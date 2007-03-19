@@ -19,6 +19,7 @@ package org.apache.camel.seda;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.ExchangeConverter;
+import org.apache.camel.CamelContainer;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -32,12 +33,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class SedaEndpoint<E> extends DefaultEndpoint<E> {
     private Queue queue;
 
-    public SedaEndpoint(String uri, ExchangeConverter exchangeConverter) {
-        this(uri, exchangeConverter, new ConcurrentLinkedQueue());
+    public SedaEndpoint(String uri, CamelContainer container) {
+        this(uri, container, new ConcurrentLinkedQueue());
     }
 
-    public SedaEndpoint(String uri, ExchangeConverter exchangeConverter, Queue queue) {
-        super(uri, exchangeConverter);
+    public SedaEndpoint(String uri, CamelContainer container, Queue queue) {
+        super(uri, container);
         this.queue = queue;
     }
 

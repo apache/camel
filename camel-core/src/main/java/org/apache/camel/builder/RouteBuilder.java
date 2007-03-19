@@ -21,6 +21,7 @@ import org.apache.camel.EndpointResolver;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.CamelContainer;
 import org.apache.camel.impl.DefaultEndpointResolver;
 import org.apache.camel.util.ObjectHelper;
 
@@ -36,7 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version $Revision$
  */
 public abstract class RouteBuilder<E extends Exchange> {
-    private EndpointResolver<E> endpointResolver;
+    private CamelContainer<E> container;
     private List<DestinationBuilder<E>> destinationBuilders = new ArrayList<DestinationBuilder<E>>();
     private AtomicBoolean initalized = new AtomicBoolean(false);
     private Map<Endpoint<E>, Processor<E>> routeMap = new HashMap<Endpoint<E>, Processor<E>>();
@@ -50,7 +51,7 @@ public abstract class RouteBuilder<E extends Exchange> {
      * Resolves the given URI to an endpoint
      */
     public Endpoint<E> endpoint(String uri) {
-        return getEndpointResolver().resolve(uri);
+        return getContainer().getEndpointResolver().resolve(uri);
     }
 
     public DestinationBuilder<E> from(String uri) {
@@ -81,6 +82,17 @@ public abstract class RouteBuilder<E extends Exchange> {
     // Properties
     //-----------------------------------------------------------------------
 
+    public CamelContainer<E> getContainer() {
+        if (container == null) {
+            container = createContainer();
+        }
+        return container;
+    }
+
+    public void setContainer(CamelContainer<E> container) {
+        this.container = container;
+    }
+
     /**
      * Returns the routing map from inbound endpoints to processors
      */
@@ -97,23 +109,9 @@ public abstract class RouteBuilder<E extends Exchange> {
         return destinationBuilders;
     }
 
-    public EndpointResolver<E> getEndpointResolver() {
-        if (endpointResolver == null) {
-            endpointResolver = createEndpointResolver();
-        }
-        return endpointResolver;
-    }
-
-    public void setEndpointResolver(EndpointResolver<E> endpointResolver) {
-        this.endpointResolver = endpointResolver;
-    }
 
     // Implementation methods
     //-----------------------------------------------------------------------
-    protected EndpointResolver<E> createEndpointResolver() {
-        return new DefaultEndpointResolver<E>();
-    }
-
     protected void checkInitialized() {
         if (initalized.compareAndSet(false, true)) {
             configure();
@@ -131,4 +129,9 @@ public abstract class RouteBuilder<E extends Exchange> {
             routeMap.put(from, processor);
         }
     }
+
+    protected CamelContainer<E> createContainer() {
+        return new CamelContainer<E>();
+    }
+
 }
