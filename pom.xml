@@ -109,6 +109,7 @@
   <modules>
     <module>camel-core</module>
     <module>camel-jms</module>
+    <module>camel-jbi</module>
   </modules>
 
   <scm>
