@@ -14,30 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.seda;
-
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.ExchangeConverter;
-import org.apache.camel.CamelContainer;
+package org.apache.camel.queue;
 
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.apache.camel.CamelContainer;
+import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
- * Represents a SEDA endpoint using an internal {@link Queue}
+ * Represents a queue endpoint that uses a {@link Queue}
  * object to process inbound exchanges.
  *
- * @version $Revision$
+ * @version $Revision: 519973 $
  */
-public class SedaEndpoint<E> extends DefaultEndpoint<E> {
-    private Queue queue;
+public class QueueEndpoint<E> extends DefaultEndpoint<E> {
+    private Queue<E> queue;
 
-    public SedaEndpoint(String uri, CamelContainer container) {
-        this(uri, container, new ConcurrentLinkedQueue());
-    }
-
-    public SedaEndpoint(String uri, CamelContainer container, Queue queue) {
+    public QueueEndpoint(String uri, CamelContainer container, Queue<E> queue) {
         super(uri, container);
         this.queue = queue;
     }
@@ -47,10 +41,12 @@ public class SedaEndpoint<E> extends DefaultEndpoint<E> {
     }
 
     public E createExchange() {
+    	// How can we create a specific Exchange if we are generic??
+    	// perhaps it would be better if we did not impement this. 
         return (E) new DefaultExchange();
     }
 
-    public Queue getQueue() {
+    public Queue<E> getQueue() {
         return queue;
     }
 }

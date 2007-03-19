@@ -16,14 +16,14 @@
  */
 package org.apache.camel;
 
-import junit.framework.TestCase;
-import org.apache.camel.builder.RouteBuilder;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Collection;
-import java.util.ArrayList;
+
+import junit.framework.TestCase;
+
+import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version $Revision$
@@ -44,7 +44,7 @@ public class RouteBuilderTest extends TestCase {
         // START SNIPPET: e1
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
-                from("seda:a").to("seda:b");
+                from("queue:a").to("queue:b");
             }
         };
         // END SNIPPET: e1
@@ -54,12 +54,12 @@ public class RouteBuilderTest extends TestCase {
         assertEquals("Number routes created", 1, routes.size());
         for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
-            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
+            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = route.getValue();
 
             assertTrue("Processor should be a SendProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof SendProcessor);
             SendProcessor sendProcessor = (SendProcessor) processor;
-            assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
+            assertEquals("Endpoint URI", "queue:b", sendProcessor.getDestination().getEndpointUri());
         }
     }
 
@@ -67,7 +67,7 @@ public class RouteBuilderTest extends TestCase {
         // START SNIPPET: e2
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
-                from("seda:a").filter(headerEquals("foo", "bar")).to("seda:b");
+                from("queue:a").filter(headerEquals("foo", "bar")).to("queue:b");
             }
         };
         // END SNIPPET: e2
@@ -79,14 +79,14 @@ public class RouteBuilderTest extends TestCase {
         assertEquals("Number routes created", 1, routes.size());
         for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
-            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
+            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = route.getValue();
 
             assertTrue("Processor should be a FilterProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof FilterProcessor);
             FilterProcessor filterProcessor = (FilterProcessor) processor;
 
             SendProcessor sendProcessor = (SendProcessor) filterProcessor.getProcessor();
-            assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
+            assertEquals("Endpoint URI", "queue:b", sendProcessor.getDestination().getEndpointUri());
         }
     }
 
@@ -94,10 +94,10 @@ public class RouteBuilderTest extends TestCase {
         // START SNIPPET: e3
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
-                from("seda:a").choice()
-                        .when(headerEquals("foo", "bar")).to("seda:b")
-                        .when(headerEquals("foo", "cheese")).to("seda:c")
-                        .otherwise().to("seda:d");
+                from("queue:a").choice()
+                        .when(headerEquals("foo", "bar")).to("queue:b")
+                        .when(headerEquals("foo", "cheese")).to("queue:c")
+                        .otherwise().to("queue:d");
             }
         };
         // END SNIPPET: e3
@@ -109,7 +109,7 @@ public class RouteBuilderTest extends TestCase {
         assertEquals("Number routes created", 1, routes.size());
         for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
-            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
+            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = route.getValue();
 
             assertTrue("Processor should be a ChoiceProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof ChoiceProcessor);
@@ -119,12 +119,12 @@ public class RouteBuilderTest extends TestCase {
             assertEquals("Should be two when clauses", 2, filters.size());
 
             FilterProcessor<Exchange> filter1 = filters.get(0);
-            assertSendTo(filter1.getProcessor(), "seda:b");
+            assertSendTo(filter1.getProcessor(), "queue:b");
 
             FilterProcessor<Exchange> filter2 = filters.get(1);
-            assertSendTo(filter2.getProcessor(), "seda:c");
+            assertSendTo(filter2.getProcessor(), "queue:c");
 
-            assertSendTo(choiceProcessor.getOtherwise(), "seda:d");
+            assertSendTo(choiceProcessor.getOtherwise(), "queue:d");
         }
     }
 
@@ -138,7 +138,7 @@ public class RouteBuilderTest extends TestCase {
 
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
-                from("seda:a").process(myProcessor);
+                from("queue:a").process(myProcessor);
             }
         };
         // END SNIPPET: e4
@@ -149,7 +149,7 @@ public class RouteBuilderTest extends TestCase {
         assertEquals("Number routes created", 1, routes.size());
         for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
-            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
+            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = route.getValue();
 
             assertEquals("Should be called with my processor", myProcessor, processor);
@@ -160,7 +160,7 @@ public class RouteBuilderTest extends TestCase {
         // START SNIPPET: e5
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
-                from("seda:a").filter(headerEquals("foo", "bar")).process(myProcessor);
+                from("queue:a").filter(headerEquals("foo", "bar")).process(myProcessor);
             }
         };
         // END SNIPPET: e5
@@ -172,7 +172,7 @@ public class RouteBuilderTest extends TestCase {
         assertEquals("Number routes created", 1, routes.size());
         for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
-            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
+            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = route.getValue();
 
             assertTrue("Processor should be a FilterProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof FilterProcessor);
@@ -185,7 +185,7 @@ public class RouteBuilderTest extends TestCase {
         // START SNIPPET: e6
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
-                from("seda:a").to("seda:tap", "seda:b");
+                from("queue:a").to("queue:tap", "queue:b");
             }
         };
         // END SNIPPET: e6
@@ -197,7 +197,7 @@ public class RouteBuilderTest extends TestCase {
         assertEquals("Number routes created", 1, routes.size());
         for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
-            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
+            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = route.getValue();
 
             assertTrue("Processor should be a CompositeProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof CompositeProcessor);
@@ -205,8 +205,8 @@ public class RouteBuilderTest extends TestCase {
             List<Processor<Exchange>> processors = new ArrayList<Processor<Exchange>>(compositeProcessor.getProcessors());
             assertEquals("Should have 2 processors", 2, processors.size());
 
-            assertSendTo(processors.get(0), "seda:tap");
-            assertSendTo(processors.get(1), "seda:b");
+            assertSendTo(processors.get(0), "queue:tap");
+            assertSendTo(processors.get(1), "queue:b");
         }
     }
 

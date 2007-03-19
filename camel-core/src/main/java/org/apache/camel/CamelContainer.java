@@ -17,6 +17,10 @@
  */
 package org.apache.camel;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.impl.DefaultEndpointResolver;
 import org.apache.camel.impl.DefaultExchangeConverter;
 
@@ -26,8 +30,10 @@ import org.apache.camel.impl.DefaultExchangeConverter;
  * @version $Revision$
  */
 public class CamelContainer<E> {
+	
     private EndpointResolver<E> endpointResolver;
     private ExchangeConverter exchangeConverter;
+    private Map<String, Object> components = (Map<String, Object>)Collections.synchronizedMap(new HashMap<String, Object>());
 
     public EndpointResolver<E> getEndpointResolver() {
         if (endpointResolver == null) {
@@ -63,4 +69,11 @@ public class CamelContainer<E> {
     protected ExchangeConverter createExchangeConverter() {
         return new DefaultExchangeConverter();
     }
+
+	public Map<String, Object> getComponents() {
+		return components;
+	}
+	public void setComponents(Map<String, Object> components) {
+		this.components = Collections.synchronizedMap(components);
+	}
 }
