@@ -22,7 +22,8 @@ import javax.jms.JMSException;
  * @version $Revision$
  */
 public class MessagePropertyAcessException extends RuntimeJmsException {
-    private String propertyName;
+	private static final long serialVersionUID = -3996286386119163309L;
+	private String propertyName;
 
     public MessagePropertyAcessException(String propertyName, JMSException e) {
         super("Error accessing header: " + propertyName, e);

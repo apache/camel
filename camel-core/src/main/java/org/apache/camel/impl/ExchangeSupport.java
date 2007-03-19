@@ -23,10 +23,10 @@ import org.apache.camel.Exchange;
  *
  * @version $Revision$
  */
-public abstract class ExchangeSupport<M> implements Exchange<M> {
+public abstract class ExchangeSupport<M,R,F> implements Exchange<M,R,F> {
     private M request;
-    private M response;
-    private M fault;
+    private R response;
+    private F fault;
     private Exception exception;
 
     public Exception getException() {
@@ -37,11 +37,11 @@ public abstract class ExchangeSupport<M> implements Exchange<M> {
         this.exception = exception;
     }
 
-    public M getFault() {
+    public F getFault() {
         return fault;
     }
 
-    public void setFault(M fault) {
+    public void setFault(F fault) {
         this.fault = fault;
     }
 
@@ -53,11 +53,11 @@ public abstract class ExchangeSupport<M> implements Exchange<M> {
         this.request = request;
     }
 
-    public M getResponse() {
+    public R getResponse() {
         return response;
     }
 
-    public void setResponse(M response) {
+    public void setResponse(R response) {
         this.response = response;
     }
 }

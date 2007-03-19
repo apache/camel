@@ -42,7 +42,7 @@ public class QueueEndpoint<E> extends DefaultEndpoint<E> {
 
     public E createExchange() {
     	// How can we create a specific Exchange if we are generic??
-    	// perhaps it would be better if we did not impement this. 
+    	// perhaps it would be better if we did not implement this. 
         return (E) new DefaultExchange();
     }
 

@@ -23,7 +23,9 @@ import javax.jms.JMSException;
  */
 public class MessagePropertyNamesAcessException extends RuntimeJmsException {
 
-    public MessagePropertyNamesAcessException(JMSException e) {
+	private static final long serialVersionUID = -6744171518099741324L;
+
+	public MessagePropertyNamesAcessException(JMSException e) {
         super("Failed to acess the JMS message property names", e);
     }
 }

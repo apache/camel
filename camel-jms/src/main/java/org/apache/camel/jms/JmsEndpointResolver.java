@@ -17,23 +17,22 @@
  */
 package org.apache.camel.jms;
 
-import org.apache.camel.EndpointResolver;
+import java.util.concurrent.Callable;
+
+import org.apache.axis.transport.jms.JMSEndpoint;
 import org.apache.camel.CamelContainer;
 import org.apache.camel.Component;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.queue.QueueEndpoint;
+import org.apache.camel.EndpointResolver;
 import org.apache.camel.queue.QueueComponent;
-
-import java.util.Queue;
-import java.util.concurrent.Callable;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * An implementation of {@link EndpointResolver} that creates
- * {@link QueueEndpoint} objects.
+ * {@link JMSEndpoint} objects.
  *
- * The synatx for a Queue URI looks like:
+ * The syntax for a JMS URI looks like:
  *
- * <pre><code>queue:[component:]queuename</code></pre>
+ * <pre><code>jms:[component:]destination</code></pre>
  * the component is optional, and if it is not specified, the default component name
  * is assumed.
  *
@@ -48,8 +47,8 @@ public class JmsEndpointResolver implements EndpointResolver<JmsExchange> {
 	 * object do not exist, it will be created.
 	 */
 	public Component resolveComponent(CamelContainer container, String uri) {
-		String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 3);
-		return resolveJmsComponent(container, splitURI);
+		String id[] = getEndpointId(uri);        
+		return resolveJmsComponent(container, id[0]);
 	}
 
 	/**
@@ -57,22 +56,34 @@ public class JmsEndpointResolver implements EndpointResolver<JmsExchange> {
 	 * {@see QueueComponent} object do not exist, they will be created.
 	 */
 	public JmsEndpoint resolveEndpoint(CamelContainer container, String uri) {
-		String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 3);
-    	JmsComponent component = resolveJmsComponent(container, splitURI);
-
-        return component.createEndpoint(uri, splitURI[2]);
+		String id[] = getEndpointId(uri);        
+    	JmsComponent component = resolveJmsComponent(container, id[0]);
+        return component.createEndpoint(uri, id[1]);
     }
 
-	private JmsComponent resolveJmsComponent(final CamelContainer container, String[] splitURI) {
-		String componentName = DEFAULT_COMPONENT_NAME;
+	/**
+	 * @return an array that looks like: [componentName,endpointName] 
+	 */
+	private String[] getEndpointId(String uri) {
+		String rc [] = {DEFAULT_COMPONENT_NAME, null};
+		String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 3);        
     	if( splitURI[2] != null ) {
-    		componentName =  splitURI[1];
+    		rc[0] =  splitURI[1];
+    		rc[0] =  splitURI[2];
+    	} else {
+    		rc[0] =  splitURI[1];
     	}
+		return rc;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private JmsComponent resolveJmsComponent(final CamelContainer container, String componentName) {
     	Component rc = container.getOrCreateComponent(componentName, new Callable<JmsComponent>(){
 			public JmsComponent call() throws Exception {
 				return new JmsComponent(container);
 			}});
     	return (JmsComponent) rc;
 	}
+
 
 }

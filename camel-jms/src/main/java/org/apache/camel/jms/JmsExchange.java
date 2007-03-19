@@ -25,7 +25,7 @@ import javax.jms.JMSException;
 /**
  * @version $Revision$
  */
-public interface JmsExchange extends Exchange<Message> {
+public interface JmsExchange extends Exchange<Message,Message,Message> {
 
     /**
      * Creates the JMS message for this exchange so that it can be sent to

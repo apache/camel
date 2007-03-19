@@ -29,7 +29,7 @@ public interface Endpoint<E>  {
     public String getEndpointUri();
 
     /**
-     * Sends the mesage exchange to this endpoint
+     * Sends the message exchange to this endpoint
      */
     void send(E exchange);
 

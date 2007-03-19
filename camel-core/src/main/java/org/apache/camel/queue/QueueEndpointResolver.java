@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
  * An implementation of {@link EndpointResolver} that creates 
  * {@link QueueEndpoint} objects.
  *
- * The synatx for a Queue URI looks like:
+ * The syntax for a Queue URI looks like:
  * 
  * <pre><code>queue:[component:]queuename</code></pre>
  * the component is optional, and if it is not specified, the default component name
@@ -48,8 +48,8 @@ public class QueueEndpointResolver<E> implements EndpointResolver<E> {
 	 * @see org.apache.camel.EndpointResolver#resolveComponent(org.apache.camel.CamelContainer, java.lang.String)
 	 */
 	public Component resolveComponent(CamelContainer container, String uri) {
-		String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 3);
-		return resolveQueueComponent(container, splitURI);
+		String id[] = getEndpointId(uri);        
+    	return resolveQueueComponent(container, id[0]);  
 	}
 
 	/**
@@ -59,19 +59,31 @@ public class QueueEndpointResolver<E> implements EndpointResolver<E> {
 	 * @see org.apache.camel.EndpointResolver#resolveEndpoint(org.apache.camel.CamelContainer, java.lang.String)
 	 */
 	public Endpoint<E> resolveEndpoint(CamelContainer container, String uri) {
-		String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 3);        
-    	QueueComponent<E> component = resolveQueueComponent(container, splitURI);        
-        Queue<E> queue = component.getOrCreateQueue(uri);
+		String id[] = getEndpointId(uri);        
+    	QueueComponent<E> component = resolveQueueComponent(container, id[0]);  
+        Queue<E> queue = component.getOrCreateQueue(id[1]);
 		return new QueueEndpoint<E>(uri, container, queue);
     }
 
-	private QueueComponent<E> resolveQueueComponent(CamelContainer container, String[] splitURI) {
-		String componentName = DEFAULT_COMPONENT_NAME;
+	/**
+	 * @return an array that looks like: [componentName,endpointName] 
+	 */
+	private String[] getEndpointId(String uri) {
+		String rc [] = {DEFAULT_COMPONENT_NAME, null};
+		String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 3);        
     	if( splitURI[2] != null ) {
-    		componentName =  splitURI[1];
+    		rc[0] =  splitURI[1];
+    		rc[0] =  splitURI[2];
+    	} else {
+    		rc[0] =  splitURI[1];
     	}
-    	Component rc = container.getOrCreateComponent(componentName, new Callable<Component<E>>(){
-			public Component<E> call() throws Exception {
+		return rc;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private QueueComponent<E> resolveQueueComponent(CamelContainer container, String componentName) {
+    	Component rc = container.getOrCreateComponent(componentName, new Callable<Component<E,? extends Endpoint<E>>>(){
+			public Component<E, ? extends Endpoint<E>> call() throws Exception {
 				return new QueueComponent<E>();
 			}});
     	return (QueueComponent<E>) rc;
