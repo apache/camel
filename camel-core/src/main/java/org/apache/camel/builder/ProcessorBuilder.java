@@ -16,17 +16,11 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
-import org.apache.camel.Predicates;
-import org.apache.camel.builder.DestinationBuilder;
 
 /**
  * @version $Revision$
  */
 public interface ProcessorBuilder<E extends Exchange> {
-
-    public Processor<E> createProcessor();
+    public void createProcessors();
 }

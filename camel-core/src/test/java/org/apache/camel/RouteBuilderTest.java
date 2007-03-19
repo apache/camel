@@ -21,6 +21,8 @@ import org.apache.camel.builder.DestinationBuilder;
 import org.apache.camel.builder.RouteBuilder;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @version $Revision$
@@ -28,19 +30,27 @@ import java.util.List;
 public class RouteBuilderTest extends TestCase {
 
     public void testSimpleRoute() throws Exception {
-        RouteBuilder builder = new RouteBuilder() {
+        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("seda://a").to("seda://b");
             }
         };
 
-        List<DestinationBuilder> destinationBuilders = builder.getRoutes();
-        assertEquals("Number or destinationBuilders created", 1, destinationBuilders.size());
-        DestinationBuilder destinationBuilder = destinationBuilders.get(0);
-        Processor processor = destinationBuilder.createProcessor();
-        assertTrue("Processor should be a SendProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof SendProcessor);
-        SendProcessor sendProcessor = (SendProcessor) processor;
-        assertEquals("Endpoint URI", "seda://b", sendProcessor.getDestination().getEndpointUri());
+        Map<Endpoint<Exchange>, List<Processor<Exchange>>> routeMap = builder.getRouteMap();
+        Set<Map.Entry<Endpoint<Exchange>, List<Processor<Exchange>>>> routes = routeMap.entrySet();
+        assertEquals("Number routes created", 1, routes.size());
+        for (Map.Entry<Endpoint<Exchange>, List<Processor<Exchange>>> route : routes) {
+            Endpoint<Exchange> key = route.getKey();
+            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            List<Processor<Exchange>> processors = route.getValue();
+
+            assertEquals("Number of processors", 1, processors.size());
+            Processor processor = processors.get(0);
+
+            assertTrue("Processor should be a SendProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof SendProcessor);
+            SendProcessor sendProcessor = (SendProcessor) processor;
+            assertEquals("Endpoint URI", "seda://b", sendProcessor.getDestination().getEndpointUri());
+        }
     }
 
 
@@ -50,6 +60,26 @@ public class RouteBuilderTest extends TestCase {
                 from("seda://a").filter(headerEquals("foo", "bar")).to("seda://b");
             }
         };
+
+        Map<Endpoint<Exchange>, List<Processor<Exchange>>> routeMap = builder.getRouteMap();
+        Set<Map.Entry<Endpoint<Exchange>, List<Processor<Exchange>>>> routes = routeMap.entrySet();
+        assertEquals("Number routes created", 1, routes.size());
+        for (Map.Entry<Endpoint<Exchange>, List<Processor<Exchange>>> route : routes) {
+            Endpoint<Exchange> key = route.getKey();
+            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            List<Processor<Exchange>> processors = route.getValue();
+
+            assertEquals("Number of processors", 1, processors.size());
+            Processor processor = processors.get(0);
+
+            assertTrue("Processor should be a FilterProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof FilterProcessor);
+            FilterProcessor filterProcessor = (FilterProcessor) processor;
+        
+            SendProcessor sendProcessor = (SendProcessor) filterProcessor.getProcessor();
+            assertEquals("Endpoint URI", "seda://b", sendProcessor.getDestination().getEndpointUri());
+        }
+
+        System.out.println("Created map: " + routeMap);
     }
 
     public void testSimpleRouteWithChoice() throws Exception {

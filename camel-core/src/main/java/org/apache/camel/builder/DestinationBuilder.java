@@ -17,30 +17,34 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ProcessorBuilder;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @version $Revision$
  */
 public class DestinationBuilder<E extends Exchange> implements ProcessorBuilder<E> {
+    private DestinationBuilder<E> parent;
     private RouteBuilder<E> builder;
     private Endpoint<E> from;
+    private List<Processor<E>> processors = new ArrayList<Processor<E>>();
     private List<ProcessorBuilder<E>> processBuilders = new ArrayList<ProcessorBuilder<E>>();
-
-    public DestinationBuilder(DestinationBuilder<E> parent) {
-        this(parent.getBuilder(), parent.getFrom());
-    }
 
     public DestinationBuilder(RouteBuilder builder, Endpoint<E> from) {
         this.builder = builder;
         this.from = from;
+        this.parent = this;
+    }
+
+    public DestinationBuilder(DestinationBuilder<E> parent) {
+        this.parent = parent;
+        this.builder = parent.getBuilder();
+        this.from = parent.getFrom();
     }
 
     /**
@@ -48,6 +52,10 @@ public class DestinationBuilder<E extends Exchange> implements ProcessorBuilder<
      */
     public Endpoint<E> endpoint(String uri) {
         return getBuilder().endpoint(uri);
+    }
+
+    public DestinationBuilder<E> getParent() {
+        return parent;
     }
 
     /**
@@ -62,7 +70,7 @@ public class DestinationBuilder<E extends Exchange> implements ProcessorBuilder<
      */
     public ProcessorBuilder<E> to(Endpoint<E> endpoint) {
         ConfiguredDestinationBuilder<E> answer = new ConfiguredDestinationBuilder<E>(this, endpoint);
-        builder.addRoute(answer);
+        parent.addProcessBuilder(answer);
         return answer;
     }
 
@@ -95,5 +103,19 @@ public class DestinationBuilder<E extends Exchange> implements ProcessorBuilder<
 
     public Processor<E> createProcessor() {
         throw new UndefinedDestinationException();
+    }
+
+    public void addProcessor(Processor<E> processor) {
+        processors.add(processor);
+    }
+
+    public void createProcessors() {
+        for (ProcessorBuilder<E> processBuilder : processBuilders) {
+            processBuilder.createProcessors();
+        }
+    }
+
+    public List<Processor<E>> getProcessors() {
+        return processors;
     }
 }

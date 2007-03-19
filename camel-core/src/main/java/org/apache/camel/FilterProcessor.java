@@ -39,4 +39,12 @@ public class FilterProcessor<E> implements Processor<E> {
     public String toString() {
         return "if (" + predicate + ") " + processor;
     }
+
+    public Predicate<E> getPredicate() {
+        return predicate;
+    }
+
+    public Processor<E> getProcessor() {
+        return processor;
+    }
 }

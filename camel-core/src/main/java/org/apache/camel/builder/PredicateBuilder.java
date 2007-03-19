@@ -19,6 +19,8 @@ package org.apache.camel.builder;
 import org.apache.camel.Predicate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicates;
+import org.apache.camel.Processor;
+import org.apache.camel.FilterProcessor;
 
 /**
  * @version $Revision$
@@ -49,5 +51,9 @@ public class PredicateBuilder<E extends Exchange> extends DestinationBuilder<E> 
 
     public Predicate<E> getPredicate() {
         return predicate;
+    }
+
+    public void addProcessor(Processor<E> processor) {
+        getParent().addProcessor(new FilterProcessor(predicate, processor));
     }
 }
