@@ -54,7 +54,7 @@ public class CamelContainer<E> {
     // Implementation methods
     //-----------------------------------------------------------------------
     protected EndpointResolver<E> createEndpointResolver() {
-        return new DefaultEndpointResolver<E>(this);
+        return new DefaultEndpointResolver<E>();
     }
 
     /**

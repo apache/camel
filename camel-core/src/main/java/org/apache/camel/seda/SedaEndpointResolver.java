@@ -14,37 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.seda;
 
 import org.apache.camel.CamelContainer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
-import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A default implementation of {@link org.apache.camel.EndpointResolver}
  *
- * @version $Revision$
+ * @version $Revision: 519901 $
  */
-public class DefaultEndpointResolver<E> implements EndpointResolver<E> {
-    static final private FactoryFinder endpointResolverFactory = new FactoryFinder("META-INF/services/org/apache/camel/EndpointResolver/");
-    
+public class SedaEndpointResolver<E> implements EndpointResolver<E> {
+	
     public Endpoint<E> resolve(CamelContainer container, String uri) {
-    	String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":");
-    	if( splitURI == null )
-    		throw new IllegalArgumentException("Invalid URI, it did not contain a scheme: "+uri);
-    	EndpointResolver resolver;
-		try {
-			resolver = (EndpointResolver) endpointResolverFactory.newInstance(splitURI[0]);
-		} catch (Throwable e) {
-			throw new IllegalArgumentException("Invalid URI, no EndpointResolver registered for scheme : "+splitURI[0], e);
-		}
-
-		return resolver.resolve(container, uri);
-		
-		// EndpointResolvers could be more recusive in nature if we resolved the reset of the of the URI 
-		//return resolver.resolve(container, splitURI[1]);
+		return new SedaEndpoint<E>(uri, container);
     }
 
 }
