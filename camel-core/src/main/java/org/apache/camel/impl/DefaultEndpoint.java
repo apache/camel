@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeConverter;
+import org.apache.camel.CamelContainer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -26,11 +27,11 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class DefaultEndpoint<E> implements Endpoint<E> {
     private String endpointUri;
-    private ExchangeConverter exchangeConverter;
+    private CamelContainer container;
 
-    protected DefaultEndpoint(String endpointUri, ExchangeConverter exchangeConverter) {
+    protected DefaultEndpoint(String endpointUri, CamelContainer container) {
         this.endpointUri = endpointUri;
-        this.exchangeConverter = exchangeConverter;
+        this.container = container;
     }
 
     public int hashCode() {
@@ -55,8 +56,8 @@ public abstract class DefaultEndpoint<E> implements Endpoint<E> {
         return endpointUri;
     }
 
-    public ExchangeConverter getExchangeConverter() {
-        return exchangeConverter;
+    public CamelContainer getContainer() {
+        return container;
     }
 
     /**
@@ -67,7 +68,7 @@ public abstract class DefaultEndpoint<E> implements Endpoint<E> {
         if (type.isInstance(exchange)) {
             return type.cast(exchange);
         }
-        return getExchangeConverter().convertTo(type, exchange);
+        return getContainer().getExchangeConverter().convertTo(type, exchange);
     }
 
 }

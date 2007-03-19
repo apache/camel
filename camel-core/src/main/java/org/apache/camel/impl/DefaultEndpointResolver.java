@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.EndpointResolver;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangeConverter;
+import org.apache.camel.CamelContainer;
 import org.apache.camel.seda.SedaEndpoint;
 
 /**
@@ -27,35 +28,16 @@ import org.apache.camel.seda.SedaEndpoint;
  * @version $Revision$
  */
 public class DefaultEndpointResolver<E> implements EndpointResolver<E> {
-    private ExchangeConverter exchangeConverter;
+    private final CamelContainer container;
 
-    public DefaultEndpointResolver() {
+    public DefaultEndpointResolver(CamelContainer container) {
+        this.container = container;
     }
 
-    public DefaultEndpointResolver(ExchangeConverter exchangeConverter) {
-        this.exchangeConverter = exchangeConverter;
-    }
     public Endpoint<E> resolve(String uri) {
         // TODO we may want to cache them?
-        return new SedaEndpoint<E>(uri, getExchangeConverter());
+        return new SedaEndpoint<E>(uri, container);
     }
 
-    public ExchangeConverter getExchangeConverter() {
-        if (exchangeConverter == null) {
-            exchangeConverter =           createExchangeConverter();
-        }
-        return exchangeConverter;
-    }
-
-    public void setExchangeConverter(ExchangeConverter exchangeConverter) {
-        this.exchangeConverter = exchangeConverter;
-    }
-
-    /**
-     * Lazily create a default exchange converter implementation
-     */
-    protected ExchangeConverter createExchangeConverter() {
-        return new DefaultExchangeConverter();
-    }
 
 }

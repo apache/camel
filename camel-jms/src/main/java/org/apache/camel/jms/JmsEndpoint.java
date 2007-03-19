@@ -18,6 +18,7 @@ package org.apache.camel.jms;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeConverter;
+import org.apache.camel.CamelContainer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
@@ -36,8 +37,8 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     private Destination destination;
 
 
-    public JmsEndpoint(String uri, ExchangeConverter exchangeConverter, Destination destination, JmsOperations template) {
-        super(uri, exchangeConverter);
+    public JmsEndpoint(String uri, CamelContainer container, Destination destination, JmsOperations template) {
+        super(uri, container);
         this.destination = destination;
         this.template = template;
     }
