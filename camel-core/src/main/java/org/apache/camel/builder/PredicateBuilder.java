@@ -53,7 +53,13 @@ public class PredicateBuilder<E extends Exchange> extends DestinationBuilder<E> 
         return predicate;
     }
 
+    public FilterProcessor<E> createProcessor() {
+        // lets create a single processor for all child predicates
+        Processor<E> childProcessor = super.createProcessor();
+        return new FilterProcessor<E>(predicate, childProcessor);
+    }
+
     public void addProcessor(Processor<E> processor) {
-        getParent().addProcessor(new FilterProcessor(predicate, processor));
+        getParent().addProcessor(new FilterProcessor<E>(predicate, processor));
     }
 }

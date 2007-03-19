@@ -39,7 +39,7 @@ public abstract class RouteBuilder<E extends Exchange> {
     private EndpointResolver<E> endpointResolver;
     private List<DestinationBuilder<E>> destinationBuilders = new ArrayList<DestinationBuilder<E>>();
     private AtomicBoolean initalized = new AtomicBoolean(false);
-    private Map<Endpoint<E>, List<Processor<E>>> routeMap = new HashMap<Endpoint<E>, List<Processor<E>>>();
+    private Map<Endpoint<E>, Processor<E>> routeMap = new HashMap<Endpoint<E>, Processor<E>>();
 
     /**
      * Called on initialisation to to build the required destinationBuilders
@@ -84,7 +84,7 @@ public abstract class RouteBuilder<E extends Exchange> {
     /**
      * Returns the routing map from inbound endpoints to processors
      */
-    public Map<Endpoint<E>, List<Processor<E>>> getRouteMap() {
+    public Map<Endpoint<E>, Processor<E>> getRouteMap() {
         checkInitialized();
         return routeMap;
     }
@@ -121,12 +121,14 @@ public abstract class RouteBuilder<E extends Exchange> {
         }
     }
 
-    protected void populateRouteMap(Map<Endpoint<E>, List<Processor<E>>> routeMap) {
+    protected void populateRouteMap(Map<Endpoint<E>, Processor<E>> routeMap) {
         for (DestinationBuilder<E> destinationBuilder : destinationBuilders) {
             Endpoint<E> from = destinationBuilder.getFrom();
-            destinationBuilder.createProcessors();
-            List<Processor<E>> processors = destinationBuilder.getProcessors();
-            routeMap.put(from, processors);
+            Processor<E> processor = destinationBuilder.createProcessor();
+            if (processor == null) {
+                throw new IllegalArgumentException("No processor created for DestinationBuilder: " + destinationBuilder);
+            }
+            routeMap.put(from, processor);
         }
     }
 }

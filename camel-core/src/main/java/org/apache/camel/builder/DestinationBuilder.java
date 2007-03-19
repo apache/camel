@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder;
 
+import org.apache.camel.CompositeProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
@@ -23,7 +24,6 @@ import org.apache.camel.Processor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @version $Revision$
@@ -35,7 +35,7 @@ public class DestinationBuilder<E extends Exchange> implements ProcessorBuilder<
     private List<Processor<E>> processors = new ArrayList<Processor<E>>();
     private List<ProcessorBuilder<E>> processBuilders = new ArrayList<ProcessorBuilder<E>>();
 
-    public DestinationBuilder(RouteBuilder builder, Endpoint<E> from) {
+    public DestinationBuilder(RouteBuilder<E> builder, Endpoint<E> from) {
         this.builder = builder;
         this.from = from;
         this.parent = this;
@@ -70,23 +70,31 @@ public class DestinationBuilder<E extends Exchange> implements ProcessorBuilder<
      */
     public ProcessorBuilder<E> to(Endpoint<E> endpoint) {
         ConfiguredDestinationBuilder<E> answer = new ConfiguredDestinationBuilder<E>(this, endpoint);
-        parent.addProcessBuilder(answer);
+        addProcessBuilder(answer);
         return answer;
     }
 
     /**
      * Creates a predicate which is applied and only if it is true then
      * the exchange is forwarded to the destination
+     *
+     * @return the builder for a predicate
      */
-    public PredicateBuilder<E> filter(Predicate predicate) {
-        return new PredicateBuilder<E>(this, predicate);
+    public PredicateBuilder<E> filter(Predicate<E> predicate) {
+        PredicateBuilder<E> answer = new PredicateBuilder<E>(this, predicate);
+        addProcessBuilder(answer);
+        return answer;
     }
 
     /**
      * Creates a choice of one or more predicates with an otherwise clause
+     *
+     * @return the builder for a choice expression
      */
     public ChoiceBuilder<E> choice() {
-        return new ChoiceBuilder<E>(this);
+        ChoiceBuilder<E> answer = new ChoiceBuilder<E>(this);
+        addProcessBuilder(answer);
+        return answer;
     }
 
     public RouteBuilder<E> getBuilder() {
@@ -101,12 +109,29 @@ public class DestinationBuilder<E extends Exchange> implements ProcessorBuilder<
         processBuilders.add(processBuilder);
     }
 
-    public Processor<E> createProcessor() {
-        throw new UndefinedDestinationException();
-    }
-
     public void addProcessor(Processor<E> processor) {
         processors.add(processor);
+    }
+
+    public Processor<E> createProcessor() {
+        List<Processor<E>> answer = new ArrayList<Processor<E>>();
+
+        for (ProcessorBuilder<E> processBuilder : processBuilders) {
+            Processor<E> processor = processBuilder.createProcessor();
+            if (processor == null) {
+                throw new IllegalArgumentException("No processor created for processBuilder: " + processBuilder);
+            }
+            answer.add(processor);
+        }
+        if (answer.size() == 0) {
+            return null;
+        }
+        if (answer.size() == 1) {
+            return answer.get(0);
+        }
+        else {
+            return new CompositeProcessor<E>(answer);
+        }
     }
 
     public void createProcessors() {
