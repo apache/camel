@@ -26,5 +26,5 @@ public interface EndpointResolver<E> {
     /**
      * Resolves the given uri or returns null if no endpoint could be found
      */
-    public Endpoint<E> resolve(String uri);
+    public Endpoint<E> resolve(CamelContainer container, String uri);
 }

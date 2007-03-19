@@ -32,4 +32,13 @@ public class ObjectHelper {
             throw new NullPointerException("No " + name + " specified");
         }
     }
+    
+    public static String[] splitOnCharacter(String value, String needle) {
+		int i = value.indexOf(needle);
+		if( i < 0 ) {
+			return null;
+		}		
+		return new String[] {value.substring(0, i), value.substring(i+1)};
+	}
+
 }

@@ -16,20 +16,19 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointResolver;
-import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
-import org.apache.camel.CamelContainer;
-import org.apache.camel.impl.DefaultEndpointResolver;
-import org.apache.camel.util.ObjectHelper;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.camel.CamelContainer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointResolver;
+import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
+import org.apache.camel.Processor;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A builder of destinationBuilders using a typesafe Java DLS.
@@ -51,7 +50,9 @@ public abstract class RouteBuilder<E extends Exchange> {
      * Resolves the given URI to an endpoint
      */
     public Endpoint<E> endpoint(String uri) {
-        return getContainer().getEndpointResolver().resolve(uri);
+         CamelContainer<E> c = getContainer();
+         EndpointResolver<E> er = c.getEndpointResolver();
+         return er.resolve(c, uri);
     }
 
     public DestinationBuilder<E> from(String uri) {
