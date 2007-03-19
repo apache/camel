@@ -214,10 +214,16 @@ public class RouteBuilderTest extends TestCase {
     	
         final InterceptorProcessor<Exchange> interceptor1 = new InterceptorProcessor<Exchange>() {
         };
-        final InterceptorProcessor<Exchange> interceptor2 = new InterceptorProcessor<Exchange>() {    	
+
+        // START SNIPPET: e7        
+        final InterceptorProcessor<Exchange> interceptor2 = new InterceptorProcessor<Exchange>() {
+        	public void onExchange(Exchange exchange) {
+        		System.out.println("START of onExchange: "+exchange);
+        		next.onExchange(exchange);
+        		System.out.println("END of onExchange: "+exchange);
+        	}
         };
 
-        // START SNIPPET: e7
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("queue:a")
