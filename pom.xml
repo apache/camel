@@ -93,7 +93,7 @@
     <repository>
       <id>apache.incubating.releases</id>
       <name>Apache Incubating Release Distribution Repository</name>
-      <url>${dist-repo-url}</url>
+      <url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository</url>
     </repository>
     <snapshotRepository>
       <id>apache.snapshots</id>
@@ -102,7 +102,7 @@
     </snapshotRepository>
     <site>
       <id>apache.website</id>
-      <url>${site-repo-url}</url>
+      <url>scpexe://people.apache.org/www/activemq.apache.org/camel/maven/</url>
     </site>
   </distributionManagement>
 

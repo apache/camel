@@ -39,11 +39,13 @@ public class RouteBuilderTest extends TestCase {
     };
 
     public void testSimpleRoute() throws Exception {
+        // START SNIPPET: e1
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("seda://a").to("seda://b");
             }
         };
+        // END SNIPPET: e1
 
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
         Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
@@ -60,11 +62,13 @@ public class RouteBuilderTest extends TestCase {
     }
 
     public void testSimpleRouteWithHeaderPredicate() throws Exception {
+        // START SNIPPET: e2
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("seda://a").filter(headerEquals("foo", "bar")).to("seda://b");
             }
         };
+        // END SNIPPET: e2
 
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
         System.out.println("Created map: " + routeMap);
@@ -85,6 +89,7 @@ public class RouteBuilderTest extends TestCase {
     }
 
     public void testSimpleRouteWithChoice() throws Exception {
+        // START SNIPPET: e3
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("seda://a").choice()
@@ -93,6 +98,7 @@ public class RouteBuilderTest extends TestCase {
                         .otherwise().to("seda://d");
             }
         };
+        // END SNIPPET: e3
 
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
         System.out.println("Created map: " + routeMap);
@@ -121,11 +127,13 @@ public class RouteBuilderTest extends TestCase {
     }
 
     public void testCustomProcessor() throws Exception {
+        // START SNIPPET: e4
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("seda://a").process(myProcessor);
             }
         };
+        // END SNIPPET: e4
 
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
         System.out.println("Created map: " + routeMap);
@@ -142,11 +150,13 @@ public class RouteBuilderTest extends TestCase {
     }
 
     public void testCustomProcessorWithFilter() throws Exception {
+        // START SNIPPET: e5
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("seda://a").filter(headerEquals("foo", "bar")).process(myProcessor);
             }
         };
+        // END SNIPPET: e5
 
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
         System.out.println("Created map: " + routeMap);
