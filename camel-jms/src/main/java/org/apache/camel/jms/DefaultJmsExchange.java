@@ -32,6 +32,13 @@ import java.util.Map;
 public class DefaultJmsExchange extends ExchangeSupport<Message> implements JmsExchange {
     private Map<String, Object> lazyHeaders;
 
+    public DefaultJmsExchange() {
+    }
+
+    public DefaultJmsExchange(Message message) {
+        setRequest(message);
+    }
+
     public <T> T getHeader(String name) {
         Message request = getRequest();
         if (request != null) {
