@@ -76,6 +76,29 @@ public class DestinationBuilder<E extends Exchange> implements ProcessorBuilder<
 
 
     /**
+     * Sends the exchange to the given endpoint URI
+     */
+    public ProcessorBuilder<E> to(String... uris) {
+        ProcessorBuilder<E> answer = null;
+        for (String uri : uris) {
+            answer = to(endpoint(uri));
+        }
+        return answer;
+    }
+
+    /**
+     * Sends the exchange to the given endpoint
+     */
+    public ProcessorBuilder<E> to(Endpoint<E>... endpoints) {
+        ProcessorBuilder<E> answer = null;
+        for (Endpoint<E> endpoint : endpoints) {
+            answer = to(endpoint);          
+        }
+        return answer;
+    }
+
+
+    /**
      * Adds the custom processor to this destination
      */
     public ProcessorBuilder<E> process(Processor<E> processor) {
