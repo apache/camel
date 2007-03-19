@@ -14,22 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.seda;
+package org.apache.camel.queue;
+
+import java.util.Queue;
 
 import org.apache.camel.CamelContainer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
-import org.apache.camel.util.ObjectHelper;
 
 /**
- * A default implementation of {@link org.apache.camel.EndpointResolver}
+ * An implementation of {@link EndpointResolver} that creates 
+ * {@link QueueEndpoint} objects.
  *
  * @version $Revision: 519901 $
  */
-public class SedaEndpointResolver<E> implements EndpointResolver<E> {
+public class QueueEndpointResolver<E> implements EndpointResolver<E> {
+	
+	static QueueComponent defaultComponent = new QueueComponent();
 	
     public Endpoint<E> resolve(CamelContainer container, String uri) {
-		return new SedaEndpoint<E>(uri, container);
+        
+    	// TODO: we could look at the uri scheme to look for a named
+    	// component registered on the container
+    	QueueComponent<E> component = defaultComponent;
+        
+        Queue<E> queue = component.getOrCreateQueue(uri);
+		return new QueueEndpoint<E>(uri, container, queue);
     }
 
 }
