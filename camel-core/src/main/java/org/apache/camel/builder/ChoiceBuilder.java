@@ -18,6 +18,9 @@ package org.apache.camel.builder;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.Exchange;
+import org.apache.camel.ChoiceProcessor;
+import org.apache.camel.FilterProcessor;
+import org.apache.camel.Processor;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -29,7 +32,7 @@ public class ChoiceBuilder<E extends Exchange> extends DestinationBuilder<E> {
 
     private final DestinationBuilder<E> parent;
     private List<ChoicePredicateBuilder<E>> predicateBuilders = new ArrayList<ChoicePredicateBuilder<E>>();
-    private DestinationBuilder otherwise;
+    private DestinationBuilder<E> otherwise;
 
     public ChoiceBuilder(DestinationBuilder<E> parent) {
         super(parent);
@@ -38,6 +41,8 @@ public class ChoiceBuilder<E extends Exchange> extends DestinationBuilder<E> {
 
     /**
      * Adds a predicate which if it is true then the message exchange is sent to the given destination
+     *
+     * @return a builder for creating a when predicate clause and action
      */
     public ChoicePredicateBuilder<E> when(Predicate<E> predicate) {
         ChoicePredicateBuilder<E> answer = new ChoicePredicateBuilder<E>(this, predicate);
@@ -46,15 +51,28 @@ public class ChoiceBuilder<E extends Exchange> extends DestinationBuilder<E> {
     }
 
     public DestinationBuilder<E> otherwise() {
-        this.otherwise = new DestinationBuilder(parent);
-        return parent;
+        this.otherwise = new DestinationBuilder<E>(parent);
+        return otherwise;
     }
 
     public List<ChoicePredicateBuilder<E>> getPredicateBuilders() {
         return predicateBuilders;
     }
 
-    public DestinationBuilder getOtherwise() {
+    public DestinationBuilder<E> getOtherwise() {
         return otherwise;
+    }
+
+    @Override
+    public Processor<E> createProcessor() {
+        List<FilterProcessor<E>> filters = new ArrayList<FilterProcessor<E>>();
+        for (ChoicePredicateBuilder<E> predicateBuilder : predicateBuilders) {
+            filters.add(predicateBuilder.createProcessor());
+        }
+        Processor<E> otherwiseProcessor = null;
+        if (otherwise != null) {
+            otherwiseProcessor = otherwise.createProcessor();
+        }
+        return new ChoiceProcessor<E>(filters, otherwiseProcessor);
     }
 }

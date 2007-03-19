@@ -17,7 +17,6 @@
 package org.apache.camel;
 
 import junit.framework.TestCase;
-import org.apache.camel.builder.DestinationBuilder;
 import org.apache.camel.builder.RouteBuilder;
 
 import java.util.List;
@@ -28,7 +27,6 @@ import java.util.Set;
  * @version $Revision$
  */
 public class RouteBuilderTest extends TestCase {
-
     public void testSimpleRoute() throws Exception {
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
@@ -36,16 +34,13 @@ public class RouteBuilderTest extends TestCase {
             }
         };
 
-        Map<Endpoint<Exchange>, List<Processor<Exchange>>> routeMap = builder.getRouteMap();
-        Set<Map.Entry<Endpoint<Exchange>, List<Processor<Exchange>>>> routes = routeMap.entrySet();
+        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
+        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
         assertEquals("Number routes created", 1, routes.size());
-        for (Map.Entry<Endpoint<Exchange>, List<Processor<Exchange>>> route : routes) {
+        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
             assertEquals("From endpoint", "seda://a", key.getEndpointUri());
-            List<Processor<Exchange>> processors = route.getValue();
-
-            assertEquals("Number of processors", 1, processors.size());
-            Processor processor = processors.get(0);
+            Processor processor = route.getValue();
 
             assertTrue("Processor should be a SendProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof SendProcessor);
             SendProcessor sendProcessor = (SendProcessor) processor;
@@ -53,37 +48,33 @@ public class RouteBuilderTest extends TestCase {
         }
     }
 
-
     public void testSimpleRouteWithHeaderPredicate() throws Exception {
-        RouteBuilder builder = new RouteBuilder() {
+        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("seda://a").filter(headerEquals("foo", "bar")).to("seda://b");
             }
         };
 
-        Map<Endpoint<Exchange>, List<Processor<Exchange>>> routeMap = builder.getRouteMap();
-        Set<Map.Entry<Endpoint<Exchange>, List<Processor<Exchange>>>> routes = routeMap.entrySet();
+        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
+        System.out.println("Created map: " + routeMap);
+
+        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
         assertEquals("Number routes created", 1, routes.size());
-        for (Map.Entry<Endpoint<Exchange>, List<Processor<Exchange>>> route : routes) {
+        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
             assertEquals("From endpoint", "seda://a", key.getEndpointUri());
-            List<Processor<Exchange>> processors = route.getValue();
-
-            assertEquals("Number of processors", 1, processors.size());
-            Processor processor = processors.get(0);
+            Processor processor = route.getValue();
 
             assertTrue("Processor should be a FilterProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof FilterProcessor);
             FilterProcessor filterProcessor = (FilterProcessor) processor;
-        
+
             SendProcessor sendProcessor = (SendProcessor) filterProcessor.getProcessor();
             assertEquals("Endpoint URI", "seda://b", sendProcessor.getDestination().getEndpointUri());
         }
-
-        System.out.println("Created map: " + routeMap);
     }
 
     public void testSimpleRouteWithChoice() throws Exception {
-        RouteBuilder builder = new RouteBuilder() {
+        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("seda://a").choice()
                         .when(headerEquals("foo", "bar")).to("seda://b")
@@ -91,5 +82,40 @@ public class RouteBuilderTest extends TestCase {
                         .otherwise().to("seda://d");
             }
         };
+
+        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
+        System.out.println("Created map: " + routeMap);
+
+        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
+        assertEquals("Number routes created", 1, routes.size());
+        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
+            Endpoint<Exchange> key = route.getKey();
+            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            Processor processor = route.getValue();
+
+            assertTrue("Processor should be a ChoiceProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof ChoiceProcessor);
+            ChoiceProcessor<Exchange> choiceProcessor = (ChoiceProcessor<Exchange>) processor;
+
+            List<FilterProcessor<Exchange>> filters = choiceProcessor.getFilters();
+            assertEquals("Should be two when clauses", 2, filters.size());
+
+            FilterProcessor<Exchange> filter1 = filters.get(0);
+            assertSendTo(filter1.getProcessor(), "seda://b");
+
+            FilterProcessor<Exchange> filter2 = filters.get(1);
+            assertSendTo(filter2.getProcessor(), "seda://c");
+
+
+            assertSendTo(choiceProcessor.getOtherwise(), "seda://d");
+        }
+
+    }
+
+
+    protected void assertSendTo(Processor processor, String uri) {
+        assertTrue("Processor should be a SendProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof SendProcessor);
+
+        SendProcessor sendProcessor = (SendProcessor) processor;
+        assertEquals("Endpoint URI", uri, sendProcessor.getDestination().getEndpointUri());
     }
 }

@@ -17,26 +17,40 @@
  */
 package org.apache.camel;
 
+import java.util.Collection;
+
 /**
+ * Represents a composite pattern, aggregating a collection of processors together as a single processor
+ *
  * @version $Revision$
  */
-public class SendProcessor<E> implements Processor<E> {
-    private Endpoint<E> destination;
+public class CompositeProcessor<E> implements Processor<E> {
+    private final Collection<Processor<E>> processors;
 
-    public SendProcessor(Endpoint<E> destination) {
-        this.destination = destination;
+    public CompositeProcessor(Collection<Processor<E>> processors) {
+        this.processors = processors;
     }
 
     public void onExchange(E exchange) {
-        destination.send(exchange);
-    }
-
-    public Endpoint<E> getDestination() {
-        return destination;
+        for (Processor<E> processor : processors) {
+            processor.onExchange(exchange);
+        }
     }
 
     @Override
     public String toString() {
-        return "sendTo(" + destination + ")";
+        StringBuilder builder = new StringBuilder("[ ");
+        boolean first = true;
+        for (Processor<E> processor : processors) {
+            if (first) {
+                first = false;
+            }
+            else {
+                builder.append(", ");
+            }
+            builder.append(processor.toString());
+        }
+        builder.append(" ]");
+        return builder.toString();
     }
 }
