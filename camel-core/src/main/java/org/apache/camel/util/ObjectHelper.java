@@ -26,4 +26,10 @@ public class ObjectHelper {
         }
         return a != null && b != null && a.equals(b);
     }
+
+    public static void notNull(Object value, String name) {
+        if (value == null) {
+            throw new NullPointerException("No " + name + " specified");
+        }
+    }
 }

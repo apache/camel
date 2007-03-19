@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeConverter;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version $Revision$
@@ -30,6 +31,24 @@ public abstract class DefaultEndpoint<E> implements Endpoint<E> {
     protected DefaultEndpoint(String endpointUri, ExchangeConverter exchangeConverter) {
         this.endpointUri = endpointUri;
         this.exchangeConverter = exchangeConverter;
+    }
+
+    public int hashCode() {
+        return endpointUri.hashCode() * 37 + 1;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof DefaultEndpoint) {
+            DefaultEndpoint that = (DefaultEndpoint) object;
+            return ObjectHelper.equals(this.endpointUri, that.endpointUri);
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "Endpoint[" + endpointUri  + "]";
     }
 
     public String getEndpointUri() {

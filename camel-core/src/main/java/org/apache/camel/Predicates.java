@@ -16,25 +16,20 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.util.ObjectHelper;
+
 /**
  * A helper class for working with predicates
  *
  * @version $Revision$
  */
 public class Predicates {
-
-    public static void notNull(Object value, String name) {
-        if (value == null) {
-            throw new NullPointerException("No " + name + " specified");
-        }
-    }
-
     /**
      * A helper method to combine multiple predicates by a logical AND
      */
     public static <E> Predicate<E> and(final Predicate<E> left, final Predicate<E> right) {
-        notNull(left, "left");
-        notNull(right, "right");
+        ObjectHelper.notNull(left, "left");
+        ObjectHelper.notNull(right, "right");
         return new Predicate<E>() {
             public boolean evaluate(E exchange) {
                 return left.evaluate(exchange) && right.evaluate(exchange);
@@ -46,8 +41,8 @@ public class Predicates {
      * A helper method to combine multiple predicates by a logical OR
      */
     public static <E> Predicate<E> or(final Predicate<E> left, final Predicate<E> right) {
-        notNull(left, "left");
-        notNull(right, "right");
+        ObjectHelper.notNull(left, "left");
+        ObjectHelper.notNull(right, "right");
         return new Predicate<E>() {
             public boolean evaluate(E exchange) {
                 return left.evaluate(exchange) || right.evaluate(exchange);

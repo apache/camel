@@ -20,12 +20,14 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpointResolver;
-import org.apache.camel.builder.DestinationBuilder;
+import org.apache.camel.util.ObjectHelper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -34,10 +36,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version $Revision$
  */
 public abstract class RouteBuilder<E extends Exchange> {
-
     private EndpointResolver<E> endpointResolver;
     private List<DestinationBuilder<E>> destinationBuilders = new ArrayList<DestinationBuilder<E>>();
     private AtomicBoolean initalized = new AtomicBoolean(false);
+    private Map<Endpoint<E>, List<Processor<E>>> routeMap = new HashMap<Endpoint<E>, List<Processor<E>>>();
 
     /**
      * Called on initialisation to to build the required destinationBuilders
@@ -56,13 +58,10 @@ public abstract class RouteBuilder<E extends Exchange> {
     }
 
     public DestinationBuilder<E> from(Endpoint<E> endpoint) {
-        return new DestinationBuilder<E>(this, endpoint);
+        DestinationBuilder<E> answer = new DestinationBuilder<E>(this, endpoint);
+        destinationBuilders.add(answer);
+        return answer;
     }
-
-    public void addRoute(DestinationBuilder<E> destinationBuilder) {
-        destinationBuilders.add(destinationBuilder);
-    }
-
 
     // Helper methods
     //-----------------------------------------------------------------------
@@ -71,6 +70,11 @@ public abstract class RouteBuilder<E extends Exchange> {
             public boolean evaluate(E exchange) {
                 return ObjectHelper.equals(value, exchange.getHeader(header));
             }
+
+            @Override
+            public String toString() {
+                return "header[" + header + "] == " + value;
+            }
         };
     }
 
@@ -78,9 +82,17 @@ public abstract class RouteBuilder<E extends Exchange> {
     //-----------------------------------------------------------------------
 
     /**
+     * Returns the routing map from inbound endpoints to processors
+     */
+    public Map<Endpoint<E>, List<Processor<E>>> getRouteMap() {
+        checkInitialized();
+        return routeMap;
+    }
+
+    /**
      * Returns the destinationBuilders which have been created
      */
-    public List<DestinationBuilder<E>> getRoutes() {
+    public List<DestinationBuilder<E>> getDestinationBuilders() {
         checkInitialized();
         return destinationBuilders;
     }
@@ -105,7 +117,16 @@ public abstract class RouteBuilder<E extends Exchange> {
     protected void checkInitialized() {
         if (initalized.compareAndSet(false, true)) {
             configure();
+            populateRouteMap(routeMap);
         }
     }
 
+    protected void populateRouteMap(Map<Endpoint<E>, List<Processor<E>>> routeMap) {
+        for (DestinationBuilder<E> destinationBuilder : destinationBuilders) {
+            Endpoint<E> from = destinationBuilder.getFrom();
+            destinationBuilder.createProcessors();
+            List<Processor<E>> processors = destinationBuilder.getProcessors();
+            routeMap.put(from, processors);
+        }
+    }
 }
