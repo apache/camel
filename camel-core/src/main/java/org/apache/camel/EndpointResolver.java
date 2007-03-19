@@ -24,7 +24,14 @@ package org.apache.camel;
 public interface EndpointResolver<E> {
 
     /**
-     * Resolves the given uri or returns null if no endpoint could be found
+     * Resolves the component for a given uri or returns null if now component handles it.
      */
-    public Endpoint<E> resolve(CamelContainer container, String uri);
+    public Component resolveComponent(CamelContainer container, String uri);
+
+
+    /**
+     * Resolves the endpoint for a given uri or returns null if no endpoint could be found
+     */
+    public Endpoint<E> resolveEndpoint(CamelContainer container, String uri);
+    
 }
