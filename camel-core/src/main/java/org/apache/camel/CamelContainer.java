@@ -70,7 +70,7 @@ public class CamelContainer<E> {
         return new DefaultExchangeConverter();
     }
 
-	public Component getOrCreateComponent(String componentName, Callable<Component> factory) {
+	public Component getOrCreateComponent(String componentName, Callable<Component<E>> factory) {
 		synchronized(components) { 
 			Component component = components.get(componentName);
 			if( component == null ) {
