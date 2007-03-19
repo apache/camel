@@ -302,7 +302,7 @@
             <link>http://junit.sourceforge.net/javadoc/</link>
             <link>http://logging.apache.org/log4j/docs/api/</link>
           </links>
-          <!-- <stylesheetfile>${basedir}/../etc/css/stylesheet.css</stylesheetfile> -->
+           <stylesheetfile>${basedir}/../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
           <maxmemory>900m</maxmemory>
           <source>1.5</source>

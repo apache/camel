@@ -73,7 +73,7 @@ public class DefaultJmsExchange extends ExchangeSupport<Message> implements JmsE
         Message request = getRequest();
         if (request != null) {
             Map<String, Object> answer = new HashMap<String, Object>();
-            Enumeration names = null;
+            Enumeration names;
             try {
                 names = request.getPropertyNames();
             }
