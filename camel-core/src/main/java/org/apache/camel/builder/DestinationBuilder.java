@@ -74,6 +74,18 @@ public class DestinationBuilder<E extends Exchange> implements ProcessorBuilder<
         return answer;
     }
 
+
+    /**
+     * Adds the custom processor to this destination
+     */
+    public ProcessorBuilder<E> process(Processor<E> processor) {
+        ConstantProcessorBuilder<E> answer = new ConstantProcessorBuilder<E>(processor);
+        addProcessBuilder(answer);
+        return answer;
+    }
+
+
+
     /**
      * Creates a predicate which is applied and only if it is true then
      * the exchange is forwarded to the destination
@@ -131,12 +143,6 @@ public class DestinationBuilder<E extends Exchange> implements ProcessorBuilder<
         }
         else {
             return new CompositeProcessor<E>(answer);
-        }
-    }
-
-    public void createProcessors() {
-        for (ProcessorBuilder<E> processBuilder : processBuilders) {
-            processBuilder.createProcessors();
         }
     }
 

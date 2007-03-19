@@ -37,9 +37,4 @@ public class ConfiguredDestinationBuilder<E extends Exchange> extends Destinatio
     public Processor<E> createProcessor() {
         return new SendProcessor<E>(destination);
     }
-
-    @Override
-    public void createProcessors() {
-        getParent().addProcessor(new SendProcessor<E>(destination));
-    }
 }

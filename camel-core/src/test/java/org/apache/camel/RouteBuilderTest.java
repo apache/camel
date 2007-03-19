@@ -27,6 +27,17 @@ import java.util.Set;
  * @version $Revision$
  */
 public class RouteBuilderTest extends TestCase {
+    protected Processor<Exchange> myProcessor = new Processor<Exchange>() {
+        public void onExchange(Exchange exchange) {
+            System.out.println("Called with exchange: " + exchange);
+        }
+
+        @Override
+        public String toString() {
+            return "MyProcessor";
+        }
+    };
+
     public void testSimpleRoute() throws Exception {
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
@@ -105,12 +116,53 @@ public class RouteBuilderTest extends TestCase {
             FilterProcessor<Exchange> filter2 = filters.get(1);
             assertSendTo(filter2.getProcessor(), "seda://c");
 
-
             assertSendTo(choiceProcessor.getOtherwise(), "seda://d");
         }
-
     }
 
+    public void testCustomProcessor() throws Exception {
+        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+            public void configure() {
+                from("seda://a").process(myProcessor);
+            }
+        };
+
+        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
+        System.out.println("Created map: " + routeMap);
+
+        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
+        assertEquals("Number routes created", 1, routes.size());
+        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
+            Endpoint<Exchange> key = route.getKey();
+            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            Processor processor = route.getValue();
+
+            assertEquals("Should be called with my processor", myProcessor, processor);
+        }
+    }
+
+    public void testCustomProcessorWithFilter() throws Exception {
+        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+            public void configure() {
+                from("seda://a").filter(headerEquals("foo", "bar")).process(myProcessor);
+            }
+        };
+
+        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
+        System.out.println("Created map: " + routeMap);
+
+        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
+        assertEquals("Number routes created", 1, routes.size());
+        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
+            Endpoint<Exchange> key = route.getKey();
+            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            Processor processor = route.getValue();
+
+            assertTrue("Processor should be a FilterProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof FilterProcessor);
+            FilterProcessor filterProcessor = (FilterProcessor) processor;
+            assertEquals("Should be called with my processor", myProcessor, filterProcessor.getProcessor());
+        }
+    }
 
     protected void assertSendTo(Processor processor, String uri) {
         assertTrue("Processor should be a SendProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof SendProcessor);
