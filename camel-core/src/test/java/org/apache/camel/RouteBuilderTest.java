@@ -22,6 +22,8 @@ import org.apache.camel.builder.RouteBuilder;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Collection;
+import java.util.ArrayList;
 
 /**
  * @version $Revision$
@@ -176,6 +178,35 @@ public class RouteBuilderTest extends TestCase {
             assertTrue("Processor should be a FilterProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof FilterProcessor);
             FilterProcessor filterProcessor = (FilterProcessor) processor;
             assertEquals("Should be called with my processor", myProcessor, filterProcessor.getProcessor());
+        }
+    }
+
+    public void testWireTap() throws Exception {
+        // START SNIPPET: e6
+        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+            public void configure() {
+                from("seda:a").to("seda:tap", "seda:b");
+            }
+        };
+        // END SNIPPET: e6
+
+        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
+        System.out.println("Created map: " + routeMap);
+
+        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
+        assertEquals("Number routes created", 1, routes.size());
+        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
+            Endpoint<Exchange> key = route.getKey();
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
+            Processor processor = route.getValue();
+
+            assertTrue("Processor should be a CompositeProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof CompositeProcessor);
+            CompositeProcessor<Exchange> compositeProcessor = (CompositeProcessor<Exchange>) processor;
+            List<Processor<Exchange>> processors = new ArrayList<Processor<Exchange>>(compositeProcessor.getProcessors());
+            assertEquals("Should have 2 processors", 2, processors.size());
+
+            assertSendTo(processors.get(0), "seda:tap");
+            assertSendTo(processors.get(1), "seda:b");
         }
     }
 

@@ -53,4 +53,8 @@ public class CompositeProcessor<E> implements Processor<E> {
         builder.append(" ]");
         return builder.toString();
     }
+
+    public Collection<Processor<E>> getProcessors() {
+        return processors;
+    }
 }
