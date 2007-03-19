@@ -39,7 +39,7 @@ public class RouteBuilderTest extends TestCase {
             return "MyProcessor";
         }
     };
-
+    
     public void testSimpleRoute() throws Exception {
         // START SNIPPET: e1
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
@@ -207,6 +207,46 @@ public class RouteBuilderTest extends TestCase {
 
             assertSendTo(processors.get(0), "queue:tap");
             assertSendTo(processors.get(1), "queue:b");
+        }
+    }
+
+    public void testRouteWithInterceptor() throws Exception {
+    	
+        final InterceptorProcessor<Exchange> interceptor1 = new InterceptorProcessor<Exchange>() {
+        };
+        final InterceptorProcessor<Exchange> interceptor2 = new InterceptorProcessor<Exchange>() {    	
+        };
+
+        // START SNIPPET: e7
+        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+            public void configure() {
+                from("queue:a")
+                    .intercept()
+            		   .add(interceptor1)
+            		   .add(interceptor2)
+            		.target().to("queue:d");
+            }
+        };
+        // END SNIPPET: e7
+
+        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
+        System.out.println("Created map: " + routeMap);
+
+        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
+        assertEquals("Number routes created", 1, routes.size());
+        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
+            Endpoint<Exchange> key = route.getKey();
+            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            Processor processor = route.getValue();
+
+            assertTrue("Processor should be a interceptor1 but was: " + processor + " with type: " + processor.getClass().getName(), processor==interceptor1);
+            InterceptorProcessor<Exchange> p1 = (InterceptorProcessor<Exchange>) processor;
+
+            processor = p1.getNext();
+            assertTrue("Processor should be a interceptor2 but was: " + processor + " with type: " + processor.getClass().getName(), processor==interceptor2);
+            InterceptorProcessor<Exchange> p2 = (InterceptorProcessor<Exchange>) processor;
+
+            assertSendTo(p2.getNext(), "queue:d");
         }
     }
 

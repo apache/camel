@@ -16,14 +16,14 @@
  */
 package org.apache.camel.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.CompositeProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @version $Revision$
@@ -172,4 +172,10 @@ public class DestinationBuilder<E extends Exchange> implements ProcessorBuilder<
     public List<Processor<E>> getProcessors() {
         return processors;
     }
+
+	public InterceptorBuilder<E> intercept() {
+		InterceptorBuilder<E> answer = new InterceptorBuilder<E>(this);
+        addProcessBuilder(answer);
+        return answer;
+	}
 }
