@@ -33,12 +33,19 @@ public class ObjectHelper {
         }
     }
     
-    public static String[] splitOnCharacter(String value, String needle) {
-		int i = value.indexOf(needle);
-		if( i < 0 ) {
-			return null;
-		}		
-		return new String[] {value.substring(0, i), value.substring(i+1)};
+    public static String[] splitOnCharacter(String value, String needle, int count) {
+    	String rc [] = new String[count];
+    	rc[0] = value;
+    	for ( int i=1; i < count; i++ ) {
+    		String v = rc[i-1];
+			int p = v.indexOf(needle);
+			if( p < 0 ) {
+				return rc;
+			} 
+			rc[i-1] = v.substring(0,p);
+			rc[i] = v.substring(p+1);
+    	}
+    	return rc;
 	}
 
 }

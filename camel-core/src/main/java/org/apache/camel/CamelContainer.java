@@ -17,9 +17,9 @@
  */
 package org.apache.camel;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.apache.camel.impl.DefaultEndpointResolver;
 import org.apache.camel.impl.DefaultExchangeConverter;
@@ -33,7 +33,7 @@ public class CamelContainer<E> {
 	
     private EndpointResolver<E> endpointResolver;
     private ExchangeConverter exchangeConverter;
-    private Map<String, Object> components = (Map<String, Object>)Collections.synchronizedMap(new HashMap<String, Object>());
+    private Map<String, Component> components = new HashMap<String, Component>();
 
     public EndpointResolver<E> getEndpointResolver() {
         if (endpointResolver == null) {
@@ -70,10 +70,19 @@ public class CamelContainer<E> {
         return new DefaultExchangeConverter();
     }
 
-	public Map<String, Object> getComponents() {
-		return components;
-	}
-	public void setComponents(Map<String, Object> components) {
-		this.components = Collections.synchronizedMap(components);
+	public Component getOrCreateComponent(String componentName, Callable<Component> factory) {
+		synchronized(components) { 
+			Component component = components.get(componentName);
+			if( component == null ) {
+				try {
+					component = factory.call();
+					if( component == null )
+						throw new IllegalArgumentException("Factory failed to create the "+componentName+" component, it returned null.");
+				} catch (Exception e) {
+					throw new IllegalArgumentException("Factory failed to create the "+componentName+" component", e);
+				}
+			}
+			return component;
+		}
 	}
 }

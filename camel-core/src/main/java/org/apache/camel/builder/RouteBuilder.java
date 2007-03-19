@@ -52,7 +52,7 @@ public abstract class RouteBuilder<E extends Exchange> {
     public Endpoint<E> endpoint(String uri) {
          CamelContainer<E> c = getContainer();
          EndpointResolver<E> er = c.getEndpointResolver();
-         return er.resolve(c, uri);
+         return er.resolveEndpoint(c, uri);
     }
 
     public DestinationBuilder<E> from(String uri) {

@@ -20,13 +20,15 @@ import java.util.HashMap;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.camel.Component;
+
 /**
  * Represents the component that manages {@link QueueEndpoint}.  It holds the 
  * list of named queues that queue endpoints reference.
  *
  * @version $Revision: 519973 $
  */
-public class QueueComponent<E> {
+public class QueueComponent<E> implements Component<E> {
 	
     private HashMap<String, Queue<E>> registry = new HashMap<String, Queue<E>>();
 

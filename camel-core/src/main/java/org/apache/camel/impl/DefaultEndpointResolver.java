@@ -17,22 +17,40 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.CamelContainer;
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A default implementation of {@link org.apache.camel.EndpointResolver}
+ * An implementation of {@link org.apache.camel.EndpointResolver} that delegates to 
+ * other {@link EndpointResolver} which are selected based on the uri prefix.
+ * 
+ * The delegate {@link EndpointResolver} are associated with uri prefixes by 
+ * adding a property file with the same uri prefix in the
+ * META-INF/services/org/apache/camel/EndpointResolver/
+ * directory on the classpath.
  *
  * @version $Revision$
  */
 public class DefaultEndpointResolver<E> implements EndpointResolver<E> {
     static final private FactoryFinder endpointResolverFactory = new FactoryFinder("META-INF/services/org/apache/camel/EndpointResolver/");
     
-    public Endpoint<E> resolve(CamelContainer container, String uri) {
-    	String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":");
-    	if( splitURI == null )
+    public Endpoint<E> resolveEndpoint(CamelContainer container, String uri) {
+    	EndpointResolver resolver = getDelegate(uri);
+		return resolver.resolveEndpoint(container, uri);
+    }
+
+
+	public Component resolveComponent(CamelContainer container, String uri) {
+    	EndpointResolver resolver = getDelegate(uri);
+		return resolver.resolveComponent(container, uri);
+	}
+
+	private EndpointResolver getDelegate(String uri) {
+		String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
+    	if( splitURI[1] == null )
     		throw new IllegalArgumentException("Invalid URI, it did not contain a scheme: "+uri);
     	EndpointResolver resolver;
 		try {
@@ -40,11 +58,7 @@ public class DefaultEndpointResolver<E> implements EndpointResolver<E> {
 		} catch (Throwable e) {
 			throw new IllegalArgumentException("Invalid URI, no EndpointResolver registered for scheme : "+splitURI[0], e);
 		}
-
-		return resolver.resolve(container, uri);
-		
-		// EndpointResolvers could be more recusive in nature if we resolved the reset of the of the URI 
-		//return resolver.resolve(container, splitURI[1]);
-    }
+		return resolver;
+	}
 
 }
