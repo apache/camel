@@ -26,7 +26,7 @@ import java.util.HashMap;
  *
  * @version $Revision$
  */
-public class DefaultExchange<M> extends ExchangeSupport<M> {
+public class DefaultExchange<M,R,F> extends ExchangeSupport<M,R,F> {
     private Map<String,Object> headers;
 
     public Object getHeader(String name) {

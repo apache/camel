@@ -17,25 +17,24 @@
  */
 package org.apache.camel.jms;
 
-import org.springframework.jms.core.JmsOperations;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Session;
+
+import org.apache.camel.CamelContainer;
+import org.apache.camel.Component;
+import org.apache.camel.Processor;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.SessionCallback;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
-import org.apache.camel.CamelContainer;
-import org.apache.camel.Component;
-
-import javax.jms.ConnectionFactory;
-import javax.jms.Session;
-import javax.jms.JMSException;
-import javax.jms.Destination;
 
 import com.sun.jndi.toolkit.url.Uri;
 
 /**
  * @version $Revision$
  */
-public class JmsComponent implements Component<JmsExchange> {
+public class JmsComponent implements Component<JmsExchange, JmsEndpoint> {
     private JmsTemplate template = new JmsTemplate();
     private static final String QUEUE_PREFIX = "queue/";
     private static final String TOPIC_PREFIX = "topic/";
@@ -95,4 +94,11 @@ public class JmsComponent implements Component<JmsExchange> {
     protected String convertPathToActualDestination(String path) {
         return path;
     }
+
+	public void activate(JmsEndpoint endpoint, Processor<JmsExchange> processor) {
+		// TODO Auto-generated method stub
+	}
+	public void deactivate(JmsEndpoint endpoint) {
+		// TODO Auto-generated method stub
+	}
 }

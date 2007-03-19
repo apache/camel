@@ -23,12 +23,12 @@ import java.util.Map;
  *
  * @version $Revision$
  */
-public interface Exchange<M> {
+public interface Exchange<M,R,F> {
 
     /**
      * Accesses a specific header
      */
-    <T> T getHeader(String name);
+    Object getHeader(String name);
 
     /**
      * Sets a header on the exchange
@@ -48,12 +48,12 @@ public interface Exchange<M> {
     /**
      * Returns the response message
      */
-    M getResponse();
+    R getResponse();
 
     /**
      * Returns the fault message
      */
-    M getFault();
+    F getFault();
 
     /**
      * Returns the exception associated with this exchange

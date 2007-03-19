@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * @version $Revision$
  */
-public class DefaultJmsExchange extends ExchangeSupport<Message> implements JmsExchange {
+public class DefaultJmsExchange extends ExchangeSupport<Message,Message,Message> implements JmsExchange {
     private Map<String, Object> lazyHeaders;
 
     public DefaultJmsExchange() {
@@ -39,13 +39,13 @@ public class DefaultJmsExchange extends ExchangeSupport<Message> implements JmsE
         setRequest(message);
     }
 
-    public <T> T getHeader(String name) {
+    public Object getHeader(String name) {
         Message request = getRequest();
         if (request != null) {
             try {
                 Object value = request.getObjectProperty(name);
                 try {
-                    return (T) value;
+                    return value;
                 }
                 catch (ClassCastException e) {
                     throw new InvalidHeaderTypeException(e.getMessage(), value);

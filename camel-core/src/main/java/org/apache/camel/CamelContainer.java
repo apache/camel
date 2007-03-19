@@ -70,7 +70,7 @@ public class CamelContainer<E> {
         return new DefaultExchangeConverter();
     }
 
-	public Component getOrCreateComponent(String componentName, Callable<Component<E>> factory) {
+	public Component getOrCreateComponent(String componentName, Callable<Component<E,? extends  Endpoint<E>>> factory) {
 		synchronized(components) { 
 			Component component = components.get(componentName);
 			if( component == null ) {
@@ -82,6 +82,13 @@ public class CamelContainer<E> {
 					throw new IllegalArgumentException("Factory failed to create the "+componentName+" component", e);
 				}
 			}
+			return component;
+		}
+	}
+	
+	public Component getComponent(String componentName) {
+		synchronized(components) { 
+			Component component = components.get(componentName);
 			return component;
 		}
 	}

@@ -20,7 +20,9 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class InvalidHeaderTypeException extends RuntimeCamelException {
-    private Object headerValue;
+
+	private static final long serialVersionUID = -8417806626073055262L;
+	private Object headerValue;
 
     public InvalidHeaderTypeException(Throwable cause, Object headerValue) {
         super(cause.getMessage() + " headerValue is: " + headerValue + " of type: "

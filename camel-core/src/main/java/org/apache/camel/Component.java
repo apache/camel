@@ -21,6 +21,18 @@ package org.apache.camel;
  *
  * @version $Revision: 519901 $
  */
-public interface Component<E>  {
+public interface Component<E, EP extends Endpoint<E>>  {
 
+	/**
+	 * Asks the component to activate the delivery of {@link Exchange} objects
+	 * from the {@link Endpoint} to the {@link Processor}.
+	 */
+	void activate(EP endpoint, Processor<E> processor);
+
+	/**
+	 * Stops the delivery of messages from a previously activated 
+	 * {@link Endpoint}.
+	 */
+	void deactivate(EP endpoint);
+	
 }
