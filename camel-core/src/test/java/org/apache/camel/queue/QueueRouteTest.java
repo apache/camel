@@ -27,6 +27,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
 
 /**
  * @version $Revision: 520220 $
@@ -37,10 +38,10 @@ public class QueueRouteTest extends TestCase {
     public void testJmsRoute() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
-        CamelContext container = new CamelContext();
+        CamelContext container = new DefaultCamelContext<Exchange>();
 
         // lets add some routes
-        container.routes(new RouteBuilder() {
+        container.setRoutes(new RouteBuilder() {
             public void configure() {
                 from("queue:test.a").to("queue:test.b");
                 from("queue:test.b").process(new Processor<Exchange>() {
@@ -56,7 +57,7 @@ public class QueueRouteTest extends TestCase {
         container.activateEndpoints();
         
         // now lets fire in a message
-        Endpoint<Exchange> endpoint = container.endpoint("queue:test.a");
+        Endpoint<Exchange> endpoint = container.resolveEndpoint("queue:test.a");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().getHeaders().setHeader("cheese", 123);
         endpoint.onExchange(exchange);

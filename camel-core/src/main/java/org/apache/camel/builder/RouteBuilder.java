@@ -21,6 +21,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultCamelContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -123,6 +124,6 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     }
 
     protected CamelContext<E> createContainer() {
-        return new CamelContext<E>();
+        return new DefaultCamelContext<E>();
     }
 }
