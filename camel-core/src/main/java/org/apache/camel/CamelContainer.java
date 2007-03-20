@@ -75,6 +75,15 @@ public class CamelContainer<E extends Exchange> {
     }
 
 
+    /**
+     * Resolves the given URI to an endpoint
+     */
+    public Endpoint<E> endpoint(String uri) {
+         EndpointResolver<E> er = getEndpointResolver();
+         return er.resolveEndpoint(this, uri);
+    }
+
+
     // Properties
     //-----------------------------------------------------------------------
     public EndpointResolver<E> getEndpointResolver() {
