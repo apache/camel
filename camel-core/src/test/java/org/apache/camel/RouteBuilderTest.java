@@ -374,13 +374,13 @@ public class RouteBuilderTest extends TestCase {
         }
     }
     protected RouteBuilder<Exchange> buildSplitter() {
-        // START SNIPPET: e9
+        // START SNIPPET: splitter
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("queue:a").splitter(bodyAs(String.class).tokenize("\n")).to("queue:b");
             }
         };
-        // END SNIPPET: e9
+        // END SNIPPET: splitter
         return builder;
     }
 
