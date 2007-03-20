@@ -377,7 +377,7 @@ public class RouteBuilderTest extends TestCase {
         // START SNIPPET: e9
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
-                from("queue:a").splitter(header("cheese")).to("queue:b");
+                from("queue:a").splitter(bodyAs(String.class).tokenize("\n")).to("queue:b");
             }
         };
         // END SNIPPET: e9

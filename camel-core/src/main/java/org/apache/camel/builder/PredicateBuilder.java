@@ -132,4 +132,16 @@ public class PredicateBuilder {
             }
         };
     }
+
+    public static <E extends Exchange> Predicate<E> isInstanceOf(final Expression<E> expression, final Class type) {
+        notNull(expression, "expression");
+        notNull(type, "type");
+
+        return new Predicate<E>() {
+            public boolean evaluate(E exchange) {
+                Object value = expression.evaluate(exchange);
+                return type.isInstance(value);
+            }
+        };
+    }
 }
