@@ -16,13 +16,14 @@
  */
 package org.apache.camel.queue;
 
+import org.apache.camel.CamelContainer;
+import org.apache.camel.Component;
+import org.apache.camel.Processor;
+
 import java.util.HashMap;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.apache.camel.Component;
-import org.apache.camel.Processor;
 
 /**
  * Represents the component that manages {@link QueueEndpoint}.  It holds the 
@@ -35,7 +36,12 @@ public class QueueComponent<E> implements Component<E, QueueEndpoint<E>> {
 	
     private HashMap<String, Queue<E>> registry = new HashMap<String, Queue<E>>();
     private HashMap<QueueEndpoint<E>, Activation> activations = new HashMap<QueueEndpoint<E>, Activation>();
-    
+    private CamelContainer container;
+
+    public void setContainer(CamelContainer container) {
+        this.container = container;
+    }
+
     class Activation implements Runnable {
 		private final QueueEndpoint<E> endpoint;
 		AtomicBoolean stop = new AtomicBoolean();

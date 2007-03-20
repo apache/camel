@@ -34,7 +34,23 @@ public interface Endpoint<E>  {
     void send(E exchange);
 
     /**
+     * Sets the processor for inbound messages
+     */
+    void setInboundProcessor(Processor<E> processor);
+    
+    /**
      * Create a new exchange for communicating with this endpoint
      */
     E createExchange();
+
+
+    /**
+     * Called by the container when an endpoint is activiated
+     */
+    void activate();
+
+    /**
+     * Called by the container when the endpoint is deactivated
+     */
+    void deactivate();
 }

@@ -16,11 +16,12 @@
  */
 package org.apache.camel.queue;
 
-import java.util.Queue;
-
 import org.apache.camel.CamelContainer;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+
+import java.util.Queue;
 
 /**
  * Represents a queue endpoint that uses a {@link Queue}
@@ -39,6 +40,11 @@ public class QueueEndpoint<E> extends DefaultEndpoint<E> {
 
     public void send(E exchange) {
         queue.add(exchange);
+    }
+
+    public void setInboundProcessor(Processor<E> processor) {
+        // TODO lets start a thread to process inbound requests
+        // if we don't already have one
     }
 
     public E createExchange() {

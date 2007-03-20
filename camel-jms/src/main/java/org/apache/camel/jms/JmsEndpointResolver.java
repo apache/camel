@@ -17,14 +17,14 @@
  */
 package org.apache.camel.jms;
 
-import java.util.concurrent.Callable;
-
 import org.apache.axis.transport.jms.JMSEndpoint;
 import org.apache.camel.CamelContainer;
 import org.apache.camel.Component;
 import org.apache.camel.EndpointResolver;
 import org.apache.camel.queue.QueueComponent;
 import org.apache.camel.util.ObjectHelper;
+
+import java.util.concurrent.Callable;
 
 /**
  * An implementation of {@link EndpointResolver} that creates
@@ -69,18 +69,18 @@ public class JmsEndpointResolver implements EndpointResolver<JmsExchange> {
 		String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 3);        
     	if( splitURI[2] != null ) {
     		rc[0] =  splitURI[1];
-    		rc[0] =  splitURI[2];
+    		rc[1] =  splitURI[2];
     	} else {
-    		rc[0] =  splitURI[1];
+    		rc[1] =  splitURI[1];
     	}
 		return rc;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private JmsComponent resolveJmsComponent(final CamelContainer container, String componentName) {
+	private JmsComponent resolveJmsComponent(final CamelContainer container, final String componentName) {
     	Component rc = container.getOrCreateComponent(componentName, new Callable<JmsComponent>(){
 			public JmsComponent call() throws Exception {
-				return new JmsComponent(container);
+                return new JmsComponent(container);
 			}});
     	return (JmsComponent) rc;
 	}

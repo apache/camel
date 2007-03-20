@@ -18,12 +18,32 @@
 package org.apache.camel.jms;
 
 import junit.framework.TestCase;
+import org.apache.camel.CamelContainer;
+import org.apache.camel.builder.RouteBuilder;
+
+import static org.apache.camel.jms.JmsComponent.*;
+import org.apache.activemq.ActiveMQConnectionFactory;
+
+import javax.jms.ConnectionFactory;
 
 /**
  * @version $Revision$
  */
 public class JmsRouteTest extends TestCase {
     public void testJmsRoute() throws Exception {
-        // TODO 
+        CamelContainer container = new CamelContainer();
+
+        System.out.println("Created container: " + container);
+        
+        // lets configure some componnets
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
+        container.addComponent("activemq", jmsComponent(connectionFactory));
+
+        // lets add some routes
+        container.routes(new RouteBuilder() {
+            public void configure() {
+                from("jms:activemq:FOO.BAR").to("jms:activemq:FOO.BAR");
+            }
+        });
     }
 }
