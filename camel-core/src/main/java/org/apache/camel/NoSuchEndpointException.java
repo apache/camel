@@ -26,7 +26,8 @@ import org.apache.camel.processor.RecipientList;
  * @version $Revision$
  */
 public class NoSuchEndpointException extends RuntimeCamelException {
-    private final String uri;
+	private static final long serialVersionUID = -8721487431101572630L;
+	private final String uri;
 
     public NoSuchEndpointException(String uri) {
         super("No endpoint could be found for: " + uri);

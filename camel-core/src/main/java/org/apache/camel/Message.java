@@ -17,8 +17,6 @@
  */
 package org.apache.camel;
 
-import java.util.Map;
-
 /**
  * Represents an inbound or outbound message as part of an {@link Exchange}
  *
@@ -34,14 +32,14 @@ public interface Message {
     /**
      * Returns the body of the message as a POJO
      *
-     * @returns the body of the message
+     * @return the body of the message
      */
     public Object getBody();
 
     /**
      * Returns the body as the specified type
      *
-     * @param type the type that the body i
+     * @param type the type that the body
      * @return the body of the message as the specified type
      */
     public <T> T getBody(Class<T> type);

@@ -16,7 +16,6 @@
  */
 package org.apache.camel;
 
-import java.util.Map;
 
 /**
  * Represents the base exchange interface providing access to the request, response and fault {@link Message} instances.

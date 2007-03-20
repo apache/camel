@@ -90,7 +90,7 @@ public class ExpressionBuilder {
     /**
      * Returns the expression for the exchanges inbound message body converted to the given type
      */
-    public static <E extends Exchange> Expression<E> bodyExpression(final Class type) {
+    public static <E extends Exchange, T> Expression<E> bodyExpression(final Class<T> type) {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
                 return exchange.getIn().getBody(type);
