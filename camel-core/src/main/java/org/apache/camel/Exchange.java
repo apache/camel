@@ -22,46 +22,59 @@ import java.util.Map;
  * Represents the base interface of an exchange
  *
  * @version $Revision$
+ * @param <M> message or payload type
+ * @param <R> message or payload type for a response (for request/response exchange)
+ * @param <F> fault type
  */
 public interface Exchange<M,R,F> {
 
     /**
      * Accesses a specific header
+     * @param name 
+     * @return object header associated with the name
      */
     Object getHeader(String name);
 
     /**
      * Sets a header on the exchange
+     * @param name of the header 
+     * @param value to associate with the name
      */
     void setHeader(String name, Object value);
 
     /**
      * Returns all of the headers associated with the request
+     * @return all the headers in a Map
      */
     Map<String,Object> getHeaders();
 
     /**
      * Returns the request message
+     * @return the message
      */
     M getRequest();
 
     /**
      * Returns the response message
+     * @return the response
      */
     R getResponse();
 
     /**
      * Returns the fault message
+     * @return the fault
      */
     F getFault();
 
     /**
      * Returns the exception associated with this exchange
+     * @return the exception (or null if no faults)
      */
     Exception getException();
 
     /**
      * Sets the exception associated with this exchange
+     * @param e 
      */
     void setException(Exception e);
 
