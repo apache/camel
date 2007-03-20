@@ -27,6 +27,11 @@ import java.util.Map;
 public interface Message {
 
     /**
+     * Access the headers on the message
+     */
+    public Headers getHeaders();
+
+    /**
      * Returns the body of the message as a POJO
      *
      * @returns the body of the message
@@ -51,26 +56,4 @@ public interface Message {
      */
     public <T> void setBody(Object body, Class<T> type);
 
-    /**
-     * Accesses a specific header
-     *
-     * @param name
-     * @return object header associated with the name
-     */
-    Object getHeader(String name);
-
-    /**
-     * Sets a header on the exchange
-     *
-     * @param name  of the header
-     * @param value to associate with the name
-     */
-    void setHeader(String name, Object value);
-
-    /**
-     * Returns all of the headers associated with the request
-     *
-     * @return all the headers in a Map
-     */
-    Map<String, Object> getHeaders();
 }

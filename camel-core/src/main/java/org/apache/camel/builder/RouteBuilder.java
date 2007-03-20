@@ -72,20 +72,6 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
         return answer;
     }
 
-    // Helper methods
-    //-----------------------------------------------------------------------
-    public Predicate<E> headerEquals(final String header, final Object value) {
-        return new Predicate<E>() {
-            public boolean evaluate(E exchange) {
-                return ObjectHelper.equals(value, exchange.getHeader(header));
-            }
-
-            @Override
-            public String toString() {
-                return "header[" + header + "] == " + value;
-            }
-        };
-    }
 
     // Properties
     //-----------------------------------------------------------------------

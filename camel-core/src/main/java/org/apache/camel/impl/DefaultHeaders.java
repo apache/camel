@@ -1,4 +1,5 @@
-/*
+/**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -6,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,23 +17,20 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Headers;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.HashMap;
 
 /**
- * A default implementation of {@link Exchange}
+ * A default implementation of {@link Headers}
  *
  * @version $Revision$
  */
-public class DefaultExchange<M, R, F> extends ExchangeSupport<M, R, F> {
+public class DefaultHeaders implements Headers {
     private Map<String, Object> headers;
-
-    public DefaultExchange(CamelContext container) {
-        super(container);
-    }
 
     public Object getHeader(String name) {
         if (headers != null) {
@@ -42,13 +40,13 @@ public class DefaultExchange<M, R, F> extends ExchangeSupport<M, R, F> {
     }
 
     public void setHeader(String name, Object value) {
-        if (headers == null) {
-            headers = new HashMap<String, Object>();
-        }
-        headers.put(name, value);
+        getHeaders().put(name, value);
     }
 
     public Map<String, Object> getHeaders() {
+        if (headers == null) {
+            headers = new HashMap<String, Object>();
+        }
         return headers;
     }
 

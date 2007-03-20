@@ -25,19 +25,14 @@ import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultExchange;
 
 /**
  * @version $Revision: 520220 $
  */
 public class QueueRouteTest extends TestCase {
-	
-	static class StringExchange extends DefaultExchange<String, String, String> {
-        public StringExchange(CamelContext container) {
-            super(container);
-        }
-    }
+
 	
     public void testJmsRoute() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
@@ -48,9 +43,9 @@ public class QueueRouteTest extends TestCase {
         container.routes(new RouteBuilder() {
             public void configure() {
                 from("queue:test.a").to("queue:test.b");
-                from("queue:test.b").process(new Processor<StringExchange>() {
-                    public void onExchange(StringExchange exchange) {
-                        System.out.println("Received exchange: " + exchange.getRequest());
+                from("queue:test.b").process(new Processor<Exchange>() {
+                    public void onExchange(Exchange e) {
+                        System.out.println("Received exchange: " + e.getIn());
                         latch.countDown();
                     }
                 });
@@ -61,9 +56,9 @@ public class QueueRouteTest extends TestCase {
         container.activateEndpoints();
         
         // now lets fire in a message
-        Endpoint<StringExchange> endpoint = container.endpoint("queue:test.a");
-        StringExchange exchange = new StringExchange(container);
-        exchange.setHeader("cheese", 123);
+        Endpoint<Exchange> endpoint = container.endpoint("queue:test.a");
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().getHeaders().setHeader("cheese", 123);
         endpoint.onExchange(exchange);
 
         // now lets sleep for a while

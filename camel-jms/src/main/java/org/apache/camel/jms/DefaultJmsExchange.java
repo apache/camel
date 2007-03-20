@@ -18,7 +18,7 @@ package org.apache.camel.jms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.InvalidHeaderTypeException;
-import org.apache.camel.impl.ExchangeSupport;
+import org.apache.camel.impl.DefaultExchange;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -30,8 +30,7 @@ import java.util.Map;
 /**
  * @version $Revision$
  */
-public class DefaultJmsExchange extends ExchangeSupport<Message, Message, Message> implements JmsExchange {
-    private Map<String, Object> lazyHeaders;
+public class DefaultJmsExchange extends DefaultExchange implements JmsExchange {
 
     public DefaultJmsExchange(CamelContext container) {
         super(container);
@@ -39,86 +38,41 @@ public class DefaultJmsExchange extends ExchangeSupport<Message, Message, Messag
 
     public DefaultJmsExchange(CamelContext container, Message message) {
         super(container);
-        setRequest(message);
-    }
-
-    public Object getHeader(String name) {
-        Message request = getRequest();
-        if (request != null) {
-            try {
-                Object value = request.getObjectProperty(name);
-                try {
-                    return value;
-                }
-                catch (ClassCastException e) {
-                    throw new InvalidHeaderTypeException(e.getMessage(), value);
-                }
-            }
-            catch (JMSException e) {
-                throw new MessagePropertyAcessException(name, e);
-            }
-        }
-        return null;
-    }
-
-    public void setHeader(String name, Object value) {
-        Message request = getRequest();
-        if (request != null) {
-            try {
-                request.setObjectProperty(name, value);
-            }
-            catch (JMSException e) {
-                throw new MessagePropertyAcessException(name, e);
-            }
-        }
-        else {
-            if (lazyHeaders == null) {
-                lazyHeaders = new HashMap<String, Object>();
-            }
-            lazyHeaders.put(name, value);
-        }
-    }
-
-    public Map<String, Object> getHeaders() {
-        Message request = getRequest();
-        if (request != null) {
-            Map<String, Object> answer = new HashMap<String, Object>();
-            Enumeration names;
-            try {
-                names = request.getPropertyNames();
-            }
-            catch (JMSException e) {
-                throw new MessagePropertyNamesAcessException(e);
-            }
-            while (names.hasMoreElements()) {
-                String name = names.nextElement().toString();
-                try {
-                    Object value = request.getObjectProperty(name);
-                    answer.put(name, value);
-                }
-                catch (JMSException e) {
-                    throw new MessagePropertyAcessException(name, e);
-                }
-            }
-            return answer;
-        }
-        else {
-            return lazyHeaders;
-        }
+        setIn(new DefaultJmsMessage(message));
     }
 
     public Message createMessage(Session session) throws JMSException {
-        Message request = getRequest();
+        Message request = getInMessage();
         if (request == null) {
             request = session.createMessage();
 
+            /** TODO
             if (lazyHeaders != null) {
                 // lets add any lazy headers
                 for (Map.Entry<String, Object> entry : lazyHeaders.entrySet()) {
                     request.setObjectProperty(entry.getKey(), entry.getValue());
                 }
             }
+             */
         }
         return request;
+    }
+
+    public Message getInMessage() {
+        JmsMessage jmsMessage = (JmsMessage) getIn();
+        if (jmsMessage != null) {
+            return jmsMessage.getJmsMessage();
+        }
+        return null;
+    }
+
+    @Override
+    protected org.apache.camel.Message createInMessage() {
+        return new DefaultJmsMessage();
+    }
+
+    @Override
+    protected org.apache.camel.Message createOutMessage() {
+        return new DefaultJmsMessage();
     }
 }
