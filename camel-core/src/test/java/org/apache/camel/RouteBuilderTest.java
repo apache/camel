@@ -24,6 +24,7 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.InterceptorProcessor;
 import org.apache.camel.processor.RecipientList;
+import org.apache.camel.processor.Splitter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -370,6 +371,35 @@ public class RouteBuilderTest extends TestCase {
 
             assertTrue("Processor should be a RecipientList but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof RecipientList);
             RecipientList<Exchange> p1 = (RecipientList<Exchange>) processor;
+        }
+    }
+    protected RouteBuilder<Exchange> buildSplitter() {
+        // START SNIPPET: e9
+        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+            public void configure() {
+                from("queue:a").splitter(header("cheese")).to("queue:b");
+            }
+        };
+        // END SNIPPET: e9
+        return builder;
+    }
+
+    public void testSplitter() throws Exception {
+
+        RouteBuilder<Exchange> builder = buildSplitter();
+
+        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
+        System.out.println("Created map: " + routeMap);
+
+        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
+        assertEquals("Number routes created", 1, routes.size());
+        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
+            Endpoint<Exchange> key = route.getKey();
+            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            Processor processor = route.getValue();
+
+            assertTrue("Processor should be a Splitter but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof Splitter);
+            Splitter<Exchange> p1 = (Splitter<Exchange>) processor;
         }
     }
 

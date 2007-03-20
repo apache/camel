@@ -94,7 +94,7 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
 					if ( fault != null ) {
 						throw new InvocationTargetException(fault);
 					}
-					return exchange.getOut();
+					return exchange.getOut().getBody();
 				}
 				throw new IllegalStateException("The endpoint is not active: "+getEndpointUri());
 			}

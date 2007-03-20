@@ -56,4 +56,10 @@ public interface Message {
      */
     public <T> void setBody(Object body, Class<T> type);
 
+    /**
+     * Creates a copy of this message so that it can be used and possibly modified further in another exchange
+     * 
+     * @return a new message instance copied from this message
+     */
+    public Message copy();
 }

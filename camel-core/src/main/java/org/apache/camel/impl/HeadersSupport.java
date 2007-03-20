@@ -17,40 +17,19 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Headers;
 
-import java.util.Map;
-import java.util.HashMap;
-
 /**
- * A default implementation of {@link Headers}
- *
  * @version $Revision$
  */
-public class DefaultHeaders extends HeadersSupport {
-    private Map<String, Object> headers;
-
-    public Object getHeader(String name) {
-        if (headers != null) {
-            return headers.get(name);
-        }
-        return null;
+public abstract class HeadersSupport implements Headers {
+    public Headers copy() {
+        Headers answer = newInstance();
+        answer.getHeaders().putAll(getHeaders());
+        return answer;
     }
 
-    public void setHeader(String name, Object value) {
-        getHeaders().put(name, value);
-    }
-
-    public Map<String, Object> getHeaders() {
-        if (headers == null) {
-            headers = new HashMap<String, Object>();
-        }
-        return headers;
-    }
-
-    public void setHeaders(Map<String, Object> headers) {
-        this.headers = headers;
+    public Headers newInstance() {
+        return new DefaultHeaders();
     }
 }

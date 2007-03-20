@@ -39,6 +39,23 @@ public class DefaultExchange implements Exchange {
         this.context = context;
     }
 
+    public Exchange copy() {
+        Exchange exchange = newInstance();
+        if (exchange instanceof DefaultExchange) {
+            DefaultExchange defaultExchange = (DefaultExchange) exchange;
+            defaultExchange.setHeaders(getHeaders().copy());
+            defaultExchange.setIn(getIn().copy());
+            defaultExchange.setOut(getOut().copy());
+            defaultExchange.setFault(getFault().copy());
+            defaultExchange.setException(getException());
+        }
+        return exchange;
+    }
+
+    public Exchange newInstance() {
+        return new DefaultExchange(context);
+    }
+
     public CamelContext getContext() {
         return context;
     }
