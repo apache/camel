@@ -61,7 +61,7 @@ public class QueueRouteTest extends TestCase {
         Endpoint<StringExchange> endpoint = container.endpoint("queue:test.a");
         StringExchange exchange = new StringExchange();
         exchange.setHeader("cheese", 123);
-        endpoint.send(exchange);
+        endpoint.onExchange(exchange);
 
         // now lets sleep for a while
         boolean received = latch.await(5, TimeUnit.SECONDS);

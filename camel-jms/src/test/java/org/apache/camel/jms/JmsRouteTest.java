@@ -63,7 +63,7 @@ public class JmsRouteTest extends TestCase {
         JmsExchange exchange2 = endpoint.createExchange();
         //exchange2.setInBody("Hello there!")
         exchange2.setHeader("cheese", 123);
-        endpoint.send(exchange2);
+        endpoint.onExchange(exchange2);
 
         // now lets sleep for a while
         boolean received = latch.await(5, TimeUnit.SECONDS);

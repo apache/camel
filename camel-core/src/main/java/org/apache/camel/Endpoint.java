@@ -18,34 +18,36 @@ package org.apache.camel;
 
 
 /**
- * Represents an endpoint on which messages can be exchanged
+ * Represents an endpoint that can send and receive message exchanges
  *
  * @version $Revision$
  */
-public interface Endpoint<E>  {
+public interface Endpoint<E> extends Processor<E> {
 
     /**
-     * Returns the string representation of the URI
+     * Returns the string representation of the endpoint URI
      */
     public String getEndpointUri();
 
     /**
-     * Sends the message exchange to this endpoint
+     * Sends an outbound exchange to the endpoint
      */
-    void send(E exchange);
+    void onExchange(E exchange);
     
     /**
      * Create a new exchange for communicating with this endpoint
      */
     E createExchange();
 
-
     /**
      * Called by the container to Activate the endpoint.  Once activated,
-     * the endpoint will start delivering messages inbound exchanges
-     * it receives to the specified processor.
+     * the endpoint will start delivering inbound message exchanges
+     * that are received to the specified processor.
+     *
+     * The processor must be thread safe ( or stateless ) since some endpoints 
+     * may choose to deliver exchanges concurrently to the processor.
      * 
-     * @throws IllegalStateException is the Endpoint has already been activated.
+     * @throws IllegalStateException if the Endpoint has already been activated.
      */
 	public void activate(Processor<E> processor) throws IllegalStateException;
 
