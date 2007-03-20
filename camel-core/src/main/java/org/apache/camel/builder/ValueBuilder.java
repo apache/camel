@@ -66,6 +66,15 @@ public class ValueBuilder<E extends Exchange> {
         return PredicateBuilder.isInstanceOf(expression, type);
     }
 
+    public Predicate<E> isNull() {
+        return PredicateBuilder.isNull(expression);
+    }
+
+    public Predicate<E> isNotNull() {
+        return PredicateBuilder.isNotNull(expression);
+    }
+
+
     public Expression<E> getExpression() {
         return expression;
     }

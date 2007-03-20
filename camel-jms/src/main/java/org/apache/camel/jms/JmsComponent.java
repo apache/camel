@@ -140,7 +140,7 @@ public class JmsComponent implements Component<JmsExchange> {
         return container;
     }
 
-    public void setContainer(CamelContext container) {
+    public void setContext(CamelContext container) {
         this.container = container;
     }
 

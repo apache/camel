@@ -48,7 +48,7 @@ public class Splitter<E extends Exchange> implements Processor<E> {
 
     public void onExchange(E exchange) {
         Object value = expression.evaluate(exchange);
-        Iterator iter = createIterator(value);
+        Iterator iter = iterator(value);
         while (iter.hasNext()) {
             Object part = iter.next();
             E newExchange = (E) exchange.copy();

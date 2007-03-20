@@ -54,6 +54,7 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
             if( components.containsKey(componentName) ) {
             	throw new IllegalArgumentException("Component previously added: "+componentName);
             }
+            component.setContext(this);
             components.put(componentName, component);
         }
     }
@@ -93,7 +94,7 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
                         throw new IllegalArgumentException("Factory failed to create the " + componentName + " component, it returned null.");
                     }
                     components.put(componentName, component);
-                    component.setContainer(this);
+                    component.setContext(this);
                 }
                 catch (Exception e) {
                     throw new IllegalArgumentException("Factory failed to create the " + componentName + " component", e);

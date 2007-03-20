@@ -52,7 +52,7 @@ public class PojoComponent implements Component<PojoExchange> {
 	}
 	
 	
-	public void setContainer(CamelContext container) {
+	public void setContext(CamelContext container) {
 		this.container = container;
 	}
 	public CamelContext getContainer() {

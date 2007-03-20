@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.Collection;
 import java.util.Arrays;
 import java.util.Collections;
-import java.lang.reflect.Array;
 
 /**
  * @version $Revision$
@@ -90,7 +89,7 @@ public class ObjectHelper {
      * Creates an iterator over the value if the value is a collection, an Object[] or a primitive type array; otherwise
      * to simplify the caller's code, we just create a singleton collection iterator over a single value
      */
-    public static Iterator createIterator(Object value) {
+    public static Iterator iterator(Object value) {
         if (value == null) {
             return Collections.EMPTY_LIST.iterator();
         }
@@ -103,6 +102,25 @@ public class ObjectHelper {
         }
         else {
             return Collections.singletonList(value).iterator();
+        }
+    }
+
+    /**
+     * Returns true if the collection contains the specified value
+     */
+    public static boolean contains(Object collectionOrArray, Object value) {
+        if (collectionOrArray instanceof Collection) {
+            Collection collection = (Collection) collectionOrArray;
+            return collection.contains(value);
+        }
+        else {
+            Iterator iter = iterator(value);
+            while (iter.hasNext()) {
+                if (equals(value, iter.next())) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

@@ -24,9 +24,9 @@ package org.apache.camel;
 public interface Component<E>  {
 
     /**
-     * The CamelContainer is injected into the component when it is added to it
+     * The {@link CamelContext} is injected into the component when it is added to it
      */
-    void setContainer(CamelContext container);
+    void setContext(CamelContext context);
 
 	
 }
