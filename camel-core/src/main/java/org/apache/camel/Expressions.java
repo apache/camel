@@ -32,6 +32,11 @@ public class Expressions {
             public Object evaluate(E exchange) {
                 return exchange.getHeader(headerName);
             }
+
+            @Override
+            public String toString() {
+                return "header(" + headerName + ")";
+            }
         };
     }
     /**
@@ -44,6 +49,11 @@ public class Expressions {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
                 return value;
+            }
+
+            @Override
+            public String toString() {
+                return "" + value;
             }
         };
     }

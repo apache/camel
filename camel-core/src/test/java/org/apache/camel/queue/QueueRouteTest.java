@@ -33,8 +33,11 @@ import org.apache.camel.impl.DefaultExchange;
  */
 public class QueueRouteTest extends TestCase {
 	
-	static class StringExchange extends DefaultExchange<String, String, String> {		
-	}
+	static class StringExchange extends DefaultExchange<String, String, String> {
+        public StringExchange(CamelContainer container) {
+            super(container);
+        }
+    }
 	
     public void testJmsRoute() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
@@ -59,7 +62,7 @@ public class QueueRouteTest extends TestCase {
         
         // now lets fire in a message
         Endpoint<StringExchange> endpoint = container.endpoint("queue:test.a");
-        StringExchange exchange = new StringExchange();
+        StringExchange exchange = new StringExchange(container);
         exchange.setHeader("cheese", 123);
         endpoint.onExchange(exchange);
 

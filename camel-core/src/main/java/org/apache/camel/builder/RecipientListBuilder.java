@@ -15,32 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jms;
+package org.apache.camel.builder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Endpoint;
-
-import javax.jms.MessageListener;
-import javax.jms.Message;
+import org.apache.camel.Expression;
+import org.apache.camel.RecipientList;
 
 /**
- * Represents a JMS {@link MessageListener} which can be used directly with any JMS client
- * or derived from to create an MDB for processing messages using a {@link Processor}
- *  
+ * Creates a dynamic <a href="http://activemq.apache.org/camel/recipient-list.html">Recipient List</a> pattern.
+ *
  * @version $Revision$
  */
-public class MessageListenerProcessor implements MessageListener {
-    private final JmsEndpoint endpoint;
-    private final Processor<Exchange> processor;
-    
-    public MessageListenerProcessor(JmsEndpoint endpoint, Processor<Exchange> processor) {
-        this.endpoint = endpoint;
-        this.processor = processor;
+public class RecipientListBuilder<E extends Exchange> extends BuilderSupport<E> implements ProcessorBuilder<E> {
+    private final ValueBuilder<E> valueBuilder;
+
+    public RecipientListBuilder(DestinationBuilder<E> destinationBuilder, ValueBuilder<E> valueBuilder) {
+        super();
+        this.valueBuilder = valueBuilder;
     }
 
-    public void onMessage(Message message) {
-        Exchange exchange = endpoint.createExchange(message);
-        processor.onExchange(exchange);
+    public Processor<E> createProcessor() {
+        Expression<E> expression = valueBuilder.getExpression();
+        return new RecipientList<E>(expression);
     }
 }

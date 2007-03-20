@@ -90,4 +90,11 @@ public interface Exchange<M,R,F> {
      */
     void setException(Exception e);
 
+    /**
+     * Returns the container so that a processor can resolve endpoints from URIs
+     *
+     * @return the container which owns this exchange
+     */
+    CamelContainer<Exchange> getContainer();
+
 }

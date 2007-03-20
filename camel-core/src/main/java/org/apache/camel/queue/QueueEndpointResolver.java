@@ -23,6 +23,7 @@ import org.apache.camel.CamelContainer;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
+import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -37,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
  * 
  * @version $Revision: 519901 $
  */
-public class QueueEndpointResolver<E> implements EndpointResolver<E> {
+public class QueueEndpointResolver<E extends Exchange> implements EndpointResolver<E> {
 	
 	public static final String DEFAULT_COMPONENT_NAME = QueueComponent.class.getName();
 	

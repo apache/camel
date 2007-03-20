@@ -59,7 +59,7 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
     }
 
     public PojoExchange createExchange() {
-        return new PojoExchange();
+        return new PojoExchange(getContainer());
     }
 
     @Override
@@ -87,7 +87,7 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
 			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 				if( !activated.get() ) {
 					PojoInvocation invocation = new PojoInvocation(proxy, method, args);
-					PojoExchange exchange = new PojoExchange();
+					PojoExchange exchange = createExchange();
 					exchange.setRequest(invocation);
 					endpoint.getInboundProcessor().onExchange(exchange);
 					Throwable fault = exchange.getFault();

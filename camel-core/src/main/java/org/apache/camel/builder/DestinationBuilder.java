@@ -127,6 +127,20 @@ public class DestinationBuilder<E extends Exchange> extends BuilderSupport<E> im
         return answer;
     }
 
+    /**
+     * Creates a dynamic <a href="http://activemq.apache.org/camel/recipient-list.html">Recipient List</a> pattern.
+     * 
+     * @param valueBuilder
+     */
+    public RecipientListBuilder<E> recipientList(ValueBuilder<E> valueBuilder) {
+        RecipientListBuilder<E> answer = new RecipientListBuilder<E>(this, valueBuilder);
+        addProcessBuilder(answer);
+        return answer;
+    }
+
+
+    // Properties
+    //-------------------------------------------------------------------------
     public RouteBuilder<E> getBuilder() {
         return builder;
     }

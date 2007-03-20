@@ -16,6 +16,12 @@
  */
 package org.apache.camel.util;
 
+import java.util.Iterator;
+import java.util.Collection;
+import java.util.Arrays;
+import java.util.Collections;
+import java.lang.reflect.Array;
+
 /**
  * @version $Revision$
  */
@@ -80,4 +86,23 @@ public class ObjectHelper {
     	return rc;
 	}
 
+    /**
+     * Creates an iterator over the value if the value is a collection, an Object[] or a primitive type array; otherwise
+     * to simplify the caller's code, we just create a singleton collection iterator over a single value
+     */
+    public static Iterator createIterator(Object value) {
+        if (value == null) {
+            return Collections.EMPTY_LIST.iterator();
+        }
+        else if (value instanceof Collection) {
+            Collection collection = (Collection) value;
+            return collection.iterator();
+        }
+        else if (value.getClass().isArray()) {
+            return Arrays.asList(value).iterator();
+        }
+        else {
+            return Collections.singletonList(value).iterator();
+        }
+    }
 }
