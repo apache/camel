@@ -14,12 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.builder;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 
 /**
  * @version $Revision: $
  */
-public class Expressions {
+public class ExpressionBuilder {
 
     /**
      * Returns an expression for the header value with the given name
