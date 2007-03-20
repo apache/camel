@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @version $Revision$
  */
-public abstract class RouteBuilder<E extends Exchange> {
+public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E> {
     private CamelContainer<E> container;
     private List<DestinationBuilder<E>> destinationBuilders = new ArrayList<DestinationBuilder<E>>();
     private AtomicBoolean initalized = new AtomicBoolean(false);

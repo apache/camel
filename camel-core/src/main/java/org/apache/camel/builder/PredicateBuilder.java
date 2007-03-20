@@ -59,7 +59,4 @@ public class PredicateBuilder<E extends Exchange> extends DestinationBuilder<E> 
         return new FilterProcessor<E>(predicate, childProcessor);
     }
 
-    public void addProcessor(Processor<E> processor) {
-        getParent().addProcessor(new FilterProcessor<E>(predicate, processor));
-    }
 }

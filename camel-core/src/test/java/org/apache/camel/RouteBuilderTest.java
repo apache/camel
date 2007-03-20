@@ -16,14 +16,13 @@
  */
 package org.apache.camel;
 
+import junit.framework.TestCase;
+import org.apache.camel.builder.RouteBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import junit.framework.TestCase;
-
-import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version $Revision$
@@ -292,6 +291,38 @@ public class RouteBuilderTest extends TestCase {
             InterceptorProcessor<Exchange> p2 = (InterceptorProcessor<Exchange>) processor;
 
             assertSendTo(p2.getNext(), "queue:d");
+        }
+    }
+
+	public void testComplexExpressions() throws Exception {
+		// START SNIPPET: e7
+        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+            public void configure() {
+                from("queue:a").filter(header("foo").isEqualTo(123)).to("queue:b");
+                from("queue:a").filter(header("bar").isGreaterThan(45)).to("queue:b");
+            }
+        };
+        // END SNIPPET: e7
+
+
+        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
+        System.out.println("Created map: " + routeMap);
+
+        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
+        assertEquals("Number routes created", 1, routes.size());
+        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
+            Endpoint<Exchange> key = route.getKey();
+            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            Processor processor = route.getValue();
+
+            System.out.println("processor: " + processor);
+            /* TODO
+            assertTrue("Processor should be a FilterProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof FilterProcessor);
+            FilterProcessor filterProcessor = (FilterProcessor) processor;
+
+            SendProcessor sendProcessor = (SendProcessor) filterProcessor.getProcessor();
+            assertEquals("Endpoint URI", "queue:b", sendProcessor.getDestination().getEndpointUri());
+            */
         }
     }
 

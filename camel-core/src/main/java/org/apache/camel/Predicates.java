@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A helper class for working with predicates
@@ -27,9 +28,9 @@ public class Predicates {
     /**
      * A helper method to combine multiple predicates by a logical AND
      */
-    public static <E> Predicate<E> and(final Predicate<E> left, final Predicate<E> right) {
-        ObjectHelper.notNull(left, "left");
-        ObjectHelper.notNull(right, "right");
+    public static <E extends Exchange> Predicate<E> and(final Predicate<E> left, final Predicate<E> right) {
+        notNull(left, "left");
+        notNull(right, "right");
         return new Predicate<E>() {
             public boolean evaluate(E exchange) {
                 return left.evaluate(exchange) && right.evaluate(exchange);
@@ -40,9 +41,9 @@ public class Predicates {
     /**
      * A helper method to combine multiple predicates by a logical OR
      */
-    public static <E> Predicate<E> or(final Predicate<E> left, final Predicate<E> right) {
-        ObjectHelper.notNull(left, "left");
-        ObjectHelper.notNull(right, "right");
+    public static <E extends Exchange> Predicate<E> or(final Predicate<E> left, final Predicate<E> right) {
+        notNull(left, "left");
+        notNull(right, "right");
         return new Predicate<E>() {
             public boolean evaluate(E exchange) {
                 return left.evaluate(exchange) || right.evaluate(exchange);
@@ -51,4 +52,81 @@ public class Predicates {
     }
 
 
+    public static <E extends Exchange> Predicate<E> isEqualTo(final Expression<E> left, final Expression<E> right) {
+        notNull(left, "left");
+        notNull(right, "right");
+
+        return new Predicate<E>() {
+            public boolean evaluate(E exchange) {
+                Object value1 = left.evaluate(exchange);
+                Object value2 = right.evaluate(exchange);
+                return ObjectHelper.equals(value1, value2);
+            }
+        };
+    }
+
+    public static <E extends Exchange> Predicate<E> isNotEqualTo(final Expression<E> left, final Expression<E> right) {
+        notNull(left, "left");
+        notNull(right, "right");
+
+        return new Predicate<E>() {
+            public boolean evaluate(E exchange) {
+                Object value1 = left.evaluate(exchange);
+                Object value2 = right.evaluate(exchange);
+                return !ObjectHelper.equals(value1, value2);
+            }
+        };
+    }
+
+    public static <E extends Exchange> Predicate<E> isLessThan(final Expression<E> left, final Expression<E> right) {
+        notNull(left, "left");
+        notNull(right, "right");
+
+        return new Predicate<E>() {
+            public boolean evaluate(E exchange) {
+                Object value1 = left.evaluate(exchange);
+                Object value2 = right.evaluate(exchange);
+                return ObjectHelper.compare(value1, value2) < 0;
+            }
+        };
+    }
+
+    public static <E extends Exchange> Predicate<E> isLessThanOrEqualTo(final Expression<E> left, final Expression<E> right) {
+        notNull(left, "left");
+        notNull(right, "right");
+
+        return new Predicate<E>() {
+            public boolean evaluate(E exchange) {
+                Object value1 = left.evaluate(exchange);
+                Object value2 = right.evaluate(exchange);
+                return ObjectHelper.compare(value1, value2) <= 0;
+            }
+        };
+    }
+
+    public static <E extends Exchange> Predicate<E> isGreaterThan(final Expression<E> left, final Expression<E> right) {
+        notNull(left, "left");
+        notNull(right, "right");
+
+        return new Predicate<E>() {
+            public boolean evaluate(E exchange) {
+                Object value1 = left.evaluate(exchange);
+                Object value2 = right.evaluate(exchange);
+                return ObjectHelper.compare(value1, value2) > 0;
+            }
+        };
+    }
+
+    public static <E extends Exchange> Predicate<E> isGreaterThanOrEqualTo(final Expression<E> left, final Expression<E> right) {
+        notNull(left, "left");
+        notNull(right, "right");
+
+        return new Predicate<E>() {
+            public boolean evaluate(E exchange) {
+                Object value1 = left.evaluate(exchange);
+                Object value2 = right.evaluate(exchange);
+                return ObjectHelper.compare(value1, value2) >= 0;
+            }
+        };
+    }
 }
