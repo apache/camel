@@ -28,6 +28,7 @@ public abstract class ExchangeSupport<M,R,F> implements Exchange<M,R,F> {
     private R response;
     private F fault;
     private Exception exception;
+    private String exchangeId;
 
     public Exception getException() {
         return exception;
@@ -60,4 +61,15 @@ public abstract class ExchangeSupport<M,R,F> implements Exchange<M,R,F> {
     public void setResponse(R response) {
         this.response = response;
     }
+    
+    
+    public String getExchangeId() {
+        return exchangeId;
+    }
+    
+  
+    public void setExchangeId(String id) {
+        this.exchangeId=id;
+    }
+
 }
