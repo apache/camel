@@ -79,4 +79,9 @@ public interface Exchange  {
      */
     CamelContext<Exchange> getContext();
 
+    /**
+     * Creates a copy of the current message exchange so that it can be forwarded to another
+     * destination
+     */
+    Exchange copy();
 }

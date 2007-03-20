@@ -19,6 +19,7 @@ package org.apache.camel.jms;
 
 import org.apache.camel.Headers;
 import org.apache.camel.InvalidHeaderTypeException;
+import org.apache.camel.impl.HeadersSupport;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -29,7 +30,7 @@ import java.util.Map;
 /**
  * @version $Revision$
  */
-public class JmsHeaders implements Headers {
+public class JmsHeaders extends HeadersSupport {
     private final DefaultJmsMessage message;
     private Map<String, Object> lazyHeaders;
 
@@ -101,4 +102,5 @@ public class JmsHeaders implements Headers {
             return lazyHeaders;
         }
     }
+
 }

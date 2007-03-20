@@ -18,6 +18,7 @@ package org.apache.camel.jms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.InvalidHeaderTypeException;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 
 import javax.jms.JMSException;
@@ -39,6 +40,11 @@ public class DefaultJmsExchange extends DefaultExchange implements JmsExchange {
     public DefaultJmsExchange(CamelContext container, Message message) {
         super(container);
         setIn(new DefaultJmsMessage(message));
+    }
+
+    @Override
+    public Exchange newInstance() {
+        return new DefaultJmsExchange(getContext());
     }
 
     public Message createMessage(Session session) throws JMSException {

@@ -138,6 +138,18 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         return answer;
     }
 
+    /**
+     * A builder for the <a href="http://activemq.apache.org/camel/splitter.html">Splitter</a> pattern
+     * where an expression is evaluated to iterate through each of the parts of a message and then each part is then send to some endpoint.
+     *
+     * @param valueBuilder the builder for the value used as the expression on which to split
+     * @return the builder
+     */
+    public SplitterBuilder<E> splitter(ValueBuilder<E> valueBuilder) {
+              SplitterBuilder<E> answer = new SplitterBuilder<E>(this, valueBuilder);
+        addProcessBuilder(answer);
+        return answer;
+    }
 
     // Properties
     //-------------------------------------------------------------------------

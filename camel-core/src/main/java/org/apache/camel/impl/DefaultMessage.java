@@ -58,4 +58,17 @@ public class DefaultMessage implements Message {
     protected Headers createHeaders() {
         return new DefaultHeaders();
     }
+
+    public Message copy() {
+        DefaultMessage answer = newInstance();
+        answer.setBody(getBody());
+        Headers headers = createHeaders();
+        headers.getHeaders().putAll(getHeaders().getHeaders());
+        answer.setHeaders(headers);
+        return answer;
+    }
+
+    public DefaultMessage newInstance() {
+        return new DefaultMessage();
+    }
 }

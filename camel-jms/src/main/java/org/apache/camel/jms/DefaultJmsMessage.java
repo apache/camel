@@ -48,5 +48,8 @@ public class DefaultJmsMessage extends DefaultMessage implements JmsMessage {
         return new JmsHeaders(this);
     }
 
-
+    @Override
+    public DefaultMessage newInstance() {
+        return new DefaultJmsMessage();
+    }
 }

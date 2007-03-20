@@ -48,4 +48,9 @@ public interface Headers {
      * @return all the headers in a Map
      */
     Map<String, Object> getHeaders();
+
+    /**
+     * Creates a copy of the headers so that we can append them to another exchange
+     */
+    Headers copy();
 }

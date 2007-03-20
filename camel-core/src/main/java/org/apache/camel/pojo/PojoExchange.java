@@ -18,15 +18,15 @@ package org.apache.camel.pojo;
 
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 
 /**
  * @version $Revision: 519901 $
  */
 public class PojoExchange extends DefaultExchange {
-    private PojoInvocation invocation;
 
-    public PojoExchange(CamelContext container) {
-        super(container);
+    public PojoExchange(CamelContext context) {
+        super(context);
     }
 
     public PojoInvocation getInvocation() {
@@ -35,5 +35,10 @@ public class PojoExchange extends DefaultExchange {
 
     public void setInvocation(PojoInvocation invocation) {
         getIn().setBody(invocation);
+    }
+
+    @Override
+    public Exchange newInstance() {
+        return new PojoExchange(getContext());
     }
 }
