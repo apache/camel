@@ -27,10 +27,10 @@ import org.apache.camel.processor.RecipientList;
  *
  * @version $Revision$
  */
-public class RecipientListBuilder<E extends Exchange> extends BuilderSupport<E> implements ProcessorBuilder<E> {
+public class RecipientListBuilder<E extends Exchange> extends BuilderSupport<E> implements ProcessorFactory<E> {
     private final ValueBuilder<E> valueBuilder;
 
-    public RecipientListBuilder(DestinationBuilder<E> destinationBuilder, ValueBuilder<E> valueBuilder) {
+    public RecipientListBuilder(FromBuilder<E> fromBuilder, ValueBuilder<E> valueBuilder) {
         super();
         this.valueBuilder = valueBuilder;
     }

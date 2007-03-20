@@ -24,7 +24,7 @@ import org.apache.camel.Processor;
  * 
  * @version $Revision$
  */
-public interface ProcessorBuilder<E extends Exchange> {
+public interface ProcessorFactory<E extends Exchange> {
 
     public Processor<E> createProcessor();
 

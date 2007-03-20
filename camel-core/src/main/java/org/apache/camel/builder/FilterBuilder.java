@@ -25,10 +25,10 @@ import org.apache.camel.Processor;
 /**
  * @version $Revision$
  */
-public class PredicateBuilder<E extends Exchange> extends DestinationBuilder<E> {
+public class FilterBuilder<E extends Exchange> extends FromBuilder<E> {
     private Predicate<E> predicate;
 
-    public PredicateBuilder(DestinationBuilder<E> builder, Predicate<E> predicate) {
+    public FilterBuilder(FromBuilder<E> builder, Predicate<E> predicate) {
         super(builder);
         this.predicate = predicate;
     }
@@ -36,7 +36,7 @@ public class PredicateBuilder<E extends Exchange> extends DestinationBuilder<E> 
     /**
      * Adds another predicate using a logican AND
      */
-    public PredicateBuilder<E> and(Predicate<E> predicate) {
+    public FilterBuilder<E> and(Predicate<E> predicate) {
         this.predicate = Predicates.and(this.predicate, predicate);
         return this;
     }
@@ -44,7 +44,7 @@ public class PredicateBuilder<E extends Exchange> extends DestinationBuilder<E> 
     /**
      * Adds another predicate using a logican OR
      */
-    public PredicateBuilder<E> or(Predicate<E> predicate) {
+    public FilterBuilder<E> or(Predicate<E> predicate) {
         this.predicate = Predicates.or(this.predicate, predicate);
         return this;
     }

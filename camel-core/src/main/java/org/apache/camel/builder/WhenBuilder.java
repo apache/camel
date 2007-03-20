@@ -17,24 +17,32 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.Predicate;
+import org.apache.camel.Endpoint;
 
 /**
  * @version $Revision$
  */
-public class ConfiguredDestinationBuilder<E extends Exchange> extends DestinationBuilder<E> {
-    private Endpoint<E> destination;
+public class WhenBuilder<E extends Exchange> extends FilterBuilder<E> {
+    private final ChoiceBuilder<E> parent;
 
-    public ConfiguredDestinationBuilder(DestinationBuilder<E> parent, Endpoint<E> endpoint) {
-        super(parent);
-        this.destination = endpoint;
+    public WhenBuilder(ChoiceBuilder<E> parent, Predicate<E> predicate) {
+        super(parent, predicate);
+        this.parent = parent;
     }
 
     @Override
-    public Processor<E> createProcessor() {
-        return new SendProcessor<E>(destination);
+    public ChoiceBuilder<E> to(Endpoint<E> endpoint) {
+        super.to(endpoint);
+        return parent;
     }
+
+    @Override
+    public ChoiceBuilder<E> to(String uri) {
+        super.to(uri);
+        return parent;
+    }
+
+    
 }

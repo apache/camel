@@ -17,32 +17,24 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
+import org.apache.camel.Exchange;
+import org.apache.camel.processor.SendProcessor;
 
 /**
  * @version $Revision$
  */
-public class ChoicePredicateBuilder<E extends Exchange> extends PredicateBuilder<E> {
-    private final ChoiceBuilder<E> parent;
+public class ToBuilder<E extends Exchange> extends FromBuilder<E> {
+    private Endpoint<E> destination;
 
-    public ChoicePredicateBuilder(ChoiceBuilder<E> parent, Predicate<E> predicate) {
-        super(parent, predicate);
-        this.parent = parent;
+    public ToBuilder(FromBuilder<E> parent, Endpoint<E> endpoint) {
+        super(parent);
+        this.destination = endpoint;
     }
 
     @Override
-    public ChoiceBuilder<E> to(Endpoint<E> endpoint) {
-        super.to(endpoint);
-        return parent;
+    public Processor<E> createProcessor() {
+        return new SendProcessor<E>(destination);
     }
-
-    @Override
-    public ChoiceBuilder<E> to(String uri) {
-        super.to(uri);
-        return parent;
-    }
-
-    
 }

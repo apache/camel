@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 /**
  * @version $Revision$
  */
-public class ConstantProcessorBuilder<E extends Exchange> implements ProcessorBuilder<E> {
+public class ConstantProcessorBuilder<E extends Exchange> implements ProcessorFactory<E> {
     private Processor<E> processor;
 
     public ConstantProcessorBuilder(Processor<E> processor) {
