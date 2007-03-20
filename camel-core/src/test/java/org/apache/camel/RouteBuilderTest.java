@@ -326,7 +326,7 @@ public class RouteBuilderTest extends TestCase {
         }
     }
 
-    protected RouteBuilder<Exchange> buildStaticReceipentList() {
+    protected RouteBuilder<Exchange> buildStaticRecipientList() {
         // START SNIPPET: e8
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
@@ -337,20 +337,20 @@ public class RouteBuilderTest extends TestCase {
         return builder;
     }
 
-    protected RouteBuilder<Exchange> buildDynamicReceipentList() {
-        // START SNIPPET: e8
+    protected RouteBuilder<Exchange> buildDynamicRecipientList() {
+        // START SNIPPET: e9
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("queue:a").recipientList(header("foo"));
             }
         };
-        // END SNIPPET: e8
+        // END SNIPPET: e9
         return builder;
     }
 
     public void testRouteDynamicReceipentList() throws Exception {
 
-        RouteBuilder<Exchange> builder = buildDynamicReceipentList();
+        RouteBuilder<Exchange> builder = buildDynamicRecipientList();
 
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
         System.out.println("Created map: " + routeMap);
