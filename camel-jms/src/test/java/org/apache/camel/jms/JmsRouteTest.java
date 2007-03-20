@@ -18,13 +18,15 @@
 package org.apache.camel.jms;
 
 import junit.framework.TestCase;
-import org.apache.camel.CamelContainer;
-import org.apache.camel.builder.RouteBuilder;
-
-import static org.apache.camel.jms.JmsComponent.*;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.camel.CamelContainer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
+import static org.apache.camel.jms.JmsComponent.jmsComponent;
+import org.springframework.jms.core.JmsTemplate;
 
-import javax.jms.ConnectionFactory;
+import javax.jms.Session;
 
 /**
  * @version $Revision$
@@ -36,14 +38,35 @@ public class JmsRouteTest extends TestCase {
         System.out.println("Created container: " + container);
         
         // lets configure some componnets
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
-        container.addComponent("activemq", jmsComponent(connectionFactory));
+        JmsTemplate template = new JmsTemplate(new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false"));
+        template.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
+        template.setSessionTransacted(false);
+        
+        container.addComponent("activemq", jmsComponent(template));
 
         // lets add some routes
         container.routes(new RouteBuilder() {
             public void configure() {
-                from("jms:activemq:FOO.BAR").to("jms:activemq:FOO.BAR");
+                from("jms:activemq:test.a").to("jms:activemq:test.b");
+                from("jms:activemq:test.b").process(new Processor<JmsExchange>() {
+                    public void onExchange(JmsExchange exchange) {
+                        System.out.println("Received exchange: " + exchange.getRequest());
+                    }
+                });
             }
         });
+
+        // now lets fire in a message
+        Endpoint<JmsExchange> endpoint = container.endpoint("jms:activemq:test.a");
+        JmsExchange exchange2 = endpoint.createExchange();
+        //exchange2.setInBody("Hello there!")
+        exchange2.setHeader("cheese", 123);
+        endpoint.send(exchange2);
+
+        // now lets sleep for a while
+        Thread.sleep(3000);
+
+        // TODO
+        //container.stop();
     }
 }

@@ -20,6 +20,8 @@ import org.apache.camel.CamelContainer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
@@ -33,18 +35,24 @@ import javax.jms.Session;
  * @version $Revision$
  */
 public class JmsEndpoint extends DefaultEndpoint<JmsExchange> implements MessageListener {
+    private static final Log log = LogFactory.getLog(JmsEndpoint.class);
 
     private JmsOperations template;
     private AbstractMessageListenerContainer listenerContainer;
+    private String destination;
 
-    public JmsEndpoint(String endpointUri, CamelContainer container, JmsOperations template, AbstractMessageListenerContainer listenerContainer) {
+    public JmsEndpoint(String endpointUri, CamelContainer container, String destination, JmsOperations template, AbstractMessageListenerContainer listenerContainer) {
         super(endpointUri, container);
+        this.destination = destination;
         this.template = template;
         this.listenerContainer = listenerContainer;
         this.listenerContainer.setMessageListener(this);
     }
 
     public void onMessage(Message message) {
+        if (log.isDebugEnabled()) {
+            log.debug(JmsEndpoint.this + " receiving JMS message: " + message);
+        }
         JmsExchange exchange = createExchange(message);
         getInboundProcessor().onExchange(exchange);
     }
@@ -57,9 +65,13 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> implements Message
     }
 
     public void send(final JmsExchange exchange) {
-        template.send(new MessageCreator() {
+        template.send(destination, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
-                return exchange.createMessage(session);
+                Message message = exchange.createMessage(session);
+                if (log.isDebugEnabled()) {
+                    log.debug(JmsEndpoint.this + " sending JMS message: " + message);
+                }
+                return message;
             }
         });
     }

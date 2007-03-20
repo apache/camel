@@ -113,7 +113,7 @@ public class JmsComponent implements Component<JmsExchange, JmsEndpoint> {
         // messageConverter
         // durableSubscriberName 
 
-        return new JmsEndpoint(uri, container, template, listenerContainer);
+        return new JmsEndpoint(uri, container, subject, template, listenerContainer);
     }
 
     public JmsTemplate getTemplate() {
