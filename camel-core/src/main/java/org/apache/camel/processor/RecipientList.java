@@ -64,7 +64,7 @@ public class RecipientList<E extends Exchange> implements Processor<E> {
         }
         else {
             String uri = recipient.toString();
-            endpoint = (Endpoint<E>) exchange.getContext().endpoint(uri);
+            endpoint = (Endpoint<E>) exchange.getContext().resolveEndpoint(uri);
             if (endpoint == null) {
                 throw new NoSuchEndpointException(uri);
             }

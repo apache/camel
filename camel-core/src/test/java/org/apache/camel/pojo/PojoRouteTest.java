@@ -22,6 +22,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import junit.framework.TestCase;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.InterceptorProcessor;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -32,7 +34,8 @@ public class PojoRouteTest extends TestCase {
 	
     public void testJmsRoute() throws Exception {
 
-        CamelContext container = new CamelContext();
+        CamelContext container = new DefaultCamelContext<Exchange>();
+        
         PojoComponent component = new PojoComponent();
         component.registerPojo("hello", new SayService("Hello!"));
         component.registerPojo("bye", new SayService("Good Bye!"));
@@ -47,7 +50,7 @@ public class PojoRouteTest extends TestCase {
         	}
         };
         // lets add some routes
-        container.routes(new RouteBuilder() {
+        container.setRoutes(new RouteBuilder() {
             public void configure() {
                 from("pojo:default:hello").intercept(tracingInterceptor).target().to("pojo:default:bye");
                 
@@ -59,13 +62,13 @@ public class PojoRouteTest extends TestCase {
         container.activateEndpoints();
         
         // now lets fire in a message
-        PojoEndpoint endpoint = (PojoEndpoint) container.endpoint("pojo:default:hello");
+        PojoEndpoint endpoint = (PojoEndpoint) container.resolveEndpoint("pojo:default:hello");
         ISay proxy = (ISay) endpoint.createInboundProxy(new Class[]{ISay.class});
         String rc = proxy.say();
         assertEquals("Good Bye!", rc);
 
         try {
-			endpoint = (PojoEndpoint) container.endpoint("pojo:default:bye");
+			endpoint = (PojoEndpoint) container.resolveEndpoint("pojo:default:bye");
 			proxy = (ISay) endpoint.createInboundProxy(new Class[]{ISay.class});
 			rc = proxy.say();
 			assertEquals("Hello!", rc);

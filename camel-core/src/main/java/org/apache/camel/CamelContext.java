@@ -17,178 +17,81 @@
  */
 package org.apache.camel;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultEndpointResolver;
-import org.apache.camel.impl.DefaultExchangeConverter;
-import org.apache.camel.impl.DefaultTypeConverter;
 
 /**
- * Represents the context used to configure routes and the policies to use.
+ * Interface used to represent the context used to configure routes and the 
+ * policies to use during message exchanges between endpoints.
  *
  * @version $Revision$
- * @org.apache.xbean.XBean element="container" rootElement="true"
  */
-public class CamelContext<E extends Exchange> {
+public interface CamelContext<E extends Exchange> {
+    
+	// Component Management Methods
+    //-----------------------------------------------------------------------
 
-    private EndpointResolver<E> endpointResolver;
-    private ExchangeConverter exchangeConverter;
-    private Map<String, Component> components = new HashMap<String, Component>();
-	private Map<Endpoint<E>, Processor<E>> routes;
-    private TypeConverter typeConverter;
+    /**
+     * Adds a component to the container.
+     */
+    public void addComponent(String componentName, final Component<E> component);
+
+    public Component getComponent(String componentName);
+    
+    /**
+     * Removes a previously added component.
+     * @param componentName
+     * @return the previously added component or null if it had not been previously added.
+     */
+    public Component removeComponent(String componentName);
+
+    /**
+     * Gets the a previously added component by name or lazily creates the component
+     * using the factory Callback. 
+     * 
+     * @param componentName
+     * @param factory used to create a new component instance if the component was not previously added.
+     * @return
+     */
+    public Component getOrCreateComponent(String componentName, Callable<Component<E>> factory);
+    
+    // Endpoint Management Methods
+    //-----------------------------------------------------------------------
+
+    /**
+     * Resolves the given URI to an endpoint
+     */
+    public Endpoint<E> resolveEndpoint(String uri);
     
     /**
      * Activates all the starting endpoints in that were added as routes.
      */
-    public void activateEndpoints() {
-        for (Map.Entry<Endpoint<E>, Processor<E>> entry : routes.entrySet()) {
-            Endpoint<E> endpoint = entry.getKey();
-            Processor<E> processor = entry.getValue();
-            endpoint.activate(processor);
-        }
-    }
+    public void activateEndpoints();
     
     /**
      * Deactivates all the starting endpoints in that were added as routes.
      */
-    public void deactivateEndpoints() {
-        for (Endpoint<E> endpoint : routes.keySet()) {
-            endpoint.deactivate();
-        }
-    }
+    public void deactivateEndpoints() ;
 
-
-    public Component getOrCreateComponent(String componentName, Callable<Component<E>> factory) {
-        synchronized (components) {
-            Component component = components.get(componentName);
-            if (component == null) {
-                try {
-                    component = factory.call();
-                    if (component == null) {
-                        throw new IllegalArgumentException("Factory failed to create the " + componentName + " component, it returned null.");
-                    }
-                    components.put(componentName, component);
-                    component.setContainer(this);
-                }
-                catch (Exception e) {
-                    throw new IllegalArgumentException("Factory failed to create the " + componentName + " component", e);
-                }
-            }
-            return component;
-        }
-    }
-
-    public Component getComponent(String componentName) {
-        synchronized (components) {
-            Component component = components.get(componentName);
-            return component;
-        }
-    }
-
-
-    // Builder APIs
+    // Route Management Methods
     //-----------------------------------------------------------------------
-    public void routes(RouteBuilder<E> builder) {
-        // lets now add the routes from the builder
-        builder.setContainer(this);
-        routes = builder.getRouteMap();
-    }
+	public Map<Endpoint<E>, Processor<E>> getRoutes() ;
+	
+	public void setRoutes(Map<Endpoint<E>, Processor<E>> routes);
+	
+    public void setRoutes(RouteBuilder<E> builder);
 
-    public void routes(final RouteFactory factory) {
-        RouteBuilder<E> builder = new RouteBuilder<E>(this) {
-            public void configure() {
-                factory.build(this);
-            }
-        };
-        routes(builder);
-    }
-
-
-    /**
-     * Adds a component to the container if there is not currently a component already registered.
-     */
-    public void addComponent(String componentName, final Component<E> component) {
-        // TODO provide a version of this which barfs if the component is registered multiple times
-
-        getOrCreateComponent(componentName, new Callable<Component<E>>() {
-            public Component<E> call() throws Exception {
-                return component;
-            }
-        });
-    }
-
-
-    /**O
-     * Resolves the given URI to an endpoint
-     */
-    public Endpoint<E> endpoint(String uri) {
-         EndpointResolver<E> er = getEndpointResolver();
-         return er.resolveEndpoint(this, uri);
-    }
-
+    public void setRoutes(final RouteFactory factory);
 
     // Properties
     //-----------------------------------------------------------------------
-    public EndpointResolver<E> getEndpointResolver() {
-        if (endpointResolver == null) {
-            endpointResolver = createEndpointResolver();
-        }
-        return endpointResolver;
-    }
+    public EndpointResolver<E> getEndpointResolver();
+    
+    public ExchangeConverter getExchangeConverter();
 
-    public void setEndpointResolver(EndpointResolver<E> endpointResolver) {
-        this.endpointResolver = endpointResolver;
-    }
+    public TypeConverter getTypeConverter();
 
-    public ExchangeConverter getExchangeConverter() {
-        if (exchangeConverter == null) {
-            exchangeConverter = createExchangeConverter();
-        }
-        return exchangeConverter;
-    }
-
-    public void setExchangeConverter(ExchangeConverter exchangeConverter) {
-        this.exchangeConverter = exchangeConverter;
-    }
-
-    public TypeConverter getTypeConverter() {
-        if (typeConverter == null) {
-            typeConverter = createTypeConverter();
-        }
-        return typeConverter;
-    }
-
-    public void setTypeConverter(TypeConverter typeConverter) {
-        this.typeConverter = typeConverter;
-    }
-
-    // Implementation methods
-    //-----------------------------------------------------------------------
-
-    /**
-     * Lazily create a default implementation
-     */
-    protected EndpointResolver<E> createEndpointResolver() {
-        return new DefaultEndpointResolver<E>();
-    }
-
-
-    /**
-     * Lazily create a default implementation
-     */
-    protected ExchangeConverter createExchangeConverter() {
-        return new DefaultExchangeConverter();
-    }
-
-
-    /**
-     * Lazily create a default implementation
-     */
-    private TypeConverter createTypeConverter() {
-        return new DefaultTypeConverter();
-    }
 
 }

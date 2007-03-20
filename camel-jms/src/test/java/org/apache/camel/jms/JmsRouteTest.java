@@ -17,17 +17,22 @@
  */
 package org.apache.camel.jms;
 
+import static org.apache.camel.jms.JmsComponent.jmsComponentClientAcknowledge;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import javax.jms.ConnectionFactory;
+
 import junit.framework.TestCase;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.jms.JmsComponent.jmsComponentClientAcknowledge;
-
-import javax.jms.ConnectionFactory;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import org.apache.camel.impl.DefaultCamelContext;
 
 /**
  * @version $Revision$
@@ -36,14 +41,14 @@ public class JmsRouteTest extends TestCase {
     public void testJmsRoute() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
-        CamelContext container = new CamelContext();
+        CamelContext container = new DefaultCamelContext<Exchange>();
 
         // lets configure some componnets
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
         container.addComponent("activemq", jmsComponentClientAcknowledge(connectionFactory));
 
         // lets add some routes
-        container.routes(new RouteBuilder() {
+        container.setRoutes(new RouteBuilder() {
             public void configure() {
                 from("jms:activemq:test.a").to("jms:activemq:test.b");
                 from("jms:activemq:test.b").process(new Processor<JmsExchange>() {
@@ -59,7 +64,7 @@ public class JmsRouteTest extends TestCase {
         container.activateEndpoints();
         
         // now lets fire in a message
-        Endpoint<JmsExchange> endpoint = container.endpoint("jms:activemq:test.a");
+        Endpoint<JmsExchange> endpoint = container.resolveEndpoint("jms:activemq:test.a");
         JmsExchange exchange2 = endpoint.createExchange();
         //exchange2.setInBody("Hello there!")
         exchange2.getIn().getHeaders().setHeader("cheese", 123);
