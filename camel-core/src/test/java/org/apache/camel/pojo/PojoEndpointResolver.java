@@ -14,33 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.queue;
-
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
+package org.apache.camel.pojo;
 
 import org.apache.camel.CamelContainer;
 import org.apache.camel.Component;
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * An implementation of {@link EndpointResolver} that creates 
- * {@link QueueEndpoint} objects.
+ * {@link PojoEndpoint} objects.
  *
- * The syntax for a Queue URI looks like:
+ * The synatax for a Pojo URI looks like:
  * 
- * <pre><code>queue:[component:]queuename</code></pre>
- * the component is optional, and if it is not specified, the default component name
- * is assumed.
+ * <pre><code>pojo:component:queuename</code></pre>
  * 
  * @version $Revision: 519901 $
  */
-public class QueueEndpointResolver<E> implements EndpointResolver<E> {
-	
-	public static final String DEFAULT_COMPONENT_NAME = QueueComponent.class.getName();
-	
+public class PojoEndpointResolver implements EndpointResolver<PojoExchange> {
+		
 	/**
 	 * Finds the {@see QueueComponent} specified by the uri.  If the {@see QueueComponent} 
 	 * object do not exist, it will be created.
@@ -49,7 +41,7 @@ public class QueueEndpointResolver<E> implements EndpointResolver<E> {
 	 */
 	public Component resolveComponent(CamelContainer container, String uri) {
 		String id[] = getEndpointId(uri);        
-    	return resolveQueueComponent(container, id[0]);  
+		return resolveQueueComponent(container, id[0]);
 	}
 
 	/**
@@ -58,35 +50,34 @@ public class QueueEndpointResolver<E> implements EndpointResolver<E> {
 	 * 
 	 * @see org.apache.camel.EndpointResolver#resolveEndpoint(org.apache.camel.CamelContainer, java.lang.String)
 	 */
-	public Endpoint<E> resolveEndpoint(CamelContainer container, String uri) {
+	public PojoEndpoint resolveEndpoint(CamelContainer container, String uri) {
 		String id[] = getEndpointId(uri);        
-    	QueueComponent<E> component = resolveQueueComponent(container, id[0]);  
-    	BlockingQueue<E> queue = component.getOrCreateQueue(id[1]);
-		return new QueueEndpoint<E>(uri, container, queue);
+    	PojoComponent component = resolveQueueComponent(container, id[0]);        
+        Object pojo = component.lookupRegisteredPojo(id[1]);
+		return new PojoEndpoint(uri, container, component, pojo);
     }
+
+	private PojoComponent resolveQueueComponent(CamelContainer container, String componentName) {
+    	Component rc = container.getComponent(componentName);
+    	if( rc == null ) {
+    		throw new IllegalArgumentException("Invalid URI, pojo component does not exist: "+componentName);
+    	}
+    	return (PojoComponent) rc;
+	}
 
 	/**
 	 * @return an array that looks like: [componentName,endpointName] 
 	 */
 	private String[] getEndpointId(String uri) {
-		String rc [] = {DEFAULT_COMPONENT_NAME, null};
+		String rc [] = {null, null};
 		String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 3);        
     	if( splitURI[2] != null ) {
     		rc[0] =  splitURI[1];
     		rc[1] =  splitURI[2];
     	} else {
-    		rc[0] =  splitURI[1];
+    		throw new IllegalArgumentException("Invalid URI, component not specified in URI: "+uri);
     	}
 		return rc;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private QueueComponent<E> resolveQueueComponent(CamelContainer container, String componentName) {
-    	Component rc = container.getOrCreateComponent(componentName, new Callable<Component<E>>(){
-			public Component<E> call() throws Exception {
-				return new QueueComponent<E>();
-			}});
-    	return (QueueComponent<E>) rc;
 	}
 
 }
