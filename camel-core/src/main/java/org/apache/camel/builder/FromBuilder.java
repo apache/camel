@@ -29,18 +29,18 @@ import java.util.List;
 /**
  * @version $Revision$
  */
-public class DestinationBuilder<E extends Exchange> extends BuilderSupport<E> implements ProcessorBuilder<E> {
+public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implements ProcessorFactory<E> {
     private RouteBuilder<E> builder;
     private Endpoint<E> from;
     private List<Processor<E>> processors = new ArrayList<Processor<E>>();
-    private List<ProcessorBuilder<E>> processBuilders = new ArrayList<ProcessorBuilder<E>>();
+    private List<ProcessorFactory<E>> processFactories = new ArrayList<ProcessorFactory<E>>();
 
-    public DestinationBuilder(RouteBuilder<E> builder, Endpoint<E> from) {
+    public FromBuilder(RouteBuilder<E> builder, Endpoint<E> from) {
         this.builder = builder;
         this.from = from;
     }
 
-    public DestinationBuilder(DestinationBuilder<E> parent) {
+    public FromBuilder(FromBuilder<E> parent) {
         this.builder = parent.getBuilder();
         this.from = parent.getFrom();
     }
@@ -55,15 +55,15 @@ public class DestinationBuilder<E extends Exchange> extends BuilderSupport<E> im
     /**
      * Sends the exchange to the given endpoint URI
      */
-    public ProcessorBuilder<E> to(String uri) {
+    public ProcessorFactory<E> to(String uri) {
         return to(endpoint(uri));
     }
 
     /**
      * Sends the exchange to the given endpoint
      */
-    public ProcessorBuilder<E> to(Endpoint<E> endpoint) {
-        ConfiguredDestinationBuilder<E> answer = new ConfiguredDestinationBuilder<E>(this, endpoint);
+    public ProcessorFactory<E> to(Endpoint<E> endpoint) {
+        ToBuilder<E> answer = new ToBuilder<E>(this, endpoint);
         addProcessBuilder(answer);
         return answer;
     }
@@ -72,8 +72,8 @@ public class DestinationBuilder<E extends Exchange> extends BuilderSupport<E> im
     /**
      * Sends the exchange to the given endpoint URI
      */
-    public ProcessorBuilder<E> to(String... uris) {
-        ProcessorBuilder<E> answer = null;
+    public ProcessorFactory<E> to(String... uris) {
+        ProcessorFactory<E> answer = null;
         for (String uri : uris) {
             answer = to(endpoint(uri));
         }
@@ -83,8 +83,8 @@ public class DestinationBuilder<E extends Exchange> extends BuilderSupport<E> im
     /**
      * Sends the exchange to the given endpoint
      */
-    public ProcessorBuilder<E> to(Endpoint<E>... endpoints) {
-        ProcessorBuilder<E> answer = null;
+    public ProcessorFactory<E> to(Endpoint<E>... endpoints) {
+        ProcessorFactory<E> answer = null;
         for (Endpoint<E> endpoint : endpoints) {
             answer = to(endpoint);          
         }
@@ -95,7 +95,7 @@ public class DestinationBuilder<E extends Exchange> extends BuilderSupport<E> im
     /**
      * Adds the custom processor to this destination
      */
-    public ProcessorBuilder<E> process(Processor<E> processor) {
+    public ConstantProcessorBuilder<E> process(Processor<E> processor) {
         ConstantProcessorBuilder<E> answer = new ConstantProcessorBuilder<E>(processor);
         addProcessBuilder(answer);
         return answer;
@@ -109,8 +109,8 @@ public class DestinationBuilder<E extends Exchange> extends BuilderSupport<E> im
      *
      * @return the builder for a predicate
      */
-    public PredicateBuilder<E> filter(Predicate<E> predicate) {
-        PredicateBuilder<E> answer = new PredicateBuilder<E>(this, predicate);
+    public FilterBuilder<E> filter(Predicate<E> predicate) {
+        FilterBuilder<E> answer = new FilterBuilder<E>(this, predicate);
         addProcessBuilder(answer);
         return answer;
     }
@@ -149,8 +149,8 @@ public class DestinationBuilder<E extends Exchange> extends BuilderSupport<E> im
         return from;
     }
 
-    public void addProcessBuilder(ProcessorBuilder<E> processBuilder) {
-        processBuilders.add(processBuilder);
+    public void addProcessBuilder(ProcessorFactory<E> processFactory) {
+        processFactories.add(processFactory);
     }
 
     public void addProcessor(Processor<E> processor) {
@@ -160,10 +160,10 @@ public class DestinationBuilder<E extends Exchange> extends BuilderSupport<E> im
     public Processor<E> createProcessor() {
         List<Processor<E>> answer = new ArrayList<Processor<E>>();
 
-        for (ProcessorBuilder<E> processBuilder : processBuilders) {
-            Processor<E> processor = processBuilder.createProcessor();
+        for (ProcessorFactory<E> processFactory : processFactories) {
+            Processor<E> processor = processFactory.createProcessor();
             if (processor == null) {
-                throw new IllegalArgumentException("No processor created for processBuilder: " + processBuilder);
+                throw new IllegalArgumentException("No processor created for processBuilder: " + processFactory);
             }
             answer.add(processor);
         }

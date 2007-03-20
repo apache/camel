@@ -20,9 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
 import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.util.ObjectHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +35,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E> {
     private CamelContext<E> container;
-    private List<DestinationBuilder<E>> destinationBuilders = new ArrayList<DestinationBuilder<E>>();
+    private List<FromBuilder<E>> fromBuilders = new ArrayList<FromBuilder<E>>();
     private AtomicBoolean initalized = new AtomicBoolean(false);
     private Map<Endpoint<E>, Processor<E>> routeMap = new HashMap<Endpoint<E>, Processor<E>>();
 
@@ -62,13 +60,13 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
          return er.resolveEndpoint(c, uri);
     }
 
-    public DestinationBuilder<E> from(String uri) {
+    public FromBuilder<E> from(String uri) {
         return from(endpoint(uri));
     }
 
-    public DestinationBuilder<E> from(Endpoint<E> endpoint) {
-        DestinationBuilder<E> answer = new DestinationBuilder<E>(this, endpoint);
-        destinationBuilders.add(answer);
+    public FromBuilder<E> from(Endpoint<E> endpoint) {
+        FromBuilder<E> answer = new FromBuilder<E>(this, endpoint);
+        fromBuilders.add(answer);
         return answer;
     }
 
@@ -98,9 +96,9 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     /**
      * Returns the destinationBuilders which have been created
      */
-    public List<DestinationBuilder<E>> getDestinationBuilders() {
+    public List<FromBuilder<E>> getDestinationBuilders() {
         checkInitialized();
-        return destinationBuilders;
+        return fromBuilders;
     }
 
 
@@ -114,11 +112,11 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     }
 
     protected void populateRouteMap(Map<Endpoint<E>, Processor<E>> routeMap) {
-        for (DestinationBuilder<E> destinationBuilder : destinationBuilders) {
-            Endpoint<E> from = destinationBuilder.getFrom();
-            Processor<E> processor = destinationBuilder.createProcessor();
+        for (FromBuilder<E> fromBuilder : fromBuilders) {
+            Endpoint<E> from = fromBuilder.getFrom();
+            Processor<E> processor = fromBuilder.createProcessor();
             if (processor == null) {
-                throw new IllegalArgumentException("No processor created for DestinationBuilder: " + destinationBuilder);
+                throw new IllegalArgumentException("No processor created for DestinationBuilder: " + fromBuilder);
             }
             routeMap.put(from, processor);
         }

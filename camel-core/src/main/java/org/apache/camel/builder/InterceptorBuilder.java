@@ -28,12 +28,12 @@ import org.apache.camel.RuntimeCamelException;
 /**
  * @version $Revision: 519943 $
  */
-public class InterceptorBuilder<E extends Exchange> implements ProcessorBuilder<E> {
+public class InterceptorBuilder<E extends Exchange> implements ProcessorFactory<E> {
     private final List<InterceptorProcessor<E>> intercepts = new ArrayList<InterceptorProcessor<E>>();
-	private final DestinationBuilder<E> parent;
-	private DestinationBuilder<E> target;
+	private final FromBuilder<E> parent;
+	private FromBuilder<E> target;
 
-	public InterceptorBuilder(DestinationBuilder<E> parent) {
+	public InterceptorBuilder(FromBuilder<E> parent) {
 		this.parent = parent;
 	}
 
@@ -42,8 +42,8 @@ public class InterceptorBuilder<E extends Exchange> implements ProcessorBuilder<
 		return this;
 	}
 	
-    public DestinationBuilder<E> target() {
-        this.target = new DestinationBuilder<E>(parent);
+    public FromBuilder<E> target() {
+        this.target = new FromBuilder<E>(parent);
         return target;
     }
 

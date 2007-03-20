@@ -28,13 +28,13 @@ import java.util.ArrayList;
 /**
  * @version $Revision$
  */
-public class ChoiceBuilder<E extends Exchange> extends DestinationBuilder<E> {
+public class ChoiceBuilder<E extends Exchange> extends FromBuilder<E> {
 
-    private final DestinationBuilder<E> parent;
-    private List<ChoicePredicateBuilder<E>> predicateBuilders = new ArrayList<ChoicePredicateBuilder<E>>();
-    private DestinationBuilder<E> otherwise;
+    private final FromBuilder<E> parent;
+    private List<WhenBuilder<E>> predicateBuilders = new ArrayList<WhenBuilder<E>>();
+    private FromBuilder<E> otherwise;
 
-    public ChoiceBuilder(DestinationBuilder<E> parent) {
+    public ChoiceBuilder(FromBuilder<E> parent) {
         super(parent);
         this.parent = parent;
     }
@@ -44,29 +44,29 @@ public class ChoiceBuilder<E extends Exchange> extends DestinationBuilder<E> {
      *
      * @return a builder for creating a when predicate clause and action
      */
-    public ChoicePredicateBuilder<E> when(Predicate<E> predicate) {
-        ChoicePredicateBuilder<E> answer = new ChoicePredicateBuilder<E>(this, predicate);
+    public WhenBuilder<E> when(Predicate<E> predicate) {
+        WhenBuilder<E> answer = new WhenBuilder<E>(this, predicate);
         predicateBuilders.add(answer);
         return answer;
     }
 
-    public DestinationBuilder<E> otherwise() {
-        this.otherwise = new DestinationBuilder<E>(parent);
+    public FromBuilder<E> otherwise() {
+        this.otherwise = new FromBuilder<E>(parent);
         return otherwise;
     }
 
-    public List<ChoicePredicateBuilder<E>> getPredicateBuilders() {
+    public List<WhenBuilder<E>> getPredicateBuilders() {
         return predicateBuilders;
     }
 
-    public DestinationBuilder<E> getOtherwise() {
+    public FromBuilder<E> getOtherwise() {
         return otherwise;
     }
 
     @Override
     public Processor<E> createProcessor() {
         List<FilterProcessor<E>> filters = new ArrayList<FilterProcessor<E>>();
-        for (ChoicePredicateBuilder<E> predicateBuilder : predicateBuilders) {
+        for (WhenBuilder<E> predicateBuilder : predicateBuilders) {
             filters.add(predicateBuilder.createProcessor());
         }
         Processor<E> otherwiseProcessor = null;
