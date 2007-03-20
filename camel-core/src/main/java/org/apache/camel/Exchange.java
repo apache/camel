@@ -19,14 +19,11 @@ package org.apache.camel;
 import java.util.Map;
 
 /**
- * Represents the base interface of an exchange
+ * Represents the base exchange interface providing access to the request, response and fault {@link Message} instances.
  *
  * @version $Revision$
- * @param <M> message or payload type
- * @param <R> message or payload type for a response (for request/response exchange)
- * @param <F> fault type
  */
-public interface Exchange<M,R,F> {
+public interface Exchange  {
     
     /**
      * Returns the exchange id
@@ -41,60 +38,45 @@ public interface Exchange<M,R,F> {
     void setExchangeId(String id);
 
     /**
-     * Accesses a specific header
-     * @param name 
-     * @return object header associated with the name
+     * Returns the exchange headers
      */
-    Object getHeader(String name);
+    Headers getHeaders();
 
     /**
-     * Sets a header on the exchange
-     * @param name of the header 
-     * @param value to associate with the name
-     */
-    void setHeader(String name, Object value);
-
-    /**
-     * Returns all of the headers associated with the request
-     * @return all the headers in a Map
-     */
-    Map<String,Object> getHeaders();
-
-    /**
-     * Returns the request message
+     * Returns the inbound request message
      * @return the message
      */
-    M getRequest();
+    Message getIn();
 
     /**
-     * Returns the response message
+     * Returns the aresponse message
      * @return the response
      */
-    R getResponse();
+    Message getOut();
 
     /**
      * Returns the fault message
      * @return the fault
      */
-    F getFault();
+    Message getFault();
 
     /**
      * Returns the exception associated with this exchange
      * @return the exception (or null if no faults)
      */
-    Exception getException();
+    Throwable getException();
 
     /**
      * Sets the exception associated with this exchange
-     * @param e 
+     * @param e
      */
-    void setException(Exception e);
+    void setException(Throwable e);
 
     /**
      * Returns the container so that a processor can resolve endpoints from URIs
      *
      * @return the container which owns this exchange
      */
-    CamelContext<Exchange> getContainer();
+    CamelContext<Exchange> getContext();
 
 }

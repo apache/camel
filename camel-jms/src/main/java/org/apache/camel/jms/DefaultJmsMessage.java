@@ -1,4 +1,5 @@
-/*
+/**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -6,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,26 +15,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.pojo;
+package org.apache.camel.jms;
 
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.Headers;
+
+import javax.jms.Message;
 
 /**
- * @version $Revision: 519901 $
+ * @version $Revision$
  */
-public class PojoExchange extends DefaultExchange {
-    private PojoInvocation invocation;
+public class DefaultJmsMessage extends DefaultMessage implements JmsMessage {
+    private Message jmsMessage;
 
-    public PojoExchange(CamelContext container) {
-        super(container);
+    public DefaultJmsMessage() {
     }
 
-    public PojoInvocation getInvocation() {
-        return getIn().getBody(PojoInvocation.class);
+    public DefaultJmsMessage(Message jmsMessage) {
+        this.jmsMessage = jmsMessage;
     }
 
-    public void setInvocation(PojoInvocation invocation) {
-        getIn().setBody(invocation);
+    public Message getJmsMessage() {
+        return jmsMessage;
     }
+
+    public void setJmsMessage(Message jmsMessage) {
+        this.jmsMessage = jmsMessage;
+    }
+
+    @Override
+    protected Headers createHeaders() {
+        return new JmsHeaders(this);
+    }
+
+
 }

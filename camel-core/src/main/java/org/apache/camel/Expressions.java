@@ -30,7 +30,12 @@ public class Expressions {
     public static <E extends Exchange> Expression<E> headerExpression(final String headerName) {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                return exchange.getHeader(headerName);
+                Object header = exchange.getIn().getHeaders().getHeader(headerName);
+                if (header == null) {
+                    // lets try the exchange header
+                    header = exchange.getHeaders().getHeader(headerName);
+                }
+                return header;
             }
 
             @Override

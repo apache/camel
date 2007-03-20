@@ -45,12 +45,12 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
 	 *  This causes us to invoke the endpoint Pojo using reflection.
 	 */
     public void onExchange(PojoExchange exchange) {
-        PojoInvocation invocation = exchange.getRequest();
+        PojoInvocation invocation = exchange.getInvocation();
         try {
 			Object response = invocation.getMethod().invoke(pojo, invocation.getArgs());
-			exchange.setResponse(response);
+			exchange.getOut().setBody(response);
 		} catch (InvocationTargetException e) {
-			exchange.setFault(e.getCause());
+			exchange.setException(e.getCause());
 		} catch ( RuntimeException e ) {
 			throw e;
 		} catch ( Throwable e ) {
@@ -88,13 +88,13 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
 				if( !activated.get() ) {
 					PojoInvocation invocation = new PojoInvocation(proxy, method, args);
 					PojoExchange exchange = createExchange();
-					exchange.setRequest(invocation);
+					exchange.setInvocation(invocation);
 					endpoint.getInboundProcessor().onExchange(exchange);
-					Throwable fault = exchange.getFault();
+					Throwable fault = exchange.getException();
 					if ( fault != null ) {
 						throw new InvocationTargetException(fault);
 					}
-					return exchange.getResponse();
+					return exchange.getOut();
 				}
 				throw new IllegalStateException("The endpoint is not active: "+getEndpointUri());
 			}

@@ -1,4 +1,5 @@
-/*
+/**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -6,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,26 +15,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.pojo;
+package org.apache.camel;
 
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.CamelContext;
+import java.util.Map;
 
 /**
- * @version $Revision: 519901 $
+ * Represents the available headers on a message or message exchange.
+ *
+ * @version $Revision$
  */
-public class PojoExchange extends DefaultExchange {
-    private PojoInvocation invocation;
+public interface Headers {
+    
+    /**
+     * Accesses a specific header
+     *
+     * @param name
+     * @return object header associated with the name
+     */
+    Object getHeader(String name);
 
-    public PojoExchange(CamelContext container) {
-        super(container);
-    }
+    /**
+     * Sets a header on the exchange
+     *
+     * @param name  of the header
+     * @param value to associate with the name
+     */
+    void setHeader(String name, Object value);
 
-    public PojoInvocation getInvocation() {
-        return getIn().getBody(PojoInvocation.class);
-    }
-
-    public void setInvocation(PojoInvocation invocation) {
-        getIn().setBody(invocation);
-    }
+    /**
+     * Returns all of the headers associated with the request
+     *
+     * @return all the headers in a Map
+     */
+    Map<String, Object> getHeaders();
 }

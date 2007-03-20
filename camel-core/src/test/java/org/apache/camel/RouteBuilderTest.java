@@ -79,7 +79,7 @@ public class RouteBuilderTest extends TestCase {
 		// START SNIPPET: e2
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
-                from("queue:a").filter(headerEquals("foo", "bar")).to("queue:b");
+                from("queue:a").filter(header("foo").isEqualTo("bar")).to("queue:b");
             }
         };
         // END SNIPPET: e2
@@ -112,8 +112,8 @@ public class RouteBuilderTest extends TestCase {
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("queue:a").choice()
-                        .when(headerEquals("foo", "bar")).to("queue:b")
-                        .when(headerEquals("foo", "cheese")).to("queue:c")
+                        .when(header("foo").isEqualTo("bar")).to("queue:b")
+                        .when(header("foo").isEqualTo("cheese")).to("queue:c")
                         .otherwise().to("queue:d");
             }
         };
@@ -188,7 +188,7 @@ public class RouteBuilderTest extends TestCase {
 		// START SNIPPET: e5
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
-                from("queue:a").filter(headerEquals("foo", "bar")).process(myProcessor);
+                from("queue:a").filter(header("foo").isEqualTo("bar")).process(myProcessor);
             }
         };
         // END SNIPPET: e5
