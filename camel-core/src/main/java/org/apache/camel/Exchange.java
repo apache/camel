@@ -27,6 +27,18 @@ import java.util.Map;
  * @param <F> fault type
  */
 public interface Exchange<M,R,F> {
+    
+    /**
+     * Returns the exchange id
+     * @return the unique id of the exchange
+     */
+    String getExchangeId();
+    
+    /**
+     * Set the exchange id
+     * @param id
+     */
+    void setExchangeId(String id);
 
     /**
      * Accesses a specific header
