@@ -17,7 +17,6 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Expression;
-import org.apache.camel.Expressions;
 import org.apache.camel.Exchange;
 
 /**
@@ -31,6 +30,6 @@ public abstract class BuilderSupport<E extends Exchange> {
      * Returns a predicate and value builder for headers on an exchange
      */
     public ValueBuilder<E> header(String name) {
-        Expression<E> expression = Expressions.headerExpression(name);
+        Expression<E> expression = ExpressionBuilder.headerExpression(name);
         return new ValueBuilder<E>(expression);
     }}

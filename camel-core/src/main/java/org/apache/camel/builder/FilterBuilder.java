@@ -19,7 +19,6 @@ package org.apache.camel.builder;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.Predicate;
 import org.apache.camel.Exchange;
-import org.apache.camel.Predicates;
 import org.apache.camel.Processor;
 
 /**
@@ -37,7 +36,7 @@ public class FilterBuilder<E extends Exchange> extends FromBuilder<E> {
      * Adds another predicate using a logican AND
      */
     public FilterBuilder<E> and(Predicate<E> predicate) {
-        this.predicate = Predicates.and(this.predicate, predicate);
+        this.predicate = PredicateBuilder.and(this.predicate, predicate);
         return this;
     }
 
@@ -45,7 +44,7 @@ public class FilterBuilder<E extends Exchange> extends FromBuilder<E> {
      * Adds another predicate using a logican OR
      */
     public FilterBuilder<E> or(Predicate<E> predicate) {
-        this.predicate = Predicates.or(this.predicate, predicate);
+        this.predicate = PredicateBuilder.or(this.predicate, predicate);
         return this;
     }
 

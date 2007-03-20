@@ -19,8 +19,6 @@ package org.apache.camel.builder;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.Predicates;
-import org.apache.camel.Expressions;
 
 /**
  * A builder of expressions or predicates based on values.
@@ -35,33 +33,33 @@ public class ValueBuilder<E extends Exchange> {
     }
 
     public Predicate<E> isNotEqualTo(Object value) {
-        Expression<E> right = Expressions.constantExpression(value);
-        return Predicates.isNotEqualTo(expression, right);
+        Expression<E> right = ExpressionBuilder.constantExpression(value);
+        return PredicateBuilder.isNotEqualTo(expression, right);
     }
 
     public Predicate<E> isEqualTo(Object value) {
-        Expression<E> right = Expressions.constantExpression(value);
-        return Predicates.isEqualTo(expression, right);
+        Expression<E> right = ExpressionBuilder.constantExpression(value);
+        return PredicateBuilder.isEqualTo(expression, right);
     }
 
     public Predicate<E> isLessThan(Object value) {
-        Expression<E> right = Expressions.constantExpression(value);
-        return Predicates.isLessThan(expression, right);
+        Expression<E> right = ExpressionBuilder.constantExpression(value);
+        return PredicateBuilder.isLessThan(expression, right);
     }
 
     public Predicate<E> isLessThanOrEqualTo(Object value) {
-        Expression<E> right = Expressions.constantExpression(value);
-        return Predicates.isLessThanOrEqualTo(expression, right);
+        Expression<E> right = ExpressionBuilder.constantExpression(value);
+        return PredicateBuilder.isLessThanOrEqualTo(expression, right);
     }
 
     public Predicate<E> isGreaterThan(Object value) {
-        Expression<E> right = Expressions.constantExpression(value);
-        return Predicates.isGreaterThan(expression, right);
+        Expression<E> right = ExpressionBuilder.constantExpression(value);
+        return PredicateBuilder.isGreaterThan(expression, right);
     }
 
     public Predicate<E> isGreaterThanOrEqualTo(Object value) {
-        Expression<E> right = Expressions.constantExpression(value);
-        return Predicates.isGreaterThanOrEqualTo(expression, right);
+        Expression<E> right = ExpressionBuilder.constantExpression(value);
+        return PredicateBuilder.isGreaterThanOrEqualTo(expression, right);
     }
 
     public Expression<E> getExpression() {

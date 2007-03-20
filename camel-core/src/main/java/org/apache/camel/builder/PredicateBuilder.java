@@ -14,17 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.builder;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A helper class for working with predicates
  *
- * @version $Revision$
+ * @version $Revision: 520261 $
  */
-public class Predicates {
+public class PredicateBuilder {
     /**
      * A helper method to combine multiple predicates by a logical AND
      */
