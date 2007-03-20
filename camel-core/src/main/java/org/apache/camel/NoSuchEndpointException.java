@@ -17,6 +17,8 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.processor.RecipientList;
+
 /**
  * A runtime exception thrown if a routing processor such as a {@link RecipientList} is unable to resolve
  * an {@link Endpoint} from a URI.

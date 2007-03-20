@@ -16,7 +16,7 @@
  */
 package org.apache.camel.jms;
 
-import org.apache.camel.CamelContainer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.InvalidHeaderTypeException;
 import org.apache.camel.impl.ExchangeSupport;
 
@@ -33,11 +33,11 @@ import java.util.Map;
 public class DefaultJmsExchange extends ExchangeSupport<Message, Message, Message> implements JmsExchange {
     private Map<String, Object> lazyHeaders;
 
-    public DefaultJmsExchange(CamelContainer container) {
+    public DefaultJmsExchange(CamelContext container) {
         super(container);
     }
 
-    public DefaultJmsExchange(CamelContainer container, Message message) {
+    public DefaultJmsExchange(CamelContext container, Message message) {
         super(container);
         setRequest(message);
     }

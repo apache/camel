@@ -16,7 +16,7 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.CamelContainer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
@@ -37,12 +37,12 @@ import org.apache.camel.util.ObjectHelper;
 public class DefaultEndpointResolver<E> implements EndpointResolver<E> {
     static final private FactoryFinder endpointResolverFactory = new FactoryFinder("META-INF/services/org/apache/camel/EndpointResolver/");
     
-    public Endpoint<E> resolveEndpoint(CamelContainer container, String uri) {
+    public Endpoint<E> resolveEndpoint(CamelContext container, String uri) {
     	EndpointResolver resolver = getDelegate(uri);
 		return resolver.resolveEndpoint(container, uri);
     }
 
-	public Component resolveComponent(CamelContainer container, String uri) {
+	public Component resolveComponent(CamelContext container, String uri) {
     	EndpointResolver resolver = getDelegate(uri);
 		return resolver.resolveComponent(container, uri);
 	}

@@ -26,12 +26,12 @@ import org.apache.camel.impl.DefaultEndpointResolver;
 import org.apache.camel.impl.DefaultExchangeConverter;
 
 /**
- * Represents the container used to configure routes and the policies to use.
+ * Represents the context used to configure routes and the policies to use.
  *
  * @version $Revision$
  * @org.apache.xbean.XBean element="container" rootElement="true"
  */
-public class CamelContainer<E extends Exchange> {
+public class CamelContext<E extends Exchange> {
 
     private EndpointResolver<E> endpointResolver;
     private ExchangeConverter exchangeConverter;

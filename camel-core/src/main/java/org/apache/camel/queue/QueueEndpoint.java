@@ -21,7 +21,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.camel.CamelContainer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -38,7 +38,7 @@ public class QueueEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     private BlockingQueue<E> queue;
 	private org.apache.camel.queue.QueueEndpoint.Activation activation;
 
-    public QueueEndpoint(String uri, CamelContainer container, BlockingQueue<E> queue) {
+    public QueueEndpoint(String uri, CamelContext container, BlockingQueue<E> queue) {
         super(uri, container);
         this.queue = queue;
     }
@@ -55,7 +55,7 @@ public class QueueEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     public E createExchange() {
     	// How can we create a specific Exchange if we are generic??
     	// perhaps it would be better if we did not implement this. 
-        return (E) new DefaultExchange(getContainer());
+        return (E) new DefaultExchange(getContext());
     }
 
     public Queue<E> getQueue() {

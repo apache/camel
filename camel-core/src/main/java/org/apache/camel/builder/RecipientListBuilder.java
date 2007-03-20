@@ -20,7 +20,7 @@ package org.apache.camel.builder;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Expression;
-import org.apache.camel.RecipientList;
+import org.apache.camel.processor.RecipientList;
 
 /**
  * Creates a dynamic <a href="http://activemq.apache.org/camel/recipient-list.html">Recipient List</a> pattern.

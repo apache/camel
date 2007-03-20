@@ -49,10 +49,17 @@ public interface Endpoint<E> extends Processor<E> {
      * 
      * @throws IllegalStateException if the Endpoint has already been activated.
      */
-	public void activate(Processor<E> processor) throws IllegalStateException;
+	void activate(Processor<E> processor) throws IllegalStateException;
 
     /**
      * Called by the container when the endpoint is deactivated
      */
     void deactivate();
+
+    /**
+     * Returns the context which created the endpoint
+     *
+     * @return the context which created the endpoint
+     */
+    CamelContext getContext();
 }

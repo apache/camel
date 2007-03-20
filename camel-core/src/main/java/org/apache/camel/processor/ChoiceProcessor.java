@@ -15,7 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.processor;
+
+import org.apache.camel.Processor;
+import org.apache.camel.Predicate;
 
 import java.util.ArrayList;
 import java.util.List;

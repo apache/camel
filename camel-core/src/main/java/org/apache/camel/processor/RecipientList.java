@@ -15,10 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.processor;
 
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.notNull;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.Expression;
+import org.apache.camel.Endpoint;
+import org.apache.camel.NoSuchEndpointException;
 
 import java.util.Iterator;
 

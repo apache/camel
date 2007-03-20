@@ -21,7 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import org.apache.camel.CamelContainer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultEndpoint;
 
 /**
@@ -35,7 +35,7 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
     private final Object pojo;
 	private final PojoComponent component;
     
-	public PojoEndpoint(String uri, CamelContainer container, PojoComponent component, Object pojo) {
+	public PojoEndpoint(String uri, CamelContext container, PojoComponent component, Object pojo) {
         super(uri, container);
 		this.component = component;
 		this.pojo = pojo;
@@ -59,7 +59,7 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
     }
 
     public PojoExchange createExchange() {
-        return new PojoExchange(getContainer());
+        return new PojoExchange(getContext());
     }
 
     @Override

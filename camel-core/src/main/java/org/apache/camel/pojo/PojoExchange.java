@@ -16,19 +16,15 @@
  */
 package org.apache.camel.pojo;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.camel.impl.ExchangeSupport;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.CamelContainer;
+import org.apache.camel.CamelContext;
 
 /**
  * @version $Revision: 519901 $
  */
 public class PojoExchange extends DefaultExchange<PojoInvocation, Object, Throwable> {
 
-    public PojoExchange(CamelContainer container) {
+    public PojoExchange(CamelContext container) {
         super(container);
     }
 }

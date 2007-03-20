@@ -26,12 +26,12 @@ public interface EndpointResolver<E> {
     /**
      * Resolves the component for a given uri or returns null if now component handles it.
      */
-    public Component resolveComponent(CamelContainer container, String uri);
+    public Component resolveComponent(CamelContext container, String uri);
 
 
     /**
      * Resolves the endpoint for a given uri or returns null if no endpoint could be found
      */
-    public Endpoint<E> resolveEndpoint(CamelContainer container, String uri);
+    public Endpoint<E> resolveEndpoint(CamelContext container, String uri);
     
 }

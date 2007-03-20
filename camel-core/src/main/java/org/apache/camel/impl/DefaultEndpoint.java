@@ -16,7 +16,7 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.CamelContainer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,14 +29,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class DefaultEndpoint<E> implements Endpoint<E> {
     private String endpointUri;
-    private CamelContainer container;
+    private CamelContext context;
     private Processor<E> inboundProcessor;
     protected AtomicBoolean activated = new AtomicBoolean(false);
     protected AtomicBoolean deactivated = new AtomicBoolean(false);
 
-    protected DefaultEndpoint(String endpointUri, CamelContainer container) {
+    protected DefaultEndpoint(String endpointUri, CamelContext container) {
         this.endpointUri = endpointUri;
-        this.container = container;
+        this.context = container;
     }
 
     public int hashCode() {
@@ -54,15 +54,15 @@ public abstract class DefaultEndpoint<E> implements Endpoint<E> {
 
     @Override
     public String toString() {
-        return "Endpoint[" + endpointUri  + "]";
+        return "Endpoint[" + endpointUri + "]";
     }
 
     public String getEndpointUri() {
         return endpointUri;
     }
 
-    public CamelContainer getContainer() {
-        return container;
+    public CamelContext getContext() {
+        return context;
     }
 
     /**
@@ -73,19 +73,20 @@ public abstract class DefaultEndpoint<E> implements Endpoint<E> {
         if (type.isInstance(exchange)) {
             return type.cast(exchange);
         }
-        return getContainer().getExchangeConverter().convertTo(type, exchange);
+        return getContext().getExchangeConverter().convertTo(type, exchange);
     }
-
 
     public void activate(Processor<E> inboundProcessor) {
         if (activated.compareAndSet(false, true)) {
             deactivated.set(false);
-        	this.inboundProcessor = inboundProcessor;
+            this.inboundProcessor = inboundProcessor;
             doActivate();
-        } else {
-        	throw new IllegalStateException("Endpoint is already active: "+getEndpointUri());
+        }
+        else {
+            throw new IllegalStateException("Endpoint is already active: " + getEndpointUri());
         }
     }
+
     public void deactivate() {
         if (deactivated.compareAndSet(false, true)) {
             activated.set(false);
@@ -115,5 +116,4 @@ public abstract class DefaultEndpoint<E> implements Endpoint<E> {
      */
     protected void doDeactivate() {
     }
-
 }

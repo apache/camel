@@ -95,6 +95,6 @@ public interface Exchange<M,R,F> {
      *
      * @return the container which owns this exchange
      */
-    CamelContainer<Exchange> getContainer();
+    CamelContext<Exchange> getContainer();
 
 }

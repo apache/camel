@@ -15,36 +15,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.processor;
+
+import org.apache.camel.Processor;
 
 /**
- * @version $Revision$
+ * @version $Revision: 519941 $
  */
-public class FilterProcessor<E> implements Processor<E> {
-    private Predicate<E> predicate;
-    private Processor<E> processor;
+public class InterceptorProcessor<E> implements Processor<E> {
 
-    public FilterProcessor(Predicate<E> predicate, Processor<E> processor) {
-        this.predicate = predicate;
-        this.processor = processor;
+    protected Processor<E> next;
+
+	public InterceptorProcessor() {
     }
 
     public void onExchange(E exchange) {
-        if (predicate.evaluate(exchange)) {
-            processor.onExchange(exchange);
-        }
+       if( next != null ) {
+    	   next.onExchange(exchange);
+       }
     }
 
     @Override
     public String toString() {
-        return "if (" + predicate + ") " + processor;
+        return "intercept(" + next + ")";
     }
 
-    public Predicate<E> getPredicate() {
-        return predicate;
-    }
-
-    public Processor<E> getProcessor() {
-        return processor;
-    }
+	public Processor<E> getNext() {
+		return next;
+	}
+	public void setNext(Processor<E> next) {
+		this.next = next;
+	}
 }

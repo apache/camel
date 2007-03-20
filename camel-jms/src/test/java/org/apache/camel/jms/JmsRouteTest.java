@@ -19,7 +19,7 @@ package org.apache.camel.jms;
 
 import junit.framework.TestCase;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.camel.CamelContainer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -36,7 +36,7 @@ public class JmsRouteTest extends TestCase {
     public void testJmsRoute() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
-        CamelContainer container = new CamelContainer();
+        CamelContext container = new CamelContext();
 
         // lets configure some componnets
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");

@@ -16,9 +16,8 @@
  */
 package org.apache.camel.jms;
 
-import org.apache.camel.CamelContainer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,7 +40,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> implements Message
     private AbstractMessageListenerContainer listenerContainer;
     private String destination;
 
-    public JmsEndpoint(String endpointUri, CamelContainer container, String destination, JmsOperations template, AbstractMessageListenerContainer listenerContainer) {
+    public JmsEndpoint(String endpointUri, CamelContext container, String destination, JmsOperations template, AbstractMessageListenerContainer listenerContainer) {
         super(endpointUri, container);
         this.destination = destination;
         this.template = template;
@@ -81,12 +80,12 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> implements Message
     }
 
     public JmsExchange createExchange() {
-        return new DefaultJmsExchange(getContainer());
+        return new DefaultJmsExchange(getContext());
     }
 
 
     public JmsExchange createExchange(Message message) {
-        return new DefaultJmsExchange(getContainer(), message);
+        return new DefaultJmsExchange(getContext(), message);
     }
 
 
