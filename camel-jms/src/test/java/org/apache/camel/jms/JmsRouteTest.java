@@ -23,10 +23,9 @@ import org.apache.camel.CamelContainer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.jms.JmsComponent.jmsComponent;
-import org.springframework.jms.core.JmsTemplate;
+import static org.apache.camel.jms.JmsComponent.jmsComponentClientAcknowledge;
 
-import javax.jms.Session;
+import javax.jms.ConnectionFactory;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -40,11 +39,8 @@ public class JmsRouteTest extends TestCase {
         CamelContainer container = new CamelContainer();
 
         // lets configure some componnets
-        JmsTemplate template = new JmsTemplate(new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false"));
-        template.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
-        template.setSessionTransacted(false);
-        
-        container.addComponent("activemq", jmsComponent(template));
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
+        container.addComponent("activemq", jmsComponentClientAcknowledge(connectionFactory));
 
         // lets add some routes
         container.routes(new RouteBuilder() {

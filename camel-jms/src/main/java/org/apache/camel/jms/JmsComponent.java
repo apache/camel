@@ -27,6 +27,7 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
 import javax.jms.ConnectionFactory;
+import javax.jms.Session;
 
 /**
  * @version $Revision$
@@ -57,6 +58,16 @@ public class JmsComponent implements Component<JmsExchange, JmsEndpoint> {
      */
     public static JmsComponent jmsComponent(ConnectionFactory connectionFactory) {
         return jmsComponent(new JmsTemplate(connectionFactory));
+    }
+
+    /**
+     * Static builder method
+     */
+    public static JmsComponent jmsComponentClientAcknowledge(ConnectionFactory connectionFactory) {
+        JmsTemplate template = new JmsTemplate(connectionFactory);
+        template.setSessionTransacted(false);
+        template.setSessionAcknowledgeMode(Session.CLIENT_ACKNOWLEDGE);
+        return jmsComponent(template);
     }
 
 
