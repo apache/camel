@@ -16,24 +16,28 @@
  */
 package org.apache.camel.queue;
 
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.CamelContainer;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 
-import java.util.Queue;
-
 /**
- * Represents a queue endpoint that uses a {@link Queue}
+ * Represents a queue endpoint that uses a {@link BlockingQueue}
  * object to process inbound exchanges.
  *
  * @org.apache.xbean.XBean
  * @version $Revision: 519973 $
  */
 public class QueueEndpoint<E> extends DefaultEndpoint<E> {
-    private Queue<E> queue;
+    private BlockingQueue<E> queue;
+	private org.apache.camel.queue.QueueEndpoint.Activation activation;
 
-    public QueueEndpoint(String uri, CamelContainer container, Queue<E> queue) {
+    public QueueEndpoint(String uri, CamelContainer container, BlockingQueue<E> queue) {
         super(uri, container);
         this.queue = queue;
     }
@@ -55,5 +59,60 @@ public class QueueEndpoint<E> extends DefaultEndpoint<E> {
 
     public Queue<E> getQueue() {
         return queue;
+    }
+    
+    class Activation implements Runnable {
+		AtomicBoolean stop = new AtomicBoolean();
+		private Thread thread;
+		
+		public void run() {
+			while(!stop.get()) {
+				E exchange=null;
+				try {
+					exchange = queue.poll(100, TimeUnit.MILLISECONDS);
+				} catch (InterruptedException e) {
+					break;
+				}
+				if( exchange !=null ) {
+					try {
+						getInboundProcessor().onExchange(exchange);
+					} catch (Throwable e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+
+		public void start() {
+			thread = new Thread(this, getEndpointUri());
+			thread.setDaemon(true);
+			thread.start();
+		}
+
+		public void stop() throws InterruptedException {
+			stop.set(true);
+			thread.join();
+		}
+		
+		@Override
+		public String toString() {
+			return "Activation: "+getEndpointUri();
+		}
+    }
+
+    @Override
+    protected void doActivate() {
+		activation = new Activation();
+		activation.start();
+    }
+    
+    @Override
+    protected void doDeactivate() {
+		try {
+			activation.stop();
+			activation=null;
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
     }
 }

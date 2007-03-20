@@ -16,7 +16,7 @@
  */
 package org.apache.camel.queue;
 
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 
 import org.apache.camel.CamelContainer;
@@ -61,7 +61,7 @@ public class QueueEndpointResolver<E> implements EndpointResolver<E> {
 	public Endpoint<E> resolveEndpoint(CamelContainer container, String uri) {
 		String id[] = getEndpointId(uri);        
     	QueueComponent<E> component = resolveQueueComponent(container, id[0]);  
-        Queue<E> queue = component.getOrCreateQueue(id[1]);
+    	BlockingQueue<E> queue = component.getOrCreateQueue(id[1]);
 		return new QueueEndpoint<E>(uri, container, queue);
     }
 
@@ -82,8 +82,8 @@ public class QueueEndpointResolver<E> implements EndpointResolver<E> {
 	
 	@SuppressWarnings("unchecked")
 	private QueueComponent<E> resolveQueueComponent(CamelContainer container, String componentName) {
-    	Component rc = container.getOrCreateComponent(componentName, new Callable<Component<E,? extends Endpoint<E>>>(){
-			public Component<E, ? extends Endpoint<E>> call() throws Exception {
+    	Component rc = container.getOrCreateComponent(componentName, new Callable<Component<E>>(){
+			public Component<E> call() throws Exception {
 				return new QueueComponent<E>();
 			}});
     	return (QueueComponent<E>) rc;

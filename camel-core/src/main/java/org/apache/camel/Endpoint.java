@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+
 /**
  * Represents an endpoint on which messages can be exchanged
  *
@@ -32,11 +33,6 @@ public interface Endpoint<E>  {
      * Sends the message exchange to this endpoint
      */
     void send(E exchange);
-
-    /**
-     * Sets the processor for inbound messages
-     */
-    void setInboundProcessor(Processor<E> processor);
     
     /**
      * Create a new exchange for communicating with this endpoint
@@ -45,9 +41,13 @@ public interface Endpoint<E>  {
 
 
     /**
-     * Called by the container when an endpoint is activiated
+     * Called by the container to Activate the endpoint.  Once activated,
+     * the endpoint will start delivering messages inbound exchanges
+     * it receives to the specified processor.
+     * 
+     * @throws IllegalStateException is the Endpoint has already been activated.
      */
-    void activate();
+	public void activate(Processor<E> processor) throws IllegalStateException;
 
     /**
      * Called by the container when the endpoint is deactivated

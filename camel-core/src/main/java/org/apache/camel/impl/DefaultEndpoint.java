@@ -77,9 +77,12 @@ public abstract class DefaultEndpoint<E> implements Endpoint<E> {
     }
 
 
-    public void activate() {
+    public void activate(Processor<E> inboundProcessor) {
         if (activated.compareAndSet(false, true)) {
+        	this.inboundProcessor = inboundProcessor;
             doActivate();
+        } else {
+        	throw new IllegalStateException("Endpoint is already active: "+getEndpointUri());
         }
     }
     public void deactivate() {
@@ -97,7 +100,6 @@ public abstract class DefaultEndpoint<E> implements Endpoint<E> {
 
     public void setInboundProcessor(Processor<E> inboundProcessor) {
         this.inboundProcessor = inboundProcessor;
-        activate();
     }
 
     /**

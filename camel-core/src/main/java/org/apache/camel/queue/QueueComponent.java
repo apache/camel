@@ -16,14 +16,12 @@
  */
 package org.apache.camel.queue;
 
+import java.util.HashMap;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import org.apache.camel.CamelContainer;
 import org.apache.camel.Component;
-import org.apache.camel.Processor;
-
-import java.util.HashMap;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Represents the component that manages {@link QueueEndpoint}.  It holds the 
@@ -32,45 +30,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @org.apache.xbean.XBean
  * @version $Revision: 519973 $
  */
-public class QueueComponent<E> implements Component<E, QueueEndpoint<E>> {
+public class QueueComponent<E> implements Component<E> {
 	
-    private HashMap<String, Queue<E>> registry = new HashMap<String, Queue<E>>();
-    private HashMap<QueueEndpoint<E>, Activation> activations = new HashMap<QueueEndpoint<E>, Activation>();
+    private HashMap<String, BlockingQueue<E>> registry = new HashMap<String, BlockingQueue<E>>();
     private CamelContainer container;
 
     public void setContainer(CamelContainer container) {
         this.container = container;
     }
 
-    class Activation implements Runnable {
-		private final QueueEndpoint<E> endpoint;
-		AtomicBoolean stop = new AtomicBoolean();
-		private Thread thread;
-		
-		public Activation(QueueEndpoint<E> endpoint) {
-			this.endpoint = endpoint;
-		}
-
-		public void run() {
-			while(!stop.get()) {
-				
-			}
-		}
-
-		public void start() {
-			thread = new Thread(this, endpoint.getEndpointUri());
-			thread.setDaemon(true);
-			thread.start();
-		}
-
-		public void stop() throws InterruptedException {
-			stop.set(true);
-			thread.join();
-		}
-    }
-
-	synchronized public Queue<E> getOrCreateQueue(String uri) {
-		Queue<E> queue = registry.get(uri);
+	synchronized public BlockingQueue<E> getOrCreateQueue(String uri) {
+		BlockingQueue<E> queue = registry.get(uri);
 		if( queue == null ) {
 			queue = createQueue();
 			registry.put(uri, queue);
@@ -78,30 +48,13 @@ public class QueueComponent<E> implements Component<E, QueueEndpoint<E>> {
 		return queue;
 	}
 
-	private Queue<E> createQueue() {
+	protected BlockingQueue<E> createQueue() {
 		return new LinkedBlockingQueue<E>();
 	}
 
-	public void activate(QueueEndpoint<E> endpoint, Processor<E> processor) {
-		Activation activation = activations.get(endpoint);
-		if( activation!=null ) {
-			throw new IllegalArgumentException("Endpoint "+endpoint.getEndpointUri()+" has already been activated.");
-		}
-		
-		activation = new Activation(endpoint);
-		activation.start();
+	public CamelContainer getContainer() {
+		return container;
 	}
 
-	public void deactivate(QueueEndpoint<E> endpoint) {
-		Activation activation = activations.remove(endpoint);
-		if( activation==null ) {
-			throw new IllegalArgumentException("Endpoint "+endpoint.getEndpointUri()+" is not activate.");
-		}		
-		try {
-			activation.stop();
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
-	}
 
 }

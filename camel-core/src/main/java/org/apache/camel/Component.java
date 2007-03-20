@@ -21,23 +21,12 @@ package org.apache.camel;
  *
  * @version $Revision: 519901 $
  */
-public interface Component<E, EP extends Endpoint<E>>  {
+public interface Component<E>  {
 
     /**
      * The CamelContainer is injected into the component when it is added to it
      */
     void setContainer(CamelContainer container);
 
-    /**
-	 * Asks the component to activate the delivery of {@link Exchange} objects
-	 * from the {@link Endpoint} to the {@link Processor}.
-	 */
-	void activate(EP endpoint, Processor<E> processor);
-
-	/**
-	 * Stops the delivery of messages from a previously activated 
-	 * {@link Endpoint}.
-	 */
-	void deactivate(EP endpoint);
 	
 }

@@ -17,14 +17,14 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultEndpointResolver;
-import org.apache.camel.impl.DefaultExchangeConverter;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultEndpointResolver;
+import org.apache.camel.impl.DefaultExchangeConverter;
 
 /**
  * Represents the container used to configure routes and the policies to use.
@@ -37,19 +37,34 @@ public class CamelContainer<E extends Exchange> {
     private EndpointResolver<E> endpointResolver;
     private ExchangeConverter exchangeConverter;
     private Map<String, Component> components = new HashMap<String, Component>();
+	private Map<Endpoint<E>, Processor<E>> routes;
+    
+    /**
+     * Activates all the starting endpoints in that were added as routes.
+     */
+    public void activateEndpoints() {
+        for (Map.Entry<Endpoint<E>, Processor<E>> entry : routes.entrySet()) {
+            Endpoint<E> endpoint = entry.getKey();
+            Processor<E> processor = entry.getValue();
+            endpoint.activate(processor);
+        }
+    }
+    
+    /**
+     * Deactivates all the starting endpoints in that were added as routes.
+     */
+    public void deactivateEndpoints() {
+        for (Endpoint<E> endpoint : routes.keySet()) {
+            endpoint.deactivate();
+        }
+    }
 
     // Builder APIs
     //-----------------------------------------------------------------------
     public void routes(RouteBuilder<E> builder) {
         // lets now add the routes from the builder
         builder.setContainer(this);
-        Map<Endpoint<E>, Processor<E>> routeMap = builder.getRouteMap();
-        Set<Map.Entry<Endpoint<E>, Processor<E>>> entries = routeMap.entrySet();
-        for (Map.Entry<Endpoint<E>, Processor<E>> entry : entries) {
-            Endpoint<E> endpoint = entry.getKey();
-            Processor<E> processor = entry.getValue();
-            endpoint.setInboundProcessor(processor);
-        }
+        routes = builder.getRouteMap();
     }
 
     public void routes(final RouteFactory factory) {
@@ -64,18 +79,18 @@ public class CamelContainer<E extends Exchange> {
     /**
      * Adds a component to the container if there is not currently a component already registered.
      */
-    public void addComponent(String componentName, final Component<E, ? extends Endpoint<E>> component) {
+    public void addComponent(String componentName, final Component<E> component) {
         // TODO provide a version of this which barfs if the component is registered multiple times
 
-        getOrCreateComponent(componentName, new Callable<Component<E, ? extends Endpoint<E>>>() {
-            public Component<E, ? extends Endpoint<E>> call() throws Exception {
+        getOrCreateComponent(componentName, new Callable<Component<E>>() {
+            public Component<E> call() throws Exception {
                 return component;
             }
         });
     }
 
 
-    /**
+    /**O
      * Resolves the given URI to an endpoint
      */
     public Endpoint<E> endpoint(String uri) {
@@ -121,7 +136,7 @@ public class CamelContainer<E extends Exchange> {
         return new DefaultExchangeConverter();
     }
 
-    public Component getOrCreateComponent(String componentName, Callable<Component<E, ? extends Endpoint<E>>> factory) {
+    public Component getOrCreateComponent(String componentName, Callable<Component<E>> factory) {
         synchronized (components) {
             Component component = components.get(componentName);
             if (component == null) {
