@@ -16,20 +16,19 @@
  */
 package org.apache.camel.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.CompositeProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @version $Revision$
  */
-public class DestinationBuilder<E extends Exchange> implements ProcessorBuilder<E> {
-    private DestinationBuilder<E> parent;
+public class DestinationBuilder<E extends Exchange> extends BuilderSupport<E> implements ProcessorBuilder<E> {
     private RouteBuilder<E> builder;
     private Endpoint<E> from;
     private List<Processor<E>> processors = new ArrayList<Processor<E>>();
@@ -38,11 +37,9 @@ public class DestinationBuilder<E extends Exchange> implements ProcessorBuilder<
     public DestinationBuilder(RouteBuilder<E> builder, Endpoint<E> from) {
         this.builder = builder;
         this.from = from;
-        this.parent = this;
     }
 
     public DestinationBuilder(DestinationBuilder<E> parent) {
-        this.parent = parent;
         this.builder = parent.getBuilder();
         this.from = parent.getFrom();
     }
@@ -52,10 +49,6 @@ public class DestinationBuilder<E extends Exchange> implements ProcessorBuilder<
      */
     public Endpoint<E> endpoint(String uri) {
         return getBuilder().endpoint(uri);
-    }
-
-    public DestinationBuilder<E> getParent() {
-        return parent;
     }
 
     /**
@@ -120,6 +113,7 @@ public class DestinationBuilder<E extends Exchange> implements ProcessorBuilder<
         addProcessBuilder(answer);
         return answer;
     }
+
 
     /**
      * Creates a choice of one or more predicates with an otherwise clause

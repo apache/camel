@@ -20,12 +20,44 @@ package org.apache.camel.util;
  * @version $Revision$
  */
 public class ObjectHelper {
+    /**
+     * A helper method for comparing objects for equality while handling nulls
+     */
     public static boolean equals(Object a, Object b) {
         if (a == b) {
             return true;
         }
         return a != null && b != null && a.equals(b);
     }
+
+    /**
+     * A helper method for performing an ordered comparsion on the objects
+     * handling nulls and objects which do not
+     * handle sorting gracefully
+     */
+    public static int compare(Object a, Object b) {
+        if (a == b) {
+            return 0;
+        }
+        if (a == null) {
+            return -1;
+        }
+        if (b == null) {
+            return 1;
+        }
+        if (a instanceof Comparable) {
+            Comparable comparable = (Comparable) a;
+            return comparable.compareTo(b);
+        }
+        else {
+            int answer = a.getClass().getName().compareTo(b.getClass().getName());
+            if (answer == 0) {
+                answer = a.hashCode() - b.hashCode();
+            }
+            return answer;
+        }
+    }
+
 
     public static void notNull(Object value, String name) {
         if (value == null) {
