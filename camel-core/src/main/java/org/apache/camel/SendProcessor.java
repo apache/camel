@@ -28,7 +28,7 @@ public class SendProcessor<E> implements Processor<E> {
     }
 
     public void onExchange(E exchange) {
-        destination.send(exchange);
+        destination.onExchange(exchange);
     }
 
     public Endpoint<E> getDestination() {

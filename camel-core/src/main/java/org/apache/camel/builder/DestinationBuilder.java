@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 import org.apache.camel.CompositeProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.InterceptorProcessor;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 
@@ -169,6 +170,13 @@ public class DestinationBuilder<E extends Exchange> extends BuilderSupport<E> im
 
 	public InterceptorBuilder<E> intercept() {
 		InterceptorBuilder<E> answer = new InterceptorBuilder<E>(this);
+        addProcessBuilder(answer);
+        return answer;
+	}
+	
+	public InterceptorBuilder<E> intercept(InterceptorProcessor<E> interceptor) {
+		InterceptorBuilder<E> answer = new InterceptorBuilder<E>(this);
+		answer.add(interceptor);
         addProcessBuilder(answer);
         return answer;
 	}

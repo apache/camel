@@ -31,8 +31,8 @@ public abstract class DefaultEndpoint<E> implements Endpoint<E> {
     private String endpointUri;
     private CamelContainer container;
     private Processor<E> inboundProcessor;
-    private AtomicBoolean activated = new AtomicBoolean(false);
-    private AtomicBoolean deactivated = new AtomicBoolean(false);
+    protected AtomicBoolean activated = new AtomicBoolean(false);
+    protected AtomicBoolean deactivated = new AtomicBoolean(false);
 
     protected DefaultEndpoint(String endpointUri, CamelContainer container) {
         this.endpointUri = endpointUri;
@@ -79,6 +79,7 @@ public abstract class DefaultEndpoint<E> implements Endpoint<E> {
 
     public void activate(Processor<E> inboundProcessor) {
         if (activated.compareAndSet(false, true)) {
+            deactivated.set(false);
         	this.inboundProcessor = inboundProcessor;
             doActivate();
         } else {
@@ -87,6 +88,7 @@ public abstract class DefaultEndpoint<E> implements Endpoint<E> {
     }
     public void deactivate() {
         if (deactivated.compareAndSet(false, true)) {
+            activated.set(false);
             doDeactivate();
         }
     }
