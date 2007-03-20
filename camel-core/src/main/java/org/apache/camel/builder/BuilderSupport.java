@@ -20,7 +20,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Exchange;
 
 /**
- * Base class for implementation inheritence
+ * Base class for implementation inheritance
  *
  * @version $Revision: $
  */
@@ -45,7 +45,7 @@ public abstract class BuilderSupport<E extends Exchange> {
     /**
      * Returns a predicate and value builder for the inbound message body as a specific type
      */
-    public ValueBuilder<E> bodyAs(Class type) {
+    public <T> ValueBuilder<E> bodyAs(Class<T> type) {
         Expression<E> expression = ExpressionBuilder.bodyExpression(type);
         return new ValueBuilder<E>(expression);
     }
@@ -61,7 +61,7 @@ public abstract class BuilderSupport<E extends Exchange> {
     /**
      * Returns a predicate and value builder for the outbound message body as a specific type
      */
-    public ValueBuilder<E> outBody(Class type) {
+    public <T> ValueBuilder<E> outBody(Class<T> type) {
         Expression<E> expression = ExpressionBuilder.bodyExpression(type);
         return new ValueBuilder<E>(expression);
     }

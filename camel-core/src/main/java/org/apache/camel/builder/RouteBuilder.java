@@ -47,7 +47,7 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     }
 
     /**
-     * Called on initialisation to to build the required destinationBuilders
+     * Called on initialization to to build the required destinationBuilders
      */
     public abstract void configure();
 
