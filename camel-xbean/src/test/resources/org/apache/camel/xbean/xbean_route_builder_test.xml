@@ -22,22 +22,26 @@
         from("queue:a").to("queue:b");
 	 -->
 	<RouteBuilder id="buildSimpleRoute">
-		<routes>
-		  <route from="queue:a" to="queue:b"/>
-		</routes>
+	   <routes>
+	      <route>
+			<from uri="queue:a"/>
+			<to uri="queue:b"/>
+	      </route>
+	   </routes>
 	</RouteBuilder>
 	
 	<!-- 
 		from("queue:a").process(myProcessor);
 	 -->
 	<RouteBuilder id="buildCustomProcessor">
-		<routes>
-		  <route from="queue:a">
-		  	<processor>
-		  	  <bean class="some.Processor"/>
-		  	</processor>		  	
-		  </route>
-		</routes>
+	   <routes>
+	      <route>
+			<from uri="queue:a"/>
+			<processor>
+		  	  <bean id="myProcessor" class="some.Processor"/>
+			</processor>
+	      </route>
+	   </routes>
 	</RouteBuilder>
 
 
@@ -45,9 +49,20 @@
         from("queue:a").filter(headerEquals("foo", "bar")).process(myProcessor);
 	 -->
 	<RouteBuilder id="buildCustomProcessorWithFilter">
-		<routes>
-		   <!-- TODO -->
-		</routes>
+	   <routes>
+	      <route>
+			<from uri="queue:a"/>
+			<filter>
+				<predicate>
+				   <header name="foo"/>
+				   <equalTo value="bar"/>
+				</predicate>
+			</filter>
+			<processor>
+		  	  <bean class="some.Processor"/>
+			</processor>
+	      </route>
+	   </routes>
 	</RouteBuilder>
 
 	<!-- 
@@ -58,39 +73,83 @@
    	       .target().to("queue:d");
 	 -->
 	<RouteBuilder id="buildRouteWithInterceptor">
-		<routes>
-		   <!-- TODO -->
-		</routes>
+	   <routes>
+	      <route>
+			<from uri="queue:a"/>
+			<intercept>
+				<bean id="interceptor1" class="some.InterceptorProcessor"/>
+				<bean id="interceptor2" class="some.InterceptorProcessor"/>
+			</intercept>
+			<to uri="queue:b"/>
+	      </route>
+	   </routes>
 	</RouteBuilder>
 
 	<!-- 
         from("queue:a").choice()
-                .when(headerEquals("foo", "bar")).to("queue:b")
-                .when(headerEquals("foo", "cheese")).to("queue:c")
+                .when(header("foo").isEqualTo("bar")).to("queue:b")
+                .when(header("foo").isEqualTo("cheese")).to("queue:c")
                 .otherwise().to("queue:d");
 	 -->
-	<RouteBuilder id="buildSimpleRouteWithChoice">
-		<routes>
-		   <!-- TODO -->
-		</routes>
-	</RouteBuilder>
+	<routeBuilder id="buildSimpleRouteWithChoice">
+	   <routes>
+	      <route>
+			<from uri="queue:a"/>
+			<choice>
+				<when>
+					<predicate>
+					   <header name="foo"/>
+					   <equalTo value="bar"/>
+					</predicate>
+  				    <to uri="queue:b"/>
+				</when>
+				
+				<when>
+					<predicate>
+					   <header name="foo"/>
+					   <equalTo value="cheese"/>
+					</predicate>
+				    <to uri="queue:c"/>
+				</when>
+				<otherwise>
+					<to uri="queue:d"/>
+				</otherwise>
+			</choice>
+	      </route>
+	   </routes>
+	</routeBuilder>
 
 	<!-- 
         from("queue:a").filter(headerEquals("foo", "bar")).to("queue:b");
 	 -->
 	<RouteBuilder id="buildSimpleRouteWithHeaderPredicate">
-		<routes>
-		   <!-- TODO -->
-		</routes>
+	   <routes>
+	      <route>
+			<from uri="queue:a"/>
+			<filter>
+				<predicate>
+				   <header name="foo"/>
+				   <equalTo value="bar"/>
+				</predicate>
+			</filter>
+			<to uri="queue:b"/>
+	      </route>
+	   </routes>
 	</RouteBuilder>
 
 	<!-- 
         from("queue:a").to("queue:tap", "queue:b");
 	 -->
 	<RouteBuilder id="buildWireTap">
-		<routes>
-		   <!-- TODO -->
-		</routes>
+	   <routes>
+	      <route>
+			<from uri="queue:a"/>
+			<to>
+			   <uri>queue:tap</uri>
+			   <uri>queue:a</uri>
+			</to>
+	      </route>
+	   </routes>
 	</RouteBuilder>
 
 </beans>
