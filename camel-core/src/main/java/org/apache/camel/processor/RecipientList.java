@@ -48,7 +48,7 @@ public class RecipientList<E extends Exchange> implements Processor<E> {
 
     public void onExchange(E exchange) {
         Object receipientList = expression.evaluate(exchange);
-        Iterator iter = ObjectHelper.createIterator(receipientList);
+        Iterator iter = ObjectHelper.iterator(receipientList);
         while (iter.hasNext()) {
             Object recipient = iter.next();
             Endpoint<E> endpoint = resolveEndpoint(exchange, recipient);

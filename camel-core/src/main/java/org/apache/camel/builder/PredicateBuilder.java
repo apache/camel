@@ -144,4 +144,41 @@ public class PredicateBuilder {
             }
         };
     }
+
+    public static <E extends Exchange> Predicate<E> isNull(final Expression<E> expression) {
+        notNull(expression, "expression");
+
+        return new Predicate<E>() {
+            public boolean evaluate(E exchange) {
+                Object value = expression.evaluate(exchange);
+                return value == null;
+            }
+        };
+    }
+
+    public static <E extends Exchange> Predicate<E> isNotNull(final Expression<E> expression) {
+        notNull(expression, "expression");
+
+        return new Predicate<E>() {
+            public boolean evaluate(E exchange) {
+                Object value = expression.evaluate(exchange);
+                return value != null;
+            }
+        };
+    }
+
+    public static <E extends Exchange> Predicate<E> contains(final Expression<E> left, final Expression<E> right) {
+        notNull(left, "left");
+        notNull(right, "right");
+
+        return new Predicate<E>() {
+            public boolean evaluate(E exchange) {
+                Object value1 = left.evaluate(exchange);
+                Object value2 = right.evaluate(exchange);
+                return ObjectHelper.contains(value1, value2);
+            }
+        };
+    }
+
+
 }

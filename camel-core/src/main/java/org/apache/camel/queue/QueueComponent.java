@@ -35,7 +35,7 @@ public class QueueComponent<E> implements Component<E> {
     private HashMap<String, BlockingQueue<E>> registry = new HashMap<String, BlockingQueue<E>>();
     private CamelContext container;
 
-    public void setContainer(CamelContext container) {
+    public void setContext(CamelContext container) {
         this.container = container;
     }
 
