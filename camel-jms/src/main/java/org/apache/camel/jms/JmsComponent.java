@@ -32,7 +32,7 @@ import javax.jms.Session;
 /**
  * @version $Revision$
  */
-public class JmsComponent implements Component<JmsExchange, JmsEndpoint> {
+public class JmsComponent implements Component<JmsExchange> {
     public static final String QUEUE_PREFIX = "queue/";
     public static final String TOPIC_PREFIX = "topic/";
 

@@ -15,39 +15,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jms;
+package org.apache.camel.queue;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
-import org.apache.activemq.ActiveMQConnectionFactory;
+
 import org.apache.camel.CamelContainer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.jms.JmsComponent.jmsComponentClientAcknowledge;
-
-import javax.jms.ConnectionFactory;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version $Revision$
+ * @version $Revision: 520220 $
  */
-public class JmsRouteTest extends TestCase {
+public class QueueRouteTest extends TestCase {
+	
+	static class StringExchange extends DefaultExchange<String, String, String> {		
+	}
+	
     public void testJmsRoute() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
         CamelContainer container = new CamelContainer();
 
-        // lets configure some componnets
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
-        container.addComponent("activemq", jmsComponentClientAcknowledge(connectionFactory));
-
         // lets add some routes
         container.routes(new RouteBuilder() {
             public void configure() {
-                from("jms:activemq:test.a").to("jms:activemq:test.b");
-                from("jms:activemq:test.b").process(new Processor<JmsExchange>() {
-                    public void onExchange(JmsExchange exchange) {
+                from("queue:test.a").to("queue:test.b");
+                from("queue:test.b").process(new Processor<StringExchange>() {
+                    public void onExchange(StringExchange exchange) {
                         System.out.println("Received exchange: " + exchange.getRequest());
                         latch.countDown();
                     }
@@ -59,11 +58,10 @@ public class JmsRouteTest extends TestCase {
         container.activateEndpoints();
         
         // now lets fire in a message
-        Endpoint<JmsExchange> endpoint = container.endpoint("jms:activemq:test.a");
-        JmsExchange exchange2 = endpoint.createExchange();
-        //exchange2.setInBody("Hello there!")
-        exchange2.setHeader("cheese", 123);
-        endpoint.send(exchange2);
+        Endpoint<StringExchange> endpoint = container.endpoint("queue:test.a");
+        StringExchange exchange = new StringExchange();
+        exchange.setHeader("cheese", 123);
+        endpoint.send(exchange);
 
         // now lets sleep for a while
         boolean received = latch.await(5, TimeUnit.SECONDS);

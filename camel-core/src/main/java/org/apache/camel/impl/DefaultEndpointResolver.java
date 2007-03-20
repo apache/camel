@@ -42,7 +42,6 @@ public class DefaultEndpointResolver<E> implements EndpointResolver<E> {
 		return resolver.resolveEndpoint(container, uri);
     }
 
-
 	public Component resolveComponent(CamelContainer container, String uri) {
     	EndpointResolver resolver = getDelegate(uri);
 		return resolver.resolveComponent(container, uri);
