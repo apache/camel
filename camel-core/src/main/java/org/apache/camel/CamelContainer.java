@@ -27,6 +27,7 @@ import org.apache.camel.impl.DefaultExchangeConverter;
 /**
  * Represents the container used to configure routes and the policies to use.
  *
+ * @org.apache.xbean.XBean element="container" rootElement="true"
  * @version $Revision$
  */
 public class CamelContainer<E> {

@@ -28,6 +28,7 @@ import org.apache.camel.Processor;
  * Represents the component that manages {@link QueueEndpoint}.  It holds the 
  * list of named queues that queue endpoints reference.
  *
+ * @org.apache.xbean.XBean
  * @version $Revision: 519973 $
  */
 public class QueueComponent<E> implements Component<E, QueueEndpoint<E>> {
