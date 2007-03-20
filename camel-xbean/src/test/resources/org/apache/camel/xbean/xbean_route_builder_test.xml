@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+   
+    http://www.apache.org/licenses/LICENSE-2.0
+   
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans>
+	<!-- Right now this is just ideas of what we wish the xml could look like -->
+
+	<!-- 
+        from("queue:a").to("queue:b");
+	 -->
+	<RouteBuilder id="buildSimpleRoute">
+		<routes>
+		  <route from="queue:a" to="queue:b"/>
+		</routes>
+	</RouteBuilder>
+	
+	<!-- 
+		from("queue:a").process(myProcessor);
+	 -->
+	<RouteBuilder id="buildCustomProcessor">
+		<routes>
+		  <route from="queue:a">
+		  	<processor>
+		  	  <bean class="some.Processor"/>
+		  	</processor>		  	
+		  </route>
+		</routes>
+	</RouteBuilder>
+
+
+	<!-- 
+        from("queue:a").filter(headerEquals("foo", "bar")).process(myProcessor);
+	 -->
+	<RouteBuilder id="buildCustomProcessorWithFilter">
+		<routes>
+		   <!-- TODO -->
+		</routes>
+	</RouteBuilder>
+
+	<!-- 
+        from("queue:a")
+           .intercept()
+   		      .add(interceptor1)
+   		      .add(interceptor2)
+   	       .target().to("queue:d");
+	 -->
+	<RouteBuilder id="buildRouteWithInterceptor">
+		<routes>
+		   <!-- TODO -->
+		</routes>
+	</RouteBuilder>
+
+	<!-- 
+        from("queue:a").choice()
+                .when(headerEquals("foo", "bar")).to("queue:b")
+                .when(headerEquals("foo", "cheese")).to("queue:c")
+                .otherwise().to("queue:d");
+	 -->
+	<RouteBuilder id="buildSimpleRouteWithChoice">
+		<routes>
+		   <!-- TODO -->
+		</routes>
+	</RouteBuilder>
+
+	<!-- 
+        from("queue:a").filter(headerEquals("foo", "bar")).to("queue:b");
+	 -->
+	<RouteBuilder id="buildSimpleRouteWithHeaderPredicate">
+		<routes>
+		   <!-- TODO -->
+		</routes>
+	</RouteBuilder>
+
+	<!-- 
+        from("queue:a").to("queue:tap", "queue:b");
+	 -->
+	<RouteBuilder id="buildWireTap">
+		<routes>
+		   <!-- TODO -->
+		</routes>
+	</RouteBuilder>
+
+</beans>
+<!-- END SNIPPET: example -->

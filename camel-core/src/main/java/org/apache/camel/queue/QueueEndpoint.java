@@ -26,6 +26,7 @@ import org.apache.camel.impl.DefaultExchange;
  * Represents a queue endpoint that uses a {@link Queue}
  * object to process inbound exchanges.
  *
+ * @org.apache.xbean.XBean
  * @version $Revision: 519973 $
  */
 public class QueueEndpoint<E> extends DefaultEndpoint<E> {

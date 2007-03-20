@@ -39,15 +39,22 @@ public class RouteBuilderTest extends TestCase {
             return "MyProcessor";
         }
     };
+	private InterceptorProcessor<Exchange> interceptor1;
+	private InterceptorProcessor<Exchange> interceptor2;
     
-    public void testSimpleRoute() throws Exception {
-        // START SNIPPET: e1
+	protected RouteBuilder<Exchange> buildSimpleRoute() {
+		// START SNIPPET: e1
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("queue:a").to("queue:b");
             }
         };
         // END SNIPPET: e1
+		return builder;
+	}
+
+	public void testSimpleRoute() throws Exception {
+        RouteBuilder<Exchange> builder = buildSimpleRoute();
 
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
         Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
@@ -63,14 +70,19 @@ public class RouteBuilderTest extends TestCase {
         }
     }
 
-    public void testSimpleRouteWithHeaderPredicate() throws Exception {
-        // START SNIPPET: e2
+	protected RouteBuilder<Exchange> buildSimpleRouteWithHeaderPredicate() {
+		// START SNIPPET: e2
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("queue:a").filter(headerEquals("foo", "bar")).to("queue:b");
             }
         };
         // END SNIPPET: e2
+		return builder;
+	}
+
+	public void testSimpleRouteWithHeaderPredicate() throws Exception {
+        RouteBuilder<Exchange> builder = buildSimpleRouteWithHeaderPredicate();
 
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
         System.out.println("Created map: " + routeMap);
@@ -90,8 +102,8 @@ public class RouteBuilderTest extends TestCase {
         }
     }
 
-    public void testSimpleRouteWithChoice() throws Exception {
-        // START SNIPPET: e3
+	protected RouteBuilder<Exchange> buildSimpleRouteWithChoice() {
+		// START SNIPPET: e3
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("queue:a").choice()
@@ -101,6 +113,11 @@ public class RouteBuilderTest extends TestCase {
             }
         };
         // END SNIPPET: e3
+		return builder;
+	}
+
+    public void testSimpleRouteWithChoice() throws Exception {
+        RouteBuilder<Exchange> builder = buildSimpleRouteWithChoice();
 
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
         System.out.println("Created map: " + routeMap);
@@ -128,9 +145,9 @@ public class RouteBuilderTest extends TestCase {
         }
     }
 
-    public void testCustomProcessor() throws Exception {
-        // START SNIPPET: e4
-        final Processor<Exchange> myProcessor = new Processor<Exchange>() {
+    protected RouteBuilder<Exchange> buildCustomProcessor() {
+		// START SNIPPET: e4
+        myProcessor = new Processor<Exchange>() {
             public void onExchange(Exchange exchange) {
                 System.out.println("Called with exchange: " + exchange);
             }
@@ -142,6 +159,11 @@ public class RouteBuilderTest extends TestCase {
             }
         };
         // END SNIPPET: e4
+		return builder;
+	}
+
+	public void testCustomProcessor() throws Exception {
+        RouteBuilder<Exchange> builder = buildCustomProcessor();
 
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
 
@@ -156,14 +178,20 @@ public class RouteBuilderTest extends TestCase {
         }
     }
 
-    public void testCustomProcessorWithFilter() throws Exception {
-        // START SNIPPET: e5
+
+	protected RouteBuilder<Exchange> buildCustomProcessorWithFilter() {
+		// START SNIPPET: e5
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("queue:a").filter(headerEquals("foo", "bar")).process(myProcessor);
             }
         };
         // END SNIPPET: e5
+		return builder;
+	}
+
+	public void testCustomProcessorWithFilter() throws Exception {
+        RouteBuilder<Exchange> builder = buildCustomProcessorWithFilter();
 
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
         System.out.println("Created map: " + routeMap);
@@ -181,14 +209,20 @@ public class RouteBuilderTest extends TestCase {
         }
     }
 
-    public void testWireTap() throws Exception {
-        // START SNIPPET: e6
+
+	protected RouteBuilder<Exchange> buildWireTap() {
+		// START SNIPPET: e6
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("queue:a").to("queue:tap", "queue:b");
             }
         };
         // END SNIPPET: e6
+		return builder;
+	}
+
+    public void testWireTap() throws Exception {
+        RouteBuilder<Exchange> builder = buildWireTap();
 
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
         System.out.println("Created map: " + routeMap);
@@ -209,14 +243,13 @@ public class RouteBuilderTest extends TestCase {
             assertSendTo(processors.get(1), "queue:b");
         }
     }
-
-    public void testRouteWithInterceptor() throws Exception {
-    	
-        final InterceptorProcessor<Exchange> interceptor1 = new InterceptorProcessor<Exchange>() {
+    
+    protected RouteBuilder<Exchange> buildRouteWithInterceptor() {
+		interceptor1 = new InterceptorProcessor<Exchange>() {
         };
 
         // START SNIPPET: e7        
-        final InterceptorProcessor<Exchange> interceptor2 = new InterceptorProcessor<Exchange>() {
+        interceptor2 = new InterceptorProcessor<Exchange>() {
         	public void onExchange(Exchange exchange) {
         		System.out.println("START of onExchange: "+exchange);
         		next.onExchange(exchange);
@@ -234,6 +267,12 @@ public class RouteBuilderTest extends TestCase {
             }
         };
         // END SNIPPET: e7
+		return builder;
+	}
+
+    public void testRouteWithInterceptor() throws Exception {
+    	
+        RouteBuilder<Exchange> builder = buildRouteWithInterceptor();
 
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
         System.out.println("Created map: " + routeMap);
