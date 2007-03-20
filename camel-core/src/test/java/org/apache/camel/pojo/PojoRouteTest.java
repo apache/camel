@@ -31,9 +31,6 @@ import org.apache.camel.impl.DefaultExchange;
  */
 public class PojoRouteTest extends TestCase {
 	
-	static class StringExchange extends DefaultExchange<String, String, String> {		
-	}
-	
     public void testJmsRoute() throws Exception {
 
         CamelContainer container = new CamelContainer();

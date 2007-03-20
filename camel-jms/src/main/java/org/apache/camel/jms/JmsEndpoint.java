@@ -81,17 +81,12 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> implements Message
     }
 
     public JmsExchange createExchange() {
-        return new DefaultJmsExchange();
+        return new DefaultJmsExchange(getContainer());
     }
 
 
     public JmsExchange createExchange(Message message) {
-        return new DefaultJmsExchange(message);
-    }
-
-
-    protected MessageListener createMessageListener(Processor<Exchange> processor) {
-        return new MessageListenerProcessor(processor);
+        return new DefaultJmsExchange(getContainer(), message);
     }
 
 

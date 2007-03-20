@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.CamelContainer;
 
 /**
  * A base class useful for implementing other typesafe exchanges
@@ -29,6 +30,11 @@ public abstract class ExchangeSupport<M,R,F> implements Exchange<M,R,F> {
     private F fault;
     private Exception exception;
     private String exchangeId;
+    protected final CamelContainer container;
+
+    public ExchangeSupport(CamelContainer container) {
+        this.container = container;
+    }
 
     public Exception getException() {
         return exception;
@@ -72,4 +78,7 @@ public abstract class ExchangeSupport<M,R,F> implements Exchange<M,R,F> {
         this.exchangeId=id;
     }
 
+    public CamelContainer getContainer() {
+        return container;
+    }
 }

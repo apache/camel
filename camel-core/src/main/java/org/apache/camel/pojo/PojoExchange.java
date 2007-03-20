@@ -14,45 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
-
-import org.apache.camel.CamelContainer;
-import org.apache.camel.Exchange;
+package org.apache.camel.pojo;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.impl.ExchangeSupport;
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.CamelContainer;
+
 /**
- * A default implementation of {@link Exchange}
- *
- * @version $Revision$
+ * @version $Revision: 519901 $
  */
-public class DefaultExchange<M, R, F> extends ExchangeSupport<M, R, F> {
-    private Map<String, Object> headers;
+public class PojoExchange extends DefaultExchange<PojoInvocation, Object, Throwable> {
 
-    public DefaultExchange(CamelContainer container) {
+    public PojoExchange(CamelContainer container) {
         super(container);
-    }
-
-    public Object getHeader(String name) {
-        if (headers != null) {
-            return headers.get(name);
-        }
-        return null;
-    }
-
-    public void setHeader(String name, Object value) {
-        if (headers == null) {
-            headers = new HashMap<String, Object>();
-        }
-        headers.put(name, value);
-    }
-
-    public Map<String, Object> getHeaders() {
-        return headers;
-    }
-
-    public void setHeaders(Map<String, Object> headers) {
-        this.headers = headers;
     }
 }
