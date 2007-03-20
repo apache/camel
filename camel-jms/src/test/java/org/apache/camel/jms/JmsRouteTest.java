@@ -27,16 +27,18 @@ import static org.apache.camel.jms.JmsComponent.jmsComponent;
 import org.springframework.jms.core.JmsTemplate;
 
 import javax.jms.Session;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Revision$
  */
 public class JmsRouteTest extends TestCase {
     public void testJmsRoute() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+
         CamelContainer container = new CamelContainer();
 
-        System.out.println("Created container: " + container);
-        
         // lets configure some componnets
         JmsTemplate template = new JmsTemplate(new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false"));
         template.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
@@ -51,6 +53,7 @@ public class JmsRouteTest extends TestCase {
                 from("jms:activemq:test.b").process(new Processor<JmsExchange>() {
                     public void onExchange(JmsExchange exchange) {
                         System.out.println("Received exchange: " + exchange.getRequest());
+                        latch.countDown();
                     }
                 });
             }
@@ -64,7 +67,8 @@ public class JmsRouteTest extends TestCase {
         endpoint.send(exchange2);
 
         // now lets sleep for a while
-        Thread.sleep(3000);
+        boolean received = latch.await(5, TimeUnit.SECONDS);
+        assertTrue("Did not recieve the message!", received);
 
         // TODO
         //container.stop();
