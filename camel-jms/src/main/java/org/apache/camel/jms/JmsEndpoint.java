@@ -61,10 +61,10 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> implements Message
     public void send(Exchange exchange) {
         // lets convert to the type of an exchange
         JmsExchange jmsExchange = convertTo(JmsExchange.class, exchange);
-        send(jmsExchange);
+        onExchange(jmsExchange);
     }
 
-    public void send(final JmsExchange exchange) {
+    public void onExchange(final JmsExchange exchange) {
         template.send(destination, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 Message message = exchange.createMessage(session);

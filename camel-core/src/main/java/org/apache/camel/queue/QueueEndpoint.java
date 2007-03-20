@@ -42,7 +42,7 @@ public class QueueEndpoint<E> extends DefaultEndpoint<E> {
         this.queue = queue;
     }
 
-    public void send(E exchange) {
+    public void onExchange(E exchange) {
         queue.add(exchange);
     }
 
