@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.apache.camel.CamelContainer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 
 /**
@@ -33,9 +33,9 @@ import org.apache.camel.Component;
 public class QueueComponent<E> implements Component<E> {
 	
     private HashMap<String, BlockingQueue<E>> registry = new HashMap<String, BlockingQueue<E>>();
-    private CamelContainer container;
+    private CamelContext container;
 
-    public void setContainer(CamelContainer container) {
+    public void setContainer(CamelContext container) {
         this.container = container;
     }
 
@@ -52,7 +52,7 @@ public class QueueComponent<E> implements Component<E> {
 		return new LinkedBlockingQueue<E>();
 	}
 
-	public CamelContainer getContainer() {
+	public CamelContext getContainer() {
 		return container;
 	}
 

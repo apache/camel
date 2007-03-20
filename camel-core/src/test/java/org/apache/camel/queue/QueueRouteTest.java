@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
 
-import org.apache.camel.CamelContainer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,7 +34,7 @@ import org.apache.camel.impl.DefaultExchange;
 public class QueueRouteTest extends TestCase {
 	
 	static class StringExchange extends DefaultExchange<String, String, String> {
-        public StringExchange(CamelContainer container) {
+        public StringExchange(CamelContext container) {
             super(container);
         }
     }
@@ -42,7 +42,7 @@ public class QueueRouteTest extends TestCase {
     public void testJmsRoute() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
-        CamelContainer container = new CamelContainer();
+        CamelContext container = new CamelContext();
 
         // lets add some routes
         container.routes(new RouteBuilder() {

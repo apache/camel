@@ -18,6 +18,12 @@ package org.apache.camel;
 
 import junit.framework.TestCase;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.processor.ChoiceProcessor;
+import org.apache.camel.processor.CompositeProcessor;
+import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.processor.InterceptorProcessor;
+import org.apache.camel.processor.RecipientList;
 
 import java.util.ArrayList;
 import java.util.List;

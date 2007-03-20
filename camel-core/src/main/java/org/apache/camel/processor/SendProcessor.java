@@ -15,33 +15,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.processor;
+
+import org.apache.camel.Processor;
+import org.apache.camel.Endpoint;
 
 /**
- * @version $Revision: 519941 $
+ * @version $Revision$
  */
-public class InterceptorProcessor<E> implements Processor<E> {
+public class SendProcessor<E> implements Processor<E> {
+    private Endpoint<E> destination;
 
-    protected Processor<E> next;
-
-	public InterceptorProcessor() {
+    public SendProcessor(Endpoint<E> destination) {
+        this.destination = destination;
     }
 
     public void onExchange(E exchange) {
-       if( next != null ) {
-    	   next.onExchange(exchange);
-       }
+        destination.onExchange(exchange);
+    }
+
+    public Endpoint<E> getDestination() {
+        return destination;
     }
 
     @Override
     public String toString() {
-        return "intercept(" + next + ")";
+        return "sendTo(" + destination + ")";
     }
-
-	public Processor<E> getNext() {
-		return next;
-	}
-	public void setNext(Processor<E> next) {
-		this.next = next;
-	}
 }

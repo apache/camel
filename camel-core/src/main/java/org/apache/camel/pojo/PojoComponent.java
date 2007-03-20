@@ -18,7 +18,7 @@ package org.apache.camel.pojo;
 
 import java.util.HashMap;
 
-import org.apache.camel.CamelContainer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 
 /**
@@ -32,7 +32,7 @@ public class PojoComponent implements Component<PojoExchange> {
     private final HashMap<String, Object> registry = new HashMap<String, Object>();
     private final HashMap<String, PojoEndpoint> activatedEndpoints = new HashMap<String, PojoEndpoint>();
     
-	private CamelContainer container;
+	private CamelContext container;
 
 	public void registerPojo(String uri, Object pojo) {
 		registry.put(uri, pojo);
@@ -52,10 +52,10 @@ public class PojoComponent implements Component<PojoExchange> {
 	}
 	
 	
-	public void setContainer(CamelContainer container) {
+	public void setContainer(CamelContext container) {
 		this.container = container;
 	}
-	public CamelContainer getContainer() {
+	public CamelContext getContainer() {
 		return container;
 	}
     

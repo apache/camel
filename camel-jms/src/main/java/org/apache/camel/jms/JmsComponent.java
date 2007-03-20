@@ -18,7 +18,7 @@
 package org.apache.camel.jms;
 
 import com.sun.jndi.toolkit.url.Uri;
-import org.apache.camel.CamelContainer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ObjectHelper;
@@ -36,7 +36,7 @@ public class JmsComponent implements Component<JmsExchange> {
     public static final String QUEUE_PREFIX = "queue/";
     public static final String TOPIC_PREFIX = "topic/";
 
-    private CamelContainer container;
+    private CamelContext container;
     private JmsTemplate template;
 
     /**
@@ -79,7 +79,7 @@ public class JmsComponent implements Component<JmsExchange> {
         this.template = template;
     }
 
-    public JmsComponent(CamelContainer container) {
+    public JmsComponent(CamelContext container) {
         this();
         this.container = container;
     }
@@ -136,11 +136,11 @@ public class JmsComponent implements Component<JmsExchange> {
     }
 
 
-    public CamelContainer getContainer() {
+    public CamelContext getContainer() {
         return container;
     }
 
-    public void setContainer(CamelContainer container) {
+    public void setContainer(CamelContext container) {
         this.container = container;
     }
 

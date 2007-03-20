@@ -17,7 +17,7 @@
 package org.apache.camel.jms;
 
 /**
- * Some helper builder methods for the easy configuration of the {@link org.apache.camel.CamelContainer} via Java code.
+ * Some helper builder methods for the easy configuration of the {@link org.apache.camel.CamelContext} via Java code.
  *
  * @version $Revision: $
  */

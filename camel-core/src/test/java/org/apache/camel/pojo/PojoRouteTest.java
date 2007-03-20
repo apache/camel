@@ -21,10 +21,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
 
-import org.apache.camel.CamelContainer;
-import org.apache.camel.InterceptorProcessor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.InterceptorProcessor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultExchange;
 
 /**
  * @version $Revision: 520220 $
@@ -33,7 +32,7 @@ public class PojoRouteTest extends TestCase {
 	
     public void testJmsRoute() throws Exception {
 
-        CamelContainer container = new CamelContainer();
+        CamelContext container = new CamelContext();
         PojoComponent component = new PojoComponent();
         component.registerPojo("hello", new SayService("Hello!"));
         component.registerPojo("bye", new SayService("Good Bye!"));

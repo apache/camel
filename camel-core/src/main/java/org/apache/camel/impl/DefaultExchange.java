@@ -16,7 +16,7 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.CamelContainer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 
 import java.util.HashMap;
@@ -30,7 +30,7 @@ import java.util.Map;
 public class DefaultExchange<M, R, F> extends ExchangeSupport<M, R, F> {
     private Map<String, Object> headers;
 
-    public DefaultExchange(CamelContainer container) {
+    public DefaultExchange(CamelContext container) {
         super(container);
     }
 

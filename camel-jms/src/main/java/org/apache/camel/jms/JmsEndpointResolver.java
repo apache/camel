@@ -18,7 +18,7 @@
 package org.apache.camel.jms;
 
 import org.apache.axis.transport.jms.JMSEndpoint;
-import org.apache.camel.CamelContainer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.EndpointResolver;
 import org.apache.camel.queue.QueueComponent;
@@ -46,7 +46,7 @@ public class JmsEndpointResolver implements EndpointResolver<JmsExchange> {
 	 * Finds the {@see JmsComponent} specified by the uri.  If the {@see JmsComponent}
 	 * object do not exist, it will be created.
 	 */
-	public Component resolveComponent(CamelContainer container, String uri) {
+	public Component resolveComponent(CamelContext container, String uri) {
 		String id[] = getEndpointId(uri);        
 		return resolveJmsComponent(container, id[0]);
 	}
@@ -55,7 +55,7 @@ public class JmsEndpointResolver implements EndpointResolver<JmsExchange> {
 	 * Finds the {@see QueueEndpoint} specified by the uri.  If the {@see QueueEndpoint} or it's associated
 	 * {@see QueueComponent} object do not exist, they will be created.
 	 */
-	public JmsEndpoint resolveEndpoint(CamelContainer container, String uri) {
+	public JmsEndpoint resolveEndpoint(CamelContext container, String uri) {
 		String id[] = getEndpointId(uri);        
     	JmsComponent component = resolveJmsComponent(container, id[0]);
         return component.createEndpoint(uri, id[1]);
@@ -77,7 +77,7 @@ public class JmsEndpointResolver implements EndpointResolver<JmsExchange> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private JmsComponent resolveJmsComponent(final CamelContainer container, final String componentName) {
+	private JmsComponent resolveJmsComponent(final CamelContext container, final String componentName) {
     	Component rc = container.getOrCreateComponent(componentName, new Callable<JmsComponent>(){
 			public JmsComponent call() throws Exception {
                 return new JmsComponent(container);

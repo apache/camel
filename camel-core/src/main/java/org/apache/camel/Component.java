@@ -26,7 +26,7 @@ public interface Component<E>  {
     /**
      * The CamelContainer is injected into the component when it is added to it
      */
-    void setContainer(CamelContainer container);
+    void setContainer(CamelContext container);
 
 	
 }

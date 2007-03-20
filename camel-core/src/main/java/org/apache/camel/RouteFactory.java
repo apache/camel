@@ -20,7 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 /**
  * A simple callback that POJOs can implement to be called back by the
- * {@link CamelContainer} with a properly configured {@link RouteBuilder}
+ * {@link CamelContext} with a properly configured {@link RouteBuilder}
  * to build routes
  *
  * @version $Revision: $

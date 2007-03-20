@@ -16,7 +16,7 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.CamelContainer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
 import org.apache.camel.Exchange;
@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version $Revision$
  */
 public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E> {
-    private CamelContainer<E> container;
+    private CamelContext<E> container;
     private List<DestinationBuilder<E>> destinationBuilders = new ArrayList<DestinationBuilder<E>>();
     private AtomicBoolean initalized = new AtomicBoolean(false);
     private Map<Endpoint<E>, Processor<E>> routeMap = new HashMap<Endpoint<E>, Processor<E>>();
@@ -44,7 +44,7 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     protected RouteBuilder() {
     }
 
-    protected RouteBuilder(CamelContainer<E> container) {
+    protected RouteBuilder(CamelContext<E> container) {
         this.container = container;
     }
 
@@ -57,7 +57,7 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
      * Resolves the given URI to an endpoint
      */
     public Endpoint<E> endpoint(String uri) {
-         CamelContainer<E> c = getContainer();
+         CamelContext<E> c = getContainer();
          EndpointResolver<E> er = c.getEndpointResolver();
          return er.resolveEndpoint(c, uri);
     }
@@ -90,14 +90,14 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     // Properties
     //-----------------------------------------------------------------------
 
-    public CamelContainer<E> getContainer() {
+    public CamelContext<E> getContainer() {
         if (container == null) {
             container = createContainer();
         }
         return container;
     }
 
-    public void setContainer(CamelContainer<E> container) {
+    public void setContainer(CamelContext<E> container) {
         this.container = container;
     }
 
@@ -138,7 +138,7 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
         }
     }
 
-    protected CamelContainer<E> createContainer() {
-        return new CamelContainer<E>();
+    protected CamelContext<E> createContainer() {
+        return new CamelContext<E>();
     }
 }

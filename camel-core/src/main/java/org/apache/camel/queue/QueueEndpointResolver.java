@@ -19,7 +19,7 @@ package org.apache.camel.queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 
-import org.apache.camel.CamelContainer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
@@ -46,9 +46,9 @@ public class QueueEndpointResolver<E extends Exchange> implements EndpointResolv
 	 * Finds the {@see QueueComponent} specified by the uri.  If the {@see QueueComponent} 
 	 * object do not exist, it will be created.
 	 * 
-	 * @see org.apache.camel.EndpointResolver#resolveComponent(org.apache.camel.CamelContainer, java.lang.String)
+	 * @see org.apache.camel.EndpointResolver#resolveComponent(org.apache.camel.CamelContext, java.lang.String)
 	 */
-	public Component resolveComponent(CamelContainer container, String uri) {
+	public Component resolveComponent(CamelContext container, String uri) {
 		String id[] = getEndpointId(uri);        
     	return resolveQueueComponent(container, id[0]);  
 	}
@@ -57,9 +57,9 @@ public class QueueEndpointResolver<E extends Exchange> implements EndpointResolv
 	 * Finds the {@see QueueEndpoint} specified by the uri.  If the {@see QueueEndpoint} or it's associated
 	 * {@see QueueComponent} object do not exist, they will be created.
 	 * 
-	 * @see org.apache.camel.EndpointResolver#resolveEndpoint(org.apache.camel.CamelContainer, java.lang.String)
+	 * @see org.apache.camel.EndpointResolver#resolveEndpoint(org.apache.camel.CamelContext, java.lang.String)
 	 */
-	public Endpoint<E> resolveEndpoint(CamelContainer container, String uri) {
+	public Endpoint<E> resolveEndpoint(CamelContext container, String uri) {
 		String id[] = getEndpointId(uri);        
     	QueueComponent<E> component = resolveQueueComponent(container, id[0]);  
     	BlockingQueue<E> queue = component.getOrCreateQueue(id[1]);
@@ -82,7 +82,7 @@ public class QueueEndpointResolver<E extends Exchange> implements EndpointResolv
 	}
 	
 	@SuppressWarnings("unchecked")
-	private QueueComponent<E> resolveQueueComponent(CamelContainer container, String componentName) {
+	private QueueComponent<E> resolveQueueComponent(CamelContext container, String componentName) {
     	Component rc = container.getOrCreateComponent(componentName, new Callable<Component<E>>(){
 			public Component<E> call() throws Exception {
 				return new QueueComponent<E>();

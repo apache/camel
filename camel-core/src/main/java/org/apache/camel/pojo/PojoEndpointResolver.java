@@ -16,7 +16,7 @@
  */
 package org.apache.camel.pojo;
 
-import org.apache.camel.CamelContainer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.EndpointResolver;
 import org.apache.camel.util.ObjectHelper;
@@ -37,9 +37,9 @@ public class PojoEndpointResolver implements EndpointResolver<PojoExchange> {
 	 * Finds the {@see QueueComponent} specified by the uri.  If the {@see QueueComponent} 
 	 * object do not exist, it will be created.
 	 * 
-	 * @see org.apache.camel.EndpointResolver#resolveComponent(org.apache.camel.CamelContainer, java.lang.String)
+	 * @see org.apache.camel.EndpointResolver#resolveComponent(org.apache.camel.CamelContext, java.lang.String)
 	 */
-	public Component resolveComponent(CamelContainer container, String uri) {
+	public Component resolveComponent(CamelContext container, String uri) {
 		String id[] = getEndpointId(uri);        
 		return resolveQueueComponent(container, id[0]);
 	}
@@ -48,16 +48,16 @@ public class PojoEndpointResolver implements EndpointResolver<PojoExchange> {
 	 * Finds the {@see QueueEndpoint} specified by the uri.  If the {@see QueueEndpoint} or it's associated
 	 * {@see QueueComponent} object do not exist, they will be created.
 	 * 
-	 * @see org.apache.camel.EndpointResolver#resolveEndpoint(org.apache.camel.CamelContainer, java.lang.String)
+	 * @see org.apache.camel.EndpointResolver#resolveEndpoint(org.apache.camel.CamelContext, java.lang.String)
 	 */
-	public PojoEndpoint resolveEndpoint(CamelContainer container, String uri) {
+	public PojoEndpoint resolveEndpoint(CamelContext container, String uri) {
 		String id[] = getEndpointId(uri);        
     	PojoComponent component = resolveQueueComponent(container, id[0]);        
         Object pojo = component.lookupRegisteredPojo(id[1]);
 		return new PojoEndpoint(uri, container, component, pojo);
     }
 
-	private PojoComponent resolveQueueComponent(CamelContainer container, String componentName) {
+	private PojoComponent resolveQueueComponent(CamelContext container, String componentName) {
     	Component rc = container.getComponent(componentName);
     	if( rc == null ) {
     		throw new IllegalArgumentException("Invalid URI, pojo component does not exist: "+componentName);

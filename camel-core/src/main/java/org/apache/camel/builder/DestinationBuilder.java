@@ -16,10 +16,10 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.CompositeProcessor;
+import org.apache.camel.processor.CompositeProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.InterceptorProcessor;
+import org.apache.camel.processor.InterceptorProcessor;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 
