@@ -62,7 +62,20 @@ public class ValueBuilder<E extends Exchange> {
         return PredicateBuilder.isGreaterThanOrEqualTo(expression, right);
     }
 
+    public Predicate<E> isInstanceOf(Class type) {
+        return PredicateBuilder.isInstanceOf(expression, type);
+    }
+
     public Expression<E> getExpression() {
         return expression;
+    }
+
+    public ValueBuilder<E> tokenize() {
+        return tokenize("\n");
+    }
+
+    public ValueBuilder<E> tokenize(String token) {
+        Expression<E> newExp = ExpressionBuilder.tokenizeExpression(expression, token);
+        return new ValueBuilder<E>(newExp);
     }
 }

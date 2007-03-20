@@ -24,6 +24,7 @@ import java.util.concurrent.Callable;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultEndpointResolver;
 import org.apache.camel.impl.DefaultExchangeConverter;
+import org.apache.camel.impl.DefaultTypeConverter;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -37,6 +38,7 @@ public class CamelContext<E extends Exchange> {
     private ExchangeConverter exchangeConverter;
     private Map<String, Component> components = new HashMap<String, Component>();
 	private Map<Endpoint<E>, Processor<E>> routes;
+    private TypeConverter typeConverter;
     
     /**
      * Activates all the starting endpoints in that were added as routes.
@@ -57,6 +59,35 @@ public class CamelContext<E extends Exchange> {
             endpoint.deactivate();
         }
     }
+
+
+    public Component getOrCreateComponent(String componentName, Callable<Component<E>> factory) {
+        synchronized (components) {
+            Component component = components.get(componentName);
+            if (component == null) {
+                try {
+                    component = factory.call();
+                    if (component == null) {
+                        throw new IllegalArgumentException("Factory failed to create the " + componentName + " component, it returned null.");
+                    }
+                    components.put(componentName, component);
+                    component.setContainer(this);
+                }
+                catch (Exception e) {
+                    throw new IllegalArgumentException("Factory failed to create the " + componentName + " component", e);
+                }
+            }
+            return component;
+        }
+    }
+
+    public Component getComponent(String componentName) {
+        synchronized (components) {
+            Component component = components.get(componentName);
+            return component;
+        }
+    }
+
 
     // Builder APIs
     //-----------------------------------------------------------------------
@@ -123,43 +154,41 @@ public class CamelContext<E extends Exchange> {
         this.exchangeConverter = exchangeConverter;
     }
 
+    public TypeConverter getTypeConverter() {
+        if (typeConverter == null) {
+            typeConverter = createTypeConverter();
+        }
+        return typeConverter;
+    }
+
+    public void setTypeConverter(TypeConverter typeConverter) {
+        this.typeConverter = typeConverter;
+    }
+
     // Implementation methods
     //-----------------------------------------------------------------------
+
+    /**
+     * Lazily create a default implementation
+     */
     protected EndpointResolver<E> createEndpointResolver() {
         return new DefaultEndpointResolver<E>();
     }
 
+
     /**
-     * Lazily create a default exchange converter implementation
+     * Lazily create a default implementation
      */
     protected ExchangeConverter createExchangeConverter() {
         return new DefaultExchangeConverter();
     }
 
-    public Component getOrCreateComponent(String componentName, Callable<Component<E>> factory) {
-        synchronized (components) {
-            Component component = components.get(componentName);
-            if (component == null) {
-                try {
-                    component = factory.call();
-                    if (component == null) {
-                        throw new IllegalArgumentException("Factory failed to create the " + componentName + " component, it returned null.");
-                    }
-                    components.put(componentName, component);
-                    component.setContainer(this);
-                }
-                catch (Exception e) {
-                    throw new IllegalArgumentException("Factory failed to create the " + componentName + " component", e);
-                }
-            }
-            return component;
-        }
+
+    /**
+     * Lazily create a default implementation
+     */
+    private TypeConverter createTypeConverter() {
+        return new DefaultTypeConverter();
     }
 
-    public Component getComponent(String componentName) {
-        synchronized (components) {
-            Component component = components.get(componentName);
-            return component;
-        }
-    }
 }

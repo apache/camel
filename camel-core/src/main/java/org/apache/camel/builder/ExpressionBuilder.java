@@ -19,11 +19,14 @@ package org.apache.camel.builder;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 
+import java.util.StringTokenizer;
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * @version $Revision: $
  */
 public class ExpressionBuilder {
-
     /**
      * Returns an expression for the header value with the given name
      *
@@ -47,6 +50,7 @@ public class ExpressionBuilder {
             }
         };
     }
+
     /**
      * Returns an expression for the contant value
      *
@@ -62,6 +66,78 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "" + value;
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the exchanges inbound message body
+     */
+    public static <E extends Exchange> Expression<E> bodyExpression() {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange.getIn().getBody();
+            }
+
+            @Override
+            public String toString() {
+                return "Body";
+            }
+        };
+    }
+
+
+    /**
+     * Returns the expression for the exchanges inbound message body converted to the given type
+     */
+    public static <E extends Exchange> Expression<E> bodyExpression(final Class type) {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange.getIn().getBody(type);
+            }
+
+            @Override
+            public String toString() {
+                return "BodyAs[" + type.getName() + "]";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the out messages body
+     */
+    public static <E extends Exchange> Expression<E> outBodyExpression() {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange.getOut().getBody();
+            }
+
+            @Override
+            public String toString() {
+                return "OutBody";
+            }
+        };
+    }
+
+    /**
+     * Returns a tokenize expression which will tokenize the string with the given token
+     */
+    public static <E extends Exchange> Expression<E> tokenizeExpression(final Expression<E> expression, final String token) {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                Object value = expression.evaluate(exchange);
+                String text = exchange.getContext().getTypeConverter().convertTo(String.class, value);
+                StringTokenizer iter = new StringTokenizer(text, token);
+                List<String> answer = new ArrayList<String>();
+                while (iter.hasMoreTokens()) {
+                    answer.add(iter.nextToken());
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "tokenize(" + expression + ", " + token + ")";
             }
         };
     }

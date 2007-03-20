@@ -32,4 +32,39 @@ public abstract class BuilderSupport<E extends Exchange> {
     public ValueBuilder<E> header(String name) {
         Expression<E> expression = ExpressionBuilder.headerExpression(name);
         return new ValueBuilder<E>(expression);
-    }}
+    }
+
+    /**
+     * Returns a predicate and value builder for the inbound body on an exchange
+     */
+    public ValueBuilder<E> body() {
+        Expression<E> expression = ExpressionBuilder.bodyExpression();
+        return new ValueBuilder<E>(expression);
+    }
+
+    /**
+     * Returns a predicate and value builder for the inbound message body as a specific type
+     */
+    public ValueBuilder<E> bodyAs(Class type) {
+        Expression<E> expression = ExpressionBuilder.bodyExpression(type);
+        return new ValueBuilder<E>(expression);
+    }
+
+    /**
+     * Returns a predicate and value builder for the outbound body on an exchange
+     */
+    public ValueBuilder<E> outBody() {
+        Expression<E> expression = ExpressionBuilder.bodyExpression();
+        return new ValueBuilder<E>(expression);
+    }
+
+    /**
+     * Returns a predicate and value builder for the outbound message body as a specific type
+     */
+    public ValueBuilder<E> outBody(Class type) {
+        Expression<E> expression = ExpressionBuilder.bodyExpression(type);
+        return new ValueBuilder<E>(expression);
+    }
+
+
+}
