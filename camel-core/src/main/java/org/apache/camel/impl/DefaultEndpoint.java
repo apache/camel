@@ -16,11 +16,13 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.CamelContainer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangeConverter;
-import org.apache.camel.CamelContainer;
+import org.apache.camel.Processor;
 import org.apache.camel.util.ObjectHelper;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @version $Revision$
@@ -28,6 +30,9 @@ import org.apache.camel.util.ObjectHelper;
 public abstract class DefaultEndpoint<E> implements Endpoint<E> {
     private String endpointUri;
     private CamelContainer container;
+    private Processor<E> inboundProcessor;
+    private AtomicBoolean activated = new AtomicBoolean(false);
+    private AtomicBoolean deactivated = new AtomicBoolean(false);
 
     protected DefaultEndpoint(String endpointUri, CamelContainer container) {
         this.endpointUri = endpointUri;
@@ -69,6 +74,42 @@ public abstract class DefaultEndpoint<E> implements Endpoint<E> {
             return type.cast(exchange);
         }
         return getContainer().getExchangeConverter().convertTo(type, exchange);
+    }
+
+
+    public void activate() {
+        if (activated.compareAndSet(false, true)) {
+            doActivate();
+        }
+    }
+    public void deactivate() {
+        if (deactivated.compareAndSet(false, true)) {
+            doDeactivate();
+        }
+    }
+
+    /**
+     * The processor used to process inbound message exchanges
+     */
+    public Processor<E> getInboundProcessor() {
+        return inboundProcessor;
+    }
+
+    public void setInboundProcessor(Processor<E> inboundProcessor) {
+        this.inboundProcessor = inboundProcessor;
+        activate();
+    }
+
+    /**
+     * Called at most once by the container to activate the endpoint
+     */
+    protected void doActivate() {
+    }
+
+    /**
+     * Called at most once by the container to deactivate the endpoint
+     */
+    protected void doDeactivate() {
     }
 
 }

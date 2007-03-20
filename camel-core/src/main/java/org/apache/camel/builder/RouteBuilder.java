@@ -16,12 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.camel.CamelContainer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
@@ -29,6 +23,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ObjectHelper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A builder of destinationBuilders using a typesafe Java DLS.
@@ -40,6 +40,13 @@ public abstract class RouteBuilder<E extends Exchange> {
     private List<DestinationBuilder<E>> destinationBuilders = new ArrayList<DestinationBuilder<E>>();
     private AtomicBoolean initalized = new AtomicBoolean(false);
     private Map<Endpoint<E>, Processor<E>> routeMap = new HashMap<Endpoint<E>, Processor<E>>();
+
+    protected RouteBuilder() {
+    }
+
+    protected RouteBuilder(CamelContainer<E> container) {
+        this.container = container;
+    }
 
     /**
      * Called on initialisation to to build the required destinationBuilders
@@ -134,5 +141,4 @@ public abstract class RouteBuilder<E extends Exchange> {
     protected CamelContainer<E> createContainer() {
         return new CamelContainer<E>();
     }
-
 }

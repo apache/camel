@@ -14,30 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.jms;
 
 /**
- * Represents a component which manages a set of {@link Endpoint} objects.
+ * Some helper builder methods for the easy configuration of the {@link org.apache.camel.CamelContainer} via Java code.
  *
- * @version $Revision: 519901 $
+ * @version $Revision: $
  */
-public interface Component<E, EP extends Endpoint<E>>  {
-
-    /**
-     * The CamelContainer is injected into the component when it is added to it
-     */
-    void setContainer(CamelContainer container);
-
-    /**
-	 * Asks the component to activate the delivery of {@link Exchange} objects
-	 * from the {@link Endpoint} to the {@link Processor}.
-	 */
-	void activate(EP endpoint, Processor<E> processor);
-
-	/**
-	 * Stops the delivery of messages from a previously activated 
-	 * {@link Endpoint}.
-	 */
-	void deactivate(EP endpoint);
-	
+public class Builder {
+    public static JmsComponent jmsComponent() {
+        return new JmsComponent();
+    }
 }

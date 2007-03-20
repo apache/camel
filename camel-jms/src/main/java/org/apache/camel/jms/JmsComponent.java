@@ -17,30 +17,59 @@
  */
 package org.apache.camel.jms;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Session;
-
+import com.sun.jndi.toolkit.url.Uri;
 import org.apache.camel.CamelContainer;
 import org.apache.camel.Component;
 import org.apache.camel.Processor;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.SessionCallback;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
-import com.sun.jndi.toolkit.url.Uri;
+import javax.jms.ConnectionFactory;
 
 /**
  * @version $Revision$
  */
 public class JmsComponent implements Component<JmsExchange, JmsEndpoint> {
-    private JmsTemplate template = new JmsTemplate();
-    private static final String QUEUE_PREFIX = "queue/";
-    private static final String TOPIC_PREFIX = "topic/";
+    public static final String QUEUE_PREFIX = "queue/";
+    public static final String TOPIC_PREFIX = "topic/";
+
     private CamelContainer container;
+    private JmsTemplate template;
+
+    /**
+     * Static builder method
+     */
+    public static JmsComponent jmsComponent() {
+        return new JmsComponent();
+    }
+
+    /**
+     * Static builder method
+     */
+    public static JmsComponent jmsComponent(JmsTemplate template) {
+        return new JmsComponent(template);
+    }
+
+    /**
+     * Static builder method
+     */
+    public static JmsComponent jmsComponent(ConnectionFactory connectionFactory) {
+        return jmsComponent(new JmsTemplate(connectionFactory));
+    }
+
+
+    protected JmsComponent() {
+        this.template = new JmsTemplate();
+    }
+
+    protected JmsComponent(JmsTemplate template) {
+        this.template = template;
+    }
 
     public JmsComponent(CamelContainer container) {
+        this();
         this.container = container;
     }
 
@@ -52,6 +81,8 @@ public class JmsComponent implements Component<JmsExchange, JmsEndpoint> {
     }
 
     public JmsEndpoint createEndpoint(String uri, String path) {
+        ObjectHelper.notNull(container, "container");
+
         if (path.startsWith(QUEUE_PREFIX)) {
             template.setPubSubDomain(false);
             path = path.substring(QUEUE_PREFIX.length());
@@ -64,14 +95,25 @@ public class JmsComponent implements Component<JmsExchange, JmsEndpoint> {
         final String subject = convertPathToActualDestination(path);
         template.setDefaultDestinationName(subject);
 
+        /*
         Destination destination = (Destination) template.execute(new SessionCallback() {
             public Object doInJms(Session session) throws JMSException {
                 return template.getDestinationResolver().resolveDestinationName(session, subject, template.isPubSubDomain());
             }
         });
+        */
 
         AbstractMessageListenerContainer listenerContainer = createMessageListenerContainer(template);
-        return new JmsEndpoint(uri, container, destination, template ,listenerContainer);
+        listenerContainer.setDestinationName(subject);
+        listenerContainer.setPubSubDomain(template.isPubSubDomain());
+        listenerContainer.setConnectionFactory(template.getConnectionFactory());
+
+        // TODO support optional parameters
+        // selector
+        // messageConverter
+        // durableSubscriberName 
+
+        return new JmsEndpoint(uri, container, template, listenerContainer);
     }
 
     public JmsTemplate getTemplate() {
@@ -82,8 +124,19 @@ public class JmsComponent implements Component<JmsExchange, JmsEndpoint> {
         this.template = template;
     }
 
+
+    public CamelContainer getContainer() {
+        return container;
+    }
+
+    public void setContainer(CamelContainer container) {
+        this.container = container;
+    }
+
     protected AbstractMessageListenerContainer createMessageListenerContainer(JmsTemplate template) {
         // TODO use an enum to auto-switch container types?
+
+        //return new SimpleMessageListenerContainer();
         return new DefaultMessageListenerContainer();
     }
 
@@ -95,10 +148,11 @@ public class JmsComponent implements Component<JmsExchange, JmsEndpoint> {
         return path;
     }
 
-	public void activate(JmsEndpoint endpoint, Processor<JmsExchange> processor) {
-		// TODO Auto-generated method stub
-	}
-	public void deactivate(JmsEndpoint endpoint) {
-		// TODO Auto-generated method stub
-	}
+    public void activate(JmsEndpoint endpoint, Processor<JmsExchange> processor) {
+        // TODO Auto-generated method stub
+    }
+
+    public void deactivate(JmsEndpoint endpoint) {
+        // TODO Auto-generated method stub
+    }
 }

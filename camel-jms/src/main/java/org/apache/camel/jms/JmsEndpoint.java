@@ -26,10 +26,8 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.Session;
 import javax.jms.MessageListener;
-import javax.jms.Destination;
-import java.util.concurrent.atomic.AtomicBoolean;
+import javax.jms.Session;
 
 /**
  * @version $Revision$
@@ -37,33 +35,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class JmsEndpoint extends DefaultEndpoint<JmsExchange> implements MessageListener {
 
     private JmsOperations template;
-    private Destination destination;
     private AbstractMessageListenerContainer listenerContainer;
-    private Processor<Exchange> processor;
-    private AtomicBoolean startedConsuming = new AtomicBoolean(false);
 
-    public JmsEndpoint(String endpointUri, CamelContainer container, Destination destination, JmsOperations template, AbstractMessageListenerContainer listenerContainer) {
+    public JmsEndpoint(String endpointUri, CamelContainer container, JmsOperations template, AbstractMessageListenerContainer listenerContainer) {
         super(endpointUri, container);
-        this.destination = destination;
         this.template = template;
         this.listenerContainer = listenerContainer;
         this.listenerContainer.setMessageListener(this);
-        this.listenerContainer.setDestination(destination);
     }
 
     public void onMessage(Message message) {
-        Exchange exchange = createExchange(message);
-        processor.onExchange(exchange);
+        JmsExchange exchange = createExchange(message);
+        getInboundProcessor().onExchange(exchange);
     }
 
-    public void setProcessor(Processor<Exchange> processor) {
-        this.processor = processor;
-        if (startedConsuming.compareAndSet(false, true)) {
-            listenerContainer.afterPropertiesSet();
-            listenerContainer.initialize();
-            listenerContainer.start();
-        }
-    }
 
     public void send(Exchange exchange) {
         // lets convert to the type of an exchange
@@ -72,18 +57,11 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> implements Message
     }
 
     public void send(final JmsExchange exchange) {
-        template.send(getDestination(), new MessageCreator() {
+        template.send(new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 return exchange.createMessage(session);
             }
         });
-    }
-
-    /**
-     * Returns the JMS destination for this endpoint
-     */
-    public Destination getDestination() {
-        return destination;
     }
 
     public JmsOperations getTemplate() {
@@ -102,5 +80,19 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> implements Message
 
     protected MessageListener createMessageListener(Processor<Exchange> processor) {
         return new MessageListenerProcessor(processor);
+    }
+
+
+    protected void doActivate() {
+        super.doActivate();
+        listenerContainer.afterPropertiesSet();
+        listenerContainer.initialize();
+        listenerContainer.start();
+    }
+
+    protected void doDeactivate() {
+        listenerContainer.stop();
+        listenerContainer.destroy();
+        super.doDeactivate();
     }
 }
