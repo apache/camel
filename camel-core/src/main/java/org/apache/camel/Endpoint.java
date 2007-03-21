@@ -40,6 +40,12 @@ public interface Endpoint<E> extends Processor<E> {
     E createExchange();
 
     /**
+     * Creates a new exchange for communicating with this exchange using the given exchange to pre-populate the values
+     * of the headers and messages
+     */
+    E createExchange(E exchange);
+
+    /**
      * Called by the container to Activate the endpoint.  Once activated,
      * the endpoint will start delivering inbound message exchanges
      * that are received to the specified processor.

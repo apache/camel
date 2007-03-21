@@ -19,12 +19,13 @@ package org.apache.camel;
 import junit.framework.TestCase;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.ChoiceProcessor;
-import org.apache.camel.processor.CompositeProcessor;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.InterceptorProcessor;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.Splitter;
+import org.apache.camel.processor.DeadLetterChannel;
+import org.apache.camel.processor.MulticastProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +69,7 @@ public class RouteBuilderTest extends TestCase {
         for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
-            Processor processor = route.getValue();
+            Processor processor = getProcessorWithoutErrorHandler(route);
 
             assertTrue("Processor should be a SendProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof SendProcessor);
             SendProcessor sendProcessor = (SendProcessor) processor;
@@ -76,7 +77,7 @@ public class RouteBuilderTest extends TestCase {
         }
     }
 
-	protected RouteBuilder<Exchange> buildSimpleRouteWithHeaderPredicate() {
+    protected RouteBuilder<Exchange> buildSimpleRouteWithHeaderPredicate() {
 		// START SNIPPET: e2
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
@@ -98,17 +99,18 @@ public class RouteBuilderTest extends TestCase {
         for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
-            Processor processor = route.getValue();
+            Processor processor = getProcessorWithoutErrorHandler(route);
 
             assertTrue("Processor should be a FilterProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof FilterProcessor);
             FilterProcessor filterProcessor = (FilterProcessor) processor;
 
-            SendProcessor sendProcessor = (SendProcessor) filterProcessor.getProcessor();
+            SendProcessor sendProcessor = (SendProcessor) unwrapErrorHandler(filterProcessor.getProcessor());
             assertEquals("Endpoint URI", "queue:b", sendProcessor.getDestination().getEndpointUri());
         }
     }
 
-	protected RouteBuilder<Exchange> buildSimpleRouteWithChoice() {
+
+    protected RouteBuilder<Exchange> buildSimpleRouteWithChoice() {
 		// START SNIPPET: e3
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
@@ -133,7 +135,7 @@ public class RouteBuilderTest extends TestCase {
         for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
-            Processor processor = route.getValue();
+            Processor processor = getProcessorWithoutErrorHandler(route);
 
             assertTrue("Processor should be a ChoiceProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof ChoiceProcessor);
             ChoiceProcessor<Exchange> choiceProcessor = (ChoiceProcessor<Exchange>) processor;
@@ -178,7 +180,7 @@ public class RouteBuilderTest extends TestCase {
         for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
-            Processor processor = route.getValue();
+            Processor processor = getProcessorWithoutErrorHandler(route);
 
             assertEquals("Should be called with my processor", myProcessor, processor);
         }
@@ -207,11 +209,11 @@ public class RouteBuilderTest extends TestCase {
         for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
-            Processor processor = route.getValue();
+            Processor processor = getProcessorWithoutErrorHandler(route);
 
             assertTrue("Processor should be a FilterProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof FilterProcessor);
             FilterProcessor filterProcessor = (FilterProcessor) processor;
-            assertEquals("Should be called with my processor", myProcessor, filterProcessor.getProcessor());
+            assertEquals("Should be called with my processor", myProcessor, unwrapErrorHandler(filterProcessor.getProcessor()));
         }
     }
 
@@ -238,18 +240,19 @@ public class RouteBuilderTest extends TestCase {
         for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
-            Processor processor = route.getValue();
+            Processor processor = getProcessorWithoutErrorHandler(route);
 
-            assertTrue("Processor should be a CompositeProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof CompositeProcessor);
-            CompositeProcessor<Exchange> compositeProcessor = (CompositeProcessor<Exchange>) processor;
-            List<Processor<Exchange>> processors = new ArrayList<Processor<Exchange>>(compositeProcessor.getProcessors());
-            assertEquals("Should have 2 processors", 2, processors.size());
+            assertTrue("Processor should be a MulticastProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof MulticastProcessor);
+            MulticastProcessor<Exchange> multicastProcessor = (MulticastProcessor<Exchange>) processor;
 
-            assertSendTo(processors.get(0), "queue:tap");
-            assertSendTo(processors.get(1), "queue:b");
+            List<Endpoint<Exchange>> endpoints = new ArrayList<Endpoint<Exchange>>(multicastProcessor.getEndpoints());
+            assertEquals("Should have 2 endpoints", 2, endpoints.size());
+
+            assertEndpointUri(endpoints.get(0), "queue:tap");
+            assertEndpointUri(endpoints.get(1), "queue:b");
         }
     }
-    
+
     protected RouteBuilder<Exchange> buildRouteWithInterceptor() {
 		interceptor1 = new InterceptorProcessor<Exchange>() {
         };
@@ -288,7 +291,7 @@ public class RouteBuilderTest extends TestCase {
         for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
-            Processor processor = route.getValue();
+            Processor processor = getProcessorWithoutErrorHandler(route);
 
             assertTrue("Processor should be a interceptor1 but was: " + processor + " with type: " + processor.getClass().getName(), processor==interceptor1);
             InterceptorProcessor<Exchange> p1 = (InterceptorProcessor<Exchange>) processor;
@@ -311,7 +314,6 @@ public class RouteBuilderTest extends TestCase {
         };
         // END SNIPPET: e7
 
-
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
         System.out.println("Created map: " + routeMap);
 
@@ -320,7 +322,7 @@ public class RouteBuilderTest extends TestCase {
         for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
-            Processor processor = route.getValue();
+            Processor processor = getProcessorWithoutErrorHandler(route);
 
             System.out.println("processor: " + processor);
             /* TODO
@@ -367,7 +369,7 @@ public class RouteBuilderTest extends TestCase {
         for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
-            Processor processor = route.getValue();
+            Processor processor = getProcessorWithoutErrorHandler(route);
 
             assertTrue("Processor should be a RecipientList but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof RecipientList);
             RecipientList<Exchange> p1 = (RecipientList<Exchange>) processor;
@@ -396,7 +398,7 @@ public class RouteBuilderTest extends TestCase {
         for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
             Endpoint<Exchange> key = route.getKey();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
-            Processor processor = route.getValue();
+            Processor processor = getProcessorWithoutErrorHandler(route);
 
             assertTrue("Processor should be a Splitter but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof Splitter);
             Splitter<Exchange> p1 = (Splitter<Exchange>) processor;
@@ -404,9 +406,29 @@ public class RouteBuilderTest extends TestCase {
     }
 
     protected void assertSendTo(Processor processor, String uri) {
+        processor = unwrapErrorHandler(processor);
+        
         assertTrue("Processor should be a SendProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof SendProcessor);
 
         SendProcessor sendProcessor = (SendProcessor) processor;
         assertEquals("Endpoint URI", uri, sendProcessor.getDestination().getEndpointUri());
+    }
+
+    /**
+     * By default routes should be wrapped in the {@link DeadLetterChannel} so lets unwrap that and return the actual processor
+     */
+    protected Processor<Exchange> getProcessorWithoutErrorHandler(Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route) {
+        Processor<Exchange> processor = route.getValue();
+        return unwrapErrorHandler(processor);
+    }
+
+    protected Processor<Exchange> unwrapErrorHandler(Processor<Exchange> processor) {
+        assertTrue("Processor should be a DeadLetterChannel but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof DeadLetterChannel);
+        DeadLetterChannel deadLetter = (DeadLetterChannel) processor;
+        return deadLetter.getOutput();
+    }
+
+    protected void assertEndpointUri(Endpoint<Exchange> endpoint, String uri) {
+        assertEquals("Endoint uri for: " + endpoint, uri, endpoint.getEndpointUri());
     }
 }

@@ -38,6 +38,11 @@ public class PredicateBuilder {
             public boolean evaluate(E exchange) {
                 return left.evaluate(exchange) && right.evaluate(exchange);
             }
+
+            @Override
+            public String toString() {
+                return "(" + left + ") and (" + right + ")";
+            }
         };
     }
 
@@ -51,9 +56,13 @@ public class PredicateBuilder {
             public boolean evaluate(E exchange) {
                 return left.evaluate(exchange) || right.evaluate(exchange);
             }
+
+            @Override
+            public String toString() {
+                return "(" + left + ") or (" + right + ")";
+            }
         };
     }
-
 
     public static <E extends Exchange> Predicate<E> isEqualTo(final Expression<E> left, final Expression<E> right) {
         notNull(left, "left");
@@ -64,6 +73,11 @@ public class PredicateBuilder {
                 Object value1 = left.evaluate(exchange);
                 Object value2 = right.evaluate(exchange);
                 return ObjectHelper.equals(value1, value2);
+            }
+
+            @Override
+            public String toString() {
+                return left + " == " + right;
             }
         };
     }
@@ -78,6 +92,11 @@ public class PredicateBuilder {
                 Object value2 = right.evaluate(exchange);
                 return !ObjectHelper.equals(value1, value2);
             }
+
+            @Override
+            public String toString() {
+                return left + " != " + right;
+            }
         };
     }
 
@@ -90,6 +109,11 @@ public class PredicateBuilder {
                 Object value1 = left.evaluate(exchange);
                 Object value2 = right.evaluate(exchange);
                 return ObjectHelper.compare(value1, value2) < 0;
+            }
+
+            @Override
+            public String toString() {
+                return left + " < " + right;
             }
         };
     }
@@ -104,6 +128,11 @@ public class PredicateBuilder {
                 Object value2 = right.evaluate(exchange);
                 return ObjectHelper.compare(value1, value2) <= 0;
             }
+
+            @Override
+            public String toString() {
+                return left + " <= " + right;
+            }
         };
     }
 
@@ -116,6 +145,11 @@ public class PredicateBuilder {
                 Object value1 = left.evaluate(exchange);
                 Object value2 = right.evaluate(exchange);
                 return ObjectHelper.compare(value1, value2) > 0;
+            }
+
+            @Override
+            public String toString() {
+                return left + " > " + right;
             }
         };
     }
@@ -130,6 +164,11 @@ public class PredicateBuilder {
                 Object value2 = right.evaluate(exchange);
                 return ObjectHelper.compare(value1, value2) >= 0;
             }
+
+            @Override
+            public String toString() {
+                return left + " >= " + right;
+            }
         };
     }
 
@@ -142,6 +181,11 @@ public class PredicateBuilder {
                 Object value = expression.evaluate(exchange);
                 return type.isInstance(value);
             }
+
+            @Override
+            public String toString() {
+                return expression + " instanceof " + type.getName();
+            }
         };
     }
 
@@ -153,6 +197,11 @@ public class PredicateBuilder {
                 Object value = expression.evaluate(exchange);
                 return value == null;
             }
+
+            @Override
+            public String toString() {
+                return expression + " == null";
+            }
         };
     }
 
@@ -163,6 +212,11 @@ public class PredicateBuilder {
             public boolean evaluate(E exchange) {
                 Object value = expression.evaluate(exchange);
                 return value != null;
+            }
+
+            @Override
+            public String toString() {
+                return expression + " != null";
             }
         };
     }
@@ -177,8 +231,11 @@ public class PredicateBuilder {
                 Object value2 = right.evaluate(exchange);
                 return ObjectHelper.contains(value1, value2);
             }
+
+            @Override
+            public String toString() {
+                return left + ".contains(" + right + ")";
+            }
         };
     }
-
-
 }

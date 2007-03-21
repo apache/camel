@@ -18,6 +18,7 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ExchangeHelper;
 import static org.apache.camel.util.ObjectHelper.notNull;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -56,19 +57,7 @@ public class RecipientList<E extends Exchange> implements Processor<E> {
         }
     }
 
-    @SuppressWarnings({"unchecked"})
     protected Endpoint<E> resolveEndpoint(E exchange, Object recipient) {
-        Endpoint<E> endpoint;
-        if (recipient instanceof Endpoint) {
-            endpoint = (Endpoint<E>) recipient;
-        }
-        else {
-            String uri = recipient.toString();
-            endpoint = (Endpoint<E>) exchange.getContext().resolveEndpoint(uri);
-            if (endpoint == null) {
-                throw new NoSuchEndpointException(uri);
-            }
-        }
-        return endpoint;
+        return ExchangeHelper.resolveEndpoint(exchange, recipient);
     }
 }

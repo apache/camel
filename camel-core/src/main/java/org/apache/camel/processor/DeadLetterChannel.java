@@ -48,6 +48,11 @@ public class DeadLetterChannel<E extends Exchange> implements Processor<E> {
         this.redeliveryPolicy = redeliveryPolicy;
     }
 
+    @Override
+    public String toString() {
+        return "DeadLetterChannel[" + output + ", " + deadLetter + ", " + redeliveryPolicy + "]";
+    }
+
     public void onExchange(E exchange) {
         int redeliveryCounter = 0;
         long redeliveryDelay = 0;
@@ -77,6 +82,21 @@ public class DeadLetterChannel<E extends Exchange> implements Processor<E> {
 
     // Properties
     //-------------------------------------------------------------------------
+
+    /**
+     * Returns the output processor
+     */
+    public Processor<E> getOutput() {
+        return output;
+    }
+
+    /**
+     * Returns the dead letter that message exchanges will be sent to if the redelivery attempts fail
+     */
+    public Processor<E> getDeadLetter() {
+        return deadLetter;
+    }
+
     public RedeliveryPolicy getRedeliveryPolicy() {
         return redeliveryPolicy;
     }

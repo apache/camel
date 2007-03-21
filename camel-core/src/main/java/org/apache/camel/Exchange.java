@@ -83,4 +83,11 @@ public interface Exchange  {
      * destination
      */
     Exchange copy();
+
+    /**
+     * Copies the data into this exchange from the given exchange
+     *
+     * #param source is the source from which headers and messages will be copied 
+     */
+    void copyFrom(Exchange source);
 }
