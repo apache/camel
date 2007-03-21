@@ -111,7 +111,7 @@
     <module>camel-jms</module>
     <module>camel-jbi</module>
     <module>camel-mina</module>
-    <module>camel-xbean</module>
+    <module>camel-spring</module>
   </modules>
 
   <scm>
