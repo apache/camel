@@ -56,9 +56,9 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
      * Resolves the given URI to an endpoint
      */
     public Endpoint<E> endpoint(String uri) {
-         CamelContext<E> c = getContext();
-         EndpointResolver<E> er = c.getEndpointResolver();
-         return er.resolveEndpoint(c, uri);
+        CamelContext<E> c = getContext();
+        EndpointResolver<E> er = c.getEndpointResolver();
+        return er.resolveEndpoint(c, uri);
     }
 
     public FromBuilder<E> from(String uri) {
@@ -73,6 +73,7 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
 
     /**
      * Installs the given error handler builder
+     *
      * @param errorHandlerBuilder the error handler to be used by default for all child routes
      * @return the current builder with the error handler configured
      */
@@ -92,7 +93,6 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
         return context;
     }
 
-
     /**
      * Returns the routing map from inbound endpoints to processors
      */
@@ -109,7 +109,6 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
         return fromBuilders;
     }
 
-
     // Implementation methods
     //-----------------------------------------------------------------------
     protected void checkInitialized() {
@@ -120,14 +119,26 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     }
 
     protected void populateRouteMap(Map<Endpoint<E>, Processor<E>> routeMap) {
-        for (FromBuilder<E> fromBuilder : fromBuilders) {
-            Endpoint<E> from = fromBuilder.getFrom();
-            Processor<E> processor = fromBuilder.createProcessor();
+        for (FromBuilder<E> builder : fromBuilders) {
+            Endpoint<E> from = builder.getFrom();
+            Processor<E> processor = makeProcessor(from, builder);
             if (processor == null) {
-                throw new IllegalArgumentException("No processor created for DestinationBuilder: " + fromBuilder);
+                throw new IllegalArgumentException("No processor created for DestinationBuilder: " + builder);
             }
             routeMap.put(from, processor);
         }
+    }
+
+    /**
+     * Factory method to create the underlying {@link Processor} for the given builder applying any
+     * necessary interceptors.
+     *
+     * @param from    the endpoint which starts the route
+     * @param builder the builder which is the factory of the processor
+     * @return
+     */
+    protected Processor<E> makeProcessor(Endpoint<E> from, FromBuilder<E> builder) {
+        return builder.createProcessor();
     }
 
     protected CamelContext<E> createContainer() {
