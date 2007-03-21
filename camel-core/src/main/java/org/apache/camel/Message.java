@@ -18,8 +18,9 @@
 package org.apache.camel;
 
 /**
- * Represents an inbound or outbound message as part of an {@link Exchange}
- *
+ * Implements the <a href="http://activemq.apache.org/camel/message.html">Message</a>
+ * pattern and represents an inbound or outbound message as part of an {@link Exchange}
+ * 
  * @version $Revision$
  */
 public interface Message {

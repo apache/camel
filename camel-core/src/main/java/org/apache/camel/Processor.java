@@ -17,8 +17,9 @@
 package org.apache.camel;
 
 /**
- * A processor of a message exchange.
- * 
+ * Implements the <a href="http://activemq.apache.org/camel/event-driven-consumer.html">Event Driven Consumer</a>
+ * pattern to process message exchanges
+ *
  * @version $Revision$
  */
 public interface Processor<E> {
