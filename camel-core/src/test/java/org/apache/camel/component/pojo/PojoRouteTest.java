@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.pojo;
+package org.apache.camel.component.pojo;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -23,6 +23,8 @@ import junit.framework.TestCase;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.pojo.PojoExchange;
+import org.apache.camel.component.pojo.ISay;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.InterceptorProcessor;
 import org.apache.camel.builder.RouteBuilder;
