@@ -21,6 +21,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.impl.DefaultCamelContext;
 
 import java.util.ArrayList;
@@ -79,6 +80,17 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
      */
     public RouteBuilder<E> errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
         setErrorHandlerBuilder(errorHandlerBuilder);
+        return this;
+    }
+
+    /**
+     * Configures whether or not the error handler is inherited by every processing node (or just the top most one)
+     *
+     * @param value the falg as to whether error handlers should be inherited or not
+     * @return the current builder
+     */
+    public RouteBuilder<E> inheritErrorHandler(boolean value) {
+        setInheritErrorHandler(value);
         return this;
     }
 

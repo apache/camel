@@ -179,6 +179,18 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         return this;
     }
 
+    /**
+     * Configures whether or not the error handler is inherited by every processing node (or just the top most one)
+     *
+     * @param value the falg as to whether error handlers should be inherited or not
+     * @return the current builder
+     */
+    public FromBuilder<E> inheritErrorHandler(boolean value) {
+        setInheritErrorHandler(value);
+        return this;
+    }
+
+
     // Properties
     //-------------------------------------------------------------------------
     public RouteBuilder<E> getBuilder() {

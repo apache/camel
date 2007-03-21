@@ -35,6 +35,7 @@ import java.util.ArrayList;
 public abstract class BuilderSupport<E extends Exchange> {
     private CamelContext context;
     private ErrorHandlerBuilder<E> errorHandlerBuilder;
+    private boolean inheritErrorHandler = true;
 
     protected BuilderSupport(CamelContext context) {
         this.context = context;
@@ -42,7 +43,8 @@ public abstract class BuilderSupport<E extends Exchange> {
 
     protected BuilderSupport(BuilderSupport<E> parent) {
         this.context = parent.getContext();
-        if (parent.errorHandlerBuilder != null) {
+        this.inheritErrorHandler = parent.inheritErrorHandler;
+        if (inheritErrorHandler && parent.errorHandlerBuilder != null) {
             this.errorHandlerBuilder = parent.errorHandlerBuilder.copy();
         }
     }
@@ -181,9 +183,18 @@ public abstract class BuilderSupport<E extends Exchange> {
 
     public ErrorHandlerBuilder<E> getErrorHandlerBuilder() {
         if (errorHandlerBuilder == null) {
-            errorHandlerBuilder = new DeadLetterChannelBuilder<E>();
+            errorHandlerBuilder = createErrorHandlerBuilder();
         }
         return errorHandlerBuilder;
+    }
+
+    protected ErrorHandlerBuilder<E> createErrorHandlerBuilder() {
+        if (isInheritErrorHandler()) {
+            return new DeadLetterChannelBuilder<E>();
+        }
+        else {
+            return new NoErrorHandlerBuilder<E>();
+        }
     }
 
     /**
@@ -193,4 +204,11 @@ public abstract class BuilderSupport<E extends Exchange> {
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
+    public boolean isInheritErrorHandler() {
+        return inheritErrorHandler;
+    }
+
+    public void setInheritErrorHandler(boolean inheritErrorHandler) {
+        this.inheritErrorHandler = inheritErrorHandler;
+    }
 }

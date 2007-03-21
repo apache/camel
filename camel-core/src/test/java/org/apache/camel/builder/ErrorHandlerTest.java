@@ -17,15 +17,15 @@
  */
 package org.apache.camel.builder;
 
-import junit.framework.TestCase;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.TestSupport;
-import org.apache.camel.processor.LoggingErrorHandler;
-import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.DeadLetterChannel;
+import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.processor.SendProcessor;
 
 import java.util.Map;
 import java.util.Set;
@@ -34,10 +34,11 @@ import java.util.Set;
  * @version $Revision$
  */
 public class ErrorHandlerTest extends TestSupport {
+    /*
     public void testOverloadingTheDefaultErrorHandler() throws Exception {
 
         // START SNIPPET: e1
-        RouteBuilder<Exchange> builder1 = new RouteBuilder<Exchange>() {
+        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 errorHandler(loggingErrorHandler("FOO.BAR"));
 
@@ -45,7 +46,6 @@ public class ErrorHandlerTest extends TestSupport {
             }
         };
         // END SNIPPET: e1
-        RouteBuilder<Exchange> builder = builder1;
 
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
         Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
@@ -62,7 +62,7 @@ public class ErrorHandlerTest extends TestSupport {
     public void testOverloadingTheHandlerOnASingleRoute() throws Exception {
 
         // START SNIPPET: e2
-        RouteBuilder<Exchange> builder1 = new RouteBuilder<Exchange>() {
+        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 from("queue:a").errorHandler(loggingErrorHandler("FOO.BAR")).to("queue:b");
 
@@ -71,7 +71,6 @@ public class ErrorHandlerTest extends TestSupport {
             }
         };
         // END SNIPPET: e2
-        RouteBuilder<Exchange> builder = builder1;
 
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
         log.info(routeMap);
@@ -102,7 +101,7 @@ public class ErrorHandlerTest extends TestSupport {
     public void testConfigureDeadLetterChannel() throws Exception {
 
         // START SNIPPET: e3
-        RouteBuilder<Exchange> builder1 = new RouteBuilder<Exchange>() {
+        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 errorHandler(deadLetterChannel("queue:errors"));
 
@@ -110,7 +109,6 @@ public class ErrorHandlerTest extends TestSupport {
             }
         };
         // END SNIPPET: e3
-        RouteBuilder<Exchange> builder = builder1;
 
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
         Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
@@ -129,7 +127,7 @@ public class ErrorHandlerTest extends TestSupport {
     public void testConfigureDeadLetterChannelWithCustomRedeliveryPolicy() throws Exception {
 
         // START SNIPPET: e4
-        RouteBuilder<Exchange> builder1 = new RouteBuilder<Exchange>() {
+        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
                 errorHandler(deadLetterChannel("queue:errors").maximumRedeliveries(2).useExponentialBackOff());
 
@@ -137,7 +135,6 @@ public class ErrorHandlerTest extends TestSupport {
             }
         };
         // END SNIPPET: e4
-        RouteBuilder<Exchange> builder = builder1;
 
         Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
         Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
@@ -154,6 +151,31 @@ public class ErrorHandlerTest extends TestSupport {
             assertEquals("getMaximumRedeliveries()", 2, redeliveryPolicy.getMaximumRedeliveries());
             assertEquals("isUseExponentialBackOff()", true, redeliveryPolicy.isUseExponentialBackOff());
         }
-    }
+    }         */
 
+    public void testDisablingInheritenceOfErrorHandlers() throws Exception {
+
+        // START SNIPPET: e5
+        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+            public void configure() {
+                inheritErrorHandler(false);
+
+                from("queue:a").errorHandler(loggingErrorHandler("FOO.BAR")).filter(body().isInstanceOf(String.class)).to("queue:b");
+            }
+        };
+        // END SNIPPET: e5
+
+        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
+        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
+        assertEquals("Number routes created", 1, routes.size());
+        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
+            Endpoint<Exchange> key = route.getKey();
+            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            Processor processor = route.getValue();
+
+            LoggingErrorHandler loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class, processor);
+            FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, loggingProcessor.getOutput());
+            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, filterProcessor.getProcessor());
+        }
+    }
 }
