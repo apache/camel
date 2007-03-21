@@ -50,6 +50,9 @@
 
   <build>
     <plugins>
+      <!--
+      Disabling the xbean annotation processor for now since it's qdox parser is choking on the 
+      Java 1.5 stuff
       <plugin>
         <groupId>org.apache.xbean</groupId>
         <artifactId>maven-xbean-plugin</artifactId>
@@ -66,6 +69,7 @@
           </execution>
         </executions>
       </plugin>
+      -->
 
       <!-- generate the attached tests jar -->
       <plugin>
