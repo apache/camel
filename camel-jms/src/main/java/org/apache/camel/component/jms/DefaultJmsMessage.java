@@ -15,19 +15,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jms;
+package org.apache.camel.component.jms;
 
-import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.Headers;
+
+import javax.jms.Message;
 
 /**
  * @version $Revision$
  */
-public interface JmsMessage extends Message {
+public class DefaultJmsMessage extends DefaultMessage implements JmsMessage {
+    private Message jmsMessage;
 
-    /**
-     * Accesses the underlying JMS message
-     */
-    public javax.jms.Message getJmsMessage();
+    public DefaultJmsMessage() {
+    }
 
-    void setJmsMessage(javax.jms.Message jmsMessage);
+    public DefaultJmsMessage(Message jmsMessage) {
+        this.jmsMessage = jmsMessage;
+    }
+
+    public Message getJmsMessage() {
+        return jmsMessage;
+    }
+
+    public void setJmsMessage(Message jmsMessage) {
+        this.jmsMessage = jmsMessage;
+    }
+
+    @Override
+    protected Headers createHeaders() {
+        return new JmsHeaders(this);
+    }
+
+    @Override
+    public DefaultMessage newInstance() {
+        return new DefaultJmsMessage();
+    }
 }

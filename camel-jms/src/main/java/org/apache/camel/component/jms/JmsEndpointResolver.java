@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jms;
+package org.apache.camel.component.jms;
 
 import org.apache.axis.transport.jms.JMSEndpoint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.EndpointResolver;
-import org.apache.camel.queue.QueueComponent;
+import org.apache.camel.component.queue.QueueComponent;
 import org.apache.camel.util.ObjectHelper;
 
 import java.util.concurrent.Callable;

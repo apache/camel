@@ -14,22 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jms;
-
-import org.apache.camel.Exchange;
-
-import javax.jms.Session;
-import javax.jms.Message;
-import javax.jms.JMSException;
+package org.apache.camel.component.jms;
 
 /**
- * @version $Revision$
+ * Some helper builder methods for the easy configuration of the {@link org.apache.camel.CamelContext} via Java code.
+ *
+ * @version $Revision: $
  */
-public interface JmsExchange extends Exchange {
-
-    /**
-     * Creates the JMS message for this exchange so that it can be sent to
-     * a JMS endpoint.
-     */
-    Message createMessage(Session session) throws JMSException;
+public class Builder {
+    public static JmsComponent jmsComponent() {
+        return new JmsComponent();
+    }
 }

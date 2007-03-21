@@ -14,19 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jms;
+package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.InvalidHeaderTypeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @version $Revision$

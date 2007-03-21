@@ -14,18 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jms;
+package org.apache.camel.component.pojo;
 
-import javax.jms.JMSException;
-
-/**
- * @version $Revision$
- */
-public class MessagePropertyNamesAcessException extends RuntimeJmsException {
-
-	private static final long serialVersionUID = -6744171518099741324L;
-
-	public MessagePropertyNamesAcessException(JMSException e) {
-        super("Failed to acess the JMS message property names", e);
-    }
+public interface ISay {
+	public String say();
 }

@@ -14,15 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jms;
+package org.apache.camel.component.jms;
+
+import javax.jms.JMSException;
 
 /**
- * Some helper builder methods for the easy configuration of the {@link org.apache.camel.CamelContext} via Java code.
- *
- * @version $Revision: $
+ * @version $Revision$
  */
-public class Builder {
-    public static JmsComponent jmsComponent() {
-        return new JmsComponent();
+public class MessagePropertyAcessException extends RuntimeJmsException {
+	private static final long serialVersionUID = -3996286386119163309L;
+	private String propertyName;
+
+    public MessagePropertyAcessException(String propertyName, JMSException e) {
+        super("Error accessing header: " + propertyName, e);
+        this.propertyName = propertyName;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
     }
 }

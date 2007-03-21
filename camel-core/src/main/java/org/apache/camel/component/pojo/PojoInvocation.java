@@ -1,4 +1,4 @@
-package org.apache.camel.pojo;
+package org.apache.camel.component.pojo;
 
 import java.lang.reflect.Method;
 

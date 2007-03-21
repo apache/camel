@@ -14,31 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.pojo;
+package org.apache.camel.component.jms;
 
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
+import javax.jms.JMSException;
 
 /**
- * @version $Revision: 519901 $
+ * @version $Revision$
  */
-public class PojoExchange extends DefaultExchange {
+public class RuntimeJmsException extends RuntimeException {
 
-    public PojoExchange(CamelContext context) {
-        super(context);
-    }
+	private static final long serialVersionUID = -2141493732308871761L;
 
-    public PojoInvocation getInvocation() {
-        return getIn().getBody(PojoInvocation.class);
-    }
-
-    public void setInvocation(PojoInvocation invocation) {
-        getIn().setBody(invocation);
-    }
-
-    @Override
-    public Exchange newInstance() {
-        return new PojoExchange(getContext());
+	public RuntimeJmsException(String message, JMSException cause) {
+        super(message, cause);
     }
 }
