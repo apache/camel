@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
@@ -42,8 +43,8 @@ public class MinaTest extends TestCase {
         container.setRoutes(new RouteBuilder() {
             public void configure() {
                 from("mina:vm:8080").process(new Processor<MinaExchange>() {
-                    public void onExchange(MinaExchange exchange) {
-                        System.out.println("Received exchange: " + exchange.getIn());
+                    public void onExchange(MinaExchange e) {
+                        System.out.println("Received exchange: " + e.getIn());
                         latch.countDown();
                     }
                 });
@@ -55,14 +56,16 @@ public class MinaTest extends TestCase {
 
         // now lets fire in a message
         Endpoint<MinaExchange> endpoint = container.resolveEndpoint("mina:vm:8080");
-        MinaExchange exchange2 = endpoint.createExchange();
-        //exchange2.setInBody("Hello there!")
-        exchange2.getIn().getHeaders().setHeader("cheese", 123);
-        endpoint.onExchange(exchange2);
+        MinaExchange exchange = endpoint.createExchange();
+        Message message = exchange.getIn();
+        message.setBody("Hello there!");
+        message.getHeaders().setHeader("cheese", 123);
+
+        endpoint.onExchange(exchange);
 
         // now lets sleep for a while
         boolean received = latch.await(5, TimeUnit.SECONDS);
-        assertTrue("Did not recieve the message!", received);
+        assertTrue("Did not receive the message!", received);
 
         container.deactivateEndpoints();
     }

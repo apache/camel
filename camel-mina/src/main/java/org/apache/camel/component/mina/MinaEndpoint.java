@@ -38,12 +38,23 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
         this.acceptor = acceptor;
     }
 
-    public void onExchange(MinaExchange minaExchange) {
-        session.write(minaExchange.getIn().getBody());
+    public void onExchange(MinaExchange exchange) {
+        Object body = exchange.getIn().getBody();
+        if (body == null) {
+            System.out.println("#### No payload for exchange: " + exchange);
+        }
+        session.write(body);
     }
 
     public MinaExchange createExchange() {
         return new MinaExchange(getContext());
+    }
+
+    public MinaExchange createExchange(IoSession session, Object object) {
+        MinaExchange exchange = new MinaExchange(getContext());
+        exchange.getIn().setBody(object);
+        // TODO store session in exchange?
+        return exchange;
     }
 
     public IoHandler getServerHandler() {
@@ -89,9 +100,13 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
     protected IoHandler createServerHandler() {
         return new IoHandlerAdapter() {
             @Override
-            public void messageReceived(IoSession ioSession, Object object) throws Exception {
-                super.messageReceived(ioSession, object);    /** TODO */
+            public void messageReceived(IoSession session, Object object) throws Exception {
+                processInboundMessage(session, object);
             }
         };
+    }
+
+    private void processInboundMessage(IoSession session, Object object) {
+        getInboundProcessor().onExchange(createExchange(session, object));
     }
 }

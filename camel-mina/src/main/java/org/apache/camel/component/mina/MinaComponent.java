@@ -27,11 +27,15 @@ import org.apache.mina.transport.vmpipe.VmPipeAddress;
 import org.apache.mina.transport.vmpipe.VmPipeConnector;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @version $Revision$
  */
 public class MinaComponent extends DefaultComponent<MinaExchange> {
+    private Map<String, MinaEndpoint> map = new HashMap<String, MinaEndpoint>();
+
     public MinaComponent() {
     }
 
@@ -39,22 +43,26 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         super(context);
     }
 
-    public MinaEndpoint createEndpoint(String uri, String[] urlParts) throws IOException {
-        IoAcceptor acceptor = new VmPipeAcceptor();
-        MinaEndpoint endpoint = new MinaEndpoint(uri, getContext(), acceptor);
+    public synchronized MinaEndpoint createEndpoint(String uri, String[] urlParts) throws IOException {
+        MinaEndpoint endpoint = map.get(uri);
+        if (endpoint == null) {
+            IoAcceptor acceptor = new VmPipeAcceptor();
+            endpoint = new MinaEndpoint(uri, getContext(), acceptor);
 
-        VmPipeAddress address = new VmPipeAddress(8080);
+            VmPipeAddress address = new VmPipeAddress(8080);
 
-        // Set up server
-        acceptor.bind(address, endpoint.getServerHandler());
+            // Set up server
+            acceptor.bind(address, endpoint.getServerHandler());
 
-        // Connect to the server.
-        VmPipeConnector connector = new VmPipeConnector();
-        ConnectFuture future = connector.connect(address, endpoint.getClientHandler());
-        future.join();
-        IoSession session = future.getSession();
+            // Connect to the server.
+            VmPipeConnector connector = new VmPipeConnector();
+            ConnectFuture future = connector.connect(address, endpoint.getClientHandler());
+            future.join();
+            IoSession session = future.getSession();
 
-        endpoint.setSession(session);
+            endpoint.setSession(session);
+            map.put(uri, endpoint);
+        }
 
         return endpoint;
     }
