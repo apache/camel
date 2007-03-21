@@ -25,6 +25,7 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.DeadLetterChannel;
+import org.apache.camel.processor.RedeliveryPolicy;
 
 import java.util.Map;
 import java.util.Set;
@@ -97,4 +98,62 @@ public class ErrorHandlerTest extends TestSupport {
             }
         }
     }
+
+    public void testConfigureDeadLetterChannel() throws Exception {
+
+        // START SNIPPET: e3
+        RouteBuilder<Exchange> builder1 = new RouteBuilder<Exchange>() {
+            public void configure() {
+                errorHandler(deadLetterChannel("queue:errors"));
+
+                from("queue:a").to("queue:b");
+            }
+        };
+        // END SNIPPET: e3
+        RouteBuilder<Exchange> builder = builder1;
+
+        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
+        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
+        assertEquals("Number routes created", 1, routes.size());
+        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
+            Endpoint<Exchange> key = route.getKey();
+            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            Processor processor = route.getValue();
+
+            DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, processor);
+            Endpoint deadLetterEndpoint = assertIsInstanceOf(Endpoint.class, deadLetterChannel.getDeadLetter());
+            assertEndpointUri(deadLetterEndpoint, "queue:errors");
+        }
+    }
+
+    public void testConfigureDeadLetterChannelWithCustomRedeliveryPolicy() throws Exception {
+
+        // START SNIPPET: e4
+        RouteBuilder<Exchange> builder1 = new RouteBuilder<Exchange>() {
+            public void configure() {
+                errorHandler(deadLetterChannel("queue:errors").maximumRedeliveries(2).useExponentialBackOff());
+
+                from("queue:a").to("queue:b");
+            }
+        };
+        // END SNIPPET: e4
+        RouteBuilder<Exchange> builder = builder1;
+
+        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
+        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
+        assertEquals("Number routes created", 1, routes.size());
+        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
+            Endpoint<Exchange> key = route.getKey();
+            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            Processor processor = route.getValue();
+
+            DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, processor);
+            Endpoint deadLetterEndpoint = assertIsInstanceOf(Endpoint.class, deadLetterChannel.getDeadLetter());
+            assertEndpointUri(deadLetterEndpoint, "queue:errors");
+            RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();
+            assertEquals("getMaximumRedeliveries()", 2, redeliveryPolicy.getMaximumRedeliveries());
+            assertEquals("isUseExponentialBackOff()", true, redeliveryPolicy.isUseExponentialBackOff());
+        }
+    }
+
 }

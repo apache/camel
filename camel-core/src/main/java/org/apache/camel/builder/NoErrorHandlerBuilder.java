@@ -29,7 +29,7 @@ import org.apache.camel.Processor;
  *
  * @version $Revision$
  */
-public class NoErrorHandlerBuilder<E extends Exchange> extends BuilderSupport<E> implements ErrorHandlerBuilder<E> {
+public class NoErrorHandlerBuilder<E extends Exchange> implements ErrorHandlerBuilder<E> {
     public ErrorHandlerBuilder<E> copy() {
         return this;
     }
