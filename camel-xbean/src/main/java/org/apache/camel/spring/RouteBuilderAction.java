@@ -1,17 +1,53 @@
 package org.apache.camel.spring;
 
-import org.apache.camel.builder.RouteBuilder;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.SimpleTypeConverter;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 
 public class RouteBuilderAction {
 
-	private final String name;
+	private final MethodInfo methodInfo;
+	private final HashMap<String, Object> parameterValues;
 
-	public RouteBuilderAction(String name) {
-		this.name = name;
+	public RouteBuilderAction(MethodInfo methodInfo, HashMap<String, Object> parameterValues) {
+		this.methodInfo = methodInfo;
+		this.parameterValues = parameterValues;
 	}
 
-	public void create(RouteBuilder builder) {
-		// TODO Auto-generated method stub
+	public Object invoke(BeanFactory beanFactory, Object builder) {
+		SimpleTypeConverter converter = new SimpleTypeConverter();
+		Object args[] = new Object[methodInfo.parameters.size()];
+		int pos=0;
+		for (Map.Entry<String, Class> entry :  methodInfo.parameters.entrySet()) {
+			String paramName = entry.getKey();
+			Class paramClass = entry.getValue();
+			Object value = parameterValues.get(paramName);
+			if( value != null ) {
+				if( value.getClass() == RuntimeBeanReference.class ) {
+					value = beanFactory.getBean(((RuntimeBeanReference)value).getBeanName());
+				}
+				args[pos] = converter.convertIfNecessary(value, paramClass);				
+			}
+			
+		}
 		
+		try {
+			return methodInfo.method.invoke(builder, args);
+		} catch (InvocationTargetException e) {
+			throw new IllegalArgumentException(e.getCause());
+		} catch (RuntimeException e) {
+			throw e;
+		} catch (Throwable e) {
+			throw new IllegalArgumentException(e);
+		}
+		
+	}
+
+	public String getName() {
+		return methodInfo.getName();
 	}
 }

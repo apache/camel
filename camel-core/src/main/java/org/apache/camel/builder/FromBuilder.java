@@ -54,14 +54,16 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     /**
      * Sends the exchange to the given endpoint URI
      */
-    public ProcessorFactory<E> to(String uri) {
+    @Fluent
+    public ProcessorFactory<E> to(@FluentArg("uri") String uri) {
         return to(endpoint(uri));
     }
 
     /**
      * Sends the exchange to the given endpoint
      */
-    public ProcessorFactory<E> to(Endpoint<E> endpoint) {
+    @Fluent
+    public ProcessorFactory<E> to(@FluentArg("endpoint") Endpoint<E> endpoint) {
         ToBuilder<E> answer = new ToBuilder<E>(this, endpoint);
         addProcessBuilder(answer);
         return answer;
@@ -70,21 +72,24 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     /**
      * Sends the exchange to a list of endpoints using the {@link MulticastProcessor} pattern
      */
-    public ProcessorFactory<E> to(String... uris) {
+    @Fluent
+    public ProcessorFactory<E> to(@FluentArg("uris") String... uris) {
         return to(endpoints(uris));
     }
 
     /**
      * Sends the exchange to a list of endpoints using the {@link MulticastProcessor} pattern
      */
-    public ProcessorFactory<E> to(Endpoint<E>... endpoints) {
+    @Fluent
+    public ProcessorFactory<E> to(@FluentArg("endpoints") Endpoint<E>... endpoints) {
         return to(endpoints(endpoints));
     }
 
     /**
      * Sends the exchange to a list of endpoint using the {@link MulticastProcessor} pattern
      */
-    public ProcessorFactory<E> to(Collection<Endpoint<E>> endpoints) {
+    @Fluent
+    public ProcessorFactory<E> to(@FluentArg("endpoints") Collection<Endpoint<E>> endpoints) {
         return addProcessBuilder(new MulticastBuilder<E>(this, endpoints));
     }
 
@@ -92,7 +97,8 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * Creates a {@link Pipeline} of the list of endpoints so that the message will get processed by each endpoint in turn
      * and for request/response the output of one endpoint will be the input of the next endpoint
      */
-    public ProcessorFactory<E> pipeline(String... uris) {
+    @Fluent
+    public ProcessorFactory<E> pipeline(@FluentArg("uris") String... uris) {
         return pipeline(endpoints(uris));
     }
 
@@ -100,7 +106,8 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * Creates a {@link Pipeline} of the list of endpoints so that the message will get processed by each endpoint in turn
      * and for request/response the output of one endpoint will be the input of the next endpoint
      */
-    public ProcessorFactory<E> pipeline(Endpoint<E>... endpoints) {
+    @Fluent
+    public ProcessorFactory<E> pipeline(@FluentArg("endpoints") Endpoint<E>... endpoints) {
         return pipeline(endpoints(endpoints));
     }
 
@@ -108,14 +115,16 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * Creates a {@link Pipeline} of the list of endpoints so that the message will get processed by each endpoint in turn
      * and for request/response the output of one endpoint will be the input of the next endpoint
      */
-    public ProcessorFactory<E> pipeline(Collection<Endpoint<E>> endpoints) {
+    @Fluent
+    public ProcessorFactory<E> pipeline(@FluentArg("endpoints") Collection<Endpoint<E>> endpoints) {
         return addProcessBuilder(new PipelineBuilder<E>(this, endpoints));
     }
 
     /**
      * Adds the custom processor to this destination
      */
-    public ConstantProcessorBuilder<E> process(Processor<E> processor) {
+    @Fluent
+    public ConstantProcessorBuilder<E> process(@FluentArg("processor") Processor<E> processor) {
         ConstantProcessorBuilder<E> answer = new ConstantProcessorBuilder<E>(processor);
         addProcessBuilder(answer);
         return answer;
@@ -127,7 +136,8 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      *
      * @return the builder for a predicate
      */
-    public FilterBuilder<E> filter(Predicate<E> predicate) {
+    @Fluent
+    public FilterBuilder<E> filter(@FluentArg("predicate") Predicate<E> predicate) {
         FilterBuilder<E> answer = new FilterBuilder<E>(this, predicate);
         addProcessBuilder(answer);
         return answer;
@@ -138,6 +148,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      *
      * @return the builder for a choice expression
      */
+    @Fluent
     public ChoiceBuilder<E> choice() {
         ChoiceBuilder<E> answer = new ChoiceBuilder<E>(this);
         addProcessBuilder(answer);
@@ -147,10 +158,11 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     /**
      * Creates a dynamic <a href="http://activemq.apache.org/camel/recipient-list.html">Recipient List</a> pattern.
      *
-     * @param valueBuilder is the builder of the expression used in the {@link RecipientList} to decide the destinations
+     * @param receipients is the builder of the expression used in the {@link RecipientList} to decide the destinations
      */
-    public RecipientListBuilder<E> recipientList(ValueBuilder<E> valueBuilder) {
-        RecipientListBuilder<E> answer = new RecipientListBuilder<E>(this, valueBuilder);
+    @Fluent
+    public RecipientListBuilder<E> recipientList(@FluentArg("receipients") ValueBuilder<E> receipients) {
+        RecipientListBuilder<E> answer = new RecipientListBuilder<E>(this, receipients);
         addProcessBuilder(answer);
         return answer;
     }
@@ -159,11 +171,12 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * A builder for the <a href="http://activemq.apache.org/camel/splitter.html">Splitter</a> pattern
      * where an expression is evaluated to iterate through each of the parts of a message and then each part is then send to some endpoint.
      *
-     * @param valueBuilder the builder for the value used as the expression on which to split
+     * @param receipients the builder for the value used as the expression on which to split
      * @return the builder
      */
-    public SplitterBuilder<E> splitter(ValueBuilder<E> valueBuilder) {
-        SplitterBuilder<E> answer = new SplitterBuilder<E>(this, valueBuilder);
+    @Fluent
+    public SplitterBuilder<E> splitter(@FluentArg("receipients") ValueBuilder<E> receipients) {
+        SplitterBuilder<E> answer = new SplitterBuilder<E>(this, receipients);
         addProcessBuilder(answer);
         return answer;
     }
@@ -174,7 +187,8 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * @param errorHandlerBuilder the error handler to be used by default for all child routes
      * @return the current builder with the error handler configured
      */
-    public FromBuilder<E> errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
+    @Fluent
+    public FromBuilder<E> errorHandler(@FluentArg("handler") ErrorHandlerBuilder errorHandlerBuilder) {
         setErrorHandlerBuilder(errorHandlerBuilder);
         return this;
     }
@@ -182,12 +196,28 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     /**
      * Configures whether or not the error handler is inherited by every processing node (or just the top most one)
      *
-     * @param value the falg as to whether error handlers should be inherited or not
+     * @param condition the falg as to whether error handlers should be inherited or not
      * @return the current builder
      */
-    public FromBuilder<E> inheritErrorHandler(boolean value) {
-        setInheritErrorHandler(value);
+    @Fluent
+    public FromBuilder<E> inheritErrorHandler(@FluentArg("condition") boolean condition) {
+        setInheritErrorHandler(condition);
         return this;
+    }
+    
+    @Fluent
+    public InterceptorBuilder<E> intercept() {
+        InterceptorBuilder<E> answer = new InterceptorBuilder<E>(this);
+        addProcessBuilder(answer);
+        return answer;
+    }
+
+    @Fluent
+    public InterceptorBuilder<E> intercept(@FluentArg("interceptor") InterceptorProcessor<E> interceptor) {
+        InterceptorBuilder<E> answer = new InterceptorBuilder<E>(this);
+        answer.add(interceptor);
+        addProcessBuilder(answer);
+        return answer;
     }
 
 
@@ -243,16 +273,4 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         return processors;
     }
 
-    public InterceptorBuilder<E> intercept() {
-        InterceptorBuilder<E> answer = new InterceptorBuilder<E>(this);
-        addProcessBuilder(answer);
-        return answer;
-    }
-
-    public InterceptorBuilder<E> intercept(InterceptorProcessor<E> interceptor) {
-        InterceptorBuilder<E> answer = new InterceptorBuilder<E>(this);
-        answer.add(interceptor);
-        addProcessBuilder(answer);
-        return answer;
-    }
 }

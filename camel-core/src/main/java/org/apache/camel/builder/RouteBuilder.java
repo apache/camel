@@ -53,11 +53,13 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
      */
     public abstract void configure();
 
-    public FromBuilder<E> from(String uri) {
+    @Fluent
+    public FromBuilder<E> from( @FluentArg("uri") String uri) {
         return from(endpoint(uri));
     }
 
-    public FromBuilder<E> from(Endpoint<E> endpoint) {
+    @Fluent
+    public FromBuilder<E> from( @FluentArg("endpoint") Endpoint<E> endpoint) {
         FromBuilder<E> answer = new FromBuilder<E>(this, endpoint);
         fromBuilders.add(answer);
         return answer;
