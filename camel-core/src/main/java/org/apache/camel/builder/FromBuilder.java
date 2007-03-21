@@ -16,18 +16,19 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.processor.CompositeProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
+import org.apache.camel.Processor;
+import org.apache.camel.processor.CompositeProcessor;
 import org.apache.camel.processor.InterceptorProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
+import org.apache.camel.processor.RecipientList;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @version $Revision$
@@ -39,11 +40,13 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     private List<ProcessorFactory<E>> processFactories = new ArrayList<ProcessorFactory<E>>();
 
     public FromBuilder(RouteBuilder<E> builder, Endpoint<E> from) {
+        super(builder);
         this.builder = builder;
         this.from = from;
     }
 
     public FromBuilder(FromBuilder<E> parent) {
+        super(parent);
         this.builder = parent.getBuilder();
         this.from = parent.getFrom();
     }
@@ -71,7 +74,6 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         return endpoints;
     }
 
-
     /**
      * Sends the exchange to the given endpoint URI
      */
@@ -88,7 +90,6 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         return answer;
     }
 
-
     /**
      * Sends the exchange to a list of endpoints using the {@link MulticastProcessor} pattern
      */
@@ -102,7 +103,6 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     public ProcessorFactory<E> to(Endpoint<E>... endpoints) {
         return to(endpoints(endpoints));
     }
-
 
     /**
      * Sends the exchange to a list of endpoint using the {@link MulticastProcessor} pattern
@@ -144,8 +144,6 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         return answer;
     }
 
-
-
     /**
      * Creates a predicate which is applied and only if it is true then
      * the exchange is forwarded to the destination
@@ -157,7 +155,6 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         addProcessBuilder(answer);
         return answer;
     }
-
 
     /**
      * Creates a choice of one or more predicates with an otherwise clause
@@ -172,8 +169,8 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
 
     /**
      * Creates a dynamic <a href="http://activemq.apache.org/camel/recipient-list.html">Recipient List</a> pattern.
-     * 
-     * @param valueBuilder
+     *
+     * @param valueBuilder is the builder of the expression used in the {@link RecipientList} to decide the destinations
      */
     public RecipientListBuilder<E> recipientList(ValueBuilder<E> valueBuilder) {
         RecipientListBuilder<E> answer = new RecipientListBuilder<E>(this, valueBuilder);
@@ -189,9 +186,20 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * @return the builder
      */
     public SplitterBuilder<E> splitter(ValueBuilder<E> valueBuilder) {
-              SplitterBuilder<E> answer = new SplitterBuilder<E>(this, valueBuilder);
+        SplitterBuilder<E> answer = new SplitterBuilder<E>(this, valueBuilder);
         addProcessBuilder(answer);
         return answer;
+    }
+
+    /**
+     * Installs the given error handler builder
+     *
+     * @param errorHandlerBuilder the error handler to be used by default for all child routes
+     * @return the current builder with the error handler configured
+     */
+    public FromBuilder<E> errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
+        setErrorHandlerBuilder(errorHandlerBuilder);
+        return this;
     }
 
     // Properties
@@ -246,16 +254,16 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         return processors;
     }
 
-	public InterceptorBuilder<E> intercept() {
-		InterceptorBuilder<E> answer = new InterceptorBuilder<E>(this);
+    public InterceptorBuilder<E> intercept() {
+        InterceptorBuilder<E> answer = new InterceptorBuilder<E>(this);
         addProcessBuilder(answer);
         return answer;
-	}
-	
-	public InterceptorBuilder<E> intercept(InterceptorProcessor<E> interceptor) {
-		InterceptorBuilder<E> answer = new InterceptorBuilder<E>(this);
-		answer.add(interceptor);
+    }
+
+    public InterceptorBuilder<E> intercept(InterceptorProcessor<E> interceptor) {
+        InterceptorBuilder<E> answer = new InterceptorBuilder<E>(this);
+        answer.add(interceptor);
         addProcessBuilder(answer);
         return answer;
-	}
+    }
 }

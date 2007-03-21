@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class DeadLetterChannel<E extends Exchange> implements Processor<E> {
+public class DeadLetterChannel<E extends Exchange> implements ErrorHandler<E> {
     public static final String REDELIVERY_COUNT_HEADER = "org.apache.camel.redeliveryCount";
 
     private static final transient Log log = LogFactory.getLog(DeadLetterChannel.class);

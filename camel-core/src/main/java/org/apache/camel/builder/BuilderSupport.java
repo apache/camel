@@ -16,9 +16,11 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.Expression;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import org.apache.camel.Expression;
+import org.apache.camel.processor.LoggingLevel;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Base class for implementation inheritance
@@ -26,10 +28,15 @@ import org.apache.camel.Processor;
  * @version $Revision: $
  */
 public abstract class BuilderSupport<E extends Exchange> {
-
     private ErrorHandlerBuilder<E> errorHandlerBuilder;
-                                                    
+
     protected BuilderSupport() {
+    }
+
+    protected BuilderSupport(BuilderSupport<E> parent) {
+        if (parent.errorHandlerBuilder != null) {
+            this.errorHandlerBuilder = parent.errorHandlerBuilder.copy();
+        }
     }
 
     // Builder methods
@@ -75,15 +82,49 @@ public abstract class BuilderSupport<E extends Exchange> {
         return new ValueBuilder<E>(expression);
     }
 
+    /**
+     * Creates a disabled error handler for removing the default error handler
+     */
+    public NoErrorHandlerBuilder<E> noErrorHandler() {
+        return new NoErrorHandlerBuilder<E>();
+    }
+
+    /**
+     * Creates an error handler which just logs errors
+     */
+    public LoggingErrorHandlerBuilder<E> loggingErrorHandler() {
+        return new LoggingErrorHandlerBuilder<E>();
+    }
+
+    /**
+     * Creates an error handler which just logs errors
+     */
+    public LoggingErrorHandlerBuilder<E> loggingErrorHandler(String log) {
+        return loggingErrorHandler(LogFactory.getLog(log));
+    }
+
+    /**
+     * Creates an error handler which just logs errors
+     */
+    public LoggingErrorHandlerBuilder<E> loggingErrorHandler(Log log) {
+        return new LoggingErrorHandlerBuilder<E>(log);
+    }
+
+    /**
+     * Creates an error handler which just logs errors
+     */
+    public LoggingErrorHandlerBuilder<E> loggingErrorHandler(Log log, LoggingLevel level) {
+        return new LoggingErrorHandlerBuilder<E>(log, level);
+    }
+
+    /*
+    public DeadLetterChannelBuilder<E> deadLetterChannel() {
+        return new DeadLetterChannelBuilder<E>();
+    }
+    */
 
     // Properties
     //-------------------------------------------------------------------------
-
-    protected BuilderSupport(BuilderSupport<E> parent) {
-        if (parent.errorHandlerBuilder != null) {
-            this.errorHandlerBuilder = parent.errorHandlerBuilder.copy();
-        }
-    }
 
     public ErrorHandlerBuilder<E> getErrorHandlerBuilder() {
         if (errorHandlerBuilder == null) {
@@ -98,5 +139,4 @@ public abstract class BuilderSupport<E extends Exchange> {
     public void setErrorHandlerBuilder(ErrorHandlerBuilder<E> errorHandlerBuilder) {
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
-
 }

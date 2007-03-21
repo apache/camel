@@ -147,7 +147,7 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
 
     public void setRoutes(RouteBuilder<E> builder) {
         // lets now add the routes from the builder
-        builder.setContainer(this);
+        builder.setContext(this);
         setRoutes(builder.getRouteMap());
     }
 

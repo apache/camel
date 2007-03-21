@@ -15,28 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder;
+package org.apache.camel;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Expression;
-import org.apache.camel.processor.RecipientList;
+import junit.framework.TestCase;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
- * Creates a dynamic <a href="http://activemq.apache.org/camel/recipient-list.html">Recipient List</a> pattern.
- *
+ * A bunch of useful testing methods
+ * 
  * @version $Revision$
  */
-public class RecipientListBuilder<E extends Exchange> extends BuilderSupport<E> implements ProcessorFactory<E> {
-    private final ValueBuilder<E> valueBuilder;
+public abstract class TestSupport extends TestCase {
 
-    public RecipientListBuilder(FromBuilder<E> parent, ValueBuilder<E> valueBuilder) {
-        super(parent);
-        this.valueBuilder = valueBuilder;
-    }
+    protected transient Log log = LogFactory.getLog(getClass());
 
-    public Processor<E> createProcessor() {
-        Expression<E> expression = valueBuilder.getExpression();
-        return new RecipientList<E>(expression);
+    protected <T> T assertIsInstanceOf(Class<T> expectedType, Object value) {
+        assertNotNull("Expected an instance of type: " + expectedType.getName() + " but was null", value);
+        assertTrue("object should be a " + expectedType.getName() + " but was: " + value + " with type: " + value.getClass().getName(),
+                expectedType.isInstance(value));
+        return expectedType.cast(value);
     }
 }
