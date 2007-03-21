@@ -36,11 +36,11 @@ import java.util.concurrent.Callable;
  * the component is optional, and if it is not specified, the default component name
  * is assumed.
  *
- * @version $Revision$
+ * @version $Revision:520964 $
  */
 public class JmsEndpointResolver implements EndpointResolver<JmsExchange> {
 
-	public static final String DEFAULT_COMPONENT_NAME = QueueComponent.class.getName();
+	public static final String DEFAULT_COMPONENT_NAME = JmsEndpointResolver.class.getName();
 
 	/**
 	 * Finds the {@see JmsComponent} specified by the uri.  If the {@see JmsComponent}

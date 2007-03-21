@@ -21,6 +21,7 @@ import com.sun.jndi.toolkit.url.Uri;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
@@ -30,13 +31,12 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Session;
 
 /**
- * @version $Revision$
+ * @version $Revision:520964 $
  */
-public class JmsComponent implements Component<JmsExchange> {
+public class JmsComponent extends DefaultComponent<JmsExchange> {
     public static final String QUEUE_PREFIX = "queue/";
     public static final String TOPIC_PREFIX = "topic/";
 
-    private CamelContext container;
     private JmsTemplate template;
 
     /**
@@ -79,9 +79,9 @@ public class JmsComponent implements Component<JmsExchange> {
         this.template = template;
     }
 
-    public JmsComponent(CamelContext container) {
-        this();
-        this.container = container;
+    public JmsComponent(CamelContext context) {
+        super(context);
+        this.template = new JmsTemplate();
     }
 
     public JmsEndpoint createEndpoint(Uri uri) {
@@ -92,7 +92,7 @@ public class JmsComponent implements Component<JmsExchange> {
     }
 
     public JmsEndpoint createEndpoint(String uri, String path) {
-        ObjectHelper.notNull(container, "container");
+        ObjectHelper.notNull(getContext(), "container");
 
         if (path.startsWith(QUEUE_PREFIX)) {
             template.setPubSubDomain(false);
@@ -124,7 +124,7 @@ public class JmsComponent implements Component<JmsExchange> {
         // messageConverter
         // durableSubscriberName 
 
-        return new JmsEndpoint(uri, container, subject, template, listenerContainer);
+        return new JmsEndpoint(uri, getContext(), subject, template, listenerContainer);
     }
 
     public JmsTemplate getTemplate() {
@@ -135,14 +135,6 @@ public class JmsComponent implements Component<JmsExchange> {
         this.template = template;
     }
 
-
-    public CamelContext getContainer() {
-        return container;
-    }
-
-    public void setContext(CamelContext container) {
-        this.container = container;
-    }
 
     protected AbstractMessageListenerContainer createMessageListenerContainer(JmsTemplate template) {
         // TODO use an enum to auto-switch container types?

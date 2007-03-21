@@ -53,15 +53,6 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
      */
     public abstract void configure();
 
-    /**
-     * Resolves the given URI to an endpoint
-     */
-    public Endpoint<E> endpoint(String uri) {
-        CamelContext<E> c = getContext();
-        EndpointResolver<E> er = c.getEndpointResolver();
-        return er.resolveEndpoint(c, uri);
-    }
-
     public FromBuilder<E> from(String uri) {
         return from(endpoint(uri));
     }

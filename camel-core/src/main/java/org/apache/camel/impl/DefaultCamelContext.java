@@ -21,15 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointResolver;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangeConverter;
-import org.apache.camel.Processor;
-import org.apache.camel.RouteFactory;
-import org.apache.camel.TypeConverter;
+import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -112,7 +104,12 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
      */
     public Endpoint<E> resolveEndpoint(String uri) {
          EndpointResolver<E> er = getEndpointResolver();
-         return er.resolveEndpoint(this, uri);
+        try {
+            return er.resolveEndpoint(this, uri);
+        }
+        catch (Exception e) {
+            throw new ResolveEndpointFailedException(uri, e);
+        }
     }
     
     /**
