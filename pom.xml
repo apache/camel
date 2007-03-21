@@ -110,6 +110,7 @@
     <module>camel-core</module>
     <module>camel-jms</module>
     <module>camel-jbi</module>
+    <module>camel-mina</module>
     <module>camel-xbean</module>
   </modules>
 
@@ -231,6 +232,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.apache.mina</groupId>
+        <artifactId>mina-java5</artifactId>
+        <version>1.0.2</version>
+      </dependency>
+
+      <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>3.8.1</version>
@@ -303,6 +310,7 @@
             <link>http://jakarta.apache.org/commons/pool/apidocs/</link>
             <link>http://junit.sourceforge.net/javadoc/</link>
             <link>http://logging.apache.org/log4j/docs/api/</link>
+            <link>http://mina.apache.org/report/trunk/apidocs/</link>
           </links>
            <stylesheetfile>${basedir}/../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>

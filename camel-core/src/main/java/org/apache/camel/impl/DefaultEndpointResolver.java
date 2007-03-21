@@ -37,12 +37,12 @@ import org.apache.camel.util.ObjectHelper;
 public class DefaultEndpointResolver<E> implements EndpointResolver<E> {
     static final private FactoryFinder endpointResolverFactory = new FactoryFinder("META-INF/services/org/apache/camel/EndpointResolver/");
     
-    public Endpoint<E> resolveEndpoint(CamelContext container, String uri) {
+    public Endpoint<E> resolveEndpoint(CamelContext container, String uri) throws Exception {
     	EndpointResolver resolver = getDelegate(uri);
 		return resolver.resolveEndpoint(container, uri);
     }
 
-	public Component resolveComponent(CamelContext container, String uri) {
+	public Component resolveComponent(CamelContext container, String uri) throws Exception {
     	EndpointResolver resolver = getDelegate(uri);
 		return resolver.resolveComponent(container, uri);
 	}
