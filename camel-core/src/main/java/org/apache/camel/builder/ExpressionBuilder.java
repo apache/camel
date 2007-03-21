@@ -81,7 +81,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "Body";
+                return "body";
             }
         };
     }
@@ -98,7 +98,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "BodyAs[" + type.getName() + "]";
+                return "bodyAs[" + type.getName() + "]";
             }
         };
     }
@@ -114,7 +114,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "OutBody";
+                return "outBody";
             }
         };
     }

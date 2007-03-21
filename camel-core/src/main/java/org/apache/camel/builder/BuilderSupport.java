@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 
 /**
  * Base class for implementation inheritance
@@ -25,6 +26,14 @@ import org.apache.camel.Exchange;
  * @version $Revision: $
  */
 public abstract class BuilderSupport<E extends Exchange> {
+
+    private ErrorHandlerBuilder<E> errorHandlerBuilder;
+                                                    
+    protected BuilderSupport() {
+    }
+
+    // Builder methods
+    //-------------------------------------------------------------------------
 
     /**
      * Returns a predicate and value builder for headers on an exchange
@@ -66,5 +75,28 @@ public abstract class BuilderSupport<E extends Exchange> {
         return new ValueBuilder<E>(expression);
     }
 
+
+    // Properties
+    //-------------------------------------------------------------------------
+
+    protected BuilderSupport(BuilderSupport<E> parent) {
+        if (parent.errorHandlerBuilder != null) {
+            this.errorHandlerBuilder = parent.errorHandlerBuilder.copy();
+        }
+    }
+
+    public ErrorHandlerBuilder<E> getErrorHandlerBuilder() {
+        if (errorHandlerBuilder == null) {
+            errorHandlerBuilder = new DeadLetterChannelBuilder<E>();
+        }
+        return errorHandlerBuilder;
+    }
+
+    /**
+     * Sets the error handler to use with processors created by this builder
+     */
+    public void setErrorHandlerBuilder(ErrorHandlerBuilder<E> errorHandlerBuilder) {
+        this.errorHandlerBuilder = errorHandlerBuilder;
+    }
 
 }

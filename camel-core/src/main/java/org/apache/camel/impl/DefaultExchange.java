@@ -41,15 +41,16 @@ public class DefaultExchange implements Exchange {
 
     public Exchange copy() {
         Exchange exchange = newInstance();
-        if (exchange instanceof DefaultExchange) {
-            DefaultExchange defaultExchange = (DefaultExchange) exchange;
-            defaultExchange.setHeaders(getHeaders().copy());
-            defaultExchange.setIn(getIn().copy());
-            defaultExchange.setOut(getOut().copy());
-            defaultExchange.setFault(getFault().copy());
-            defaultExchange.setException(getException());
-        }
+        exchange.copyFrom(this);
         return exchange;
+    }
+
+    public void copyFrom(Exchange exchange) {
+        setHeaders(exchange.getHeaders().copy());
+        setIn(exchange.getIn().copy());
+        setOut(exchange.getOut().copy());
+        setFault(exchange.getFault().copy());
+        setException(exchange.getException());
     }
 
     public Exchange newInstance() {
@@ -124,5 +125,4 @@ public class DefaultExchange implements Exchange {
     protected Message createOutMessage() {
         return new DefaultMessage();
     }
-
 }

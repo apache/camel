@@ -25,9 +25,11 @@ import org.apache.camel.util.ObjectHelper;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * A default endpoint useful for implementation inheritence
+ * 
  * @version $Revision$
  */
-public abstract class DefaultEndpoint<E> implements Endpoint<E> {
+public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E> {
     private String endpointUri;
     private CamelContext context;
     private Processor<E> inboundProcessor;
@@ -92,6 +94,13 @@ public abstract class DefaultEndpoint<E> implements Endpoint<E> {
             activated.set(false);
             doDeactivate();
         }
+    }
+
+
+    public E createExchange(E exchange) {
+        E answer = createExchange();
+        answer.copyFrom(exchange);
+        return answer;
     }
 
     /**

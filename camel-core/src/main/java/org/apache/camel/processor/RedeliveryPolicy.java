@@ -40,6 +40,11 @@ public class RedeliveryPolicy {
     public RedeliveryPolicy() {
     }
 
+    @Override
+    public String toString() {
+        return "RedeliveryPolicy[maximumRedeliveries=" + maximumRedeliveries + "]";
+    }
+
     public RedeliveryPolicy copy() {
         try {
             return (RedeliveryPolicy) clone();

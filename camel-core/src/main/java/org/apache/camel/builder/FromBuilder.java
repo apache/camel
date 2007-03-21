@@ -20,11 +20,14 @@ import org.apache.camel.processor.CompositeProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.InterceptorProcessor;
+import org.apache.camel.processor.MulticastProcessor;
+import org.apache.camel.processor.Pipeline;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collection;
 
 /**
  * @version $Revision$
@@ -52,6 +55,23 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         return getBuilder().endpoint(uri);
     }
 
+    public List<Endpoint<E>> endpoints(String... uris) {
+        List<Endpoint<E>> endpoints = new ArrayList<Endpoint<E>>();
+        for (String uri : uris) {
+            endpoints.add(endpoint(uri));
+        }
+        return endpoints;
+    }
+
+    public List<Endpoint<E>> endpoints(Endpoint<E>... uris) {
+        List<Endpoint<E>> endpoints = new ArrayList<Endpoint<E>>();
+        for (Endpoint<E> uri : uris) {
+            endpoints.add(uri);
+        }
+        return endpoints;
+    }
+
+
     /**
      * Sends the exchange to the given endpoint URI
      */
@@ -70,27 +90,50 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
 
 
     /**
-     * Sends the exchange to the given endpoint URI
+     * Sends the exchange to a list of endpoints using the {@link MulticastProcessor} pattern
      */
     public ProcessorFactory<E> to(String... uris) {
-        ProcessorFactory<E> answer = null;
-        for (String uri : uris) {
-            answer = to(endpoint(uri));
-        }
-        return answer;
+        return to(endpoints(uris));
     }
 
     /**
-     * Sends the exchange to the given endpoint
+     * Sends the exchange to a list of endpoints using the {@link MulticastProcessor} pattern
      */
     public ProcessorFactory<E> to(Endpoint<E>... endpoints) {
-        ProcessorFactory<E> answer = null;
-        for (Endpoint<E> endpoint : endpoints) {
-            answer = to(endpoint);          
-        }
-        return answer;
+        return to(endpoints(endpoints));
     }
 
+
+    /**
+     * Sends the exchange to a list of endpoint using the {@link MulticastProcessor} pattern
+     */
+    public ProcessorFactory<E> to(Collection<Endpoint<E>> endpoints) {
+        return addProcessBuilder(new MulticastBuilder<E>(this, endpoints));
+    }
+
+    /**
+     * Creates a {@link Pipeline} of the list of endpoints so that the message will get processed by each endpoint in turn
+     * and for request/response the output of one endpoint will be the input of the next endpoint
+     */
+    public ProcessorFactory<E> pipeline(String... uris) {
+        return pipeline(endpoints(uris));
+    }
+
+    /**
+     * Creates a {@link Pipeline} of the list of endpoints so that the message will get processed by each endpoint in turn
+     * and for request/response the output of one endpoint will be the input of the next endpoint
+     */
+    public ProcessorFactory<E> pipeline(Endpoint<E>... endpoints) {
+        return pipeline(endpoints(endpoints));
+    }
+
+    /**
+     * Creates a {@link Pipeline} of the list of endpoints so that the message will get processed by each endpoint in turn
+     * and for request/response the output of one endpoint will be the input of the next endpoint
+     */
+    public ProcessorFactory<E> pipeline(Collection<Endpoint<E>> endpoints) {
+        return addProcessBuilder(new PipelineBuilder<E>(this, endpoints));
+    }
 
     /**
      * Adds the custom processor to this destination
@@ -161,8 +204,9 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         return from;
     }
 
-    public void addProcessBuilder(ProcessorFactory<E> processFactory) {
+    public ProcessorFactory<E> addProcessBuilder(ProcessorFactory<E> processFactory) {
         processFactories.add(processFactory);
+        return processFactory;
     }
 
     public void addProcessor(Processor<E> processor) {
@@ -173,7 +217,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         List<Processor<E>> answer = new ArrayList<Processor<E>>();
 
         for (ProcessorFactory<E> processFactory : processFactories) {
-            Processor<E> processor = processFactory.createProcessor();
+            Processor<E> processor = makeProcessor(processFactory);
             if (processor == null) {
                 throw new IllegalArgumentException("No processor created for processBuilder: " + processFactory);
             }
@@ -188,6 +232,14 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         else {
             return new CompositeProcessor<E>(answer);
         }
+    }
+
+    /**
+     * Creates the processor and wraps it in any necessary interceptors and error handlers
+     */
+    protected Processor<E> makeProcessor(ProcessorFactory<E> processFactory) {
+        Processor<E> processor = processFactory.createProcessor();
+        return getErrorHandlerBuilder().createErrorHandler(processor);
     }
 
     public List<Processor<E>> getProcessors() {
