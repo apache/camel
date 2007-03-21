@@ -18,6 +18,7 @@
 package org.apache.camel.processor;
 
 import java.util.Random;
+import java.io.Serializable;
 
 // Code taken from the ActiveMQ codebase
 
@@ -27,7 +28,9 @@ import java.util.Random;
  *
  * @version $Revision$
  */
-public class RedeliveryPolicy {
+public class RedeliveryPolicy implements Cloneable, Serializable {
+    protected static transient Random randomNumberGenerator;
+
     protected int maximumRedeliveries = 6;
     protected long initialRedeliveryDelay = 1000L;
     protected double backOffMultiplier = 2;
@@ -35,7 +38,7 @@ public class RedeliveryPolicy {
     // +/-15% for a 30% spread -cgs
     protected double collisionAvoidanceFactor = 0.15d;
     protected boolean useCollisionAvoidance = false;
-    protected static Random randomNumberGenerator;
+
 
     public RedeliveryPolicy() {
     }
@@ -186,15 +189,13 @@ public class RedeliveryPolicy {
         }
 
         if (useCollisionAvoidance) {
-            if (randomNumberGenerator == null) {
-                initRandomNumberGenerator();
-            }
 
             /*
              * First random determines +/-, second random determines how far to
              * go in that direction. -cgs
              */
-            double variance = (randomNumberGenerator.nextBoolean() ? collisionAvoidanceFactor : -collisionAvoidanceFactor) * randomNumberGenerator.nextDouble();
+            Random random = getRandomNumberGenerator();
+            double variance = (random.nextBoolean() ? collisionAvoidanceFactor : -collisionAvoidanceFactor) * random.nextDouble();
             redeliveryDelay += redeliveryDelay * variance;
         }
 
@@ -223,9 +224,10 @@ public class RedeliveryPolicy {
         this.useExponentialBackOff = useExponentialBackOff;
     }
 
-    protected static synchronized void initRandomNumberGenerator() {
+    protected static synchronized Random getRandomNumberGenerator() {
         if (randomNumberGenerator == null) {
             randomNumberGenerator = new Random();
         }
+        return randomNumberGenerator;
     }
 }

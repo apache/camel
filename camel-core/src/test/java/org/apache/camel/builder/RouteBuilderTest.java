@@ -416,8 +416,4 @@ public class RouteBuilderTest extends TestSupport {
         DeadLetterChannel deadLetter = (DeadLetterChannel) processor;
         return deadLetter.getOutput();
     }
-
-    protected void assertEndpointUri(Endpoint<Exchange> endpoint, String uri) {
-        assertEquals("Endoint uri for: " + endpoint, uri, endpoint.getEndpointUri());
-    }
 }

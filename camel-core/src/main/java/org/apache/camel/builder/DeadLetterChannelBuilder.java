@@ -18,18 +18,18 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Expression;
-import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.Processor;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.RecipientList;
+import org.apache.camel.processor.RedeliveryPolicy;
 
 /**
  * A builder of a <a href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter Channel</a>
- * 
+ *
  * @version $Revision$
  */
-public class DeadLetterChannelBuilder<E extends Exchange> extends BuilderSupport<E> implements ErrorHandlerBuilder<E> {
+public class DeadLetterChannelBuilder<E extends Exchange> implements ErrorHandlerBuilder<E> {
     private RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
     private ProcessorFactory<E> deadLetterFactory;
     private Processor<E> defaultDeadLetterEndpoint;
@@ -37,6 +37,10 @@ public class DeadLetterChannelBuilder<E extends Exchange> extends BuilderSupport
     private String defaultDeadLetterEndpointUri = "log:org.apache.camel.DeadLetterChannel:error";
 
     public DeadLetterChannelBuilder() {
+    }
+
+    public DeadLetterChannelBuilder(Processor<E> processor) {
+        this(new ConstantProcessorBuilder<E>(processor));
     }
 
     public DeadLetterChannelBuilder(ProcessorFactory<E> deadLetterFactory) {
@@ -54,6 +58,40 @@ public class DeadLetterChannelBuilder<E extends Exchange> extends BuilderSupport
         return new DeadLetterChannel<E>(processor, deadLetter, getRedeliveryPolicy());
     }
 
+    // Builder methods
+    //-------------------------------------------------------------------------
+    public DeadLetterChannelBuilder<E> backOffMultiplier(double backOffMultiplier) {
+        getRedeliveryPolicy().backOffMultiplier(backOffMultiplier);
+        return this;
+    }
+
+    public DeadLetterChannelBuilder<E> collisionAvoidancePercent(short collisionAvoidancePercent) {
+        getRedeliveryPolicy().collisionAvoidancePercent(collisionAvoidancePercent);
+        return this;
+    }
+
+    public DeadLetterChannelBuilder<E> initialRedeliveryDelay(long initialRedeliveryDelay) {
+        getRedeliveryPolicy().initialRedeliveryDelay(initialRedeliveryDelay);
+        return this;
+    }
+
+    public DeadLetterChannelBuilder<E> maximumRedeliveries(int maximumRedeliveries) {
+        getRedeliveryPolicy().maximumRedeliveries(maximumRedeliveries);
+        return this;
+    }
+
+    public DeadLetterChannelBuilder<E> useCollisionAvoidance() {
+        getRedeliveryPolicy().useCollisionAvoidance();
+        return this;
+    }
+
+    public DeadLetterChannelBuilder<E> useExponentialBackOff() {
+        getRedeliveryPolicy().useExponentialBackOff();
+        return this;
+    }
+
+    // Properties
+    //-------------------------------------------------------------------------
     public RedeliveryPolicy getRedeliveryPolicy() {
         return redeliveryPolicy;
     }
@@ -83,19 +121,19 @@ public class DeadLetterChannelBuilder<E extends Exchange> extends BuilderSupport
         this.deadLetterFactory = deadLetterFactory;
     }
 
-     public Processor<E> getDefaultDeadLetterEndpoint() {
-         if (defaultDeadLetterEndpoint == null) {
+    public Processor<E> getDefaultDeadLetterEndpoint() {
+        if (defaultDeadLetterEndpoint == null) {
             defaultDeadLetterEndpoint = new RecipientList<E>(getDefaultDeadLetterEndpointExpression());
-         }
-         return defaultDeadLetterEndpoint;
-     }
+        }
+        return defaultDeadLetterEndpoint;
+    }
 
-     /**
-      * Sets the default dead letter endpoint used
-      */
-     public void setDefaultDeadLetterEndpoint(Processor<E> defaultDeadLetterEndpoint) {
-         this.defaultDeadLetterEndpoint = defaultDeadLetterEndpoint;
-     }
+    /**
+     * Sets the default dead letter endpoint used
+     */
+    public void setDefaultDeadLetterEndpoint(Processor<E> defaultDeadLetterEndpoint) {
+        this.defaultDeadLetterEndpoint = defaultDeadLetterEndpoint;
+    }
 
     public Expression<E> getDefaultDeadLetterEndpointExpression() {
         if (defaultDeadLetterEndpointExpression == null) {

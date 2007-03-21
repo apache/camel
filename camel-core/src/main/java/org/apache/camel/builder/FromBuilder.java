@@ -52,29 +52,6 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     }
 
     /**
-     * Resolves the given URI to an endpoint
-     */
-    public Endpoint<E> endpoint(String uri) {
-        return getBuilder().endpoint(uri);
-    }
-
-    public List<Endpoint<E>> endpoints(String... uris) {
-        List<Endpoint<E>> endpoints = new ArrayList<Endpoint<E>>();
-        for (String uri : uris) {
-            endpoints.add(endpoint(uri));
-        }
-        return endpoints;
-    }
-
-    public List<Endpoint<E>> endpoints(Endpoint<E>... uris) {
-        List<Endpoint<E>> endpoints = new ArrayList<Endpoint<E>>();
-        for (Endpoint<E> uri : uris) {
-            endpoints.add(uri);
-        }
-        return endpoints;
-    }
-
-    /**
      * Sends the exchange to the given endpoint URI
      */
     public ProcessorFactory<E> to(String uri) {

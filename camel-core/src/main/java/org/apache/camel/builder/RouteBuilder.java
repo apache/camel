@@ -35,16 +35,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version $Revision$
  */
 public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E> {
-    private CamelContext<E> context;
     private List<FromBuilder<E>> fromBuilders = new ArrayList<FromBuilder<E>>();
     private AtomicBoolean initalized = new AtomicBoolean(false);
     private Map<Endpoint<E>, Processor<E>> routeMap = new HashMap<Endpoint<E>, Processor<E>>();
 
     protected RouteBuilder() {
+        this(null);
     }
 
     protected RouteBuilder(CamelContext<E> context) {
-        this.context = context;
+        super(context);
     }
 
     /**
@@ -83,17 +83,15 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
 
     // Properties
     //-----------------------------------------------------------------------
-
     public CamelContext<E> getContext() {
+        CamelContext<E> context = super.getContext();
         if (context == null) {
             context = createContainer();
+            setContext(context);
         }
         return context;
     }
 
-    public void setContext(CamelContext<E> context) {
-        this.context = context;
-    }
 
     /**
      * Returns the routing map from inbound endpoints to processors

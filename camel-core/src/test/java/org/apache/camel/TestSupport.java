@@ -36,4 +36,8 @@ public abstract class TestSupport extends TestCase {
                 expectedType.isInstance(value));
         return expectedType.cast(value);
     }
+
+    protected void assertEndpointUri(Endpoint<Exchange> endpoint, String uri) {
+        assertEquals("Endoint uri for: " + endpoint, uri, endpoint.getEndpointUri());
+    }
 }
