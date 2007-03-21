@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+   
+    http://www.apache.org/licenses/LICENSE-2.0
+   
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<s:beans xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd" xmlns:s="http://www.springframework.org/schema/beans">
+    <!-- Right now this is just ideas of what we wish the xml could look like -->
+
+    <!-- 
+        from("queue:a").to("queue:b");
+        from("queue:c").to("queue:d");
+     -->
+    <routeBuilder id="buildSimpleRoute" >
+       <route>
+         <from uri="queue:a"/>
+         <to uri="queue:b"/>
+       </route>
+       <route>
+         <from uri="queue:c"/>
+         <to uri="queue:d"/>
+       </route>
+    </routeBuilder>
+    
+    <!-- 
+        from("queue:a").process(myProcessor);
+     -->
+    <routeBuilder id="buildCustomProcessor">
+       <route>
+         <from uri="queue:a"/>
+         <processor>
+           <s:bean id="myProcessor" class="some.Processor"/>
+         </processor>
+       </route>
+    </routeBuilder>
+
+
+    <!-- 
+        from("queue:a").filter(headerEquals("foo", "bar")).process(myProcessor);
+     -->
+    <routeBuilder id="buildCustomProcessorWithFilter">
+       <route>
+         <from uri="queue:a"/>
+         <filter>
+             <predicate>
+                <header name="foo"/>
+                <equalTo value="bar"/>
+             </predicate>
+         </filter>
+         <processor>
+           <s:bean class="some.Processor"/>
+         </processor>
+       </route>
+    </routeBuilder>
+
+    <!-- 
+        from("queue:a")
+           .intercept()
+              .add(interceptor1)
+              .add(interceptor2)
+           .target().to("queue:d");
+     -->
+    <routeBuilder id="buildRouteWithInterceptor">
+       <route>
+         <from uri="queue:a"/>
+         <intercept>
+             <s:bean id="interceptor1" class="some.InterceptorProcessor"/>
+             <s:bean id="interceptor2" class="some.InterceptorProcessor"/>
+         </intercept>
+         <to uri="queue:b"/>
+       </route>
+    </routeBuilder>
+
+    <!-- 
+        from("queue:a").choice()
+                .when(header("foo").isEqualTo("bar")).to("queue:b")
+                .when(header("foo").isEqualTo("cheese")).to("queue:c")
+                .otherwise().to("queue:d");
+     -->
+    <routeBuilder id="buildSimpleRouteWithChoice">
+       <route>
+         <from uri="queue:a"/>
+         <choice>
+             <when>
+                 <predicate>
+                    <header name="foo"/>
+                    <equalTo value="bar"/>
+                 </predicate>
+                 <to uri="queue:b"/>
+             </when>
+             
+             <when>
+                 <predicate>
+                    <header name="foo"/>
+                    <equalTo value="cheese"/>
+                 </predicate>
+                 <to uri="queue:c"/>
+             </when>
+             <otherwise>
+                 <to uri="queue:d"/>
+             </otherwise>
+         </choice>
+       </route>
+    </routeBuilder>
+
+    <!-- 
+        from("queue:a").filter(headerEquals("foo", "bar")).to("queue:b");
+     -->
+    <routeBuilder id="buildSimpleRouteWithHeaderPredicate">
+       <route>
+         <from uri="queue:a"/>
+         <filter>
+             <predicate>
+                <header name="foo"/>
+                <equalTo value="bar"/>
+             </predicate>
+         </filter>
+         <to uri="queue:b"/>
+       </route>
+    </routeBuilder>
+
+    <!-- 
+        from("queue:a").to("queue:tap", "queue:b");
+     -->
+    <routeBuilder id="buildWireTap">
+       <route>
+         <from uri="queue:a"/>
+         <to>
+            <uri>queue:tap</uri>
+            <uri>queue:a</uri>
+         </to>
+       </route>
+    </routeBuilder>
+
+</s:beans>
+<!-- END SNIPPET: example -->
