@@ -15,28 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Expression;
-import org.apache.camel.processor.RecipientList;
+package org.apache.camel.processor;
 
 /**
- * Creates a dynamic <a href="http://activemq.apache.org/camel/recipient-list.html">Recipient List</a> pattern.
+ * Used to configure the logging levels
  *
  * @version $Revision$
- */
-public class RecipientListBuilder<E extends Exchange> extends BuilderSupport<E> implements ProcessorFactory<E> {
-    private final ValueBuilder<E> valueBuilder;
-
-    public RecipientListBuilder(FromBuilder<E> parent, ValueBuilder<E> valueBuilder) {
-        super(parent);
-        this.valueBuilder = valueBuilder;
-    }
-
-    public Processor<E> createProcessor() {
-        Expression<E> expression = valueBuilder.getExpression();
-        return new RecipientList<E>(expression);
-    }
+*/
+public enum LoggingLevel {
+    DEBUG, ERROR, FATAL, INFO, TRACE, WARN;
 }

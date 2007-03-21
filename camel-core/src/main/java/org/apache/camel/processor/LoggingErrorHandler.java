@@ -23,72 +23,55 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A {@link Processor} which just logs to a {@link Log} object which can be used as an exception
- * handler instead of using a dead letter queue.
+ * An {@link ErrorHandler} which uses commons-logging to dump the error
  *
  * @version $Revision$
  */
-public class Logger<E extends Exchange> implements Processor<E> {
+public class LoggingErrorHandler<E extends Exchange> implements ErrorHandler<E> {
+    private Processor<E> output;
     private Log log;
     private LoggingLevel level;
 
-    public Logger() {
-        this(LogFactory.getLog(Logger.class));
+    public LoggingErrorHandler(Processor<E> output) {
+        this(output, LogFactory.getLog(LoggingErrorHandler.class), LoggingLevel.INFO);
     }
 
-    public Logger(Log log) {
-        this(log, LoggingLevel.INFO);
-    }
-
-    public Logger(Log log, LoggingLevel level) {
+    public LoggingErrorHandler(Processor<E> output, Log log, LoggingLevel level) {
+        this.output = output;
         this.log = log;
         this.level = level;
     }
 
     @Override
     public String toString() {
-        return "Logger[" + log + "]";
+        return "LoggingErrorHandler[" + output + "]";
     }
 
     public void onExchange(E exchange) {
-        switch (level) {
-            case DEBUG:
-                if (log.isDebugEnabled()) {
-                    log.debug(logMessage(exchange));
-                }
-                break;
-            case ERROR:
-                if (log.isErrorEnabled()) {
-                    log.error(logMessage(exchange));
-                }
-                break;
-            case FATAL:
-                if (log.isFatalEnabled()) {
-                    log.fatal(logMessage(exchange));
-                }
-                break;
-            case INFO:
-                if (log.isInfoEnabled()) {
-                    log.debug(logMessage(exchange));
-                }
-                break;
-            case TRACE:
-                if (log.isTraceEnabled()) {
-                    log.trace(logMessage(exchange));
-                }
-                break;
-            case WARN:
-                if (log.isWarnEnabled()) {
-                    log.warn(logMessage(exchange));
-                }
-                break;
-            default:
-                log.error("Unknown level: " + level + " when trying to log exchange: " + logMessage(exchange));
+        try {
+            output.onExchange(exchange);
+        }
+        catch (RuntimeException e) {
+            logError(exchange, e);
         }
     }
 
-    protected Object logMessage(E exchange) {
-        return exchange;
+    // Properties
+    //-------------------------------------------------------------------------
+
+    /**
+     * Returns the output processor
+     */
+    public Processor<E> getOutput() {
+        return output;
+    }
+
+    public LoggingLevel getLevel() {
+        return level;
+    }
+
+    public void setLevel(LoggingLevel level) {
+        this.level = level;
     }
 
     public Log getLog() {
@@ -97,5 +80,48 @@ public class Logger<E extends Exchange> implements Processor<E> {
 
     public void setLog(Log log) {
         this.log = log;
+    }
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+    protected void logError(E exchange, RuntimeException e) {
+        switch (level) {
+            case DEBUG:
+                if (log.isDebugEnabled()) {
+                    log.debug(logMessage(exchange, e), e);
+                }
+                break;
+            case ERROR:
+                if (log.isErrorEnabled()) {
+                    log.error(logMessage(exchange, e), e);
+                }
+                break;
+            case FATAL:
+                if (log.isFatalEnabled()) {
+                    log.fatal(logMessage(exchange, e), e);
+                }
+                break;
+            case INFO:
+                if (log.isInfoEnabled()) {
+                    log.debug(logMessage(exchange, e), e);
+                }
+                break;
+            case TRACE:
+                if (log.isTraceEnabled()) {
+                    log.trace(logMessage(exchange, e), e);
+                }
+                break;
+            case WARN:
+                if (log.isWarnEnabled()) {
+                    log.warn(logMessage(exchange, e), e);
+                }
+                break;
+            default:
+                log.error("Unknown level: " + level + " when trying to log exchange: " + logMessage(exchange, e), e);
+        }
+    }
+
+    protected Object logMessage(E exchange, RuntimeException e) {
+        return e + " while processing exchange: " + exchange;
     }
 }

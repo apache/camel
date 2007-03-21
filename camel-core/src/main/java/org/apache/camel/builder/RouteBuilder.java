@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version $Revision$
  */
 public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E> {
-    private CamelContext<E> container;
+    private CamelContext<E> context;
     private List<FromBuilder<E>> fromBuilders = new ArrayList<FromBuilder<E>>();
     private AtomicBoolean initalized = new AtomicBoolean(false);
     private Map<Endpoint<E>, Processor<E>> routeMap = new HashMap<Endpoint<E>, Processor<E>>();
@@ -43,8 +43,8 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     protected RouteBuilder() {
     }
 
-    protected RouteBuilder(CamelContext<E> container) {
-        this.container = container;
+    protected RouteBuilder(CamelContext<E> context) {
+        this.context = context;
     }
 
     /**
@@ -56,7 +56,7 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
      * Resolves the given URI to an endpoint
      */
     public Endpoint<E> endpoint(String uri) {
-         CamelContext<E> c = getContainer();
+         CamelContext<E> c = getContext();
          EndpointResolver<E> er = c.getEndpointResolver();
          return er.resolveEndpoint(c, uri);
     }
@@ -71,19 +71,28 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
         return answer;
     }
 
+    /**
+     * Installs the given error handler builder
+     * @param errorHandlerBuilder the error handler to be used by default for all child routes
+     * @return the current builder with the error handler configured
+     */
+    public RouteBuilder<E> errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
+        setErrorHandlerBuilder(errorHandlerBuilder);
+        return this;
+    }
 
     // Properties
     //-----------------------------------------------------------------------
 
-    public CamelContext<E> getContainer() {
-        if (container == null) {
-            container = createContainer();
+    public CamelContext<E> getContext() {
+        if (context == null) {
+            context = createContainer();
         }
-        return container;
+        return context;
     }
 
-    public void setContainer(CamelContext<E> container) {
-        this.container = container;
+    public void setContext(CamelContext<E> context) {
+        this.context = context;
     }
 
     /**

@@ -17,7 +17,7 @@
 package org.apache.camel.xbean;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.RouteBuilderTest;
+import org.apache.camel.builder.RouteBuilderTest;
 import org.apache.camel.builder.RouteBuilder;
 
 /**

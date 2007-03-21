@@ -19,24 +19,22 @@ package org.apache.camel.builder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Expression;
-import org.apache.camel.processor.RecipientList;
 
 /**
- * Creates a dynamic <a href="http://activemq.apache.org/camel/recipient-list.html">Recipient List</a> pattern.
+ * A builder to disable the use of an error handler so that any exceptions are thrown.
+ * This not recommended in general, the
+ * <a href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter Channel</a> should be used
+ * if you are unsure; however it can be useful sometimes to disable an error handler inside a complex route
+ * so that exceptions bubble up to the parent {@link Processor}
  *
  * @version $Revision$
  */
-public class RecipientListBuilder<E extends Exchange> extends BuilderSupport<E> implements ProcessorFactory<E> {
-    private final ValueBuilder<E> valueBuilder;
-
-    public RecipientListBuilder(FromBuilder<E> parent, ValueBuilder<E> valueBuilder) {
-        super(parent);
-        this.valueBuilder = valueBuilder;
+public class NoErrorHandlerBuilder<E extends Exchange> extends BuilderSupport<E> implements ErrorHandlerBuilder<E> {
+    public ErrorHandlerBuilder<E> copy() {
+        return this;
     }
 
-    public Processor<E> createProcessor() {
-        Expression<E> expression = valueBuilder.getExpression();
-        return new RecipientList<E>(expression);
+    public Processor<E> createErrorHandler(Processor<E> processor) {
+        return processor;
     }
 }

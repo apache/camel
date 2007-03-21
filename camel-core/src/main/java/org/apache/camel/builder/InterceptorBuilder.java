@@ -34,7 +34,7 @@ public class InterceptorBuilder<E extends Exchange> implements ProcessorFactory<
 	private FromBuilder<E> target;
 
 	public InterceptorBuilder(FromBuilder<E> parent) {
-		this.parent = parent;
+        this.parent = parent;
 	}
 
 	public InterceptorBuilder<E> add(InterceptorProcessor<E> intercept) {

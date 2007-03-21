@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.builder;
 
 import junit.framework.TestCase;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +26,10 @@ import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.MulticastProcessor;
+import org.apache.camel.TestSupport;
+import org.apache.camel.Processor;
+import org.apache.camel.Exchange;
+import org.apache.camel.Endpoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +39,7 @@ import java.util.Set;
 /**
  * @version $Revision$
  */
-public class RouteBuilderTest extends TestCase {
+public class RouteBuilderTest extends TestSupport {
     protected Processor<Exchange> myProcessor = new Processor<Exchange>() {
         public void onExchange(Exchange exchange) {
             System.out.println("Called with exchange: " + exchange);
@@ -71,8 +75,7 @@ public class RouteBuilderTest extends TestCase {
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
-            assertTrue("Processor should be a SendProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof SendProcessor);
-            SendProcessor sendProcessor = (SendProcessor) processor;
+            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, processor);
             assertEquals("Endpoint URI", "queue:b", sendProcessor.getDestination().getEndpointUri());
         }
     }
@@ -101,10 +104,8 @@ public class RouteBuilderTest extends TestCase {
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
-            assertTrue("Processor should be a FilterProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof FilterProcessor);
-            FilterProcessor filterProcessor = (FilterProcessor) processor;
-
-            SendProcessor sendProcessor = (SendProcessor) unwrapErrorHandler(filterProcessor.getProcessor());
+            FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
+    SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapErrorHandler(filterProcessor.getProcessor()));
             assertEquals("Endpoint URI", "queue:b", sendProcessor.getDestination().getEndpointUri());
         }
     }
@@ -137,9 +138,7 @@ public class RouteBuilderTest extends TestCase {
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
-            assertTrue("Processor should be a ChoiceProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof ChoiceProcessor);
-            ChoiceProcessor<Exchange> choiceProcessor = (ChoiceProcessor<Exchange>) processor;
-
+            ChoiceProcessor<Exchange> choiceProcessor = assertIsInstanceOf(ChoiceProcessor.class, processor);
             List<FilterProcessor<Exchange>> filters = choiceProcessor.getFilters();
             assertEquals("Should be two when clauses", 2, filters.size());
 
@@ -211,8 +210,7 @@ public class RouteBuilderTest extends TestCase {
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
-            assertTrue("Processor should be a FilterProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof FilterProcessor);
-            FilterProcessor filterProcessor = (FilterProcessor) processor;
+            FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
             assertEquals("Should be called with my processor", myProcessor, unwrapErrorHandler(filterProcessor.getProcessor()));
         }
     }
@@ -242,9 +240,7 @@ public class RouteBuilderTest extends TestCase {
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
-            assertTrue("Processor should be a MulticastProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof MulticastProcessor);
-            MulticastProcessor<Exchange> multicastProcessor = (MulticastProcessor<Exchange>) processor;
-
+            MulticastProcessor<Exchange> multicastProcessor = assertIsInstanceOf(MulticastProcessor.class, processor);
             List<Endpoint<Exchange>> endpoints = new ArrayList<Endpoint<Exchange>>(multicastProcessor.getEndpoints());
             assertEquals("Should have 2 endpoints", 2, endpoints.size());
 
@@ -293,12 +289,10 @@ public class RouteBuilderTest extends TestCase {
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
-            assertTrue("Processor should be a interceptor1 but was: " + processor + " with type: " + processor.getClass().getName(), processor==interceptor1);
-            InterceptorProcessor<Exchange> p1 = (InterceptorProcessor<Exchange>) processor;
-
+            InterceptorProcessor<Exchange> p1 = assertIsInstanceOf(InterceptorProcessor.class, processor);
             processor = p1.getNext();
-            assertTrue("Processor should be a interceptor2 but was: " + processor + " with type: " + processor.getClass().getName(), processor==interceptor2);
-            InterceptorProcessor<Exchange> p2 = (InterceptorProcessor<Exchange>) processor;
+
+            InterceptorProcessor<Exchange> p2 = assertIsInstanceOf(InterceptorProcessor.class, processor);
 
             assertSendTo(p2.getNext(), "queue:d");
         }
@@ -326,10 +320,9 @@ public class RouteBuilderTest extends TestCase {
 
             System.out.println("processor: " + processor);
             /* TODO
-            assertTrue("Processor should be a FilterProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof FilterProcessor);
-            FilterProcessor filterProcessor = (FilterProcessor) processor;
+            FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
 
-            SendProcessor sendProcessor = (SendProcessor) filterProcessor.getProcessor();
+            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, filterProcessor.getProcessor());
             assertEquals("Endpoint URI", "queue:b", sendProcessor.getDestination().getEndpointUri());
             */
         }
@@ -371,8 +364,7 @@ public class RouteBuilderTest extends TestCase {
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
-            assertTrue("Processor should be a RecipientList but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof RecipientList);
-            RecipientList<Exchange> p1 = (RecipientList<Exchange>) processor;
+            RecipientList<Exchange> p1 = assertIsInstanceOf(RecipientList.class, processor);
         }
     }
     protected RouteBuilder<Exchange> buildSplitter() {
@@ -400,17 +392,14 @@ public class RouteBuilderTest extends TestCase {
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
-            assertTrue("Processor should be a Splitter but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof Splitter);
-            Splitter<Exchange> p1 = (Splitter<Exchange>) processor;
+            Splitter<Exchange> p1 = assertIsInstanceOf(Splitter.class, processor);
         }
     }
 
     protected void assertSendTo(Processor processor, String uri) {
         processor = unwrapErrorHandler(processor);
-        
-        assertTrue("Processor should be a SendProcessor but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof SendProcessor);
 
-        SendProcessor sendProcessor = (SendProcessor) processor;
+        SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, processor);
         assertEquals("Endpoint URI", uri, sendProcessor.getDestination().getEndpointUri());
     }
 
