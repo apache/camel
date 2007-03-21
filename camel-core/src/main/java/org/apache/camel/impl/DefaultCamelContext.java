@@ -17,12 +17,12 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.*;
+import org.apache.camel.builder.RouteBuilder;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
-
-import org.apache.camel.*;
-import org.apache.camel.builder.RouteBuilder;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -31,20 +31,19 @@ import org.apache.camel.builder.RouteBuilder;
  * @org.apache.xbean.XBean element="container" rootElement="true"
  */
 public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> {
-
     private EndpointResolver<E> endpointResolver;
     private ExchangeConverter exchangeConverter;
     private Map<String, Component> components = new HashMap<String, Component>();
-	private Map<Endpoint<E>, Processor<E>> routes;
+    private Map<Endpoint<E>, Processor<E>> routes;
     private TypeConverter typeConverter;
-    
+
     /**
      * Adds a component to the container.
      */
     public void addComponent(String componentName, final Component<E> component) {
         synchronized (components) {
-            if( components.containsKey(componentName) ) {
-            	throw new IllegalArgumentException("Component previously added: "+componentName);
+            if (components.containsKey(componentName)) {
+                throw new IllegalArgumentException("Component previously added: " + componentName);
             }
             component.setContext(this);
             components.put(componentName, component);
@@ -56,9 +55,10 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
             return components.get(componentName);
         }
     }
-    
+
     /**
      * Removes a previously added component.
+     *
      * @param componentName
      * @return the previously added component or null if it had not been previously added.
      */
@@ -70,10 +70,10 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
 
     /**
      * Gets the a previously added component by name or lazily creates the component
-     * using the factory Callback. 
-     * 
+     * using the factory Callback.
+     *
      * @param componentName
-     * @param factory used to create a new component instance if the component was not previously added.
+     * @param factory       used to create a new component instance if the component was not previously added.
      * @return
      */
     public Component getOrCreateComponent(String componentName, Callable<Component<E>> factory) {
@@ -103,7 +103,7 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
      * Resolves the given URI to an endpoint
      */
     public Endpoint<E> resolveEndpoint(String uri) {
-         EndpointResolver<E> er = getEndpointResolver();
+        EndpointResolver<E> er = getEndpointResolver();
         try {
             return er.resolveEndpoint(this, uri);
         }
@@ -111,7 +111,7 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
             throw new ResolveEndpointFailedException(uri, e);
         }
     }
-    
+
     /**
      * Activates all the starting endpoints in that were added as routes.
      */
@@ -122,7 +122,7 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
             endpoint.activate(processor);
         }
     }
-    
+
     /**
      * Deactivates all the starting endpoints in that were added as routes.
      */
@@ -134,13 +134,13 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
 
     // Route Management Methods
     //-----------------------------------------------------------------------
-	public Map<Endpoint<E>, Processor<E>> getRoutes() {
-		return routes;
-	}
+    public Map<Endpoint<E>, Processor<E>> getRoutes() {
+        return routes;
+    }
 
-	public void setRoutes(Map<Endpoint<E>, Processor<E>> routes) {
-		this.routes = routes;
-	}
+    public void setRoutes(Map<Endpoint<E>, Processor<E>> routes) {
+        this.routes = routes;
+    }
 
     public void setRoutes(RouteBuilder<E> builder) {
         // lets now add the routes from the builder
@@ -202,7 +202,6 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
         return new DefaultEndpointResolver<E>();
     }
 
-
     /**
      * Lazily create a default implementation
      */
@@ -210,12 +209,10 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
         return new DefaultExchangeConverter();
     }
 
-
     /**
      * Lazily create a default implementation
      */
     private TypeConverter createTypeConverter() {
         return new DefaultTypeConverter();
     }
-
 }
