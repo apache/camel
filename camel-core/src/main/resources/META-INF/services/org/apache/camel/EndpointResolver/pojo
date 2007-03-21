@@ -1,1 +1,1 @@
-class=org.apache.camel.pojo.PojoEndpointResolver
+class=org.apache.camel.component.pojo.PojoEndpointResolver

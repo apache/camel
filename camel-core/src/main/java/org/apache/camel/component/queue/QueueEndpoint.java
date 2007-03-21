@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.queue;
+package org.apache.camel.component.queue;
 
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
@@ -36,7 +36,7 @@ import org.apache.camel.impl.DefaultExchange;
  */
 public class QueueEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     private BlockingQueue<E> queue;
-	private org.apache.camel.queue.QueueEndpoint.Activation activation;
+	private org.apache.camel.component.queue.QueueEndpoint.Activation activation;
 
     public QueueEndpoint(String uri, CamelContext container, BlockingQueue<E> queue) {
         super(uri, container);

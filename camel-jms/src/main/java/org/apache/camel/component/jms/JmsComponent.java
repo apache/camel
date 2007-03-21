@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jms;
+package org.apache.camel.component.jms;
 
 import com.sun.jndi.toolkit.url.Uri;
 import org.apache.camel.CamelContext;

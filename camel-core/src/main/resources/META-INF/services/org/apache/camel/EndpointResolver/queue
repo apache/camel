@@ -1,1 +1,1 @@
-class=org.apache.camel.queue.QueueEndpointResolver
+class=org.apache.camel.component.queue.QueueEndpointResolver

@@ -1,1 +1,1 @@
-class=org.apache.camel.jms.JmsEndpointResolver
+class=org.apache.camel.component.jms.JmsEndpointResolver

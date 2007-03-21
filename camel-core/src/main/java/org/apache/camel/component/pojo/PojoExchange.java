@@ -14,27 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.pojo;
+package org.apache.camel.component.pojo;
 
-public class SayService implements ISay {
-	String message = "Hello";
-	
-	public SayService() {
-	}
-	public SayService(String message) {
-		this.message = message;
-	}
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 
-	public String say() {
-		return message;
-	}
+/**
+ * @version $Revision: 519901 $
+ */
+public class PojoExchange extends DefaultExchange {
 
-	public String getMessage() {
-		return message;
-	}
+    public PojoExchange(CamelContext context) {
+        super(context);
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public PojoInvocation getInvocation() {
+        return getIn().getBody(PojoInvocation.class);
+    }
 
+    public void setInvocation(PojoInvocation invocation) {
+        getIn().setBody(invocation);
+    }
+
+    @Override
+    public Exchange newInstance() {
+        return new PojoExchange(getContext());
+    }
 }
