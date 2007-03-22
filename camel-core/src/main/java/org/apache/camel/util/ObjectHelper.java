@@ -136,4 +136,10 @@ public class ObjectHelper {
         }
         return value != null;
     }
+
+
+
+    public static boolean isNotNullOrBlank(String text) {
+        return text != null && text.trim().length() > 0;
+    }
 }
