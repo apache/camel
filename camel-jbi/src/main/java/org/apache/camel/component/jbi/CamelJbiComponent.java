@@ -24,6 +24,7 @@ import org.apache.servicemix.common.DefaultComponent;
 public class CamelJbiComponent extends DefaultComponent{
 
     private CamelJbiEndpoint[] endpoints;
+    private JbiBinding binding;
 
     /**
      * @return the endpoints
@@ -53,5 +54,19 @@ public class CamelJbiComponent extends DefaultComponent{
      */
     @Override protected Class[] getEndpointClasses(){
         return new Class[] { CamelJbiEndpoint.class };
+    }
+
+    /**
+     * @return the binding
+     */
+    public JbiBinding getBinding(){
+        return this.binding;
+    }
+
+    /**
+     * @param binding the binding to set
+     */
+    public void setBinding(JbiBinding binding){
+        this.binding=binding;
     }
 }
