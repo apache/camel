@@ -83,8 +83,7 @@ public class JmsMessage extends DefaultMessage {
     }
 
     @Override
-    protected Map<String, Object> createHeaders() {
-        HashMap<String, Object> answer = new HashMap<String, Object>();
+    protected void populateInitialHeaders(Map<String, Object> map) {
         if (jmsMessage != null) {
             Enumeration names;
             try {
@@ -97,14 +96,13 @@ public class JmsMessage extends DefaultMessage {
                 String name = names.nextElement().toString();
                 try {
                     Object value = jmsMessage.getObjectProperty(name);
-                    answer.put(name, value);
+                    map.put(name, value);
                 }
                 catch (JMSException e) {
                     throw new MessagePropertyAcessException(name, e);
                 }
             }
         }
-        return answer;
     }
 }
 

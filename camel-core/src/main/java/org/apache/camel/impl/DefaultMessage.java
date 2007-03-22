@@ -66,7 +66,16 @@ public class DefaultMessage extends MessageSupport {
      * @return return a newly constructed Map possibly containing headers from the underlying inbound transport
      */
     protected Map<String, Object> createHeaders() {
-        return new HashMap<String, Object>();
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        populateInitialHeaders(map);
+        return map;
     }
 
+    /**
+     * A strategy method populate the initial set of headers on an inbound message from an underlying binding
+     *
+     * @param map is the empty header map to populate
+     */
+    protected void populateInitialHeaders(Map<String, Object> map) {
+    }
 }
