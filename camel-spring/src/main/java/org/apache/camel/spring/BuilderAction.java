@@ -54,4 +54,8 @@ public class BuilderAction {
 	public String getName() {
 		return methodInfo.getName();
 	}
+
+	public MethodInfo getMethodInfo() {
+		return methodInfo;
+	}
 }

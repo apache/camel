@@ -27,4 +27,23 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Fluent {
+	
+	/**
+	 * Used to change the default element name of the action.
+	 * @return
+	 */
+	String value() default "";
+	
+	/** 
+	 * Should nested elements be evaluated against the current builder.
+	 * @return
+	 */
+	boolean nestedActions() default false;
+
+	/** 
+	 * Should this method be called at the end of the evaluating the 
+	 * element.
+	 * @return
+	 */
+	boolean callOnElementEnd() default false;
 }

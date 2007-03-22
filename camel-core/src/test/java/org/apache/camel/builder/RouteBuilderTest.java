@@ -16,25 +16,23 @@
  */
 package org.apache.camel.builder;
 
-import junit.framework.TestCase;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.ChoiceProcessor;
-import org.apache.camel.processor.SendProcessor;
-import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.processor.InterceptorProcessor;
-import org.apache.camel.processor.RecipientList;
-import org.apache.camel.processor.Splitter;
-import org.apache.camel.processor.DeadLetterChannel;
-import org.apache.camel.processor.MulticastProcessor;
-import org.apache.camel.TestSupport;
-import org.apache.camel.Processor;
-import org.apache.camel.Exchange;
-import org.apache.camel.Endpoint;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.TestSupport;
+import org.apache.camel.processor.ChoiceProcessor;
+import org.apache.camel.processor.DeadLetterChannel;
+import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.processor.InterceptorProcessor;
+import org.apache.camel.processor.MulticastProcessor;
+import org.apache.camel.processor.RecipientList;
+import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.processor.Splitter;
 
 /**
  * @version $Revision$
@@ -42,8 +40,8 @@ import java.util.Set;
 public class RouteBuilderTest extends TestSupport {
 	
 	protected Processor<Exchange> myProcessor = new MyProcessor();    	
-	private InterceptorProcessor<Exchange> interceptor1;
-	private InterceptorProcessor<Exchange> interceptor2;
+	protected InterceptorProcessor<Exchange> interceptor1;
+	protected InterceptorProcessor<Exchange> interceptor2;
     
 	protected RouteBuilder<Exchange> buildSimpleRoute() {
 		// START SNIPPET: e1
@@ -246,13 +244,7 @@ public class RouteBuilderTest extends TestSupport {
         };
 
         // START SNIPPET: e7        
-        interceptor2 = new InterceptorProcessor<Exchange>() {
-        	public void onExchange(Exchange exchange) {
-        		System.out.println("START of onExchange: "+exchange);
-        		next.onExchange(exchange);
-        		System.out.println("END of onExchange: "+exchange);
-        	}
-        };
+        interceptor2 = new MyInterceptorProcessor();
 
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {

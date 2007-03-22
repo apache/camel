@@ -207,7 +207,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         return this;
     }
     
-    @Fluent
+    @Fluent(nestedActions=true)
     public InterceptorBuilder<E> intercept() {
         InterceptorBuilder<E> answer = new InterceptorBuilder<E>(this);
         addProcessBuilder(answer);

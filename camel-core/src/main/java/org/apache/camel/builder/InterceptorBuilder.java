@@ -36,12 +36,14 @@ public class InterceptorBuilder<E extends Exchange> implements ProcessorFactory<
 	public InterceptorBuilder(FromBuilder<E> parent) {
         this.parent = parent;
 	}
-
-	public InterceptorBuilder<E> add(InterceptorProcessor<E> intercept) {
-		intercepts.add(intercept);
+	
+	@Fluent("interceptor")
+	public InterceptorBuilder<E> add(@FluentArg("ref") InterceptorProcessor<E> interceptor) {
+		intercepts.add(interceptor);
 		return this;
 	}
 	
+	@Fluent(callOnElementEnd=true)
     public FromBuilder<E> target() {
         this.target = new FromBuilder<E>(parent);
         return target;
