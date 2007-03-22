@@ -34,6 +34,9 @@ public abstract class MessageSupport implements Message {
     private Object body;
 
     public Object getBody() {
+        if (body == null) {
+            body = createBody();
+        }
         return body;
     }
 
@@ -83,4 +86,13 @@ public abstract class MessageSupport implements Message {
      */
     public abstract Message newInstance();
 
+
+    /**
+     * A factory method to allow a provider to lazily create the message body for inbound messages from other sources
+     *
+     * @return the value of the message body or null if there is no value available
+     */
+    protected Object createBody() {
+        return null;
+    }
 }
