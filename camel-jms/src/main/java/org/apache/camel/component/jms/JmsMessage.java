@@ -18,18 +18,10 @@
 package org.apache.camel.component.jms;
 
 import org.apache.camel.InvalidHeaderTypeException;
-import org.apache.camel.Exchange;
 import org.apache.camel.impl.MessageSupport;
 
-import javax.jms.BytesMessage;
 import javax.jms.JMSException;
-import javax.jms.MapMessage;
 import javax.jms.Message;
-import javax.jms.ObjectMessage;
-import javax.jms.Session;
-import javax.jms.StreamMessage;
-import javax.jms.TextMessage;
-import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +41,6 @@ public class JmsMessage extends MessageSupport {
     public JmsMessage(Message jmsMessage) {
         this.jmsMessage = jmsMessage;
     }
-
 
     @Override
     public Object getBody() {
@@ -140,9 +131,5 @@ public class JmsMessage extends MessageSupport {
     public JmsMessage newInstance() {
         return new JmsMessage();
     }
-
-
-
-
 }
 

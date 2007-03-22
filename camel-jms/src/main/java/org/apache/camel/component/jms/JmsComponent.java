@@ -19,7 +19,6 @@ package org.apache.camel.component.jms;
 
 import com.sun.jndi.toolkit.url.Uri;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
@@ -36,7 +35,6 @@ import javax.jms.Session;
 public class JmsComponent extends DefaultComponent<JmsExchange> {
     public static final String QUEUE_PREFIX = "queue/";
     public static final String TOPIC_PREFIX = "topic/";
-
     private JmsTemplate template;
 
     /**
@@ -69,7 +67,6 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
         template.setSessionAcknowledgeMode(Session.CLIENT_ACKNOWLEDGE);
         return jmsComponent(template);
     }
-
 
     protected JmsComponent() {
         this.template = new JmsTemplate();
@@ -134,7 +131,6 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
     public void setTemplate(JmsTemplate template) {
         this.template = template;
     }
-
 
     protected AbstractMessageListenerContainer createMessageListenerContainer(JmsTemplate template) {
         // TODO use an enum to auto-switch container types?

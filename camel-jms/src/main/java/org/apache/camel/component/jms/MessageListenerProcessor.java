@@ -20,19 +20,19 @@ package org.apache.camel.component.jms;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
-import javax.jms.MessageListener;
 import javax.jms.Message;
+import javax.jms.MessageListener;
 
 /**
  * Represents a JMS {@link MessageListener} which can be used directly with any JMS client
  * or derived from to create an MDB for processing messages using a {@link Processor}
- *  
- * @version $Revision$
+ *
+ * @version $Revision:520964 $
  */
 public class MessageListenerProcessor implements MessageListener {
     private final JmsEndpoint endpoint;
     private final Processor<Exchange> processor;
-    
+
     public MessageListenerProcessor(JmsEndpoint endpoint, Processor<Exchange> processor) {
         this.endpoint = endpoint;
         this.processor = processor;

@@ -20,17 +20,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 
-import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.Session;
 
 /**
  * Represents an {@ilnk Exchange} for working with JMS
- * 
+ *
  * @version $Revision:520964 $
  */
 public class JmsExchange extends DefaultExchange {
-
     private JmsBinding binding;
 
     public JmsExchange(CamelContext context, JmsBinding binding) {
@@ -66,7 +63,6 @@ public class JmsExchange extends DefaultExchange {
     public Exchange newInstance() {
         return new JmsExchange(getContext(), binding);
     }
-
 
     @Override
     protected org.apache.camel.Message createInMessage() {

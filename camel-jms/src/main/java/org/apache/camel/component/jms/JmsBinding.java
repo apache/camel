@@ -17,18 +17,18 @@
  */
 package org.apache.camel.component.jms;
 
+import javax.jms.BytesMessage;
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.ObjectMessage;
-import javax.jms.TextMessage;
-import javax.jms.MapMessage;
-import javax.jms.BytesMessage;
-import javax.jms.StreamMessage;
-import javax.jms.JMSException;
 import javax.jms.Session;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Enumeration;
+import javax.jms.StreamMessage;
+import javax.jms.TextMessage;
 import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A Strategy used to convert between a Camel {@JmsExchange} and {@JmsMessage} to and from a
@@ -37,7 +37,6 @@ import java.io.Serializable;
  * @version $Revision$
  */
 public class JmsBinding {
-
     /**
      * Creates a JMS message from the Camel exchange and message
      *
@@ -89,7 +88,6 @@ public class JmsBinding {
             throw new RuntimeJmsException("Failed to extract body due to: " + e + ". Message: " + message, e);
         }
     }
-
 
     /**
      * Extracts a {@link Map} from a {@link MapMessage}

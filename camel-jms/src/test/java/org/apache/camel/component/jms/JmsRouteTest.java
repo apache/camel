@@ -30,8 +30,8 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Message;
-import javax.jms.TextMessage;
 import javax.jms.ObjectMessage;
+import javax.jms.TextMessage;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -40,7 +40,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class JmsRouteTest extends TestCase {
     private static final transient Log log = LogFactory.getLog(JmsRouteTest.class);
-    
     protected JmsExchange receivedExchange;
     protected CamelContext container = new DefaultCamelContext();
     protected CountDownLatch latch = new CountDownLatch(1);
