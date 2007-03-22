@@ -19,8 +19,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
+  <!-- START SNIPPET: example -->
   <bean id="camel" class="org.apache.camel.spring.CamelContextFactoryBean">
     <property name="packages" value="org.apache.camel.spring.example"/>
   </bean>
+  <!-- END SNIPPET: example -->
 </beans>
-<!-- END SNIPPET: example -->
