@@ -87,8 +87,6 @@ public class ValueBuilder<E extends Exchange> {
         return PredicateBuilder.isNotNull(expression);
     }
 
-
-
     @Fluent
     public ValueBuilder<E> tokenize() {
         return tokenize("\n");
@@ -98,5 +96,27 @@ public class ValueBuilder<E extends Exchange> {
     public ValueBuilder<E> tokenize(@FluentArg("token") String token) {
         Expression<E> newExp = ExpressionBuilder.tokenizeExpression(expression, token);
         return new ValueBuilder<E>(newExp);
+    }
+
+    /**
+     * Converts the current value to the given type using the registered type converters
+     *
+     * @param type the type to convert the value to
+     * @return the current builder
+     */
+    @Fluent
+    public ValueBuilder<E> convertTo(@FluentArg("type") Class type) {
+        Expression<E> newExp = ExpressionBuilder.convertTo(expression, type);
+        return new ValueBuilder<E>(newExp);
+    }
+
+    /**
+     * Converts the current value a String using the registered type converters
+     *
+     * @return the current builder
+     */
+    @Fluent
+    public ValueBuilder<E> convertToString() {
+        return convertTo(String.class);
     }
 }

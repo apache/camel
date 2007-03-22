@@ -120,6 +120,23 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression which converts the given expression to the given type
+     */
+    public static <E extends Exchange> Expression<E> convertTo(final Expression expression, final Class type) {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                Object value = expression.evaluate(exchange);
+                return exchange.getContext().getTypeConverter().convertTo(type, value);
+            }
+
+            @Override
+            public String toString() {
+                return "convertTo(" + expression + ", " + type + ")";
+            }
+        };
+    }
+
+    /**
      * Returns a tokenize expression which will tokenize the string with the given token
      */
     public static <E extends Exchange> Expression<E> tokenizeExpression(final Expression<E> expression, final String token) {
