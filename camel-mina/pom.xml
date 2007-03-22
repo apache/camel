@@ -18,7 +18,7 @@
 -->
 
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -41,8 +41,8 @@
     </dependency>
 
     <dependency>
-			<groupId>org.apache.mina</groupId>
-			<artifactId>mina-java5</artifactId>
+      <groupId>org.apache.mina</groupId>
+      <artifactId>mina-java5</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -56,4 +56,32 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <childDelegation>false</childDelegation>
+          <useFile>true</useFile>
+
+          <!--
+                     <systemProperties>
+                      <property>
+                        <name>org.apache.camel.foo</name>
+                        <value>bar</value>
+                      </property>
+                    </systemProperties>
+          -->
+
+          <includes>
+            <include>**/*Test.*</include>
+          </includes>
+          <excludes>
+            <exclude>**/MinaTcpTest.*</exclude>
+            <exclude>**/MinaMulticastTest.*</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

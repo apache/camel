@@ -68,7 +68,7 @@ public interface CamelContext {
     /**
      * Activates all the starting endpoints in that were added as routes.
      */
-    public void activateEndpoints();
+    public void activateEndpoints() throws Exception;
     
     /**
      * Deactivates all the starting endpoints in that were added as routes.

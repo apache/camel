@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.util.ObjectHelper;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.io.IOException;
 
 /**
  * A default endpoint useful for implementation inheritence
@@ -78,7 +79,7 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         return getContext().getExchangeConverter().convertTo(type, exchange);
     }
 
-    public void activate(Processor<E> inboundProcessor) {
+    public void activate(Processor<E> inboundProcessor) throws Exception {
         if (activated.compareAndSet(false, true)) {
             deactivated.set(false);
             this.inboundProcessor = inboundProcessor;
@@ -117,7 +118,7 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
     /**
      * Called at most once by the container to activate the endpoint
      */
-    protected void doActivate() {
+    protected void doActivate() throws Exception {
     }
 
     /**

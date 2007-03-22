@@ -115,7 +115,7 @@ public class DefaultCamelContext implements CamelContext {
     /**
      * Activates all the starting endpoints in that were added as routes.
      */
-    public void activateEndpoints() {
+    public void activateEndpoints() throws Exception {
         for (Map.Entry<Endpoint, Processor> entry : routes.entrySet()) {
             Endpoint endpoint = entry.getKey();
             Processor processor = entry.getValue();
