@@ -1,0 +1,36 @@
+=========================================================================
+==  NOTICE file corresponding to the section 4 d of                    ==
+==  the Apache License, Version 2.0,                                   ==
+==  in this case for the Apache ActiveMQ distribution.                 ==
+=========================================================================
+
+Apache Camel
+Copyright 2005-2006 The Apache Software Foundation
+
+This product includes software developed by
+The Apache Software Foundation (http://www.apache.org/).
+
+=========================================================================
+==  Spring Notice                                                      ==
+=========================================================================
+
+This product includes software developed by
+the Apache Software Foundation (http://www.apache.org).
+
+This product also includes software developed by
+Clinton Begin (http://www.ibatis.com).
+
+The end-user documentation included with a redistribution, if any,
+must include the following acknowledgement:
+
+ "This product includes software developed by the Spring Framework
+  Project (http://www.springframework.org)."
+
+Alternately, this acknowledgement may appear in the software itself,
+if and wherever such third-party acknowledgements normally appear.
+
+The names "Spring" and "Spring Framework" must not be used to
+endorse or promote products derived from this software without
+prior written permission. For written permission, please contact
+rod.johnson@interface21.com or juergen.hoeller@interface21.com.
+
