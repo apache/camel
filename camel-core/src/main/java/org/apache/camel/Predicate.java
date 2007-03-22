@@ -24,10 +24,11 @@ package org.apache.camel;
 public interface Predicate<E> {
 
     /**
-     * Evaluates the predicate on the message exchange
+     * Evaluates the predicate on the message exchange and returns true
+     * if this exchange matches the predicate
      *
      * @param exchange the message exchange
      * @return true if the predicate matches
      */
-    boolean evaluate(E exchange);
+    boolean matches(E exchange);
 }

@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
+import org.apache.camel.Predicate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.commons.logging.Log;
@@ -35,11 +36,18 @@ import javax.xml.xpath.XPathFunctionResolver;
 public class XPathTest extends TestCase {
     private static final transient Log log = LogFactory.getLog(XPathTest.class);
 
-    public void testXPath() throws Exception {
+    public void testXPathExpressions() throws Exception {
         assertExpression("/foo/bar/@xyz", "cheese", "<foo><bar xyz='cheese'/></foo>");
         assertExpression("$name", "James", "<foo><bar xyz='cheese'/></foo>");
         assertExpression("foo/bar", "cheese", "<foo><bar>cheese</bar></foo>");
         assertExpression("foo/bar/text()", "cheese", "<foo><bar>cheese</bar></foo>");
+    }
+
+    public void testXPathPredicates() throws Exception {
+        assertPredicate("/foo/bar/@xyz", true, "<foo><bar xyz='cheese'/></foo>");
+        assertPredicate("$name = 'James'", true, "<foo><bar xyz='cheese'/></foo>");
+        assertPredicate("$name = 'Hiram'", false, "<foo><bar xyz='cheese'/></foo>");
+        assertPredicate("/foo/notExist", false, "<foo><bar xyz='cheese'/></foo>");
     }
 
     public void testUsingJavaExtensions() throws Exception {
@@ -79,14 +87,33 @@ public class XPathTest extends TestCase {
     }
 
     protected Object assertExpression(Expression expression, String expected, String xml) {
+        Exchange exchange = createExchange(xml);
+        Object value = expression.evaluate(exchange);
+        assertEquals("Expression: " + expression, expected, value);
+        return value;
+    }
+
+    protected void assertPredicate(String xpath, boolean expected, String xml) {
+        Predicate predicate = XPathBuilder.xpath(xpath).createPredicate();
+        boolean value = assertPredicate(predicate, expected, xml);
+
+        log.debug("Evaluated xpath: " + xpath + " on XML: " + xml + " result: " + value);
+
+    }
+
+    protected boolean assertPredicate(Predicate predicate, boolean expected, String xml) {
+        Exchange exchange = createExchange(xml);
+        boolean value = predicate.matches(exchange);
+        assertEquals("Predicate: " + predicate, expected, value);
+        return value;
+    }
+
+    protected Exchange createExchange(String xml) {
         CamelContext context = new DefaultCamelContext();
         Exchange exchange = new DefaultExchange(context);
         Message message = exchange.getIn();
         message.getHeaders().setHeader("name", "James");
         message.setBody(xml);
-
-        Object value = expression.evaluate(exchange);
-        assertEquals("Expression: " + expression, expected, value);
-        return value;
+        return exchange;
     }
 }

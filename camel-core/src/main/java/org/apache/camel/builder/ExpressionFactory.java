@@ -15,39 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.builder;
 
-import org.apache.camel.Processor;
-import org.apache.camel.Predicate;
+import org.apache.camel.Expression;
+import org.apache.camel.Exchange;
 
 /**
+ * A Factory of {@link Expression} objects typically implemented by a builder such as @{XPathBuilder}
+ *
  * @version $Revision$
  */
-public class FilterProcessor<E> implements Processor<E> {
-    private Predicate<E> predicate;
-    private Processor<E> processor;
+public interface ExpressionFactory<E extends Exchange> {
 
-    public FilterProcessor(Predicate<E> predicate, Processor<E> processor) {
-        this.predicate = predicate;
-        this.processor = processor;
-    }
-
-    public void onExchange(E exchange) {
-        if (predicate.matches(exchange)) {
-            processor.onExchange(exchange);
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "if (" + predicate + ") " + processor;
-    }
-
-    public Predicate<E> getPredicate() {
-        return predicate;
-    }
-
-    public Processor<E> getProcessor() {
-        return processor;
-    }
+    /**
+     * Creates an expression object
+     *
+     * @return the newly created expression object
+     */
+    public Expression<E> createExpression();
 }

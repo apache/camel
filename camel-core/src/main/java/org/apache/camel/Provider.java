@@ -15,39 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
-
-import org.apache.camel.Processor;
-import org.apache.camel.Predicate;
+package org.apache.camel;
 
 /**
+ * A provider of newly constructed objects
+ *
  * @version $Revision$
  */
-public class FilterProcessor<E> implements Processor<E> {
-    private Predicate<E> predicate;
-    private Processor<E> processor;
+public interface Provider<T> {
 
-    public FilterProcessor(Predicate<E> predicate, Processor<E> processor) {
-        this.predicate = predicate;
-        this.processor = processor;
-    }
-
-    public void onExchange(E exchange) {
-        if (predicate.matches(exchange)) {
-            processor.onExchange(exchange);
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "if (" + predicate + ") " + processor;
-    }
-
-    public Predicate<E> getPredicate() {
-        return predicate;
-    }
-
-    public Processor<E> getProcessor() {
-        return processor;
-    }
+    /**
+     * Returns the newly constructed instance
+     */
+    T get();
 }

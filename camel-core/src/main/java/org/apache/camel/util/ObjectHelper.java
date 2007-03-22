@@ -123,4 +123,17 @@ public class ObjectHelper {
             return false;
         }
     }
+
+    /**
+     * Converts the given value to a boolean, handling strings or Boolean objects; otherwise returning true if non-null
+     */
+    public static boolean toBoolean(Object value) {
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        }
+        if (value instanceof String) {
+            return "true".equalsIgnoreCase(value.toString());
+        }
+        return value != null;
+    }
 }

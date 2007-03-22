@@ -35,8 +35,8 @@ public class PredicateBuilder {
         notNull(left, "left");
         notNull(right, "right");
         return new Predicate<E>() {
-            public boolean evaluate(E exchange) {
-                return left.evaluate(exchange) && right.evaluate(exchange);
+            public boolean matches(E exchange) {
+                return left.matches(exchange) && right.matches(exchange);
             }
 
             @Override
@@ -53,8 +53,8 @@ public class PredicateBuilder {
         notNull(left, "left");
         notNull(right, "right");
         return new Predicate<E>() {
-            public boolean evaluate(E exchange) {
-                return left.evaluate(exchange) || right.evaluate(exchange);
+            public boolean matches(E exchange) {
+                return left.matches(exchange) || right.matches(exchange);
             }
 
             @Override
@@ -69,7 +69,7 @@ public class PredicateBuilder {
         notNull(right, "right");
 
         return new Predicate<E>() {
-            public boolean evaluate(E exchange) {
+            public boolean matches(E exchange) {
                 Object value1 = left.evaluate(exchange);
                 Object value2 = right.evaluate(exchange);
                 return ObjectHelper.equals(value1, value2);
@@ -87,7 +87,7 @@ public class PredicateBuilder {
         notNull(right, "right");
 
         return new Predicate<E>() {
-            public boolean evaluate(E exchange) {
+            public boolean matches(E exchange) {
                 Object value1 = left.evaluate(exchange);
                 Object value2 = right.evaluate(exchange);
                 return !ObjectHelper.equals(value1, value2);
@@ -105,7 +105,7 @@ public class PredicateBuilder {
         notNull(right, "right");
 
         return new Predicate<E>() {
-            public boolean evaluate(E exchange) {
+            public boolean matches(E exchange) {
                 Object value1 = left.evaluate(exchange);
                 Object value2 = right.evaluate(exchange);
                 return ObjectHelper.compare(value1, value2) < 0;
@@ -123,7 +123,7 @@ public class PredicateBuilder {
         notNull(right, "right");
 
         return new Predicate<E>() {
-            public boolean evaluate(E exchange) {
+            public boolean matches(E exchange) {
                 Object value1 = left.evaluate(exchange);
                 Object value2 = right.evaluate(exchange);
                 return ObjectHelper.compare(value1, value2) <= 0;
@@ -141,7 +141,7 @@ public class PredicateBuilder {
         notNull(right, "right");
 
         return new Predicate<E>() {
-            public boolean evaluate(E exchange) {
+            public boolean matches(E exchange) {
                 Object value1 = left.evaluate(exchange);
                 Object value2 = right.evaluate(exchange);
                 return ObjectHelper.compare(value1, value2) > 0;
@@ -159,7 +159,7 @@ public class PredicateBuilder {
         notNull(right, "right");
 
         return new Predicate<E>() {
-            public boolean evaluate(E exchange) {
+            public boolean matches(E exchange) {
                 Object value1 = left.evaluate(exchange);
                 Object value2 = right.evaluate(exchange);
                 return ObjectHelper.compare(value1, value2) >= 0;
@@ -177,7 +177,7 @@ public class PredicateBuilder {
         notNull(type, "type");
 
         return new Predicate<E>() {
-            public boolean evaluate(E exchange) {
+            public boolean matches(E exchange) {
                 Object value = expression.evaluate(exchange);
                 return type.isInstance(value);
             }
@@ -193,7 +193,7 @@ public class PredicateBuilder {
         notNull(expression, "expression");
 
         return new Predicate<E>() {
-            public boolean evaluate(E exchange) {
+            public boolean matches(E exchange) {
                 Object value = expression.evaluate(exchange);
                 return value == null;
             }
@@ -209,7 +209,7 @@ public class PredicateBuilder {
         notNull(expression, "expression");
 
         return new Predicate<E>() {
-            public boolean evaluate(E exchange) {
+            public boolean matches(E exchange) {
                 Object value = expression.evaluate(exchange);
                 return value != null;
             }
@@ -226,7 +226,7 @@ public class PredicateBuilder {
         notNull(right, "right");
 
         return new Predicate<E>() {
-            public boolean evaluate(E exchange) {
+            public boolean matches(E exchange) {
                 Object value1 = left.evaluate(exchange);
                 Object value2 = right.evaluate(exchange);
                 return ObjectHelper.contains(value1, value2);

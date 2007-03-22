@@ -20,6 +20,10 @@ package org.apache.camel.builder.xpath;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeExpressionException;
+import org.apache.camel.Provider;
+import org.apache.camel.Predicate;
+import org.apache.camel.builder.PredicateFactory;
+import org.apache.camel.builder.ExpressionFactory;
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
@@ -37,7 +41,7 @@ import javax.xml.xpath.XPathFunctionResolver;
  *
  * @version $Revision$
  */
-public class XPathBuilder<E extends Exchange> {
+public class XPathBuilder<E extends Exchange> implements ExpressionFactory<E>, PredicateFactory<E> {
     private final String text;
     private XPathFactory xpathFactory;
     private Class documentType = Document.class;
@@ -55,15 +59,13 @@ public class XPathBuilder<E extends Exchange> {
     }
 
     public Expression<E> createExpression() {
-        try {
-            MessageVariableResolver variableResolver = new MessageVariableResolver();
-            XPathExpression expression = createXPathExpression(variableResolver);
-            return new ExchangeXPathExpression<E>(this, expression, variableResolver);
-        }
-        catch (XPathException e) {
-            throw new InvalidXPathExpression(text, e);
-        }
+        return createExchangeXPathExpression();
     }
+
+    public Predicate<E> createPredicate() {
+        return createExchangeXPathExpression();
+    }
+    
 
     // Builder methods
     //-------------------------------------------------------------------------
@@ -208,6 +210,17 @@ public class XPathBuilder<E extends Exchange> {
 
     // Implementation methods
     //-------------------------------------------------------------------------
+    protected ExchangeXPathExpression<E> createExchangeXPathExpression() {
+        try {
+            MessageVariableResolver variableResolver = new MessageVariableResolver();
+            XPathExpression expression = createXPathExpression(variableResolver);
+            return new ExchangeXPathExpression<E>(this, expression, variableResolver);
+        }
+        catch (XPathException e) {
+            throw new InvalidXPathExpression(text, e);
+        }
+    }
+
     protected XPathExpression createXPathExpression(MessageVariableResolver variableResolver) throws XPathExpressionException, XPathFactoryConfigurationException {
         XPath xPath = getXPathFactory().newXPath();
         xPath.setNamespaceContext(getNamespaceContext());
@@ -217,4 +230,5 @@ public class XPathBuilder<E extends Exchange> {
         }
         return xPath.compile(text);
     }
+
 }
