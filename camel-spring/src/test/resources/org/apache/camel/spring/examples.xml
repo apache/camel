@@ -96,7 +96,7 @@
              <when>
                  <predicate>
                     <header name="foo"/>
-                    <isEqualTo value="cheese"/>
+                    <isNotEqualTo value="cheese"/>
                  </predicate>
                  <to endpoint="queue:c"/>
              </when>
@@ -123,6 +123,30 @@
             <uri>queue:tap</uri>
             <uri>queue:a</uri>
          </to>
+       </route>
+       
+       <route>
+         <from uri="queue:a"/>
+         <recipientList>
+         	<recipients>
+              <header name=""/>
+            </recipients>
+         </recipientList>
+       </route>
+       
+       <route>
+         <from uri="queue:a"/>
+         <filter>
+             <predicate>
+                <body/>
+                <isNotEqualTo value="none"/>
+             </predicate>
+         </filter>
+         <recipientList>
+         	<recipients>
+              <body/>
+            </recipients>
+         </recipientList>
        </route>
        
     </routeBuilder>
