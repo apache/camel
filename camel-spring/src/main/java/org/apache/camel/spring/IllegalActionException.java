@@ -1,12 +1,12 @@
 package org.apache.camel.spring;
 
-public class IllegalRouteException extends IllegalArgumentException {
+public class IllegalActionException extends IllegalArgumentException {
 
 	private static final long serialVersionUID = -2166507687211986107L;
 	private final String actionName;
 	private final String previousAction;
 
-	public IllegalRouteException(String actionName, String previousAction) {
+	public IllegalActionException(String actionName, String previousAction) {
 		super("Illegal route.");
 		this.actionName = actionName;
 		this.previousAction = previousAction;

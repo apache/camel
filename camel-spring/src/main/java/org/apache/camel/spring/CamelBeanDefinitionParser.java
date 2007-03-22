@@ -3,7 +3,6 @@ package org.apache.camel.spring;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -39,7 +38,12 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		if (childElements != null && childElements.size() > 0) {
 			for (int i = 0; i < childElements.size(); ++i) {
 				Element routeElement = (Element) childElements.get(i);
-				BuilderStatement statement = parseRouteElement(routeElement);
+
+				ArrayList<BuilderAction> actions = new ArrayList<BuilderAction>();
+				Class type = parseBuilderElement(routeElement, RouteBuilder.class, actions);
+				BuilderStatement statement = new BuilderStatement();
+				statement.setReturnType(type);
+				statement.setActions(actions);
 				routes.add(statement);
 			}
 		}
@@ -50,30 +54,56 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	/**
 	 * Use reflection to figure out what is the valid next element.
-	 * 
+	 * @param builder TODO
 	 * @param routeElement
+	 * 
 	 * @return
 	 */
-	private BuilderStatement parseRouteElement(Element element) {
-		BuilderStatement rc = new BuilderStatement();
-		Class currentBuilder = RouteBuilder.class;
-
+	private Class parseBuilderElement(Element element, Class<RouteBuilder> builder, ArrayList<BuilderAction> actions) {
+		Class currentBuilder = builder;
 		NodeList childElements = element.getChildNodes();
-		ArrayList<BuilderAction> actions = new ArrayList<BuilderAction>(childElements.getLength());
-		if (childElements != null && childElements.getLength() > 0) {
-			Element previousElement = null;
-			for (int i = 0; i < childElements.getLength(); ++i) {
-				Node node = childElements.item(i);
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					currentBuilder = parseAction(currentBuilder, actions, (Element) node, previousElement);
-					previousElement = (Element) node;
+		Element previousElement = null;
+		for (int i = 0; i < childElements.getLength(); ++i) {
+			Node node = childElements.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				currentBuilder = parseAction(currentBuilder, actions, (Element) node, previousElement);
+				previousElement = (Element) node;
+				BuilderAction action = actions.get(actions.size()-1);
+				
+				if( action.getMethodInfo().methodAnnotation.nestedActions() ) {
+					currentBuilder = parseBuilderElement((Element) node, currentBuilder, actions);
+				} else {
+					// Make sure the there are no child elements.
+					NodeList nl = node.getChildNodes();
+					for (int j = 0; j < nl.getLength(); ++j) {
+						if( nl.item(j).getNodeType() == Node.ELEMENT_NODE ) {
+							throw new IllegalArgumentException("The element "+node.getLocalName()+" should not have any child elements.");
+						}
+					}
+				}
+				
+			}
+		}
+		
+		// Add the builder actions that are annotated with @Fluent(callOnElementEnd=true) 
+		if( currentBuilder!=null ) {
+			Method[] methods = currentBuilder.getMethods();
+			for (int i = 0; i < methods.length; i++) {
+				Method method = methods[i];
+				Fluent annotation = method.getAnnotation(Fluent.class);
+				if( annotation!=null && annotation.callOnElementEnd() ) {
+					
+					if( method.getParameterTypes().length > 0 ) {
+						throw new RuntimeException("Only methods with no parameters can annotated with @Fluent(callOnElementEnd=true): "+method); 
+					}
+					
+					MethodInfo methodInfo = new MethodInfo(method, annotation, new LinkedHashMap<String, Class>(), new LinkedHashMap<String, FluentArg>());
+					actions.add(new BuilderAction(methodInfo, new HashMap<String, Object>()));
+					currentBuilder = method.getReturnType();
 				}
 			}
 		}
-
-		rc.setReturnType(currentBuilder);
-		rc.setActions(actions);
-		return rc;
+		return currentBuilder;
 	}
 
 	private Class parseAction(Class currentBuilder, ArrayList<BuilderAction> actions, Element element, Element previousElement) {
@@ -83,7 +113,7 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		// Get a list of method names that match the action.
 		ArrayList<MethodInfo> methods = findFluentMethodsWithName(currentBuilder, element.getLocalName());
 		if (methods.isEmpty()) {
-			throw new IllegalRouteException(actionName, previousElement == null ? null : previousElement.getLocalName());
+			throw new IllegalActionException(actionName, previousElement == null ? null : previousElement.getLocalName());
 		}
 
 		// Pick the best method out of the list. Sort by argument length. Pick
@@ -103,7 +133,7 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		MethodInfo match = null;
 		match = findMethodMatch(methods, attributeArguments.keySet(), elementArguments.keySet());
 		if (match == null)
-			throw new IllegalRouteException(actionName, previousElement == null ? null : previousElement.getLocalName());
+			throw new IllegalActionException(actionName, previousElement == null ? null : previousElement.getLocalName());
 
 		// Move element arguments into the attributeArguments map if needed. 
 		Set<String> parameterNames = new HashSet<String>(match.parameters.keySet());
@@ -137,10 +167,16 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 				return new RuntimeBeanReference(ref);
 			}
 			
-			BuilderStatement statement = parseRouteElement(element);
+			ArrayList<BuilderAction> actions = new ArrayList<BuilderAction>();
+			Class type = parseBuilderElement(element, RouteBuilder.class, actions);
+			BuilderStatement statement = new BuilderStatement();
+			statement.setReturnType(type);
+			statement.setActions(actions);
+			
 			if( !clazz.isAssignableFrom( statement.getReturnType() ) ) {
 				throw new IllegalStateException("Builder does not produce object of expected type: "+clazz.getName());
 			}
+			
 			return statement;
 		}
 	}
@@ -152,7 +188,7 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 			// attributes
 			boolean miss = false;
 			for (String key : attributeNames) {
-				FluentArg arg = method.annotations.get(key);
+				FluentArg arg = method.parameterAnnotations.get(key);
 				if (arg == null || !arg.attribute()) {
 					miss = true;
 					break;
@@ -176,7 +212,7 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 				}
 				// We only want to use the first child elements as arguments,
 				// once we don't match, we can stop looking.
-				FluentArg arg = method.annotations.get(key);
+				FluentArg arg = method.parameterAnnotations.get(key);
 				if (arg == null || !arg.element()) {
 					break;
 				}
@@ -261,13 +297,15 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		Method[] methods = clazz.getMethods();
 		for (int i = 0; i < methods.length; i++) {
 			Method method = methods[i];
-			if (name.equals(method.getName())) {
-
-				if (!method.isAnnotationPresent(Fluent.class)) {
-					List<Annotation> l = Arrays.asList(method.getAnnotations());
-					System.out.println(l);
-					continue;
-				}
+			if (!method.isAnnotationPresent(Fluent.class)) {
+				continue;
+			}
+			
+			// Use the fluent supplied name for the action, or the method name if not set.
+			Fluent fluentAnnotation = method.getAnnotation(Fluent.class);
+			if ( StringUtils.hasText(fluentAnnotation.value()) ? 
+					name.equals(fluentAnnotation.value()) :
+					name.equals(method.getName()) ) {
 
 				LinkedHashMap<String, Class> map = new LinkedHashMap<String, Class>();
 				LinkedHashMap<String, FluentArg> amap = new LinkedHashMap<String, FluentArg>();
@@ -285,7 +323,7 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 				// If all the parameters were annotated...
 				if (parameters.length == map.size()) {
-					rc.add(new MethodInfo(method, map, amap));
+					rc.add(new MethodInfo(method, fluentAnnotation, map, amap));
 				}
 			}
 		}

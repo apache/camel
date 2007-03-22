@@ -66,17 +66,17 @@
               .add(interceptor2)
            .target().to("queue:d");
      -->
+    <bean id="interceptor1" class="org.apache.camel.builder.MyInterceptorProcessor"/>
+    <bean id="interceptor2" class="org.apache.camel.builder.MyInterceptorProcessor"/>     
     <routeBuilder id="buildRouteWithInterceptor" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
-       <!-- 
        <route>
          <from uri="queue:a"/>
          <intercept>
-             <s:bean id="interceptor1" class="some.InterceptorProcessor"/>
-             <s:bean id="interceptor2" class="some.InterceptorProcessor"/>
+             <interceptor ref="#interceptor1"/>
+             <interceptor ref="#interceptor2"/>
          </intercept>
-         <to uri="queue:b"/>
+         <to uri="queue:d"/>
        </route>
-        -->
     </routeBuilder>
 
     <!-- 

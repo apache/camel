@@ -50,7 +50,7 @@
 
        <route>
          <from uri="queue:a"/>
-         <process ref="#myProcessor"/>
+         <process ref="myProcessor"/>
        </route>
 
        <route>
@@ -73,12 +73,12 @@
        <route>
          <from uri="queue:a"/>
          <intercept>
-         	<interceptor interceptor="#myInterceptor"/>
-         	<interceptor interceptor="#myInterceptor"/>
+             <interceptor ref="interceptor1"/>
+             <interceptor ref="#interceptor2"/>
          </intercept>
          <intercept>
-         	<interceptor interceptor="#myInterceptor"/>
-         	<interceptor interceptor="#myInterceptor"/>
+             <interceptor ref="#interceptor1"/>
+             <interceptor ref="interceptor2"/>
          </intercept>
          <to uri="queue:b"/>
        </route>
