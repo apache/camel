@@ -29,6 +29,7 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A Strategy used to convert between a Camel {@JmsExchange} and {@JmsMessage} to and from a
@@ -37,26 +38,6 @@ import java.util.Map;
  * @version $Revision$
  */
 public class JmsBinding {
-    /**
-     * Creates a JMS message from the Camel exchange and message
-     *
-     * @param session the JMS session used to create the message
-     * @return a newly created JMS Message instance containing the
-     * @throws JMSException if the message could not be created
-     */
-    public Message createJmsMessage(JmsExchange exchange, JmsMessage message, Session session) throws JMSException {
-        Object value = message.getBody();
-        if (value instanceof String) {
-            return session.createTextMessage((String) value);
-        }
-        else if (value instanceof Serializable) {
-            return session.createObjectMessage((Serializable) value);
-        }
-        else {
-            return session.createMessage();
-        }
-    }
-
     /**
      * Extracts the body from the JMS message
      *
@@ -90,6 +71,46 @@ public class JmsBinding {
     }
 
     /**
+     * Creates a JMS message from the Camel exchange and message
+     *
+     * @param session the JMS session used to create the message
+     * @return a newly created JMS Message instance containing the
+     * @throws JMSException if the message could not be created
+     */
+    public Message makeJmsMessage(JmsMessage message, Session session) throws JMSException {
+        Message answer = createJmsMessage(message, session);
+        appendJmsProperties(answer, message, session);
+        return answer;
+    }
+
+    /**
+     * Appends the JMS headers from the Camel {@link JmsMessage}
+     */
+    protected void appendJmsProperties(Message jmsMessage, JmsMessage camelMessage, Session session) throws JMSException {
+        Set<Map.Entry<String, Object>> entries = camelMessage.getHeaders().entrySet();
+        for (Map.Entry<String, Object> entry : entries) {
+            String headerName = entry.getKey();
+            Object headerValue = entry.getValue();
+            if (shouldOutputHeader(camelMessage, headerName, headerValue)) {
+                jmsMessage.setObjectProperty(headerName, headerValue);
+            }
+        }
+    }
+
+    protected Message createJmsMessage(JmsMessage message, Session session) throws JMSException {
+        Object value = message.getBody();
+        if (value instanceof String) {
+            return session.createTextMessage((String) value);
+        }
+        else if (value instanceof Serializable) {
+            return session.createObjectMessage((Serializable) value);
+        }
+        else {
+            return session.createMessage();
+        }
+    }
+
+    /**
      * Extracts a {@link Map} from a {@link MapMessage}
      */
     public Map<String, Object> createMapFromMapMessage(MapMessage message) throws JMSException {
@@ -101,5 +122,12 @@ public class JmsBinding {
             answer.put(name, value);
         }
         return answer;
+    }
+
+    /**
+     * Strategy to allow filtering of headers which are put on the JMS message
+     */
+    protected boolean shouldOutputHeader(JmsMessage camelMessage, String headerName, Object headerValue) {
+        return true;
     }
 }

@@ -30,8 +30,8 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Message;
-import javax.jms.ObjectMessage;
 import javax.jms.TextMessage;
+import javax.jms.ObjectMessage;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -47,55 +47,46 @@ public class JmsRouteTest extends TestCase {
 
     public void testJmsRouteWithTextMessage() throws Exception {
         String expectedBody = "Hello there!";
+        sendExchange(expectedBody);
 
-        // now lets fire in a message
-        JmsExchange exchange = endpoint.createExchange();
-        JmsMessage in = exchange.getIn();
-        in.setBody(expectedBody);
-        in.setHeader("cheese", 123);
-        endpoint.onExchange(exchange);
-
-        // lets wait on the message being received
-        boolean received = latch.await(5, TimeUnit.SECONDS);
-        assertTrue("Did not recieve the message!", received);
-
-        assertNotNull(receivedExchange);
-
-        Object body = receivedExchange.getIn().getBody();
-        log.debug("Received body: " + body);
+        Object body = assertReceivedValidExchange(TextMessage.class);
         assertEquals("body", expectedBody, body);
-
-        Message jmsMessage = receivedExchange.getIn().getJmsMessage();
-        assertTrue("Received a JMS TextMessage: " + jmsMessage, jmsMessage instanceof TextMessage);
-
-        log.debug("Received JMS message: " + jmsMessage);
     }
 
     public void testJmsRouteWithObjectMessage() throws Exception {
         PurchaseOrder expectedBody = new PurchaseOrder("Beer", 10);
 
+        sendExchange(expectedBody);
+
+        Object body = assertReceivedValidExchange(ObjectMessage.class);
+        assertEquals("body", expectedBody, body);
+    }
+
+    protected void sendExchange(Object expectedBody) {
         // now lets fire in a message
         JmsExchange exchange = endpoint.createExchange();
         JmsMessage in = exchange.getIn();
         in.setBody(expectedBody);
         in.setHeader("cheese", 123);
         endpoint.onExchange(exchange);
+    }
 
+    protected Object assertReceivedValidExchange(Class type) throws Exception {
         // lets wait on the message being received
         boolean received = latch.await(5, TimeUnit.SECONDS);
         assertTrue("Did not recieve the message!", received);
 
         assertNotNull(receivedExchange);
+        JmsMessage receivedMessage = receivedExchange.getIn();
 
-        Object body = receivedExchange.getIn().getBody();
+        assertEquals("cheese header", 123, receivedMessage.getHeader("cheese"));
+        Object body = receivedMessage.getBody();
         log.debug("Received body: " + body);
-
-        assertEquals("body", expectedBody, body);
-
-        Message jmsMessage = receivedExchange.getIn().getJmsMessage();
-        assertTrue("Received a JMS TextMessage: " + jmsMessage, jmsMessage instanceof ObjectMessage);
+        Message jmsMessage = receivedMessage.getJmsMessage();
+        assertTrue("Expected an instance of " + type.getName() + " but was " + jmsMessage, type.isInstance(jmsMessage));
 
         log.debug("Received JMS message: " + jmsMessage);
+        return body;
     }
 
     @Override
