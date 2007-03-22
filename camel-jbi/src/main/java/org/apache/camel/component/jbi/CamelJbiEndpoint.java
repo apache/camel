@@ -27,17 +27,17 @@ public class CamelJbiEndpoint extends ProviderEndpoint{
 
     private static final QName SERVICE_NAME=new QName("http://camel.servicemix.org","CamelEndpointComponent");
     private JbiEndpoint jbiEndpoint;
+    private JbiBinding binding;
 
-    public CamelJbiEndpoint(JbiEndpoint jbiEndpoint){
+    public CamelJbiEndpoint(JbiEndpoint jbiEndpoint, JbiBinding binding){
         this.jbiEndpoint=jbiEndpoint;
+        this.binding=binding;
         this.service=SERVICE_NAME;
         this.endpoint=jbiEndpoint.getEndpointUri();
     }
 
     protected void processInOnly(MessageExchange exchange,NormalizedMessage in) throws Exception{
-        /*
-         * ToDo
-         */
+        jbiEndpoint.onExchange(new JbiExchange(jbiEndpoint.getContext(), binding, exchange));
     }
 
     protected void processInOut(MessageExchange exchange,NormalizedMessage in,NormalizedMessage out) throws Exception{
