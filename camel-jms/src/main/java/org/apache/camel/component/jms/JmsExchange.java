@@ -31,44 +31,42 @@ import javax.jms.Session;
  */
 public class JmsExchange extends DefaultExchange {
 
-    public JmsExchange(CamelContext container) {
-        super(container);
+    private JmsBinding binding;
+
+    public JmsExchange(CamelContext context, JmsBinding binding) {
+        super(context);
+        this.binding = binding;
     }
 
-    public JmsExchange(CamelContext container, Message message) {
-        super(container);
+    public JmsExchange(CamelContext context, JmsBinding binding, Message message) {
+        this(context, binding);
         setIn(new JmsMessage(message));
     }
 
     @Override
+    public JmsMessage getIn() {
+        return (JmsMessage) super.getIn();
+    }
+
+    @Override
+    public JmsMessage getOut() {
+        return (JmsMessage) super.getOut();
+    }
+
+    @Override
+    public JmsMessage getFault() {
+        return (JmsMessage) super.getFault();
+    }
+
+    public JmsBinding getBinding() {
+        return binding;
+    }
+
+    @Override
     public Exchange newInstance() {
-        return new JmsExchange(getContext());
+        return new JmsExchange(getContext(), binding);
     }
 
-    public Message createMessage(Session session) throws JMSException {
-        Message request = getInMessage();
-        if (request == null) {
-            request = session.createMessage();
-
-            /** TODO
-            if (lazyHeaders != null) {
-                // lets add any lazy headers
-                for (Map.Entry<String, Object> entry : lazyHeaders.entrySet()) {
-                    request.setObjectProperty(entry.getKey(), entry.getValue());
-                }
-            }
-             */
-        }
-        return request;
-    }
-
-    public Message getInMessage() {
-        JmsMessage jmsMessage = (JmsMessage) getIn();
-        if (jmsMessage != null) {
-            return jmsMessage.getJmsMessage();
-        }
-        return null;
-    }
 
     @Override
     protected org.apache.camel.Message createInMessage() {

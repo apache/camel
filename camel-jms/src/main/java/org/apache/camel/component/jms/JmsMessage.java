@@ -18,17 +18,25 @@
 package org.apache.camel.component.jms;
 
 import org.apache.camel.InvalidHeaderTypeException;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.MessageSupport;
 
+import javax.jms.BytesMessage;
 import javax.jms.JMSException;
+import javax.jms.MapMessage;
 import javax.jms.Message;
+import javax.jms.ObjectMessage;
+import javax.jms.Session;
+import javax.jms.StreamMessage;
+import javax.jms.TextMessage;
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with JMS
- * 
+ *
  * @version $Revision:520964 $
  */
 public class JmsMessage extends MessageSupport {
@@ -40,6 +48,22 @@ public class JmsMessage extends MessageSupport {
 
     public JmsMessage(Message jmsMessage) {
         this.jmsMessage = jmsMessage;
+    }
+
+
+    @Override
+    public Object getBody() {
+        Object answer = super.getBody();
+        if (answer == null && jmsMessage != null) {
+            answer = getExchange().getBinding().extractBodyFromJms(getExchange(), jmsMessage);
+            setBody(answer);
+        }
+        return answer;
+    }
+
+    @Override
+    public JmsExchange getExchange() {
+        return (JmsExchange) super.getExchange();
     }
 
     public Message getJmsMessage() {
@@ -116,4 +140,9 @@ public class JmsMessage extends MessageSupport {
     public JmsMessage newInstance() {
         return new JmsMessage();
     }
+
+
+
+
 }
+
