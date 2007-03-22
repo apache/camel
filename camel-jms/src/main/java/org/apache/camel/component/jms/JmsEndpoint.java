@@ -65,7 +65,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> implements Message
     public void onExchange(final JmsExchange exchange) {
         template.send(destination, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
-                Message message = getBinding().createJmsMessage(exchange, exchange.getIn(), session);
+                Message message = getBinding().makeJmsMessage(exchange.getIn(), session);
                 if (log.isDebugEnabled()) {
                     log.debug(JmsEndpoint.this + " sending JMS message: " + message);
                 }
