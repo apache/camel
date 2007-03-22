@@ -16,20 +16,67 @@
  */
 package org.apache.camel.component.jms;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultExchange;
 
-import javax.jms.Session;
-import javax.jms.Message;
 import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
 
 /**
- * @version $Revision$
+ * Represents an {@ilnk Exchange} for working with JMS
+ * 
+ * @version $Revision:520964 $
  */
-public interface JmsExchange extends Exchange {
+public class JmsExchange extends DefaultExchange {
 
-    /**
-     * Creates the JMS message for this exchange so that it can be sent to
-     * a JMS endpoint.
-     */
-    Message createMessage(Session session) throws JMSException;
+    public JmsExchange(CamelContext container) {
+        super(container);
+    }
+
+    public JmsExchange(CamelContext container, Message message) {
+        super(container);
+        setIn(new JmsMessage(message));
+    }
+
+    @Override
+    public Exchange newInstance() {
+        return new JmsExchange(getContext());
+    }
+
+    public Message createMessage(Session session) throws JMSException {
+        Message request = getInMessage();
+        if (request == null) {
+            request = session.createMessage();
+
+            /** TODO
+            if (lazyHeaders != null) {
+                // lets add any lazy headers
+                for (Map.Entry<String, Object> entry : lazyHeaders.entrySet()) {
+                    request.setObjectProperty(entry.getKey(), entry.getValue());
+                }
+            }
+             */
+        }
+        return request;
+    }
+
+    public Message getInMessage() {
+        JmsMessage jmsMessage = (JmsMessage) getIn();
+        if (jmsMessage != null) {
+            return jmsMessage.getJmsMessage();
+        }
+        return null;
+    }
+
+    @Override
+    protected org.apache.camel.Message createInMessage() {
+        return new JmsMessage();
+    }
+
+    @Override
+    protected org.apache.camel.Message createOutMessage() {
+        return new JmsMessage();
+    }
 }
