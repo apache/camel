@@ -38,7 +38,8 @@ import java.util.List;
 public class CamelContextFactoryBean implements FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware {
     private CamelContext context;
     private boolean singleton = true;
-    private List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
+    private RouteBuilder routeBuilder;
+    private List<RouteBuilder> additionalBuilders = new ArrayList<RouteBuilder>();
     private String[] packages = {};
     private ApplicationContext applicationContext;
 
@@ -83,18 +84,13 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
         this.context = context;
     }
 
-    public List<RouteBuilder> getRouteBuilders() {
-        return routeBuilders;
-    }
+	public RouteBuilder getRouteBuilder() {
+		return routeBuilder;
+	}
 
-    /**
-     * Sets the {@link RouteBuilder} instances to be installed in this context
-     *
-     * @param routeBuilders the route builders to activate on startup
-     */
-    public void setRouteBuilders(List<RouteBuilder> routeBuilders) {
-        this.routeBuilders = routeBuilders;
-    }
+	public void setRouteBuilder(RouteBuilder routeBuilder) {
+		this.routeBuilder = routeBuilder;
+	}
 
     public ApplicationContext getApplicationContext() {
         return applicationContext;
@@ -120,9 +116,11 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
      * Strategy to install all available routes into the context
      */
     protected void installRoutes() {
-        for (RouteBuilder routeBuilder : routeBuilders) {
-            getContext().setRoutes(routeBuilder);
+        for (RouteBuilder routeBuilder : additionalBuilders) {
+            getContext().addRoutes(routeBuilder);
         }
+        if( routeBuilder!=null )
+        	getContext().addRoutes(routeBuilder);
     }
 
     /**
@@ -131,7 +129,7 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
     protected void findRouteBuiders() throws IllegalAccessException, InstantiationException {
         if (packages != null && packages.length > 0) {
             RouteBuilderFinder finder = new RouteBuilderFinder(this);
-            finder.appendBuilders(getRouteBuilders());
+            finder.appendBuilders(additionalBuilders);
         }
     }
 }
