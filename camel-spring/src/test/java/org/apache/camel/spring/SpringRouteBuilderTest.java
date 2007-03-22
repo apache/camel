@@ -14,30 +14,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.xbean;
+package org.apache.camel.spring;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilderTest;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.RouteBuilderTest;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * TODO: re-implement the route building logic using xbean and 
+ * TODO: re-implement the route building logic using spring and 
  * then test it by overriding the buildXXX methods in the RouteBuilderTest
  * 
  * @version $Revision: 520164 $
  */
-public class XBeanRouteBuilderTest extends RouteBuilderTest {
+public class SpringRouteBuilderTest extends RouteBuilderTest {
+	private ClassPathXmlApplicationContext ctx;
 
 	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		ctx = new ClassPathXmlApplicationContext("org/apache/camel/spring/spring_route_builder_test.xml");
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		ctx.close();
+		super.tearDown();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
 	protected RouteBuilder<Exchange> buildSimpleRoute() {
-		// TODO Auto-generated method stub
-		return super.buildSimpleRoute();
+		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildSimpleRoute");
+		assertNotNull(builder);
+		return builder;
 	}
 	
 	@Override
 	protected RouteBuilder<Exchange> buildCustomProcessor() {
-		// TODO Auto-generated method stub
-		return super.buildCustomProcessor();
+		myProcessor = (Processor<Exchange>) ctx.getBean("myProcessor");
+		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildCustomProcessor");
+		assertNotNull(builder);
+		return builder;
 	}
 	
 	@Override

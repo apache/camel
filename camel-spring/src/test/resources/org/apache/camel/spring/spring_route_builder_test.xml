@@ -15,41 +15,39 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<s:beans xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd" xmlns:s="http://www.springframework.org/schema/beans">
-    <!-- Right now this is just ideas of what we wish the xml could look like -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://activemq.apache.org/camel/schema/camel-1.0.xsd http://activemq.apache.org/camel/schema/camel-1.0.xsd
+    ">
 
     <!-- 
         from("queue:a").to("queue:b");
-        from("queue:c").to("queue:d");
      -->
-    <routeBuilder id="buildSimpleRoute" >
+    <routeBuilder id="buildSimpleRoute" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
        <route>
          <from uri="queue:a"/>
          <to uri="queue:b"/>
-       </route>
-       <route>
-         <from uri="queue:c"/>
-         <to uri="queue:d"/>
        </route>
     </routeBuilder>
     
     <!-- 
         from("queue:a").process(myProcessor);
      -->
-    <routeBuilder id="buildCustomProcessor">
+    <bean id="myProcessor" class="org.apache.camel.builder.MyProcessor"/>
+    <routeBuilder id="buildCustomProcessor" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
        <route>
          <from uri="queue:a"/>
-         <processor>
-           <s:bean id="myProcessor" class="some.Processor"/>
-         </processor>
+         <process ref="#myProcessor"/>
        </route>
     </routeBuilder>
-
 
     <!-- 
         from("queue:a").filter(headerEquals("foo", "bar")).process(myProcessor);
      -->
-    <routeBuilder id="buildCustomProcessorWithFilter">
+    <routeBuilder id="buildCustomProcessorWithFilter" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+    <!-- 
        <route>
          <from uri="queue:a"/>
          <filter>
@@ -62,6 +60,7 @@
            <s:bean class="some.Processor"/>
          </processor>
        </route>
+     -->
     </routeBuilder>
 
     <!-- 
@@ -71,7 +70,8 @@
               .add(interceptor2)
            .target().to("queue:d");
      -->
-    <routeBuilder id="buildRouteWithInterceptor">
+    <routeBuilder id="buildRouteWithInterceptor" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+       <!-- 
        <route>
          <from uri="queue:a"/>
          <intercept>
@@ -80,6 +80,7 @@
          </intercept>
          <to uri="queue:b"/>
        </route>
+        -->
     </routeBuilder>
 
     <!-- 
@@ -88,7 +89,8 @@
                 .when(header("foo").isEqualTo("cheese")).to("queue:c")
                 .otherwise().to("queue:d");
      -->
-    <routeBuilder id="buildSimpleRouteWithChoice">
+    <routeBuilder id="buildSimpleRouteWithChoice" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+       <!-- 
        <route>
          <from uri="queue:a"/>
          <choice>
@@ -112,12 +114,14 @@
              </otherwise>
          </choice>
        </route>
+        -->
     </routeBuilder>
 
     <!-- 
         from("queue:a").filter(headerEquals("foo", "bar")).to("queue:b");
      -->
-    <routeBuilder id="buildSimpleRouteWithHeaderPredicate">
+    <routeBuilder id="buildSimpleRouteWithHeaderPredicate" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+    <!-- 
        <route>
          <from uri="queue:a"/>
          <filter>
@@ -128,12 +132,14 @@
          </filter>
          <to uri="queue:b"/>
        </route>
+     -->
     </routeBuilder>
 
     <!-- 
         from("queue:a").to("queue:tap", "queue:b");
      -->
-    <routeBuilder id="buildWireTap">
+    <routeBuilder id="buildWireTap" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+    <!-- 
        <route>
          <from uri="queue:a"/>
          <to>
@@ -141,7 +147,8 @@
             <uri>queue:a</uri>
          </to>
        </route>
+     -->
     </routeBuilder>
 
-</s:beans>
+</beans>
 <!-- END SNIPPET: example -->
