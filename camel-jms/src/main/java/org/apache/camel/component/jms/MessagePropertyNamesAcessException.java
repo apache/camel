@@ -19,13 +19,12 @@ package org.apache.camel.component.jms;
 import javax.jms.JMSException;
 
 /**
- * @version $Revision$
+ * @version $Revision:520964 $
  */
 public class MessagePropertyNamesAcessException extends RuntimeJmsException {
+    private static final long serialVersionUID = -6744171518099741324L;
 
-	private static final long serialVersionUID = -6744171518099741324L;
-
-	public MessagePropertyNamesAcessException(JMSException e) {
+    public MessagePropertyNamesAcessException(JMSException e) {
         super("Failed to acess the JMS message property names", e);
     }
 }

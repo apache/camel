@@ -21,7 +21,6 @@ import org.apache.axis.transport.jms.JMSEndpoint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.EndpointResolver;
-import org.apache.camel.component.queue.QueueComponent;
 import org.apache.camel.util.ObjectHelper;
 
 import java.util.concurrent.Callable;
@@ -29,9 +28,9 @@ import java.util.concurrent.Callable;
 /**
  * An implementation of {@link EndpointResolver} that creates
  * {@link JMSEndpoint} objects.
- *
+ * <p/>
  * The syntax for a JMS URI looks like:
- *
+ * <p/>
  * <pre><code>jms:[component:]destination</code></pre>
  * the component is optional, and if it is not specified, the default component name
  * is assumed.
@@ -39,51 +38,52 @@ import java.util.concurrent.Callable;
  * @version $Revision:520964 $
  */
 public class JmsEndpointResolver implements EndpointResolver<JmsExchange> {
+    public static final String DEFAULT_COMPONENT_NAME = JmsEndpointResolver.class.getName();
 
-	public static final String DEFAULT_COMPONENT_NAME = JmsEndpointResolver.class.getName();
+    /**
+     * Finds the {@see JmsComponent} specified by the uri.  If the {@see JmsComponent}
+     * object do not exist, it will be created.
+     */
+    public Component resolveComponent(CamelContext container, String uri) {
+        String id[] = getEndpointId(uri);
+        return resolveJmsComponent(container, id[0]);
+    }
 
-	/**
-	 * Finds the {@see JmsComponent} specified by the uri.  If the {@see JmsComponent}
-	 * object do not exist, it will be created.
-	 */
-	public Component resolveComponent(CamelContext container, String uri) {
-		String id[] = getEndpointId(uri);        
-		return resolveJmsComponent(container, id[0]);
-	}
-
-	/**
-	 * Finds the {@see QueueEndpoint} specified by the uri.  If the {@see QueueEndpoint} or it's associated
-	 * {@see QueueComponent} object do not exist, they will be created.
-	 */
-	public JmsEndpoint resolveEndpoint(CamelContext container, String uri) {
-		String id[] = getEndpointId(uri);        
-    	JmsComponent component = resolveJmsComponent(container, id[0]);
+    /**
+     * Finds the {@see QueueEndpoint} specified by the uri.  If the {@see QueueEndpoint} or it's associated
+     * {@see QueueComponent} object do not exist, they will be created.
+     */
+    public JmsEndpoint resolveEndpoint(CamelContext container, String uri) {
+        String id[] = getEndpointId(uri);
+        JmsComponent component = resolveJmsComponent(container, id[0]);
         return component.createEndpoint(uri, id[1]);
     }
 
-	/**
-	 * @return an array that looks like: [componentName,endpointName] 
-	 */
-	private String[] getEndpointId(String uri) {
-		String rc [] = {DEFAULT_COMPONENT_NAME, null};
-		String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 3);        
-    	if( splitURI[2] != null ) {
-    		rc[0] =  splitURI[1];
-    		rc[1] =  splitURI[2];
-    	} else {
-    		rc[1] =  splitURI[1];
-    	}
-		return rc;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private JmsComponent resolveJmsComponent(final CamelContext container, final String componentName) {
-    	Component rc = container.getOrCreateComponent(componentName, new Callable(){
-			public JmsComponent call() throws Exception {
+    /**
+     * @return an array that looks like: [componentName,endpointName]
+     */
+    private String[] getEndpointId(String uri) {
+        String rc[] = {DEFAULT_COMPONENT_NAME, null};
+        String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 3);
+        if (splitURI[2] != null) {
+            rc[0] = splitURI[1];
+            rc[1] = splitURI[2];
+        }
+        else {
+            rc[1] = splitURI[1];
+        }
+        return rc;
+    }
+
+    @SuppressWarnings("unchecked")
+    private JmsComponent resolveJmsComponent(final CamelContext container, final String componentName) {
+        Component rc = container.getOrCreateComponent(componentName, new Callable() {
+            public JmsComponent call() throws Exception {
                 return new JmsComponent(container);
-			}});
-    	return (JmsComponent) rc;
-	}
+            }
+        });
+        return (JmsComponent) rc;
+    }
 
 
 }

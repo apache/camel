@@ -19,11 +19,11 @@ package org.apache.camel.component.jms;
 import javax.jms.JMSException;
 
 /**
- * @version $Revision$
+ * @version $Revision:520964 $
  */
 public class MessagePropertyAcessException extends RuntimeJmsException {
-	private static final long serialVersionUID = -3996286386119163309L;
-	private String propertyName;
+    private static final long serialVersionUID = -3996286386119163309L;
+    private String propertyName;
 
     public MessagePropertyAcessException(String propertyName, JMSException e) {
         super("Error accessing header: " + propertyName, e);
