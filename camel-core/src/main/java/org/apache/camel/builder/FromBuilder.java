@@ -73,7 +73,9 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * Sends the exchange to a list of endpoints using the {@link MulticastProcessor} pattern
      */
     @Fluent
-    public ProcessorFactory<E> to(@FluentArg("uris") String... uris) {
+    public ProcessorFactory<E> to(
+    		@FluentArg(value="uri", attribute=false, element=true) 
+    		String... uris) {
         return to(endpoints(uris));
     }
 
@@ -81,7 +83,9 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * Sends the exchange to a list of endpoints using the {@link MulticastProcessor} pattern
      */
     @Fluent
-    public ProcessorFactory<E> to(@FluentArg("endpoints") Endpoint<E>... endpoints) {
+    public ProcessorFactory<E> to(
+    		@FluentArg(value="endpoint", attribute=false, element=true) 
+    		Endpoint<E>... endpoints) {
         return to(endpoints(endpoints));
     }
 
@@ -150,7 +154,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      *
      * @return the builder for a choice expression
      */
-    @Fluent
+    @Fluent(nestedActions=true)
     public ChoiceBuilder<E> choice() {
         ChoiceBuilder<E> answer = new ChoiceBuilder<E>(this);
         addProcessBuilder(answer);

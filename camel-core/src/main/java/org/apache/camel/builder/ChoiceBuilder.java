@@ -44,12 +44,16 @@ public class ChoiceBuilder<E extends Exchange> extends FromBuilder<E> {
      *
      * @return a builder for creating a when predicate clause and action
      */
-    public WhenBuilder<E> when(Predicate<E> predicate) {
+    @Fluent(nestedActions=true)
+    public WhenBuilder<E> when(
+    		@FluentArg(value="predicate",element=true) 
+    		Predicate<E> predicate) {
         WhenBuilder<E> answer = new WhenBuilder<E>(this, predicate);
         predicateBuilders.add(answer);
         return answer;
     }
 
+    @Fluent(nestedActions=true)
     public FromBuilder<E> otherwise() {
         this.otherwise = new FromBuilder<E>(parent);
         return otherwise;
