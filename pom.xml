@@ -111,6 +111,7 @@
   </distributionManagement>
 
   <modules>
+    <module>camel-assembly</module>
     <module>camel-core</module>
     <module>camel-http</module>
     <module>camel-jms</module>
