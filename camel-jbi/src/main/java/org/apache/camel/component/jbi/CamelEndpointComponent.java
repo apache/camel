@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.jbi;
 
+import javax.jbi.messaging.MessageExchange;
+import javax.jbi.messaging.MessagingException;
+import org.apache.camel.CamelContext;
+import org.apache.servicemix.MessageExchangeListener;
 import org.apache.servicemix.components.util.ComponentSupport;
 
 
@@ -24,15 +28,22 @@ import org.apache.servicemix.components.util.ComponentSupport;
  * The Component activated in the JBIContainer
  * @version $Revision: 426415 $
  */
-public class CamelEndpointComponent extends ComponentSupport {
+public class CamelEndpointComponent extends ComponentSupport implements MessageExchangeListener{
+    private CamelContext camelContext;
     private JbiEndpoint jbiEndpoint;
     
-    CamelEndpointComponent(JbiEndpoint jbiEndpoint){
+    CamelEndpointComponent(CamelContext camelContext,JbiEndpoint jbiEndpoint){
+        this.camelContext=camelContext;
         this.jbiEndpoint=jbiEndpoint;
     }
     
     public String getName() {
         return jbiEndpoint.getEndpointUri();
+    }
+    
+    public void onMessageExchange(MessageExchange exchange) throws MessagingException{
+      
+
     }
     
 
