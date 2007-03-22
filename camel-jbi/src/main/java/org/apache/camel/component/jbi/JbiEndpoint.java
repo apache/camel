@@ -40,7 +40,7 @@ public class JbiEndpoint extends DefaultEndpoint<JbiExchange> {
     }
 
     @Override
-    protected void doActivate() {
+    protected void doActivate() throws Exception {
         super.doActivate();
 
         Processor<JbiExchange> processor = getInboundProcessor();

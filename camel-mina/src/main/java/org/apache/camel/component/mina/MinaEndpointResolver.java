@@ -25,6 +25,7 @@ import org.apache.camel.component.queue.QueueComponent;
 
 import java.util.concurrent.Callable;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * An implementation of {@link EndpointResolver} that creates
@@ -53,7 +54,7 @@ public class MinaEndpointResolver implements EndpointResolver<MinaExchange> {
 	 * Finds the {@link MinaEndpoint} specified by the uri.  If the {@link MinaEndpoint} or it's associated
 	 * {@see QueueComponent} object do not exist, they will be created.
 	 */
-	public MinaEndpoint resolveEndpoint(CamelContext container, String uri) throws IOException {
+	public MinaEndpoint resolveEndpoint(CamelContext container, String uri) throws IOException, URISyntaxException {
 		String[] urlParts = getEndpointId(uri);
     	MinaComponent component = resolveMinaComponent(container, urlParts[0]);
         return component.createEndpoint(uri, urlParts);

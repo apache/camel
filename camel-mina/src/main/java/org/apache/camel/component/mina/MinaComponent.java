@@ -19,14 +19,22 @@ package org.apache.camel.component.mina;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.IoAcceptor;
-import org.apache.mina.common.IoSession;
+import org.apache.mina.common.IoConnector;
+import org.apache.mina.transport.socket.nio.DatagramAcceptor;
+import org.apache.mina.transport.socket.nio.DatagramConnector;
+import org.apache.mina.transport.socket.nio.SocketAcceptor;
+import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.vmpipe.VmPipeAcceptor;
 import org.apache.mina.transport.vmpipe.VmPipeAddress;
 import org.apache.mina.transport.vmpipe.VmPipeConnector;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,27 +51,50 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         super(context);
     }
 
-    public synchronized MinaEndpoint createEndpoint(String uri, String[] urlParts) throws IOException {
+    public synchronized MinaEndpoint createEndpoint(String uri, String[] urlParts) throws IOException, URISyntaxException {
         MinaEndpoint endpoint = map.get(uri);
         if (endpoint == null) {
-            IoAcceptor acceptor = new VmPipeAcceptor();
-            endpoint = new MinaEndpoint(uri, getContext(), acceptor);
+            String remainingUrl = uri.substring("mina:".length());
+            URI u = new URI(remainingUrl);
 
-            VmPipeAddress address = new VmPipeAddress(8080);
-
-            // Set up server
-            acceptor.bind(address, endpoint.getServerHandler());
-
-            // Connect to the server.
-            VmPipeConnector connector = new VmPipeConnector();
-            ConnectFuture future = connector.connect(address, endpoint.getClientHandler());
-            future.join();
-            IoSession session = future.getSession();
-
-            endpoint.setSession(session);
+            String protocol = u.getScheme();
+            if (protocol.equals("tcp")) {
+                endpoint = createSocketEndpoint(uri, u);
+            }
+            else if (protocol.equals("udp") || protocol.equals("mcast") || protocol.equals("multicast")) {
+                endpoint = createDatagramEndpoint(uri, u);
+            }
+            else if (protocol.equals("vm")) {
+                endpoint = createVmEndpoint(uri, u);
+            }
+            else {
+                throw new IOException("Unrecognised MINA protocol: " + protocol + " for uri: " + uri);
+            }
             map.put(uri, endpoint);
         }
 
         return endpoint;
+    }
+
+    protected MinaEndpoint createVmEndpoint(String uri, URI connectUri) {
+        IoAcceptor acceptor = new VmPipeAcceptor();
+        SocketAddress address = new VmPipeAddress(connectUri.getPort());
+        IoConnector connector = new VmPipeConnector();
+
+        return new MinaEndpoint(uri, getContext(), address, acceptor, connector);
+    }
+
+    protected MinaEndpoint createSocketEndpoint(String uri, URI connectUri) {
+        IoAcceptor acceptor = new SocketAcceptor();
+        SocketAddress address = new InetSocketAddress(connectUri.getHost(), connectUri.getPort());
+        IoConnector connector = new SocketConnector();
+        return new MinaEndpoint(uri, getContext(), address, acceptor, connector);
+    }
+
+    protected MinaEndpoint createDatagramEndpoint(String uri, URI connectUri) {
+        IoAcceptor acceptor = new DatagramAcceptor();
+        SocketAddress address = new InetSocketAddress(connectUri.getHost(), connectUri.getPort());
+        IoConnector connector = new DatagramConnector();
+        return new MinaEndpoint(uri, getContext(), address, acceptor, connector);
     }
 }

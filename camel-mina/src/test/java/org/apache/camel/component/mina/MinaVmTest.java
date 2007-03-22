@@ -18,44 +18,29 @@
 package org.apache.camel.component.mina;
 
 import junit.framework.TestCase;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Message;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
-
 /**
  * @version $Revision$
  */
-public class MinaTest extends TestCase {
+public class MinaVmTest extends TestCase {
+    protected CamelContext container = new DefaultCamelContext();
+    protected CountDownLatch latch = new CountDownLatch(1);
+    protected MinaExchange receivedExchange;
+    protected String uri = "mina:vm://localhost:8080";
+
     public void testMinaRoute() throws Exception {
-        final CountDownLatch latch = new CountDownLatch(1);
-
-        CamelContext container = new DefaultCamelContext();
-
-        // lets add some routes
-        container.setRoutes(new RouteBuilder() {
-            public void configure() {
-                from("mina:vm:8080").process(new Processor<MinaExchange>() {
-                    public void onExchange(MinaExchange e) {
-                        System.out.println("Received exchange: " + e.getIn());
-                        latch.countDown();
-                    }
-                });
-            }
-        });
-
-
-        container.activateEndpoints();
 
         // now lets fire in a message
-        Endpoint<MinaExchange> endpoint = container.resolveEndpoint("mina:vm:8080");
+        Endpoint<MinaExchange> endpoint = container.resolveEndpoint(uri);
         MinaExchange exchange = endpoint.createExchange();
         Message message = exchange.getIn();
         message.setBody("Hello there!");
@@ -66,7 +51,31 @@ public class MinaTest extends TestCase {
         // now lets sleep for a while
         boolean received = latch.await(5, TimeUnit.SECONDS);
         assertTrue("Did not receive the message!", received);
+    }
 
+    @Override
+    protected void setUp() throws Exception {
+        container.setRoutes(createRouteBuilder());
+        container.activateEndpoints();
+    }
+
+
+    @Override
+    protected void tearDown() throws Exception {
         container.deactivateEndpoints();
+    }
+
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from(uri).process(new Processor<MinaExchange>() {
+                    public void onExchange(MinaExchange e) {
+                        System.out.println("Received exchange: " + e.getIn());
+                        receivedExchange = e;
+                        latch.countDown();
+                    }
+                });
+            }
+        };
     }
 }

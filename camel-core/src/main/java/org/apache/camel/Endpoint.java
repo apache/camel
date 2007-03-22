@@ -56,7 +56,7 @@ public interface Endpoint<E> extends Processor<E> {
      * 
      * @throws IllegalStateException if the Endpoint has already been activated.
      */
-	void activate(Processor<E> processor) throws IllegalStateException;
+	void activate(Processor<E> processor) throws Exception;
 
     /**
      * Called by the container when the endpoint is deactivated

@@ -106,7 +106,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> implements Message
 
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected void doActivate() {
+    protected void doActivate() throws Exception {
         super.doActivate();
         listenerContainer.afterPropertiesSet();
         listenerContainer.initialize();
