@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+   
+    http://www.apache.org/licenses/LICENSE-2.0
+   
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://activemq.apache.org/camel/schema/camel-1.0.xsd http://activemq.apache.org/camel/schema/camel-1.0.xsd
+    ">
+
+    <routeBuilder id="buildSimpleRoute" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+    </routeBuilder>
+    
+    <routeBuilder id="buildSimpleRoute" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+       <route>
+         <from uri="queue:a"/>
+         <to uri="queue:b"/>
+       </route>
+       <route>
+         <from uris="queue:a"/>
+         <to uris="queue:b"/>
+       </route>
+       <route>
+         <from endpoint="queue:a"/>
+         <to endpoint="queue:b"/>
+       </route>
+       <route>
+         <from endpoints="queue:a"/>
+         <to endpoints="queue:b"/>
+       </route>
+
+       <route>
+         <from uri="queue:a"/>
+         <process ref="#myProcessor"/>
+       </route>
+
+       <route>
+         <from uri="queue:a"/>
+         <filter>
+             <predicate>
+                <header name="foo"/>
+                <equalTo value="bar"/>
+             </predicate>
+         </filter>
+         <filter>
+             <predicate>
+                <header name="foo"/>
+                <equalTo value="bar"/>
+             </predicate>
+         </filter>
+         <process ref="#myProcessor"/>
+       </route>
+
+       <route>
+         <from uri="queue:a"/>
+         <intercept>
+         	<interceptor interceptor="#myInterceptor"/>
+         	<interceptor interceptor="#myInterceptor"/>
+         </intercept>
+         <intercept>
+         	<interceptor interceptor="#myInterceptor"/>
+         	<interceptor interceptor="#myInterceptor"/>
+         </intercept>
+         <to uri="queue:b"/>
+       </route>
+
+       <route>
+         <from uri="queue:a"/>
+         <choice>
+             <when>
+                 <predicate>
+                    <header name="foo"/>
+                    <equalTo value="bar"/>
+                 </predicate>
+                 <to uri="queue:b"/>
+             </when>
+             <when>
+                 <predicate>
+                    <header name="foo"/>
+                    <equalTo value="cheese"/>
+                 </predicate>
+                 <to endpoint="queue:c"/>
+             </when>
+             <otherwise>
+                 <to uri="queue:d"/>
+             </otherwise>
+         </choice>
+       </route>
+
+       <route>
+         <from uri="queue:a"/>
+         <filter>
+             <predicate>
+                <header name="foo"/>
+                <equalTo value="bar"/>
+             </predicate>
+         </filter>
+         <to uri="queue:b"/>
+       </route>
+
+       <route>
+         <from uri="queue:a"/>
+         <to>
+            <uri>queue:tap</uri>
+            <uri>queue:a</uri>
+         </to>
+       </route>
+       
+    </routeBuilder>
+
+</beans>
+<!-- END SNIPPET: example -->
