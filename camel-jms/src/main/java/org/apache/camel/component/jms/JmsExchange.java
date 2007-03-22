@@ -65,12 +65,12 @@ public class JmsExchange extends DefaultExchange {
     }
 
     @Override
-    protected org.apache.camel.Message createInMessage() {
+    protected JmsMessage createInMessage() {
         return new JmsMessage();
     }
 
     @Override
-    protected org.apache.camel.Message createOutMessage() {
+    protected JmsMessage createOutMessage() {
         return new JmsMessage();
     }
 }

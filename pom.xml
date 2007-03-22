@@ -189,6 +189,8 @@
         <scope>runtime</scope>
         <optional>true</optional>
       </dependency>
+
+
       <!-- Optional Spring Support -->
       <dependency>
         <groupId>org.springframework</groupId>
@@ -241,6 +243,14 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
         <version>1.2</version>
+      </dependency>
+
+
+      <!-- optional jetty support -->
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty</artifactId>
+        <version>6.1.2rc1</version>
       </dependency>
 
       <dependency>

@@ -45,6 +45,11 @@ public class JmsMessage extends DefaultMessage {
         return (JmsExchange) super.getExchange();
     }
 
+    /**
+     * Returns the underlying JMS message
+     *
+     * @return the underlying JMS message
+     */
     public Message getJmsMessage() {
         return jmsMessage;
     }
