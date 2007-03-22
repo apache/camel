@@ -39,23 +39,23 @@ public interface Exchange  {
 
 
     /**
-     * Accesses a specific header on this exchange
+     * Returns a property associated with this exchange by name
      *
-     * @param name
-     * @return object header associated with the name
+     * @param name the name of the property
+     * @return the value of the given header or null if there is no property for the given name
      */
-    Object getHeader(String name);
+    Object getProperty(String name);
 
     /**
-     * Sets a header on the exchange
+     * Sets a property on the exchange
      *
-     * @param name  of the header
+     * @param name of the property
      * @param value to associate with the name
      */
-    void setHeader(String name, Object value);
+    void setProperty(String name, Object value);
 
     /**
-     * Returns all of the headers associated with the exchange
+     * Returns all of the properties associated with the exchange
      *
      * @return all the headers in a Map
      */

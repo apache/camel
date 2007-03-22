@@ -63,14 +63,14 @@ public class DefaultExchange implements Exchange {
         return context;
     }
 
-    public Object getHeader(String name) {
+    public Object getProperty(String name) {
         if (headers != null) {
             return headers.get(name);
         }
         return null;
     }
 
-    public void setHeader(String name, Object value) {
+    public void setProperty(String name, Object value) {
         getHeaders().put(name, value);
     }
 
