@@ -97,7 +97,7 @@ public interface Exchange  {
      *
      * @return the container which owns this exchange
      */
-    CamelContext<Exchange> getContext();
+    CamelContext getContext();
 
     /**
      * Creates a copy of the current message exchange so that it can be forwarded to another

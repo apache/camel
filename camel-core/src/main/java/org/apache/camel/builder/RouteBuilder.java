@@ -42,7 +42,7 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
         this(null);
     }
 
-    protected RouteBuilder(CamelContext<E> context) {
+    protected RouteBuilder(CamelContext context) {
         super(context);
     }
 
@@ -87,8 +87,8 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
 
     // Properties
     //-----------------------------------------------------------------------
-    public CamelContext<E> getContext() {
-        CamelContext<E> context = super.getContext();
+    public CamelContext getContext() {
+        CamelContext context = super.getContext();
         if (context == null) {
             context = createContainer();
             setContext(context);
@@ -144,7 +144,7 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
         return builder.createProcessor();
     }
 
-    protected CamelContext<E> createContainer() {
-        return new DefaultCamelContext<E>();
+    protected CamelContext createContainer() {
+        return new DefaultCamelContext();
     }
 }
