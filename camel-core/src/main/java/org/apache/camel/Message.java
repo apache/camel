@@ -17,6 +17,8 @@
  */
 package org.apache.camel;
 
+import java.util.Map;
+
 /**
  * Implements the <a href="http://activemq.apache.org/camel/message.html">Message</a>
  * pattern and represents an inbound or outbound message as part of an {@link Exchange}
@@ -24,11 +26,29 @@ package org.apache.camel;
  * @version $Revision$
  */
 public interface Message {
+    
+    /**
+     * Accesses a specific header
+     *
+     * @param name
+     * @return object header associated with the name
+     */
+    Object getHeader(String name);
 
     /**
-     * Access the headers on the message
+     * Sets a header on the message
+     *
+     * @param name  of the header
+     * @param value to associate with the name
      */
-    public Headers getHeaders();
+    void setHeader(String name, Object value);
+
+    /**
+     * Returns all of the headers associated with the message
+     *
+     * @return all the headers in a Map
+     */
+    Map<String, Object> getHeaders();
 
     /**
      * Returns the body of the message as a POJO
@@ -60,5 +80,7 @@ public interface Message {
      * 
      * @return a new message instance copied from this message
      */
-    public Message copy();
+    Message copy();
+
+    
 }

@@ -17,11 +17,13 @@
  */
 package org.apache.camel.builder.xpath;
 
-
-import javax.xml.xpath.*;
 import javax.xml.namespace.NamespaceContext;
-
-import java.util.*;
+import javax.xml.xpath.XPathFactory;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * An implementation of {@link NamespaceContext} which uses a simple Map where

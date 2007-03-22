@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.pojo;
 
-import java.util.HashMap;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+
+import java.util.HashMap;
 
 /**
  * Represents the component that manages {@link PojoEndpoint}.  It holds the 

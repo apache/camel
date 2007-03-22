@@ -18,8 +18,10 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Headers;
 import org.apache.camel.Message;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A default implementation of {@link Exchange}
@@ -28,7 +30,7 @@ import org.apache.camel.Message;
  */
 public class DefaultExchange implements Exchange {
     protected final CamelContext context;
-    private Headers headers;
+    private Map<String, Object> headers;
     private Message in;
     private Message out;
     private Message fault;
@@ -46,7 +48,7 @@ public class DefaultExchange implements Exchange {
     }
 
     public void copyFrom(Exchange exchange) {
-        setHeaders(exchange.getHeaders().copy());
+        setHeaders(new HashMap<String, Object>(exchange.getHeaders()));
         setIn(exchange.getIn().copy());
         setOut(exchange.getOut().copy());
         setFault(exchange.getFault().copy());
@@ -61,14 +63,25 @@ public class DefaultExchange implements Exchange {
         return context;
     }
 
-    public Headers getHeaders() {
+    public Object getHeader(String name) {
+        if (headers != null) {
+            return headers.get(name);
+        }
+        return null;
+    }
+
+    public void setHeader(String name, Object value) {
+        getHeaders().put(name, value);
+    }
+
+    public Map<String, Object> getHeaders() {
         if (headers == null) {
-            headers = new DefaultHeaders();
+            headers = new HashMap<String, Object>();
         }
         return headers;
     }
 
-    public void setHeaders(Headers headers) {
+    public void setHeaders(Map<String, Object> headers) {
         this.headers = headers;
     }
 
@@ -81,6 +94,7 @@ public class DefaultExchange implements Exchange {
 
     public void setIn(Message in) {
         this.in = in;
+        configureMessage(in);
     }
 
     public Message getOut() {
@@ -92,6 +106,7 @@ public class DefaultExchange implements Exchange {
 
     public void setOut(Message out) {
         this.out = out;
+        configureMessage(out);
     }
 
     public Throwable getException() {
@@ -108,6 +123,7 @@ public class DefaultExchange implements Exchange {
 
     public void setFault(Message fault) {
         this.fault = fault;
+        configureMessage(fault);
     }
 
     public String getExchangeId() {
@@ -118,11 +134,27 @@ public class DefaultExchange implements Exchange {
         this.exchangeId = id;
     }
 
+    /**
+     * Factory method used to lazily create the IN message
+     */
     protected Message createInMessage() {
         return new DefaultMessage();
     }
 
+    /**
+     * Factory method to lazily create the OUT message
+     */
     protected Message createOutMessage() {
         return new DefaultMessage();
+    }
+
+    /**
+     * Configures the message after it has been set on the exchange
+     */
+    protected void configureMessage(Message message) {
+        if (message instanceof MessageSupport) {
+            MessageSupport messageSupport = (MessageSupport) message;
+            messageSupport.setExchange(this);
+        }
     }
 }

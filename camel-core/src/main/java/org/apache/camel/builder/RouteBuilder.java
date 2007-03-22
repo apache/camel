@@ -18,10 +18,8 @@ package org.apache.camel.builder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointResolver;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.impl.DefaultCamelContext;
 
 import java.util.ArrayList;

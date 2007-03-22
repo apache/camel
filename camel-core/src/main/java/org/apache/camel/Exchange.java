@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import java.util.Map;
 
 /**
  * Represents the base exchange interface providing access to the request, response and fault {@link Message} instances.
@@ -36,11 +37,31 @@ public interface Exchange  {
      */
     void setExchangeId(String id);
 
-    /**
-     * Returns the exchange headers
-     */
-    Headers getHeaders();
 
+    /**
+     * Accesses a specific header on this exchange
+     *
+     * @param name
+     * @return object header associated with the name
+     */
+    Object getHeader(String name);
+
+    /**
+     * Sets a header on the exchange
+     *
+     * @param name  of the header
+     * @param value to associate with the name
+     */
+    void setHeader(String name, Object value);
+
+    /**
+     * Returns all of the headers associated with the exchange
+     *
+     * @return all the headers in a Map
+     */
+    Map<String, Object> getHeaders();
+
+    
     /**
      * Returns the inbound request message
      * @return the message

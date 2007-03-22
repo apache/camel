@@ -18,9 +18,10 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Expression;
-import static org.apache.camel.util.ObjectHelper.*;
+import org.apache.camel.Processor;
+import static org.apache.camel.util.ObjectHelper.iterator;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.util.Iterator;
 

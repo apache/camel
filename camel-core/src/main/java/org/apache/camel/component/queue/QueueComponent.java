@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.queue;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
 
 /**
  * Represents the component that manages {@link QueueEndpoint}.  It holds the 

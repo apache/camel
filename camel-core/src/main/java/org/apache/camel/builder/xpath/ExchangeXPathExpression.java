@@ -25,9 +25,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.xml.sax.InputSource;
 
 import javax.xml.namespace.QName;
+import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathConstants;
 import java.io.StringReader;
 
 /**

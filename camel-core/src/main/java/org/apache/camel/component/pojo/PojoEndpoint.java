@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.pojo;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultEndpoint;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultEndpoint;
 
 /**
  * Represents a pojo endpoint that uses reflection

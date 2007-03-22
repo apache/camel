@@ -127,7 +127,7 @@ public class DeadLetterChannel<E extends Exchange> implements ErrorHandler<E> {
     protected void appendRedeliveryHeaders(E exchange, int redeliveryCounter) {
         String header = getRedeliveryCountHeader();
         if (header != null) {
-            exchange.getIn().getHeaders().setHeader(header, redeliveryCounter);
+            exchange.getIn().setHeader(header, redeliveryCounter);
         }
     }
 

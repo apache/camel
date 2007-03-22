@@ -17,14 +17,13 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ExchangeHelper;
-import static org.apache.camel.util.ObjectHelper.notNull;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Expression;
 import org.apache.camel.Endpoint;
-import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Processor;
+import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.util.Iterator;
 
