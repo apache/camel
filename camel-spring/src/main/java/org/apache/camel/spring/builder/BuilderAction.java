@@ -1,4 +1,4 @@
-package org.apache.camel.spring;
+package org.apache.camel.spring.builder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;

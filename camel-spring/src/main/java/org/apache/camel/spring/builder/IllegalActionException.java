@@ -1,4 +1,4 @@
-package org.apache.camel.spring;
+package org.apache.camel.spring.builder;
 
 public class IllegalActionException extends IllegalArgumentException {
 
