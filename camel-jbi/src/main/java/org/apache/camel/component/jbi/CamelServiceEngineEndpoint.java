@@ -17,8 +17,12 @@
 package org.apache.camel.component.jbi;
 
 import javax.jbi.component.ComponentContext;
+import javax.jbi.messaging.MessageExchange;
+import javax.jbi.messaging.MessagingException;
 import javax.jbi.messaging.MessageExchange.Role;
 import javax.xml.namespace.QName;
+import org.apache.camel.CamelContext;
+import org.apache.servicemix.MessageExchangeListener;
 import org.apache.servicemix.common.ExchangeProcessor;
 import org.apache.servicemix.jbi.container.JBIContainer;
 import org.apache.servicemix.jbi.framework.ComponentContextImpl;
@@ -31,10 +35,11 @@ public class CamelServiceEngineEndpoint extends org.apache.servicemix.common.End
 
     private static final QName SERVICE_NAME = new QName("http://camel.servicemix.org", "CamelEndpointComponent");
     
+    private CamelContext camelContext;
     private CamelEndpointComponent camelEndpointComponent;
     
-    public CamelServiceEngineEndpoint(JbiEndpoint jbiEndpoint) {
-        this.camelEndpointComponent = new CamelEndpointComponent(jbiEndpoint);
+    public CamelServiceEngineEndpoint(CamelContext camelContext,JbiEndpoint jbiEndpoint) {
+        this.camelEndpointComponent = new CamelEndpointComponent(camelContext,jbiEndpoint);
         this.service = SERVICE_NAME;
         this.endpoint=jbiEndpoint.getEndpointUri();
     }
@@ -62,5 +67,7 @@ public class CamelServiceEngineEndpoint extends org.apache.servicemix.common.End
         }
         throw new IllegalStateException("LwContainer component can only be deployed in ServiceMix");
     }
+    
+   
 
 }
