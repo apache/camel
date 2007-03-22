@@ -17,8 +17,8 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.ExchangeConverter;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeConverter;
 
 /**
  * @version $Revision$

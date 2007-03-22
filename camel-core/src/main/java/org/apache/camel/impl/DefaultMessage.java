@@ -18,54 +18,38 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.Message;
-import org.apache.camel.Headers;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
+ * The default implementation of {@link Message}
+ *
  * @version $Revision$
  */
-public class DefaultMessage implements Message {
-    private Headers headers;
-    private Object body;
+public class DefaultMessage extends MessageSupport {
+    private Map<String, Object> headers;
 
-    public Object getBody() {
-        return body;
+    public Object getHeader(String name) {
+        if (headers != null) {
+            return headers.get(name);
+        }
+        return null;
     }
 
-    public void setBody(Object body) {
-        this.body = body;
+    public void setHeader(String name, Object value) {
+        getHeaders().put(name, value);
     }
 
-    @SuppressWarnings({"unchecked"})
-    public <T> T getBody(Class<T> type) {
-        return (T) getBody();
-    }
-
-    public <T> void setBody(Object body, Class<T> type) {
-        setBody(body);
-    }
-
-    public Headers getHeaders() {
+    public Map<String, Object> getHeaders() {
         if (headers == null) {
-            headers = createHeaders();
+            headers = new HashMap<String, Object>();
         }
         return headers;
     }
 
-    public void setHeaders(Headers headers) {
+    public void setHeaders(Map<String, Object> headers) {
         this.headers = headers;
-    }
-
-    protected Headers createHeaders() {
-        return new DefaultHeaders();
-    }
-
-    public Message copy() {
-        DefaultMessage answer = newInstance();
-        answer.setBody(getBody());
-        Headers headers = createHeaders();
-        headers.getHeaders().putAll(getHeaders().getHeaders());
-        answer.setHeaders(headers);
-        return answer;
     }
 
     public DefaultMessage newInstance() {

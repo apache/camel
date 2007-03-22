@@ -16,16 +16,16 @@
  */
 package org.apache.camel.component.queue;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultExchange;
+
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Processor;
-import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 
 /**
  * Represents a queue endpoint that uses a {@link BlockingQueue}

@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.queue;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
 
 /**
  * An implementation of {@link EndpointResolver} that creates 

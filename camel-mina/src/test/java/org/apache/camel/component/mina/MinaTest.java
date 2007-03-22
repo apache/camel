@@ -59,7 +59,7 @@ public class MinaTest extends TestCase {
         MinaExchange exchange = endpoint.createExchange();
         Message message = exchange.getIn();
         message.setBody("Hello there!");
-        message.getHeaders().setHeader("cheese", 123);
+        message.setHeader("cheese", 123);
 
         endpoint.onExchange(exchange);
 

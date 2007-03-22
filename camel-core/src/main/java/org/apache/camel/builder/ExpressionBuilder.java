@@ -19,9 +19,9 @@ package org.apache.camel.builder;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 
-import java.util.StringTokenizer;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * @version $Revision: $
@@ -38,10 +38,10 @@ public class ExpressionBuilder {
     public static <E extends Exchange> Expression<E> headerExpression(final String headerName) {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                Object header = exchange.getIn().getHeaders().getHeader(headerName);
+                Object header = exchange.getIn().getHeader(headerName);
                 if (header == null) {
                     // lets try the exchange header
-                    header = exchange.getHeaders().getHeader(headerName);
+                    header = exchange.getHeader(headerName);
                 }
                 return header;
             }

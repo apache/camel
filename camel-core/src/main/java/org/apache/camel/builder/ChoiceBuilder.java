@@ -16,14 +16,14 @@
  */
 package org.apache.camel.builder;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
+import org.apache.camel.Processor;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.Predicate;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Revision$

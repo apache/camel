@@ -53,10 +53,10 @@ public class MessageVariableResolver implements XPathVariableResolver {
         if (uri == null || uri.length() == 0) {
             Message message = exchange.getIn();
             if (message != null) {
-                answer = message.getHeaders().getHeader(localPart);
+                answer = message.getHeader(localPart);
             }
             if (answer == null) {
-                answer = exchange.getHeaders().getHeader(localPart);
+                answer = exchange.getHeader(localPart);
             }
         }
         else if (uri.equals(SYSTEM_PROPERTIES_NAMESPACE)) {

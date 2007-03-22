@@ -19,7 +19,6 @@ package org.apache.camel.builder.xpath;
 
 import org.apache.camel.RuntimeExpressionException;
 
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathException;
 
 /**

@@ -17,8 +17,8 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.Processor;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 
 /**
  * @version $Revision$

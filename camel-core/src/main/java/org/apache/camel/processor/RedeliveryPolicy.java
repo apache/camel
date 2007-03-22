@@ -17,8 +17,8 @@
  */
 package org.apache.camel.processor;
 
-import java.util.Random;
 import java.io.Serializable;
+import java.util.Random;
 
 // Code taken from the ActiveMQ codebase
 

@@ -17,11 +17,10 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.processor.MulticastProcessor;
-import org.apache.camel.processor.Pipeline;
-import org.apache.camel.Exchange;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.Pipeline;
 
 import java.util.Collection;
 

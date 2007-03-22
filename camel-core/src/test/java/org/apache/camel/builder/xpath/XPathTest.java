@@ -112,7 +112,7 @@ public class XPathTest extends TestCase {
         CamelContext context = new DefaultCamelContext();
         Exchange exchange = new DefaultExchange(context);
         Message message = exchange.getIn();
-        message.getHeaders().setHeader("name", "James");
+        message.setHeader("name", "James");
         message.setBody(xml);
         return exchange;
     }

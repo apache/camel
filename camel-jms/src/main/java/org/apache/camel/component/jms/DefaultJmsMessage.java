@@ -17,16 +17,21 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.impl.DefaultMessage;
-import org.apache.camel.Headers;
+import org.apache.camel.InvalidHeaderTypeException;
+import org.apache.camel.impl.MessageSupport;
 
+import javax.jms.JMSException;
 import javax.jms.Message;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * @version $Revision$
+ * @version $Revision:520964 $
  */
-public class DefaultJmsMessage extends DefaultMessage implements JmsMessage {
+public class DefaultJmsMessage extends MessageSupport implements JmsMessage {
     private Message jmsMessage;
+    private Map<String, Object> lazyHeaders;
 
     public DefaultJmsMessage() {
     }
@@ -43,13 +48,70 @@ public class DefaultJmsMessage extends DefaultMessage implements JmsMessage {
         this.jmsMessage = jmsMessage;
     }
 
-    @Override
-    protected Headers createHeaders() {
-        return new JmsHeaders(this);
+    public Object getHeader(String name) {
+        if (jmsMessage != null) {
+            try {
+                Object value = jmsMessage.getObjectProperty(name);
+                try {
+                    return value;
+                }
+                catch (ClassCastException e) {
+                    throw new InvalidHeaderTypeException(e.getMessage(), value);
+                }
+            }
+            catch (JMSException e) {
+                throw new MessagePropertyAcessException(name, e);
+            }
+        }
+        return null;
+    }
+
+    public void setHeader(String name, Object value) {
+        if (jmsMessage != null) {
+            try {
+                jmsMessage.setObjectProperty(name, value);
+            }
+            catch (JMSException e) {
+                throw new MessagePropertyAcessException(name, e);
+            }
+        }
+        else {
+            if (lazyHeaders == null) {
+                lazyHeaders = new HashMap<String, Object>();
+            }
+            lazyHeaders.put(name, value);
+        }
+    }
+
+    public Map<String, Object> getHeaders() {
+        if (jmsMessage != null) {
+            Map<String, Object> answer = new HashMap<String, Object>();
+            Enumeration names;
+            try {
+                names = jmsMessage.getPropertyNames();
+            }
+            catch (JMSException e) {
+                throw new MessagePropertyNamesAcessException(e);
+            }
+            while (names.hasMoreElements()) {
+                String name = names.nextElement().toString();
+                try {
+                    Object value = jmsMessage.getObjectProperty(name);
+                    answer.put(name, value);
+                }
+                catch (JMSException e) {
+                    throw new MessagePropertyAcessException(name, e);
+                }
+            }
+            return answer;
+        }
+        else {
+            return lazyHeaders;
+        }
     }
 
     @Override
-    public DefaultMessage newInstance() {
+    public DefaultJmsMessage newInstance() {
         return new DefaultJmsMessage();
     }
 }

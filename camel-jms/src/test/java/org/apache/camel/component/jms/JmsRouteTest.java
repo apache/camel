@@ -53,8 +53,8 @@ public class JmsRouteTest extends TestCase {
             public void configure() {
                 from("jms:activemq:test.a").to("jms:activemq:test.b");
                 from("jms:activemq:test.b").process(new Processor<JmsExchange>() {
-                    public void onExchange(JmsExchange exchange) {
-                        System.out.println("Received exchange: " + exchange.getIn());
+                    public void onExchange(JmsExchange e) {
+                        System.out.println("Received exchange: " + e.getIn());
                         latch.countDown();
                     }
                 });
@@ -66,10 +66,10 @@ public class JmsRouteTest extends TestCase {
         
         // now lets fire in a message
         Endpoint<JmsExchange> endpoint = container.resolveEndpoint("jms:activemq:test.a");
-        JmsExchange exchange2 = endpoint.createExchange();
+        JmsExchange exchange = endpoint.createExchange();
         //exchange2.setInBody("Hello there!")
-        exchange2.getIn().getHeaders().setHeader("cheese", 123);
-        endpoint.onExchange(exchange2);
+        exchange.getIn().setHeader("cheese", 123);
+        endpoint.onExchange(exchange);
 
         // now lets sleep for a while
         boolean received = latch.await(5, TimeUnit.SECONDS);

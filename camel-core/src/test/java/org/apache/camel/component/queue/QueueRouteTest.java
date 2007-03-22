@@ -17,17 +17,16 @@
  */
 package org.apache.camel.component.queue;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Revision: 520220 $
@@ -59,7 +58,7 @@ public class QueueRouteTest extends TestCase {
         // now lets fire in a message
         Endpoint<Exchange> endpoint = container.resolveEndpoint("queue:test.a");
         Exchange exchange = endpoint.createExchange();
-        exchange.getIn().getHeaders().setHeader("cheese", 123);
+        exchange.getIn().setHeader("cheese", 123);
         endpoint.onExchange(exchange);
 
         // now lets sleep for a while

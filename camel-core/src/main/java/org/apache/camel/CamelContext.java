@@ -17,10 +17,10 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.builder.RouteBuilder;
+
 import java.util.Map;
 import java.util.concurrent.Callable;
-
-import org.apache.camel.builder.RouteBuilder;
 
 /**
  * Interface used to represent the context used to configure routes and the 

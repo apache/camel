@@ -19,21 +19,20 @@ package org.apache.camel.builder.xpath;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.RuntimeExpressionException;
-import org.apache.camel.Provider;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.PredicateFactory;
+import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.builder.ExpressionFactory;
+import org.apache.camel.builder.PredicateFactory;
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import javax.xml.xpath.XPathFactoryConfigurationException;
-import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathFunctionResolver;
 
 /**

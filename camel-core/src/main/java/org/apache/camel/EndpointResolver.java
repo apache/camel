@@ -16,8 +16,6 @@
  */
 package org.apache.camel;
 
-import java.io.IOException;
-
 /**
  * A resolver of endpoints from a String URI
  *
