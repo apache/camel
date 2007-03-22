@@ -18,7 +18,7 @@
 -->
 
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -43,6 +43,18 @@
     <dependency>
       <groupId>org.apache.servicemix</groupId>
       <artifactId>servicemix-jbi</artifactId>
+      <version>3.1-incubating</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.servicemix</groupId>
+      <artifactId>servicemix-core</artifactId>
+      <version>3.1-incubating</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.servicemix</groupId>
+      <artifactId>servicemix-common</artifactId>
       <version>3.1-incubating</version>
     </dependency>
 
