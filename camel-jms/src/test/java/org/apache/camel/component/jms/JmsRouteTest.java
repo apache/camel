@@ -17,33 +17,90 @@
  */
 package org.apache.camel.component.jms;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import javax.jms.ConnectionFactory;
-
 import junit.framework.TestCase;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.jms.JmsExchange;
 import org.apache.camel.builder.RouteBuilder;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.jms.ConnectionFactory;
+import javax.jms.Message;
+import javax.jms.TextMessage;
+import javax.jms.ObjectMessage;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Revision$
  */
 public class JmsRouteTest extends TestCase {
-    public void testJmsRoute() throws Exception {
-        final CountDownLatch latch = new CountDownLatch(1);
+    private static final transient Log log = LogFactory.getLog(JmsRouteTest.class);
+    
+    protected JmsExchange receivedExchange;
+    protected CamelContext container = new DefaultCamelContext();
+    protected CountDownLatch latch = new CountDownLatch(1);
+    protected Endpoint<JmsExchange> endpoint;
 
-        CamelContext container = new DefaultCamelContext();
+    public void testJmsRouteWithTextMessage() throws Exception {
+        String expectedBody = "Hello there!";
 
+        // now lets fire in a message
+        JmsExchange exchange = endpoint.createExchange();
+        JmsMessage in = exchange.getIn();
+        in.setBody(expectedBody);
+        in.setHeader("cheese", 123);
+        endpoint.onExchange(exchange);
+
+        // lets wait on the message being received
+        boolean received = latch.await(5, TimeUnit.SECONDS);
+        assertTrue("Did not recieve the message!", received);
+
+        assertNotNull(receivedExchange);
+
+        Object body = receivedExchange.getIn().getBody();
+        log.debug("Received body: " + body);
+        assertEquals("body", expectedBody, body);
+
+        Message jmsMessage = receivedExchange.getIn().getJmsMessage();
+        assertTrue("Received a JMS TextMessage: " + jmsMessage, jmsMessage instanceof TextMessage);
+
+        log.debug("Received JMS message: " + jmsMessage);
+    }
+
+    public void testJmsRouteWithObjectMessage() throws Exception {
+        PurchaseOrder expectedBody = new PurchaseOrder("Beer", 10);
+
+        // now lets fire in a message
+        JmsExchange exchange = endpoint.createExchange();
+        JmsMessage in = exchange.getIn();
+        in.setBody(expectedBody);
+        in.setHeader("cheese", 123);
+        endpoint.onExchange(exchange);
+
+        // lets wait on the message being received
+        boolean received = latch.await(5, TimeUnit.SECONDS);
+        assertTrue("Did not recieve the message!", received);
+
+        assertNotNull(receivedExchange);
+
+        Object body = receivedExchange.getIn().getBody();
+        log.debug("Received body: " + body);
+
+        assertEquals("body", expectedBody, body);
+
+        Message jmsMessage = receivedExchange.getIn().getJmsMessage();
+        assertTrue("Received a JMS TextMessage: " + jmsMessage, jmsMessage instanceof ObjectMessage);
+
+        log.debug("Received JMS message: " + jmsMessage);
+    }
+
+    @Override
+    protected void setUp() throws Exception {
         // lets configure some componnets
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
         container.addComponent("activemq", jmsComponentClientAcknowledge(connectionFactory));
@@ -55,26 +112,20 @@ public class JmsRouteTest extends TestCase {
                 from("jms:activemq:test.b").process(new Processor<JmsExchange>() {
                     public void onExchange(JmsExchange e) {
                         System.out.println("Received exchange: " + e.getIn());
+                        receivedExchange = e;
                         latch.countDown();
                     }
                 });
             }
         });
+        endpoint = container.resolveEndpoint("jms:activemq:test.a");
+        assertNotNull("No endpoint found!", endpoint);
 
-        
         container.activateEndpoints();
-        
-        // now lets fire in a message
-        Endpoint<JmsExchange> endpoint = container.resolveEndpoint("jms:activemq:test.a");
-        JmsExchange exchange = endpoint.createExchange();
-        //exchange2.setInBody("Hello there!")
-        exchange.getIn().setHeader("cheese", 123);
-        endpoint.onExchange(exchange);
+    }
 
-        // now lets sleep for a while
-        boolean received = latch.await(5, TimeUnit.SECONDS);
-        assertTrue("Did not recieve the message!", received);
-
+    @Override
+    protected void tearDown() throws Exception {
         container.deactivateEndpoints();
     }
 }
