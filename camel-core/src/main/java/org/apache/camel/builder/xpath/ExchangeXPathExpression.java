@@ -20,11 +20,14 @@ package org.apache.camel.builder.xpath;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
+import org.apache.camel.Predicate;
+import org.apache.camel.util.ObjectHelper;
 import org.xml.sax.InputSource;
 
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathConstants;
 import java.io.StringReader;
 
 /**
@@ -32,7 +35,7 @@ import java.io.StringReader;
  *
  * @version $Revision$
  */
-public class ExchangeXPathExpression<E extends Exchange> implements Expression<E> {
+public class ExchangeXPathExpression<E extends Exchange> implements Expression<E>, Predicate<E> {
     private final XPathExpression expression;
     private final MessageVariableResolver variableResolver;
     private Class documentType;
@@ -45,6 +48,10 @@ public class ExchangeXPathExpression<E extends Exchange> implements Expression<E
         this.documentType = builder.getDocumentType();
         this.text = builder.getText();
         this.resultType = builder.getResultType();
+    }
+
+    public boolean matches(E exchange) {
+        return ObjectHelper.toBoolean(evaluateAs(exchange, XPathConstants.BOOLEAN));
     }
 
     public Object evaluate(E exchange) {
