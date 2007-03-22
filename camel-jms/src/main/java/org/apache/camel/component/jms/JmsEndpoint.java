@@ -31,7 +31,7 @@ import javax.jms.MessageListener;
 import javax.jms.Session;
 
 /**
- * @version $Revision$
+ * @version $Revision:520964 $
  */
 public class JmsEndpoint extends DefaultEndpoint<JmsExchange> implements MessageListener {
     private static final Log log = LogFactory.getLog(JmsEndpoint.class);
@@ -80,12 +80,12 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> implements Message
     }
 
     public JmsExchange createExchange() {
-        return new DefaultJmsExchange(getContext());
+        return new JmsExchange(getContext());
     }
 
 
     public JmsExchange createExchange(Message message) {
-        return new DefaultJmsExchange(getContext(), message);
+        return new JmsExchange(getContext(), message);
     }
 
 
