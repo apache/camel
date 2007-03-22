@@ -17,12 +17,21 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.*;
-import org.apache.camel.builder.RouteBuilder;
-
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointResolver;
+import org.apache.camel.ExchangeConverter;
+import org.apache.camel.Processor;
+import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.RouteFactory;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -155,6 +164,29 @@ public class DefaultCamelContext implements CamelContext {
             }
         };
         setRoutes(builder);
+    }
+
+    public void addRoutes(Map<Endpoint, Processor> routes) {
+    	if( this.routes == null ) {
+    		this.routes = new LinkedHashMap<Endpoint, Processor>(routes);
+    	} else {
+    		this.routes.putAll(routes);
+    	}
+    }
+
+    public void addRoutes(RouteBuilder builder) {
+        // lets now add the routes from the builder
+        builder.setContext(this);
+        addRoutes(builder.getRouteMap());
+    }
+
+    public void addRoutes(final RouteFactory factory) {
+        RouteBuilder builder = new RouteBuilder(this) {
+            public void configure() {
+                factory.build(this);
+            }
+        };
+        addRoutes(builder);
     }
 
     // Properties

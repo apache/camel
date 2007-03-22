@@ -80,10 +80,12 @@ public interface CamelContext {
 	public Map<Endpoint, Processor> getRoutes() ;
 	
 	public void setRoutes(Map<Endpoint, Processor> routes);
-	
     public void setRoutes(RouteBuilder builder);
+    public void setRoutes(RouteFactory factory);
 
-    public void setRoutes(final RouteFactory factory);
+	public void addRoutes(Map<Endpoint, Processor> routes);
+    public void addRoutes(RouteBuilder builder);
+    public void addRoutes(RouteFactory factory);
 
     // Properties
     //-----------------------------------------------------------------------

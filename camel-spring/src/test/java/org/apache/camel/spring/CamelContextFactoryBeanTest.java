@@ -17,27 +17,26 @@
  */
 package org.apache.camel.spring;
 
-import junit.framework.TestCase;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.ApplicationContext;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.TestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.Map;
-import java.util.Set;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision$
  */
-public class SpringClassPathRouteLoaderTest extends TestSupport {
-    private static final transient Log log = LogFactory.getLog(SpringClassPathRouteLoaderTest.class);
+public class CamelContextFactoryBeanTest extends TestSupport {
+    private static final transient Log log = LogFactory.getLog(CamelContextFactoryBeanTest.class);
     
-    public void testLoadingRouteBuildresOnTheClassPathViaSpringXml() throws Exception {
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/findRouteBuildersOnClassPath.xml");
+    public void testClassPathRouteLoading() throws Exception {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camel_context_factory_bean_test.xml");
 
         CamelContext context = (CamelContext) applicationContext.getBean("camel");
         assertNotNull("No context found!", context);
@@ -55,4 +54,24 @@ public class SpringClassPathRouteLoaderTest extends TestSupport {
             assertEndpointUri(key, "queue:test.a");
         }
     }
+    
+    public void testXMLRouteLoading() throws Exception {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camel_context_factory_bean_test.xml");
+
+        CamelContext context = (CamelContext) applicationContext.getBean("camel2");
+        assertNotNull("No context found!", context);
+
+        Map<Endpoint,Processor> map = context.getRoutes();
+        log.debug("Found routes: " + map);
+
+        Set<Map.Entry<Endpoint,Processor>> entries = map.entrySet();
+        assertEquals("One Route should be found", 1, entries.size());
+
+        for (Map.Entry<Endpoint, Processor> entry : entries) {
+            Endpoint key = entry.getKey();
+            Processor processor = entry.getValue();
+            assertEndpointUri(key, "queue:test.c");
+        }
+    }
+
 }
