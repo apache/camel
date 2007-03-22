@@ -33,7 +33,7 @@ public class FilterBuilder<E extends Exchange> extends FromBuilder<E> {
     }
 
     /**
-     * Adds another predicate using a logican AND
+     * Adds another predicate using a logical AND
      */
     public FilterBuilder<E> and(Predicate<E> predicate) {
         this.predicate = PredicateBuilder.and(this.predicate, predicate);
@@ -41,7 +41,7 @@ public class FilterBuilder<E extends Exchange> extends FromBuilder<E> {
     }
 
     /**
-     * Adds another predicate using a logican OR
+     * Adds another predicate using a logical OR
      */
     public FilterBuilder<E> or(Predicate<E> predicate) {
         this.predicate = PredicateBuilder.or(this.predicate, predicate);

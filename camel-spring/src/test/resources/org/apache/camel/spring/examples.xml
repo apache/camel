@@ -21,6 +21,11 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
        http://activemq.apache.org/camel/schema/camel-1.0.xsd http://activemq.apache.org/camel/schema/camel-1.0.xsd
     ">
+    
+    <!--  
+          put all combinations of possible usages in this file so that XML->XSD converters
+          (like trang) can generate a pretty good XSD.
+     -->
 
     <routeBuilder id="buildSimpleRoute" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
     </routeBuilder>
@@ -53,13 +58,13 @@
          <filter>
              <predicate>
                 <header name="foo"/>
-                <equalTo value="bar"/>
+                <isEqualTo value="bar"/>
              </predicate>
          </filter>
          <filter>
              <predicate>
                 <header name="foo"/>
-                <equalTo value="bar"/>
+                <isEqualTo value="bar"/>
              </predicate>
          </filter>
          <process ref="#myProcessor"/>
@@ -84,14 +89,14 @@
              <when>
                  <predicate>
                     <header name="foo"/>
-                    <equalTo value="bar"/>
+                    <isEqualTo value="bar"/>
                  </predicate>
                  <to uri="queue:b"/>
              </when>
              <when>
                  <predicate>
                     <header name="foo"/>
-                    <equalTo value="cheese"/>
+                    <isEqualTo value="cheese"/>
                  </predicate>
                  <to endpoint="queue:c"/>
              </when>
@@ -106,7 +111,7 @@
          <filter>
              <predicate>
                 <header name="foo"/>
-                <equalTo value="bar"/>
+                <isEqualTo value="bar"/>
              </predicate>
          </filter>
          <to uri="queue:b"/>

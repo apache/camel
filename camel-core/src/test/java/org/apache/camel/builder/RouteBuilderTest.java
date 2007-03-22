@@ -40,16 +40,8 @@ import java.util.Set;
  * @version $Revision$
  */
 public class RouteBuilderTest extends TestSupport {
-    protected Processor<Exchange> myProcessor = new Processor<Exchange>() {
-        public void onExchange(Exchange exchange) {
-            System.out.println("Called with exchange: " + exchange);
-        }
-
-        @Override
-        public String toString() {
-            return "MyProcessor";
-        }
-    };
+	
+	protected Processor<Exchange> myProcessor = new MyProcessor();    	
 	private InterceptorProcessor<Exchange> interceptor1;
 	private InterceptorProcessor<Exchange> interceptor2;
     
