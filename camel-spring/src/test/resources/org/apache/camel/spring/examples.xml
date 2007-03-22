@@ -136,6 +136,16 @@
        
        <route>
          <from uri="queue:a"/>
+         <recipientList>
+         	<recipients>
+              <header name=""/>
+              <tokenize token=","/>
+            </recipients>
+         </recipientList>
+       </route>
+       
+       <route>
+         <from uri="queue:a"/>
          <filter>
              <predicate>
                 <body/>
@@ -147,6 +157,19 @@
               <body/>
             </recipients>
          </recipientList>
+       </route>
+       
+       
+       <route>
+         <from uri="queue:a"/>
+         <splitter>
+         	<recipients>
+	            <bodyAs class="java.lang.String"/>
+	            <tokenize token="
+"/>
+         	</recipients>
+         </splitter>
+         <to uri="queue:b"/>
        </route>
        
     </routeBuilder>

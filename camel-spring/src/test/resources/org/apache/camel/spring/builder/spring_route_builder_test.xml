@@ -153,6 +153,39 @@
        </route>
     </routeBuilder>
     
+                    
+    <!-- 
+        from("queue:a").to("queue:b", "queue:c", "queue:d");
+     -->
+    <routeBuilder id="buildStaticRecipientList" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+       <route>
+         <from uri="queue:a"/>
+         <to>
+            <uri>queue:b</uri>
+            <uri>queue:c</uri>
+            <uri>queue:d</uri>
+         </to>
+       </route>
+    </routeBuilder>
+                    
+    
+                    
+    <!-- 
+        from("queue:a").splitter(bodyAs(String.class).tokenize("\n")).to("queue:b");
+     -->
+    <routeBuilder id="buildSplitter" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+       <route>
+         <from uri="queue:a"/>
+         <splitter>
+         	<recipients>
+	            <bodyAs class="java.lang.String"/>
+	            <tokenize token="
+"/>
+         	</recipients>
+         </splitter>
+         <to uri="queue:b"/>
+       </route>
+    </routeBuilder>
 
 </beans>
 <!-- END SNIPPET: example -->
