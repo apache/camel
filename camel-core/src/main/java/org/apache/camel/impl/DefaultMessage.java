@@ -38,12 +38,15 @@ public class DefaultMessage extends MessageSupport {
     }
 
     public void setHeader(String name, Object value) {
-        getHeaders().put(name, value);
+        if (headers == null) {
+            headers = createHeaders();
+        }
+        headers.put(name, value);
     }
 
     public Map<String, Object> getHeaders() {
         if (headers == null) {
-            headers = new HashMap<String, Object>();
+            headers = createHeaders();
         }
         return headers;
     }
@@ -55,4 +58,15 @@ public class DefaultMessage extends MessageSupport {
     public DefaultMessage newInstance() {
         return new DefaultMessage();
     }
+
+    /**
+     * A factory method to lazily create the headers to make it easy to create efficient Message implementations
+     * which only construct and populate the Map on demand
+     *
+     * @return return a newly constructed Map possibly containing headers from the underlying inbound transport
+     */
+    protected Map<String, Object> createHeaders() {
+        return new HashMap<String, Object>();
+    }
+
 }

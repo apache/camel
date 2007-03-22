@@ -17,8 +17,7 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.InvalidHeaderTypeException;
-import org.apache.camel.impl.MessageSupport;
+import org.apache.camel.impl.DefaultMessage;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -31,9 +30,8 @@ import java.util.Map;
  *
  * @version $Revision:520964 $
  */
-public class JmsMessage extends MessageSupport {
+public class JmsMessage extends DefaultMessage {
     private Message jmsMessage;
-    private Map<String, Object> lazyHeaders;
 
     public JmsMessage() {
     }
@@ -56,43 +54,38 @@ public class JmsMessage extends MessageSupport {
     }
 
     public Object getHeader(String name) {
+        Object answer = null;
         if (jmsMessage != null) {
             try {
-                Object value = jmsMessage.getObjectProperty(name);
-                try {
-                    return value;
-                }
-                catch (ClassCastException e) {
-                    throw new InvalidHeaderTypeException(e.getMessage(), value);
-                }
+                answer = jmsMessage.getObjectProperty(name);
             }
             catch (JMSException e) {
                 throw new MessagePropertyAcessException(name, e);
             }
+        }
+        if (answer == null) {
+            answer = super.getHeader(name);
+        }
+        return answer;
+    }
+
+    @Override
+    public JmsMessage newInstance() {
+        return new JmsMessage();
+    }
+
+    @Override
+    protected Object createBody() {
+        if (jmsMessage != null) {
+            return getExchange().getBinding().extractBodyFromJms(getExchange(), jmsMessage);
         }
         return null;
     }
 
-    public void setHeader(String name, Object value) {
+    @Override
+    protected Map<String, Object> createHeaders() {
+        HashMap<String, Object> answer = new HashMap<String, Object>();
         if (jmsMessage != null) {
-            try {
-                jmsMessage.setObjectProperty(name, value);
-            }
-            catch (JMSException e) {
-                throw new MessagePropertyAcessException(name, e);
-            }
-        }
-        else {
-            if (lazyHeaders == null) {
-                lazyHeaders = new HashMap<String, Object>();
-            }
-            lazyHeaders.put(name, value);
-        }
-    }
-
-    public Map<String, Object> getHeaders() {
-        if (jmsMessage != null) {
-            Map<String, Object> answer = new HashMap<String, Object>();
             Enumeration names;
             try {
                 names = jmsMessage.getPropertyNames();
@@ -110,24 +103,8 @@ public class JmsMessage extends MessageSupport {
                     throw new MessagePropertyAcessException(name, e);
                 }
             }
-            return answer;
         }
-        else {
-            return lazyHeaders;
-        }
-    }
-
-    @Override
-    public JmsMessage newInstance() {
-        return new JmsMessage();
-    }
-
-    @Override
-    protected Object createBody() {
-        if (jmsMessage != null) {
-            return  getExchange().getBinding().extractBodyFromJms(getExchange(), jmsMessage);
-        }
-        return null;
+        return answer;
     }
 }
 
