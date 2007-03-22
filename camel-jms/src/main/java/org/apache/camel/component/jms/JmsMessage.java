@@ -43,16 +43,6 @@ public class JmsMessage extends MessageSupport {
     }
 
     @Override
-    public Object getBody() {
-        Object answer = super.getBody();
-        if (answer == null && jmsMessage != null) {
-            answer = getExchange().getBinding().extractBodyFromJms(getExchange(), jmsMessage);
-            setBody(answer);
-        }
-        return answer;
-    }
-
-    @Override
     public JmsExchange getExchange() {
         return (JmsExchange) super.getExchange();
     }
@@ -130,6 +120,14 @@ public class JmsMessage extends MessageSupport {
     @Override
     public JmsMessage newInstance() {
         return new JmsMessage();
+    }
+
+    @Override
+    protected Object createBody() {
+        if (jmsMessage != null) {
+            return  getExchange().getBinding().extractBodyFromJms(getExchange(), jmsMessage);
+        }
+        return null;
     }
 }
 
