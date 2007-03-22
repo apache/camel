@@ -183,7 +183,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * @return the builder
      */
     @Fluent
-    public SplitterBuilder<E> splitter(@FluentArg("receipients") ValueBuilder<E> receipients) {
+    public SplitterBuilder<E> splitter(@FluentArg(value="recipients", element=true) ValueBuilder<E> receipients) {
         SplitterBuilder<E> answer = new SplitterBuilder<E>(this, receipients);
         addProcessBuilder(answer);
         return answer;
