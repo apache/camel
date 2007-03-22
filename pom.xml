@@ -33,6 +33,10 @@
     <maven>2.0.4</maven>
   </prerequisites>
 
+  <properties>
+    <camel-version>1.0-SNAPSHOT</camel-version>
+  </properties>
+
   <url>http://apache.apache.org/camel/</url>
 
   <organization>
@@ -123,18 +127,50 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- =============================== -->
-      <!-- ActiveMQ Dependencies -->
-      <!-- =============================== -->
+
+      <!-- Camel jars -->
       <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>apache-activemq</artifactId>
-        <version>4.1.0-incubator</version>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-core</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-http</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jbi</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jms</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-mina</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring</artifactId>
+        <version>${camel-version}</version>
       </dependency>
 
-      <!-- =============================== -->
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-core</artifactId>
+        <type>test-jar</type>
+        <version>${camel-version}</version>
+        <optional>true</optional>
+        <scope>test</scope>
+      </dependency>
+
+
       <!-- Required dependencies -->
-      <!-- =============================== -->
       <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
@@ -157,6 +193,23 @@
             <artifactId>servlet-api</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+
+      <!-- optional dependencies  -->
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.12</version>
+        <scope>runtime</scope>
+        <optional>true</optional>
+      </dependency>
+
+
+      <!-- optional dependencies for JMS -->
+      <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>apache-activemq</artifactId>
+        <version>4.1.0-incubator</version>
       </dependency>
 
       <dependency>
@@ -199,14 +252,6 @@
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-servlet_2.4_spec</artifactId>
         <version>1.0</version>
-      </dependency>
-
-      <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>1.2.12</version>
-        <scope>runtime</scope>
-        <optional>true</optional>
       </dependency>
 
 
