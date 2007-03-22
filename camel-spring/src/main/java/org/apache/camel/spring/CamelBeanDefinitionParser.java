@@ -1,6 +1,7 @@
 package org.apache.camel.spring;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,6 +15,7 @@ import java.util.Set;
 import org.apache.camel.builder.Fluent;
 import org.apache.camel.builder.FluentArg;
 import org.apache.camel.builder.RouteBuilder;
+import org.springframework.beans.SimpleTypeConverter;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -74,11 +76,8 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 					currentBuilder = parseBuilderElement((Element) node, currentBuilder, actions);
 				} else {
 					// Make sure the there are no child elements.
-					NodeList nl = node.getChildNodes();
-					for (int j = 0; j < nl.getLength(); ++j) {
-						if( nl.item(j).getNodeType() == Node.ELEMENT_NODE ) {
-							throw new IllegalArgumentException("The element "+node.getLocalName()+" should not have any child elements.");
-						}
+					if( hasChildElements(node) ) {
+						throw new IllegalArgumentException("The element "+node.getLocalName()+" should not have any child elements.");
 					}
 				}
 				
@@ -104,6 +103,16 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 			}
 		}
 		return currentBuilder;
+	}
+
+	private boolean hasChildElements(Node node) {
+		NodeList nl = node.getChildNodes();
+		for (int j = 0; j < nl.getLength(); ++j) {
+			if( nl.item(j).getNodeType() == Node.ELEMENT_NODE ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private Class parseAction(Class currentBuilder, ArrayList<BuilderAction> actions, Element element, Element previousElement) {
@@ -157,8 +166,14 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 	private Object convertTo(ArrayList<Element> elements, Class clazz) {
 
 		if( clazz.isArray() || elements.size() > 1 ) {
-			// TODO: we could support arrays one day soon.
-			throw new IllegalStateException("We don't support injecting array values.");
+			Object array = Array.newInstance(clazz.getComponentType(), elements.size());
+			for( int i=0; i < elements.size(); i ++ ) {
+				ArrayList<Element> e = new ArrayList<Element>(1);
+				e.add(elements.get(i));
+				Object value = convertTo(e, clazz.getComponentType());
+				Array.set(array, i, value);
+			}
+			return array;
 		} else {
 			
 			Element element = elements.get(0);
@@ -167,17 +182,25 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 				return new RuntimeBeanReference(ref);
 			}
 			
-			ArrayList<BuilderAction> actions = new ArrayList<BuilderAction>();
-			Class type = parseBuilderElement(element, RouteBuilder.class, actions);
-			BuilderStatement statement = new BuilderStatement();
-			statement.setReturnType(type);
-			statement.setActions(actions);
-			
-			if( !clazz.isAssignableFrom( statement.getReturnType() ) ) {
-				throw new IllegalStateException("Builder does not produce object of expected type: "+clazz.getName());
+			// Use a builder to create the value..
+			if( hasChildElements(element) ) {
+				
+				ArrayList<BuilderAction> actions = new ArrayList<BuilderAction>();
+				Class type = parseBuilderElement(element, RouteBuilder.class, actions);
+				BuilderStatement statement = new BuilderStatement();
+				statement.setReturnType(type);
+				statement.setActions(actions);
+				
+				if( !clazz.isAssignableFrom( statement.getReturnType() ) ) {
+					throw new IllegalStateException("Builder does not produce object of expected type: "+clazz.getName());
+				}
+				
+				return statement;
+			} else {
+				// Just use the text in the element as the value.
+				SimpleTypeConverter converter = new SimpleTypeConverter();
+				return converter.convertIfNecessary(element.getTextContent(), clazz);
 			}
-			
-			return statement;
 		}
 	}
 

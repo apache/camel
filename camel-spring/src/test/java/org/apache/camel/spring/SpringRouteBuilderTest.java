@@ -78,20 +78,24 @@ public class SpringRouteBuilderTest extends RouteBuilderTest {
 	}
 	
 	@Override
+	protected RouteBuilder<Exchange> buildSimpleRouteWithHeaderPredicate() {
+		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildSimpleRouteWithHeaderPredicate");
+		assertNotNull(builder);
+		return builder;
+	}
+
+	@Override
 	protected RouteBuilder<Exchange> buildSimpleRouteWithChoice() {
-		// TODO Auto-generated method stub
-		return super.buildSimpleRouteWithChoice();
+		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildSimpleRouteWithChoice");
+		assertNotNull(builder);
+		return builder;
 	}
 	
-	@Override
-	protected RouteBuilder<Exchange> buildSimpleRouteWithHeaderPredicate() {
-		// TODO Auto-generated method stub
-		return super.buildSimpleRouteWithHeaderPredicate();
-	}
 	
 	@Override
 	protected RouteBuilder<Exchange> buildWireTap() {
-		// TODO Auto-generated method stub
-		return super.buildWireTap();
+		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildWireTap");
+		assertNotNull(builder);
+		return builder;
 	}
 }

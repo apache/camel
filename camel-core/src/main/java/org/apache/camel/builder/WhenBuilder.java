@@ -33,13 +33,15 @@ public class WhenBuilder<E extends Exchange> extends FilterBuilder<E> {
     }
 
     @Override
-    public ChoiceBuilder<E> to(Endpoint<E> endpoint) {
+    @Fluent
+    public ChoiceBuilder<E> to(@FluentArg("endpoint") Endpoint<E> endpoint) {
         super.to(endpoint);
         return parent;
     }
 
     @Override
-    public ChoiceBuilder<E> to(String uri) {
+    @Fluent
+    public ChoiceBuilder<E> to(@FluentArg("uri")  String uri) {
         super.to(uri);
         return parent;
     }

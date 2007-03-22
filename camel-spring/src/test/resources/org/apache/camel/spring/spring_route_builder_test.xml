@@ -86,22 +86,20 @@
                 .otherwise().to("queue:d");
      -->
     <routeBuilder id="buildSimpleRouteWithChoice" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
-       <!-- 
        <route>
          <from uri="queue:a"/>
          <choice>
              <when>
                  <predicate>
                     <header name="foo"/>
-                    <equalTo value="bar"/>
+                    <isEqualTo value="bar"/>
                  </predicate>
                  <to uri="queue:b"/>
              </when>
-             
              <when>
                  <predicate>
                     <header name="foo"/>
-                    <equalTo value="cheese"/>
+                    <isEqualTo value="cheese"/>
                  </predicate>
                  <to uri="queue:c"/>
              </when>
@@ -110,40 +108,35 @@
              </otherwise>
          </choice>
        </route>
-        -->
     </routeBuilder>
 
     <!-- 
-        from("queue:a").filter(headerEquals("foo", "bar")).to("queue:b");
+        from("queue:a").filter(header("foo").isEqualTo("bar")).to("queue:b");
      -->
     <routeBuilder id="buildSimpleRouteWithHeaderPredicate" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
-    <!-- 
        <route>
          <from uri="queue:a"/>
          <filter>
              <predicate>
                 <header name="foo"/>
-                <equalTo value="bar"/>
+                <isEqualTo value="bar"/>
              </predicate>
          </filter>
          <to uri="queue:b"/>
        </route>
-     -->
     </routeBuilder>
 
     <!-- 
         from("queue:a").to("queue:tap", "queue:b");
      -->
     <routeBuilder id="buildWireTap" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
-    <!-- 
        <route>
          <from uri="queue:a"/>
          <to>
             <uri>queue:tap</uri>
-            <uri>queue:a</uri>
+            <uri>queue:b</uri>
          </to>
        </route>
-     -->
     </routeBuilder>
 
 </beans>
