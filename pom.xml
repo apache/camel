@@ -108,6 +108,7 @@
 
   <modules>
     <module>camel-core</module>
+    <module>camel-http</module>
     <module>camel-jms</module>
     <module>camel-jbi</module>
     <module>camel-mina</module>
