@@ -16,18 +16,16 @@
  */
 package org.apache.camel.builder;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 
-/** 
- * Used to annotate the parameter of a {@see Fluent} method.
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface FluentArg {
-	String value();
-	boolean attribute() default true;
-	boolean element() default false;
+public class MyProcessor implements Processor<Exchange> {
+    public void onExchange(Exchange exchange) {
+        System.out.println("Called with exchange: " + exchange);
+    }
+
+    @Override
+    public String toString() {
+        return "MyProcessor";
+    }
 }

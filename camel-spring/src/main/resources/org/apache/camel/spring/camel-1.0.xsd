@@ -97,7 +97,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="c:header"/>
-        <xs:element ref="c:equalTo"/>
+        <xs:element ref="c:isEqualTo"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -106,7 +106,7 @@
       <xs:attribute name="name" use="required" type="xs:NCName"/>
     </xs:complexType>
   </xs:element>
-  <xs:element name="equalTo">
+  <xs:element name="isEqualTo">
     <xs:complexType>
       <xs:attribute name="value" use="required" type="xs:NCName"/>
     </xs:complexType>

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
@@ -25,10 +29,6 @@ import org.apache.camel.processor.InterceptorProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * @version $Revision$
@@ -124,7 +124,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * Adds the custom processor to this destination
      */
     @Fluent
-    public ConstantProcessorBuilder<E> process(@FluentArg("processor") Processor<E> processor) {
+    public ConstantProcessorBuilder<E> process(@FluentArg("ref") Processor<E> processor) {
         ConstantProcessorBuilder<E> answer = new ConstantProcessorBuilder<E>(processor);
         addProcessBuilder(answer);
         return answer;
@@ -137,7 +137,9 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * @return the builder for a predicate
      */
     @Fluent
-    public FilterBuilder<E> filter(@FluentArg("predicate") Predicate<E> predicate) {
+    public FilterBuilder<E> filter(
+    		@FluentArg(value="predicate",element=true) 
+    		Predicate<E> predicate) {
         FilterBuilder<E> answer = new FilterBuilder<E>(this, predicate);
         addProcessBuilder(answer);
         return answer;

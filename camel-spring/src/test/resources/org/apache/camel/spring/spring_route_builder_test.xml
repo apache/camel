@@ -44,23 +44,19 @@
     </routeBuilder>
 
     <!-- 
-        from("queue:a").filter(headerEquals("foo", "bar")).process(myProcessor);
+        from("queue:a").filter(header("foo").isEqualTo("bar")).process(myProcessor);
      -->
     <routeBuilder id="buildCustomProcessorWithFilter" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
-    <!-- 
        <route>
          <from uri="queue:a"/>
          <filter>
-             <predicate>
-                <header name="foo"/>
-                <equalTo value="bar"/>
-             </predicate>
+           <predicate>
+             <header name="foo"/>
+             <isEqualTo value="bar"/>
+           </predicate>
          </filter>
-         <processor>
-           <s:bean class="some.Processor"/>
-         </processor>
+         <process ref="#myProcessor"/>
        </route>
-     -->
     </routeBuilder>
 
     <!-- 

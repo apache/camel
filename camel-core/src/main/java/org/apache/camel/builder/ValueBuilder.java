@@ -31,59 +31,71 @@ public class ValueBuilder<E extends Exchange> {
     public ValueBuilder(Expression<E> expression) {
         this.expression = expression;
     }
+    
+    public Expression<E> getExpression() {
+        return expression;
+    }
 
-    public Predicate<E> isNotEqualTo(Object value) {
+    @Fluent
+    public Predicate<E> isNotEqualTo(@FluentArg("value") Object value) {
         Expression<E> right = ExpressionBuilder.constantExpression(value);
         return PredicateBuilder.isNotEqualTo(expression, right);
     }
 
-    public Predicate<E> isEqualTo(Object value) {
+    @Fluent
+    public Predicate<E> isEqualTo(@FluentArg("value") Object value) {
         Expression<E> right = ExpressionBuilder.constantExpression(value);
         return PredicateBuilder.isEqualTo(expression, right);
     }
 
-    public Predicate<E> isLessThan(Object value) {
+    @Fluent
+    public Predicate<E> isLessThan(@FluentArg("value") Object value) {
         Expression<E> right = ExpressionBuilder.constantExpression(value);
         return PredicateBuilder.isLessThan(expression, right);
     }
 
-    public Predicate<E> isLessThanOrEqualTo(Object value) {
+    @Fluent
+    public Predicate<E> isLessThanOrEqualTo(@FluentArg("value") Object value) {
         Expression<E> right = ExpressionBuilder.constantExpression(value);
         return PredicateBuilder.isLessThanOrEqualTo(expression, right);
     }
 
-    public Predicate<E> isGreaterThan(Object value) {
+    @Fluent
+    public Predicate<E> isGreaterThan(@FluentArg("value") Object value) {
         Expression<E> right = ExpressionBuilder.constantExpression(value);
         return PredicateBuilder.isGreaterThan(expression, right);
     }
 
-    public Predicate<E> isGreaterThanOrEqualTo(Object value) {
+    @Fluent
+    public Predicate<E> isGreaterThanOrEqualTo(@FluentArg("value") Object value) {
         Expression<E> right = ExpressionBuilder.constantExpression(value);
         return PredicateBuilder.isGreaterThanOrEqualTo(expression, right);
     }
 
-    public Predicate<E> isInstanceOf(Class type) {
+    @Fluent
+    public Predicate<E> isInstanceOf(@FluentArg("class") Class type) {
         return PredicateBuilder.isInstanceOf(expression, type);
     }
 
+    @Fluent
     public Predicate<E> isNull() {
         return PredicateBuilder.isNull(expression);
     }
 
+    @Fluent
     public Predicate<E> isNotNull() {
         return PredicateBuilder.isNotNull(expression);
     }
 
 
-    public Expression<E> getExpression() {
-        return expression;
-    }
 
+    @Fluent
     public ValueBuilder<E> tokenize() {
         return tokenize("\n");
     }
 
-    public ValueBuilder<E> tokenize(String token) {
+    @Fluent
+    public ValueBuilder<E> tokenize(@FluentArg("token") String token) {
         Expression<E> newExp = ExpressionBuilder.tokenizeExpression(expression, token);
         return new ValueBuilder<E>(newExp);
     }

@@ -16,16 +16,16 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.processor.LoggingLevel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * Base class for implementation inheritance
@@ -55,14 +55,16 @@ public abstract class BuilderSupport<E extends Exchange> {
     /**
      * Resolves the given URI to an endpoint
      */
-    public Endpoint<E> endpoint(String uri) {
+    @Fluent
+    public Endpoint<E> endpoint(@FluentArg("uri") String uri) {
         return getContext().resolveEndpoint(uri);
     }
 
     /**
      * Resolves the list of URIs into a list of {@link Endpoint} instances
      */
-    public List<Endpoint<E>> endpoints(String... uris) {
+    @Fluent
+    public List<Endpoint<E>> endpoints(@FluentArg("uris") String... uris) {
         List<Endpoint<E>> endpoints = new ArrayList<Endpoint<E>>();
         for (String uri : uris) {
             endpoints.add(endpoint(uri));
@@ -73,7 +75,8 @@ public abstract class BuilderSupport<E extends Exchange> {
     /**
      * Helper method to create a list of {@link Endpoint} instances
      */
-    public List<Endpoint<E>> endpoints(Endpoint<E>... endpoints) {
+    @Fluent
+    public List<Endpoint<E>> endpoints(@FluentArg("endpoints") Endpoint<E>... endpoints) {
         List<Endpoint<E>> answer = new ArrayList<Endpoint<E>>();
         for (Endpoint<E> endpoint : endpoints) {
             answer.add(endpoint);
@@ -87,7 +90,8 @@ public abstract class BuilderSupport<E extends Exchange> {
     /**
      * Returns a predicate and value builder for headers on an exchange
      */
-    public ValueBuilder<E> header(String name) {
+    @Fluent
+    public ValueBuilder<E> header(@FluentArg("name") String name) {
         Expression<E> expression = ExpressionBuilder.headerExpression(name);
         return new ValueBuilder<E>(expression);
     }
@@ -95,6 +99,7 @@ public abstract class BuilderSupport<E extends Exchange> {
     /**
      * Returns a predicate and value builder for the inbound body on an exchange
      */
+    @Fluent
     public ValueBuilder<E> body() {
         Expression<E> expression = ExpressionBuilder.bodyExpression();
         return new ValueBuilder<E>(expression);
@@ -103,7 +108,8 @@ public abstract class BuilderSupport<E extends Exchange> {
     /**
      * Returns a predicate and value builder for the inbound message body as a specific type
      */
-    public <T> ValueBuilder<E> bodyAs(Class<T> type) {
+    @Fluent
+    public <T> ValueBuilder<E> bodyAs(@FluentArg("class") Class<T> type) {
         Expression<E> expression = ExpressionBuilder.bodyExpression(type);
         return new ValueBuilder<E>(expression);
     }
@@ -111,6 +117,7 @@ public abstract class BuilderSupport<E extends Exchange> {
     /**
      * Returns a predicate and value builder for the outbound body on an exchange
      */
+    @Fluent
     public ValueBuilder<E> outBody() {
         Expression<E> expression = ExpressionBuilder.bodyExpression();
         return new ValueBuilder<E>(expression);
@@ -119,7 +126,8 @@ public abstract class BuilderSupport<E extends Exchange> {
     /**
      * Returns a predicate and value builder for the outbound message body as a specific type
      */
-    public <T> ValueBuilder<E> outBody(Class<T> type) {
+    @Fluent
+    public <T> ValueBuilder<E> outBody(@FluentArg("class") Class<T> type) {
         Expression<E> expression = ExpressionBuilder.bodyExpression(type);
         return new ValueBuilder<E>(expression);
     }
@@ -127,6 +135,7 @@ public abstract class BuilderSupport<E extends Exchange> {
     /**
      * Creates a disabled error handler for removing the default error handler
      */
+    @Fluent
     public NoErrorHandlerBuilder<E> noErrorHandler() {
         return new NoErrorHandlerBuilder<E>();
     }
@@ -134,6 +143,7 @@ public abstract class BuilderSupport<E extends Exchange> {
     /**
      * Creates an error handler which just logs errors
      */
+    @Fluent
     public LoggingErrorHandlerBuilder<E> loggingErrorHandler() {
         return new LoggingErrorHandlerBuilder<E>();
     }
@@ -141,33 +151,39 @@ public abstract class BuilderSupport<E extends Exchange> {
     /**
      * Creates an error handler which just logs errors
      */
-    public LoggingErrorHandlerBuilder<E> loggingErrorHandler(String log) {
+    @Fluent
+    public LoggingErrorHandlerBuilder<E> loggingErrorHandler(@FluentArg("log") String log) {
         return loggingErrorHandler(LogFactory.getLog(log));
     }
 
     /**
      * Creates an error handler which just logs errors
      */
-    public LoggingErrorHandlerBuilder<E> loggingErrorHandler(Log log) {
+    @Fluent
+    public LoggingErrorHandlerBuilder<E> loggingErrorHandler(@FluentArg("log") Log log) {
         return new LoggingErrorHandlerBuilder<E>(log);
     }
 
     /**
      * Creates an error handler which just logs errors
      */
-    public LoggingErrorHandlerBuilder<E> loggingErrorHandler(Log log, LoggingLevel level) {
+    @Fluent
+    public LoggingErrorHandlerBuilder<E> loggingErrorHandler(@FluentArg("log") Log log, @FluentArg("level") LoggingLevel level) {
         return new LoggingErrorHandlerBuilder<E>(log, level);
     }
 
+    @Fluent
     public DeadLetterChannelBuilder<E> deadLetterChannel() {
         return new DeadLetterChannelBuilder<E>();
     }
 
-    public DeadLetterChannelBuilder<E> deadLetterChannel(String deadLetterUri) {
+    @Fluent
+    public DeadLetterChannelBuilder<E> deadLetterChannel(@FluentArg("uri") String deadLetterUri) {
         return deadLetterChannel(endpoint(deadLetterUri));
     }
 
-    public DeadLetterChannelBuilder<E> deadLetterChannel(Endpoint<E> deadLetterEndpoint) {
+    @Fluent
+    public DeadLetterChannelBuilder<E> deadLetterChannel(@FluentArg("endpoint") Endpoint<E> deadLetterEndpoint) {
         return new DeadLetterChannelBuilder<E>(deadLetterEndpoint);
     }
 

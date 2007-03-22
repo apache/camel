@@ -9,25 +9,25 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
 
 public class RouteBuilderFactory implements FactoryBean, BeanFactoryAware {
-	private ArrayList<RouteBuilderStatement> routes;
+	private ArrayList<BuilderStatement> routes;
 	private boolean singleton;
 	private BeanFactory beanFactory;
 
 	class SpringRouteBuilder extends RouteBuilder {
-		private ArrayList<RouteBuilderStatement> routes;
+		private ArrayList<BuilderStatement> routes;
 		private BeanFactory beanFactory;
 
 		@Override
 		public void configure() {
-			for (RouteBuilderStatement routeFactory : routes) {
+			for (BuilderStatement routeFactory : routes) {
 				routeFactory.create(beanFactory, this);
 			}
 		}
 
-		public ArrayList<RouteBuilderStatement> getRoutes() {
+		public ArrayList<BuilderStatement> getRoutes() {
 			return routes;
 		}
-		public void setRoutes(ArrayList<RouteBuilderStatement> routes) {
+		public void setRoutes(ArrayList<BuilderStatement> routes) {
 			this.routes = routes;
 		}
 
@@ -54,10 +54,10 @@ public class RouteBuilderFactory implements FactoryBean, BeanFactoryAware {
 		this.singleton = singleton;
 	}
 
-	public ArrayList<RouteBuilderStatement> getRoutes() {
+	public ArrayList<BuilderStatement> getRoutes() {
 		return routes;
 	}
-	public void setRoutes(ArrayList<RouteBuilderStatement> routes) {
+	public void setRoutes(ArrayList<BuilderStatement> routes) {
 		this.routes = routes;
 	}
 

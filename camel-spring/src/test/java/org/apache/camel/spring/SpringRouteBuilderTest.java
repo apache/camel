@@ -61,8 +61,10 @@ public class SpringRouteBuilderTest extends RouteBuilderTest {
 	
 	@Override
 	protected RouteBuilder<Exchange> buildCustomProcessorWithFilter() {
-		// TODO Auto-generated method stub
-		return super.buildCustomProcessorWithFilter();
+		myProcessor = (Processor<Exchange>) ctx.getBean("myProcessor");
+		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildCustomProcessorWithFilter");
+		assertNotNull(builder);
+		return builder;
 	}
 	
 	@Override

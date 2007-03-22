@@ -8,17 +8,17 @@ import org.springframework.beans.SimpleTypeConverter;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 
-public class RouteBuilderAction {
+public class BuilderAction {
 
 	private final MethodInfo methodInfo;
 	private final HashMap<String, Object> parameterValues;
 
-	public RouteBuilderAction(MethodInfo methodInfo, HashMap<String, Object> parameterValues) {
+	public BuilderAction(MethodInfo methodInfo, HashMap<String, Object> parameterValues) {
 		this.methodInfo = methodInfo;
 		this.parameterValues = parameterValues;
 	}
 
-	public Object invoke(BeanFactory beanFactory, Object builder) {
+	public Object invoke(BeanFactory beanFactory, Object rootBuilder, Object contextBuilder) {
 		SimpleTypeConverter converter = new SimpleTypeConverter();
 		Object args[] = new Object[methodInfo.parameters.size()];
 		int pos=0;
@@ -30,13 +30,17 @@ public class RouteBuilderAction {
 				if( value.getClass() == RuntimeBeanReference.class ) {
 					value = beanFactory.getBean(((RuntimeBeanReference)value).getBeanName());
 				}
+				if( value.getClass() == BuilderStatement.class ) {
+					BuilderStatement bs = (BuilderStatement) value;
+					value = bs.create(beanFactory, rootBuilder);
+				}				
 				args[pos] = converter.convertIfNecessary(value, paramClass);				
 			}
 			
 		}
 		
 		try {
-			return methodInfo.method.invoke(builder, args);
+			return methodInfo.method.invoke(contextBuilder, args);
 		} catch (InvocationTargetException e) {
 			throw new IllegalArgumentException(e.getCause());
 		} catch (RuntimeException e) {

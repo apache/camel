@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -30,15 +32,15 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
 		BeanDefinitionBuilder factory = BeanDefinitionBuilder.rootBeanDefinition(RouteBuilderFactory.class);
-		
+
 		List childElements = DomUtils.getChildElementsByTagName(element, "route");
-		ArrayList<RouteBuilderStatement> routes = new ArrayList<RouteBuilderStatement>(childElements.size());
+		ArrayList<BuilderStatement> routes = new ArrayList<BuilderStatement>(childElements.size());
 
 		if (childElements != null && childElements.size() > 0) {
 			for (int i = 0; i < childElements.size(); ++i) {
 				Element routeElement = (Element) childElements.get(i);
-				RouteBuilderStatement def = parseRouteElement(routeElement);
-				routes.add(def);
+				BuilderStatement statement = parseRouteElement(routeElement);
+				routes.add(statement);
 			}
 		}
 
@@ -46,96 +48,199 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		return factory.getBeanDefinition();
 	}
 
-	/** 
+	/**
 	 * Use reflection to figure out what is the valid next element.
 	 * 
 	 * @param routeElement
 	 * @return
 	 */
-	private RouteBuilderStatement parseRouteElement(Element element) {
-		RouteBuilderStatement rc = new RouteBuilderStatement();
+	private BuilderStatement parseRouteElement(Element element) {
+		BuilderStatement rc = new BuilderStatement();
 		Class currentBuilder = RouteBuilder.class;
-		
+
 		NodeList childElements = element.getChildNodes();
-		ArrayList<RouteBuilderAction> actions = new ArrayList<RouteBuilderAction>(childElements.getLength());
+		ArrayList<BuilderAction> actions = new ArrayList<BuilderAction>(childElements.getLength());
 		if (childElements != null && childElements.getLength() > 0) {
-			Element previousElement=null;
+			Element previousElement = null;
 			for (int i = 0; i < childElements.getLength(); ++i) {
 				Node node = childElements.item(i);
-				if( node.getNodeType() == Node.ELEMENT_NODE ) {
-					currentBuilder = parseAction(currentBuilder, actions, (Element)node, previousElement);
-					previousElement = (Element)node;
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					currentBuilder = parseAction(currentBuilder, actions, (Element) node, previousElement);
+					previousElement = (Element) node;
 				}
 			}
 		}
-		
+
+		rc.setReturnType(currentBuilder);
 		rc.setActions(actions);
 		return rc;
 	}
 
-	private Class parseAction(Class currentBuilder, ArrayList<RouteBuilderAction> actions, Element element, Element previousElement) {
-		
+	private Class parseAction(Class currentBuilder, ArrayList<BuilderAction> actions, Element element, Element previousElement) {
+
 		String actionName = element.getLocalName();
-		
+
 		// Get a list of method names that match the action.
-		ArrayList<MethodInfo> methods = findFluentMethodsWithName( currentBuilder, element.getLocalName() );		
-		if( methods.isEmpty() ) {
-			throw new IllegalRouteException(actionName, previousElement==null? null : previousElement.getLocalName());
+		ArrayList<MethodInfo> methods = findFluentMethodsWithName(currentBuilder, element.getLocalName());
+		if (methods.isEmpty()) {
+			throw new IllegalRouteException(actionName, previousElement == null ? null : previousElement.getLocalName());
 		}
-		
-		// Pick the best method out of the list.  Sort by argument length.  Pick first longest match.
-		Collections.sort(methods, new Comparator<MethodInfo>(){
+
+		// Pick the best method out of the list. Sort by argument length. Pick
+		// first longest match.
+		Collections.sort(methods, new Comparator<MethodInfo>() {
 			public int compare(MethodInfo m1, MethodInfo m2) {
-				return m1.method.getParameterTypes().length - m2.method.getParameterTypes().length; 
+				return m1.method.getParameterTypes().length - m2.method.getParameterTypes().length;
 			}
 		});
+
+		// Build the possible list of arguments from the attributes and child
+		// elements
+		HashMap<String, Object> attributeArguments = getArugmentsFromAttributes(element);
+		HashMap<String, ArrayList<Element>> elementArguments = getArgumentsFromElements(element);
+
+		// Find the first method that we can supply arguments for.
+		MethodInfo match = null;
+		match = findMethodMatch(methods, attributeArguments.keySet(), elementArguments.keySet());
+		if (match == null)
+			throw new IllegalRouteException(actionName, previousElement == null ? null : previousElement.getLocalName());
+
+		// Move element arguments into the attributeArguments map if needed. 
+		Set<String> parameterNames = new HashSet<String>(match.parameters.keySet());
+		parameterNames.removeAll(attributeArguments.keySet());
+		for (String key : parameterNames) {
+			ArrayList<Element> elements = elementArguments.get(key);
+			Class clazz = match.parameters.get(key);
+			Object value = convertTo(elements, clazz);
+			attributeArguments.put(key, value);
+			for (Element el : elements) {
+				// remove the argument nodes so that they don't get interpreted as
+				// actions.
+				el.getParentNode().removeChild(el);
+			}
+		}
 		
-		// Build an ordered list of the element attributes.
-		HashMap<String, Object> attributes = getAttributes(element);
-		
-		// Do we have enough parameters for this action.
-		MethodInfo match=findBestMethod(methods, attributes);
-		if( match == null )
-			throw new IllegalRouteException(actionName, previousElement==null? null : previousElement.getLocalName());
-			
-		actions.add( new RouteBuilderAction(match, attributes) );
+		actions.add(new BuilderAction(match, attributeArguments));
 		return match.method.getReturnType();
 	}
 
-	private MethodInfo findBestMethod(ArrayList<MethodInfo> methods, HashMap<String, Object> attributes) {
-		Set<String> attributeNames = attributes.keySet();
-		for (MethodInfo method : methods) {
-			Set<String> parameterNames = method.parameters.keySet();
+	private Object convertTo(ArrayList<Element> elements, Class clazz) {
+
+		if( clazz.isArray() || elements.size() > 1 ) {
+			// TODO: we could support arrays one day soon.
+			throw new IllegalStateException("We don't support injecting array values.");
+		} else {
 			
-			// If all the parameters are specified as parameters.
-			if(    attributeNames.size()==parameterNames.size() 
-				&& attributeNames.containsAll(parameterNames)) {
+			Element element = elements.get(0);
+			String ref = element.getAttribute("ref");
+			if( StringUtils.hasText(ref) ) {
+				return new RuntimeBeanReference(ref);
+			}
+			
+			BuilderStatement statement = parseRouteElement(element);
+			if( !clazz.isAssignableFrom( statement.getReturnType() ) ) {
+				throw new IllegalStateException("Builder does not produce object of expected type: "+clazz.getName());
+			}
+			return statement;
+		}
+	}
+
+	private MethodInfo findMethodMatch(ArrayList<MethodInfo> methods, Set<String> attributeNames, Set<String> elementNames) {
+		for (MethodInfo method : methods) {
+
+			// make sure all the given attribute parameters can be assigned via
+			// attributes
+			boolean miss = false;
+			for (String key : attributeNames) {
+				FluentArg arg = method.annotations.get(key);
+				if (arg == null || !arg.attribute()) {
+					miss = true;
+					break;
+				}
+			}
+			if (miss)
+				continue; // Keep looking...
+
+			Set<String> parameterNames = new HashSet<String>(method.parameters.keySet());
+			parameterNames.removeAll(attributeNames);
+
+			// Bingo we found a match.
+			if (parameterNames.isEmpty()) {
 				return method;
 			}
+
+			// We may still be able to match using elements as parameters.
+			for (String key : elementNames) {
+				if (parameterNames.isEmpty()) {
+					break;
+				}
+				// We only want to use the first child elements as arguments,
+				// once we don't match, we can stop looking.
+				FluentArg arg = method.annotations.get(key);
+				if (arg == null || !arg.element()) {
+					break;
+				}
+				if (!parameterNames.remove(key)) {
+					break;
+				}
+			}
+
+			// All parameters found! We have a match!
+			if (parameterNames.isEmpty()) {
+				return method;
+			}
+
 		}
 		return null;
 	}
 
-	private HashMap<String, Object> getAttributes(Element element) {
+	private LinkedHashMap<String, ArrayList<Element>> getArgumentsFromElements(Element element) {
+		LinkedHashMap<String, ArrayList<Element>> elements = new LinkedHashMap<String, ArrayList<Element>>();
+		NodeList childNodes = element.getChildNodes();
+		String lastTag = null;
+		for (int i = 0; i < childNodes.getLength(); i++) {
+			Node node = childNodes.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element el = (Element) node;
+				String tag = el.getLocalName();
+				ArrayList<Element> els = elements.get(tag);
+				if (els == null) {
+					els = new ArrayList<Element>();
+					elements.put(el.getLocalName(), els);
+					els.add(el);
+					lastTag = tag;
+				} else {
+					// add to array if the elements are consecutive
+					if (tag.equals(lastTag)) {
+						els.add(el);
+						lastTag = tag;
+					}
+				}
+			}
+		}
+		return elements;
+	}
+
+	private HashMap<String, Object> getArugmentsFromAttributes(Element element) {
 		HashMap<String, Object> attributes = new HashMap<String, Object>();
 		NamedNodeMap childNodes = element.getAttributes();
-		for( int i=0; i < childNodes.getLength(); i++) {
+		for (int i = 0; i < childNodes.getLength(); i++) {
 			Node node = childNodes.item(i);
-			if( node.getNodeType() == Node.ATTRIBUTE_NODE ) {
+			if (node.getNodeType() == Node.ATTRIBUTE_NODE) {
 				Attr attr = (Attr) node;
-				
+
 				String str = attr.getValue();
 				Object value = str;
-				
+
 				// If the value starts with # then it's a bean reference
-				if( str.startsWith("#")) {
+				if (str.startsWith("#")) {
 					str = str.substring(1);
 					// Support using ## to escape the bean reference feature.
-					if( !str.startsWith("#")) {
+					if (!str.startsWith("#")) {
 						value = new RuntimeBeanReference(str);
-					}					
+					}
 				}
-				
+
 				attributes.put(attr.getName(), value);
 			}
 		}
@@ -144,8 +249,9 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	/**
 	 * Finds all the methods on the clazz that match the name and which have the
-	 * {@see Fluent} annotation and whoes parameters have the {@see FluentArg} annotation.
-	 *  
+	 * {@see Fluent} annotation and whoes parameters have the {@see FluentArg}
+	 * annotation.
+	 * 
 	 * @param clazz
 	 * @param name
 	 * @return
@@ -155,30 +261,31 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		Method[] methods = clazz.getMethods();
 		for (int i = 0; i < methods.length; i++) {
 			Method method = methods[i];
-			if( name.equals(method.getName())) {
-				
-				if( !method.isAnnotationPresent(Fluent.class) ) {
+			if (name.equals(method.getName())) {
+
+				if (!method.isAnnotationPresent(Fluent.class)) {
 					List<Annotation> l = Arrays.asList(method.getAnnotations());
 					System.out.println(l);
 					continue;
 				}
-				
-				
+
 				LinkedHashMap<String, Class> map = new LinkedHashMap<String, Class>();
+				LinkedHashMap<String, FluentArg> amap = new LinkedHashMap<String, FluentArg>();
 				Class<?>[] parameters = method.getParameterTypes();
 				for (int j = 0; j < parameters.length; j++) {
 					Class<?> parameter = parameters[j];
 					FluentArg annotation = getParameterAnnotation(FluentArg.class, method, j);
-					if( annotation!=null ) {
+					if (annotation != null) {
 						map.put(annotation.value(), parameter);
+						amap.put(annotation.value(), annotation);
 					} else {
 						break;
 					}
 				}
-				
+
 				// If all the parameters were annotated...
-				if( parameters.length == map.size() ) {
-					rc.add(new MethodInfo(method, map));
+				if (parameters.length == map.size()) {
+					rc.add(new MethodInfo(method, map, amap));
 				}
 			}
 		}
@@ -188,8 +295,8 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 	private <T> T getParameterAnnotation(Class<T> annotationClass, Method method, int index) {
 		Annotation[] annotations = method.getParameterAnnotations()[index];
 		for (int i = 0; i < annotations.length; i++) {
-			if( annotationClass.isAssignableFrom(annotations[i].getClass()) ) {
-				return (T)annotations[i];
+			if (annotationClass.isAssignableFrom(annotations[i].getClass())) {
+				return (T) annotations[i];
 			}
 		}
 		return null;
