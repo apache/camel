@@ -28,7 +28,7 @@ import java.util.concurrent.Callable;
  *
  * @version $Revision$
  */
-public interface CamelContext<E extends Exchange> {
+public interface CamelContext {
     
 	// Component Management Methods
     //-----------------------------------------------------------------------
@@ -36,7 +36,7 @@ public interface CamelContext<E extends Exchange> {
     /**
      * Adds a component to the container.
      */
-    public void addComponent(String componentName, final Component<E> component);
+    public void addComponent(String componentName, Component component);
 
     public Component getComponent(String componentName);
     
@@ -55,7 +55,7 @@ public interface CamelContext<E extends Exchange> {
      * @param factory used to create a new component instance if the component was not previously added.
      * @return
      */
-    public Component getOrCreateComponent(String componentName, Callable<Component<E>> factory);
+    public Component getOrCreateComponent(String componentName, Callable<Component> factory);
     
     // Endpoint Management Methods
     //-----------------------------------------------------------------------
@@ -63,7 +63,7 @@ public interface CamelContext<E extends Exchange> {
     /**
      * Resolves the given URI to an endpoint
      */
-    public Endpoint<E> resolveEndpoint(String uri);
+    public Endpoint resolveEndpoint(String uri);
     
     /**
      * Activates all the starting endpoints in that were added as routes.
@@ -77,17 +77,17 @@ public interface CamelContext<E extends Exchange> {
 
     // Route Management Methods
     //-----------------------------------------------------------------------
-	public Map<Endpoint<E>, Processor<E>> getRoutes() ;
+	public Map<Endpoint, Processor> getRoutes() ;
 	
-	public void setRoutes(Map<Endpoint<E>, Processor<E>> routes);
+	public void setRoutes(Map<Endpoint, Processor> routes);
 	
-    public void setRoutes(RouteBuilder<E> builder);
+    public void setRoutes(RouteBuilder builder);
 
     public void setRoutes(final RouteFactory factory);
 
     // Properties
     //-----------------------------------------------------------------------
-    public EndpointResolver<E> getEndpointResolver();
+    public EndpointResolver getEndpointResolver();
     
     public ExchangeConverter getExchangeConverter();
 

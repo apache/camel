@@ -83,7 +83,7 @@ public class QueueEndpointResolver<E extends Exchange> implements EndpointResolv
 	
 	@SuppressWarnings("unchecked")
 	private QueueComponent<E> resolveQueueComponent(CamelContext container, String componentName) {
-    	Component rc = container.getOrCreateComponent(componentName, new Callable<Component<E>>(){
+    	Component rc = container.getOrCreateComponent(componentName, new Callable<Component>(){
 			public Component<E> call() throws Exception {
 				return new QueueComponent<E>();
 			}});

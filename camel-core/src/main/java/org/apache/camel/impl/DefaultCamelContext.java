@@ -30,17 +30,17 @@ import java.util.concurrent.Callable;
  * @version $Revision: 520517 $
  * @org.apache.xbean.XBean element="container" rootElement="true"
  */
-public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> {
-    private EndpointResolver<E> endpointResolver;
+public class DefaultCamelContext implements CamelContext {
+    private EndpointResolver endpointResolver;
     private ExchangeConverter exchangeConverter;
     private Map<String, Component> components = new HashMap<String, Component>();
-    private Map<Endpoint<E>, Processor<E>> routes;
+    private Map<Endpoint, Processor> routes;
     private TypeConverter typeConverter;
 
     /**
      * Adds a component to the container.
      */
-    public void addComponent(String componentName, final Component<E> component) {
+    public void addComponent(String componentName, final Component component) {
         synchronized (components) {
             if (components.containsKey(componentName)) {
                 throw new IllegalArgumentException("Component previously added: " + componentName);
@@ -76,7 +76,7 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
      * @param factory       used to create a new component instance if the component was not previously added.
      * @return
      */
-    public Component getOrCreateComponent(String componentName, Callable<Component<E>> factory) {
+    public Component getOrCreateComponent(String componentName, Callable<Component> factory) {
         synchronized (components) {
             Component component = components.get(componentName);
             if (component == null) {
@@ -102,8 +102,8 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
     /**
      * Resolves the given URI to an endpoint
      */
-    public Endpoint<E> resolveEndpoint(String uri) {
-        EndpointResolver<E> er = getEndpointResolver();
+    public Endpoint resolveEndpoint(String uri) {
+        EndpointResolver er = getEndpointResolver();
         try {
             return er.resolveEndpoint(this, uri);
         }
@@ -116,9 +116,9 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
      * Activates all the starting endpoints in that were added as routes.
      */
     public void activateEndpoints() {
-        for (Map.Entry<Endpoint<E>, Processor<E>> entry : routes.entrySet()) {
-            Endpoint<E> endpoint = entry.getKey();
-            Processor<E> processor = entry.getValue();
+        for (Map.Entry<Endpoint, Processor> entry : routes.entrySet()) {
+            Endpoint endpoint = entry.getKey();
+            Processor processor = entry.getValue();
             endpoint.activate(processor);
         }
     }
@@ -127,29 +127,29 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
      * Deactivates all the starting endpoints in that were added as routes.
      */
     public void deactivateEndpoints() {
-        for (Endpoint<E> endpoint : routes.keySet()) {
+        for (Endpoint endpoint : routes.keySet()) {
             endpoint.deactivate();
         }
     }
 
     // Route Management Methods
     //-----------------------------------------------------------------------
-    public Map<Endpoint<E>, Processor<E>> getRoutes() {
+    public Map<Endpoint, Processor> getRoutes() {
         return routes;
     }
 
-    public void setRoutes(Map<Endpoint<E>, Processor<E>> routes) {
+    public void setRoutes(Map<Endpoint, Processor> routes) {
         this.routes = routes;
     }
 
-    public void setRoutes(RouteBuilder<E> builder) {
+    public void setRoutes(RouteBuilder builder) {
         // lets now add the routes from the builder
         builder.setContext(this);
         setRoutes(builder.getRouteMap());
     }
 
     public void setRoutes(final RouteFactory factory) {
-        RouteBuilder<E> builder = new RouteBuilder<E>(this) {
+        RouteBuilder builder = new RouteBuilder(this) {
             public void configure() {
                 factory.build(this);
             }
@@ -159,14 +159,14 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
 
     // Properties
     //-----------------------------------------------------------------------
-    public EndpointResolver<E> getEndpointResolver() {
+    public EndpointResolver getEndpointResolver() {
         if (endpointResolver == null) {
             endpointResolver = createEndpointResolver();
         }
         return endpointResolver;
     }
 
-    public void setEndpointResolver(EndpointResolver<E> endpointResolver) {
+    public void setEndpointResolver(EndpointResolver endpointResolver) {
         this.endpointResolver = endpointResolver;
     }
 
@@ -198,8 +198,8 @@ public class DefaultCamelContext<E extends Exchange> implements CamelContext<E> 
     /**
      * Lazily create a default implementation
      */
-    protected EndpointResolver<E> createEndpointResolver() {
-        return new DefaultEndpointResolver<E>();
+    protected EndpointResolver createEndpointResolver() {
+        return new DefaultEndpointResolver();
     }
 
     /**

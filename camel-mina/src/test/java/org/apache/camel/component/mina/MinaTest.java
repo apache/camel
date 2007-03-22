@@ -37,7 +37,7 @@ public class MinaTest extends TestCase {
     public void testMinaRoute() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
-        CamelContext container = new DefaultCamelContext<Exchange>();
+        CamelContext container = new DefaultCamelContext();
 
         // lets add some routes
         container.setRoutes(new RouteBuilder() {

@@ -76,7 +76,7 @@ public class MinaEndpointResolver implements EndpointResolver<MinaExchange> {
 
 	@SuppressWarnings("unchecked")
 	private MinaComponent resolveMinaComponent(final CamelContext context, final String componentName) {
-    	Component rc = context.getOrCreateComponent(componentName, new Callable<MinaComponent>(){
+    	Component rc = context.getOrCreateComponent(componentName, new Callable(){
 			public MinaComponent call() throws Exception {
                 return new MinaComponent(context);
 			}});

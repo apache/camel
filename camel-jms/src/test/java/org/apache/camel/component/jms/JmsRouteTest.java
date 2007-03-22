@@ -42,7 +42,7 @@ public class JmsRouteTest extends TestCase {
     public void testJmsRoute() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
-        CamelContext container = new DefaultCamelContext<Exchange>();
+        CamelContext container = new DefaultCamelContext();
 
         // lets configure some componnets
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");

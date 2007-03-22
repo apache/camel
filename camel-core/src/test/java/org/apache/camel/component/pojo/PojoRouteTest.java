@@ -33,7 +33,7 @@ public class PojoRouteTest extends TestCase {
 	
     public void testJmsRoute() throws Exception {
 
-        CamelContext container = new DefaultCamelContext<Exchange>();
+        CamelContext container = new DefaultCamelContext();
         
         PojoComponent component = new PojoComponent();
         component.registerPojo("hello", new SayService("Hello!"));

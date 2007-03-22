@@ -78,7 +78,7 @@ public class JmsEndpointResolver implements EndpointResolver<JmsExchange> {
 	
 	@SuppressWarnings("unchecked")
 	private JmsComponent resolveJmsComponent(final CamelContext container, final String componentName) {
-    	Component rc = container.getOrCreateComponent(componentName, new Callable<JmsComponent>(){
+    	Component rc = container.getOrCreateComponent(componentName, new Callable(){
 			public JmsComponent call() throws Exception {
                 return new JmsComponent(container);
 			}});
