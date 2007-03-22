@@ -41,7 +41,7 @@ public class ExpressionBuilder {
                 Object header = exchange.getIn().getHeader(headerName);
                 if (header == null) {
                     // lets try the exchange header
-                    header = exchange.getHeader(headerName);
+                    header = exchange.getProperty(headerName);
                 }
                 return header;
             }
