@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.apache.camel.spring;
+package org.apache.camel.spring.builder;
 
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;

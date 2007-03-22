@@ -1,4 +1,4 @@
-package org.apache.camel.spring;
+package org.apache.camel.spring.builder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;

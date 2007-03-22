@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring;
+package org.apache.camel.spring.builder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -35,7 +35,7 @@ public class SpringRouteBuilderTest extends RouteBuilderTest {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		ctx = new ClassPathXmlApplicationContext("org/apache/camel/spring/spring_route_builder_test.xml");
+		ctx = new ClassPathXmlApplicationContext("org/apache/camel/spring/builder/spring_route_builder_test.xml");
 	}
 
 	@Override
