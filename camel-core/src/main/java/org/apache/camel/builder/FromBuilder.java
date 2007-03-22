@@ -167,7 +167,9 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * @param receipients is the builder of the expression used in the {@link RecipientList} to decide the destinations
      */
     @Fluent
-    public RecipientListBuilder<E> recipientList(@FluentArg("receipients") ValueBuilder<E> receipients) {
+    public RecipientListBuilder<E> recipientList(
+    		@FluentArg(value="recipients",element=true) 
+    		ValueBuilder<E> receipients) {
         RecipientListBuilder<E> answer = new RecipientListBuilder<E>(this, receipients);
         addProcessBuilder(answer);
         return answer;

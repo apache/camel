@@ -138,6 +138,21 @@
          </to>
        </route>
     </routeBuilder>
+    
+    <!-- 
+        from("queue:a").recipientList(header("foo"));
+     -->
+    <routeBuilder id="buildDynamicRecipientList" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+       <route>
+         <from uri="queue:a"/>
+         <recipientList>
+         	<recipients>
+              <header name="foo"/>
+            </recipients>
+         </recipientList>
+       </route>
+    </routeBuilder>
+    
 
 </beans>
 <!-- END SNIPPET: example -->

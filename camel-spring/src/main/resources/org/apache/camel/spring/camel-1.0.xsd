@@ -25,12 +25,15 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="c:from"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="c:intercept"/>
-        <xs:element minOccurs="0" ref="c:choice"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="c:filter"/>
-        <xs:choice minOccurs="0">
+        <xs:choice>
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="c:filter"/>
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="c:intercept"/>
+        </xs:choice>
+        <xs:choice>
           <xs:element ref="c:to"/>
+          <xs:element ref="c:choice"/>
           <xs:element ref="c:process"/>
+          <xs:element ref="c:recipientList"/>
         </xs:choice>
       </xs:sequence>
     </xs:complexType>
@@ -43,6 +46,7 @@
       <xs:attribute name="uris" type="xs:NMTOKEN"/>
     </xs:complexType>
   </xs:element>
+  <xs:element name="filter" type="c:predicate"/>
   <xs:element name="intercept">
     <xs:complexType>
       <xs:sequence>
@@ -81,10 +85,24 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="filter" type="c:predicate"/>
   <xs:element name="process">
     <xs:complexType>
       <xs:attribute name="ref" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="recipientList">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="c:recipients"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="recipients">
+    <xs:complexType>
+      <xs:choice>
+        <xs:element ref="c:body"/>
+        <xs:element ref="c:header"/>
+      </xs:choice>
     </xs:complexType>
   </xs:element>
   <xs:complexType name="predicate">
@@ -95,17 +113,23 @@
   <xs:element name="predicate">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="c:header"/>
-        <xs:element ref="c:isEqualTo"/>
+        <xs:choice>
+          <xs:element ref="c:body"/>
+          <xs:element ref="c:header"/>
+        </xs:choice>
+        <xs:choice>
+          <xs:element ref="c:isEqualTo"/>
+          <xs:element ref="c:isNotEqualTo"/>
+        </xs:choice>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="header">
+  <xs:element name="isEqualTo">
     <xs:complexType>
-      <xs:attribute name="name" use="required" type="xs:NCName"/>
+      <xs:attribute name="value" use="required" type="xs:NCName"/>
     </xs:complexType>
   </xs:element>
-  <xs:element name="isEqualTo">
+  <xs:element name="isNotEqualTo">
     <xs:complexType>
       <xs:attribute name="value" use="required" type="xs:NCName"/>
     </xs:complexType>
@@ -122,4 +146,12 @@
     </xs:complexType>
   </xs:element>
   <xs:element name="uri" type="xs:NMTOKEN"/>
+  <xs:element name="header">
+    <xs:complexType>
+      <xs:attribute name="name" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="body">
+    <xs:complexType/>
+  </xs:element>
 </xs:schema>

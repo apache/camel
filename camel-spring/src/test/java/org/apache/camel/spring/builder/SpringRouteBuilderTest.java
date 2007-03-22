@@ -98,4 +98,17 @@ public class SpringRouteBuilderTest extends RouteBuilderTest {
 		assertNotNull(builder);
 		return builder;
 	}
+	
+	@Override
+	protected RouteBuilder<Exchange> buildDynamicRecipientList() {
+		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildDynamicRecipientList");
+		assertNotNull(builder);
+		return builder;
+	}
+	
+	@Override
+	protected RouteBuilder<Exchange> buildStaticRecipientList() {
+		// TODO Auto-generated method stub
+		return super.buildStaticRecipientList();
+	}
 }
