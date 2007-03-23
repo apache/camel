@@ -17,25 +17,15 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.*;
+import org.apache.camel.builder.RouteBuilder;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Collection;
 import java.util.concurrent.Callable;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointResolver;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangeConverter;
-import org.apache.camel.Processor;
-import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.Route;
-import org.apache.camel.RouteFactory;
-import org.apache.camel.TypeConverter;
-import org.apache.camel.builder.RouteBuilder;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -44,11 +34,12 @@ import org.apache.camel.builder.RouteBuilder;
  * @org.apache.xbean.XBean element="container" rootElement="true"
  */
 public class DefaultCamelContext implements CamelContext {
-    private EndpointResolver endpointResolver;
-    private ExchangeConverter exchangeConverter;
+    private Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
     private Map<String, Component> components = new HashMap<String, Component>();
     private List<Route> routes;
     private TypeConverter typeConverter;
+    private EndpointResolver endpointResolver;
+    private ExchangeConverter exchangeConverter;
 
     /**
      * Adds a component to the container.
@@ -112,33 +103,46 @@ public class DefaultCamelContext implements CamelContext {
     // Endpoint Management Methods
     //-----------------------------------------------------------------------
 
+    public Collection<Endpoint> getEndpoints() {
+        synchronized (endpoints) {
+            return new ArrayList<Endpoint>(endpoints.values());
+        }
+    }
+
     /**
      * Resolves the given URI to an endpoint
      */
     public Endpoint resolveEndpoint(String uri) {
-        EndpointResolver er = getEndpointResolver();
-        try {
-            return er.resolveEndpoint(this, uri);
+        Endpoint answer;
+        synchronized (endpoints) {
+            answer = endpoints.get(uri);
         }
-        catch (Exception e) {
-            throw new ResolveEndpointFailedException(uri, e);
+        if (answer == null) {
+            EndpointResolver er = getEndpointResolver();
+            try {
+                answer = er.resolveEndpoint(this, uri);
+            }
+            catch (Exception e) {
+                throw new ResolveEndpointFailedException(uri, e);
+            }
         }
+        return answer;
     }
 
     /**
      * Activates all the starting endpoints in that were added as routes.
      */
     public void activateEndpoints() throws Exception {
-    	for (Route<Exchange> route : routes) {
+        for (Route<Exchange> route : routes) {
             route.getEndpoint().activate(route.getProcessor());
-		}
+        }
     }
 
     /**
      * Deactivates all the starting endpoints in that were added as routes.
      */
     public void deactivateEndpoints() {
-    	for (Route<Exchange> route : routes) {
+        for (Route<Exchange> route : routes) {
             route.getEndpoint().deactivate();
         }
     }
@@ -169,11 +173,12 @@ public class DefaultCamelContext implements CamelContext {
     }
 
     public void addRoutes(List<Route> routes) {
-    	if( this.routes == null ) {
-    		this.routes = new ArrayList<Route>(routes);
-    	} else {
-    		this.routes.addAll(routes);
-    	}
+        if (this.routes == null) {
+            this.routes = new ArrayList<Route>(routes);
+        }
+        else {
+            this.routes.addAll(routes);
+        }
     }
 
     public void addRoutes(RouteBuilder builder) {

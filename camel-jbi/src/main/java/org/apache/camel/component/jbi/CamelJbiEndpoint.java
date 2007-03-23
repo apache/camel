@@ -23,7 +23,7 @@ import org.apache.servicemix.common.endpoints.ProviderEndpoint;
  * 
  * @version $Revision: 426415 $
  */
-public class CamelJbiEndpoint extends ProviderEndpoint{
+public class CamelJbiEndpoint extends ProviderEndpoint {
 
     private static final QName SERVICE_NAME=new QName("http://camel.servicemix.org","CamelEndpointComponent");
     private JbiEndpoint jbiEndpoint;
@@ -37,7 +37,9 @@ public class CamelJbiEndpoint extends ProviderEndpoint{
     }
 
     protected void processInOnly(MessageExchange exchange,NormalizedMessage in) throws Exception{
-        jbiEndpoint.onExchange(new JbiExchange(jbiEndpoint.getContext(), binding, exchange));
+        // lets use the inbound processor to handle the exchange
+        JbiExchange camelExchange = new JbiExchange(jbiEndpoint.getContext(), binding, exchange);
+        jbiEndpoint.getInboundProcessor().onExchange(camelExchange);
     }
 
     protected void processInOut(MessageExchange exchange,NormalizedMessage in,NormalizedMessage out) throws Exception{
