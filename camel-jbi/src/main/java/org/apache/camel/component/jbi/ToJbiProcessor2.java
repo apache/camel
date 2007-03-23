@@ -17,49 +17,37 @@
  */
 package org.apache.camel.component.jbi;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.servicemix.client.Destination;
 import org.apache.servicemix.client.ServiceMixClient;
+import org.apache.servicemix.client.Destination;
 
+import javax.jbi.messaging.MessageExchange;
 import javax.jbi.messaging.MessagingException;
-import javax.jbi.component.ComponentContext;
 
 /**
- * Represents an {@link Endpoint} for interacting with JBI
+ * A @{link Processor} which takes a Camel {@link Exchange} and invokes it into JBI using the @{link ServiceMixClient}
  *
  * @version $Revision$
  */
-public class JbiEndpoint extends DefaultEndpoint<Exchange> {
-    private final JbiBinding binding;
-    private ToJbiProcessor toJbiProcessor;
+public class ToJbiProcessor2 implements Processor<Exchange> {
+    private JbiBinding binding;
+    private ServiceMixClient client;
+    private Destination destination;
 
-    public JbiEndpoint(String endpointUri, CamelContext container, ComponentContext componentContext, JbiBinding binding) {
-        super(endpointUri, container);
+    public ToJbiProcessor2(JbiBinding binding, ServiceMixClient client, Destination destination) {
         this.binding = binding;
-        toJbiProcessor = new ToJbiProcessor(binding, componentContext, endpointUri);
+        this.client = client;
+        this.destination = destination;
     }
 
-    /**
-     * Sends a message into JBI
-     */
     public void onExchange(Exchange exchange) {
-        toJbiProcessor.onExchange(exchange);
-    }
-
-    @Override
-    protected void doActivate() throws Exception {
-        super.doActivate();
-    }
-
-    public JbiExchange createExchange() {
-        return new JbiExchange(getContext(), getBinding());
-    }
-
-    public JbiBinding getBinding() {
-        return binding;
+        try {
+            MessageExchange messageExchange = binding.makeJbiMessageExchange(exchange, destination);
+            client.sendSync(messageExchange);
+        }
+        catch (MessagingException e) {
+            throw new JbiException(e);
+        }
     }
 }

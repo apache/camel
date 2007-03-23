@@ -21,6 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Collection;
 import java.util.concurrent.Callable;
 
 /**
@@ -76,6 +77,12 @@ public interface CamelContext {
      */
     public void deactivateEndpoints() ;
 
+
+    /**
+     * Returns the collection of all active endpoints currently registered
+     */
+    Collection<Endpoint> getEndpoints();
+    
     // Route Management Methods
     //-----------------------------------------------------------------------
 	public List<Route> getRoutes() ;
@@ -95,6 +102,5 @@ public interface CamelContext {
     public ExchangeConverter getExchangeConverter();
 
     public TypeConverter getTypeConverter();
-
 
 }
