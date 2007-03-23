@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class Route<E extends Exchange> {
 
-	final private Map<String, Object> properties = new HashMap<String, Object>(16);
+	private final Map<String, Object> properties = new HashMap<String, Object>(16);
 	private Endpoint<E> endpoint;
 	private Processor<E> processor;
 
@@ -37,7 +37,12 @@ public class Route<E extends Exchange> {
 		this.processor = processor;
 	}
 
-	public Endpoint<E> getEndpoint() {
+    @Override
+    public String toString() {
+        return "Route[" + endpoint + " -> " + processor + "]";
+    }
+
+    public Endpoint<E> getEndpoint() {
 		return endpoint;
 	}
 
