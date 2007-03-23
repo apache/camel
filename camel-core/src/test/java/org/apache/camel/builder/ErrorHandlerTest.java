@@ -17,16 +17,16 @@
  */
 package org.apache.camel.builder;
 
+import java.util.List;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.SendProcessor;
-
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @version $Revision$
@@ -163,13 +163,12 @@ public class ErrorHandlerTest extends TestSupport {
         };
         // END SNIPPET: e5
 
-        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
-        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
+        List<Route<Exchange>> routes = builder.getRouteList();
         assertEquals("Number routes created", 1, routes.size());
-        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
-            Endpoint<Exchange> key = route.getKey();
+        for (Route<Exchange> route : routes) {
+            Endpoint<Exchange> key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
-            Processor processor = route.getValue();
+            Processor processor = route.getProcessor();
 
             LoggingErrorHandler loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class, processor);
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, loggingProcessor.getOutput());

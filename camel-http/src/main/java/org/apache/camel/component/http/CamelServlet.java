@@ -46,6 +46,9 @@ public class CamelServlet extends HttpServlet {
         HttpExchange exchange = endpoint.createExchange(request, response);
         endpoint.onExchange(exchange);
 
+        // HC: The getBinding() interesting because it illustrates the impedance miss-match between
+        // HTTP's stream oriented protocol, and Camels more message oriented protocol exchanges.
+
         // now lets output to the response
         endpoint.getBinding().writeResponse(exchange);
     }

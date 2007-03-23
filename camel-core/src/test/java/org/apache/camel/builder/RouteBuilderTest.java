@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.DeadLetterChannel;
@@ -57,11 +58,10 @@ public class RouteBuilderTest extends TestSupport {
 	public void testSimpleRoute() throws Exception {
         RouteBuilder<Exchange> builder = buildSimpleRoute();
 
-        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
-        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
+        List<Route<Exchange>> routes = builder.getRouteList();
         assertEquals("Number routes created", 1, routes.size());
-        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
-            Endpoint<Exchange> key = route.getKey();
+        for (Route<Exchange> route : routes) {
+            Endpoint<Exchange> key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
@@ -84,13 +84,12 @@ public class RouteBuilderTest extends TestSupport {
 	public void testSimpleRouteWithHeaderPredicate() throws Exception {
         RouteBuilder<Exchange> builder = buildSimpleRouteWithHeaderPredicate();
 
-        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
-        System.out.println("Created map: " + routeMap);
+        List<Route<Exchange>> routes = builder.getRouteList();
+        System.out.println("Created routes: " + routes);
 
-        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
         assertEquals("Number routes created", 1, routes.size());
-        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
-            Endpoint<Exchange> key = route.getKey();
+        for (Route<Exchange> route : routes) {
+            Endpoint<Exchange> key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
@@ -118,13 +117,12 @@ public class RouteBuilderTest extends TestSupport {
     public void testSimpleRouteWithChoice() throws Exception {
         RouteBuilder<Exchange> builder = buildSimpleRouteWithChoice();
 
-        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
-        System.out.println("Created map: " + routeMap);
+        List<Route<Exchange>> routes = builder.getRouteList();
+        System.out.println("Created routes: " + routes);
 
-        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
         assertEquals("Number routes created", 1, routes.size());
-        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
-            Endpoint<Exchange> key = route.getKey();
+        for (Route<Exchange> route : routes) {
+            Endpoint<Exchange> key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
@@ -162,12 +160,11 @@ public class RouteBuilderTest extends TestSupport {
 	public void testCustomProcessor() throws Exception {
         RouteBuilder<Exchange> builder = buildCustomProcessor();
 
-        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
+        List<Route<Exchange>> routes = builder.getRouteList();
 
-        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
         assertEquals("Number routes created", 1, routes.size());
-        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
-            Endpoint<Exchange> key = route.getKey();
+        for (Route<Exchange> route : routes) {
+            Endpoint<Exchange> key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
@@ -190,13 +187,12 @@ public class RouteBuilderTest extends TestSupport {
 	public void testCustomProcessorWithFilter() throws Exception {
         RouteBuilder<Exchange> builder = buildCustomProcessorWithFilter();
 
-        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
-        System.out.println("Created map: " + routeMap);
+        List<Route<Exchange>> routes = builder.getRouteList();
+        System.out.println("Created routes: " + routes);
 
-        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
         assertEquals("Number routes created", 1, routes.size());
-        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
-            Endpoint<Exchange> key = route.getKey();
+        for (Route<Exchange> route : routes) {
+            Endpoint<Exchange> key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
@@ -220,13 +216,12 @@ public class RouteBuilderTest extends TestSupport {
     public void testWireTap() throws Exception {
         RouteBuilder<Exchange> builder = buildWireTap();
 
-        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
-        System.out.println("Created map: " + routeMap);
+        List<Route<Exchange>> routes = builder.getRouteList();
+        System.out.println("Created routes: " + routes);
 
-        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
         assertEquals("Number routes created", 1, routes.size());
-        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
-            Endpoint<Exchange> key = route.getKey();
+        for (Route<Exchange> route : routes) {
+            Endpoint<Exchange> key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
@@ -263,13 +258,12 @@ public class RouteBuilderTest extends TestSupport {
     	
         RouteBuilder<Exchange> builder = buildRouteWithInterceptor();
 
-        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
-        System.out.println("Created map: " + routeMap);
+        List<Route<Exchange>> routes = builder.getRouteList();
+        System.out.println("Created routes: " + routes);
 
-        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
         assertEquals("Number routes created", 1, routes.size());
-        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
-            Endpoint<Exchange> key = route.getKey();
+        for (Route<Exchange> route : routes) {
+            Endpoint<Exchange> key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
@@ -292,13 +286,12 @@ public class RouteBuilderTest extends TestSupport {
         };
         // END SNIPPET: e7
 
-        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
-        System.out.println("Created map: " + routeMap);
+        List<Route<Exchange>> routes = builder.getRouteList();
+        System.out.println("Created routes: " + routes);
 
-        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
-        assertEquals("Number routes created", 1, routes.size());
-        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
-            Endpoint<Exchange> key = route.getKey();
+        assertEquals("Number routes created", 2, routes.size());
+        for (Route<Exchange> route : routes) {
+            Endpoint<Exchange> key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
@@ -338,13 +331,12 @@ public class RouteBuilderTest extends TestSupport {
 
         RouteBuilder<Exchange> builder = buildDynamicRecipientList();
 
-        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
-        System.out.println("Created map: " + routeMap);
+        List<Route<Exchange>> routes = builder.getRouteList();
+        System.out.println("Created routes: " + routes);
 
-        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
         assertEquals("Number routes created", 1, routes.size());
-        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
-            Endpoint<Exchange> key = route.getKey();
+        for (Route<Exchange> route : routes) {
+            Endpoint<Exchange> key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
@@ -366,13 +358,12 @@ public class RouteBuilderTest extends TestSupport {
 
         RouteBuilder<Exchange> builder = buildSplitter();
 
-        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
-        System.out.println("Created map: " + routeMap);
+        List<Route<Exchange>> routes = builder.getRouteList();
+        System.out.println("Created routes: " + routes);
 
-        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
         assertEquals("Number routes created", 1, routes.size());
-        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
-            Endpoint<Exchange> key = route.getKey();
+        for (Route<Exchange> route : routes) {
+            Endpoint<Exchange> key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
@@ -390,8 +381,8 @@ public class RouteBuilderTest extends TestSupport {
     /**
      * By default routes should be wrapped in the {@link DeadLetterChannel} so lets unwrap that and return the actual processor
      */
-    protected Processor<Exchange> getProcessorWithoutErrorHandler(Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route) {
-        Processor<Exchange> processor = route.getValue();
+    protected Processor<Exchange> getProcessorWithoutErrorHandler(Route route) {
+        Processor<Exchange> processor = route.getProcessor();
         return unwrapErrorHandler(processor);
     }
 

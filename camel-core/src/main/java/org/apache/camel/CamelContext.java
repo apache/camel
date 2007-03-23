@@ -19,6 +19,7 @@ package org.apache.camel;
 
 import org.apache.camel.builder.RouteBuilder;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -77,13 +78,13 @@ public interface CamelContext {
 
     // Route Management Methods
     //-----------------------------------------------------------------------
-	public Map<Endpoint, Processor> getRoutes() ;
+	public List<Route> getRoutes() ;
 	
-	public void setRoutes(Map<Endpoint, Processor> routes);
+	public void setRoutes(List<Route> routes);
     public void setRoutes(RouteBuilder builder);
     public void setRoutes(RouteFactory factory);
 
-	public void addRoutes(Map<Endpoint, Processor> routes);
+	public void addRoutes(List<Route> routes);
     public void addRoutes(RouteBuilder builder);
     public void addRoutes(RouteFactory factory);
 

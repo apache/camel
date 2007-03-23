@@ -16,17 +16,16 @@
  */
 package org.apache.camel.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultCamelContext;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A builder of destinationBuilders using a typesafe Java DLS.
@@ -36,7 +35,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E> {
     private List<FromBuilder<E>> fromBuilders = new ArrayList<FromBuilder<E>>();
     private AtomicBoolean initalized = new AtomicBoolean(false);
-    private Map<Endpoint<E>, Processor<E>> routeMap = new HashMap<Endpoint<E>, Processor<E>>();
+    private List<Route<E>> routes = new ArrayList<Route<E>>();
 
     protected RouteBuilder() {
         this(null);
@@ -99,9 +98,9 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     /**
      * Returns the routing map from inbound endpoints to processors
      */
-    public Map<Endpoint<E>, Processor<E>> getRouteMap() {
+    public List<Route<E>> getRouteList() {
         checkInitialized();
-        return routeMap;
+        return routes;
     }
 
     /**
@@ -117,18 +116,18 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     protected void checkInitialized() {
         if (initalized.compareAndSet(false, true)) {
             configure();
-            populateRouteMap(routeMap);
+            populateRoutes(routes);
         }
     }
 
-    protected void populateRouteMap(Map<Endpoint<E>, Processor<E>> routeMap) {
+    protected void populateRoutes(List<Route<E>> routes) {
         for (FromBuilder<E> builder : fromBuilders) {
             Endpoint<E> from = builder.getFrom();
             Processor<E> processor = makeProcessor(from, builder);
             if (processor == null) {
                 throw new IllegalArgumentException("No processor created for DestinationBuilder: " + builder);
             }
-            routeMap.put(from, processor);
+            routes.add(new Route<E>(from, processor));
         }
     }
 
