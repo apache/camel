@@ -17,23 +17,49 @@
  */
 package org.apache.camel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
+ * A route defines the processing used on an inbound message exchange
+ * from a specific {@see Endpoint}
+ * 
  * @version $Revision$
  */
 public class Route<E extends Exchange> {
-    private final Endpoint<E> endpoint;
-    private final Processor<E> processor;
 
-    public Route(Endpoint<E> endpoint, Processor<E> processor) {
-        this.endpoint = endpoint;
-        this.processor = processor;
-    }
+	final private Map<String, Object> properties = new HashMap<String, Object>(16);
+	private Endpoint<E> endpoint;
+	private Processor<E> processor;
 
-    public Endpoint<E> getEndpoint() {
-        return endpoint;
-    }
+	public Route(Endpoint<E> endpoint, Processor<E> processor) {
+		this.endpoint = endpoint;
+		this.processor = processor;
+	}
 
-    public Processor<E> getProcessor() {
-        return processor;
-    }
+	public Endpoint<E> getEndpoint() {
+		return endpoint;
+	}
+
+	public void setEndpoint(Endpoint<E> endpoint) {
+		this.endpoint = endpoint;
+	}
+
+	public Processor<E> getProcessor() {
+		return processor;
+	}
+
+	public void setProcessor(Processor<E> processor) {
+		this.processor = processor;
+	}
+
+	/**
+	 * This property map is used to associate information about
+	 * the route.
+	 * 
+	 * @return
+	 */
+	public Map<String, Object> getProperties() {
+		return properties;
+	}
 }
