@@ -40,4 +40,45 @@ public abstract class TestSupport extends TestCase {
     protected void assertEndpointUri(Endpoint<Exchange> endpoint, String uri) {
         assertEquals("Endoint uri for: " + endpoint, uri, endpoint.getEndpointUri());
     }
+
+    /**
+     * Asserts the In message on the exchange contains the expected value
+     */
+    protected void assertInMessageHeader(Exchange exchange, String name, Object expected) {
+        assertMessageHeader(exchange.getIn(), name, expected);
+    }
+
+    /**
+     * Asserts the Out message on the exchange contains the expected value
+     */
+    protected void assertOutMessageHeader(Exchange exchange, String name, Object expected) {
+        assertMessageHeader(exchange.getOut(), name, expected);
+    }
+
+    protected void assertMessageHeader(Message message, String name, Object expected) {
+        Object value = message.getHeader(name);
+        assertEquals("Header: " + name + " on Message: " + message, expected, value);
+    }
+
+    /**
+     * Asserts that the given expression when evaluated returns the given answer
+     */
+    protected void assertExpression(Expression expression, Exchange exchange, Object expected) {
+        Object value = expression.evaluate(exchange);
+
+        log.debug("Evaluated expression: " + expression + " on exchange: " + exchange + " result: " + value);
+
+        assertEquals("Expression: " + expression + " on Exchange: " + exchange, expected, value);
+    }
+
+    /**
+     * Asserts that the predicate returns the expected value on the exchange
+     */
+    protected void assertPredicate(Predicate expression, Exchange exchange, boolean expected) {
+        boolean value = expression.matches(exchange);
+
+        log.debug("Evaluated predicate: " + expression + " on exchange: " + exchange + " result: " + value);
+
+        assertEquals("Predicate: " + expression + " on Exchange: " + exchange, expected, value);
+    }
 }

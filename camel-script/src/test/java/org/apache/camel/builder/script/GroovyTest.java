@@ -18,9 +18,8 @@
 package org.apache.camel.builder.script;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import static org.apache.camel.builder.script.ScriptBuilder.*;
+import org.apache.camel.TestSupport;
+import static org.apache.camel.builder.script.ScriptBuilder.groovy;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.commons.logging.Log;
@@ -29,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @version $Revision$
  */
-public class GroovyTest extends ScriptTestSupport {
+public class GroovyTest extends TestSupport {
     private static final transient Log log = LogFactory.getLog(GroovyTest.class);
 
     protected Exchange exchange;
@@ -40,15 +39,21 @@ public class GroovyTest extends ScriptTestSupport {
         assertExpression(groovy("exchange.in.headers['doesNotExist']"), exchange, null);
     }
     
-    public void testPredicateUsingScriptAttribute() throws Exception {
-        assertPredicate(groovy("request.headers.name == hacker").attribute("hacker", "James"), exchange, true);
-    }
-
     public void testPredicateEvaluation() throws Exception {
         assertPredicate(groovy("exchange.in.headers.name == 'James'"), exchange, true);
         assertPredicate(groovy("exchange.in.headers.name == 'Hiram'"), exchange, false);
 
         assertPredicate(groovy("request.headers.name == 'James'"), exchange, true);
+    }
+
+    public void testProcessorMutatesTheExchange() throws Exception {
+        groovy("request.headers.myNewHeader = 'ABC'").onExchange(exchange);
+
+        assertInMessageHeader(exchange, "myNewHeader", "ABC");
+    }
+
+    public void testPredicateUsingScriptAttribute() throws Exception {
+        assertPredicate(groovy("request.headers.name == hacker").attribute("hacker", "James"), exchange, true);
     }
 
     public void testInvalidExpressionFailsWithMeaningfulException() throws Exception {
@@ -62,29 +67,6 @@ public class GroovyTest extends ScriptTestSupport {
             assertTrue("The message should include 'doesNotExist' but was: " + message, message.contains("doesNotExist"));
         }
     }
-
-    /**
-     * Asserts that the given expression when evaluated returns the given answer
-     */
-    protected void assertExpression(Expression expression, Exchange exchange, Object expected) {
-        Object value = expression.evaluate(exchange);
-        
-        log.debug("Evaluated expression: " + expression + " on exchange: " + exchange + " result: " + value);
-
-        assertEquals("Expression: " + expression + " on Exchange: " + exchange, expected, value);
-    }
-
-    /**
-     * Asserts that the predicate returns the expected value on the exchange
-     */
-    protected void assertPredicate(Predicate expression, Exchange exchange, boolean expected) {
-        boolean value = expression.matches(exchange);
-
-        log.debug("Evaluated predicate: " + expression + " on exchange: " + exchange + " result: " + value);
-
-        assertEquals("Predicate: " + expression + " on Exchange: " + exchange, expected, value);
-    }
-
 
     @Override
     protected void setUp() throws Exception {
