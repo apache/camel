@@ -18,7 +18,7 @@
 -->
 
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -28,9 +28,9 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-spring</artifactId>
-  <name>Camel :: Spring</name>
-  <description>Camel Spring support</description>
+  <artifactId>camel-script</artifactId>
+  <name>Camel :: Script</name>
+  <description>Camel Script support</description>
 
   <dependencies>
 
@@ -40,30 +40,33 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-      <type>test-jar</type>
-      <optional>true</optional>
-      <scope>test</scope>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
     </dependency>
 
-    <!--
+    <!-- TODO is there a jsr223 jar anywhere else? -->
+    <!-- TODO add this to a profile for Java 5 only  -->
     <dependency>
-      <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-spring</artifactId>
-      <version>2.8</version>
+      <groupId>org.livetribe</groupId>
+      <artifactId>livetribe-jsr223</artifactId>
+      <version>2.0.0</version>
     </dependency>
-    -->
-    
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <optional>true</optional>
+      <groupId>groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.script</groupId>
+      <artifactId>groovy-engine</artifactId>
+      <version>20070112</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -71,7 +74,6 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
 </project>

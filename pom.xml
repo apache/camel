@@ -117,6 +117,7 @@
     <module>camel-jms</module>
     <module>camel-jbi</module>
     <module>camel-mina</module>
+    <module>camel-script</module>
     <module>camel-spring</module>
   </modules>
 
@@ -317,6 +318,27 @@
         <artifactId>jetty</artifactId>
         <version>6.1.2rc1</version>
       </dependency>
+
+
+      <!-- optional scripting support -->
+      <dependency>
+        <groupId>org.livetribe</groupId>
+        <artifactId>livetribe-jsr223</artifactId>
+        <version>2.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>1.0</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.script</groupId>
+        <artifactId>groovy-engine</artifactId>
+        <version>20070112</version>
+        <scope>test</scope>
+      </dependency>
+
 
       <dependency>
         <groupId>junit</groupId>
