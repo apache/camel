@@ -20,6 +20,7 @@ package org.apache.camel.component.jbi;
 import junit.framework.TestCase;
 import org.apache.servicemix.jbi.container.JBIContainer;
 import org.apache.servicemix.jbi.container.ActivationSpec;
+import org.apache.servicemix.jbi.container.SpringJBIContainer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.camel.CamelContext;
@@ -46,7 +47,7 @@ public class JbiTest extends TestCase {
 
     protected Exchange receivedExchange;
     protected CamelContext camelContext = new DefaultCamelContext();
-    protected JBIContainer jbiContainer = new JBIContainer();
+    protected SpringJBIContainer jbiContainer = new SpringJBIContainer();
     protected CountDownLatch latch = new CountDownLatch(1);
     protected Endpoint<Exchange> endpoint;
 
@@ -78,13 +79,32 @@ public class JbiTest extends TestCase {
         jbiContainer.setEmbedded(true);
 
         CamelJbiComponent component = new CamelJbiComponent();
+
+        /*
+
+        <bean class="org.apache.servicemix.jbi.container.ActivationSpec">
+          <property name="id" value="receiver"/>
+          <property name="service" ref="receiverServiceName"/>
+          <property name="endpoint" value="receiver"/>
+          <!-- no need to specify service on this POJO as it is hard coded -->
+          <property name="component">
+            <bean class="org.apache.servicemix.tck.ReceiverComponent"/>
+          </property>
+        </bean>
+
+         */
         ActivationSpec activationSpec = new ActivationSpec();
-        activationSpec.setComponentName("camel");
-        activationSpec.setService(new QName("camel"));
-        activationSpec.setComponent(component);
-        activationSpec.setEndpoint("camelEndpoint");
         activationSpec.setId("camel");
-        jbiContainer.activateComponent(component, activationSpec);
+        activationSpec.setService(new QName("camel"));
+        activationSpec.setEndpoint("camelEndpoint");
+        activationSpec.setComponent(component);
+
+        //activationSpec.setComponentName("camel");
+
+        jbiContainer.setActivationSpecs(new ActivationSpec[] {activationSpec});
+        jbiContainer.afterPropertiesSet();
+
+        //jbiContainer.activateComponent(component, "camel");
 
         // lets configure some componnets
         camelContext.addComponent("jbi", component);
@@ -92,8 +112,8 @@ public class JbiTest extends TestCase {
         // lets add some routes
         camelContext.setRoutes(new RouteBuilder() {
             public void configure() {
-                from("jbi:service:test.a").to("jbi:service:test.b");
-                from("jbi:service:test.b").process(new Processor<Exchange>() {
+                from("jbi:service:test:a").to("jbi:service:test:b");
+                from("jbi:service:test:b").process(new Processor<Exchange>() {
                     public void onExchange(Exchange e) {
                         System.out.println("Received exchange: " + e.getIn());
                         receivedExchange = e;
@@ -102,7 +122,7 @@ public class JbiTest extends TestCase {
                 });
             }
         });
-        endpoint = camelContext.resolveEndpoint("jbi:service:test.a");
+        endpoint = camelContext.resolveEndpoint("jbi:service:test:a");
         assertNotNull("No endpoint found!", endpoint);
 
         camelContext.activateEndpoints();

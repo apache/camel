@@ -21,11 +21,12 @@ import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Collection;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -36,6 +37,7 @@ import java.util.concurrent.Callable;
 public class DefaultCamelContext implements CamelContext {
     private Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
     private Map<String, Component> components = new HashMap<String, Component>();
+    private List<EndpointResolver> resolvers = new CopyOnWriteArrayList<EndpointResolver>();
     private List<Route> routes;
     private TypeConverter typeConverter;
     private EndpointResolver endpointResolver;
@@ -51,6 +53,9 @@ public class DefaultCamelContext implements CamelContext {
             }
             component.setContext(this);
             components.put(componentName, component);
+            if (component instanceof EndpointResolver) {
+                resolvers.add((EndpointResolver) component);
+            }
         }
     }
 
@@ -116,15 +121,37 @@ public class DefaultCamelContext implements CamelContext {
         Endpoint answer;
         synchronized (endpoints) {
             answer = endpoints.get(uri);
+            if (answer == null) {
+                try {
+                    for (EndpointResolver resolver : resolvers) {
+                        answer = resolver.resolveEndpoint(this, uri);
+                        if (answer != null) {
+                            break;
+                        }
+                    }
+                    if (answer == null) {
+                        EndpointResolver er = getEndpointResolver();
+                        answer = er.resolveEndpoint(this, uri);
+                    }
+                    if (answer != null) {
+                        endpoints.put(uri, answer);
+                    }
+                }
+                catch (Exception e) {
+                    throw new ResolveEndpointFailedException(uri, e);
+                }
+            }
         }
-        if (answer == null) {
-            EndpointResolver er = getEndpointResolver();
-            try {
-                answer = er.resolveEndpoint(this, uri);
-            }
-            catch (Exception e) {
-                throw new ResolveEndpointFailedException(uri, e);
-            }
+        return answer;
+    }
+
+    /**
+     * Looks up the current active endpoint by URI without auto-creating it.
+     */
+    public Endpoint getEndpoint(String uri) {
+        Endpoint answer;
+        synchronized (endpoints) {
+            answer = endpoints.get(uri);
         }
         return answer;
     }
