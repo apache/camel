@@ -28,15 +28,19 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-assembly</artifactId>
+  <artifactId>apache-camel</artifactId>
   <name>Camel :: Assembly</name>
-  <description>Camel Assembly</description>
+  <description>Apache Camel Assembly</description>
 
   <dependencies>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-cxf</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -53,6 +57,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-mina</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-script</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -148,7 +156,7 @@
               <goal>createbundle</goal>
             </goals>
             <configuration>
-              <includes>camel-core,camel-http,camel-jbi,camel-jms,camel-mina,camel-spring,commons-logging</includes>
+              <includes>camel-core,camel-cxf,camel-http,camel-jbi,camel-jms,camel-mina,camel-script,camel-spring,commons-logging</includes>
             </configuration>
           </execution>
         </executions>

@@ -28,9 +28,9 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-jms</artifactId>
-  <name>Camel :: JMS</name>
-  <description>Camel JMS support</description>
+  <artifactId>camel-cxf</artifactId>
+  <name>Camel :: CXF</name>
+  <description>Camel CXF support</description>
 
   <dependencies>
 
@@ -45,29 +45,10 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jms_1.1_spec</artifactId>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-core</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>apache-activemq</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-j2ee-management_1.0_spec</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-j2ee-jacc_1.0_spec</artifactId>
-      <optional>true</optional>
-    </dependency>
 
     <dependency>
       <groupId>junit</groupId>
