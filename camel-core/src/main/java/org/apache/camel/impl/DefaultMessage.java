@@ -37,6 +37,11 @@ public class DefaultMessage extends MessageSupport {
         return null;
     }
 
+    @Override
+    public String toString() {
+        return "Message: " + getBody();
+    }
+
     public void setHeader(String name, Object value) {
         if (headers == null) {
             headers = createHeaders();

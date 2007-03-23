@@ -22,7 +22,6 @@ import org.apache.camel.impl.DefaultMessage;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -38,6 +37,16 @@ public class JmsMessage extends DefaultMessage {
 
     public JmsMessage(Message jmsMessage) {
         this.jmsMessage = jmsMessage;
+    }
+
+    @Override
+    public String toString() {
+        if (jmsMessage != null) {
+            return "JmsMessage: " + jmsMessage;
+        }
+        else {
+            return "JmsMessage: " + getBody();
+        }
     }
 
     @Override

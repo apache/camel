@@ -21,26 +21,27 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
-import org.apache.camel.builder.ExpressionFactory;
-import org.apache.camel.builder.PredicateFactory;
+import org.apache.camel.Message;
+import org.apache.camel.util.ObjectHelper;
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import javax.xml.xpath.XPathFactoryConfigurationException;
 import javax.xml.xpath.XPathFunctionResolver;
+import java.io.StringReader;
 
 /**
  * Creates an XPath expression builder
  *
  * @version $Revision$
  */
-public class XPathBuilder<E extends Exchange> implements ExpressionFactory<E>, PredicateFactory<E> {
+public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicate<E> {
     private final String text;
     private XPathFactory xpathFactory;
     private Class documentType = Document.class;
@@ -48,6 +49,8 @@ public class XPathBuilder<E extends Exchange> implements ExpressionFactory<E>, P
     private String objectModelUri = null;
     private DefaultNamespaceContext namespaceContext;
     private XPathFunctionResolver functionResolver;
+    private XPathExpression expression;
+    private MessageVariableResolver variableResolver = new MessageVariableResolver();
 
     public static XPathBuilder xpath(String text) {
         return new XPathBuilder(text);
@@ -57,14 +60,19 @@ public class XPathBuilder<E extends Exchange> implements ExpressionFactory<E>, P
         this.text = text;
     }
 
-    public Expression<E> createExpression() {
-        return createExchangeXPathExpression();
+    @Override
+    public String toString() {
+        return "XPath: " + text;
     }
 
-    public Predicate<E> createPredicate() {
-        return createExchangeXPathExpression();
+    public boolean matches(E exchange) {
+        return ObjectHelper.toBoolean(evaluateAs(exchange, XPathConstants.BOOLEAN));
     }
-    
+
+    public Object evaluate(E exchange) {
+        return evaluateAs(exchange, resultType);
+    }
+
 
     // Builder methods
     //-------------------------------------------------------------------------
@@ -151,6 +159,15 @@ public class XPathBuilder<E extends Exchange> implements ExpressionFactory<E>, P
         return this;
     }
 
+    /**
+     * Registers a variable (in the global namespace) which can be referred to from XPath expressions
+     */
+    public XPathBuilder<E> variable(String name, Object value) {
+        variableResolver.addVariable(name, value);
+        return this;
+    }
+
+
     // Properties
     //-------------------------------------------------------------------------
     public XPathFactory getXPathFactory() throws XPathFactoryConfigurationException {
@@ -207,21 +224,57 @@ public class XPathBuilder<E extends Exchange> implements ExpressionFactory<E>, P
         this.functionResolver = functionResolver;
     }
 
+    public XPathExpression getExpression() throws XPathFactoryConfigurationException, XPathExpressionException {
+        if (expression == null) {
+            expression = createXPathExpression();
+        }
+        return expression;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected ExchangeXPathExpression<E> createExchangeXPathExpression() {
+
+
+    /**
+     * Evaluates the expression as the given result type
+     */
+    protected synchronized Object evaluateAs(E exchange, QName resultType) {
+        variableResolver.setExchange(exchange);
         try {
-            MessageVariableResolver variableResolver = new MessageVariableResolver();
-            XPathExpression expression = createXPathExpression(variableResolver);
-            return new ExchangeXPathExpression<E>(this, expression, variableResolver);
+            Object document = getDocument(exchange);
+            if (resultType != null) {
+                if (document instanceof InputSource) {
+                    InputSource inputSource = (InputSource) document;
+                    return getExpression().evaluate(inputSource, resultType);
+                }
+                else {
+                    return getExpression().evaluate(document, resultType);
+                }
+            }
+            else {
+                if (document instanceof InputSource) {
+                    InputSource inputSource = (InputSource) document;
+                    return getExpression().evaluate(inputSource);
+                }
+                else {
+                    return getExpression().evaluate(document);
+                }
+            }
         }
-        catch (XPathException e) {
-            throw new InvalidXPathExpression(text, e);
+        catch (XPathExpressionException e) {
+            throw new InvalidXPathExpression(getText(), e);
+        }
+        catch (XPathFactoryConfigurationException e) {
+            throw new InvalidXPathExpression(getText(), e);
         }
     }
 
-    protected XPathExpression createXPathExpression(MessageVariableResolver variableResolver) throws XPathExpressionException, XPathFactoryConfigurationException {
+    protected XPathExpression createXPathExpression() throws XPathExpressionException, XPathFactoryConfigurationException {
         XPath xPath = getXPathFactory().newXPath();
+
+        // lets now clear any factory references to avoid keeping them around
+        xpathFactory = null;
+
         xPath.setNamespaceContext(getNamespaceContext());
         xPath.setXPathVariableResolver(variableResolver);
         if (functionResolver != null) {
@@ -229,5 +282,27 @@ public class XPathBuilder<E extends Exchange> implements ExpressionFactory<E>, P
         }
         return xPath.compile(text);
     }
+
+    /**
+     * Strategy method to extract the document from the exchange
+     */
+    protected Object getDocument(E exchange) {
+        Message in = exchange.getIn();
+        Class type = getDocumentType();
+        Object answer = null;
+        if (type != null) {
+            answer = in.getBody(type);
+        }
+        if (answer == null) {
+            answer = in.getBody();
+        }
+
+        // lets try coerce some common types into something JAXP can deal with
+        if (answer instanceof String) {
+            answer = new InputSource(new StringReader(answer.toString()));
+        }
+        return answer;
+    }
+
 
 }

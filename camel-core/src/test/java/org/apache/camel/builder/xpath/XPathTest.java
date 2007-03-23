@@ -17,37 +17,39 @@
  */
 package org.apache.camel.builder.xpath;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
+import org.apache.camel.TestSupport;
+import static org.apache.camel.builder.xpath.XPathBuilder.*;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.xpath.XPathFunctionResolver;
 
 /**
  * @version $Revision$
  */
-public class XPathTest extends TestCase {
-    private static final transient Log log = LogFactory.getLog(XPathTest.class);
+public class XPathTest extends TestSupport {
 
     public void testXPathExpressions() throws Exception {
-        assertExpression("/foo/bar/@xyz", "cheese", "<foo><bar xyz='cheese'/></foo>");
-        assertExpression("$name", "James", "<foo><bar xyz='cheese'/></foo>");
-        assertExpression("foo/bar", "cheese", "<foo><bar>cheese</bar></foo>");
-        assertExpression("foo/bar/text()", "cheese", "<foo><bar>cheese</bar></foo>");
+        assertExpression("/foo/bar/@xyz", "<foo><bar xyz='cheese'/></foo>", "cheese");
+        assertExpression("$name", "<foo><bar xyz='cheese'/></foo>", "James");
+        assertExpression("foo/bar", "<foo><bar>cheese</bar></foo>", "cheese");
+        assertExpression("foo/bar/text()", "<foo><bar>cheese</bar></foo>", "cheese");
     }
 
     public void testXPathPredicates() throws Exception {
-        assertPredicate("/foo/bar/@xyz", true, "<foo><bar xyz='cheese'/></foo>");
-        assertPredicate("$name = 'James'", true, "<foo><bar xyz='cheese'/></foo>");
-        assertPredicate("$name = 'Hiram'", false, "<foo><bar xyz='cheese'/></foo>");
-        assertPredicate("/foo/notExist", false, "<foo><bar xyz='cheese'/></foo>");
+        assertPredicate("/foo/bar/@xyz", "<foo><bar xyz='cheese'/></foo>", true);
+        assertPredicate("$name = 'James'", "<foo><bar xyz='cheese'/></foo>", true);
+        assertPredicate("$name = 'Hiram'", "<foo><bar xyz='cheese'/></foo>", false);
+        assertPredicate("/foo/notExist", "<foo><bar xyz='cheese'/></foo>", false);
+    }
+
+    public void testXPathWithCustomVariable() throws Exception {
+        assertExpression(xpath("$name").variable("name", "Hiram"), "<foo/>", "Hiram");
     }
 
     public void testUsingJavaExtensions() throws Exception {
@@ -64,13 +66,13 @@ public class XPathTest extends TestCase {
         if (instance instanceof XPathFunctionResolver) {
             XPathFunctionResolver functionResolver = (XPathFunctionResolver) instance;
 
-            XPathBuilder builder = XPathBuilder.xpath("java:"
+            XPathBuilder builder = xpath("java:"
                     + getClass().getName() + ".func(string(/header/value))")
                     .namespace("java", "http://xml.apache.org/xalan/java")
                     .functionResolver(functionResolver);
 
             String xml = "<header><value>12</value></header>";
-            Object value = assertExpression(builder.createExpression(), "modified12", xml);
+            Object value = assertExpression(builder, xml, "modified12");
             log.debug("Evaluated xpath: " + builder.getText() + " on XML: " + xml + " result: " + value);
         }
     }
@@ -79,12 +81,21 @@ public class XPathTest extends TestCase {
         return "modified" + s;
     }
 
-    protected void assertExpression(String xpath, String expected, String xml) {
-        Expression expression = XPathBuilder.xpath(xpath).createExpression();
+    protected Object assertExpression(String xpath, String xml, String expected) {
+        Expression expression = XPathBuilder.xpath(xpath);
+        return assertExpression(expression, xml, expected);
+    }
+
+    protected Object assertExpression(Expression expression, String xml, String expected) {
+        return assertExpression(expression, createExchange(xml), expected);
+    }
+
+    /*
         Object value = assertExpression(expression, expected, xml);
 
         log.debug("Evaluated xpath: " + xpath + " on XML: " + xml + " result: " + value);
     }
+
 
     protected Object assertExpression(Expression expression, String expected, String xml) {
         Exchange exchange = createExchange(xml);
@@ -92,21 +103,24 @@ public class XPathTest extends TestCase {
         assertEquals("Expression: " + expression, expected, value);
         return value;
     }
+    */
 
-    protected void assertPredicate(String xpath, boolean expected, String xml) {
-        Predicate predicate = XPathBuilder.xpath(xpath).createPredicate();
-        boolean value = assertPredicate(predicate, expected, xml);
+    protected void assertPredicate(String xpath, String xml, boolean expected) {
+        Predicate predicate = XPathBuilder.xpath(xpath);
+        assertPredicate(predicate, createExchange(xml), expected);
+        //boolean value = assertPredicate(predicate, expected, xml);
 
-        log.debug("Evaluated xpath: " + xpath + " on XML: " + xml + " result: " + value);
+        //log.debug("Evaluated xpath: " + xpath + " on XML: " + xml + " result: " + value);
 
     }
-
+    /*
     protected boolean assertPredicate(Predicate predicate, boolean expected, String xml) {
         Exchange exchange = createExchange(xml);
         boolean value = predicate.matches(exchange);
         assertEquals("Predicate: " + predicate, expected, value);
         return value;
     }
+    */
 
     protected Exchange createExchange(String xml) {
         CamelContext context = new DefaultCamelContext();
