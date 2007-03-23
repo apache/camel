@@ -41,6 +41,11 @@ public class DefaultExchange implements Exchange {
         this.context = context;
     }
 
+    @Override
+    public String toString() {
+        return "Exchange[" + in + "]";
+    }
+
     public Exchange copy() {
         Exchange exchange = newInstance();
         exchange.copyFrom(this);

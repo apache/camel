@@ -40,6 +40,16 @@ public class JbiMessage extends DefaultMessage {
     }
 
     @Override
+    public String toString() {
+        if (normalizedMessage != null) {
+            return "JbiMessage: " + normalizedMessage;
+        }
+        else {
+            return "JbiMessage: " + getBody();
+        }
+    }
+
+    @Override
     public JbiExchange getExchange() {
         return (JbiExchange) super.getExchange();
     }
