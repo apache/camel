@@ -134,7 +134,8 @@ public class DefaultCamelContext implements CamelContext {
                         answer = er.resolveEndpoint(this, uri);
                     }
                     if (answer != null) {
-                        endpoints.put(uri, answer);
+                        // TODO temporarily disabled caching due to POJO test failure
+                        // endpoints.put(uri, answer);
                     }
                 }
                 catch (Exception e) {
