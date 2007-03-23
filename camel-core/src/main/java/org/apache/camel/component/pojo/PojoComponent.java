@@ -29,8 +29,8 @@ import java.util.HashMap;
  */
 public class PojoComponent implements Component<PojoExchange> {
 	
-    private final HashMap<String, Object> registry = new HashMap<String, Object>();
-    private final HashMap<String, PojoEndpoint> activatedEndpoints = new HashMap<String, PojoEndpoint>();
+    protected final HashMap<String, Object> registry = new HashMap<String, Object>();
+    protected final HashMap<String, PojoEndpoint> activatedEndpoints = new HashMap<String, PojoEndpoint>();
     
 	private CamelContext container;
 
@@ -40,6 +40,11 @@ public class PojoComponent implements Component<PojoExchange> {
 	public Object lookupRegisteredPojo(String uri) {
 		return registry.get(uri);
 	}
+    
+    public void unregisterPojo(String uri) {
+        registry.remove(uri);
+        unregisterActivation(uri);
+    }
 	
 	public void registerActivation(String uri, PojoEndpoint endpoint) {
 		activatedEndpoints.put(uri, endpoint);
