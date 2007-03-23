@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 
 import javax.jbi.messaging.MessageExchange;
+import javax.jbi.messaging.NormalizedMessage;
 
 /**
  * An {@link Exchange} working with JBI which exposes the underlying JBI features such as the 
@@ -49,15 +50,6 @@ public class JbiExchange extends DefaultExchange {
         setFault(new JbiMessage(messageExchange.getMessage("fault")));
     }
 
-    /**
-     * Returns the underlying JBI message exchange for an inbound exchange
-     * or null for outbound messages
-     *
-     * @return the inbound message exchange
-     */
-    public MessageExchange getMessageExchange() {
-        return messageExchange;
-    }
 
     @Override
     public JbiMessage getIn() {
@@ -81,6 +73,51 @@ public class JbiExchange extends DefaultExchange {
         return binding;
     }
 
+
+    // Expose JBI features
+    //-------------------------------------------------------------------------
+
+    /**
+     * Returns the underlying JBI message exchange for an inbound exchange
+     * or null for outbound messages
+     *
+     * @return the inbound message exchange
+     */
+    public MessageExchange getMessageExchange() {
+        return messageExchange;
+    }
+
+    /**
+     * Returns the underlying In {@link NormalizedMessage}
+     *
+     * @return the In message
+     */
+    public NormalizedMessage getInMessage() {
+        return getIn().getNormalizedMessage();
+    }
+
+    /**
+     * Returns the underlying Out {@link NormalizedMessage}
+     *
+     * @return the Out message
+     */
+    public NormalizedMessage getOutMessage() {
+        return getOut().getNormalizedMessage();
+    }
+
+    /**
+     * Returns the underlying Fault {@link NormalizedMessage}
+     *
+     * @return the Fault message
+     */
+    public NormalizedMessage getFaultMessage() {
+        return getFault().getNormalizedMessage();
+    }
+
+    
+    // Implementation methods
+    //-------------------------------------------------------------------------
+    
     @Override
     protected JbiMessage createInMessage() {
         return new JbiMessage();

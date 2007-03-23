@@ -64,6 +64,41 @@ public class JmsExchange extends DefaultExchange {
         return new JmsExchange(getContext(), binding);
     }
 
+
+    // Expose JMS APIs
+    //-------------------------------------------------------------------------
+
+    /**
+     * Return the underlying JMS In message
+     *
+     * @return the JMS In message
+     */
+    public Message getInMessage() {
+        return getIn().getJmsMessage();
+    }
+
+    /**
+     * Return the underlying JMS Out message
+     *
+     * @return the JMS out message
+     */
+    public Message getOutMessage() {
+        return getOut().getJmsMessage();
+    }
+
+    /**
+     * Return the underlying JMS Fault message
+     *
+     * @return the JMS fault message
+     */
+    public Message getFaultMessage() {
+        return getOut().getJmsMessage();
+    }
+
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+
     @Override
     protected JmsMessage createInMessage() {
         return new JmsMessage();
