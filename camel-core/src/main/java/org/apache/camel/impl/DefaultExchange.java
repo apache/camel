@@ -48,7 +48,7 @@ public class DefaultExchange implements Exchange {
     }
 
     public void copyFrom(Exchange exchange) {
-        setHeaders(new HashMap<String, Object>(exchange.getHeaders()));
+        setHeaders(new HashMap<String, Object>(exchange.getProperties()));
         setIn(exchange.getIn().copy());
         setOut(exchange.getOut().copy());
         setFault(exchange.getFault().copy());
@@ -71,10 +71,10 @@ public class DefaultExchange implements Exchange {
     }
 
     public void setProperty(String name, Object value) {
-        getHeaders().put(name, value);
+        getProperties().put(name, value);
     }
 
-    public Map<String, Object> getHeaders() {
+    public Map<String, Object> getProperties() {
         if (headers == null) {
             headers = new HashMap<String, Object>();
         }

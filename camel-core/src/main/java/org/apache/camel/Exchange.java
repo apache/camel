@@ -59,7 +59,7 @@ public interface Exchange  {
      *
      * @return all the headers in a Map
      */
-    Map<String, Object> getHeaders();
+    Map<String, Object> getProperties();
 
     
     /**
