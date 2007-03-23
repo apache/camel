@@ -17,12 +17,14 @@
  */
 package org.apache.camel.spring;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,15 +43,14 @@ public class CamelContextFactoryBeanTest extends TestSupport {
         CamelContext context = (CamelContext) applicationContext.getBean("camel");
         assertNotNull("No context found!", context);
 
-        Map<Endpoint,Processor> map = context.getRoutes();
-        log.debug("Found routes: " + map);
+        List<Route> routes = context.getRoutes();
+        log.debug("Found routes: " + routes);
 
-        Set<Map.Entry<Endpoint,Processor>> entries = map.entrySet();
-        assertEquals("One Route should be found", 1, entries.size());
+        assertEquals("One Route should be found", 1, routes.size());
 
-        for (Map.Entry<Endpoint, Processor> entry : entries) {
-            Endpoint key = entry.getKey();
-            Processor processor = entry.getValue();
+        for (Route route : routes) {
+            Endpoint key = route.getEndpoint();
+            Processor processor = route.getProcessor();
 
             assertEndpointUri(key, "queue:test.a");
         }
@@ -61,15 +62,14 @@ public class CamelContextFactoryBeanTest extends TestSupport {
         CamelContext context = (CamelContext) applicationContext.getBean("camel2");
         assertNotNull("No context found!", context);
 
-        Map<Endpoint,Processor> map = context.getRoutes();
-        log.debug("Found routes: " + map);
+        List<Route> routes = context.getRoutes();
+        log.debug("Found routes: " + routes);
 
-        Set<Map.Entry<Endpoint,Processor>> entries = map.entrySet();
-        assertEquals("One Route should be found", 1, entries.size());
+        assertEquals("One Route should be found", 1, routes.size());
 
-        for (Map.Entry<Endpoint, Processor> entry : entries) {
-            Endpoint key = entry.getKey();
-            Processor processor = entry.getValue();
+        for (Route route : routes) {
+            Endpoint key = route.getEndpoint();
+            Processor processor = route.getProcessor();
             assertEndpointUri(key, "queue:test.c");
         }
     }

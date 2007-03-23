@@ -17,8 +17,10 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -26,9 +28,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeConverter;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.Route;
 import org.apache.camel.RouteFactory;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
@@ -43,7 +47,7 @@ public class DefaultCamelContext implements CamelContext {
     private EndpointResolver endpointResolver;
     private ExchangeConverter exchangeConverter;
     private Map<String, Component> components = new HashMap<String, Component>();
-    private Map<Endpoint, Processor> routes;
+    private List<Route> routes;
     private TypeConverter typeConverter;
 
     /**
@@ -125,36 +129,34 @@ public class DefaultCamelContext implements CamelContext {
      * Activates all the starting endpoints in that were added as routes.
      */
     public void activateEndpoints() throws Exception {
-        for (Map.Entry<Endpoint, Processor> entry : routes.entrySet()) {
-            Endpoint endpoint = entry.getKey();
-            Processor processor = entry.getValue();
-            endpoint.activate(processor);
-        }
+    	for (Route<Exchange> route : routes) {
+            route.getEndpoint().activate(route.getProcessor());
+		}
     }
 
     /**
      * Deactivates all the starting endpoints in that were added as routes.
      */
     public void deactivateEndpoints() {
-        for (Endpoint endpoint : routes.keySet()) {
-            endpoint.deactivate();
+    	for (Route<Exchange> route : routes) {
+            route.getEndpoint().deactivate();
         }
     }
 
     // Route Management Methods
     //-----------------------------------------------------------------------
-    public Map<Endpoint, Processor> getRoutes() {
+    public List<Route> getRoutes() {
         return routes;
     }
 
-    public void setRoutes(Map<Endpoint, Processor> routes) {
+    public void setRoutes(List<Route> routes) {
         this.routes = routes;
     }
 
     public void setRoutes(RouteBuilder builder) {
         // lets now add the routes from the builder
         builder.setContext(this);
-        setRoutes(builder.getRouteMap());
+        setRoutes(builder.getRouteList());
     }
 
     public void setRoutes(final RouteFactory factory) {
@@ -166,18 +168,18 @@ public class DefaultCamelContext implements CamelContext {
         setRoutes(builder);
     }
 
-    public void addRoutes(Map<Endpoint, Processor> routes) {
+    public void addRoutes(List<Route> routes) {
     	if( this.routes == null ) {
-    		this.routes = new LinkedHashMap<Endpoint, Processor>(routes);
+    		this.routes = new ArrayList<Route>(routes);
     	} else {
-    		this.routes.putAll(routes);
+    		this.routes.addAll(routes);
     	}
     }
 
     public void addRoutes(RouteBuilder builder) {
         // lets now add the routes from the builder
         builder.setContext(this);
-        addRoutes(builder.getRouteMap());
+        addRoutes(builder.getRouteList());
     }
 
     public void addRoutes(final RouteFactory factory) {
