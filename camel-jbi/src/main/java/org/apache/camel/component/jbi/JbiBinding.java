@@ -25,8 +25,10 @@ import javax.jbi.messaging.MessagingException;
 import javax.jbi.messaging.NormalizedMessage;
 import javax.jbi.messaging.MessageExchangeFactory;
 import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 import java.util.Map;
 import java.util.Set;
+import java.io.StringReader;
 
 /**
  * The binding of how Camel messages get mapped to JBI and back again
@@ -57,6 +59,10 @@ public class JbiBinding {
     public MessageExchange makeJbiMessageExchange(Exchange camelExchange, MessageExchangeFactory exchangeFactory) throws MessagingException {
         MessageExchange jbiExchange = createJbiMessageExchange(camelExchange, exchangeFactory);
         NormalizedMessage normalizedMessage = jbiExchange.getMessage("in");
+        if (normalizedMessage == null) {
+            normalizedMessage = jbiExchange.createMessage();
+            jbiExchange.setMessage(normalizedMessage, "in");
+        }
         normalizedMessage.setContent(getJbiInContent(camelExchange));
         addJbiHeaders(jbiExchange, normalizedMessage, camelExchange);
         return jbiExchange;
@@ -73,6 +79,11 @@ public class JbiBinding {
     }
 
     protected Source getJbiInContent(Exchange camelExchange) {
+        // TODO this should be more smart
+        Object value = camelExchange.getIn().getBody();
+        if (value instanceof String) {
+            return new StreamSource(new StringReader(value.toString()));
+        }
         return camelExchange.getIn().getBody(Source.class);
     }
 
