@@ -50,10 +50,12 @@
       <scope>runtime</scope>
       <includes>
         <include>org.apache.camel:camel-core</include>
+        <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-http</include>
         <include>org.apache.camel:camel-jbi</include>
         <include>org.apache.camel:camel-jms</include>
         <include>org.apache.camel:camel-mina</include>
+        <include>org.apache.camel:camel-script</include>
         <include>org.apache.camel:camel-spring</include>
         <include>commons-logging:commons-logging</include>
       </includes>
