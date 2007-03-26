@@ -90,37 +90,10 @@ public class XPathTest extends TestSupport {
         return assertExpression(expression, createExchange(xml), expected);
     }
 
-    /*
-        Object value = assertExpression(expression, expected, xml);
-
-        log.debug("Evaluated xpath: " + xpath + " on XML: " + xml + " result: " + value);
-    }
-
-
-    protected Object assertExpression(Expression expression, String expected, String xml) {
-        Exchange exchange = createExchange(xml);
-        Object value = expression.evaluate(exchange);
-        assertEquals("Expression: " + expression, expected, value);
-        return value;
-    }
-    */
-
     protected void assertPredicate(String xpath, String xml, boolean expected) {
         Predicate predicate = XPathBuilder.xpath(xpath);
         assertPredicate(predicate, createExchange(xml), expected);
-        //boolean value = assertPredicate(predicate, expected, xml);
-
-        //log.debug("Evaluated xpath: " + xpath + " on XML: " + xml + " result: " + value);
-
     }
-    /*
-    protected boolean assertPredicate(Predicate predicate, boolean expected, String xml) {
-        Exchange exchange = createExchange(xml);
-        boolean value = predicate.matches(exchange);
-        assertEquals("Predicate: " + predicate, expected, value);
-        return value;
-    }
-    */
 
     protected Exchange createExchange(String xml) {
         CamelContext context = new DefaultCamelContext();
