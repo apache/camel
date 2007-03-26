@@ -19,6 +19,7 @@ package org.apache.camel.component.jbi;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
 
 /**
@@ -27,7 +28,7 @@ import org.apache.camel.impl.DefaultEndpoint;
  * @version $Revision$
  */
 public class JbiEndpoint extends DefaultEndpoint<Exchange> {
-    private ToJbiProcessor toJbiProcessor;
+    private Processor<Exchange> toJbiProcessor;
     private final CamelJbiComponent jbiComponent;
 
     public JbiEndpoint(CamelJbiComponent jbiComponent, String uri) {
@@ -40,7 +41,10 @@ public class JbiEndpoint extends DefaultEndpoint<Exchange> {
      * Sends a message into JBI
      */
     public void onExchange(Exchange exchange) {
-        toJbiProcessor.onExchange(exchange);
+        if (getInboundProcessor() != null) {
+            getInboundProcessor().onExchange(exchange);
+        } else {
+            toJbiProcessor.onExchange(exchange);        }
     }
 
     @Override

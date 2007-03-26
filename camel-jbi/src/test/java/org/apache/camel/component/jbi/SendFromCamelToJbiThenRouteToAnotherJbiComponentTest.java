@@ -48,7 +48,7 @@ public class SendFromCamelToJbiThenRouteToAnotherJbiComponentTest extends JbiTes
     protected RouteBuilder createRoutes() {
         return new RouteBuilder() {
             public void configure() {
-                from("jbi:service:serviceNamespace:serviceA:endpointA").to("jbi:service:serviceNamespace:serviceB");
+                from("jbi:endpoint:serviceNamespace:serviceA:endpointA").to("jbi:endpoint:serviceNamespace:serviceB:endpointB");
             }
         };
     }
