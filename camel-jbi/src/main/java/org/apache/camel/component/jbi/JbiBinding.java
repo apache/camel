@@ -18,17 +18,16 @@
 package org.apache.camel.component.jbi;
 
 import org.apache.camel.Exchange;
-import org.apache.servicemix.client.Destination;
 
 import javax.jbi.messaging.MessageExchange;
+import javax.jbi.messaging.MessageExchangeFactory;
 import javax.jbi.messaging.MessagingException;
 import javax.jbi.messaging.NormalizedMessage;
-import javax.jbi.messaging.MessageExchangeFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
+import java.io.StringReader;
 import java.util.Map;
 import java.util.Set;
-import java.io.StringReader;
 
 /**
  * The binding of how Camel messages get mapped to JBI and back again

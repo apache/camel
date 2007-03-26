@@ -17,16 +17,9 @@
  */
 package org.apache.camel.component.jbi;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.servicemix.client.Destination;
-import org.apache.servicemix.client.ServiceMixClient;
-
-import javax.jbi.messaging.MessagingException;
-import javax.jbi.component.ComponentContext;
 
 /**
  * Represents an {@link Endpoint} for interacting with JBI
@@ -34,13 +27,13 @@ import javax.jbi.component.ComponentContext;
  * @version $Revision$
  */
 public class JbiEndpoint extends DefaultEndpoint<Exchange> {
-    private final JbiBinding binding;
     private ToJbiProcessor toJbiProcessor;
+    private final CamelJbiComponent jbiComponent;
 
-    public JbiEndpoint(String endpointUri, CamelContext container, ComponentContext componentContext, JbiBinding binding) {
-        super(endpointUri, container);
-        this.binding = binding;
-        toJbiProcessor = new ToJbiProcessor(binding, componentContext, endpointUri);
+    public JbiEndpoint(CamelJbiComponent jbiComponent, String uri) {
+        super(uri, jbiComponent.getCamelContext());
+        this.jbiComponent = jbiComponent;
+        toJbiProcessor = new ToJbiProcessor(jbiComponent.getBinding(), jbiComponent.getComponentContext(), uri);
     }
 
     /**
@@ -54,8 +47,8 @@ public class JbiEndpoint extends DefaultEndpoint<Exchange> {
     protected void doActivate() throws Exception {
         super.doActivate();
 
-        // TODO once the inbound is activated we need to register a JBI endpoint
-        
+        // lets create and activate the endpoint in JBI
+        jbiComponent.activateJbiEndpoint(this);
     }
 
     public JbiExchange createExchange() {
@@ -63,6 +56,6 @@ public class JbiEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     public JbiBinding getBinding() {
-        return binding;
+        return jbiComponent.getBinding();
     }
 }
