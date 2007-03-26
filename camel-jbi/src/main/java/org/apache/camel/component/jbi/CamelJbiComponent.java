@@ -139,15 +139,15 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Jbi
     public CamelJbiEndpoint activateJbiEndpoint(JbiEndpoint camelEndpoint) throws Exception {
         CamelJbiEndpoint jbiEndpoint = null;
         String endpointUri = camelEndpoint.getEndpointUri();
-        if (endpointUri.startsWith("service:")) {
+        if (endpointUri.startsWith("endpoint:")) {
             // lets decode "service:serviceNamespace:serviceName:endpointName
-            String uri = endpointUri.substring("service:".length());
+            String uri = endpointUri.substring("endpoint:".length());
             String[] parts = new String[0];
             try {
                 parts = URIResolver.split3(uri);
             }
             catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Expected syntax service:serviceNamespace:serviceName:endpointName but was given: " + endpointUri + ". Cause: " + e, e);
+                throw new IllegalArgumentException("Expected syntax endpoint:[serviceNamespace]:[serviceName]:[endpointName] but was given: " + endpointUri + ". Cause: " + e, e);
             }
             QName service = new QName(parts[0], parts[1]);
             String endpoint = parts[2];

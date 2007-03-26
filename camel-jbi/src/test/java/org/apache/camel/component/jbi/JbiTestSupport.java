@@ -42,7 +42,7 @@ public abstract class JbiTestSupport extends TestSupport {
     protected SpringJBIContainer jbiContainer = new SpringJBIContainer();
     protected CountDownLatch latch = new CountDownLatch(1);
     protected Endpoint<Exchange> endpoint;
-    protected String startEndpointUri = "jbi:service:serviceNamespace:serviceA";
+    protected String startEndpointUri = "jbi:endpoint:serviceNamespace:serviceA:endpointA";
 
     /**
      * Sends an exchange to the endpoint
