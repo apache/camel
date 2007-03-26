@@ -17,40 +17,36 @@
  */
 package org.apache.camel.component.jbi;
 
-import junit.framework.TestCase;
-import org.apache.servicemix.jbi.container.JBIContainer;
+import org.apache.camel.TestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.servicemix.jbi.container.ActivationSpec;
 import org.apache.servicemix.jbi.container.SpringJBIContainer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.camel.CamelContext;
-import org.apache.camel.*;
-import org.apache.camel.Processor;
-import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
 
 import javax.xml.namespace.QName;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CountDownLatch;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @version $Revision$
  */
-public class JbiTest extends TestCase {
-    private static final transient Log log = LogFactory.getLog(JbiTest.class);
-
-    public void testCamelInvokingJbi() throws Exception {
-        sendExchange("<foo bar='123'/>");
-    }
-
-
+public abstract class JbiTestSupport extends TestSupport {
     protected Exchange receivedExchange;
     protected CamelContext camelContext = new DefaultCamelContext();
     protected SpringJBIContainer jbiContainer = new SpringJBIContainer();
     protected CountDownLatch latch = new CountDownLatch(1);
     protected Endpoint<Exchange> endpoint;
+    protected String startEndpointUri = "jbi:service:serviceNamespace:serviceA";
 
+    /**
+     * Sends an exchange to the endpoint
+     */
     protected void sendExchange(Object expectedBody) {
         // now lets fire in a message
         Exchange exchange = endpoint.createExchange();
@@ -80,56 +76,34 @@ public class JbiTest extends TestCase {
 
         CamelJbiComponent component = new CamelJbiComponent();
 
-        /*
+        List<ActivationSpec> activationSpecList = new ArrayList<ActivationSpec>();
 
-        <bean class="org.apache.servicemix.jbi.container.ActivationSpec">
-          <property name="id" value="receiver"/>
-          <property name="service" ref="receiverServiceName"/>
-          <property name="endpoint" value="receiver"/>
-          <!-- no need to specify service on this POJO as it is hard coded -->
-          <property name="component">
-            <bean class="org.apache.servicemix.tck.ReceiverComponent"/>
-          </property>
-        </bean>
-
-         */
+        // lets add the Camel endpoint
         ActivationSpec activationSpec = new ActivationSpec();
         activationSpec.setId("camel");
-        activationSpec.setService(new QName("camel"));
+        activationSpec.setService(new QName("camel", "camel"));
         activationSpec.setEndpoint("camelEndpoint");
         activationSpec.setComponent(component);
+        activationSpecList.add(activationSpec);
 
-        //activationSpec.setComponentName("camel");
+        appendJbiActivationSpecs(activationSpecList);
 
-        jbiContainer.setActivationSpecs(new ActivationSpec[] {activationSpec});
+        ActivationSpec[] activationSpecs = activationSpecList.toArray(new ActivationSpec[activationSpecList.size()]);
+        jbiContainer.setActivationSpecs(activationSpecs);
         jbiContainer.afterPropertiesSet();
-
-        //jbiContainer.activateComponent(component, "camel");
 
         // lets configure some componnets
         camelContext.addComponent("jbi", component);
 
         // lets add some routes
-        camelContext.setRoutes(new RouteBuilder() {
-            public void configure() {
-                from("jbi:service:test:a").to("jbi:service:test:b");
-                from("jbi:service:test:b").process(new Processor<Exchange>() {
-                    public void onExchange(Exchange e) {
-                        System.out.println("Received exchange: " + e.getIn());
-                        receivedExchange = e;
-                        latch.countDown();
-                    }
-                });
-            }
-        });
-        endpoint = camelContext.resolveEndpoint("jbi:service:test:a");
+        camelContext.setRoutes(createRoutes());
+        endpoint = camelContext.resolveEndpoint(startEndpointUri);
         assertNotNull("No endpoint found!", endpoint);
 
         camelContext.activateEndpoints();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        camelContext.deactivateEndpoints();
-    }
+    protected abstract  void appendJbiActivationSpecs(List<ActivationSpec> activationSpecList);
+
+    protected abstract RouteBuilder createRoutes();
 }

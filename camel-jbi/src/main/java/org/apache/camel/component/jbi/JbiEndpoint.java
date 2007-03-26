@@ -53,6 +53,9 @@ public class JbiEndpoint extends DefaultEndpoint<Exchange> {
     @Override
     protected void doActivate() throws Exception {
         super.doActivate();
+
+        // TODO once the inbound is activated we need to register a JBI endpoint
+        
     }
 
     public JbiExchange createExchange() {

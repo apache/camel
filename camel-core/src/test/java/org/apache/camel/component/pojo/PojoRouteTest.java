@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class PojoRouteTest extends TestCase {
 	
-    public void testJmsRoute() throws Exception {
+    public void testPojoRoutes() throws Exception {
 
         CamelContext container = new DefaultCamelContext();
         
@@ -71,8 +71,9 @@ public class PojoRouteTest extends TestCase {
 			proxy = (ISay) endpoint.createInboundProxy(new Class[]{ISay.class});
 			rc = proxy.say();
 			assertEquals("Hello!", rc);
-			
-		} catch (IllegalArgumentException expected) {
+            fail("Should have thrown an exception as we are using an inactive endpoint");
+
+        } catch (IllegalStateException expected) {
 			// since bye is not active.
 		}
 

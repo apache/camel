@@ -51,7 +51,7 @@ public class DefaultCamelContext implements CamelContext {
             if (components.containsKey(componentName)) {
                 throw new IllegalArgumentException("Component previously added: " + componentName);
             }
-            component.setContext(this);
+            component.setCamelContext(this);
             components.put(componentName, component);
             if (component instanceof EndpointResolver) {
                 resolvers.add((EndpointResolver) component);
@@ -95,7 +95,7 @@ public class DefaultCamelContext implements CamelContext {
                         throw new IllegalArgumentException("Factory failed to create the " + componentName + " component, it returned null.");
                     }
                     components.put(componentName, component);
-                    component.setContext(this);
+                    component.setCamelContext(this);
                 }
                 catch (Exception e) {
                     throw new IllegalArgumentException("Factory failed to create the " + componentName + " component", e);
@@ -134,8 +134,7 @@ public class DefaultCamelContext implements CamelContext {
                         answer = er.resolveEndpoint(this, uri);
                     }
                     if (answer != null) {
-                        // TODO temporarily disabled caching due to POJO test failure
-                        // endpoints.put(uri, answer);
+                        endpoints.put(uri, answer);
                     }
                 }
                 catch (Exception e) {

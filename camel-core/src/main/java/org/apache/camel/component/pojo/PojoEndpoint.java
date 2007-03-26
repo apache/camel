@@ -31,31 +31,33 @@ import java.lang.reflect.Proxy;
  * @version $Revision: 519973 $
  */
 public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
-
     private final Object pojo;
-	private final PojoComponent component;
-    
-	public PojoEndpoint(String uri, CamelContext container, PojoComponent component, Object pojo) {
+    private final PojoComponent component;
+
+    public PojoEndpoint(String uri, CamelContext container, PojoComponent component, Object pojo) {
         super(uri, container);
-		this.component = component;
-		this.pojo = pojo;
+        this.component = component;
+        this.pojo = pojo;
     }
 
-	/**
-	 *  This causes us to invoke the endpoint Pojo using reflection.
-	 */
+    /**
+     * This causes us to invoke the endpoint Pojo using reflection.
+     */
     public void onExchange(PojoExchange exchange) {
         PojoInvocation invocation = exchange.getInvocation();
         try {
-			Object response = invocation.getMethod().invoke(pojo, invocation.getArgs());
-			exchange.getOut().setBody(response);
-		} catch (InvocationTargetException e) {
-			exchange.setException(e.getCause());
-		} catch ( RuntimeException e ) {
-			throw e;
-		} catch ( Throwable e ) {
-			throw new RuntimeException(e);
-		}
+            Object response = invocation.getMethod().invoke(pojo, invocation.getArgs());
+            exchange.getOut().setBody(response);
+        }
+        catch (InvocationTargetException e) {
+            exchange.setException(e.getCause());
+        }
+        catch (RuntimeException e) {
+            throw e;
+        }
+        catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public PojoExchange createExchange() {
@@ -64,40 +66,36 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
 
     @Override
     protected void doActivate() {
-    	component.registerActivation(getEndpointUri(), this);
+        component.registerActivation(getEndpointUri(), this);
     }
-    
+
     @Override
     protected void doDeactivate() {
-    	component.unregisterActivation(getEndpointUri());
+        component.unregisterActivation(getEndpointUri());
     }
 
     /**
      * Creates a Proxy object that can be used to deliver inbound PojoExchanges.
-     * 
+     *
      * @param interfaces
      * @return
      */
     public Object createInboundProxy(Class interfaces[]) {
-    	final PojoEndpoint endpoint = component.lookupActivation(getEndpointUri());
-    	if( endpoint == null ) 
-			throw new IllegalArgumentException("The endpoint has not been activated yet: "+getEndpointUri());
-    	
-    	return Proxy.newProxyInstance(pojo.getClass().getClassLoader(), interfaces, new InvocationHandler(){
-			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-				if( !activated.get() ) {
-					PojoInvocation invocation = new PojoInvocation(proxy, method, args);
-					PojoExchange exchange = createExchange();
-					exchange.setInvocation(invocation);
-					endpoint.getInboundProcessor().onExchange(exchange);
-					Throwable fault = exchange.getException();
-					if ( fault != null ) {
-						throw new InvocationTargetException(fault);
-					}
-					return exchange.getOut().getBody();
-				}
-				throw new IllegalStateException("The endpoint is not active: "+getEndpointUri());
-			}
-		});
+        return Proxy.newProxyInstance(pojo.getClass().getClassLoader(), interfaces, new InvocationHandler() {
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                if (!activated.get()) {
+                    throw new IllegalStateException("The endpoint is not active: " + getEndpointUri());
+                }
+                PojoInvocation invocation = new PojoInvocation(proxy, method, args);
+                PojoExchange exchange = createExchange();
+                exchange.setInvocation(invocation);
+                getInboundProcessor().onExchange(exchange);
+                Throwable fault = exchange.getException();
+                if (fault != null) {
+                    throw new InvocationTargetException(fault);
+                }
+                return exchange.getOut().getBody();
+            }
+        });
     }
 }
