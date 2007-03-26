@@ -28,8 +28,7 @@ import javax.script.ScriptEngineFactory;
 public class Jsr223Test extends TestCase {
     public void testLanguageNames() throws Exception {
         ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngineFactory[] factories = manager.getEngineFactories();
-        for (ScriptEngineFactory factory : factories) {
+        for (ScriptEngineFactory factory : manager.getEngineFactories()) {
             System.out.println("Factory: " + factory.getNames() + " " + factory.getEngineName());
         }
     }
