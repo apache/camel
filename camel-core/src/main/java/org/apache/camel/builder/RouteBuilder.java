@@ -28,7 +28,8 @@ import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * A builder of destinationBuilders using a typesafe Java DLS.
+ * A <a href="http://activemq.apache.org/camel/dsl.html">Java DSL</a>
+ * which is used to build {@link Route} instances in a @{link CamelContext} for smart routing.
  *
  * @version $Revision$
  */
