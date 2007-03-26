@@ -56,26 +56,9 @@ public class JbiBinding {
         return jbiExchange;
     }
 
-    /**
-     * Creates a JBI {@link MessageExchange} from the given Camel {@link Exchange}
-     *
-     */
-    public MessageExchange makeJbiMessageExchange(Exchange camelExchange, Destination jbiDestination) throws MessagingException {
-        MessageExchange jbiExchange = createJbiMessageExchange(camelExchange, jbiDestination);
-        NormalizedMessage normalizedMessage = jbiExchange.getMessage("in");
-        normalizedMessage.setContent(getJbiInContent(camelExchange));
-        addJbiHeaders(jbiExchange, normalizedMessage, camelExchange);
-        return jbiExchange;
-    }
-
     protected MessageExchange createJbiMessageExchange(Exchange camelExchange, MessageExchangeFactory exchangeFactory) throws MessagingException {
         // TODO we should deal with other forms of MEP
         return exchangeFactory.createInOnlyExchange();
-    }
-
-    protected MessageExchange createJbiMessageExchange(Exchange camelExchange, Destination jbiDestination) throws MessagingException {
-        // TODO we should deal with other forms of MEP
-        return jbiDestination.createInOnlyExchange();
     }
 
     protected Source getJbiInContent(Exchange camelExchange) {
