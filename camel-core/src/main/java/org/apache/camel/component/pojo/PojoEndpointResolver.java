@@ -41,7 +41,7 @@ public class PojoEndpointResolver implements EndpointResolver<PojoExchange> {
 	 */
 	public Component resolveComponent(CamelContext container, String uri) {
 		String id[] = getEndpointId(uri);        
-		return resolveQueueComponent(container, id[0]);
+		return resolvePojoComponent(container, id[0]);
 	}
 
 	/**
@@ -52,12 +52,12 @@ public class PojoEndpointResolver implements EndpointResolver<PojoExchange> {
 	 */
 	public PojoEndpoint resolveEndpoint(CamelContext container, String uri) {
 		String id[] = getEndpointId(uri);        
-    	PojoComponent component = resolveQueueComponent(container, id[0]);        
+    	PojoComponent component = resolvePojoComponent(container, id[0]);
         Object pojo = component.lookupRegisteredPojo(id[1]);
 		return new PojoEndpoint(uri, container, component, pojo);
     }
 
-	private PojoComponent resolveQueueComponent(CamelContext container, String componentName) {
+	private PojoComponent resolvePojoComponent(CamelContext container, String componentName) {
     	Component rc = container.getComponent(componentName);
     	if( rc == null ) {
     		throw new IllegalArgumentException("Invalid URI, pojo component does not exist: "+componentName);

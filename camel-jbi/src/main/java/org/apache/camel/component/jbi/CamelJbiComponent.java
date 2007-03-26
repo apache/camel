@@ -17,9 +17,15 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
 import org.apache.servicemix.common.DefaultComponent;
+import org.apache.servicemix.jbi.util.URISupport;
+import org.apache.servicemix.jbi.util.IntrospectionSupport;
 
+import javax.jbi.servicedesc.ServiceEndpoint;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.net.URISyntaxException;
+import java.net.URI;
 
 /**
  * Deploys the camel endpoints within JBI
@@ -28,7 +34,7 @@ import java.util.List;
  */
 public class CamelJbiComponent extends DefaultComponent implements Component<JbiExchange>, EndpointResolver {
     private JbiBinding binding;
-    private CamelContext context;
+    private CamelContext camelContext;
 
     /**
      * @return List of endpoints
@@ -72,6 +78,38 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Jbi
         this.binding = binding;
     }
 
+
+    @Override
+    protected String[] getEPRProtocols() {
+        return new String[] { "camel" };
+    }
+
+    protected org.apache.servicemix.common.Endpoint getResolvedEPR(ServiceEndpoint ep) throws Exception {
+        CamelJbiEndpoint endpoint = createEndpoint(ep);
+        endpoint.activate();
+        return endpoint;
+    }
+
+
+    /**
+     * A factory method for creating endpoints from a service endpoint
+     * which is public so that it can be easily unit tested
+     */
+    public CamelJbiEndpoint createEndpoint(ServiceEndpoint ep) throws URISyntaxException {
+        URI uri = new URI(ep.getEndpointName());
+        Map map = URISupport.parseQuery(uri.getQuery());
+        String camelUri = uri.getSchemeSpecificPart();
+        Endpoint camelEndpoint = getCamelContext().resolveEndpoint(camelUri);
+        CamelJbiEndpoint endpoint = new CamelJbiEndpoint(getServiceUnit(), camelEndpoint, getBinding());
+
+        IntrospectionSupport.setProperties(endpoint, map);
+
+        // TODO
+        //endpoint.setRole(MessageExchange.Role.PROVIDER);
+
+        return endpoint;
+    }
+
     // Resolve Camel Endpoints
     //-------------------------------------------------------------------------
     public Component resolveComponent(CamelContext context, String uri) throws Exception {
@@ -85,14 +123,19 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Jbi
 
             // lets expose this endpoint now in JBI
             // TODO there could already be a component registered in JBI for this??
-            CamelJbiEndpoint jbiEndpoint = new CamelJbiEndpoint(camelEndpoint, getBinding());
+            CamelJbiEndpoint jbiEndpoint = new CamelJbiEndpoint(getServiceUnit(), camelEndpoint, getBinding());
             addEndpoint(jbiEndpoint);
+            jbiEndpoint.activate();
             return camelEndpoint;
         }
         return null;
     }
 
-    public void setContext(CamelContext context) {
-        this.context = context;
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 }

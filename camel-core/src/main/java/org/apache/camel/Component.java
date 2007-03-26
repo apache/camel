@@ -26,7 +26,7 @@ public interface Component<E>  {
     /**
      * The {@link CamelContext} is injected into the component when it is added to it
      */
-    void setContext(CamelContext context);
+    void setCamelContext(CamelContext context);
 
 	
 }

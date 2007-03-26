@@ -58,7 +58,7 @@ public class QueueEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
         return (E) new DefaultExchange(getContext());
     }
 
-    public Queue<E> getQueue() {
+    public BlockingQueue<E> getQueue() {
         return queue;
     }
     

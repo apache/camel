@@ -22,46 +22,46 @@ import org.apache.camel.Component;
 import java.util.HashMap;
 
 /**
- * Represents the component that manages {@link PojoEndpoint}.  It holds the 
+ * Represents the component that manages {@link PojoEndpoint}.  It holds the
  * list of named pojos that queue endpoints reference.
  *
  * @version $Revision: 519973 $
  */
 public class PojoComponent implements Component<PojoExchange> {
-	
     protected final HashMap<String, Object> registry = new HashMap<String, Object>();
     protected final HashMap<String, PojoEndpoint> activatedEndpoints = new HashMap<String, PojoEndpoint>();
-    
-	private CamelContext container;
+    private CamelContext container;
 
-	public void registerPojo(String uri, Object pojo) {
-		registry.put(uri, pojo);
-	}
-	public Object lookupRegisteredPojo(String uri) {
-		return registry.get(uri);
-	}
-    
+    public void registerPojo(String uri, Object pojo) {
+        registry.put(uri, pojo);
+    }
+
+    public Object lookupRegisteredPojo(String uri) {
+        return registry.get(uri);
+    }
+
     public void unregisterPojo(String uri) {
         registry.remove(uri);
         unregisterActivation(uri);
     }
-	
-	public void registerActivation(String uri, PojoEndpoint endpoint) {
-		activatedEndpoints.put(uri, endpoint);
-	}
-	public void unregisterActivation(String uri) {
-		activatedEndpoints.remove(uri);
-	}
-	public PojoEndpoint lookupActivation(String uri) {
-		return activatedEndpoints.get(uri);
-	}
-	
-	
-	public void setContext(CamelContext container) {
-		this.container = container;
-	}
-	public CamelContext getContainer() {
-		return container;
-	}
-    
+
+    public void registerActivation(String uri, PojoEndpoint endpoint) {
+        activatedEndpoints.put(uri, endpoint);
+    }
+
+    public void unregisterActivation(String uri) {
+        activatedEndpoints.remove(uri);
+    }
+
+    public PojoEndpoint lookupActivation(String uri) {
+        return activatedEndpoints.get(uri);
+    }
+
+    public void setCamelContext(CamelContext container) {
+        this.container = container;
+    }
+
+    public CamelContext getContainer() {
+        return container;
+    }
 }

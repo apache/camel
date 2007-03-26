@@ -38,7 +38,7 @@ public class DefaultComponent<E extends Exchange> implements Component<E> {
         return context;
     }
 
-    public void setContext(CamelContext context) {
+    public void setCamelContext(CamelContext context) {
         this.context = context;
     }
 }
