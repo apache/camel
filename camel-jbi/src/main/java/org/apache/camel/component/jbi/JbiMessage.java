@@ -17,8 +17,8 @@
  */
 package org.apache.camel.component.jbi;
 
-import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultMessage;
 
 import javax.jbi.messaging.NormalizedMessage;
 import java.util.Iterator;

@@ -25,7 +25,7 @@ import javax.jbi.messaging.MessageExchange;
 import javax.jbi.messaging.NormalizedMessage;
 
 /**
- * An {@link Exchange} working with JBI which exposes the underlying JBI features such as the 
+ * An {@link Exchange} working with JBI which exposes the underlying JBI features such as the
  * JBI {@link #getMessageExchange()}
  *
  * @version $Revision$
@@ -50,7 +50,6 @@ public class JbiExchange extends DefaultExchange {
         setFault(new JbiMessage(messageExchange.getMessage("fault")));
     }
 
-
     @Override
     public JbiMessage getIn() {
         return (JbiMessage) super.getIn();
@@ -72,7 +71,6 @@ public class JbiExchange extends DefaultExchange {
     public JbiBinding getBinding() {
         return binding;
     }
-
 
     // Expose JBI features
     //-------------------------------------------------------------------------
@@ -114,10 +112,9 @@ public class JbiExchange extends DefaultExchange {
         return getFault().getNormalizedMessage();
     }
 
-    
     // Implementation methods
     //-------------------------------------------------------------------------
-    
+
     @Override
     protected JbiMessage createInMessage() {
         return new JbiMessage();

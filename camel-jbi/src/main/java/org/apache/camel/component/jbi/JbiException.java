@@ -19,8 +19,6 @@ package org.apache.camel.component.jbi;
 
 import org.apache.camel.RuntimeCamelException;
 
-import javax.jbi.messaging.MessagingException;
-
 /**
  * @version $Revision$
  */

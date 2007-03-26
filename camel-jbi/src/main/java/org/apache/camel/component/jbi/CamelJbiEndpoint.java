@@ -12,11 +12,11 @@
  */
 package org.apache.camel.component.jbi;
 
-import org.apache.servicemix.common.ServiceUnit;
-import org.apache.servicemix.common.endpoints.ProviderEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.servicemix.common.ServiceUnit;
+import org.apache.servicemix.common.endpoints.ProviderEndpoint;
 
 import javax.jbi.messaging.MessageExchange;
 import javax.jbi.messaging.NormalizedMessage;
@@ -29,20 +29,18 @@ import javax.xml.namespace.QName;
  */
 public class CamelJbiEndpoint extends ProviderEndpoint {
     private static final transient Log log = LogFactory.getLog(CamelJbiEndpoint.class);
-
     private static final QName SERVICE_NAME = new QName("http://camel.apache.org/service", "CamelEndpointComponent");
     private Endpoint camelEndpoint;
     private JbiBinding binding;
 
-    public CamelJbiEndpoint(ServiceUnit serviceUnit, QName service, String endpoint, JbiBinding binding) {
+    public CamelJbiEndpoint(ServiceUnit serviceUnit, QName service, String endpoint, Endpoint camelEndpoint, JbiBinding binding) {
         super(serviceUnit, service, endpoint);
+        this.camelEndpoint = camelEndpoint;
         this.binding = binding;
     }
 
     public CamelJbiEndpoint(ServiceUnit serviceUnit, Endpoint camelEndpoint, JbiBinding binding) {
-        super(serviceUnit, SERVICE_NAME, camelEndpoint.getEndpointUri());
-        this.camelEndpoint = camelEndpoint;
-        this.binding = binding;
+        this(serviceUnit, SERVICE_NAME, camelEndpoint.getEndpointUri(), camelEndpoint, binding);
     }
 
     protected void processInOnly(MessageExchange exchange, NormalizedMessage in) throws Exception {

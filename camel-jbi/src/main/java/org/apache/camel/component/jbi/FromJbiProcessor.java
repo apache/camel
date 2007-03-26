@@ -17,9 +17,9 @@
  */
 package org.apache.camel.component.jbi;
 
-import org.apache.servicemix.MessageExchangeListener;
-import org.apache.camel.Processor;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Processor;
+import org.apache.servicemix.MessageExchangeListener;
 
 import javax.jbi.messaging.MessageExchange;
 import javax.jbi.messaging.MessagingException;
@@ -28,7 +28,6 @@ import javax.jbi.messaging.MessagingException;
  * @version $Revision$
  */
 public class FromJbiProcessor implements MessageExchangeListener {
-
     private CamelContext context;
     private JbiBinding binding;
     private Processor<JbiExchange> processor;

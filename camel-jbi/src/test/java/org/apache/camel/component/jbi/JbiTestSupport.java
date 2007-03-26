@@ -17,21 +17,21 @@
  */
 package org.apache.camel.component.jbi;
 
-import org.apache.camel.TestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.servicemix.jbi.container.ActivationSpec;
 import org.apache.servicemix.jbi.container.SpringJBIContainer;
 
 import javax.xml.namespace.QName;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.CountDownLatch;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Revision$
@@ -103,7 +103,7 @@ public abstract class JbiTestSupport extends TestSupport {
         camelContext.activateEndpoints();
     }
 
-    protected abstract  void appendJbiActivationSpecs(List<ActivationSpec> activationSpecList);
+    protected abstract void appendJbiActivationSpecs(List<ActivationSpec> activationSpecList);
 
     protected abstract RouteBuilder createRoutes();
 }

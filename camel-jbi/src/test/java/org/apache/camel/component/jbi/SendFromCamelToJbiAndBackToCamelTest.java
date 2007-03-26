@@ -17,20 +17,15 @@
  */
 package org.apache.camel.component.jbi;
 
-import org.apache.servicemix.tck.ReceiverComponent;
-import org.apache.servicemix.tck.MessageList;
-import org.apache.servicemix.tck.SenderComponent;
-import org.apache.servicemix.jbi.container.ActivationSpec;
-import org.apache.servicemix.jbi.resolver.ServiceNameEndpointResolver;
-import org.apache.servicemix.jbi.resolver.URIResolver;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.queue.QueueEndpoint;
-import org.apache.camel.Exchange;
+import org.apache.servicemix.jbi.container.ActivationSpec;
+import org.apache.servicemix.jbi.resolver.URIResolver;
+import org.apache.servicemix.tck.SenderComponent;
 
-import javax.jbi.messaging.NormalizedMessage;
 import javax.xml.namespace.QName;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 

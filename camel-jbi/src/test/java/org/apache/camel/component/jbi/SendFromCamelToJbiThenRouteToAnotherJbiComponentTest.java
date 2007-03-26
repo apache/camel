@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * @version $Revision$
  */
-public class SendFromCamelToJbiTest extends JbiTestSupport {
+public class SendFromCamelToJbiThenRouteToAnotherJbiComponentTest extends JbiTestSupport {
     private ReceiverComponent receiverComponent = new ReceiverComponent();
 
     public void testCamelInvokingJbi() throws Exception {
@@ -48,7 +48,7 @@ public class SendFromCamelToJbiTest extends JbiTestSupport {
     protected RouteBuilder createRoutes() {
         return new RouteBuilder() {
             public void configure() {
-                // no routes required
+                from("jbi:service:serviceNamespace:serviceA:endpointA").to("jbi:service:serviceNamespace:serviceB");
             }
         };
     }
@@ -56,8 +56,8 @@ public class SendFromCamelToJbiTest extends JbiTestSupport {
     protected void appendJbiActivationSpecs(List<ActivationSpec> activationSpecList) {
         ActivationSpec activationSpec = new ActivationSpec();
         activationSpec.setId("jbiReceiver");
-        activationSpec.setService(new QName("serviceNamespace", "serviceA"));
-        activationSpec.setEndpoint("endpointA");
+        activationSpec.setService(new QName("serviceNamespace", "serviceB"));
+        activationSpec.setEndpoint("endpointB");
         activationSpec.setComponent(receiverComponent);
 
         activationSpecList.add(activationSpec);

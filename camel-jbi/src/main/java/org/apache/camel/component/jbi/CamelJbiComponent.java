@@ -17,15 +17,18 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
 import org.apache.servicemix.common.DefaultComponent;
-import org.apache.servicemix.jbi.util.URISupport;
+import org.apache.servicemix.common.ServiceUnit;
 import org.apache.servicemix.jbi.util.IntrospectionSupport;
+import org.apache.servicemix.jbi.util.URISupport;
+import org.apache.servicemix.jbi.resolver.URIResolver;
 
 import javax.jbi.servicedesc.ServiceEndpoint;
+import javax.xml.namespace.QName;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.net.URISyntaxException;
-import java.net.URI;
 
 /**
  * Deploys the camel endpoints within JBI
@@ -50,7 +53,6 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Jbi
 //        }
         return answer;
     }
-
 
     /**
      * @return Class[]
@@ -78,10 +80,9 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Jbi
         this.binding = binding;
     }
 
-
     @Override
     protected String[] getEPRProtocols() {
-        return new String[] { "camel" };
+        return new String[]{"camel"};
     }
 
     protected org.apache.servicemix.common.Endpoint getResolvedEPR(ServiceEndpoint ep) throws Exception {
@@ -89,7 +90,6 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Jbi
         endpoint.activate();
         return endpoint;
     }
-
 
     /**
      * A factory method for creating endpoints from a service endpoint
@@ -119,14 +119,8 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Jbi
     public Endpoint resolveEndpoint(CamelContext context, String uri) throws Exception {
         if (uri.startsWith("jbi:")) {
             uri = uri.substring("jbi:".length());
-            JbiEndpoint camelEndpoint = new JbiEndpoint(uri, context, getComponentContext(), getBinding());
 
-            // lets expose this endpoint now in JBI
-            // TODO there could already be a component registered in JBI for this??
-            CamelJbiEndpoint jbiEndpoint = new CamelJbiEndpoint(getServiceUnit(), camelEndpoint, getBinding());
-            addEndpoint(jbiEndpoint);
-            jbiEndpoint.activate();
-            return camelEndpoint;
+            return new JbiEndpoint(this, uri);
         }
         return null;
     }
@@ -137,5 +131,34 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Jbi
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    /**
+     * Returns a JBI endpoint created for the given Camel endpoint
+     */
+    public CamelJbiEndpoint activateJbiEndpoint(JbiEndpoint camelEndpoint) throws Exception {
+        CamelJbiEndpoint jbiEndpoint = null;
+        String endpointUri = camelEndpoint.getEndpointUri();
+        if (endpointUri.startsWith("service:")) {
+            // lets decode "service:serviceNamespace:serviceName:endpointName
+            String uri = endpointUri.substring("service:".length());
+            String[] parts = new String[0];
+            try {
+                parts = URIResolver.split3(uri);
+            }
+            catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Expected syntax service:serviceNamespace:serviceName:endpointName but was given: " + endpointUri + ". Cause: " + e, e);
+            }
+            QName service = new QName(parts[0], parts[1]);
+            String endpoint = parts[2];
+            jbiEndpoint = new CamelJbiEndpoint(getServiceUnit(), service, endpoint, camelEndpoint, getBinding());
+        }
+        else {
+            jbiEndpoint = new CamelJbiEndpoint(getServiceUnit(), camelEndpoint, getBinding());
+        }
+
+        // the following method will activate the new dynamic JBI endpoint
+        addEndpoint(jbiEndpoint);
+        return jbiEndpoint;
     }
 }
