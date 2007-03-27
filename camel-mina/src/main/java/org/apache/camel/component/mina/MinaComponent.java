@@ -21,10 +21,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.IoConnector;
+import org.apache.mina.common.IoServiceConfig;
+import org.apache.mina.filter.codec.ProtocolCodecFilter;
+import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
 import org.apache.mina.transport.socket.nio.DatagramAcceptor;
 import org.apache.mina.transport.socket.nio.DatagramConnector;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketConnector;
+import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
+import org.apache.mina.transport.socket.nio.DatagramConnectorConfig;
 import org.apache.mina.transport.vmpipe.VmPipeAcceptor;
 import org.apache.mina.transport.vmpipe.VmPipeAddress;
 import org.apache.mina.transport.vmpipe.VmPipeConnector;
@@ -34,7 +39,6 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,21 +84,30 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         IoAcceptor acceptor = new VmPipeAcceptor();
         SocketAddress address = new VmPipeAddress(connectUri.getPort());
         IoConnector connector = new VmPipeConnector();
-
-        return new MinaEndpoint(uri, getContext(), address, acceptor, connector);
+        return new MinaEndpoint(uri, getContext(), address, acceptor, connector, null);
     }
 
     protected MinaEndpoint createSocketEndpoint(String uri, URI connectUri) {
         IoAcceptor acceptor = new SocketAcceptor();
         SocketAddress address = new InetSocketAddress(connectUri.getHost(), connectUri.getPort());
         IoConnector connector = new SocketConnector();
-        return new MinaEndpoint(uri, getContext(), address, acceptor, connector);
+
+        // TODO customize the config via URI
+        SocketConnectorConfig config = new SocketConnectorConfig();
+        config.getFilterChain().addLast("codec", new ProtocolCodecFilter(new ObjectSerializationCodecFactory()));
+
+        return new MinaEndpoint(uri, getContext(), address, acceptor, connector, config);
     }
 
     protected MinaEndpoint createDatagramEndpoint(String uri, URI connectUri) {
         IoAcceptor acceptor = new DatagramAcceptor();
         SocketAddress address = new InetSocketAddress(connectUri.getHost(), connectUri.getPort());
         IoConnector connector = new DatagramConnector();
-        return new MinaEndpoint(uri, getContext(), address, acceptor, connector);
+
+        // TODO customize the config via URI
+        DatagramConnectorConfig config = new DatagramConnectorConfig();
+        config.getFilterChain().addLast("codec", new ProtocolCodecFilter(new ObjectSerializationCodecFactory()));
+
+        return new MinaEndpoint(uri, getContext(), address, acceptor, connector, config);
     }
 }
