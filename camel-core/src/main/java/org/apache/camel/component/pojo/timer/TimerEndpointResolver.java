@@ -14,34 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.queue;
+package org.apache.camel.component.pojo.timer;
+
+import java.net.URISyntaxException;
+import java.util.concurrent.Callable;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
-import org.apache.camel.Exchange;
+import org.apache.camel.component.pojo.PojoExchange;
 import org.apache.camel.util.ObjectHelper;
-
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
 
 /**
  * An implementation of {@link EndpointResolver} that creates 
- * {@link QueueEndpoint} objects.
+ * {@link TimerEndpoint} objects.  TimerEndpoint objects can only 
+ * be consumed.
  *
- * The syntax for a Queue URI looks like:
+ * The synatax for a Timer URI looks like:
  * 
- * <pre><code>queue:[component:]queuename</code></pre>
- * the component is optional, and if it is not specified, the default component name
- * is assumed.
+ * <pre><code>timer:[component:]timer-name?options</code></pre>
+ * 
  * 
  * @version $Revision: 519901 $
  */
-public class QueueEndpointResolver<E extends Exchange> implements EndpointResolver<E> {
-	
-	public static final String DEFAULT_COMPONENT_NAME = QueueComponent.class.getName();
-	
+public class TimerEndpointResolver implements EndpointResolver<PojoExchange> {
+
+	public static final String DEFAULT_COMPONENT_NAME = TimerComponent.class.getName();
+		
 	/**
 	 * Finds the {@see QueueComponent} specified by the uri.  If the {@see QueueComponent} 
 	 * object do not exist, it will be created.
@@ -50,21 +49,38 @@ public class QueueEndpointResolver<E extends Exchange> implements EndpointResolv
 	 */
 	public Component resolveComponent(CamelContext container, String uri) {
 		String id[] = getEndpointId(uri);        
-    	return resolveQueueComponent(container, id[0]);  
+		return resolveTimerComponent(container, id[0]);
 	}
 
 	/**
 	 * Finds the {@see QueueEndpoint} specified by the uri.  If the {@see QueueEndpoint} or it's associated
 	 * {@see QueueComponent} object do not exist, they will be created.
+	 * @throws URISyntaxException 
 	 * 
 	 * @see org.apache.camel.EndpointResolver#resolveEndpoint(org.apache.camel.CamelContext, java.lang.String)
 	 */
-	public Endpoint<E> resolveEndpoint(CamelContext container, String uri) {
+	public TimerEndpoint resolveEndpoint(CamelContext container, String uri) throws URISyntaxException {
 		String id[] = getEndpointId(uri);        
-    	QueueComponent<E> component = resolveQueueComponent(container, id[0]);  
-    	BlockingQueue<E> queue = component.getOrCreateQueue(id[1]);
-		return new QueueEndpoint<E>(uri, container, queue);
+    	TimerComponent component = resolveTimerComponent(container, id[0]);
+		return createEndpoint(uri, id[1], component);
     }
+
+	/**
+	 * PojoEndpointResolver subclasses can override to provide a custom PojoEndpoint implementation.
+	 * @throws URISyntaxException 
+	 */
+	protected TimerEndpoint createEndpoint(String uri, String pojoId, TimerComponent component) throws URISyntaxException {
+		return new TimerEndpoint(uri, pojoId, component);
+	}
+
+	private TimerComponent resolveTimerComponent(CamelContext container, String componentName) {
+    	Component rc = container.getOrCreateComponent(componentName, new Callable<Component>(){
+			public Component call() throws Exception {
+				return new TimerComponent();
+			}
+		});
+    	return (TimerComponent) rc;
+	}
 
 	/**
 	 * @return an array that looks like: [componentName,endpointName] 
@@ -79,15 +95,6 @@ public class QueueEndpointResolver<E extends Exchange> implements EndpointResolv
     		rc[1] =  splitURI[1];
     	}
 		return rc;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private QueueComponent<E> resolveQueueComponent(CamelContext container, String componentName) {
-    	Component rc = container.getOrCreateComponent(componentName, new Callable<Component>(){
-			public Component<E> call() throws Exception {
-				return new QueueComponent<E>();
-			}});
-    	return (QueueComponent<E>) rc;
 	}
 
 }
