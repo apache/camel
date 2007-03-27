@@ -17,12 +17,12 @@
  */
 package org.apache.camel.component.cxf;
 
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
-import org.apache.cxf.transport.Destination;
 import org.apache.cxf.transport.Conduit;
+import org.apache.cxf.transport.Destination;
 
 /**
  * An {@link Exchange} for working with Apache CXF
@@ -47,6 +47,7 @@ public class CxfExchange extends DefaultExchange {
         setOut(new CxfMessage(exchange.getOutMessage()));
         setFault(new CxfMessage(exchange.getInFaultMessage()));
     }
+
     @Override
     public CxfMessage getIn() {
         return (CxfMessage) super.getIn();
@@ -105,7 +106,6 @@ public class CxfExchange extends DefaultExchange {
     public Conduit getConduit() {
         return getExchange().getConduit();
     }
-
 
     @Override
     protected CxfMessage createInMessage() {

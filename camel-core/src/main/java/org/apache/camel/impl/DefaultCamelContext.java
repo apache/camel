@@ -18,8 +18,8 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.*;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -177,17 +177,19 @@ public class DefaultCamelContext implements CamelContext, Service {
      * Activates all the starting endpoints in that were added as routes.
      */
     public void activateEndpoints() throws Exception {
-        for (Route<Exchange> route : routes) {
-            Processor<Exchange> processor = route.getProcessor();
-            Consumer<Exchange> consumer = route.getEndpoint().createConsumer(processor);
-            if (consumer != null) {
-                consumer.start();
-                servicesToClose.add(consumer);
-            }
-            if (processor instanceof Service) {
-                Service service = (Service) processor;
-                service.start();
-                servicesToClose.add(service);
+        if (routes != null) {
+            for (Route<Exchange> route : routes) {
+                Processor<Exchange> processor = route.getProcessor();
+                Consumer<Exchange> consumer = route.getEndpoint().createConsumer(processor);
+                if (consumer != null) {
+                    consumer.start();
+                    servicesToClose.add(consumer);
+                }
+                if (processor instanceof Service) {
+                    Service service = (Service) processor;
+                    service.start();
+                    servicesToClose.add(service);
+                }
             }
         }
     }
@@ -197,7 +199,6 @@ public class DefaultCamelContext implements CamelContext, Service {
      */
     public void deactivateEndpoints() throws Exception {
         ServiceHelper.stopServices(servicesToClose);
-
     }
 
     // Route Management Methods

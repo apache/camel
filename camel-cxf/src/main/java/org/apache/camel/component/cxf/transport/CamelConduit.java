@@ -31,6 +31,7 @@ import org.apache.cxf.transport.AbstractConduit;
 import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.Destination;
 import org.apache.cxf.transport.MessageObserver;
+import org.apache.cxf.ws.addressing.AttributedURIType;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 
 import java.io.ByteArrayInputStream;
@@ -45,10 +46,11 @@ import java.util.logging.Logger;
  * @version $Revision$
  */
 public class CamelConduit extends AbstractConduit implements Configurable {
-    protected static final String BASE_BEAN_NAME_SUFFIX = ".jms-conduit-base";
+    protected static final String BASE_BEAN_NAME_SUFFIX = ".camel-conduit-base";
     private static final Logger LOG = LogUtils.getL7dLogger(CamelConduit.class);
-    protected final CamelTransportBase base;
+    private final CamelTransportBase base;
     private String targetCamelEndpointUri;
+
 /*
     protected ClientConfig clientConfig;
     protected ClientBehaviorPolicyType runtimePolicy;
@@ -58,6 +60,10 @@ public class CamelConduit extends AbstractConduit implements Configurable {
 
     public CamelConduit(CamelContext camelContext, Bus bus, EndpointInfo endpointInfo, EndpointReferenceType targetReference) {
         super(targetReference);
+        AttributedURIType address = targetReference.getAddress();
+        if (address != null) {
+            this.targetCamelEndpointUri = address.getValue();
+        }
 
         base = new CamelTransportBase(camelContext, bus, endpointInfo, false, BASE_BEAN_NAME_SUFFIX);
 
@@ -66,14 +72,14 @@ public class CamelConduit extends AbstractConduit implements Configurable {
 
     // prepare the message for send out , not actually send out the message
     public void send(Message message) throws IOException {
-        getLogger().log(Level.FINE, "JMSConduit send message");
+        getLogger().log(Level.FINE, "CamelConduit send message");
 
         message.setContent(OutputStream.class,
-                new JMSOutputStream(message));
+                new CamelOutputStream(message));
     }
 
     public void close() {
-        getLogger().log(Level.FINE, "JMSConduit closed ");
+        getLogger().log(Level.FINE, "CamelConduit closed ");
 
         // ensure resources held by session factory are released
         //
@@ -85,7 +91,11 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     }
 
     public String getBeanName() {
-        return base.endpointInfo.getName().toString() + ".jms-conduit";
+        EndpointInfo info = base.endpointInfo;
+        if (info == null) {
+            return "default.camel-conduit";
+        }
+        return info.getName() + ".camel-conduit";
     }
 
     private void initConfig() {
@@ -107,11 +117,11 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         }
     }
 
-    private class JMSOutputStream extends AbstractCachedOutputStream {
+    private class CamelOutputStream extends AbstractCachedOutputStream {
         private Message outMessage;
         private boolean isOneWay;
 
-        public JMSOutputStream(Message m) {
+        public CamelOutputStream(Message m) {
             outMessage = m;
         }
 
@@ -159,7 +169,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
 
                         if (id != null) {
                             if (correlationID != null) {
-                                String error = "User cannot set JMSCorrelationID when "
+                                String error = "User cannot set CamelCorrelationID when "
                                         + "making a request/reply invocation using "
                                         + "a static replyTo Queue.";
                             }
@@ -188,36 +198,36 @@ public class CamelConduit extends AbstractConduit implements Configurable {
             Message inMessage = new MessageImpl();
             outMessage.getExchange().setInMessage(inMessage);
             //set the message header back to the incomeMessage
-            //inMessage.put(JMSConstants.CAMEL_CLIENT_RESPONSE_HEADERS,
-            //              outMessage.get(JMSConstants.CAMEL_CLIENT_RESPONSE_HEADERS));
+            //inMessage.put(CamelConstants.CAMEL_CLIENT_RESPONSE_HEADERS,
+            //              outMessage.get(CamelConstants.CAMEL_CLIENT_RESPONSE_HEADERS));
 
             /*
             Object result1;
 
             Object result = null;
 
-            javax.jms.Message jmsMessage1 = pooledSession.consumer().receive(timeout);
-            getLogger().log(Level.FINE, "client received reply: " , jmsMessage1);
+            javax.camel.Message camelMessage1 = pooledSession.consumer().receive(timeout);
+            getLogger().log(Level.FINE, "client received reply: " , camelMessage1);
 
-            if (jmsMessage1 != null) {
+            if (camelMessage1 != null) {
 
-                base.populateIncomingContext(jmsMessage1, outMessage, JMSConstants.CAMEL_CLIENT_RESPONSE_HEADERS);
-                String messageType = jmsMessage1 instanceof TextMessage
-                            ? JMSConstants.TEXT_MESSAGE_TYPE : JMSConstants.BINARY_MESSAGE_TYPE;
+                base.populateIncomingContext(camelMessage1, outMessage, CamelConstants.CAMEL_CLIENT_RESPONSE_HEADERS);
+                String messageType = camelMessage1 instanceof TextMessage
+                            ? CamelConstants.TEXT_MESSAGE_TYPE : CamelConstants.BINARY_MESSAGE_TYPE;
                 result = base.unmarshal((org.apache.camel.Exchange) outMessage);
                 result1 = result;
             } else {
-                String error = "JMSClientTransport.receive() timed out. No message available.";
+                String error = "CamelClientTransport.receive() timed out. No message available.";
                 getLogger().log(Level.SEVERE, error);
                 //TODO: Review what exception should we throw.
-                throw new JMSException(error);
+                throw new CamelException(error);
 
             }
             response = result1;
 
             //set the message header back to the incomeMessage
-            inMessage.put(JMSConstants.CAMEL_CLIENT_RESPONSE_HEADERS,
-                          outMessage.get(JMSConstants.CAMEL_CLIENT_RESPONSE_HEADERS));
+            inMessage.put(CamelConstants.CAMEL_CLIENT_RESPONSE_HEADERS,
+                          outMessage.get(CamelConstants.CAMEL_CLIENT_RESPONSE_HEADERS));
 
             */
 

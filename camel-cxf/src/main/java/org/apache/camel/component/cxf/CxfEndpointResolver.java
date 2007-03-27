@@ -17,9 +17,9 @@
  */
 package org.apache.camel.component.cxf;
 
-import org.apache.camel.EndpointResolver;
-import org.apache.camel.Component;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+import org.apache.camel.EndpointResolver;
 import org.apache.camel.util.ObjectHelper;
 
 import java.io.IOException;
@@ -29,59 +29,58 @@ import java.util.concurrent.Callable;
 /**
  * An implementation of {@link EndpointResolver} that creates
  * {@link CxfEndpoint} objects.
- *
+ * <p/>
  * The syntax for a MINA URI looks like:
- *
+ * <p/>
  * <pre><code>mina:</code></pre>
  *
  * @version $Revision:520964 $
  */
 public class CxfEndpointResolver implements EndpointResolver<CxfExchange> {
+    public static final String DEFAULT_COMPONENT_NAME = CxfEndpointResolver.class.getName();
 
-	public static final String DEFAULT_COMPONENT_NAME = CxfEndpointResolver.class.getName();
+    /**
+     * Finds the {@link CxfComponent} specified by the uri.  If the {@link CxfComponent}
+     * object do not exist, it will be created.
+     */
+    public Component resolveComponent(CamelContext container, String uri) {
+        String[] id = getEndpointId(uri);
+        return resolveCxfComponent(container, id[0]);
+    }
 
-	/**
-	 * Finds the {@link CxfComponent} specified by the uri.  If the {@link CxfComponent}
-	 * object do not exist, it will be created.
-	 */
-	public Component resolveComponent(CamelContext container, String uri) {
-		String[] id = getEndpointId(uri);
-		return resolveCxfComponent(container, id[0]);
-	}
-
-	/**
-	 * Finds the {@link CxfEndpoint} specified by the uri.  If the {@link CxfEndpoint} or it's associated
-	 * {@see QueueComponent} object do not exist, they will be created.
-	 */
-	public CxfEndpoint resolveEndpoint(CamelContext container, String uri) throws IOException, URISyntaxException {
-		String[] urlParts = getEndpointId(uri);
-    	CxfComponent component = resolveCxfComponent(container, urlParts[0]);
+    /**
+     * Finds the {@link CxfEndpoint} specified by the uri.  If the {@link CxfEndpoint} or it's associated
+     * {@see QueueComponent} object do not exist, they will be created.
+     */
+    public CxfEndpoint resolveEndpoint(CamelContext container, String uri) throws IOException, URISyntaxException {
+        String[] urlParts = getEndpointId(uri);
+        CxfComponent component = resolveCxfComponent(container, urlParts[0]);
         return component.createEndpoint(uri, urlParts);
     }
 
-	/**
-	 * @return an array that looks like: [componentName,endpointName]
-	 */
-	private String[] getEndpointId(String uri) {
-		String rc [] = {CxfEndpointResolver.DEFAULT_COMPONENT_NAME, null};
-		String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 3);
-    	if( splitURI[2] != null ) {
-    		rc[0] =  splitURI[1];
-    		rc[1] =  splitURI[2];
-    	} else {
-    		rc[1] =  splitURI[1];
-    	}
-		return rc;
-	}
+    /**
+     * @return an array that looks like: [componentName,endpointName]
+     */
+    private String[] getEndpointId(String uri) {
+        String rc[] = {CxfEndpointResolver.DEFAULT_COMPONENT_NAME, null};
+        String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 3);
+        if (splitURI[2] != null) {
+            rc[0] = splitURI[1];
+            rc[1] = splitURI[2];
+        }
+        else {
+            rc[1] = splitURI[1];
+        }
+        return rc;
+    }
 
-	@SuppressWarnings("unchecked")
-	private CxfComponent resolveCxfComponent(final CamelContext context, final String componentName) {
-    	Component rc = context.getOrCreateComponent(componentName, new Callable(){
-			public CxfComponent call() throws Exception {
+    @SuppressWarnings("unchecked")
+    private CxfComponent resolveCxfComponent(final CamelContext context, final String componentName) {
+        Component rc = context.getOrCreateComponent(componentName, new Callable() {
+            public CxfComponent call() throws Exception {
                 return new CxfComponent(context);
-			}});
-    	return (CxfComponent) rc;
-	}
-
-
+            }
+        });
+        return (CxfComponent) rc;
+    }
 }
