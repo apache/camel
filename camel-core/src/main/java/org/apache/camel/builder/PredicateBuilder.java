@@ -22,6 +22,9 @@ import org.apache.camel.Predicate;
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * A helper class for working with predicates
  *
@@ -238,4 +241,45 @@ public class PredicateBuilder {
             }
         };
     }
+
+
+    /**
+     * Returns a predicate which is true if the expression matches the given regular expression
+     *
+     * @param expression the expression to evaluate
+     * @param regex the regular expression to match against
+     * @return a new predicate
+     */
+    public static <E extends Exchange> Predicate<E> regex(final Expression<E> expression, final String regex) {
+        return regex(expression, Pattern.compile(regex));
+    }
+
+    /**
+     * Returns a predicate which is true if the expression matches the given regular expression
+     *
+     * @param expression the expression to evaluate
+     * @param pattern the regular expression to match against
+     * @return a new predicate
+     */
+    public static <E extends Exchange> Predicate<E> regex(final Expression<E> expression, final Pattern pattern) {
+        notNull(expression, "expression");
+        notNull(pattern, "pattern");
+
+        return new Predicate<E>() {
+            public boolean matches(E exchange) {
+                Object value = expression.evaluate(exchange);
+                if (value != null) {
+                    Matcher matcher = pattern.matcher(value.toString());
+                    return matcher.matches();
+                }
+                return false;
+            }
+
+            @Override
+            public String toString() {
+                return expression + ".matches(" + pattern + ")";
+            }
+        };
+    }
+
 }
