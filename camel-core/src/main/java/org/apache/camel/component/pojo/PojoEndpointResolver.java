@@ -53,9 +53,15 @@ public class PojoEndpointResolver implements EndpointResolver<PojoExchange> {
 	public PojoEndpoint resolveEndpoint(CamelContext container, String uri) {
 		String id[] = getEndpointId(uri);        
     	PojoComponent component = resolvePojoComponent(container, id[0]);
-        Object pojo = component.getService(id[1]);
-		return new PojoEndpoint(uri, id[1], component);
+		return createEndpoint(uri, id[1], component);
     }
+
+	/**
+	 * PojoEndpointResolver subclasses can override to provide a custom PojoEndpoint implementation.
+	 */
+	protected PojoEndpoint createEndpoint(String uri, String pojoId, PojoComponent component) {
+		return new PojoEndpoint(uri, pojoId, component);
+	}
 
 	private PojoComponent resolvePojoComponent(CamelContext container, String componentName) {
     	Component rc = container.getComponent(componentName);
