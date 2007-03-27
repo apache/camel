@@ -26,6 +26,8 @@ import org.apache.mina.common.IoConnector;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
+import org.apache.mina.common.IoServiceConfig;
+import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
 import java.net.SocketAddress;
 
@@ -70,7 +72,7 @@ public class MinaProducer extends DefaultProducer<MinaExchange> {
                 super.messageReceived(ioSession, object);    /** TODO */
             }
         };
-        ConnectFuture future = connector.connect(address, ioHandler);
+        ConnectFuture future = connector.connect(address, ioHandler, endpoint.getConfig());
         future.join();
         session = future.getSession();
     }

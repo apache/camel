@@ -26,6 +26,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.IoConnector;
+import org.apache.mina.common.IoServiceConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -40,10 +41,11 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
     private final IoAcceptor acceptor;
     private final SocketAddress address;
     private final IoConnector connector;
+    private final IoServiceConfig config;
 
-
-    public MinaEndpoint(String endpointUri, CamelContext container, SocketAddress address, IoAcceptor acceptor, IoConnector connector) {
+    public MinaEndpoint(String endpointUri, CamelContext container, SocketAddress address, IoAcceptor acceptor, IoConnector connector, IoServiceConfig config) {
         super(endpointUri, container);
+        this.config = config;
         this.address = address;
         this.acceptor = acceptor;
         this.connector = connector;
@@ -82,6 +84,11 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
         return connector;
     }
 
+    public IoServiceConfig getConfig() {
+        return config;
+    }
+
+    
     // Implementation methods
     //-------------------------------------------------------------------------
 
@@ -94,4 +101,5 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
     protected void doDeactivate() {
         acceptor.unbindAll();
     }
+
 }

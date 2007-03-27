@@ -76,7 +76,6 @@
             <include>**/*Test.*</include>
           </includes>
           <excludes>
-            <exclude>**/MinaTcpTest.*</exclude>
             <exclude>**/MinaMulticastTest.*</exclude>
           </excludes>
         </configuration>

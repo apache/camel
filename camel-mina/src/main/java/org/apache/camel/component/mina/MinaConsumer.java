@@ -61,7 +61,7 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
             }
         };
 
-        acceptor.bind(address, handler);
+        acceptor.bind(address, handler, endpoint.getConfig());
     }
 
     @Override
