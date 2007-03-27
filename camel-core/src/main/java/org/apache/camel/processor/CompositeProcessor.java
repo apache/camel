@@ -18,6 +18,8 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Processor;
+import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.ServiceHelper;
 
 import java.util.Collection;
 
@@ -26,7 +28,7 @@ import java.util.Collection;
  *
  * @version $Revision$
  */
-public class CompositeProcessor<E> implements Processor<E> {
+public class CompositeProcessor<E> extends ServiceSupport implements Processor<E> {
     private final Collection<Processor<E>> processors;
 
     public CompositeProcessor(Collection<Processor<E>> processors) {
@@ -58,5 +60,13 @@ public class CompositeProcessor<E> implements Processor<E> {
 
     public Collection<Processor<E>> getProcessors() {
         return processors;
+    }
+
+    protected void doStart() throws Exception {
+        ServiceHelper.startServices(processors);
+    }
+
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(processors);
     }
 }

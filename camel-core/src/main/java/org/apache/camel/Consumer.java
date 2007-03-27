@@ -15,13 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel;
 
 /**
- * Used to configure the logging levels
+ * Represents a consumer of an endpoint
  *
  * @version $Revision$
  */
-public enum LoggingLevel {
-    DEBUG, ERROR, FATAL, INFO, TRACE, WARN;
+public interface Consumer<E extends Exchange> extends Service {
 }

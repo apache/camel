@@ -49,7 +49,7 @@ public class InterceptorBuilder<E extends Exchange> implements ProcessorFactory<
         return target;
     }
 
-    public Processor<E> createProcessor() {
+    public Processor<E> createProcessor() throws Exception {
     	
     	// The target is required.
     	if( target == null ) 

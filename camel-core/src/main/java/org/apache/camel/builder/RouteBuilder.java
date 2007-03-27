@@ -99,29 +99,29 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     /**
      * Returns the routing map from inbound endpoints to processors
      */
-    public List<Route<E>> getRouteList() {
+    public List<Route<E>> getRouteList() throws Exception {
         checkInitialized();
         return routes;
     }
 
     /**
-     * Returns the destinationBuilders which have been created
+     * Returns the builders which have been created
      */
-    public List<FromBuilder<E>> getDestinationBuilders() {
+    public List<FromBuilder<E>> getFromBuilders() throws Exception {
         checkInitialized();
         return fromBuilders;
     }
 
     // Implementation methods
     //-----------------------------------------------------------------------
-    protected void checkInitialized() {
+    protected void checkInitialized() throws Exception {
         if (initalized.compareAndSet(false, true)) {
             configure();
             populateRoutes(routes);
         }
     }
 
-    protected void populateRoutes(List<Route<E>> routes) {
+    protected void populateRoutes(List<Route<E>> routes) throws Exception {
         for (FromBuilder<E> builder : fromBuilders) {
             Endpoint<E> from = builder.getFrom();
             Processor<E> processor = makeProcessor(from, builder);
@@ -140,7 +140,7 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
      * @param builder the builder which is the factory of the processor
      * @return
      */
-    protected Processor<E> makeProcessor(Endpoint<E> from, FromBuilder<E> builder) {
+    protected Processor<E> makeProcessor(Endpoint<E> from, FromBuilder<E> builder) throws Exception {
         return builder.createProcessor();
     }
 

@@ -21,9 +21,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.notNull;
+import org.apache.camel.util.ProducerCache;
 
 import java.util.Iterator;
 
@@ -33,8 +35,9 @@ import java.util.Iterator;
  *
  * @version $Revision$
  */
-public class RecipientList<E extends Exchange> implements Processor<E> {
+public class RecipientList<E extends Exchange> extends ServiceSupport implements Processor<E> {
     private final Expression<E> expression;
+    private ProducerCache<E> producerCache = new ProducerCache<E>();
 
     public RecipientList(Expression<E> expression) {
         notNull(expression, "expression");
@@ -52,11 +55,18 @@ public class RecipientList<E extends Exchange> implements Processor<E> {
         while (iter.hasNext()) {
             Object recipient = iter.next();
             Endpoint<E> endpoint = resolveEndpoint(exchange, recipient);
-            endpoint.onExchange(exchange);
+            producerCache.getProducer(endpoint).onExchange(exchange);
         }
     }
 
     protected Endpoint<E> resolveEndpoint(E exchange, Object recipient) {
         return ExchangeHelper.resolveEndpoint(exchange, recipient);
+    }
+
+    protected void doStop() throws Exception {
+        producerCache.stop();
+    }
+
+    protected void doStart() throws Exception {
     }
 }

@@ -17,7 +17,11 @@
 package org.apache.camel.component.pojo;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Producer;
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultProducer;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -40,10 +44,22 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
         this.pojo = pojo;
     }
 
+    public Producer<PojoExchange> createProducer() throws Exception {
+        return startService(new DefaultProducer<PojoExchange>(this) {
+            public void onExchange(PojoExchange exchange) {
+                invoke(exchange);
+            }
+        });
+    }
+
+    public Consumer<PojoExchange> createConsumer(Processor<PojoExchange> processor) throws Exception {
+        return startService(new PojoConsumer(this, processor, pojo));
+    }
+
     /**
      * This causes us to invoke the endpoint Pojo using reflection.
      */
-    public void onExchange(PojoExchange exchange) {
+    public void invoke(PojoExchange exchange) {
         PojoInvocation invocation = exchange.getInvocation();
         try {
             Object response = invocation.getMethod().invoke(pojo, invocation.getArgs());
@@ -74,28 +90,4 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
         component.unregisterActivation(getEndpointUri());
     }
 
-    /**
-     * Creates a Proxy object that can be used to deliver inbound PojoExchanges.
-     *
-     * @param interfaces
-     * @return
-     */
-    public Object createInboundProxy(Class interfaces[]) {
-        return Proxy.newProxyInstance(pojo.getClass().getClassLoader(), interfaces, new InvocationHandler() {
-            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                if (!activated.get()) {
-                    throw new IllegalStateException("The endpoint is not active: " + getEndpointUri());
-                }
-                PojoInvocation invocation = new PojoInvocation(proxy, method, args);
-                PojoExchange exchange = createExchange();
-                exchange.setInvocation(invocation);
-                getInboundProcessor().onExchange(exchange);
-                Throwable fault = exchange.getException();
-                if (fault != null) {
-                    throw new InvocationTargetException(fault);
-                }
-                return exchange.getOut().getBody();
-            }
-        });
-    }
 }

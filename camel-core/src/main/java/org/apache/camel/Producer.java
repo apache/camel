@@ -15,13 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel;
 
 /**
- * Used to configure the logging levels
+ * Provides a channel on which clients can create and invoke exchanges on the endpoint
  *
  * @version $Revision$
  */
-public enum LoggingLevel {
-    DEBUG, ERROR, FATAL, INFO, TRACE, WARN;
+public interface Producer<E extends Exchange> extends Processor<E>, Service {
+    Endpoint<E> getEndpoint();
+
+    /**
+     * Creates a new exchange to send to this endpoint
+     *
+     * @return a newly created exchange
+     */
+    E createExchange();
+
+    /**
+     * Creates a new exchange for communicating with this exchange using the given exchange to pre-populate the values
+     * of the headers and messages
+     */
+    E createExchange(E exchange);
 }

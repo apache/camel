@@ -115,7 +115,7 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
     /**
      * Strategy to install all available routes into the context
      */
-    protected void installRoutes() {
+    protected void installRoutes() throws Exception {
         for (RouteBuilder routeBuilder : additionalBuilders) {
             getContext().addRoutes(routeBuilder);
         }

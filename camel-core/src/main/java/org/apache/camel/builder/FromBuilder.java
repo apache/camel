@@ -248,7 +248,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         processors.add(processor);
     }
 
-    public Processor<E> createProcessor() {
+    public Processor<E> createProcessor() throws Exception {
         List<Processor<E>> answer = new ArrayList<Processor<E>>();
 
         for (ProcessorFactory<E> processFactory : processFactories) {
@@ -272,7 +272,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     /**
      * Creates the processor and wraps it in any necessary interceptors and error handlers
      */
-    protected Processor<E> makeProcessor(ProcessorFactory<E> processFactory) {
+    protected Processor<E> makeProcessor(ProcessorFactory<E> processFactory) throws Exception {
         Processor<E> processor = processFactory.createProcessor();
         return getErrorHandlerBuilder().createErrorHandler(processor);
     }

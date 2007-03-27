@@ -19,13 +19,13 @@ package org.apache.camel.component.queue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Consumer;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.DefaultProducer;
 
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Represents a queue endpoint that uses a {@link BlockingQueue}
@@ -36,20 +36,22 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class QueueEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     private BlockingQueue<E> queue;
-	private org.apache.camel.component.queue.QueueEndpoint.Activation activation;
 
     public QueueEndpoint(String uri, CamelContext container, BlockingQueue<E> queue) {
         super(uri, container);
         this.queue = queue;
     }
 
-    public void onExchange(E exchange) {
-        queue.add(exchange);
+    public Producer<E> createProducer() throws Exception {
+        return startService(new DefaultProducer<E>(this) {
+            public void onExchange(E exchange) {
+                queue.add(exchange);
+            }
+        });
     }
 
-    public void setInboundProcessor(Processor<E> processor) {
-        // TODO lets start a thread to process inbound requests
-        // if we don't already have one
+    public Consumer<E> createConsumer(Processor<E> processor) throws Exception {
+        return startService(new QueueEndpointConsumer<E>(this, processor));
     }
 
     public E createExchange() {
@@ -61,59 +63,5 @@ public class QueueEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     public BlockingQueue<E> getQueue() {
         return queue;
     }
-    
-    class Activation implements Runnable {
-		AtomicBoolean stop = new AtomicBoolean();
-		private Thread thread;
-		
-		public void run() {
-			while(!stop.get()) {
-				E exchange=null;
-				try {
-					exchange = queue.poll(100, TimeUnit.MILLISECONDS);
-				} catch (InterruptedException e) {
-					break;
-				}
-				if( exchange !=null ) {
-					try {
-						getInboundProcessor().onExchange(exchange);
-					} catch (Throwable e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
 
-		public void start() {
-			thread = new Thread(this, getEndpointUri());
-			thread.setDaemon(true);
-			thread.start();
-		}
-
-		public void stop() throws InterruptedException {
-			stop.set(true);
-			thread.join();
-		}
-		
-		@Override
-		public String toString() {
-			return "Activation: "+getEndpointUri();
-		}
-    }
-
-    @Override
-    protected void doActivate() {
-		activation = new Activation();
-		activation.start();
-    }
-    
-    @Override
-    protected void doDeactivate() {
-		try {
-			activation.stop();
-			activation=null;
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
-    }
 }

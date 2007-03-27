@@ -111,17 +111,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
         });
         */
 
-        AbstractMessageListenerContainer listenerContainer = createMessageListenerContainer(template);
-        listenerContainer.setDestinationName(subject);
-        listenerContainer.setPubSubDomain(template.isPubSubDomain());
-        listenerContainer.setConnectionFactory(template.getConnectionFactory());
-
-        // TODO support optional parameters
-        // selector
-        // messageConverter
-        // durableSubscriberName 
-
-        return new JmsEndpoint(uri, getContext(), subject, template, listenerContainer);
+        return new JmsEndpoint(uri, getContext(), subject, template);
     }
 
     public JmsTemplate getTemplate() {
@@ -130,13 +120,6 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
 
     public void setTemplate(JmsTemplate template) {
         this.template = template;
-    }
-
-    protected AbstractMessageListenerContainer createMessageListenerContainer(JmsTemplate template) {
-        // TODO use an enum to auto-switch container types?
-
-        //return new SimpleMessageListenerContainer();
-        return new DefaultMessageListenerContainer();
     }
 
     /**

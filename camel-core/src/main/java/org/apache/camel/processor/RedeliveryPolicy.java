@@ -30,7 +30,6 @@ import java.util.Random;
  */
 public class RedeliveryPolicy implements Cloneable, Serializable {
     protected static transient Random randomNumberGenerator;
-
     protected int maximumRedeliveries = 6;
     protected long initialRedeliveryDelay = 1000L;
     protected double backOffMultiplier = 2;
@@ -38,7 +37,6 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     // +/-15% for a 30% spread -cgs
     protected double collisionAvoidanceFactor = 0.15d;
     protected boolean useCollisionAvoidance = false;
-
 
     public RedeliveryPolicy() {
     }
@@ -116,7 +114,6 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         setCollisionAvoidancePercent(collisionAvoidancePercent);
         return this;
     }
-       
 
     // Properties
     //-------------------------------------------------------------------------

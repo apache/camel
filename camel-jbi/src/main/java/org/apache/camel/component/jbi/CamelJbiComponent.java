@@ -16,6 +16,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
+import org.apache.camel.Processor;
+import org.apache.camel.Exchange;
+import org.apache.camel.FailedToCreateProducerException;
 import org.apache.servicemix.common.DefaultComponent;
 import org.apache.servicemix.common.ServiceUnit;
 import org.apache.servicemix.jbi.util.IntrospectionSupport;
@@ -91,16 +94,19 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Jbi
         return endpoint;
     }
 
-    /**
-     * A factory method for creating endpoints from a service endpoint
-     * which is public so that it can be easily unit tested
-     */
     public CamelJbiEndpoint createEndpoint(ServiceEndpoint ep) throws URISyntaxException {
         URI uri = new URI(ep.getEndpointName());
         Map map = URISupport.parseQuery(uri.getQuery());
         String camelUri = uri.getSchemeSpecificPart();
         Endpoint camelEndpoint = getCamelContext().resolveEndpoint(camelUri);
-        CamelJbiEndpoint endpoint = new CamelJbiEndpoint(getServiceUnit(), camelEndpoint, getBinding());
+        Processor<Exchange> processor = null;
+        try {
+            processor = camelEndpoint.createProducer();
+        }
+        catch (Exception e) {
+            throw new FailedToCreateProducerException(camelEndpoint, e);
+        }
+        CamelJbiEndpoint endpoint = new CamelJbiEndpoint(getServiceUnit(), camelEndpoint, getBinding(), processor);
 
         IntrospectionSupport.setProperties(endpoint, map);
 
@@ -136,8 +142,8 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Jbi
     /**
      * Returns a JBI endpoint created for the given Camel endpoint
      */
-    public CamelJbiEndpoint activateJbiEndpoint(JbiEndpoint camelEndpoint) throws Exception {
-        CamelJbiEndpoint jbiEndpoint = null;
+    public CamelJbiEndpoint activateJbiEndpoint(JbiEndpoint camelEndpoint, Processor<Exchange> processor) throws Exception {
+        CamelJbiEndpoint jbiEndpoint;
         String endpointUri = camelEndpoint.getEndpointUri();
         if (endpointUri.startsWith("endpoint:")) {
             // lets decode "service:serviceNamespace:serviceName:endpointName
@@ -151,10 +157,10 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Jbi
             }
             QName service = new QName(parts[0], parts[1]);
             String endpoint = parts[2];
-            jbiEndpoint = new CamelJbiEndpoint(getServiceUnit(), service, endpoint, camelEndpoint, getBinding());
+            jbiEndpoint = new CamelJbiEndpoint(getServiceUnit(), service, endpoint, camelEndpoint, getBinding(), processor);
         }
         else {
-            jbiEndpoint = new CamelJbiEndpoint(getServiceUnit(), camelEndpoint, getBinding());
+            jbiEndpoint = new CamelJbiEndpoint(getServiceUnit(), camelEndpoint, getBinding(), processor);
         }
 
         // the following method will activate the new dynamic JBI endpoint

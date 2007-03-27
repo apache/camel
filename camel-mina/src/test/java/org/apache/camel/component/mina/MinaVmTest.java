@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
@@ -36,6 +37,7 @@ public class MinaVmTest extends TestCase {
     protected CountDownLatch latch = new CountDownLatch(1);
     protected MinaExchange receivedExchange;
     protected String uri = "mina:vm://localhost:8080";
+    protected Producer<MinaExchange> producer;
 
     public void testMinaRoute() throws Exception {
 
@@ -46,7 +48,8 @@ public class MinaVmTest extends TestCase {
         message.setBody("Hello there!");
         message.setHeader("cheese", 123);
 
-        endpoint.onExchange(exchange);
+        producer = endpoint.createProducer();
+        producer.onExchange(exchange);
 
         // now lets sleep for a while
         boolean received = latch.await(5, TimeUnit.SECONDS);
@@ -55,13 +58,16 @@ public class MinaVmTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        container.setRoutes(createRouteBuilder());
+        container.addRoutes(createRouteBuilder());
         container.activateEndpoints();
     }
 
 
     @Override
     protected void tearDown() throws Exception {
+        if (producer != null) {
+            producer.stop();
+        }
         container.deactivateEndpoints();
     }
 

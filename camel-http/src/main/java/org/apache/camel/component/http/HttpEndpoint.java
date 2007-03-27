@@ -18,8 +18,12 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Producer;
+import org.apache.camel.Consumer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,16 +41,17 @@ public class HttpEndpoint extends DefaultEndpoint<HttpExchange> {
         super(uri, camelContext);
     }
 
-    public void onExchange(HttpExchange exchange) {
-        Processor<HttpExchange> processor = getInboundProcessor();
-        if (processor != null) {
-            // lets route straight to our processor
-            processor.onExchange(exchange);
-        }
-        else {
-            // we need an external HTTP client such as commons-httpclient
-            // TODO
-        }
+    public Producer<HttpExchange> createProducer() throws Exception {
+        return startService(new DefaultProducer<HttpExchange>(this) {
+            public void onExchange(HttpExchange exchange) {
+                /** TODO */
+            }
+        });
+    }
+
+    public Consumer<HttpExchange> createConsumer(Processor<HttpExchange> processor) throws Exception {
+        // TODO
+        return startService(new DefaultConsumer<HttpExchange>(this, processor) {});
     }
 
     public HttpExchange createExchange() {

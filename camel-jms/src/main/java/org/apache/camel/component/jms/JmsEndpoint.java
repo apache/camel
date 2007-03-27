@@ -18,12 +18,18 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Producer;
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
+import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -33,45 +39,35 @@ import javax.jms.Session;
 /**
  * @version $Revision:520964 $
  */
-public class JmsEndpoint extends DefaultEndpoint<JmsExchange> implements MessageListener {
+public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     private static final Log log = LogFactory.getLog(JmsEndpoint.class);
     private JmsBinding binding;
-    private JmsOperations template;
-    private AbstractMessageListenerContainer listenerContainer;
+    private JmsTemplate template;
     private String destination;
 
-    public JmsEndpoint(String endpointUri, CamelContext container, String destination, JmsOperations template, AbstractMessageListenerContainer listenerContainer) {
+    public JmsEndpoint(String endpointUri, CamelContext container, String destination, JmsTemplate template) {
         super(endpointUri, container);
         this.destination = destination;
         this.template = template;
-        this.listenerContainer = listenerContainer;
-        this.listenerContainer.setMessageListener(this);
     }
 
-    public void onMessage(Message message) {
-        if (log.isDebugEnabled()) {
-            log.debug(JmsEndpoint.this + " receiving JMS message: " + message);
-        }
-        JmsExchange exchange = createExchange(message);
-        getInboundProcessor().onExchange(exchange);
+    public Producer<JmsExchange> createProducer() throws Exception {
+        return startService(new JmsProducer(this, template));
     }
 
-    public void onExchange(Exchange exchange) {
-        // lets convert to the type of an exchange
-        JmsExchange jmsExchange = convertTo(JmsExchange.class, exchange);
-        onExchange(jmsExchange);
-    }
+    public Consumer<JmsExchange> createConsumer(Processor<JmsExchange> processor) throws Exception {
+        AbstractMessageListenerContainer listenerContainer = createMessageListenerContainer(template);
+        listenerContainer.setDestinationName(destination);
+        listenerContainer.setPubSubDomain(template.isPubSubDomain());
+        listenerContainer.setConnectionFactory(template.getConnectionFactory());
 
-    public void onExchange(final JmsExchange exchange) {
-        template.send(destination, new MessageCreator() {
-            public Message createMessage(Session session) throws JMSException {
-                Message message = getBinding().makeJmsMessage(exchange.getIn(), session);
-                if (log.isDebugEnabled()) {
-                    log.debug(JmsEndpoint.this + " sending JMS message: " + message);
-                }
-                return message;
-            }
-        });
+        // TODO support optional parameters
+        // selector
+        // messageConverter
+        // durableSubscriberName
+
+
+        return startService(new JmsConsumer(this, processor, listenerContainer));
     }
 
     public JmsExchange createExchange() {
@@ -104,18 +100,18 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> implements Message
         return template;
     }
 
-    // Implementation methods
-    //-------------------------------------------------------------------------
-    protected void doActivate() throws Exception {
-        super.doActivate();
-        listenerContainer.afterPropertiesSet();
-        listenerContainer.initialize();
-        listenerContainer.start();
+    public String getDestination() {
+        return destination;
     }
 
-    protected void doDeactivate() {
-        listenerContainer.stop();
-        listenerContainer.destroy();
-        super.doDeactivate();
+    // Implementation methods
+    //-------------------------------------------------------------------------
+
+    protected AbstractMessageListenerContainer createMessageListenerContainer(JmsTemplate template) {
+        // TODO use an enum to auto-switch container types?
+
+        //return new SimpleMessageListenerContainer();
+        return new DefaultMessageListenerContainer();
     }
+
 }

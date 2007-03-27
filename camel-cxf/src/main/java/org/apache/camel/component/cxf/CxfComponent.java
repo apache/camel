@@ -19,9 +19,17 @@ package org.apache.camel.component.cxf;
 
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.CamelContext;
+import org.apache.cxf.Bus;
+import org.apache.cxf.message.Message;
+import org.apache.cxf.message.MessageImpl;
+import org.apache.cxf.service.model.EndpointInfo;
+import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.endpoint.ServerRegistry;
+import org.apache.cxf.bus.CXFBusFactory;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URI;
@@ -44,7 +52,7 @@ public class CxfComponent extends DefaultComponent<CxfExchange> {
     public synchronized CxfEndpoint createEndpoint(String uri, String[] urlParts) throws IOException, URISyntaxException {
         CxfEndpoint endpoint = map.get(uri);
         if (endpoint == null) {
-            String remainingUrl = uri.substring("mina:".length());
+            String remainingUrl = uri.substring("cxf:".length());
             URI u = new URI(remainingUrl);
 
             String protocol = u.getScheme();
@@ -54,4 +62,21 @@ public class CxfComponent extends DefaultComponent<CxfExchange> {
         return endpoint;
     }
 
+    /*
+    protected void foo() {
+       Bus bus = CXFBusFactory.getDefaultBus();
+       ServerRegistry serverRegistry = bus.getExtension(ServerRegistry.class);
+       List<Server> servers = serverRegistry.getServers();
+
+       Server targetServer = null;
+       for (Server server : servers) {
+           targetServer = server;
+           EndpointInfo info = server.getEndpoint().getEndpointInfo();
+           String address = info.getAddress();
+
+           Message message = new MessageImpl();
+           server.getMessageObserver().onMessage(message);
+       }
+    }
+    */
 }

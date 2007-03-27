@@ -36,7 +36,7 @@ public class SplitterBuilder<E extends Exchange> extends FromBuilder<E> {
         this.valueBuilder = valueBuilder;
     }
 
-    public Processor<E> createProcessor() {
+    public Processor<E> createProcessor() throws Exception {
         // lets create a single processor for all child predicates
         Processor<E> destination = super.createProcessor();
         Expression<E> expression = valueBuilder.getExpression();

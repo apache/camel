@@ -68,7 +68,7 @@ public class ChoiceBuilder<E extends Exchange> extends FromBuilder<E> {
     }
 
     @Override
-    public Processor<E> createProcessor() {
+    public Processor<E> createProcessor() throws Exception {
         List<FilterProcessor<E>> filters = new ArrayList<FilterProcessor<E>>();
         for (WhenBuilder<E> predicateBuilder : predicateBuilders) {
             filters.add(predicateBuilder.createProcessor());

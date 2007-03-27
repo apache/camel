@@ -19,11 +19,13 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * @version $Revision$
  */
-public class FilterProcessor<E> implements Processor<E> {
+public class FilterProcessor<E> extends ServiceSupport implements Processor<E> {
     private Predicate<E> predicate;
     private Processor<E> processor;
 
@@ -49,5 +51,13 @@ public class FilterProcessor<E> implements Processor<E> {
 
     public Processor<E> getProcessor() {
         return processor;
+    }
+
+    protected void doStart() throws Exception {
+        ServiceHelper.startServices(processor);
+    }
+
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(processor);
     }
 }

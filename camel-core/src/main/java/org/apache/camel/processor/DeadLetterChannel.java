@@ -19,6 +19,8 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -29,9 +31,8 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class DeadLetterChannel<E extends Exchange> implements ErrorHandler<E> {
+public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implements ErrorHandler<E> {
     public static final String REDELIVERY_COUNT_HEADER = "org.apache.camel.redeliveryCount";
-
     private static final transient Log log = LogFactory.getLog(DeadLetterChannel.class);
     private Processor<E> output;
     private Processor<E> deadLetter;
@@ -79,7 +80,6 @@ public class DeadLetterChannel<E extends Exchange> implements ErrorHandler<E> {
         deadLetter.onExchange(exchange);
     }
 
-
     // Properties
     //-------------------------------------------------------------------------
 
@@ -116,7 +116,7 @@ public class DeadLetterChannel<E extends Exchange> implements ErrorHandler<E> {
      * Sets the message header name to be used to append the redelivery count value when a message has been redelivered
      *
      * @param redeliveryCountHeader the header name to use to append the redelivery count or null if you wish to disable
-     * this feature
+     *                              this feature
      */
     public void setRedeliveryCountHeader(String redeliveryCountHeader) {
         this.redeliveryCountHeader = redeliveryCountHeader;
@@ -133,9 +133,9 @@ public class DeadLetterChannel<E extends Exchange> implements ErrorHandler<E> {
 
     protected void sleep(long redeliveryDelay) {
         if (redeliveryDelay > 0) {
-        if (log.isDebugEnabled()) {
-            log.debug("Sleeping for: " + redeliveryDelay + " until attempting redelivery");
-        }
+            if (log.isDebugEnabled()) {
+                log.debug("Sleeping for: " + redeliveryDelay + " until attempting redelivery");
+            }
             try {
                 Thread.sleep(redeliveryDelay);
             }
@@ -145,5 +145,13 @@ public class DeadLetterChannel<E extends Exchange> implements ErrorHandler<E> {
                 }
             }
         }
+    }
+
+    protected void doStart() throws Exception {
+        ServiceHelper.startServices(output, deadLetter);
+    }
+
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(deadLetter, output);
     }
 }

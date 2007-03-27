@@ -15,13 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel;
 
 /**
- * Used to configure the logging levels
+ * Represents the core lifecycle API for POJOs which can be started and stopped
  *
  * @version $Revision$
  */
-public enum LoggingLevel {
-    DEBUG, ERROR, FATAL, INFO, TRACE, WARN;
+public interface Service {
+
+    void start() throws Exception;
+
+    void stop() throws Exception;
 }

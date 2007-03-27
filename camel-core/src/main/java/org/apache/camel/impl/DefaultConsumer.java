@@ -15,22 +15,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder;
+package org.apache.camel.impl;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * @version $Revision$
  */
-public interface ErrorHandlerBuilder<E extends Exchange> {
-    /**
-     * Creates a copy of this builder
-     */
-    ErrorHandlerBuilder<E> copy();
+public class DefaultConsumer<E extends Exchange> extends ServiceSupport implements Consumer<E> {
+    private Endpoint<E> endpoint;
+    private Processor<E> processor;
 
-    /**
-     * Creates the error handler interceptor
-     */
-    Processor<E> createErrorHandler(Processor<E> processor) throws Exception;
+    public DefaultConsumer(Endpoint<E> endpoint, Processor<E> processor) {
+        this.endpoint = endpoint;
+        this.processor = processor;
+    }
+
+    public Endpoint<E> getEndpoint() {
+        return endpoint;
+    }
+
+    public Processor<E> getProcessor() {
+        return processor;
+    }
+
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(processor);
+    }
+
+    protected void doStart() throws Exception {
+        ServiceHelper.startServices(processor);
+    }
 }

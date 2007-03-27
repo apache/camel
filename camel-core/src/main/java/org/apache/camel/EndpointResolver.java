@@ -21,7 +21,7 @@ package org.apache.camel;
  *
  * @version $Revision$
  */
-public interface EndpointResolver<E> {
+public interface EndpointResolver<E extends Exchange> {
 
     /**
      * Resolves the component for a given uri or returns null if now component handles it.

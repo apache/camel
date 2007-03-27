@@ -23,17 +23,12 @@ package org.apache.camel;
  *
  * @version $Revision$
  */
-public interface Endpoint<E> extends Processor<E> {
+public interface Endpoint<E extends Exchange> {
 
     /**
      * Returns the string representation of the endpoint URI
      */
     public String getEndpointUri();
-
-    /**
-     * Sends an outbound exchange to the endpoint
-     */
-    void onExchange(E exchange);
     
     /**
      * Create a new exchange for communicating with this endpoint
@@ -69,4 +64,18 @@ public interface Endpoint<E> extends Processor<E> {
      * @return the context which created the endpoint
      */
     CamelContext getContext();
+
+    /**
+     * Creates a new producer which is used send messages into the endpoint
+     *
+     * @return a newly created producer
+     */
+    Producer<E> createProducer() throws Exception;
+
+    /**
+     * Creates a new consumer which consumes messages from the endpoint using the given processor
+     *
+     * @return a newly created consumer
+     */
+    Consumer<E> createConsumer(Processor<E> processor) throws Exception;
 }

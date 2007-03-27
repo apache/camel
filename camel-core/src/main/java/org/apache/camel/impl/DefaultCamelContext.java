@@ -18,7 +18,10 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.*;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -34,14 +38,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @version $Revision: 520517 $
  * @org.apache.xbean.XBean element="container" rootElement="true"
  */
-public class DefaultCamelContext implements CamelContext {
+public class DefaultCamelContext implements CamelContext, Service {
+    private static final transient Log log = LogFactory.getLog(DefaultCamelContext.class);
     private Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
     private Map<String, Component> components = new HashMap<String, Component>();
     private List<EndpointResolver> resolvers = new CopyOnWriteArrayList<EndpointResolver>();
     private List<Route> routes;
+    private List<Service> servicesToClose = new ArrayList<Service>();
     private TypeConverter typeConverter;
     private EndpointResolver endpointResolver;
     private ExchangeConverter exchangeConverter;
+    private AtomicBoolean started = new AtomicBoolean(false);
 
     /**
      * Adds a component to the container.
@@ -107,6 +114,16 @@ public class DefaultCamelContext implements CamelContext {
 
     // Endpoint Management Methods
     //-----------------------------------------------------------------------
+    public void start() throws Exception {
+        activateEndpoints();
+    }
+
+    public void stop() throws Exception {
+        deactivateEndpoints();
+    }
+
+    // Endpoint Management Methods
+    //-----------------------------------------------------------------------
 
     public Collection<Endpoint> getEndpoints() {
         synchronized (endpoints) {
@@ -161,17 +178,26 @@ public class DefaultCamelContext implements CamelContext {
      */
     public void activateEndpoints() throws Exception {
         for (Route<Exchange> route : routes) {
-            route.getEndpoint().activate(route.getProcessor());
+            Processor<Exchange> processor = route.getProcessor();
+            Consumer<Exchange> consumer = route.getEndpoint().createConsumer(processor);
+            if (consumer != null) {
+                consumer.start();
+                servicesToClose.add(consumer);
+            }
+            if (processor instanceof Service) {
+                Service service = (Service) processor;
+                service.start();
+                servicesToClose.add(service);
+            }
         }
     }
 
     /**
      * Deactivates all the starting endpoints in that were added as routes.
      */
-    public void deactivateEndpoints() {
-        for (Route<Exchange> route : routes) {
-            route.getEndpoint().deactivate();
-        }
+    public void deactivateEndpoints() throws Exception {
+        ServiceHelper.stopServices(servicesToClose);
+
     }
 
     // Route Management Methods
@@ -184,21 +210,6 @@ public class DefaultCamelContext implements CamelContext {
         this.routes = routes;
     }
 
-    public void setRoutes(RouteBuilder builder) {
-        // lets now add the routes from the builder
-        builder.setContext(this);
-        setRoutes(builder.getRouteList());
-    }
-
-    public void setRoutes(final RouteFactory factory) {
-        RouteBuilder builder = new RouteBuilder(this) {
-            public void configure() {
-                factory.build(this);
-            }
-        };
-        setRoutes(builder);
-    }
-
     public void addRoutes(List<Route> routes) {
         if (this.routes == null) {
             this.routes = new ArrayList<Route>(routes);
@@ -208,13 +219,13 @@ public class DefaultCamelContext implements CamelContext {
         }
     }
 
-    public void addRoutes(RouteBuilder builder) {
+    public void addRoutes(RouteBuilder builder) throws Exception {
         // lets now add the routes from the builder
         builder.setContext(this);
         addRoutes(builder.getRouteList());
     }
 
-    public void addRoutes(final RouteFactory factory) {
+    public void addRoutes(final RouteFactory factory) throws Exception {
         RouteBuilder builder = new RouteBuilder(this) {
             public void configure() {
                 factory.build(this);

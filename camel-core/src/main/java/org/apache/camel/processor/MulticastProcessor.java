@@ -20,7 +20,10 @@ package org.apache.camel.processor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.impl.ServiceSupport;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -29,40 +32,74 @@ import java.util.Collection;
  *
  * @version $Revision$
  */
-public class MulticastProcessor<E extends Exchange> implements Processor<E> {
-    private Collection<Endpoint<E>> endpoints;
+public class MulticastProcessor<E extends Exchange> extends ServiceSupport implements Processor<E> {
+    private Collection<Producer<E>> producers;
 
-    public MulticastProcessor(Collection<Endpoint<E>> endpoints) {
-        this.endpoints = endpoints;
+    /**
+     * A helper method to convert a list of endpoints into a list of processors
+     */
+    public static <E extends Exchange> Collection<Producer<E>> toProducers(Collection<Endpoint<E>> endpoints) throws Exception {
+        Collection<Producer<E>> answer = new ArrayList<Producer<E>>();
+        for (Endpoint<E> endpoint : endpoints) {
+            answer.add(endpoint.createProducer());
+        }
+        return answer;
+    }
+
+    public MulticastProcessor(Collection<Endpoint<E>> endpoints) throws Exception {
+        this.producers = toProducers(endpoints);
     }
 
     @Override
     public String toString() {
-        return "Multicast" + endpoints;
+        return "Multicast" + getEndpoints();
     }
 
     public void onExchange(E exchange) {
-        for (Endpoint<E> endpoint : endpoints) {
-            E copy = copyExchangeStrategy(endpoint, exchange);
-            endpoint.onExchange(copy);
+        for (Producer<E> producer : producers) {
+            E copy = copyExchangeStrategy(producer, exchange);
+            producer.onExchange(copy);
+        }
+    }
+
+    protected void doStop() throws Exception {
+        for (Producer<E> producer : producers) {
+            producer.stop();
+        }
+    }
+
+    protected void doStart() throws Exception {
+        for (Producer<E> producer : producers) {
+            producer.start();
         }
     }
 
     /**
-     * Returns the endpoints to multicast to
+     * Returns the producers to multicast to
+     */
+    public Collection<Producer<E>> getProducers() {
+        return producers;
+    }
+
+    /**
+     * Returns the list of endpoints
      */
     public Collection<Endpoint<E>> getEndpoints() {
-        return endpoints;
+        Collection<Endpoint<E>> answer = new ArrayList<Endpoint<E>>();
+        for (Producer<E> producer : producers) {
+            answer.add(producer.getEndpoint());
+        }
+        return answer;
     }
 
     /**
      * Strategy method to copy the exchange before sending to another endpoint. Derived classes such as the
      * {@link Pipeline} will not clone the exchange
      *
-     * @param endpoint the endpoint that the exchange will be sent to
+     * @param producer the producer that will send the exchange
      * @param exchange @return the current exchange if no copying is required such as for a pipeline otherwise a new copy of the exchange is returned.
      */
-    protected E copyExchangeStrategy(Endpoint<E> endpoint, E exchange) {
-        return endpoint.createExchange(exchange);
+    protected E copyExchangeStrategy(Producer<E> producer, E exchange) {
+        return producer.createExchange(exchange);
     }
 }

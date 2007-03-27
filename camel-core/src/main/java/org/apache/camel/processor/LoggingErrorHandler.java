@@ -19,6 +19,8 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -27,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class LoggingErrorHandler<E extends Exchange> implements ErrorHandler<E> {
+public class LoggingErrorHandler<E extends Exchange> extends ServiceSupport implements ErrorHandler<E> {
     private Processor<E> output;
     private Log log;
     private LoggingLevel level;
@@ -123,5 +125,13 @@ public class LoggingErrorHandler<E extends Exchange> implements ErrorHandler<E> 
 
     protected Object logMessage(E exchange, RuntimeException e) {
         return e + " while processing exchange: " + exchange;
+    }
+
+    protected void doStart() throws Exception {
+        ServiceHelper.startServices(output);
+    }
+
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(output);
     }
 }
