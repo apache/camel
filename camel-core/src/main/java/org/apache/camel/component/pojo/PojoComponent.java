@@ -28,39 +28,36 @@ import java.util.HashMap;
  * @version $Revision: 519973 $
  */
 public class PojoComponent implements Component<PojoExchange> {
-    protected final HashMap<String, Object> registry = new HashMap<String, Object>();
-    protected final HashMap<String, PojoEndpoint> activatedEndpoints = new HashMap<String, PojoEndpoint>();
+	
+    protected final HashMap<String, Object> services = new HashMap<String, Object>();
+    protected final HashMap<String, PojoConsumer> consumers = new HashMap<String, PojoConsumer>();
+    
     private CamelContext container;
 
-    public void registerPojo(String uri, Object pojo) {
-        registry.put(uri, pojo);
+    public void addService(String uri, Object pojo) {
+        services.put(uri, pojo);
+    }
+    public void removeService(String uri) {
+        services.remove(uri);
+        removeConsumer(uri);
+    }
+    public Object getService(String uri) {
+        return services.get(uri);
     }
 
-    public Object lookupRegisteredPojo(String uri) {
-        return registry.get(uri);
+    void addConsumer(String uri, PojoConsumer endpoint) {
+        consumers.put(uri, endpoint);
     }
-
-    public void unregisterPojo(String uri) {
-        registry.remove(uri);
-        unregisterActivation(uri);
+    void removeConsumer(String uri) {
+        consumers.remove(uri);
     }
-
-    public void registerActivation(String uri, PojoEndpoint endpoint) {
-        activatedEndpoints.put(uri, endpoint);
-    }
-
-    public void unregisterActivation(String uri) {
-        activatedEndpoints.remove(uri);
-    }
-
-    public PojoEndpoint lookupActivation(String uri) {
-        return activatedEndpoints.get(uri);
+    public PojoConsumer getConsumer(String uri) {
+        return consumers.get(uri);
     }
 
     public void setCamelContext(CamelContext container) {
         this.container = container;
     }
-
     public CamelContext getContainer() {
         return container;
     }

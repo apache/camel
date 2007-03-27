@@ -38,7 +38,7 @@ public class PollingPojoComponent extends PojoComponent{
      *             terminated.
      */
     public void registerAndSchedulePojo(String uri,Object pojo,PollingSchedule schedule){
-        super.registerPojo(uri,pojo);
+        super.addService(uri,pojo);
         schedules.put(uri,schedule);
     }
 
@@ -54,7 +54,7 @@ public class PollingPojoComponent extends PojoComponent{
      *             terminated.
      */
     public void registerAndSchedulePojo(String uri,Object pojo,Date time){
-        super.registerPojo(uri,pojo);
+        super.addService(uri,pojo);
         PollingSchedule schedule=new PollingSchedule(uri,time);
         schedules.put(uri,schedule);
     }
@@ -72,7 +72,7 @@ public class PollingPojoComponent extends PojoComponent{
      *             terminated.
      */
     public void registerAndScheulePojo(String uri,Object pojo,Date firstTime,long period){
-        super.registerPojo(uri,pojo);
+        super.addService(uri,pojo);
         PollingSchedule schedule=new PollingSchedule(uri,firstTime,period);
         schedules.put(uri,schedule);
     }
@@ -106,7 +106,7 @@ public class PollingPojoComponent extends PojoComponent{
      *             terminated.
      */
     public void registerAndScheulePojo(String uri,Object pojo,long delay,long period){
-        super.registerPojo(uri,pojo);
+        super.addService(uri,pojo);
         PollingSchedule schedule=new PollingSchedule(uri,delay,period);
         schedules.put(uri,schedule);
     }
@@ -140,7 +140,7 @@ public class PollingPojoComponent extends PojoComponent{
      *             terminated.
      */
     public void registerAndScheulePojoAtFixedRate(String uri,Object pojo,Date firstTime,long period){
-        super.registerPojo(uri,pojo);
+        super.addService(uri,pojo);
         PollingSchedule schedule=new PollingSchedule(uri,firstTime,-1,period,true);
         schedules.put(uri,schedule);
     }
@@ -175,14 +175,15 @@ public class PollingPojoComponent extends PojoComponent{
      *             terminated.
      */
     public void registerAndScheulePojoAtFixedRate(String uri,Object pojo,long delay,long period){
-        super.registerPojo(uri,pojo);
+        super.addService(uri,pojo);
         PollingSchedule schedule=new PollingSchedule(uri,null,delay,period,true);
         schedules.put(uri,schedule);
     }
 
     public void registerActivation(String uri,PojoEndpoint endpoint){
-        super.registerActivation(uri,endpoint);
-        if(endpoint instanceof PollingPojoEndpoint){
+//        super.registerActivation(uri,endpoint);
+//        if(endpoint instanceof PollingPojoEndpoint){
+        if(endpoint instanceof PojoEndpoint){
             PollingSchedule schedule=schedules.get(uri);
             if(schedule!=null){
                 schedule.activate((Runnable)endpoint);
@@ -190,8 +191,8 @@ public class PollingPojoComponent extends PojoComponent{
         }
     }
 
-    public void unregisterActivation(String uri){
-        super.unregisterActivation(uri);
+    public void removeConsumer(String uri){
+        super.removeConsumer(uri);
         PollingSchedule schedule=schedules.remove(uri);
         if(schedule!=null){
             schedule.deactivate();

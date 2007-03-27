@@ -17,14 +17,14 @@
  */
 package org.apache.camel.component.pojo;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import junit.framework.TestCase;
+
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.InterceptorProcessor;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @version $Revision: 520220 $
@@ -36,8 +36,7 @@ public class PojoRouteTest extends TestCase {
         CamelContext container = new DefaultCamelContext();
         
         PojoComponent component = new PojoComponent();
-        component.registerPojo("hello", new SayService("Hello!"));
-        component.registerPojo("bye", new SayService("Good Bye!"));
+        component.addService("bye", new SayService("Good Bye!"));
         container.addComponent("default", component);
         
         final AtomicInteger hitCount = new AtomicInteger();
@@ -52,34 +51,19 @@ public class PojoRouteTest extends TestCase {
         container.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("pojo:default:hello").intercept(tracingInterceptor).target().to("pojo:default:bye");
-                
-//                from("pojo:default:bye").intercept(tracingInterceptor).target().to("pojo:default:hello");
             }
         });
 
         
         container.activateEndpoints();
 
-        /* TODO
-        
         // now lets fire in a message
-        PojoEndpoint endpoint = (PojoEndpoint) container.resolveEndpoint("pojo:default:hello");
-        ISay proxy = (ISay) endpoint.createInboundProxy(new Class[]{ISay.class});
+        PojoConsumer consumer = component.getConsumer("hello");        
+        ISay proxy = consumer.createProxy(ISay.class);
         String rc = proxy.say();
         assertEquals("Good Bye!", rc);
-
-        try {
-			endpoint = (PojoEndpoint) container.resolveEndpoint("pojo:default:bye");
-			proxy = (ISay) endpoint.createInboundProxy(new Class[]{ISay.class});
-			rc = proxy.say();
-			assertEquals("Hello!", rc);
-            fail("Should have thrown an exception as we are using an inactive endpoint");
-
-        } catch (IllegalStateException expected) {
-			// since bye is not active.
-		}
-		*/
-
+        assertEquals(1, hitCount.get());
+        
         container.deactivateEndpoints();
     }
 }
