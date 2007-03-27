@@ -27,7 +27,6 @@ import java.util.Set;
  * @version $Revision$
  */
 public class CxfBinding {
-
     public Object extractBodyFromCxf(CxfExchange exchange, Message message) {
         //  TODO how do we choose a format?
         Set<Class<?>> contentFormats = message.getContentFormats();

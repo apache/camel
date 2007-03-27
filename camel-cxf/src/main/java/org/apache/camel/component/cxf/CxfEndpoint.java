@@ -18,12 +18,12 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.Consumer;
+import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.impl.DefaultConsumer;
 
 /**
  * The endpoint in the service engine
@@ -46,7 +46,8 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     }
 
     public Consumer<CxfExchange> createConsumer(Processor<CxfExchange> processor) throws Exception {
-        return startService(new DefaultConsumer<CxfExchange>(this, processor) {});
+        return startService(new DefaultConsumer<CxfExchange>(this, processor) {
+        });
     }
 
     public CxfExchange createExchange() {

@@ -18,10 +18,10 @@
 package org.apache.camel.component.cxf.transport;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.Endpoint;
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.configuration.Configurable;
@@ -48,7 +48,7 @@ import java.util.logging.Logger;
  * @version $Revision$
  */
 public class CamelDestination extends AbstractDestination implements Configurable {
-    protected static final String BASE_BEAN_NAME_SUFFIX = ".jms-destination-base";
+    protected static final String BASE_BEAN_NAME_SUFFIX = ".camel-destination-base";
     private static final Logger LOG = LogUtils.getL7dLogger(CamelDestination.class);
     CamelContext camelContext;
     String camelUri;
@@ -95,7 +95,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     }
 
     public void deactivate() {
-            base.close();
+        base.close();
     }
 
     public void shutdown() {
@@ -112,7 +112,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         MessageImpl inMessage = new MessageImpl();
         inMessage.setContent(InputStream.class, new ByteArrayInputStream(bytes));
         base.populateIncomingContext(exchange, inMessage, CamelConstants.CAMEL_SERVER_REQUEST_HEADERS);
-        //inMessage.put(JMSConstants.CAMEL_SERVER_RESPONSE_HEADERS, new JMSMessageHeadersType());
+        //inMessage.put(CamelConstants.CAMEL_SERVER_RESPONSE_HEADERS, new CamelMessageHeadersType());
         inMessage.put(CamelConstants.CAMEL_REQUEST_MESSAGE, exchange);
 
         inMessage.setDestination(this);
@@ -122,7 +122,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     }
 
     public String getBeanName() {
-        return endpointInfo.getName().toString() + ".jms-destination";
+        return endpointInfo.getName().toString() + ".camel-destination";
     }
 
     private void initConfig() {

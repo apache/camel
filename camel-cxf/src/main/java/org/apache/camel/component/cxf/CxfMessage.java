@@ -93,7 +93,7 @@ public class CxfMessage extends DefaultMessage {
     @Override
     protected void populateInitialHeaders(Map<String, Object> map) {
         if (cxfMessage != null) {
-            Set<Map.Entry<String,Object>> entries = cxfMessage.entrySet();
+            Set<Map.Entry<String, Object>> entries = cxfMessage.entrySet();
             for (Map.Entry<String, Object> entry : entries) {
                 String name = entry.getKey();
                 Object value = entry.getValue();

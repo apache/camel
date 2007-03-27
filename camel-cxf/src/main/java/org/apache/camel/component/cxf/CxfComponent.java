@@ -17,24 +17,14 @@
  */
 package org.apache.camel.component.cxf;
 
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.CamelContext;
-import org.apache.cxf.Bus;
-import org.apache.cxf.message.Message;
-import org.apache.cxf.message.MessageImpl;
-import org.apache.cxf.service.model.EndpointInfo;
-import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.endpoint.ServerRegistry;
-import org.apache.cxf.bus.CXFBusFactory;
+import org.apache.camel.impl.DefaultComponent;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URI;
-import java.net.SocketAddress;
-import java.net.InetSocketAddress;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @version $Revision$

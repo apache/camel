@@ -17,8 +17,8 @@
  */
 package org.apache.camel.component.cxf.transport;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.util.CamelClient;
 import org.apache.cxf.Bus;
 import org.apache.cxf.message.Message;
@@ -42,10 +42,9 @@ public class CamelTransportBase {
         this.client = new CamelClient<Exchange>(camelContext);
     }
 
-    public void populateIncomingContext(Exchange exchange, MessageImpl inMessage, String jmsServerRequestHeaders) {
+    public void populateIncomingContext(Exchange exchange, MessageImpl inMessage, String camelServerRequestHeaders) {
 
     }
-
 
     public String getReplyDestination() {
         return replyDestination;
@@ -70,18 +69,17 @@ public class CamelTransportBase {
     /**
      * Populates a Camel exchange with a payload
      *
-     * @param payload the message payload, expected to be either of type
-     * String or byte[] depending on payload type
-     * @param replyTo the ReplyTo destination if any
+     * @param payload  the message payload, expected to be either of type
+     *                 String or byte[] depending on payload type
+     * @param replyTo  the ReplyTo destination if any
      * @param exchange the underlying exchange to marshal to
      */
-    protected void marshal(Object payload, String replyTo,   Exchange exchange) {
+    protected void marshal(Object payload, String replyTo, Exchange exchange) {
         org.apache.camel.Message message = exchange.getIn();
         message.setBody(payload);
         if (replyTo != null) {
             message.setHeader(CamelConstants.CAMEL_CORRELATION_ID, replyTo);
         }
-
     }
 
     /**
@@ -92,33 +90,33 @@ public class CamelTransportBase {
     }
 
     /*
-    protected JMSMessageHeadersType populateIncomingContext(javax.jms.Message message,
+    protected CamelMessageHeadersType populateIncomingContext(javax.camel.Message message,
                                                             org.apache.cxf.message.Message inMessage,
-                                                     String headerType)  throws JMSException {
-        JMSMessageHeadersType headers = null;
+                                                     String headerType)  throws CamelException {
+        CamelMessageHeadersType headers = null;
 
-        headers = (JMSMessageHeadersType)inMessage.get(headerType);
+        headers = (CamelMessageHeadersType)inMessage.get(headerType);
 
         if (headers == null) {
-            headers = new JMSMessageHeadersType();
+            headers = new CamelMessageHeadersType();
             inMessage.put(headerType, headers);
         }
 
-        headers.setJMSCorrelationID(message.getJMSCorrelationID());
-        headers.setJMSDeliveryMode(new Integer(message.getJMSDeliveryMode()));
-        headers.setJMSExpiration(new Long(message.getJMSExpiration()));
-        headers.setJMSMessageID(message.getJMSMessageID());
-        headers.setJMSPriority(new Integer(message.getJMSPriority()));
-        headers.setJMSRedelivered(Boolean.valueOf(message.getJMSRedelivered()));
-        headers.setJMSTimeStamp(new Long(message.getJMSTimestamp()));
-        headers.setJMSType(message.getJMSType());
+        headers.setCamelCorrelationID(message.getCamelCorrelationID());
+        headers.setCamelDeliveryMode(new Integer(message.getCamelDeliveryMode()));
+        headers.setCamelExpiration(new Long(message.getCamelExpiration()));
+        headers.setCamelMessageID(message.getCamelMessageID());
+        headers.setCamelPriority(new Integer(message.getCamelPriority()));
+        headers.setCamelRedelivered(Boolean.valueOf(message.getCamelRedelivered()));
+        headers.setCamelTimeStamp(new Long(message.getCamelTimestamp()));
+        headers.setCamelType(message.getCamelType());
 
-        List<JMSPropertyType> props = headers.getProperty();
+        List<CamelPropertyType> props = headers.getProperty();
         Enumeration enm = message.getPropertyNames();
         while (enm.hasMoreElements()) {
             String name = (String)enm.nextElement();
             String val = message.getStringProperty(name);
-            JMSPropertyType prop = new JMSPropertyType();
+            CamelPropertyType prop = new CamelPropertyType();
             prop.setName(name);
             prop.setValue(val);
             props.add(prop);
@@ -127,24 +125,24 @@ public class CamelTransportBase {
         return headers;
     }
 
-    protected int getJMSDeliveryMode(JMSMessageHeadersType headers) {
+    protected int getCamelDeliveryMode(CamelMessageHeadersType headers) {
         int deliveryMode = Message.DEFAULT_DELIVERY_MODE;
 
-        if (headers != null && headers.isSetJMSDeliveryMode()) {
-            deliveryMode = headers.getJMSDeliveryMode();
+        if (headers != null && headers.isSetCamelDeliveryMode()) {
+            deliveryMode = headers.getCamelDeliveryMode();
         }
         return deliveryMode;
     }
 
-    protected int getJMSPriority(JMSMessageHeadersType headers) {
+    protected int getCamelPriority(CamelMessageHeadersType headers) {
         int priority = Message.DEFAULT_PRIORITY;
-        if (headers != null && headers.isSetJMSPriority()) {
-            priority = headers.getJMSPriority();
+        if (headers != null && headers.isSetCamelPriority()) {
+            priority = headers.getCamelPriority();
         }
         return priority;
     }
 
-    protected long getTimeToLive(JMSMessageHeadersType headers) {
+    protected long getTimeToLive(CamelMessageHeadersType headers) {
         long ttl = -1;
         if (headers != null && headers.isSetTimeToLive()) {
             ttl = headers.getTimeToLive();
@@ -152,34 +150,34 @@ public class CamelTransportBase {
         return ttl;
     }
 
-    protected String getCorrelationId(JMSMessageHeadersType headers) {
+    protected String getCorrelationId(CamelMessageHeadersType headers) {
         String correlationId  = null;
         if (headers != null
-            && headers.isSetJMSCorrelationID()) {
-            correlationId = headers.getJMSCorrelationID();
+            && headers.isSetCamelCorrelationID()) {
+            correlationId = headers.getCamelCorrelationID();
         }
         return correlationId;
     }
 
 
-    protected String getAddrUriFromJMSAddrPolicy() {
-        AddressType jmsAddressPolicy = transport.getJMSAddress();
-        return "jms:" + jmsAddressPolicy.getJndiConnectionFactoryName()
+    protected String getAddrUriFromCamelAddrPolicy() {
+        AddressType camelAddressPolicy = transport.getCamelAddress();
+        return "camel:" + camelAddressPolicy.getJndiConnectionFactoryName()
                         + "#"
-                        + jmsAddressPolicy.getJndiDestinationName();
+                        + camelAddressPolicy.getJndiDestinationName();
     }
 
-    protected String getReplyTotAddrUriFromJMSAddrPolicy() {
-        AddressType jmsAddressPolicy = transport.getJMSAddress();
-        return "jms:"
-                        + jmsAddressPolicy.getJndiConnectionFactoryName()
+    protected String getReplyTotAddrUriFromCamelAddrPolicy() {
+        AddressType camelAddressPolicy = transport.getCamelAddress();
+        return "camel:"
+                        + camelAddressPolicy.getJndiConnectionFactoryName()
                         + "#"
-                        + jmsAddressPolicy.getJndiReplyDestinationName();
+                        + camelAddressPolicy.getJndiReplyDestinationName();
     }
 
     protected boolean isDestinationStyleQueue() {
-        return JMSConstants.CAMEL_QUEUE.equals(
-            transport.getJMSAddress().getDestinationStyle().value());
+        return CamelConstants.CAMEL_QUEUE.equals(
+            transport.getCamelAddress().getDestinationStyle().value());
     }
     */
 }
