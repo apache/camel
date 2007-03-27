@@ -16,17 +16,14 @@
  */
 package org.apache.camel.component.pojo;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Producer;
+import java.lang.reflect.InvocationTargetException;
+
 import org.apache.camel.Consumer;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
-
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 
 /**
  * Represents a pojo endpoint that uses reflection
@@ -35,31 +32,37 @@ import java.lang.reflect.Proxy;
  * @version $Revision: 519973 $
  */
 public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
-    private final Object pojo;
     private final PojoComponent component;
+	private final String pojoId;
 
-    public PojoEndpoint(String uri, CamelContext container, PojoComponent component, Object pojo) {
-        super(uri, container);
+    public PojoEndpoint(String uri, String pojoId, PojoComponent component) {
+        super(uri, component.getContainer());
+		this.pojoId = pojoId;
         this.component = component;
-        this.pojo = pojo;
     }
 
     public Producer<PojoExchange> createProducer() throws Exception {
+        final Object pojo = component.getService(pojoId);
+        if( pojo == null )
+        	throw new NoSuchEndpointException(getEndpointUri());
+        
         return startService(new DefaultProducer<PojoExchange>(this) {
             public void onExchange(PojoExchange exchange) {
-                invoke(exchange);
+                invoke(pojo, exchange);
             }
         });
     }
 
-    public Consumer<PojoExchange> createConsumer(Processor<PojoExchange> processor) throws Exception {
-        return startService(new PojoConsumer(this, processor, pojo));
+    public Consumer<PojoExchange> createConsumer(Processor<PojoExchange> processor) throws Exception {    	
+    	PojoConsumer consumer = new PojoConsumer(this, processor);
+        return startService(consumer);
     }
 
     /**
      * This causes us to invoke the endpoint Pojo using reflection.
+     * @param pojo 
      */
-    public void invoke(PojoExchange exchange) {
+    public void invoke(Object pojo, PojoExchange exchange) {
         PojoInvocation invocation = exchange.getInvocation();
         try {
             Object response = invocation.getMethod().invoke(pojo, invocation.getArgs());
@@ -80,14 +83,12 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
         return new PojoExchange(getContext());
     }
 
-    @Override
-    protected void doActivate() {
-        component.registerActivation(getEndpointUri(), this);
-    }
+	public PojoComponent getComponent() {
+		return component;
+	}
 
-    @Override
-    protected void doDeactivate() {
-        component.unregisterActivation(getEndpointUri());
-    }
+	public String getPojoId() {
+		return pojoId;
+	}
 
 }

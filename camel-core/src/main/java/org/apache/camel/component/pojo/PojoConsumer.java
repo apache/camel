@@ -17,49 +17,86 @@
  */
 package org.apache.camel.component.pojo;
 
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
-
-import java.lang.reflect.Proxy;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
+import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.impl.DefaultConsumer;
 
 /**
  * @version $Revision$
  */
-public class PojoConsumer extends DefaultConsumer<PojoExchange> {
-    private final Object pojo;
+public class PojoConsumer extends DefaultConsumer<PojoExchange> implements InvocationHandler {
 
-    public PojoConsumer(Endpoint<PojoExchange> endpoint, Processor<PojoExchange> processor, Object pojo) {
+    private final PojoEndpoint endpoint;
+
+	public PojoConsumer(PojoEndpoint endpoint, Processor<PojoExchange> processor) {
         super(endpoint, processor);
-        this.pojo = pojo;
+		this.endpoint = endpoint;
+    }
+    
+    @Override
+    protected void doStart() throws Exception {
+    	PojoComponent component = endpoint.getComponent();
+    	PojoConsumer consumer = component.getConsumer(endpoint.getPojoId());
+    	if( consumer != null ) {
+    		throw new RuntimeCamelException("There is a consumer already registered for endpoint: "+endpoint.getEndpointUri());
+    	}
+    	component.addConsumer(endpoint.getPojoId(), this);    	
     }
 
-
+    @Override
+    protected void doStop() throws Exception {
+    	PojoComponent component = endpoint.getComponent();
+    	component.removeConsumer(endpoint.getPojoId());    	
+    }
+    
     /**
-     * Creates a Proxy object that can be used to deliver inbound PojoExchanges.
-     *
-     * @param interfaces
-     * @return
+     * Creates a Proxy which generates inbound exchanges on the consumer.
      */
-    public Object createInboundProxy(Class interfaces[]) {
-        return Proxy.newProxyInstance(pojo.getClass().getClassLoader(), interfaces, new InvocationHandler() {
-            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                if (!isStarted()) {
-                    throw new IllegalStateException("The endpoint is not active: " + getEndpoint().getEndpointUri());
-                }
-                PojoInvocation invocation = new PojoInvocation(proxy, method, args);
-                PojoExchange exchange = getEndpoint().createExchange();
-                exchange.setInvocation(invocation);
-                getProcessor().onExchange(exchange);
-                Throwable fault = exchange.getException();
-                if (fault != null) {
-                    throw new InvocationTargetException(fault);
-                }
-                return exchange.getOut().getBody();
-            }
-        });
+    public Object createProxy(ClassLoader cl, Class interfaces[]) {
+        return Proxy.newProxyInstance(cl, interfaces, this);
     }
+    /**
+     * Creates a Proxy which generates inbound exchanges on the consumer.
+     */
+    public Object createProxy(Class interfaces[]) {
+    	if( interfaces.length < 1 ) {
+    		throw new IllegalArgumentException("You must provide at least 1 interface class.");
+    	}
+        return createProxy(interfaces[0].getClassLoader(), interfaces);
+    }    
+    /**
+     * Creates a Proxy which generates inbound exchanges on the consumer.
+     */
+    @SuppressWarnings("unchecked")
+	public <T> T createProxy(ClassLoader cl, Class<T> interfaceClass) {
+        return (T) createProxy(cl, new Class[]{interfaceClass});
+    }
+    /**
+     * Creates a Proxy which generates inbound exchanges on the consumer.
+     */
+    @SuppressWarnings("unchecked")
+	public <T> T createProxy(Class<T> interfaceClass) {
+        return (T) createProxy(new Class[]{interfaceClass});
+    }
+
+
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        if (!isStarted()) {
+            throw new IllegalStateException("The endpoint is not active: " + getEndpoint().getEndpointUri());
+        }
+        PojoInvocation invocation = new PojoInvocation(proxy, method, args);
+        PojoExchange exchange = getEndpoint().createExchange();
+        exchange.setInvocation(invocation);
+        getProcessor().onExchange(exchange);
+        Throwable fault = exchange.getException();
+        if (fault != null) {
+            throw new InvocationTargetException(fault);
+        }
+        return exchange.getOut().getBody();
+	}
 }
