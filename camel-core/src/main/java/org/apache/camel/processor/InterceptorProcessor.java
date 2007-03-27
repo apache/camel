@@ -18,21 +18,22 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Processor;
+import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * @version $Revision: 519941 $
  */
-public class InterceptorProcessor<E> implements Processor<E> {
-
+public class InterceptorProcessor<E> extends ServiceSupport implements Processor<E> {
     protected Processor<E> next;
 
-	public InterceptorProcessor() {
+    public InterceptorProcessor() {
     }
 
     public void onExchange(E exchange) {
-       if( next != null ) {
-    	   next.onExchange(exchange);
-       }
+        if (next != null) {
+            next.onExchange(exchange);
+        }
     }
 
     @Override
@@ -40,10 +41,19 @@ public class InterceptorProcessor<E> implements Processor<E> {
         return "intercept(" + next + ")";
     }
 
-	public Processor<E> getNext() {
-		return next;
-	}
-	public void setNext(Processor<E> next) {
-		this.next = next;
-	}
+    public Processor<E> getNext() {
+        return next;
+    }
+
+    public void setNext(Processor<E> next) {
+        this.next = next;
+    }
+
+    protected void doStart() throws Exception {
+        ServiceHelper.startServices(next);
+    }
+
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(next);
+    }
 }

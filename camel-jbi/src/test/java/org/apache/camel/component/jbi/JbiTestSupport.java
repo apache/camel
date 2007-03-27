@@ -22,6 +22,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TestSupport;
+import org.apache.camel.Processor;
+import org.apache.camel.util.ProducerCache;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.servicemix.jbi.container.ActivationSpec;
@@ -43,17 +45,19 @@ public abstract class JbiTestSupport extends TestSupport {
     protected CountDownLatch latch = new CountDownLatch(1);
     protected Endpoint<Exchange> endpoint;
     protected String startEndpointUri = "jbi:endpoint:serviceNamespace:serviceA:endpointA";
+    protected ProducerCache<Exchange> client = new ProducerCache<Exchange>();
 
     /**
      * Sends an exchange to the endpoint
      */
-    protected void sendExchange(Object expectedBody) {
-        // now lets fire in a message
-        Exchange exchange = endpoint.createExchange();
-        Message in = exchange.getIn();
-        in.setBody(expectedBody);
-        in.setHeader("cheese", 123);
-        endpoint.onExchange(exchange);
+    protected void sendExchange(final Object expectedBody) {
+        client.send(endpoint, new Processor<Exchange>() {
+            public void onExchange(Exchange exchange) {
+                Message in = exchange.getIn();
+                in.setBody(expectedBody);
+                in.setHeader("cheese", 123);
+            }
+        });
     }
 
     protected Object assertReceivedValidExchange(Class type) throws Exception {
@@ -96,11 +100,18 @@ public abstract class JbiTestSupport extends TestSupport {
         camelContext.addComponent("jbi", component);
 
         // lets add some routes
-        camelContext.setRoutes(createRoutes());
+        camelContext.addRoutes(createRoutes());
         endpoint = camelContext.resolveEndpoint(startEndpointUri);
         assertNotNull("No endpoint found!", endpoint);
 
         camelContext.activateEndpoints();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        client.stop();
+        camelContext.deactivateEndpoints();
+        super.tearDown();
     }
 
     protected abstract void appendJbiActivationSpecs(List<ActivationSpec> activationSpecList);

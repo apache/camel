@@ -38,7 +38,7 @@ public class MulticastBuilder<E extends Exchange> extends FromBuilder<E> {
     }
 
     @Override
-    public Processor<E> createProcessor() {
+    public Processor<E> createProcessor() throws Exception {
         return new MulticastProcessor<E>(endpoints);
     }
 }

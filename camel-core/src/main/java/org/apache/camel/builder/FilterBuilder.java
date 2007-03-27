@@ -52,7 +52,7 @@ public class FilterBuilder<E extends Exchange> extends FromBuilder<E> {
         return predicate;
     }
 
-    public FilterProcessor<E> createProcessor() {
+    public FilterProcessor<E> createProcessor() throws Exception {
         // lets create a single processor for all child predicates
         Processor<E> childProcessor = super.createProcessor();
         return new FilterProcessor<E>(predicate, childProcessor);

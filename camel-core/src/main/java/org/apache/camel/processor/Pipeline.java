@@ -20,45 +20,44 @@ package org.apache.camel.processor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 
 import java.util.Collection;
 
 /**
  * Creates a Pipeline pattern where the output of the previous step is sent as input to the next step when working
  * with request/response message exchanges.
- *  
+ *
  * @version $Revision$
  */
-public class Pipeline<E extends Exchange> implements Processor<E> {
-    private Collection<Endpoint<E>> endpoints;
-
-    public Pipeline(Collection<Endpoint<E>> endpoints) {
-        this.endpoints = endpoints;
+public class Pipeline<E extends Exchange> extends MulticastProcessor<E> implements Processor<E> {
+    public Pipeline(Collection<Endpoint<E>> endpoints) throws Exception {
+        super(endpoints);
     }
 
     public void onExchange(E exchange) {
         E nextExchange = exchange;
         boolean first = true;
-        for (Endpoint<E> endpoint : endpoints) {
+        for (Producer<E> producer : getProducers()) {
             if (first) {
                 first = false;
             }
             else {
-                nextExchange = createNextExchange(endpoint, nextExchange);
+                nextExchange = createNextExchange(producer, nextExchange);
             }
-            endpoint.onExchange(nextExchange);
+            producer.onExchange(nextExchange);
         }
     }
 
     /**
      * Strategy method to create the next exchange from the
      *
-     * @param endpoint the endpoint the exchange will be sent to
+     * @param producer         the producer used to send to the endpoint
      * @param previousExchange the previous exchange
      * @return a new exchange
      */
-    protected E createNextExchange(Endpoint<E> endpoint, E previousExchange) {
-        E answer = endpoint.createExchange(previousExchange);
+    protected E createNextExchange(Producer<E> producer, E previousExchange) {
+        E answer = producer.createExchange(previousExchange);
 
         // now lets set the input of the next exchange to the output of the previous message if it is not null
         Object output = previousExchange.getOut().getBody();
@@ -81,6 +80,6 @@ public class Pipeline<E extends Exchange> implements Processor<E> {
 
     @Override
     public String toString() {
-        return "Pipeline" + endpoints;
+        return "Pipeline" + getEndpoints();
     }
 }

@@ -20,6 +20,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.Consumer;
+import org.apache.camel.Service;
 import org.apache.camel.util.ObjectHelper;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -125,5 +128,10 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
      * Called at most once by the container to deactivate the endpoint
      */
     protected void doDeactivate() {
+    }
+
+    protected <T extends Service> T startService(T service) throws Exception {
+        service.start();
+        return service;
     }
 }

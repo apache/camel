@@ -20,8 +20,10 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.ServiceSupport;
 import static org.apache.camel.util.ObjectHelper.iterator;
 import static org.apache.camel.util.ObjectHelper.notNull;
+import org.apache.camel.util.ServiceHelper;
 
 import java.util.Iterator;
 
@@ -31,12 +33,12 @@ import java.util.Iterator;
  *
  * @version $Revision$
  */
-public class Splitter<E extends Exchange> implements Processor<E> {
-    private final Processor<E> destination;
+public class Splitter<E extends Exchange> extends ServiceSupport implements Processor<E> {
+    private final Processor<E> processor;
     private final Expression<E> expression;
 
     public Splitter(Processor<E> destination, Expression<E> expression) {
-        this.destination = destination;
+        this.processor = destination;
         this.expression = expression;
         notNull(destination, "destination");
         notNull(expression, "expression");
@@ -44,7 +46,7 @@ public class Splitter<E extends Exchange> implements Processor<E> {
 
     @Override
     public String toString() {
-        return "Splitter[on: " + expression + " to: " + destination + "]";
+        return "Splitter[on: " + expression + " to: " + processor + "]";
     }
 
     public void onExchange(E exchange) {
@@ -54,7 +56,15 @@ public class Splitter<E extends Exchange> implements Processor<E> {
             Object part = iter.next();
             E newExchange = (E) exchange.copy();
             newExchange.getIn().setBody(part);
-            destination.onExchange(newExchange);
+            processor.onExchange(newExchange);
         }
+    }
+
+    protected void doStart() throws Exception {
+        ServiceHelper.startServices(processor);
+    }
+
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(processor);
     }
 }

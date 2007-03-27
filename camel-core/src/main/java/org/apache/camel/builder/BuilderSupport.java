@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.processor.LoggingLevel;
+import org.apache.camel.processor.SendProcessor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -184,7 +185,7 @@ public abstract class BuilderSupport<E extends Exchange> {
 
     @Fluent
     public DeadLetterChannelBuilder<E> deadLetterChannel(@FluentArg("endpoint") Endpoint<E> deadLetterEndpoint) {
-        return new DeadLetterChannelBuilder<E>(deadLetterEndpoint);
+        return new DeadLetterChannelBuilder<E>(new SendProcessor<E>(deadLetterEndpoint));
     }
 
     // Properties

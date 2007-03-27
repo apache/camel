@@ -26,6 +26,6 @@ import org.apache.camel.Processor;
  */
 public interface ProcessorFactory<E extends Exchange> {
 
-    public Processor<E> createProcessor();
+    public Processor<E> createProcessor() throws Exception;
 
 }

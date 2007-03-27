@@ -17,6 +17,9 @@
  */
 package org.apache.camel.component.http;
 
+import org.apache.camel.Producer;
+import org.apache.camel.util.ProducerCache;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +31,7 @@ import java.io.IOException;
  */
 public class CamelServlet extends HttpServlet {
     private HttpEndpoint endpoint;
+    private ProducerCache<HttpExchange> producerCache = new ProducerCache<HttpExchange>();
 
     public CamelServlet() {
     }
@@ -44,7 +48,7 @@ public class CamelServlet extends HttpServlet {
         }
 
         HttpExchange exchange = endpoint.createExchange(request, response);
-        endpoint.onExchange(exchange);
+        producerCache.send(endpoint, exchange);
 
         // HC: The getBinding() interesting because it illustrates the impedance miss-match between
         // HTTP's stream oriented protocol, and Camels more message oriented protocol exchanges.

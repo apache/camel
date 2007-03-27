@@ -53,7 +53,7 @@ public class DeadLetterChannelBuilder<E extends Exchange> implements ErrorHandle
         return answer;
     }
 
-    public Processor<E> createErrorHandler(Processor<E> processor) {
+    public Processor<E> createErrorHandler(Processor<E> processor) throws Exception {
         Processor<E> deadLetter = getDeadLetterFactory().createProcessor();
         return new DeadLetterChannel<E>(processor, deadLetter, getRedeliveryPolicy());
     }

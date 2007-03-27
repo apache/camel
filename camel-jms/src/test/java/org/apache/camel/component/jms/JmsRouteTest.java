@@ -22,6 +22,8 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.util.ProducerCache;
 import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -44,6 +46,7 @@ public class JmsRouteTest extends TestCase {
     protected CamelContext container = new DefaultCamelContext();
     protected CountDownLatch latch = new CountDownLatch(1);
     protected Endpoint<JmsExchange> endpoint;
+    protected ProducerCache<JmsExchange> client = new ProducerCache<JmsExchange>();
 
     public void testJmsRouteWithTextMessage() throws Exception {
         String expectedBody = "Hello there!";
@@ -62,13 +65,15 @@ public class JmsRouteTest extends TestCase {
         assertEquals("body", expectedBody, body);
     }
 
-    protected void sendExchange(Object expectedBody) {
-        // now lets fire in a message
-        JmsExchange exchange = endpoint.createExchange();
-        JmsMessage in = exchange.getIn();
-        in.setBody(expectedBody);
-        in.setHeader("cheese", 123);
-        endpoint.onExchange(exchange);
+    protected void sendExchange(final Object expectedBody) {
+        client.send(endpoint, new Processor<JmsExchange>() {
+            public void onExchange(JmsExchange exchange) {
+                // now lets fire in a message
+                JmsMessage in = exchange.getIn();
+                in.setBody(expectedBody);
+                in.setHeader("cheese", 123);
+            }
+        });
     }
 
     protected Object assertReceivedValidExchange(Class type) throws Exception {
@@ -96,7 +101,7 @@ public class JmsRouteTest extends TestCase {
         container.addComponent("activemq", jmsComponentClientAcknowledge(connectionFactory));
 
         // lets add some routes
-        container.setRoutes(new RouteBuilder() {
+        container.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("jms:activemq:test.a").to("jms:activemq:test.b");
                 from("jms:activemq:test.b").process(new Processor<JmsExchange>() {
@@ -116,6 +121,7 @@ public class JmsRouteTest extends TestCase {
 
     @Override
     protected void tearDown() throws Exception {
+        client.stop();
         container.deactivateEndpoints();
     }
 }

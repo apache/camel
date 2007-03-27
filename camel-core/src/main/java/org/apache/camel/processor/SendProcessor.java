@@ -18,20 +18,43 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.Service;
+import org.apache.camel.impl.ServiceSupport;
 
 /**
  * @version $Revision$
  */
-public class SendProcessor<E> implements Processor<E> {
+public class SendProcessor<E extends Exchange> extends ServiceSupport implements Processor<E>, Service {
     private Endpoint<E> destination;
+    private Producer<E> producer;
 
     public SendProcessor(Endpoint<E> destination) {
         this.destination = destination;
     }
 
+    protected void doStop() throws Exception {
+        if (producer != null) {
+            try {
+                producer.stop();
+            }
+            finally {
+                producer = null;
+            }
+        }
+    }
+
+    protected void doStart() throws Exception {
+        this.producer = destination.createProducer();
+    }
+
     public void onExchange(E exchange) {
-        destination.onExchange(exchange);
+        if (producer == null) {
+            throw new IllegalStateException("No producer, this processor has not been started!");
+        }
+        producer.onExchange(exchange);
     }
 
     public Endpoint<E> getDestination() {

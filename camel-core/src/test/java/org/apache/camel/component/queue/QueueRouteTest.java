@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
@@ -34,13 +35,13 @@ import java.util.concurrent.TimeUnit;
 public class QueueRouteTest extends TestCase {
 
 	
-    public void testJmsRoute() throws Exception {
+    public void testSedaQueue() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
         CamelContext container = new DefaultCamelContext();
 
         // lets add some routes
-        container.setRoutes(new RouteBuilder() {
+        container.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("queue:test.a").to("queue:test.b");
                 from("queue:test.b").process(new Processor<Exchange>() {
@@ -59,7 +60,9 @@ public class QueueRouteTest extends TestCase {
         Endpoint<Exchange> endpoint = container.resolveEndpoint("queue:test.a");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader("cheese", 123);
-        endpoint.onExchange(exchange);
+
+        Producer<Exchange> producer = endpoint.createProducer();
+        producer.onExchange(exchange);
 
         // now lets sleep for a while
         boolean received = latch.await(5, TimeUnit.SECONDS);

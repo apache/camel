@@ -38,7 +38,7 @@ public class PipelineBuilder<E extends Exchange> extends FromBuilder<E> {
     }
 
     @Override
-    public Processor<E> createProcessor() {
+    public Processor<E> createProcessor() throws Exception {
         return new Pipeline<E>(endpoints);
     }
 }

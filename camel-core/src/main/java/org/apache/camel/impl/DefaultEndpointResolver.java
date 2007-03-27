@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
+import org.apache.camel.Exchange;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.ObjectHelper;
 
@@ -34,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public class DefaultEndpointResolver<E> implements EndpointResolver<E> {
+public class DefaultEndpointResolver<E extends Exchange> implements EndpointResolver<E> {
     static final private FactoryFinder endpointResolverFactory = new FactoryFinder("META-INF/services/org/apache/camel/EndpointResolver/");
     
     public Endpoint<E> resolveEndpoint(CamelContext container, String uri) throws Exception {

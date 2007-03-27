@@ -13,6 +13,9 @@
 package org.apache.camel.component.jbi;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
+import org.apache.camel.Exchange;
+import org.apache.camel.util.ProducerCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.servicemix.common.ServiceUnit;
@@ -32,24 +35,25 @@ public class CamelJbiEndpoint extends ProviderEndpoint {
     private static final QName SERVICE_NAME = new QName("http://camel.apache.org/service", "CamelEndpointComponent");
     private Endpoint camelEndpoint;
     private JbiBinding binding;
+    private Processor<Exchange> processor;
 
-    public CamelJbiEndpoint(ServiceUnit serviceUnit, QName service, String endpoint, Endpoint camelEndpoint, JbiBinding binding) {
+    public CamelJbiEndpoint(ServiceUnit serviceUnit, QName service, String endpoint, Endpoint camelEndpoint, JbiBinding binding, Processor<Exchange> processor) {
         super(serviceUnit, service, endpoint);
+        this.processor = processor;
         this.camelEndpoint = camelEndpoint;
         this.binding = binding;
     }
 
-    public CamelJbiEndpoint(ServiceUnit serviceUnit, Endpoint camelEndpoint, JbiBinding binding) {
-        this(serviceUnit, SERVICE_NAME, camelEndpoint.getEndpointUri(), camelEndpoint, binding);
+    public CamelJbiEndpoint(ServiceUnit serviceUnit, Endpoint camelEndpoint, JbiBinding binding, Processor<Exchange> processor) {
+        this(serviceUnit, SERVICE_NAME, camelEndpoint.getEndpointUri(), camelEndpoint, binding, processor);
     }
 
     protected void processInOnly(MessageExchange exchange, NormalizedMessage in) throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("Received exchange: " + exchange);
         }
-        // lets use the inbound processor to handle the exchange
         JbiExchange camelExchange = new JbiExchange(camelEndpoint.getContext(), binding, exchange);
-        camelEndpoint.onExchange(camelExchange);
+        processor.onExchange(camelExchange);
     }
 
     protected void processInOut(MessageExchange exchange, NormalizedMessage in, NormalizedMessage out) throws Exception {

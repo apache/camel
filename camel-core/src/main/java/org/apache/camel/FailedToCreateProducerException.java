@@ -15,13 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel;
 
 /**
- * Used to configure the logging levels
- *
  * @version $Revision$
  */
-public enum LoggingLevel {
-    DEBUG, ERROR, FATAL, INFO, TRACE, WARN;
+public class FailedToCreateProducerException extends RuntimeCamelException {
+    private final Endpoint endpoint;
+
+    public FailedToCreateProducerException(Endpoint endpoint, Throwable cause) {
+        super("Failed to create Producer for endpoint: " + endpoint + ". Reason: "+ cause, cause);
+        this.endpoint = endpoint;
+    }
+
+    public Endpoint getEndpoint() {
+        return endpoint;
+    }
 }
