@@ -22,6 +22,8 @@ import org.apache.camel.Expression;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.Arrays;
+import java.util.regex.Pattern;
 
 /**
  * @version $Revision: $
@@ -144,8 +146,10 @@ public class ExpressionBuilder {
     public static <E extends Exchange> Expression<E> tokenizeExpression(final Expression<E> expression, final String token) {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                Object value = expression.evaluate(exchange);
-                String text = exchange.getContext().getTypeConverter().convertTo(String.class, value);
+                String text = evaluateStringExpression(expression, exchange);
+                if (text == null) {
+                    return null;
+                }
                 StringTokenizer iter = new StringTokenizer(text, token);
                 List<String> answer = new ArrayList<String>();
                 while (iter.hasMoreTokens()) {
@@ -159,5 +163,81 @@ public class ExpressionBuilder {
                 return "tokenize(" + expression + ", " + token + ")";
             }
         };
+    }
+
+    /**
+     * Returns a tokenize expression which will tokenize the string with the given regex
+     */
+    public static <E extends Exchange> Expression<E> regexTokenize(final Expression<E> expression, String regexTokenizer) {
+        final Pattern pattern = Pattern.compile(regexTokenizer);
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                String text = evaluateStringExpression(expression, exchange);
+                if (text == null) {
+                    return null;
+                }
+                return Arrays.asList(pattern.split(text));
+            }
+
+            @Override
+            public String toString() {
+                return "regexTokenize(" + expression + ", " + pattern.pattern() + ")";
+            }
+        };
+    }
+
+    /**
+     * Transforms the expression into a String then performs the regex replaceAll to transform the String and return the result
+     */
+    public static <E extends Exchange> Expression<E> regexReplaceAll(final Expression<E> expression, String regex, final String replacement) {
+        final Pattern pattern = Pattern.compile(regex);
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                String text = evaluateStringExpression(expression, exchange);
+                if (text == null) {
+                    return null;
+                }
+                return pattern.matcher(text).replaceAll(replacement);
+            }
+
+            @Override
+            public String toString() {
+                return "regexReplaceAll(" + expression + ", " + pattern.pattern() + ")";
+            }
+        };
+    }
+
+    /**
+     * Transforms the expression into a String then performs the regex replaceAll to transform the String and return the result
+     */
+    public static <E extends Exchange> Expression<E> regexReplaceAll(final Expression<E> expression, String regex, final Expression<E> replacementExpression) {
+        final Pattern pattern = Pattern.compile(regex);
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                String text = evaluateStringExpression(expression, exchange);
+                String replacement = evaluateStringExpression(replacementExpression, exchange);;
+                if (text == null || replacement == null) {
+                    return null;
+                }
+                return pattern.matcher(text).replaceAll(replacement);
+            }
+
+            @Override
+            public String toString() {
+                return "regexReplaceAll(" + expression + ", " + pattern.pattern() + ")";
+            }
+        };
+    }
+
+    /**
+     * Evaluates the expression on the given exchange and returns the String representation
+     *
+     * @param expression the expression to evaluate
+     * @param exchange the exchange to use to evaluate the expression
+     * @return the String representation of the expression or null if it could not be evaluated
+     */
+    public static <E extends Exchange> String evaluateStringExpression(Expression<E> expression, E exchange) {
+        Object value = expression.evaluate(exchange);
+        return exchange.getContext().getTypeConverter().convertTo(String.class, value);
     }
 }

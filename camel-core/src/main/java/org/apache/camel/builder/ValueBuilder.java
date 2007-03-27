@@ -78,6 +78,11 @@ public class ValueBuilder<E extends Exchange> {
     }
 
     @Fluent
+    public Predicate<E> matchesRegex(@FluentArg("regex") String regex) {
+        return PredicateBuilder.regex(expression, regex);
+    }
+
+    @Fluent
     public Predicate<E> isNull() {
         return PredicateBuilder.isNull(expression);
     }
