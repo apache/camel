@@ -17,14 +17,14 @@
  */
 package org.apache.camel.component.jbi;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.Consumer;
+import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.impl.DefaultConsumer;
 
 /**
  * Represents an {@link Endpoint} for interacting with JBI
@@ -42,21 +42,22 @@ public class JbiEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     public Producer<Exchange> createProducer() throws Exception {
-        return new DefaultProducer<Exchange>(this) {
+        return startService(new DefaultProducer<Exchange>(this) {
             public void onExchange(Exchange exchange) {
                 toJbiProcessor.onExchange(exchange);
             }
-        };
+        });
     }
 
     public Consumer<Exchange> createConsumer(final Processor<Exchange> processor) throws Exception {
-        return new DefaultConsumer<Exchange>(this, processor) {
+        return startService(new DefaultConsumer<Exchange>(this, processor) {
             CamelJbiEndpoint jbiEndpoint;
 
             @Override
             protected void doStart() throws Exception {
                 super.doStart();
                 jbiEndpoint = jbiComponent.activateJbiEndpoint(JbiEndpoint.this, processor);
+                System.out.println(">>>>Êactivated endpoint: " + jbiEndpoint);
             }
 
             @Override
@@ -68,7 +69,7 @@ public class JbiEndpoint extends DefaultEndpoint<Exchange> {
 */
                 super.doStop();
             }
-        };
+        });
     }
 
     /*
