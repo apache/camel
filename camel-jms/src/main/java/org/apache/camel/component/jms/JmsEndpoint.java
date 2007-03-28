@@ -20,12 +20,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.util.URISupport;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 
 import javax.jms.Message;
+import java.net.URI;
+import java.util.Map;
 
 /**
  * @version $Revision:520964 $
@@ -77,10 +81,9 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     public Consumer<JmsExchange> createConsumer(Processor<JmsExchange> processor, AbstractMessageListenerContainer listenerContainer) throws Exception {
         listenerContainer.setDestinationName(destination);
         listenerContainer.setPubSubDomain(pubSubDomain);
-
-        // TODO support optional parameters
-        // selector
-
+        if (selector != null) {
+            listenerContainer.setMessageSelector(selector);
+        }
         return startService(new JmsConsumer(this, processor, listenerContainer));
     }
 
