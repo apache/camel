@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.springframework.jms.core.JmsOperations;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 
 import javax.jms.Message;
@@ -45,12 +46,35 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
 
     public Producer<JmsExchange> createProducer() throws Exception {
         JmsOperations template = configuration.createJmsOperations(pubSubDomain, destination);
+        return createProducer(template);
+    }
+
+    /**
+     * Creates a producer using the given template
+     */
+    public Producer<JmsExchange> createProducer(JmsOperations template) throws Exception {
+        if (template instanceof JmsTemplate) {
+            JmsTemplate jmsTemplate = (JmsTemplate) template;
+            jmsTemplate.setPubSubDomain(pubSubDomain);
+            jmsTemplate.setDefaultDestinationName(destination);
+        }
         return startService(new JmsProducer(this, template));
     }
 
     public Consumer<JmsExchange> createConsumer(Processor<JmsExchange> processor) throws Exception {
-
         AbstractMessageListenerContainer listenerContainer = configuration.createMessageListenerContainer();
+        return createConsumer(processor, listenerContainer);
+    }
+
+    /**
+     * Creates a consumer using the given processor and listener container
+     *
+     * @param processor the processor to use to process the messages
+     * @param listenerContainer the listener container
+     * @return a newly created consumer
+     * @throws Exception if the consumer cannot be created
+     */
+    public Consumer<JmsExchange> createConsumer(Processor<JmsExchange> processor, AbstractMessageListenerContainer listenerContainer) throws Exception {
         listenerContainer.setDestinationName(destination);
         listenerContainer.setPubSubDomain(pubSubDomain);
 
