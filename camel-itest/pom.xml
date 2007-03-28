@@ -67,6 +67,7 @@
       <artifactId>camel-spring</artifactId>
     </dependency>
 
+<!--
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -74,14 +75,28 @@
       <optional>true</optional>
       <scope>test</scope>
     </dependency>
-
+-->
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>test</scope>
+      <scope>compile</scope>
     </dependency>
 
   </dependencies>
-
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <testClassesDirectory>${project.build.outputDirectory}</testClassesDirectory>
+          <childDelegation>false</childDelegation>
+          <useFile>true</useFile>
+          <includes>
+            <include>**/*Test.*</include>
+          </includes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
