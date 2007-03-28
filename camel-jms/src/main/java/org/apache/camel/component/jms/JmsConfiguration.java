@@ -24,9 +24,12 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.JmsTemplate102;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
+import org.springframework.jms.listener.DefaultMessageListenerContainer102;
 import org.springframework.jms.listener.SimpleMessageListenerContainer;
+import org.springframework.jms.listener.SimpleMessageListenerContainer102;
 import org.springframework.jms.listener.serversession.ServerSessionFactory;
 import org.springframework.jms.listener.serversession.ServerSessionMessageListenerContainer;
+import org.springframework.jms.listener.serversession.ServerSessionMessageListenerContainer102;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -40,6 +43,7 @@ public class JmsConfiguration implements Cloneable {
     protected static final String TRANSACTED = "TRANSACTED";
     private ConnectionFactory connectionFactory;
     private ConnectionFactory producerConnectionFactory;
+    private ConsumerType consumerType = ConsumerType.Default;
     private boolean useVersion102;
     private boolean autoStartup;
     private boolean acceptMessagesWhileStopping;
@@ -501,12 +505,27 @@ public class JmsConfiguration implements Cloneable {
         this.priority = priority;
     }
 
+    public ConsumerType getConsumerType() {
+        return consumerType;
+    }
+
+    public void setConsumerType(ConsumerType consumerType) {
+        this.consumerType = consumerType;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
     protected AbstractMessageListenerContainer chooseMessageListenerContainerImplementation() {
-        // TODO use an enum to auto-switch container types?
-
-        //return new SimpleMessageListenerContainer();
-        return new DefaultMessageListenerContainer();
+        // TODO we could allow a spring container to auto-inject these objects?
+        switch (consumerType) {
+            case Simple:
+                return isUseVersion102() ? new SimpleMessageListenerContainer102() : new SimpleMessageListenerContainer();
+            case ServerSessionPool:
+                return isUseVersion102() ? new ServerSessionMessageListenerContainer102() : new ServerSessionMessageListenerContainer();
+            case Default:
+                return isUseVersion102() ? new DefaultMessageListenerContainer102() : new DefaultMessageListenerContainer();
+            default:
+                throw new IllegalArgumentException("Unknown consumer type: " + consumerType);
+        }
     }
 }
