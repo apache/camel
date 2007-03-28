@@ -17,23 +17,22 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.core.JmsOperations;
+import org.springframework.jms.core.MessageCreator;
 
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
-import javax.jms.JMSException;
 
 /**
  * @version $Revision$
  */
 public class JmsProducer extends DefaultProducer<JmsExchange> {
     private static final transient Log log = LogFactory.getLog(JmsProducer.class);
-
     private final JmsEndpoint endpoint;
     private final JmsOperations template;
 

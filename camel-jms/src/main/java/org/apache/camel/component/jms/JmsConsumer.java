@@ -17,14 +17,11 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.Processor;
 import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 
-import javax.jms.Message;
 import javax.jms.MessageListener;
 
 /**
@@ -57,12 +54,10 @@ public class JmsConsumer extends DefaultConsumer<JmsExchange> {
         listenerContainer.start();
     }
 
-
     @Override
     protected void doStop() throws Exception {
         listenerContainer.stop();
         listenerContainer.destroy();
         super.doStop();
     }
-
 }

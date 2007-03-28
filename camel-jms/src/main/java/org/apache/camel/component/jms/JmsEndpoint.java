@@ -17,55 +17,45 @@
 package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Producer;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.jms.core.JmsOperations;
-import org.springframework.jms.core.MessageCreator;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
-import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
-import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.Session;
 
 /**
  * @version $Revision:520964 $
  */
 public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
-    private static final Log log = LogFactory.getLog(JmsEndpoint.class);
     private JmsBinding binding;
-    private JmsTemplate template;
     private String destination;
+    private final boolean pubSubDomain;
+    private String selector;
+    private JmsConfiguration configuration;
 
-    public JmsEndpoint(String endpointUri, CamelContext container, String destination, JmsTemplate template) {
-        super(endpointUri, container);
+    public JmsEndpoint(String uri, CamelContext context, String destination, boolean pubSubDomain, JmsConfiguration configuration) {
+        super(uri, context);
+        this.configuration = configuration;
         this.destination = destination;
-        this.template = template;
+        this.pubSubDomain = pubSubDomain;
     }
 
     public Producer<JmsExchange> createProducer() throws Exception {
+        JmsOperations template = configuration.createJmsOperations(pubSubDomain, destination);
         return startService(new JmsProducer(this, template));
     }
 
     public Consumer<JmsExchange> createConsumer(Processor<JmsExchange> processor) throws Exception {
-        AbstractMessageListenerContainer listenerContainer = createMessageListenerContainer(template);
+
+        AbstractMessageListenerContainer listenerContainer = configuration.createMessageListenerContainer();
         listenerContainer.setDestinationName(destination);
-        listenerContainer.setPubSubDomain(template.isPubSubDomain());
-        listenerContainer.setConnectionFactory(template.getConnectionFactory());
+        listenerContainer.setPubSubDomain(pubSubDomain);
 
         // TODO support optional parameters
         // selector
-        // messageConverter
-        // durableSubscriberName
-
 
         return startService(new JmsConsumer(this, processor, listenerContainer));
     }
@@ -96,22 +86,22 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
         this.binding = binding;
     }
 
-    public JmsOperations getTemplate() {
-        return template;
-    }
-
     public String getDestination() {
         return destination;
     }
 
-    // Implementation methods
-    //-------------------------------------------------------------------------
-
-    protected AbstractMessageListenerContainer createMessageListenerContainer(JmsTemplate template) {
-        // TODO use an enum to auto-switch container types?
-
-        //return new SimpleMessageListenerContainer();
-        return new DefaultMessageListenerContainer();
+    public JmsConfiguration getConfiguration() {
+        return configuration;
     }
 
+    public String getSelector() {
+        return selector;
+    }
+
+    /**
+     * Sets the JMS selector to use
+     */
+    public void setSelector(String selector) {
+        this.selector = selector;
+    }
 }

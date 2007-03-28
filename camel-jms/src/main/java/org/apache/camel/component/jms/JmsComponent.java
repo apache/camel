@@ -22,12 +22,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.listener.AbstractMessageListenerContainer;
-import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
 import javax.jms.ConnectionFactory;
-import javax.jms.Session;
 
 /**
  * @version $Revision:520964 $
@@ -35,7 +31,7 @@ import javax.jms.Session;
 public class JmsComponent extends DefaultComponent<JmsExchange> {
     public static final String QUEUE_PREFIX = "queue/";
     public static final String TOPIC_PREFIX = "topic/";
-    private JmsTemplate template;
+    private JmsConfiguration configuration;
 
     /**
      * Static builder method
@@ -47,38 +43,38 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
     /**
      * Static builder method
      */
-    public static JmsComponent jmsComponent(JmsTemplate template) {
-        return new JmsComponent(template);
+    public static JmsComponent jmsComponent(JmsConfiguration configuration) {
+        return new JmsComponent(configuration);
     }
 
     /**
      * Static builder method
      */
     public static JmsComponent jmsComponent(ConnectionFactory connectionFactory) {
-        return jmsComponent(new JmsTemplate(connectionFactory));
+        return jmsComponent(new JmsConfiguration(connectionFactory));
     }
 
     /**
      * Static builder method
      */
     public static JmsComponent jmsComponentClientAcknowledge(ConnectionFactory connectionFactory) {
-        JmsTemplate template = new JmsTemplate(connectionFactory);
-        template.setSessionTransacted(false);
-        template.setSessionAcknowledgeMode(Session.CLIENT_ACKNOWLEDGE);
+        JmsConfiguration template = new JmsConfiguration(connectionFactory);
+        template.setProducerAcknowledgementMode("CLIENT_ACKNOWLEDGE");
+        template.setConsumerAcknowledgementMode("CLIENT_ACKNOWLEDGE");
         return jmsComponent(template);
     }
 
     protected JmsComponent() {
-        this.template = new JmsTemplate();
+        this.configuration = new JmsConfiguration();
     }
 
-    protected JmsComponent(JmsTemplate template) {
-        this.template = template;
+    public JmsComponent(JmsConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     public JmsComponent(CamelContext context) {
         super(context);
-        this.template = new JmsTemplate();
+        this.configuration = new JmsConfiguration();
     }
 
     public JmsEndpoint createEndpoint(Uri uri) {
@@ -91,17 +87,17 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
     public JmsEndpoint createEndpoint(String uri, String path) {
         ObjectHelper.notNull(getContext(), "container");
 
+        boolean pubSubDomain = false;
         if (path.startsWith(QUEUE_PREFIX)) {
-            template.setPubSubDomain(false);
+            pubSubDomain = false;
             path = path.substring(QUEUE_PREFIX.length());
         }
         else if (path.startsWith(TOPIC_PREFIX)) {
-            template.setPubSubDomain(false);
+            pubSubDomain = true;
             path = path.substring(TOPIC_PREFIX.length());
         }
 
         final String subject = convertPathToActualDestination(path);
-        template.setDefaultDestinationName(subject);
 
         /*
         Destination destination = (Destination) template.execute(new SessionCallback() {
@@ -111,15 +107,21 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
         });
         */
 
-        return new JmsEndpoint(uri, getContext(), subject, template);
+        // TODO configure endpoint configuration and selector using URI properties
+        return new JmsEndpoint(uri, getContext(), subject, pubSubDomain, getConfiguration().copy());
     }
 
-    public JmsTemplate getTemplate() {
-        return template;
+    public JmsConfiguration getConfiguration() {
+        return configuration;
     }
 
-    public void setTemplate(JmsTemplate template) {
-        this.template = template;
+    /**
+     * Sets the JMS configuration
+     *
+     * @param configuration the configuration to use by default for endpoints
+     */
+    public void setConfiguration(JmsConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     /**
