@@ -64,7 +64,6 @@ public class JmsExchange extends DefaultExchange {
         return new JmsExchange(getContext(), binding);
     }
 
-
     // Expose JMS APIs
     //-------------------------------------------------------------------------
 
@@ -94,7 +93,6 @@ public class JmsExchange extends DefaultExchange {
     public Message getFaultMessage() {
         return getOut().getJmsMessage();
     }
-
 
     // Implementation methods
     //-------------------------------------------------------------------------

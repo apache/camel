@@ -17,7 +17,6 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.axis.transport.jms.JMSEndpoint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.EndpointResolver;
@@ -27,7 +26,7 @@ import java.util.concurrent.Callable;
 
 /**
  * An implementation of {@link EndpointResolver} that creates
- * {@link JMSEndpoint} objects.
+ * {@link JmsEndpoint} objects.
  * <p/>
  * The syntax for a JMS URI looks like:
  * <p/>
@@ -84,6 +83,4 @@ public class JmsEndpointResolver implements EndpointResolver<JmsExchange> {
         });
         return (JmsComponent) rc;
     }
-
-
 }
