@@ -21,9 +21,14 @@ import com.sun.jndi.toolkit.url.Uri;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 import javax.jms.ConnectionFactory;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
 
 /**
  * @version $Revision:520964 $
@@ -77,14 +82,14 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
         this.configuration = new JmsConfiguration();
     }
 
-    public JmsEndpoint createEndpoint(Uri uri) {
+    public JmsEndpoint createEndpoint(Uri uri) throws URISyntaxException {
         // lets figure out from the URI whether its a queue, topic etc
 
         String path = uri.getPath();
         return createEndpoint(uri.toString(), path);
     }
 
-    public JmsEndpoint createEndpoint(String uri, String path) {
+    public JmsEndpoint createEndpoint(String uri, String path) throws URISyntaxException {
         ObjectHelper.notNull(getContext(), "container");
 
         boolean pubSubDomain = false;
@@ -99,16 +104,17 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
 
         final String subject = convertPathToActualDestination(path);
 
-        /*
-        Destination destination = (Destination) template.execute(new SessionCallback() {
-            public Object doInJms(Session session) throws JMSException {
-                return template.getDestinationResolver().resolveDestinationName(session, subject, template.isPubSubDomain());
-            }
-        });
-        */
+        // lets make sure we copy the configuration as each endpoint can customize its own version
+        JmsEndpoint endpoint = new JmsEndpoint(uri, getContext(), subject, pubSubDomain, getConfiguration().copy());
 
-        // TODO configure endpoint configuration and selector using URI properties
-        return new JmsEndpoint(uri, getContext(), subject, pubSubDomain, getConfiguration().copy());
+        URI u = new URI(uri);
+        Map options = URISupport.parseParamters(u);
+        String selector = (String) options.remove("selector");
+        if (selector != null) {
+            endpoint.setSelector(selector);
+        }
+        IntrospectionSupport.setProperties(endpoint.getConfiguration(), options);
+        return endpoint;
     }
 
     public JmsConfiguration getConfiguration() {

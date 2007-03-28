@@ -23,6 +23,7 @@ import org.apache.camel.EndpointResolver;
 import org.apache.camel.util.ObjectHelper;
 
 import java.util.concurrent.Callable;
+import java.net.URISyntaxException;
 
 /**
  * An implementation of {@link EndpointResolver} that creates
@@ -52,7 +53,7 @@ public class JmsEndpointResolver implements EndpointResolver<JmsExchange> {
      * Finds the {@see QueueEndpoint} specified by the uri.  If the {@see QueueEndpoint} or it's associated
      * {@see QueueComponent} object do not exist, they will be created.
      */
-    public JmsEndpoint resolveEndpoint(CamelContext container, String uri) {
+    public JmsEndpoint resolveEndpoint(CamelContext container, String uri) throws URISyntaxException {
         String id[] = getEndpointId(uri);
         JmsComponent component = resolveJmsComponent(container, id[0]);
         return component.createEndpoint(uri, id[1]);
