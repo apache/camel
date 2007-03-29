@@ -32,23 +32,13 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class QueueComponent<E> implements Component<E> {
 	
-    private HashMap<String, BlockingQueue<E>> registry = new HashMap<String, BlockingQueue<E>>();
     private CamelContext container;
 
     public void setCamelContext(CamelContext container) {
         this.container = container;
     }
 
-	synchronized public BlockingQueue<E> getOrCreateQueue(String uri) {
-		BlockingQueue<E> queue = registry.get(uri);
-		if( queue == null ) {
-			queue = createQueue();
-			registry.put(uri, queue);
-		}
-		return queue;
-	}
-
-	protected BlockingQueue<E> createQueue() {
+	public BlockingQueue<E> createQueue() {
 		return new LinkedBlockingQueue<E>();
 	}
 
