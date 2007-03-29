@@ -36,6 +36,16 @@ public interface Message {
     Object getHeader(String name);
 
     /**
+     * Returns a header associated with this message by name and specifying the type required
+     *
+     * @param name the name of the header
+     * @param type the type of the header
+     * @return the value of the given header or null if there is no property for the given name or it cannot be
+     * converted to the given type
+     */
+    <T> T getHeader(String name, Class<T> type);
+
+    /**
      * Sets a header on the message
      *
      * @param name  of the header
