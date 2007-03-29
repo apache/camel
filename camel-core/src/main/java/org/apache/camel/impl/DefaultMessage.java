@@ -30,6 +30,11 @@ import java.util.Map;
 public class DefaultMessage extends MessageSupport {
     private Map<String, Object> headers;
 
+    @Override
+    public String toString() {
+        return "Message: " + getBody();
+    }
+
     public Object getHeader(String name) {
         if (headers != null) {
             return headers.get(name);
@@ -37,9 +42,9 @@ public class DefaultMessage extends MessageSupport {
         return null;
     }
 
-    @Override
-    public String toString() {
-        return "Message: " + getBody();
+    public <T> T getHeader(String name, Class<T> type) {
+        Object value = getHeader(name);
+        return getExchange().getContext().getTypeConverter().convertTo(type, value);
     }
 
     public void setHeader(String name, Object value) {

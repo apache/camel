@@ -46,6 +46,17 @@ public interface Exchange  {
      */
     Object getProperty(String name);
 
+
+    /**
+     * Returns a property associated with this exchange by name and specifying the type required
+     *
+     * @param name the name of the property
+     * @param type the type of the property
+     * @return the value of the given header or null if there is no property for the given name or
+     * null if it cannot be converted to the given type
+     */
+    <T> T getProperty(String name, Class<T> type);
+
     /**
      * Sets a property on the exchange
      *

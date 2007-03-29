@@ -75,6 +75,11 @@ public class DefaultExchange implements Exchange {
         return null;
     }
 
+    public <T> T getProperty(String name, Class<T> type) {
+        Object value = getProperty(name);
+        return getContext().getTypeConverter().convertTo(type, value);
+    }
+
     public void setProperty(String name, Object value) {
         getProperties().put(name, value);
     }
@@ -93,6 +98,7 @@ public class DefaultExchange implements Exchange {
     public Message getIn() {
         if (in == null) {
             in = createInMessage();
+            configureMessage(in);
         }
         return in;
     }
@@ -105,6 +111,7 @@ public class DefaultExchange implements Exchange {
     public Message getOut() {
         if (out == null) {
             out = createOutMessage();
+            configureMessage(out);
         }
         return out;
     }
