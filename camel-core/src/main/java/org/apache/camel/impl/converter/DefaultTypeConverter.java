@@ -47,7 +47,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
             return toType.cast(value);
         }
         checkLoaded();
-        TypeConverter converter = getConverter(toType, value);
+        TypeConverter converter = getOrFindTypeConverter(toType, value);
         if (converter != null) {
             return converter.convertTo(toType, value);
         }
@@ -59,8 +59,8 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         return null;
     }
 
-    public void addTypeConverter(Class fromType, Class toType, TypeConverter typeConverter) {
-        TypeMapping key = new TypeMapping(fromType, toType);
+    public void addTypeConverter(Class toType, Class fromType, TypeConverter typeConverter) {
+        TypeMapping key = new TypeMapping(toType, fromType);
         synchronized (typeMappings) {
             TypeConverter converter = typeMappings.get(key);
             if (converter != null) {
@@ -70,8 +70,8 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         }
     }
 
-    public TypeConverter getTypeConverter(Class fromType, Class toType) {
-        TypeMapping key = new TypeMapping(fromType, toType);
+    public TypeConverter getTypeConverter(Class toType, Class fromType) {
+        TypeMapping key = new TypeMapping(toType, fromType);
         synchronized (typeMappings) {
             return typeMappings.get(key);
         }
@@ -88,12 +88,12 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         this.injector = injector;
     }
 
-    protected <T> TypeConverter getConverter(Class toType, Object value) {
+    protected <T> TypeConverter getOrFindTypeConverter(Class toType, Object value) {
         Class fromType = null;
         if (value != null) {
             fromType = value.getClass();
         }
-        TypeMapping key = new TypeMapping(fromType, toType);
+        TypeMapping key = new TypeMapping(toType, fromType);
         TypeConverter converter;
         synchronized (typeMappings) {
             converter = typeMappings.get(key);
@@ -116,7 +116,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
              toSuperClass != null && !toSuperClass.equals(Object.class);
              toSuperClass = toSuperClass.getSuperclass()) {
 
-            TypeConverter converter = getTypeConverter(fromType, toSuperClass);
+            TypeConverter converter = getTypeConverter(toSuperClass, fromType);
             if (converter != null) {
                 return converter;
             }
@@ -124,21 +124,30 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
         // TODO should we filter out any interfaces which are super-interfaces?
         for (Class type : toType.getInterfaces()) {
-            TypeConverter converter = getTypeConverter(fromType, type);
+            TypeConverter converter = getTypeConverter(type, fromType);
             if (converter != null) {
                 return converter;
             }
         }
 
         // lets try the super classes of the from type
-        Class fromSuperClass = fromType.getSuperclass();
-        if (fromSuperClass != null && !fromSuperClass.equals(Object.class)) {
-            return findTypeConverter(toType, fromSuperClass, value);
-        }
-        for (Class type : fromType.getInterfaces()) {
-            TypeConverter converter = getTypeConverter(type, toType);
-            if (converter != null) {
-                return converter;
+        if (fromType != null) {
+            Class fromSuperClass = fromType.getSuperclass();
+            if (fromSuperClass != null && !fromSuperClass.equals(Object.class)) {
+
+                TypeConverter converter = getTypeConverter(toType, fromSuperClass);
+                if (converter == null) {
+                    converter = findTypeConverter(toType, fromSuperClass, value);
+                }
+                if (converter != null) {
+                    return converter;
+                }
+            }
+            for (Class type : fromType.getInterfaces()) {
+                TypeConverter converter = getTypeConverter(toType, type);
+                if (converter != null) {
+                    return converter;
+                }
             }
         }
         // TODO look at constructors of toType?
@@ -166,12 +175,12 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
      * Represents a mapping from one type (which can be null) to another
      */
     protected static class TypeMapping {
-        Class fromType;
         Class toType;
+        Class fromType;
 
-        public TypeMapping(Class fromType, Class toType) {
-            this.fromType = fromType;
+        public TypeMapping(Class toType, Class fromType) {
             this.toType = toType;
+            this.fromType = fromType;
         }
 
         public Class getFromType() {

@@ -23,6 +23,8 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.InputStream;
+
 /**
  * @version $Revision$
  */
@@ -31,15 +33,21 @@ public class ConverterTest extends TestCase {
 
     protected TypeConverter converter = new DefaultTypeConverter();
     
-    public void testConvert() throws Exception {
+    public void testConvertStringAndBytes() throws Exception {
         byte[] array = converter.convertTo(byte[].class, "foo");
         assertNotNull(array);
 
         log.debug("Found array of size: " + array.length);
 
-        // lets now convert back again
-
         String text = converter.convertTo(String.class, array);
         assertEquals("Converted to String", "foo", text);
+    }
+
+    public void testConvertStringAndStreams() throws Exception {
+        InputStream inputStream = converter.convertTo(InputStream.class, "bar");
+        assertNotNull(inputStream);
+
+        String text = converter.convertTo(String.class, inputStream);
+        assertEquals("Converted to String", "bar", text);
     }
 }
