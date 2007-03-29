@@ -18,7 +18,8 @@
 package org.apache.camel;
 
 /**
- * A pluggable strategy to be able to convert objects to different types such as from DOM to JAXB2 or String to DOM etc
+ * A pluggable strategy to be able to convert objects <a href="http://activemq.apache.org/camel/type-converter.html">to different types</a>
+ *  such as to and from String, InputStream/OutputStream, Reader/Writer, Document, byte[], ByteBuffer etc
  *
  * @version $Revision$
  */

@@ -7,6 +7,7 @@ import java.lang.annotation.ElementType;
 
 /**
  * An annotation used to mark classes and methods to indicate code capable of converting from a type to another type
+ * which are then auto-discovered using the <a href="http://activemq.apache.org/camel/type-converter.html">Type Conversion Support</a>
  *
  * @version $Revision$
  */

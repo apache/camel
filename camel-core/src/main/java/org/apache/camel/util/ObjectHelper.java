@@ -130,4 +130,11 @@ public class ObjectHelper {
             return defaultValue;
         }
     }
+
+    /**
+     * Returns the type name of the given type or null if the type variable is null
+     */
+    public static String name(Class type) {
+        return type != null ? type.getName() : null;
+    }
 }
