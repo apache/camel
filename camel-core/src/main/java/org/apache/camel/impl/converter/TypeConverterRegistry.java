@@ -26,11 +26,11 @@ public interface TypeConverterRegistry {
     /**
      * Allows a new type converter to be bregistered
      *
-     * @param fromType      the type to convert from
      * @param toType        the type to convert to
+     * @param fromType      the type to convert from
      * @param typeConverter the type converter to use
      */
-    void addTypeConverter(Class fromType, Class toType, TypeConverter typeConverter);
+    void addTypeConverter(Class toType, Class fromType, TypeConverter typeConverter);
 
     Injector getInjector();
 }

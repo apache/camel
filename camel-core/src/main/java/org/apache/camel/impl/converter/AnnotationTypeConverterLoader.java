@@ -147,13 +147,13 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                         else {
                             Class fromType = parameterTypes[0];
                             if (isStatic(modifiers)) {
-                                registry.addTypeConverter(fromType, toType, new StaticMethodTypeConverter(method));
+                                registry.addTypeConverter(toType, fromType, new StaticMethodTypeConverter(method));
                             }
                             else {
                                 if (injector == null) {
                                     injector = new CachingInjector(registry, type);
                                 }
-                                registry.addTypeConverter(fromType, toType, new InstanceMethodTypeConverter(injector, method));
+                                registry.addTypeConverter(toType, fromType, new InstanceMethodTypeConverter(injector, method));
                             }
                         }
                     }
