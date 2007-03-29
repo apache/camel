@@ -21,15 +21,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.IoConnector;
-import org.apache.mina.common.IoServiceConfig;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
 import org.apache.mina.transport.socket.nio.DatagramAcceptor;
 import org.apache.mina.transport.socket.nio.DatagramConnector;
+import org.apache.mina.transport.socket.nio.DatagramConnectorConfig;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
-import org.apache.mina.transport.socket.nio.DatagramConnectorConfig;
 import org.apache.mina.transport.vmpipe.VmPipeAcceptor;
 import org.apache.mina.transport.vmpipe.VmPipeAddress;
 import org.apache.mina.transport.vmpipe.VmPipeConnector;
@@ -39,15 +38,11 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @version $Revision$
  */
 public class MinaComponent extends DefaultComponent<MinaExchange> {
-    private Map<String, MinaEndpoint> map = new HashMap<String, MinaEndpoint>();
-
     public MinaComponent() {
     }
 
@@ -56,28 +51,22 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
     }
 
     public synchronized MinaEndpoint createEndpoint(String uri, String[] urlParts) throws IOException, URISyntaxException {
-        MinaEndpoint endpoint = map.get(uri);
-        if (endpoint == null) {
-            String remainingUrl = uri.substring("mina:".length());
-            URI u = new URI(remainingUrl);
+        String remainingUrl = uri.substring("mina:".length());
+        URI u = new URI(remainingUrl);
 
-            String protocol = u.getScheme();
-            if (protocol.equals("tcp")) {
-                endpoint = createSocketEndpoint(uri, u);
-            }
-            else if (protocol.equals("udp") || protocol.equals("mcast") || protocol.equals("multicast")) {
-                endpoint = createDatagramEndpoint(uri, u);
-            }
-            else if (protocol.equals("vm")) {
-                endpoint = createVmEndpoint(uri, u);
-            }
-            else {
-                throw new IOException("Unrecognised MINA protocol: " + protocol + " for uri: " + uri);
-            }
-            map.put(uri, endpoint);
+        String protocol = u.getScheme();
+        if (protocol.equals("tcp")) {
+            return createSocketEndpoint(uri, u);
         }
-
-        return endpoint;
+        else if (protocol.equals("udp") || protocol.equals("mcast") || protocol.equals("multicast")) {
+            return createDatagramEndpoint(uri, u);
+        }
+        else if (protocol.equals("vm")) {
+            return createVmEndpoint(uri, u);
+        }
+        else {
+            throw new IOException("Unrecognised MINA protocol: " + protocol + " for uri: " + uri);
+        }
     }
 
     protected MinaEndpoint createVmEndpoint(String uri, URI connectUri) {

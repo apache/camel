@@ -62,7 +62,7 @@ public class QueueEndpointResolver<E extends Exchange> implements EndpointResolv
 	public Endpoint<E> resolveEndpoint(CamelContext container, String uri) {
 		String id[] = getEndpointId(uri);        
     	QueueComponent<E> component = resolveQueueComponent(container, id[0]);  
-    	BlockingQueue<E> queue = component.getOrCreateQueue(id[1]);
+    	BlockingQueue<E> queue = component.createQueue();
 		return new QueueEndpoint<E>(uri, container, queue);
     }
 
