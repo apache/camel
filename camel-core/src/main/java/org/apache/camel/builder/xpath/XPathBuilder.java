@@ -22,7 +22,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.Message;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.converter.ObjectConverter;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -66,7 +66,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     }
 
     public boolean matches(E exchange) {
-        return ObjectHelper.toBoolean(evaluateAs(exchange, XPathConstants.BOOLEAN));
+        return ObjectConverter.toBoolean(evaluateAs(exchange, XPathConstants.BOOLEAN));
     }
 
     public Object evaluate(E exchange) {

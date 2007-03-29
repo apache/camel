@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.converter.ObjectConverter;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -36,8 +36,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A builder class for creating {@link Processor}, {@link Expression} and {@link Predicate} objects using
@@ -72,7 +70,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     public boolean matches(E exchange) {
-        return ObjectHelper.toBoolean(evaluateScript(exchange));
+        return ObjectConverter.toBoolean(evaluateScript(exchange));
     }
 
     public void onExchange(E exchange) {

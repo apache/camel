@@ -16,15 +16,19 @@
  */
 package org.apache.camel.util;
 
-import java.util.Arrays;
+import org.apache.camel.converter.ObjectConverter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 
 /**
  * @version $Revision$
  */
 public class ObjectHelper {
+    private static final transient Log log = LogFactory.getLog(ObjectHelper.class);
+
     /**
      * A helper method for comparing objects for equality while handling nulls
      */
@@ -86,26 +90,6 @@ public class ObjectHelper {
 	}
 
     /**
-     * Creates an iterator over the value if the value is a collection, an Object[] or a primitive type array; otherwise
-     * to simplify the caller's code, we just create a singleton collection iterator over a single value
-     */
-    public static Iterator iterator(Object value) {
-        if (value == null) {
-            return Collections.EMPTY_LIST.iterator();
-        }
-        else if (value instanceof Collection) {
-            Collection collection = (Collection) value;
-            return collection.iterator();
-        }
-        else if (value.getClass().isArray()) {
-            return Arrays.asList(value).iterator();
-        }
-        else {
-            return Collections.singletonList(value).iterator();
-        }
-    }
-
-    /**
      * Returns true if the collection contains the specified value
      */
     public static boolean contains(Object collectionOrArray, Object value) {
@@ -114,7 +98,7 @@ public class ObjectHelper {
             return collection.contains(value);
         }
         else {
-            Iterator iter = iterator(value);
+            Iterator iter = ObjectConverter.iterator(value);
             while (iter.hasNext()) {
                 if (equals(value, iter.next())) {
                     return true;
@@ -124,22 +108,26 @@ public class ObjectHelper {
         }
     }
 
-    /**
-     * Converts the given value to a boolean, handling strings or Boolean objects; otherwise returning true if non-null
-     */
-    public static boolean toBoolean(Object value) {
-        if (value instanceof Boolean) {
-            return (Boolean) value;
-        }
-        if (value instanceof String) {
-            return "true".equalsIgnoreCase(value.toString());
-        }
-        return value != null;
-    }
-
-
-
     public static boolean isNotNullOrBlank(String text) {
         return text != null && text.trim().length() > 0;
+    }
+
+    /**
+     * A helper method to access a system property, catching any security exceptions
+     *
+     * @param name the name of the system property required
+     * @param defaultValue the default value to use if the property is not available or a security exception prevents access
+     * @return the system property value or the default value if the property is not available or security does not allow its access
+     */
+    public static String getSystemProperty(String name, String defaultValue) {
+        try {
+            return System.getProperty(name, defaultValue);
+        }
+        catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Caught security exception accessing system property: " + name + ". Reason: " + e, e);
+            }
+            return defaultValue;
+        }
     }
 }

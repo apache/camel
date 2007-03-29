@@ -18,6 +18,7 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.*;
+import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
