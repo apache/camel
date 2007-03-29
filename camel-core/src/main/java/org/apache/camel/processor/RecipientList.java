@@ -21,9 +21,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.notNull;
 import org.apache.camel.util.ProducerCache;
 
@@ -51,7 +51,7 @@ public class RecipientList<E extends Exchange> extends ServiceSupport implements
 
     public void onExchange(E exchange) {
         Object receipientList = expression.evaluate(exchange);
-        Iterator iter = ObjectHelper.iterator(receipientList);
+        Iterator iter = ObjectConverter.iterator(receipientList);
         while (iter.hasNext()) {
             Object recipient = iter.next();
             Endpoint<E> endpoint = resolveEndpoint(exchange, recipient);

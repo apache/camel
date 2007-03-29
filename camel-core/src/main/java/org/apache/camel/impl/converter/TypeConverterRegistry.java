@@ -15,23 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.impl.converter;
 
 import org.apache.camel.TypeConverter;
 
 /**
  * @version $Revision$
  */
-public class DefaultTypeConverter implements TypeConverter {
-    public <T> T convertTo(Class<T> type, Object value) {
-        if (type.isInstance(value)) {
-            return type.cast(value);
-        }
-        if (value != null) {
-            if (type.equals(String.class)) {
-                return (T) value.toString();
-            }
-        }
-        return null;
-    }
+public interface TypeConverterRegistry {
+    /**
+     * Allows a new type converter to be bregistered
+     *
+     * @param fromType      the type to convert from
+     * @param toType        the type to convert to
+     * @param typeConverter the type converter to use
+     */
+    void addTypeConverter(Class fromType, Class toType, TypeConverter typeConverter);
+
+    Injector getInjector();
 }

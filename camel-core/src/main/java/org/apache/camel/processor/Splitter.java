@@ -20,8 +20,8 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.ServiceSupport;
-import static org.apache.camel.util.ObjectHelper.iterator;
 import static org.apache.camel.util.ObjectHelper.notNull;
 import org.apache.camel.util.ServiceHelper;
 
@@ -51,7 +51,7 @@ public class Splitter<E extends Exchange> extends ServiceSupport implements Proc
 
     public void onExchange(E exchange) {
         Object value = expression.evaluate(exchange);
-        Iterator iter = iterator(value);
+        Iterator iter = ObjectConverter.iterator(value);
         while (iter.hasNext()) {
             Object part = iter.next();
             E newExchange = (E) exchange.copy();
