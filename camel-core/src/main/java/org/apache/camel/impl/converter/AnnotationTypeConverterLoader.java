@@ -19,6 +19,7 @@ package org.apache.camel.impl.converter;
 
 import org.apache.camel.Converter;
 import org.apache.camel.util.ResolverUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,6 +51,9 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         resolver.findAnnotated(Converter.class, packageNames);
         Set<Class> classes = resolver.getClasses();
         for (Class type : classes) {
+            if (log.isDebugEnabled()) {
+                log.debug("Loading converter class: " + ObjectHelper.name(type));
+            }
             loadConverterMethods(registry, type);
         }
     }
