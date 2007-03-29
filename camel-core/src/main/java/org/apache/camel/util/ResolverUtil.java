@@ -209,7 +209,7 @@ public class ResolverUtil<T> {
             urls = loader.getResources(packageName);
         }
         catch (IOException ioe) {
-            ResolverUtil.log.warn("Could not read package: " + packageName, ioe);
+            log.warn("Could not read package: " + packageName, ioe);
             return;
         }
 
@@ -228,7 +228,7 @@ public class ResolverUtil<T> {
                     urlPath = urlPath.substring(0, urlPath.indexOf('!'));
                 }
 
-                ResolverUtil.log.info("Scanning for classes in [" + urlPath + "] matching criteria: " + test);
+                log.debug("Scanning for classes in [" + urlPath + "] matching criteria: " + test);
                 File file = new File(urlPath);
                 if ( file.isDirectory() ) {
                     loadImplementationsInDirectory(test, packageName, file);
@@ -238,7 +238,7 @@ public class ResolverUtil<T> {
                 }
             }
             catch (IOException ioe) {
-                ResolverUtil.log.warn("could not read entries", ioe);
+                log.warn("could not read entries", ioe);
             }
         }
     }
@@ -297,7 +297,7 @@ public class ResolverUtil<T> {
             }
         }
         catch (IOException ioe) {
-            ResolverUtil.log.error("Could not search jar file '" + jarfile + "' for classes matching criteria: " +
+            log.error("Could not search jar file '" + jarfile + "' for classes matching criteria: " +
                       test + "due to an IOException: " + ioe.getMessage());
         }
     }
@@ -313,7 +313,7 @@ public class ResolverUtil<T> {
         try {
             String externalName = fqn.substring(0, fqn.indexOf('.')).replace('/', '.');
             ClassLoader loader = getClassLoader();
-            ResolverUtil.log.trace("Checking to see if class " + externalName + " matches criteria [" + test+ "]");
+            log.trace("Checking to see if class " + externalName + " matches criteria [" + test+ "]");
 
             Class type = loader.loadClass(externalName);
             if (test.matches(type) ) {
@@ -321,7 +321,7 @@ public class ResolverUtil<T> {
             }
         }
         catch (Throwable t) {
-            ResolverUtil.log.warn("Could not examine class '"+ fqn + "' due to a " +
+            log.warn("Could not examine class '"+ fqn + "' due to a " +
                      t.getClass().getName()+ " with message: " + t.getMessage());
         }
     }

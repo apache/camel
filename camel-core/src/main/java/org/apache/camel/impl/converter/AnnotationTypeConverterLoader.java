@@ -18,6 +18,7 @@
 package org.apache.camel.impl.converter;
 
 import org.apache.camel.Converter;
+import org.apache.camel.impl.CachingInjector;
 import org.apache.camel.util.ResolverUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -121,6 +122,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         }
         visitedClasses.add(type);
         Method[] methods = type.getDeclaredMethods();
+        CachingInjector injector = null;
+
         for (Method method : methods) {
             Converter annotation = method.getAnnotation(Converter.class);
             if (annotation != null) {
@@ -147,7 +150,10 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                                 registry.addTypeConverter(fromType, toType, new StaticMethodTypeConverter(method));
                             }
                             else {
-                                registry.addTypeConverter(fromType, toType, new InstanceMethodTypeConverter(registry, type, method));
+                                if (injector == null) {
+                                    injector = new CachingInjector(registry, type);
+                                }
+                                registry.addTypeConverter(fromType, toType, new InstanceMethodTypeConverter(injector, method));
                             }
                         }
                     }
