@@ -19,18 +19,19 @@ package org.apache.camel.component.cxf;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.cxf.service.model.EndpointInfo;
+import org.apache.cxf.transport.local.LocalTransportFactory;
+import org.xmlsoap.schemas.wsdl.http.AddressType;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @version $Revision$
  */
 public class CxfComponent extends DefaultComponent<CxfExchange> {
-    private Map<String, CxfEndpoint> map = new HashMap<String, CxfEndpoint>();
+    private LocalTransportFactory localTransportFactory = new LocalTransportFactory();
 
     public CxfComponent() {
     }
@@ -40,33 +41,23 @@ public class CxfComponent extends DefaultComponent<CxfExchange> {
     }
 
     public synchronized CxfEndpoint createEndpoint(String uri, String[] urlParts) throws IOException, URISyntaxException {
-        CxfEndpoint endpoint = map.get(uri);
-        if (endpoint == null) {
-            String remainingUrl = uri.substring("cxf:".length());
-            URI u = new URI(remainingUrl);
+        String remainingUrl = uri.substring("cxf:".length());
+        URI u = new URI(remainingUrl);
 
-            String protocol = u.getScheme();
+        // TODO this is a hack!!!
+        EndpointInfo endpointInfo = new EndpointInfo(null, "http://schemas.xmlsoap.org/soap/http");
+        AddressType a = new AddressType();
+        a.setLocation(remainingUrl);
+        endpointInfo.addExtensor(a);
 
-            map.put(uri, endpoint);
-        }
-        return endpoint;
+        return new CxfEndpoint(uri, this, endpointInfo);
     }
 
-    /*
-    protected void foo() {
-       Bus bus = CXFBusFactory.getDefaultBus();
-       ServerRegistry serverRegistry = bus.getExtension(ServerRegistry.class);
-       List<Server> servers = serverRegistry.getServers();
-
-       Server targetServer = null;
-       for (Server server : servers) {
-           targetServer = server;
-           EndpointInfo info = server.getEndpoint().getEndpointInfo();
-           String address = info.getAddress();
-
-           Message message = new MessageImpl();
-           server.getMessageObserver().onMessage(message);
-       }
+    public LocalTransportFactory getLocalTransportFactory() {
+        return localTransportFactory;
     }
-    */
+
+    public void setLocalTransportFactory(LocalTransportFactory localTransportFactory) {
+        this.localTransportFactory = localTransportFactory;
+    }
 }

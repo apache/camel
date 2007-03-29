@@ -48,6 +48,11 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-transports-local</artifactId>
+      <version>2.0-incubator-RC-SNAPSHOT</version>
+    </dependency>
 
 
     <dependency>

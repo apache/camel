@@ -17,13 +17,14 @@
  */
 package org.apache.camel.component.cxf;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.transport.local.LocalTransportFactory;
+import org.apache.cxf.service.model.EndpointInfo;
 
 /**
  * The endpoint in the service engine
@@ -32,17 +33,18 @@ import org.apache.camel.impl.DefaultProducer;
  */
 public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     private CxfBinding binding;
+    private final CxfComponent component;
+    private final EndpointInfo endpointInfo;
+    private boolean inOut = true;
 
-    protected CxfEndpoint(String uri, CamelContext camelContext) {
-        super(uri, camelContext);
+    public CxfEndpoint(String uri, CxfComponent component, EndpointInfo endpointInfo) {
+        super(uri, component.getContext());
+        this.component = component;
+        this.endpointInfo = endpointInfo;
     }
 
     public Producer<CxfExchange> createProducer() throws Exception {
-        return startService(new DefaultProducer<CxfExchange>(this) {
-            public void onExchange(CxfExchange exchange) {
-                // TODO send into CXF
-            }
-        });
+        return startService(new CxfProducer(this));
     }
 
     public Consumer<CxfExchange> createConsumer(Processor<CxfExchange> processor) throws Exception {
@@ -65,15 +67,23 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
         this.binding = binding;
     }
 
-    @Override
-    protected void doActivate() throws Exception {
-        super.doActivate();
+    public boolean isInOut() {
+        return inOut;
+    }
 
-        // TODO process any inbound messages from CXF
+    public void setInOut(boolean inOut) {
+        this.inOut = inOut;
+    }
 
-        Processor<CxfExchange> processor = getInboundProcessor();
-        if (processor != null) {
+    public LocalTransportFactory getLocalTransportFactory() {
+        return component.getLocalTransportFactory();
+    }
 
-        }
+    public EndpointInfo getEndpointInfo() {
+        return endpointInfo;
+    }
+
+    public CxfComponent getComponent() {
+        return component;
     }
 }
