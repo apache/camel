@@ -17,13 +17,16 @@
  */
 package org.apache.camel.converter;
 
+import java.beans.PropertyEditorManager;
+import java.beans.PropertyEditorSupport;
+import java.io.InputStream;
+
 import junit.framework.TestCase;
+
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.InputStream;
 
 /**
  * @version $Revision$
@@ -33,6 +36,32 @@ public class ConverterTest extends TestCase {
 
     protected TypeConverter converter = new DefaultTypeConverter();
     
+	public static class IntegerPropertyEditor extends PropertyEditorSupport {
+		public void setAsText(String text) throws IllegalArgumentException {
+            setValue(new Integer(text));
+		}
+
+		public String getAsText() {
+			Integer value = (Integer) getValue();
+			return (value != null ? value.toString() : "");
+		}		
+	}
+	
+	
+	@Override
+	protected void setUp() throws Exception {
+		PropertyEditorManager.registerEditor(Integer.class, IntegerPropertyEditor.class);
+	}
+
+    public void testIntegerPropertyEditorConversion() throws Exception {
+    	Integer value = converter.convertTo(Integer.class, "1000");
+        assertNotNull(value);
+        assertEquals("Converted to Integer", new Integer(1000), value);
+
+        String text = converter.convertTo(String.class, value);
+        assertEquals("Converted to String", "1000", text);
+    }
+
     public void testConvertStringAndBytes() throws Exception {
         byte[] array = converter.convertTo(byte[].class, "foo");
         assertNotNull(array);
@@ -50,4 +79,5 @@ public class ConverterTest extends TestCase {
         String text = converter.convertTo(String.class, inputStream);
         assertEquals("Converted to String", "bar", text);
     }
+
 }

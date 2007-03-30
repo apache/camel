@@ -41,6 +41,7 @@ public class JaxpTest extends TestCase {
         // lets now convert back again
 
         String text = converter.convertTo(String.class, document);
-        assertEquals("Converted to String", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>", text);
+        // The preamble changes a little under Java 1.6 it adds a standalone="no" attribute.
+        assertTrue("Converted to String", text.endsWith("?><hello>world!</hello>"));
     }
 }
