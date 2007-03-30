@@ -44,7 +44,6 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
     private Conduit conduit;
     private ResultFuture future = new ResultFuture();
 
-
     public CxfProducer(CxfEndpoint endpoint, LocalTransportFactory transportFactory) {
         super(endpoint);
         this.endpoint = endpoint;
@@ -59,15 +58,17 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
             e.setInMessage(m);
             m.put(LocalConduit.DIRECT_DISPATCH, Boolean.TRUE);
             m.setDestination(destination);
-            conduit.send(m);
+            synchronized (conduit) {
+                conduit.send(m);
 
-            // now lets wait for the response
-            if (endpoint.isInOut()) {
-                Message response = future.getResponse();
+                // now lets wait for the response
+                if (endpoint.isInOut()) {
+                    Message response = future.getResponse();
 
-                // TODO - why do we need to ignore the returned message and get the out message from the exchange!
-                response = e.getOutMessage();
-                binding.storeCxfResponse(exchange, response);
+                    // TODO - why do we need to ignore the returned message and get the out message from the exchange!
+                    response = e.getOutMessage();
+                    binding.storeCxfResponse(exchange, response);
+                }
             }
         }
         catch (IOException e) {
@@ -93,7 +94,6 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         if (conduit != null) {
             conduit.close();
         }
-
     }
 
     protected class ResultFuture implements MessageObserver {
