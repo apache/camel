@@ -25,8 +25,9 @@ import java.util.Collection;
 import java.util.Arrays;
 
 /**
- * Some core java.lang based converters
- * 
+ * Some core java.lang based 
+ * <a href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
+ *
  * @version $Revision$
  */
 @Converter

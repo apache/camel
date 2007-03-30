@@ -23,7 +23,8 @@ import java.io.*;
 import java.nio.ByteBuffer;
 
 /**
- * Some core java.nio based converters
+ * Some core java.nio based 
+ * <a href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
  *
  * @version $Revision$
  */
