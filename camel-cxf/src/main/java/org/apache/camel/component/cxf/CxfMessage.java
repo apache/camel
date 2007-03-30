@@ -19,9 +19,9 @@ package org.apache.camel.component.cxf;
 
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.message.MessageImpl;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * An Apache CXF {@link Message} which provides access to the underlying CXF features
@@ -32,6 +32,7 @@ public class CxfMessage extends DefaultMessage {
     private Message cxfMessage;
 
     public CxfMessage() {
+        this(new MessageImpl());
     }
 
     public CxfMessage(Message cxfMessage) {
@@ -67,14 +68,17 @@ public class CxfMessage extends DefaultMessage {
     }
 
     public Object getHeader(String name) {
-        Object answer = null;
-        if (cxfMessage != null) {
-            answer = cxfMessage.get(name);
-        }
-        if (answer == null) {
-            answer = super.getHeader(name);
-        }
-        return answer;
+        return cxfMessage.get(name);
+    }
+
+    @Override
+    public void setHeader(String name, Object value) {
+        cxfMessage.put(name, value);
+    }
+
+    @Override
+    public Map<String, Object> getHeaders() {
+        return cxfMessage;
     }
 
     @Override
@@ -84,21 +88,6 @@ public class CxfMessage extends DefaultMessage {
 
     @Override
     protected Object createBody() {
-        if (cxfMessage != null) {
-            return getExchange().getBinding().extractBodyFromCxf(getExchange(), cxfMessage);
-        }
-        return null;
-    }
-
-    @Override
-    protected void populateInitialHeaders(Map<String, Object> map) {
-        if (cxfMessage != null) {
-            Set<Map.Entry<String, Object>> entries = cxfMessage.entrySet();
-            for (Map.Entry<String, Object> entry : entries) {
-                String name = entry.getKey();
-                Object value = entry.getValue();
-                map.put(name, value);
-            }
-        }
+        return getExchange().getBinding().extractBodyFromCxf(getExchange(), cxfMessage);
     }
 }

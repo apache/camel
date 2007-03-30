@@ -19,20 +19,17 @@ package org.apache.camel.component.cxf;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
-import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.Conduit;
+import org.apache.cxf.transport.Destination;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.transport.local.LocalConduit;
-import org.apache.cxf.transport.local.LocalDestination;
 import org.apache.cxf.transport.local.LocalTransportFactory;
-import org.xmlsoap.schemas.wsdl.http.AddressType;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -42,20 +39,21 @@ import java.util.concurrent.CountDownLatch;
  */
 public class CxfProducer extends DefaultProducer<CxfExchange> {
     private CxfEndpoint endpoint;
+    private final LocalTransportFactory transportFactory;
 
-    public CxfProducer(CxfEndpoint endpoint) {
+    public CxfProducer(CxfEndpoint endpoint, LocalTransportFactory transportFactory) {
         super(endpoint);
         this.endpoint = endpoint;
+        this.transportFactory = transportFactory;
     }
 
     public void onExchange(CxfExchange exchange) {
         try {
-            LocalTransportFactory factory = endpoint.getLocalTransportFactory();
             EndpointInfo endpointInfo = endpoint.getEndpointInfo();
-            LocalDestination d = (LocalDestination) factory.getDestination(endpointInfo);
+            Destination d = transportFactory.getDestination(endpointInfo);
 
             // Set up a listener for the response
-            Conduit conduit = factory.getConduit(endpointInfo);
+            Conduit conduit = transportFactory.getConduit(endpointInfo);
             ResultFuture future = new ResultFuture();
             conduit.setMessageObserver(future);
 
@@ -70,6 +68,9 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
             // now lets wait for the response
             if (endpoint.isInOut()) {
                 Message response = future.getResponse();
+
+                // TODO - why do we need to ignore the returned message and get the out message from the exchange!
+                response = e.getOutMessage();
                 binding.storeCxfResponse(exchange, response);
             }
         }

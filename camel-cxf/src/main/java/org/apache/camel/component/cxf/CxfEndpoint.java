@@ -21,9 +21,10 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.cxf.transport.local.LocalTransportFactory;
-import org.apache.cxf.service.model.EndpointInfo;
+import org.apache.cxf.BusException;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.service.model.EndpointInfo;
+import org.apache.cxf.transport.local.LocalTransportFactory;
 
 /**
  * The endpoint in the service engine
@@ -43,11 +44,11 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     }
 
     public Producer<CxfExchange> createProducer() throws Exception {
-        return startService(new CxfProducer(this));
+        return startService(new CxfProducer(this, getLocalTransportFactory()));
     }
 
     public Consumer<CxfExchange> createConsumer(Processor<CxfExchange> processor) throws Exception {
-        return startService(new CxfConsumer(this, processor));
+        return startService(new CxfConsumer(this, processor, getLocalTransportFactory()));
     }
 
     public CxfExchange createExchange() {
@@ -77,7 +78,7 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
         this.inOut = inOut;
     }
 
-    public LocalTransportFactory getLocalTransportFactory() {
+    public LocalTransportFactory getLocalTransportFactory() throws BusException {
         return component.getLocalTransportFactory();
     }
 
