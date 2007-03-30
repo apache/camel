@@ -17,16 +17,16 @@
  */
 package org.apache.camel.impl.converter;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @version $Revision$
@@ -36,10 +36,13 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     private Map<TypeMapping, TypeConverter> typeMappings = new HashMap<TypeMapping, TypeConverter>();
     private Injector injector;
     private List<TypeConverterLoader> typeConverterLoaders = new ArrayList<TypeConverterLoader>();
+    private List<TypeConverter> fallbackConverters = new ArrayList<TypeConverter>();
     private boolean loaded;
 
     public DefaultTypeConverter() {
         typeConverterLoaders.add(new AnnotationTypeConverterLoader());
+        fallbackConverters.add(new PropertyEditorTypeConverter());
+        fallbackConverters.add(new ToStringTypeConverter());
     }
 
     public <T> T convertTo(Class<T> toType, Object value) {
@@ -51,11 +54,13 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         if (converter != null) {
             return converter.convertTo(toType, value);
         }
-        if (value != null) {
-            if (toType.equals(String.class)) {
-                return (T) value.toString();
-            }
-        }
+        
+        for (TypeConverter fallback : fallbackConverters) {
+			T rc = fallback.convertTo(toType, value);
+			if( rc!=null )
+				return rc;
+		}
+        
         return null;
     }
 
@@ -207,6 +212,11 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
                 answer *= 37 + fromType.hashCode();
             }
             return answer;
+        }
+        
+        @Override
+        public String toString() {
+        	return "["+fromType+"=>"+toType+"]";
         }
     }
 }
