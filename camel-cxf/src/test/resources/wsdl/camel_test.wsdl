@@ -326,7 +326,7 @@
               jndiConnectionFactoryName="ConnectionFactory"
               jndiDestinationName="dynamicQueues/test.cameltransport.binary">
         <camel:JMSNamingProperty name="java.naming.factory.initial"
-                               value="org.activemq.jndi.ActiveMQInitialContextFactory"/>
+                                 value="org.activemq.jndi.ActiveMQInitialContextFactory"/>
         <camel:JMSNamingProperty name="java.naming.provider.url" value="tcp://localhost:61500"/>
       </camel:address>
 
@@ -341,7 +341,7 @@
               jndiConnectionFactoryName="ConnectionFactory"
               jndiDestinationName="dynamicQueues/test.cameltransport.text">
         <camel:JMSNamingProperty name="java.naming.factory.initial"
-                               value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
+                                 value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
         <camel:JMSNamingProperty name="java.naming.provider.url" value="tcp://localhost:61500"/>
       </camel:address>
 
@@ -356,7 +356,7 @@
               jndiDestinationName="dynamicQueues/test.cameltransport.binary"
               jndiReplyDestinationName="dynamicQueues/test.cameltransport.binary">
         <camel:JMSNamingProperty name="java.naming.factory.initial"
-                               value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
+                                 value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
         <camel:JMSNamingProperty name="java.naming.provider.url" value="tcp://localhost:61500"/>
       </camel:address>
 
@@ -372,7 +372,7 @@
               jndiDestinationName="dynamicQueues/test.cameltransport.binary"
               jndiReplyDestinationName="dynamicQueues/test.cameltransport.binary.reply">
         <camel:JMSNamingProperty name="java.naming.factory.initial"
-                               value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
+                                 value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
         <camel:JMSNamingProperty name="java.naming.provider.url" value="tcp://localhost:61500"/>
       </camel:address>
 
@@ -389,7 +389,7 @@
               jndiDestinationName="dynamicQueues/test.cameltransport.text"
               jndiReplyDestinationName="dynamicQueues/test.cameltransport.text.reply">
         <camel:JMSNamingProperty name="java.naming.factory.initial"
-                               value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
+                                 value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
         <camel:JMSNamingProperty name="java.naming.provider.url" value="tcp://localhost:61500"/>
       </camel:address>
 
@@ -403,7 +403,7 @@
               jndiConnectionFactoryName="ConnectionFactory"
               jndiDestinationName="dynamicQueues/test.cameltransport.oneway">
         <camel:JMSNamingProperty name="java.naming.factory.initial"
-                               value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
+                                 value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
         <camel:JMSNamingProperty name="java.naming.provider.url" value="tcp://localhost:61500"/>
       </camel:address>
 
@@ -418,7 +418,7 @@
               jndiConnectionFactoryName="ConnectionFactory"
               jndiDestinationName="dynamicTopics/test.cameltransport.oneway.topic">
         <camel:JMSNamingProperty name="java.naming.factory.initial"
-                               value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
+                                 value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
         <camel:JMSNamingProperty name="java.naming.provider.url" value="tcp://localhost:61500"/>
       </camel:address>
     </port>
@@ -431,7 +431,7 @@
               jndiDestinationName="dynamicQueues/test.camel.addr.queue"
               jndiReplyDestinationName="dynamicQueues/test.camel.addr.reply.queue">
         <camel:JMSNamingProperty name="java.naming.factory.initial"
-                               value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
+                                 value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
         <camel:JMSNamingProperty name="java.naming.provider.url" value="tcp://localhost:61500"/>
       </camel:address>
       <wswa:UsingAddressing xmlns:wswa="http://www.w3.org/2005/08/addressing/wsdl"/>
