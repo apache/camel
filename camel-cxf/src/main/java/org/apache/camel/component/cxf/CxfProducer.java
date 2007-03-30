@@ -40,6 +40,10 @@ import java.util.concurrent.CountDownLatch;
 public class CxfProducer extends DefaultProducer<CxfExchange> {
     private CxfEndpoint endpoint;
     private final LocalTransportFactory transportFactory;
+    private Destination destination;
+    private Conduit conduit;
+    private ResultFuture future = new ResultFuture();
+
 
     public CxfProducer(CxfEndpoint endpoint, LocalTransportFactory transportFactory) {
         super(endpoint);
@@ -49,20 +53,12 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
 
     public void onExchange(CxfExchange exchange) {
         try {
-            EndpointInfo endpointInfo = endpoint.getEndpointInfo();
-            Destination d = transportFactory.getDestination(endpointInfo);
-
-            // Set up a listener for the response
-            Conduit conduit = transportFactory.getConduit(endpointInfo);
-            ResultFuture future = new ResultFuture();
-            conduit.setMessageObserver(future);
-
             CxfBinding binding = endpoint.getBinding();
             MessageImpl m = binding.createCxfMessage(exchange);
             ExchangeImpl e = new ExchangeImpl();
             e.setInMessage(m);
             m.put(LocalConduit.DIRECT_DISPATCH, Boolean.TRUE);
-            m.setDestination(d);
+            m.setDestination(destination);
             conduit.send(m);
 
             // now lets wait for the response
@@ -77,6 +73,27 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         catch (IOException e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        EndpointInfo endpointInfo = endpoint.getEndpointInfo();
+        destination = transportFactory.getDestination(endpointInfo);
+
+        // Set up a listener for the response
+        conduit = transportFactory.getConduit(endpointInfo);
+        conduit.setMessageObserver(future);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        if (conduit != null) {
+            conduit.close();
+        }
+
     }
 
     protected class ResultFuture implements MessageObserver {
