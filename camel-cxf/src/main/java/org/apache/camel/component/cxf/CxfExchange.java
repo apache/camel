@@ -48,6 +48,18 @@ public class CxfExchange extends DefaultExchange {
         setFault(new CxfMessage(exchange.getInFaultMessage()));
     }
 
+    public CxfExchange(CamelContext context, CxfBinding binding, Message inMessage) {
+        super(context);
+        this.binding = binding;
+        this.exchange = inMessage.getExchange();
+
+        setIn(new CxfMessage(inMessage));
+        if (exchange != null) {
+            setOut(new CxfMessage(exchange.getOutMessage()));
+            setFault(new CxfMessage(exchange.getInFaultMessage()));
+        }
+    }
+
     @Override
     public CxfMessage getIn() {
         return (CxfMessage) super.getIn();
