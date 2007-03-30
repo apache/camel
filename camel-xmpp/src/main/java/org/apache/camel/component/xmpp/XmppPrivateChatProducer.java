@@ -60,7 +60,7 @@ public class XmppPrivateChatProducer extends DefaultProducer<XmppExchange> {
 
         endpoint.getBinding().populateXmppMessage(message, exchange);
         if (log.isDebugEnabled()) {
-            log.debug(">>>> " + message);
+            log.debug(">>>> message: " + message.getBody());
         }
         try {
             chat.sendMessage(message);

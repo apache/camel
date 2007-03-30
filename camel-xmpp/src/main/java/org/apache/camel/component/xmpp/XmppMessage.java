@@ -20,9 +20,9 @@ package org.apache.camel.component.xmpp;
 import org.apache.camel.impl.DefaultMessage;
 import org.jivesoftware.smack.packet.Message;
 
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with XMPP
@@ -74,7 +74,12 @@ public class XmppMessage extends DefaultMessage {
 
     @Override
     public void setHeader(String name, Object value) {
-        xmppMessage.setProperty(name, value);
+        if (value == null) {
+            xmppMessage.deleteProperty(name);
+        }
+        else {
+            xmppMessage.setProperty(name, value);
+        }
     }
 
     @Override

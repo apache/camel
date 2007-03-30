@@ -63,6 +63,6 @@ public class ObjectConverter {
         if (value instanceof String) {
             return "true".equalsIgnoreCase(value.toString());
         }
-        return value != null;
+        return false;
     }
 }

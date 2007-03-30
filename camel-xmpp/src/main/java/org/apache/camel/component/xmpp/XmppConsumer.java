@@ -56,25 +56,31 @@ public class XmppConsumer extends DefaultConsumer<XmppExchange> implements Packe
     }
 
     public void processPacket(Packet packet) {
-        if (log.isDebugEnabled()) {
-            log.debug("<<<< " + packet);
-        }
 
         if (packet instanceof Message) {
             Message message = (Message) packet;
+            if (log.isDebugEnabled()) {
+                log.debug("<<<< message: " + message.getBody());
+            }
             XmppExchange exchange = endpoint.createExchange(message);
             getProcessor().onExchange(exchange);
         }
         else if (packet instanceof RosterPacket) {
             RosterPacket rosterPacket = (RosterPacket) packet;
             if (log.isDebugEnabled()) {
-                log.debug("Roster packet with : " + rosterPacket.getRosterItemCount());
+                log.debug("Roster packet with : " + rosterPacket.getRosterItemCount() + " item(s)");
                 Iterator rosterItems = rosterPacket.getRosterItems();
                 while (rosterItems.hasNext()) {
                     Object item = rosterItems.next();
                     log.debug("Roster item: " + item);
                 }
             }
+        }
+        else {
+            if (log.isDebugEnabled()) {
+                log.debug("<<<< ignored packet: " + packet);
+            }
+
         }
     }
 }

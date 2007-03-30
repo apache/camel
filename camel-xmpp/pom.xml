@@ -55,13 +55,6 @@
       <version>2.2.1</version>
     </dependency>
 
-<!--
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring</artifactId>
-    </dependency>
--->
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -69,4 +62,23 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>xmpp.enable</name>
+              <value>${xmpp.enable}</value>
+            </property>
+            <property>
+              <name>xmpp.server</name>
+              <value>${xmpp.url}</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
