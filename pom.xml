@@ -115,12 +115,13 @@
     <module>camel-core</module>
     <module>camel-cxf</module>
     <module>camel-http</module>
-    <module>camel-jms</module>
+    <module>camel-itest</module>
     <module>camel-jbi</module>
+    <module>camel-jms</module>
     <module>camel-mina</module>
     <module>camel-script</module>
     <module>camel-spring</module>
-    <module>camel-itest</module>
+    <module>camel-xmpp</module>
   </modules>
 
   <scm>
