@@ -20,11 +20,10 @@ package org.apache.camel.component.cxf;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.transport.local.LocalTransportFactory;
 import org.apache.cxf.service.model.EndpointInfo;
+import org.apache.cxf.message.Message;
 
 /**
  * The endpoint in the service engine
@@ -48,12 +47,15 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     }
 
     public Consumer<CxfExchange> createConsumer(Processor<CxfExchange> processor) throws Exception {
-        return startService(new DefaultConsumer<CxfExchange>(this, processor) {
-        });
+        return startService(new CxfConsumer(this, processor));
     }
 
     public CxfExchange createExchange() {
         return new CxfExchange(getContext(), getBinding());
+    }
+
+    public CxfExchange createExchange(Message inMessage) {
+        return new CxfExchange(getContext(), getBinding(), inMessage);
     }
 
     public CxfBinding getBinding() {
