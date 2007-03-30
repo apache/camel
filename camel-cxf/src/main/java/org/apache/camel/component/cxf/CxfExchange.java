@@ -95,20 +95,20 @@ public class CxfExchange extends DefaultExchange {
         return exchange;
     }
 
+    public Message getInMessage() {
+        return getIn().getMessage();
+    }
+
+    public Message getOutMessage() {
+        return getOut().getMessage();
+    }
+
     public Message getOutFaultMessage() {
         return getExchange().getOutFaultMessage();
     }
 
-    public Message getInMessage() {
-        return getExchange().getInMessage();
-    }
-
     public Message getInFaultMessage() {
         return getExchange().getInFaultMessage();
-    }
-
-    public Message getOutMessage() {
-        return getExchange().getOutMessage();
     }
 
     public Destination getDestination() {

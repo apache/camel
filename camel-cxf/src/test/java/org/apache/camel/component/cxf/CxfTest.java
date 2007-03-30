@@ -24,82 +24,98 @@ import org.apache.camel.Processor;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.CamelClient;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.cxf.Bus;
+import org.apache.cxf.bus.CXFBusFactory;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.Conduit;
+import org.apache.cxf.transport.Destination;
+import org.apache.cxf.transport.DestinationFactory;
+import org.apache.cxf.transport.DestinationFactoryManager;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.transport.local.LocalConduit;
-import org.apache.cxf.transport.local.LocalDestination;
 import org.apache.cxf.transport.local.LocalTransportFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.xmlsoap.schemas.wsdl.http.AddressType;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @version $Revision$
  */
 public class CxfTest extends TestCase {
     private static final transient Log log = LogFactory.getLog(CxfTest.class);
-
     protected CamelContext camelContext = new DefaultCamelContext();
     protected CamelClient client = new CamelClient(camelContext);
 
     public void testInvokeOfServer() throws Exception {
-        CxfEndpoint endpoint = (CxfEndpoint) camelContext.resolveEndpoint("cxf:http://localhost/test");
-        assertNotNull(endpoint);
-
-        // lets make sure we use the same factory
-        LocalTransportFactory factory = endpoint.getLocalTransportFactory();
-
+        // lets register a service
         EndpointInfo ei = new EndpointInfo(null, "http://schemas.xmlsoap.org/soap/http");
         AddressType a = new AddressType();
         a.setLocation("http://localhost/test");
         ei.addExtensor(a);
 
-        LocalDestination d = (LocalDestination) factory.getDestination(ei);
-        d.setMessageObserver(new EchoObserver());
+        Bus bus = CXFBusFactory.getDefaultBus();
+        DestinationFactoryManager dfm = bus.getExtension(DestinationFactoryManager.class);
+        DestinationFactory factory = dfm.getDestinationFactory(LocalTransportFactory.TRANSPORT_ID);
 
-        Exchange exchange = client.send("cxf:http://localhost/test", new Processor<Exchange>() {
+        Destination destination = factory.getDestination(ei);
+        destination.setMessageObserver(new EchoObserver());
+
+        // now lets invoke it via Camel
+        CxfExchange exchange = (CxfExchange) client.send("cxf:http://localhost/test", new Processor<Exchange>() {
             public void onExchange(Exchange exchange) {
+                exchange.getIn().setHeader("requestHeader", "foo");
                 exchange.getIn().setBody("<hello>world</hello>");
             }
         });
 
         org.apache.camel.Message out = exchange.getOut();
-        log.info("Received output message: " + out);
+        Message cxfOutMessage = exchange.getOutMessage();
+        log.info("Received output message: " + out + " and CXF out: " + cxfOutMessage);
 
-/*
+        assertEquals("replyHeader on CXF", "foo2", cxfOutMessage.get("replyHeader"));
+        assertEquals("replyHeader on Camel", "foo2", out.getHeader("replyHeader"));
+
         String output = out.getBody(String.class);
-        log.info("Received output text: "+ output);
-*/
+        log.info("Received output text: " + output);
     }
 
     protected class EchoObserver implements MessageObserver {
         public void onMessage(Message message) {
             try {
-                log.info("Received message: "+ message + " with content types: " + message.getContentFormats());
-                
+                log.info("Received message: " + message + " with content types: " + message.getContentFormats());
+
                 Conduit backChannel = message.getDestination().getBackChannel(message, null, null);
                 message.remove(LocalConduit.DIRECT_DISPATCH);
 
                 TypeConverter converter = camelContext.getTypeConverter();
                 String request = converter.convertTo(String.class, message.getContent(InputStream.class));
                 log.info("Request body: " + request);
-                
+
                 org.apache.cxf.message.Exchange exchange = message.getExchange();
                 MessageImpl reply = new MessageImpl();
+                reply.put("foo", "bar");
+                assertEquals("foo header", "bar", reply.get("foo"));
+
+                reply.put("replyHeader", message.get("requestHeader") + "2");
+
+                Set<Map.Entry<String, Object>> entries = reply.entrySet();
+                assertEquals("entrySet.size()", 2, entries.size());
+
                 //reply.setContent(String.class, "<reply>true</reply>");
                 InputStream payload = converter.convertTo(InputStream.class, "<reply>true</reply>");
                 reply.setContent(InputStream.class, payload);
                 exchange.setOutMessage(reply);
 
-
-                backChannel.send(reply);
+                log.info("sending reply: " + reply);
+                backChannel.send(message);
 
 /*
                 backChannel.send(message);
@@ -114,7 +130,7 @@ public class CxfTest extends TestCase {
 */
             }
             catch (Exception e) {
-                log.error("Caught: "+ e, e);
+                log.error("Caught: " + e, e);
                 fail("Caught: " + e);
             }
         }

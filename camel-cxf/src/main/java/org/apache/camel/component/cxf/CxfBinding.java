@@ -21,7 +21,6 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 
 import java.io.InputStream;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -47,7 +46,7 @@ public class CxfBinding {
     }
 
     public MessageImpl createCxfMessage(CxfExchange exchange) {
-        MessageImpl answer = new MessageImpl();
+        MessageImpl answer = (MessageImpl) exchange.getInMessage();
 
         // TODO is InputStream the best type to give to CXF?
         CxfMessage in = exchange.getIn();
@@ -57,22 +56,21 @@ public class CxfBinding {
         }
         answer.setContent(InputStream.class, body);
 
+        // no need to process headers as we reuse the CXF message
+        /*
         // set the headers
         Set<Map.Entry<String, Object>> entries = in.getHeaders().entrySet();
         for (Map.Entry<String, Object> entry : entries) {
             answer.put(entry.getKey(), entry.getValue());
         }
+        */
         return answer;
     }
 
     public void storeCxfResponse(CxfExchange exchange, Message response) {
+        // no need to process headers as we use the CXF message
         CxfMessage out = exchange.getOut();
+        out.setMessage(response);
         out.setBody(getBody(response));
-
-        // set the headers
-        Set<Map.Entry<String, Object>> entries = response.entrySet();
-        for (Map.Entry<String, Object> entry : entries) {
-          out.setHeader(entry.getKey(), entry.getValue());
-        }
     }
 }
