@@ -29,7 +29,6 @@ import java.util.Set;
  * @version $Revision$
  */
 public class XmppBinding {
-    
     /**
      * Populates the given XMPP message from the inbound exchange
      */
@@ -44,7 +43,10 @@ public class XmppBinding {
                 message.setProperty(name, value);
             }
         }
-        message.setProperty("exchangeId", exchange.getExchangeId());
+        String id = exchange.getExchangeId();
+        if (id != null) {
+            message.setProperty("exchangeId", id);
+        }
     }
 
     /**
