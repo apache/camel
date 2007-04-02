@@ -45,6 +45,11 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         fallbackConverters.add(new ToStringTypeConverter());
     }
 
+    public DefaultTypeConverter(Injector injector) {
+        this();
+        this.injector = injector;
+    }
+
     public <T> T convertTo(Class<T> toType, Object value) {
         if (toType.isInstance(value)) {
             return toType.cast(value);
