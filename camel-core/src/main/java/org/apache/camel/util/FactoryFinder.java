@@ -85,7 +85,7 @@ public class FactoryFinder {
         if (in == null) {
             in = FactoryFinder.class.getClassLoader().getResourceAsStream(uri);
             if (in == null) {
-                throw new IOException("Could not find factory class for resource: " + uri);
+                throw new NoFactoryAvailableException(uri);
             }
         }
 

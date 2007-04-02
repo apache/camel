@@ -18,12 +18,17 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.*;
-import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.impl.converter.Injector;
+import org.apache.camel.impl.converter.ReflectionInjector;
+import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -49,6 +54,7 @@ public class DefaultCamelContext implements CamelContext, Service {
     private TypeConverter typeConverter;
     private EndpointResolver endpointResolver;
     private ExchangeConverter exchangeConverter;
+    private Injector injector;
     private AtomicBoolean started = new AtomicBoolean(false);
 
     /**
@@ -271,6 +277,17 @@ public class DefaultCamelContext implements CamelContext, Service {
         this.typeConverter = typeConverter;
     }
 
+    public Injector getInjector() {
+        if (injector == null) {
+            injector = createInjector();
+        }
+        return injector;
+    }
+
+    public void setInjector(Injector injector) {
+        this.injector = injector;
+    }
+
     // Implementation methods
     //-----------------------------------------------------------------------
 
@@ -291,7 +308,33 @@ public class DefaultCamelContext implements CamelContext, Service {
     /**
      * Lazily create a default implementation
      */
-    private TypeConverter createTypeConverter() {
+    protected TypeConverter createTypeConverter() {
         return new DefaultTypeConverter();
+    }
+
+    /**
+     * Lazily create a default implementation
+     */
+    protected Injector createInjector() {
+        FactoryFinder finder = new FactoryFinder("META-INF/services/org/apache/camel/");
+        try {
+            return (Injector) finder.newInstance("Injector");
+        }
+        catch (NoFactoryAvailableException e) {
+            // lets use the default
+            return new ReflectionInjector();
+        }
+        catch (IllegalAccessException e) {
+            throw new RuntimeCamelException(e);
+        }
+        catch (InstantiationException e) {
+            throw new RuntimeCamelException(e);
+        }
+        catch (IOException e) {
+            throw new RuntimeCamelException(e);
+        }
+        catch (ClassNotFoundException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }
