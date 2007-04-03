@@ -17,6 +17,10 @@
  */
 package org.apache.camel.examples;
 
+import org.apache.camel.component.jpa.Consumed;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
@@ -24,12 +28,16 @@ import javax.persistence.NamedQuery;
 
 /**
  * Represents a task which has multiple steps so that it can move from stage to stage
+ * with the method annotated with {@link @Consumed} being invoked when the Camel consumer
+ * has processed the entity bean
  *
  * @version $Revision$
  */
 @Entity
 @NamedQuery(name = "step1", query="select x from MultiSteps x where x.step = 1")
 public class MultiSteps {
+    private static final transient Log log = LogFactory.getLog(MultiSteps.class);
+    
     private Long id;
     private String address;
     private int step;
@@ -71,5 +79,15 @@ public class MultiSteps {
 
     public void setStep(int step) {
         this.step = step;
+    }
+
+    /**
+     * This method is invoked after the entity bean is processed successfully by a Camel endpoint
+     */
+    @Consumed
+    public void goToNextStep() {
+        setStep(getStep() + 1);
+
+        log.info("Invoked the completion complete method. Now updated the step to: " + getStep());
     }
 }
