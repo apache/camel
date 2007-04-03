@@ -20,6 +20,8 @@ package org.apache.camel.impl;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -31,6 +33,8 @@ import java.util.concurrent.TimeUnit;
  * @version $Revision$
  */
 public abstract class PollingConsumer<E extends Exchange> extends DefaultConsumer<E> implements Runnable {
+    private static final transient Log log = LogFactory.getLog(PollingConsumer.class);
+
     private long initialDelay = 1000;
     private long delay = 500;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
@@ -39,6 +43,19 @@ public abstract class PollingConsumer<E extends Exchange> extends DefaultConsume
 
     public PollingConsumer(Endpoint<E> endpoint, Processor<E> processor) {
         super(endpoint, processor);
+    }
+
+    /**
+     * Invoked whenever we should be polled
+     */
+    public void run() {
+        log.debug("Starting to poll");
+        try {
+            poll();
+        }
+        catch (Exception e) {
+            log.warn("Caught: " + e, e);
+        }
     }
 
     // Properties
@@ -77,6 +94,13 @@ public abstract class PollingConsumer<E extends Exchange> extends DefaultConsume
 
     // Implementation methods
     //-------------------------------------------------------------------------
+
+    /**
+     * The polling method which is invoked periodically to poll this consumer
+     * 
+     * @throws Exception
+     */
+    protected abstract void poll() throws Exception;
 
     @Override
     protected void doStart() throws Exception {
