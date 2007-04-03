@@ -49,13 +49,7 @@ public class ToJbiProcessor implements Processor<Exchange> {
             MessageExchangeFactory exchangeFactory = deliveryChannel.createExchangeFactory();
             MessageExchange messageExchange = binding.makeJbiMessageExchange(exchange, exchangeFactory);
 
-            System.out.println("#### Configuring exchange with: " + destinationUri);
-            new Exception().printStackTrace(System.out);
-
             URIResolver.configureExchange(messageExchange, componentContext, destinationUri);
-
-            System.out.println("#### service: " + messageExchange.getService() + " endpoint: " + messageExchange.getEndpoint());
-            
             deliveryChannel.sendSync(messageExchange);
         }
         catch (MessagingException e) {
