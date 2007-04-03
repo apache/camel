@@ -18,29 +18,33 @@
 package org.apache.camel.examples;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.NamedQuery;
 
 /**
- * Represents a task which is added to the database, then removed from the database when it is consumed
+ * Represents a task which has multiple steps so that it can move from stage to stage
  *
  * @version $Revision$
  */
 @Entity
-public class SendEmail {
+@NamedQuery(name = "step1", query="select x from MultiSteps x where x.step = 1")
+public class MultiSteps {
     private Long id;
     private String address;
+    private int step;
 
-    public SendEmail() {
+    public MultiSteps() {
     }
 
-    public SendEmail(String address) {
+    public MultiSteps(String address) {
         setAddress(address);
+        setStep(1);
     }
 
     @Override
     public String toString() {
-        return "SendEmail[id: " + getId() + " address: " + getAddress() + "]";
+        return "MultiSteps[id: " + getId() + " step: " + getStep() + " address: " + getAddress() + "]";
     }
 
     @Id
@@ -59,5 +63,13 @@ public class SendEmail {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public int getStep() {
+        return step;
+    }
+
+    public void setStep(int step) {
+        this.step = step;
     }
 }

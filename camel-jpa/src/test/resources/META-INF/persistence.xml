@@ -26,9 +26,10 @@
         in cases where there are multiple JPA implementations available.
     -->
     <provider>
-        org.apache.openjpa.persistence.PersistenceProviderImpl
+      org.apache.openjpa.persistence.PersistenceProviderImpl
     </provider>
 
+    <class>org.apache.camel.examples.MultiSteps</class>
     <class>org.apache.camel.examples.SendEmail</class>
 
     <properties>
@@ -44,7 +45,8 @@
     </properties>
   </persistence-unit>
 
-    <persistence-unit name="custom" transaction-type="RESOURCE_LOCAL">
+  <persistence-unit name="custom" transaction-type="RESOURCE_LOCAL">
+    <class>org.apache.camel.examples.MultiSteps</class>
     <class>org.apache.camel.examples.SendEmail</class>
 
     <properties>

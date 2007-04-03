@@ -18,32 +18,32 @@
 package org.apache.camel.component.jpa;
 
 import junit.framework.TestCase;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.examples.SendEmail;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.CamelClient;
-import static org.apache.camel.util.ServiceHelper.startServices;
-import static org.apache.camel.util.ServiceHelper.stopServices;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.orm.jpa.JpaCallback;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Endpoint;
+import org.apache.camel.examples.SendEmail;
+import org.apache.camel.examples.MultiSteps;
+import org.apache.camel.util.CamelClient;
+import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.springframework.orm.jpa.JpaTemplate;
+import org.springframework.orm.jpa.JpaCallback;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 /**
  * @version $Revision$
  */
-public class JpaTest extends TestCase {
-    private static final transient Log log = LogFactory.getLog(JpaTest.class);
+public class JpaWithNamedQueryTest extends TestCase {
+    private static final transient Log log = LogFactory.getLog(JpaWithNamedQueryTest.class);
     protected CamelContext camelContext = new DefaultCamelContext();
     protected CamelClient client = new CamelClient(camelContext);
     protected JpaEndpoint endpoint;
@@ -52,14 +52,19 @@ public class JpaTest extends TestCase {
     protected Consumer<Exchange> consumer;
     protected Exchange receivedExchange;
     protected CountDownLatch latch = new CountDownLatch(1);
-    protected String entityName = SendEmail.class.getName();
-    protected String queryText = "select o from " + entityName + " o";
+    protected String entityName = MultiSteps.class.getName();
+    protected String queryText = "select o from " + entityName + " o where o.step = 1";
 
     public void testProducerInsertsIntoDatabaseThenConsumerFiresMessageExchange() throws Exception {
         transactionStrategy.execute(new JpaCallback() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
                 // lets delete any exiting records before the test
                 entityManager.createQuery("delete from " + entityName).executeUpdate();
+
+                // now lets create a dummy entry
+                MultiSteps dummy = new MultiSteps("cheese");
+                dummy.setStep(4);
+                entityManager.persist(dummy);
                 return null;
             }
         });
@@ -70,14 +75,14 @@ public class JpaTest extends TestCase {
         // lets produce some objects
         client.send(endpoint, new Processor<Exchange>() {
             public void onExchange(Exchange exchange) {
-                exchange.getIn().setBody(new SendEmail("foo@bar.com"));
+                exchange.getIn().setBody(new MultiSteps("foo@bar.com"));
             }
         });
 
         // now lets assert that there is a result
         results = template.find(queryText);
         assertEquals("Should have results: " + results, 1, results.size());
-        SendEmail mail = (SendEmail) results.get(0);
+        MultiSteps mail = (MultiSteps) results.get(0);
         assertEquals("address property", "foo@bar.com", mail.getAddress());
 
         // now lets create a consumer to consume it
@@ -93,7 +98,7 @@ public class JpaTest extends TestCase {
         assertTrue("Did not receive the message!", received);
 
         assertNotNull(receivedExchange);
-        SendEmail result = receivedExchange.getIn().getBody(SendEmail.class);
+        MultiSteps result = receivedExchange.getIn().getBody(MultiSteps.class);
         assertNotNull("Received a POJO", result);
         assertEquals("address property", "foo@bar.com", result.getAddress());
     }
@@ -102,7 +107,7 @@ public class JpaTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        startServices(client, camelContext);
+        ServiceHelper.startServices(client, camelContext);
 
         Endpoint value = camelContext.resolveEndpoint(getEndpointUri());
         assertNotNull("Could not find endpoint!", value);
@@ -114,13 +119,13 @@ public class JpaTest extends TestCase {
     }
 
     protected String getEndpointUri() {
-        return "jpa:" + SendEmail.class.getName();
+        return "jpa://" + MultiSteps.class.getName() + "?consumer.namedQuery=step1";
     }
 
     @Override
     protected void tearDown() throws Exception {
 
-        stopServices(consumer, client, camelContext);
+        ServiceHelper.stopServices(consumer, client, camelContext);
 
         super.tearDown();
     }
