@@ -38,7 +38,7 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     private boolean inOut = true;
 
     public CxfEndpoint(String uri, CxfComponent component, EndpointInfo endpointInfo) {
-        super(uri, component.getContext());
+        super(uri, component);
         this.component = component;
         this.endpointInfo = endpointInfo;
     }

@@ -20,13 +20,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.Consumer;
 import org.apache.camel.Service;
+import org.apache.camel.Component;
 import org.apache.camel.util.ObjectHelper;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.io.IOException;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * A default endpoint useful for implementation inheritence
@@ -35,14 +34,15 @@ import java.io.IOException;
  */
 public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E> {
     private String endpointUri;
+    private final Component component;
     private CamelContext context;
-    private Processor<E> inboundProcessor;
     protected AtomicBoolean activated = new AtomicBoolean(false);
     protected AtomicBoolean deactivated = new AtomicBoolean(false);
 
-    protected DefaultEndpoint(String endpointUri, CamelContext container) {
+    protected DefaultEndpoint(String endpointUri, Component component) {
         this.endpointUri = endpointUri;
-        this.context = container;
+        this.component = component;
+        this.context = component.getCamelContext();
     }
 
     public int hashCode() {
@@ -71,6 +71,14 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         return context;
     }
 
+    public Component getComponent() {
+        return component;
+    }
+
+    public ScheduledExecutorService getExecutorService() {
+        return getComponent().getExecutorService();
+    }
+
     /**
      * Converts the given exchange to the specified exchange type
      */
@@ -82,25 +90,6 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         return getContext().getExchangeConverter().convertTo(type, exchange);
     }
 
-    public void activate(Processor<E> inboundProcessor) throws Exception {
-        if (activated.compareAndSet(false, true)) {
-            deactivated.set(false);
-            this.inboundProcessor = inboundProcessor;
-            doActivate();
-        }
-        else {
-            throw new IllegalStateException("Endpoint is already active: " + getEndpointUri());
-        }
-    }
-
-    public void deactivate() {
-        if (deactivated.compareAndSet(false, true)) {
-            activated.set(false);
-            doDeactivate();
-        }
-    }
-
-
     public E createExchange(E exchange) {
         E answer = createExchange();
         answer.copyFrom(exchange);
@@ -108,28 +97,8 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
     }
 
     /**
-     * The processor used to process inbound message exchanges
+     * A helper method to reduce the clutter of implementors of {@link #createProducer()} and {@link #createConsumer(Processor)}
      */
-    public Processor<E> getInboundProcessor() {
-        return inboundProcessor;
-    }
-
-    public void setInboundProcessor(Processor<E> inboundProcessor) {
-        this.inboundProcessor = inboundProcessor;
-    }
-
-    /**
-     * Called at most once by the container to activate the endpoint
-     */
-    protected void doActivate() throws Exception {
-    }
-
-    /**
-     * Called at most once by the container to deactivate the endpoint
-     */
-    protected void doDeactivate() {
-    }
-
     protected <T extends Service> T startService(T service) throws Exception {
         service.start();
         return service;

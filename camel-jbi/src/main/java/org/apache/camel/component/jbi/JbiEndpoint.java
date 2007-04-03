@@ -36,7 +36,7 @@ public class JbiEndpoint extends DefaultEndpoint<Exchange> {
     private final CamelJbiComponent jbiComponent;
 
     public JbiEndpoint(CamelJbiComponent jbiComponent, String uri) {
-        super(uri, jbiComponent.getCamelContext());
+        super(uri, jbiComponent);
         this.jbiComponent = jbiComponent;
         toJbiProcessor = new ToJbiProcessor(jbiComponent.getBinding(), jbiComponent.getComponentContext(), uri);
     }
@@ -72,21 +72,6 @@ public class JbiEndpoint extends DefaultEndpoint<Exchange> {
         });
     }
 
-    /*
-    public void onExchange(Exchange exchange) {
-        if (getInboundProcessor() != null) {
-            getInboundProcessor().onExchange(exchange);
-        } else {
-            toJbiProcessor.onExchange(exchange);        }
-    }
-    */
-
-    @Override
-    protected void doActivate() throws Exception {
-        super.doActivate();
-
-        // lets create and activate the endpoint in JBI
-    }
 
     public JbiExchange createExchange() {
         return new JbiExchange(getContext(), getBinding());

@@ -130,7 +130,7 @@
           </includes>
           <excludes>
             <!-- TODO re-enable ASAP! -->
-            <exclude>**/Camel*Test.*</exclude>
+            <exclude>**/*Test.*</exclude>
           </excludes>
         </configuration>
       </plugin>

@@ -47,7 +47,7 @@ public class TimerEndpoint extends DefaultEndpoint<PojoExchange> {
 
 
     public TimerEndpoint(String fullURI, String timerPartURI, TimerComponent component) throws URISyntaxException {
-        super(fullURI, component.getContainer());
+        super(fullURI, component);
         this.component = component;
 		
         // Use a URI to extract query so they can be set as properties on the endpoint.

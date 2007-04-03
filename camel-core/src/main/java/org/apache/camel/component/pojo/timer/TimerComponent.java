@@ -16,35 +16,25 @@
  */
 package org.apache.camel.component.pojo.timer;
 
-import java.util.ArrayList;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
 import org.apache.camel.component.pojo.PojoExchange;
+import org.apache.camel.impl.DefaultComponent;
+
+import java.util.ArrayList;
 
 /**
  * Represents the component that manages {@link TimerEndpoint}.  It holds the
  * list of {@link TimerConsumer} objects that are started.
- * 
+ *
  * @version $Revision: 519973 $
  */
-public class TimerComponent implements Component<PojoExchange> {
-	
+public class TimerComponent extends DefaultComponent<PojoExchange> {
     protected final ArrayList<TimerConsumer> timers = new ArrayList<TimerConsumer>();
-    
-    private CamelContext container;
 
     boolean addConsumer(TimerConsumer consumer) {
         return timers.add(consumer);
     }
+
     boolean removeConsumer(TimerConsumer consumer) {
         return timers.remove(consumer);
-    }
-
-    public void setCamelContext(CamelContext container) {
-        this.container = container;
-    }
-    public CamelContext getContainer() {
-        return container;
     }
 }

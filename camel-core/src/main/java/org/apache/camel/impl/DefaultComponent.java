@@ -21,24 +21,65 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
+
 /**
  * @version $Revision$
  */
-public class DefaultComponent<E extends Exchange> implements Component<E> {
-    private CamelContext context;
+public class DefaultComponent<E extends Exchange> extends ServiceSupport implements Component<E> {
+    private int defaultThreadPoolSize = 5;
+    private CamelContext camelContext;
+    private ScheduledExecutorService executorService;
 
     public DefaultComponent() {
     }
 
     public DefaultComponent(CamelContext context) {
-        this.context = context;
+        this.camelContext = context;
     }
 
-    public CamelContext getContext() {
-        return context;
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 
     public void setCamelContext(CamelContext context) {
-        this.context = context;
+        this.camelContext = context;
+    }
+
+    public ScheduledExecutorService getExecutorService() {
+        if (executorService == null) {
+            executorService = createExecutorService();
+        }
+        return executorService;
+    }
+
+    public void setExecutorService(ScheduledExecutorService executorService) {
+        this.executorService = executorService;
+    }
+
+    /**
+     * A factory method to create a default thread pool and executor
+     */
+    protected ScheduledExecutorService createExecutorService() {
+        return new ScheduledThreadPoolExecutor(defaultThreadPoolSize, new ThreadFactory() {
+            int counter;
+
+            public synchronized Thread newThread(Runnable runnable) {
+                Thread thread = new Thread(runnable);
+                thread.setName("Thread" + (++counter) + " " + DefaultComponent.this.toString());
+                return thread;
+            }
+        });
+    }
+
+    protected void doStart() throws Exception {
+    }
+
+    protected void doStop() throws Exception {
+        if (executorService != null) {
+            executorService.shutdown();
+        }
     }
 }

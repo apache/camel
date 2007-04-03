@@ -90,7 +90,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
     }
 
     public JmsEndpoint createEndpoint(String uri, String path) throws URISyntaxException {
-        ObjectHelper.notNull(getContext(), "container");
+        ObjectHelper.notNull(getCamelContext(), "camelContext");
 
         boolean pubSubDomain = false;
         if (path.startsWith(QUEUE_PREFIX)) {
@@ -105,7 +105,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
         final String subject = convertPathToActualDestination(path);
 
         // lets make sure we copy the configuration as each endpoint can customize its own version
-        JmsEndpoint endpoint = new JmsEndpoint(uri, getContext(), subject, pubSubDomain, getConfiguration().copy());
+        JmsEndpoint endpoint = new JmsEndpoint(uri, this, subject, pubSubDomain, getConfiguration().copy());
 
         URI u = new URI(uri);
         Map options = URISupport.parseParamters(u);

@@ -36,15 +36,13 @@ import java.net.SocketAddress;
  * @version $Revision$
  */
 public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
-    private static final transient Log log = LogFactory.getLog(MinaEndpoint.class);
-
     private final IoAcceptor acceptor;
     private final SocketAddress address;
     private final IoConnector connector;
     private final IoServiceConfig config;
 
-    public MinaEndpoint(String endpointUri, CamelContext container, SocketAddress address, IoAcceptor acceptor, IoConnector connector, IoServiceConfig config) {
-        super(endpointUri, container);
+    public MinaEndpoint(String endpointUri, MinaComponent component, SocketAddress address, IoAcceptor acceptor, IoConnector connector, IoServiceConfig config) {
+        super(endpointUri, component);
         this.config = config;
         this.address = address;
         this.acceptor = acceptor;
@@ -86,20 +84,6 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
 
     public IoServiceConfig getConfig() {
         return config;
-    }
-
-    
-    // Implementation methods
-    //-------------------------------------------------------------------------
-
-    @Override
-    protected void doActivate() throws Exception {
-        super.doActivate();
-    }
-
-    @Override
-    protected void doDeactivate() {
-        acceptor.unbindAll();
     }
 
 }

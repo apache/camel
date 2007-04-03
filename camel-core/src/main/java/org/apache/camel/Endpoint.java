@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Implements the <a href="http://activemq.apache.org/camel/message-endpoint.html">Message Endpoint</a>
@@ -42,23 +43,6 @@ public interface Endpoint<E extends Exchange> {
     E createExchange(E exchange);
 
     /**
-     * Called by the container to Activate the endpoint.  Once activated,
-     * the endpoint will start delivering inbound message exchanges
-     * that are received to the specified processor.
-     *
-     * The processor must be thread safe ( or stateless ) since some endpoints 
-     * may choose to deliver exchanges concurrently to the processor.
-     * 
-     * @throws IllegalStateException if the Endpoint has already been activated.
-     */
-	void activate(Processor<E> processor) throws Exception;
-
-    /**
-     * Called by the container when the endpoint is deactivated
-     */
-    void deactivate();
-
-    /**
      * Returns the context which created the endpoint
      *
      * @return the context which created the endpoint
@@ -78,4 +62,11 @@ public interface Endpoint<E extends Exchange> {
      * @return a newly created consumer
      */
     Consumer<E> createConsumer(Processor<E> processor) throws Exception;
+
+    /**
+     * Returns the executor for this endpoint which typically defaults to the components executor
+     *
+     * @return the executor for this endpoint
+     */
+    ScheduledExecutorService getExecutorService();
 }

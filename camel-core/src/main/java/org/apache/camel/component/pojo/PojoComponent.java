@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.pojo;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
+import org.apache.camel.impl.DefaultComponent;
 
 import java.util.HashMap;
 
@@ -27,20 +26,19 @@ import java.util.HashMap;
  *
  * @version $Revision: 519973 $
  */
-public class PojoComponent implements Component<PojoExchange> {
-	
+public class PojoComponent extends DefaultComponent<PojoExchange> {
     protected final HashMap<String, Object> services = new HashMap<String, Object>();
     protected final HashMap<String, PojoConsumer> consumers = new HashMap<String, PojoConsumer>();
-    
-    private CamelContext container;
 
     public void addService(String uri, Object pojo) {
         services.put(uri, pojo);
     }
+
     public void removeService(String uri) {
         services.remove(uri);
         removeConsumer(uri);
     }
+
     public Object getService(String uri) {
         return services.get(uri);
     }
@@ -48,17 +46,12 @@ public class PojoComponent implements Component<PojoExchange> {
     void addConsumer(String uri, PojoConsumer endpoint) {
         consumers.put(uri, endpoint);
     }
+
     void removeConsumer(String uri) {
         consumers.remove(uri);
     }
+
     public PojoConsumer getConsumer(String uri) {
         return consumers.get(uri);
-    }
-
-    public void setCamelContext(CamelContext container) {
-        this.container = container;
-    }
-    public CamelContext getContainer() {
-        return container;
     }
 }
