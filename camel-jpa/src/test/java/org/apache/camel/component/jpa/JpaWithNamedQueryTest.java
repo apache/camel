@@ -18,26 +18,25 @@
 package org.apache.camel.component.jpa;
 
 import junit.framework.TestCase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
 import org.apache.camel.Endpoint;
-import org.apache.camel.examples.SendEmail;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.examples.MultiSteps;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.CamelClient;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.springframework.orm.jpa.JpaTemplate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.jpa.JpaCallback;
+import org.springframework.orm.jpa.JpaTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.List;
 
 /**
  * @version $Revision$
@@ -101,6 +100,36 @@ public class JpaWithNamedQueryTest extends TestCase {
         MultiSteps result = receivedExchange.getIn().getBody(MultiSteps.class);
         assertNotNull("Received a POJO", result);
         assertEquals("address property", "foo@bar.com", result.getAddress());
+
+
+        // lets now test that the database is updated
+        // TODO we need to sleep as we will be invoked from inside the transaction!
+        Thread.sleep(1000);
+        
+        transactionStrategy.execute(new JpaCallback() {
+            public Object doInJpa(EntityManager entityManager) throws PersistenceException {
+
+                // now lets assert that there are still 2 entities left
+                List<MultiSteps> rows = entityManager.createQuery("select x from MultiSteps x").getResultList();
+                assertEquals("Number of entities: " + rows, 2, rows.size());
+
+                int counter = 1;
+                for (MultiSteps row : rows) {
+                    log.info("entity: " + counter++ + " = " + row);
+
+                    if (row.getAddress().equals("foo@bar.com")) {
+                        log.info("Found updated row: " + row);
+
+                        assertEquals("Updated row step for: " + row, 2, row.getStep());
+                    }
+                    else {
+                        // dummy row
+                        assertEquals("dummy row step for: " + row, 4, row.getStep());
+                    }
+                }
+                return null;
+            }
+        });
     }
 
     @Override

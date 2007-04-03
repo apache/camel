@@ -19,6 +19,7 @@ package org.apache.camel.impl.converter;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.impl.CachingInjector;
 
 import java.lang.reflect.InvocationTargetException;
@@ -49,14 +50,6 @@ public class InstanceMethodTypeConverter implements TypeConverter {
         if (instance == null) {
             throw new RuntimeCamelException("Could not instantiate aninstance of: " + type.getName());
         }
-        try {
-            return (T) method.invoke(instance, value);
-        }
-        catch (IllegalAccessException e) {
-            throw new RuntimeCamelException(e);
-        }
-        catch (InvocationTargetException e) {
-            throw new RuntimeCamelException(e.getCause());
-        }
+        return (T) ObjectHelper.invokeMethod(method, instance, value);
     }
 }

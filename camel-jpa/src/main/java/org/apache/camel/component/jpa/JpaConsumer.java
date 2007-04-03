@@ -20,6 +20,7 @@ package org.apache.camel.component.jpa;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.PollingConsumer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.jpa.JpaCallback;
@@ -28,6 +29,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -67,6 +69,7 @@ public class JpaConsumer extends PollingConsumer<Exchange> {
                         getDeleteHandler().deleteObject(entityManager, result);
                     }
                 }
+                entityManager.flush();
                 return null;
             }
         });
@@ -176,7 +179,22 @@ public class JpaConsumer extends PollingConsumer<Exchange> {
 
     protected DeleteHandler<Object> createDeleteHandler() {
         // TODO auto-discover an annotation in the entity bean to indicate the process completed method call?
+        Class<?> entityType = getEndpoint().getEntityType();
+        if (entityType != null) {
+            List<Method> methods = ObjectHelper.findMethodsWithAnnotation(entityType, Consumed.class);
+            if (methods.size() > 1) {
+                throw new IllegalArgumentException("Only one method can be annotated with the @Consumed annotation but found: " + methods);
+            }
+            else if (methods.size() == 1) {
+                final Method method = methods.get(0);
 
+                return new DeleteHandler<Object>() {
+                    public void deleteObject(EntityManager entityManager, Object entityBean) {
+                        ObjectHelper.invokeMethod(method, entityBean);
+                    }
+                };
+            }
+        }
         return new DeleteHandler<Object>() {
             public void deleteObject(EntityManager entityManager, Object entityBean) {
                 entityManager.remove(entityBean);

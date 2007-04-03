@@ -19,6 +19,7 @@ package org.apache.camel.impl.converter;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -43,14 +44,6 @@ public class StaticMethodTypeConverter implements TypeConverter {
     }
 
     public <T> T convertTo(Class<T> type, Object value) {
-        try {
-            return (T) method.invoke(null, value);
-        }
-        catch (IllegalAccessException e) {
-            throw new RuntimeCamelException(e);
-        }
-        catch (InvocationTargetException e) {
-            throw new RuntimeCamelException(e.getCause());
-        }
+        return (T) ObjectHelper.invokeMethod(method, null, value);
     }
 }

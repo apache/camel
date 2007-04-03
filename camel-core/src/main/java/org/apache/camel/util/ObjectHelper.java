@@ -16,12 +16,18 @@
  */
 package org.apache.camel.util;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * @version $Revision$
@@ -67,27 +73,26 @@ public class ObjectHelper {
         }
     }
 
-
     public static void notNull(Object value, String name) {
         if (value == null) {
             throw new NullPointerException("No " + name + " specified");
         }
     }
-    
+
     public static String[] splitOnCharacter(String value, String needle, int count) {
-    	String rc [] = new String[count];
-    	rc[0] = value;
-    	for ( int i=1; i < count; i++ ) {
-    		String v = rc[i-1];
-			int p = v.indexOf(needle);
-			if( p < 0 ) {
-				return rc;
-			} 
-			rc[i-1] = v.substring(0,p);
-			rc[i] = v.substring(p+1);
-    	}
-    	return rc;
-	}
+        String rc[] = new String[count];
+        rc[0] = value;
+        for (int i = 1; i < count; i++) {
+            String v = rc[i - 1];
+            int p = v.indexOf(needle);
+            if (p < 0) {
+                return rc;
+            }
+            rc[i - 1] = v.substring(0, p);
+            rc[i] = v.substring(p + 1);
+        }
+        return rc;
+    }
 
     /**
      * Returns true if the collection contains the specified value
@@ -115,7 +120,7 @@ public class ObjectHelper {
     /**
      * A helper method to access a system property, catching any security exceptions
      *
-     * @param name the name of the system property required
+     * @param name         the name of the system property required
      * @param defaultValue the default value to use if the property is not available or a security exception prevents access
      * @return the system property value or the default value if the property is not available or security does not allow its access
      */
@@ -148,11 +153,11 @@ public class ObjectHelper {
     public static Class<?> loadClass(String name) {
         return loadClass(name, ObjectHelper.class.getClassLoader());
     }
-    
+
     /**
      * Attempts to load the given class name using the thread context class loader or the given class loader
      *
-     * @param name the name of the class to load
+     * @param name   the name of the class to load
      * @param loader the class loader to use after the thread context class loader
      * @return the class or null if it could not be loaded
      */
@@ -172,5 +177,48 @@ public class ObjectHelper {
             }
         }
         return null;
+    }
+
+    /**
+     * A helper method to invoke a method via reflection and wrap any exceptions
+     * as {@link RuntimeCamelException} instances
+     *
+     * @param method     the method to invoke
+     * @param instance   the object instance (or null for static methods)
+     * @param parameters the parameters to the method
+     * @return the result of the method invocation
+     */
+    public static Object invokeMethod(Method method, Object instance, Object... parameters) {
+        try {
+            return method.invoke(instance, parameters);
+        }
+        catch (IllegalAccessException e) {
+            throw new RuntimeCamelException(e);
+        }
+        catch (InvocationTargetException e) {
+            throw new RuntimeCamelException(e.getCause());
+        }
+    }
+
+    /**
+     * Returns a list of methods which are annotated with the given annotation
+     *
+     * @param type           the type to reflect on
+     * @param annotationType the annotation type
+     * @return a list of the methods found
+     */
+    public static List<Method> findMethodsWithAnnotation(Class<?> type, Class<? extends Annotation> annotationType) {
+        List<Method> answer = new ArrayList<Method>();
+        do {
+            Method[] methods = type.getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.getAnnotation(annotationType) != null) {
+                    answer.add(method);
+                }
+            }
+            type = type.getSuperclass();
+        }
+        while (type != null);
+        return answer;
     }
 }
