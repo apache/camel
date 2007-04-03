@@ -137,4 +137,40 @@ public class ObjectHelper {
     public static String name(Class type) {
         return type != null ? type.getName() : null;
     }
+
+    /**
+     * Attempts to load the given class name using the thread context class loader
+     * or the class loader used to load this class
+     *
+     * @param name the name of the class to load
+     * @return the class or null if it could not be loaded
+     */
+    public static Class<?> loadClass(String name) {
+        return loadClass(name, ObjectHelper.class.getClassLoader());
+    }
+    
+    /**
+     * Attempts to load the given class name using the thread context class loader or the given class loader
+     *
+     * @param name the name of the class to load
+     * @param loader the class loader to use after the thread context class loader
+     * @return the class or null if it could not be loaded
+     */
+    public static Class<?> loadClass(String name, ClassLoader loader) {
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        if (contextClassLoader != null) {
+            try {
+                return contextClassLoader.loadClass(name);
+            }
+            catch (ClassNotFoundException e) {
+                try {
+                    return loader.loadClass(name);
+                }
+                catch (ClassNotFoundException e1) {
+                    log.debug("Could not find class: " + name + ". Reason: " + e);
+                }
+            }
+        }
+        return null;
+    }
 }

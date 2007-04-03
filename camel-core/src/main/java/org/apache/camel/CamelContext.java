@@ -18,6 +18,7 @@
 package org.apache.camel;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.converter.Injector;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,7 +30,7 @@ import java.util.concurrent.Callable;
  *
  * @version $Revision$
  */
-public interface CamelContext {
+public interface CamelContext extends Service {
 
     // Component Management Methods
     //-----------------------------------------------------------------------
@@ -37,9 +38,9 @@ public interface CamelContext {
     /**
      * Adds a component to the container.
      */
-    public void addComponent(String componentName, Component component);
+    void addComponent(String componentName, Component component);
 
-    public Component getComponent(String componentName);
+    Component getComponent(String componentName);
 
     /**
      * Removes a previously added component.
@@ -47,7 +48,7 @@ public interface CamelContext {
      * @param componentName
      * @return the previously added component or null if it had not been previously added.
      */
-    public Component removeComponent(String componentName);
+    Component removeComponent(String componentName);
 
     /**
      * Gets the a previously added component by name or lazily creates the component
@@ -57,7 +58,7 @@ public interface CamelContext {
      * @param factory       used to create a new component instance if the component was not previously added.
      * @return
      */
-    public Component getOrCreateComponent(String componentName, Callable<Component> factory);
+    Component getOrCreateComponent(String componentName, Callable<Component> factory);
 
     // Endpoint Management Methods
     //-----------------------------------------------------------------------
@@ -65,17 +66,17 @@ public interface CamelContext {
     /**
      * Resolves the given URI to an endpoint
      */
-    public Endpoint resolveEndpoint(String uri);
+    Endpoint resolveEndpoint(String uri);
 
     /**
      * Activates all the starting endpoints in that were added as routes.
      */
-    public void activateEndpoints() throws Exception;
+    void activateEndpoints() throws Exception;
 
     /**
      * Deactivates all the starting endpoints in that were added as routes.
      */
-    public void deactivateEndpoints() throws Exception;
+    void deactivateEndpoints() throws Exception;
 
     /**
      * Returns the collection of all active endpoints currently registered
@@ -84,21 +85,29 @@ public interface CamelContext {
 
     // Route Management Methods
     //-----------------------------------------------------------------------
-    public List<Route> getRoutes();
+    List<Route> getRoutes();
 
-    public void setRoutes(List<Route> routes);
+    void setRoutes(List<Route> routes);
 
-    public void addRoutes(List<Route> routes);
+    void addRoutes(List<Route> routes);
 
-    public void addRoutes(RouteBuilder builder) throws Exception;
+    void addRoutes(RouteBuilder builder) throws Exception;
 
-    public void addRoutes(RouteFactory factory) throws Exception;
+    void addRoutes(RouteFactory factory) throws Exception;
 
     // Properties
     //-----------------------------------------------------------------------
-    public EndpointResolver getEndpointResolver();
+    EndpointResolver getEndpointResolver();
 
-    public ExchangeConverter getExchangeConverter();
+    ExchangeConverter getExchangeConverter();
 
-    public TypeConverter getTypeConverter();
+    /**
+     * Returns the type converter used to coerce types from one type to another
+     */
+    TypeConverter getTypeConverter();
+
+    /**
+     * Returns the injector used to instantiate objects by type
+     */
+    Injector getInjector();
 }

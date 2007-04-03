@@ -44,7 +44,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version $Revision: 520517 $
  * @org.apache.xbean.XBean element="container" rootElement="true"
  */
-public class DefaultCamelContext implements CamelContext, Service {
+public class DefaultCamelContext extends ServiceSupport implements CamelContext, Service {
     private static final transient Log log = LogFactory.getLog(DefaultCamelContext.class);
     private Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
     private Map<String, Component> components = new HashMap<String, Component>();
@@ -117,16 +117,6 @@ public class DefaultCamelContext implements CamelContext, Service {
             }
             return component;
         }
-    }
-
-    // Endpoint Management Methods
-    //-----------------------------------------------------------------------
-    public void start() throws Exception {
-        activateEndpoints();
-    }
-
-    public void stop() throws Exception {
-        deactivateEndpoints();
     }
 
     // Endpoint Management Methods
@@ -290,6 +280,14 @@ public class DefaultCamelContext implements CamelContext, Service {
 
     // Implementation methods
     //-----------------------------------------------------------------------
+
+    protected void doStart() throws Exception {
+        activateEndpoints();
+    }
+
+    protected void doStop() throws Exception {
+        deactivateEndpoints();
+    }
 
     /**
      * Lazily create a default implementation
