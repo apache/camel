@@ -47,36 +47,27 @@ public class JpaConsumer extends PollingConsumer<Exchange> {
         this.template = endpoint.createTransactionStrategy();
     }
 
-    /**
-     * Invoked whenever we should be polled
-     */
-    public synchronized void run() {
-        log.debug("Starting to poll for new database entities to process");
-        try {
-            template.execute(new JpaCallback() {
-                public Object doInJpa(EntityManager entityManager) throws PersistenceException {
-                    Query query = getQueryFactory().createQuery(entityManager);
-                    configureParameters(query);
-                    List results = query.getResultList();
-                    for (Object result : results) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Processing new entity: " + result);
-                        }
-
-                        if (lockEntity(result, entityManager)) {
-                            // lets turn the result into an exchange and fire it into the processor
-                            Exchange exchange = createExchange(result);
-                            getProcessor().onExchange(exchange);
-                            getDeleteHandler().deleteObject(entityManager, result);
-                        }
+    protected void poll() throws Exception {
+        template.execute(new JpaCallback() {
+            public Object doInJpa(EntityManager entityManager) throws PersistenceException {
+                Query query = getQueryFactory().createQuery(entityManager);
+                configureParameters(query);
+                List results = query.getResultList();
+                for (Object result : results) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Processing new entity: " + result);
                     }
-                    return null;
+
+                    if (lockEntity(result, entityManager)) {
+                        // lets turn the result into an exchange and fire it into the processor
+                        Exchange exchange = createExchange(result);
+                        getProcessor().onExchange(exchange);
+                        getDeleteHandler().deleteObject(entityManager, result);
+                    }
                 }
-            });
-        }
-        catch (RuntimeException e) {
-            log.warn("Caught: " + e, e);
-        }
+                return null;
+            }
+        });
     }
 
     // Properties
