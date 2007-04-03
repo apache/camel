@@ -22,13 +22,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.PollingConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.orm.jpa.JpaCallback;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
-import javax.persistence.Query;
 import javax.persistence.PersistenceException;
+import javax.persistence.Query;
 import java.util.List;
 
 /**
@@ -40,6 +39,9 @@ public class JpaConsumer extends PollingConsumer<Exchange> {
     private final TransactionStrategy template;
     private QueryFactory queryFactory;
     private DeleteHandler<Object> deleteHandler;
+    private String query;
+    private String namedQuery;
+    private String nativeQuery;
 
     public JpaConsumer(JpaEndpoint endpoint, Processor<Exchange> processor) {
         super(endpoint, processor);
@@ -82,7 +84,6 @@ public class JpaConsumer extends PollingConsumer<Exchange> {
             if (queryFactory == null) {
                 throw new IllegalArgumentException("No queryType property configured on this consumer, nor an entityType configured on the endpoint so cannot consume");
             }
-
         }
         return queryFactory;
     }
@@ -102,13 +103,37 @@ public class JpaConsumer extends PollingConsumer<Exchange> {
         this.deleteHandler = deleteHandler;
     }
 
+    public String getNamedQuery() {
+        return namedQuery;
+    }
+
+    public void setNamedQuery(String namedQuery) {
+        this.namedQuery = namedQuery;
+    }
+
+    public String getNativeQuery() {
+        return nativeQuery;
+    }
+
+    public void setNativeQuery(String nativeQuery) {
+        this.nativeQuery = nativeQuery;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
     /**
      * A strategy method to lock an object with an exclusive lock so that it can be processed
      *
-     * @param entity the entity to be locked
+     * @param entity        the entity to be locked
      * @param entityManager
      * @return true if the entity was locked
      */
@@ -129,12 +154,23 @@ public class JpaConsumer extends PollingConsumer<Exchange> {
     }
 
     protected QueryFactory createQueryFactory() {
-        Class<?> entityType = endpoint.getEntityType();
-        if (entityType == null) {
-            return null;
+        if (query != null) {
+            return QueryBuilder.query(query);
+        }
+        else if (namedQuery != null) {
+            return QueryBuilder.namedQuery(namedQuery);
+        }
+        else if (nativeQuery != null) {
+            return QueryBuilder.nativeQuery(nativeQuery);
         }
         else {
-            return QueryBuilder.query("select x from " + entityType.getName() + " x");
+            Class<?> entityType = endpoint.getEntityType();
+            if (entityType == null) {
+                return null;
+            }
+            else {
+                return QueryBuilder.query("select x from " + entityType.getName() + " x");
+            }
         }
     }
 

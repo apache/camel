@@ -23,6 +23,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
@@ -30,6 +31,7 @@ import org.springframework.orm.jpa.JpaTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import java.util.Map;
 
 /**
  * @version $Revision$
@@ -40,6 +42,7 @@ public class JpaEndpoint extends DefaultEndpoint<Exchange> {
     private Expression<Exchange> producerExpression;
     private int maximumResults = -1;
     private Class<?> entityType;
+    private Map consumerProperties;
 
     public JpaEndpoint(String uri, JpaComponent component) {
         super(uri, component);
@@ -56,7 +59,11 @@ public class JpaEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     public Consumer<Exchange> createConsumer(Processor<Exchange> processor) throws Exception {
-        return startService(new JpaConsumer(this, processor));
+        JpaConsumer consumer = new JpaConsumer(this, processor);
+        if (consumerProperties != null) {
+            IntrospectionSupport.setProperties(consumer, consumerProperties);
+        }
+        return startService(consumer);
     }
 
 
@@ -95,6 +102,14 @@ public class JpaEndpoint extends DefaultEndpoint<Exchange> {
 
     public void setEntityType(Class<?> entityType) {
         this.entityType = entityType;
+    }
+
+    public Map getConsumerProperties() {
+        return consumerProperties;
+    }
+
+    public void setConsumerProperties(Map consumerProperties) {
+        this.consumerProperties = consumerProperties;
     }
 
     // Implementation methods

@@ -26,6 +26,8 @@ import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
+import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -68,13 +70,22 @@ public class JpaComponent extends DefaultComponent<Exchange> implements Endpoint
             return null;
         }
         URI u = new URI(uri);
-        String path = u.getSchemeSpecificPart();
-        String[] paths = ObjectHelper.splitOnCharacter(path, ":", 2);
+        String path = u.getHost();
+        if (path == null) {
+            path = u.getSchemeSpecificPart();
+        }
+        String[] paths = ObjectHelper.splitOnCharacter(path, ":", 4);
         // ignore a prefix
         if (paths[1] != null) {
             path = paths[1];
         }
         JpaEndpoint endpoint = new JpaEndpoint(uri, this);
+        Map options = URISupport.parseParamters(u);
+        Map consumerProperties = IntrospectionSupport.extractProperties(options, "consumer.");
+        if (consumerProperties != null) {
+            endpoint.setConsumerProperties(consumerProperties);
+        }
+        IntrospectionSupport.setProperties(endpoint, options);
 
         // lets interpret the next string as a class
         if (path != null) {
