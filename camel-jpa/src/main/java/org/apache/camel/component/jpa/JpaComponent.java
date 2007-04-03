@@ -69,6 +69,11 @@ public class JpaComponent extends DefaultComponent<Exchange> implements Endpoint
         }
         URI u = new URI(uri);
         String path = u.getSchemeSpecificPart();
+        String[] paths = ObjectHelper.splitOnCharacter(path, ":", 2);
+        // ignore a prefix
+        if (paths[1] != null) {
+            path = paths[1];
+        }
         JpaEndpoint endpoint = new JpaEndpoint(uri, this);
 
         // lets interpret the next string as a class
