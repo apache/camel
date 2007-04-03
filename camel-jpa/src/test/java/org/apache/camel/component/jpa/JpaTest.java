@@ -101,11 +101,10 @@ public class JpaTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        camelContext.addComponent("foo", createJpaComponent());
 
         startServices(client, camelContext);
 
-        Endpoint value = camelContext.resolveEndpoint("jpa:" + SendEmail.class.getName());
+        Endpoint value = camelContext.resolveEndpoint(getEndpointUri());
         assertNotNull("Could not find endpoint!", value);
         assertTrue("Should be a JPA endpoint but was: " + value, value instanceof JpaEndpoint);
         endpoint = (JpaEndpoint) value;
@@ -114,19 +113,8 @@ public class JpaTest extends TestCase {
         template = endpoint.getTemplate();
     }
 
-    protected JpaComponent createJpaComponent() {
-        // TODO zap this!
-        
-        JpaComponent answer = new JpaComponent();
-/*
-        Properties properties = new Properties();
-        properties.setProperty("openjpa.ConnectionDriverName", "org.apache.derby.jdbc.EmbeddedDriver");
-        properties.setProperty("openjpa.ConnectionURL", "jdbc:derby:target/derby;create=true");
-        properties.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema");
-        properties.setProperty("openjpa.Log", "DefaultLevel=WARN,SQL=TRACE");
-        answer.setEntityManagerProperties(properties);
-*/
-        return answer;
+    protected String getEndpointUri() {
+        return "jpa:" + SendEmail.class.getName();
     }
 
     @Override

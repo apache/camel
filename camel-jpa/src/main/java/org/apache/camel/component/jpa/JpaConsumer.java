@@ -88,6 +88,10 @@ public class JpaConsumer extends PollingConsumer<Exchange> {
     public QueryFactory getQueryFactory() {
         if (queryFactory == null) {
             queryFactory = createQueryFactory();
+            if (queryFactory == null) {
+                throw new IllegalArgumentException("No queryType property configured on this consumer, nor an entityType configured on the endpoint so cannot consume");
+            }
+
         }
         return queryFactory;
     }
