@@ -26,14 +26,17 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+import org.springframework.orm.jpa.JpaTemplate;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 /**
  * @version $Revision$
  */
 public class JpaEndpoint extends DefaultEndpoint<Exchange> {
     private final JpaComponent component;
+    private JpaTemplate template;
     private Expression<Exchange> producerExpression;
     private int maximumResults = -1;
     private Class<?> entityType;
@@ -41,6 +44,7 @@ public class JpaEndpoint extends DefaultEndpoint<Exchange> {
     public JpaEndpoint(String uri, JpaComponent component) {
         super(uri, component);
         this.component = component;
+        this.template = component.getTemplate();
     }
 
     public Exchange createExchange() {
@@ -48,15 +52,24 @@ public class JpaEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     public Producer<Exchange> createProducer() throws Exception {
-        return startService(new JpaProducer(this, createEntityManager(), getProducerExpression()));
+        return startService(new JpaProducer(this, getProducerExpression()));
     }
 
     public Consumer<Exchange> createConsumer(Processor<Exchange> processor) throws Exception {
-        return startService(new JpaConsumer(this, processor, createEntityManager()));
+        return startService(new JpaConsumer(this, processor));
     }
+
 
     // Properties
     //-------------------------------------------------------------------------
+    public JpaTemplate getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(JpaTemplate template) {
+        this.template = template;
+    }
+
     public Expression<Exchange> getProducerExpression() {
         if (producerExpression == null) {
             producerExpression = createProducerExpression();
@@ -88,6 +101,12 @@ public class JpaEndpoint extends DefaultEndpoint<Exchange> {
     //-------------------------------------------------------------------------
     protected EntityManager createEntityManager() {
         return component.createEntityManager();
+    }
+
+    protected TransactionStrategy createTransactionStrategy() {
+        EntityManagerFactory emf = component.getEntityManagerFactory();
+        return JpaTemplateTransactionStrategy.newInstance(emf, getTemplate());
+        //return new DefaultTransactionStrategy(emf);
     }
 
     protected Expression<Exchange> createProducerExpression() {

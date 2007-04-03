@@ -30,8 +30,8 @@ public interface QueryFactory {
     /**
      * Creates a new query to find objects to be processed
      *
-     * @param consumer the consumer which has access to the {@link JpaEndpoint} and JPA {@link EntityManager}
+     * @param entityManager
      * @return the query configured with any parameters etc
      */
-    Query createQuery(JpaConsumer consumer);
+    Query createQuery(EntityManager entityManager);
 }

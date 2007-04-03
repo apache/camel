@@ -15,11 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.component.jpa;
+
+import org.springframework.orm.jpa.JpaCallback;
+import org.apache.camel.Service;
+
+import javax.persistence.EntityManager;
 
 /**
- * Represents a factory or po
  * @version $Revision$
  */
-public interface Provider<T> {
+public interface TransactionStrategy extends Service {
+
+    public Object execute(JpaCallback callback);
 }

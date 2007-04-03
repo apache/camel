@@ -18,8 +18,8 @@
 package org.apache.camel.component.jpa;
 
 import javax.persistence.Query;
+import javax.persistence.EntityManager;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Collection;
@@ -40,8 +40,8 @@ public abstract class QueryBuilder implements QueryFactory {
      */
     public static QueryBuilder query(final String query) {
         return new QueryBuilder() {
-            protected Query makeQueryObject(JpaConsumer consumer) {
-                return consumer.getEntityManager().createQuery(query);
+            protected Query makeQueryObject(EntityManager entityManager) {
+                return entityManager.createQuery(query);
             }
 
             @Override
@@ -56,8 +56,8 @@ public abstract class QueryBuilder implements QueryFactory {
      */
     public static QueryBuilder namedQuery(final String namedQuery) {
         return new QueryBuilder() {
-            protected Query makeQueryObject(JpaConsumer consumer) {
-                return consumer.getEntityManager().createNamedQuery(namedQuery);
+            protected Query makeQueryObject(EntityManager entityManager) {
+                return entityManager.createNamedQuery(namedQuery);
             }
 
             @Override
@@ -72,8 +72,8 @@ public abstract class QueryBuilder implements QueryFactory {
      */
     public static QueryBuilder nativeQuery(final String nativeQuery) {
         return new QueryBuilder() {
-            protected Query makeQueryObject(JpaConsumer consumer) {
-                return consumer.getEntityManager().createNativeQuery(nativeQuery);
+            protected Query makeQueryObject(EntityManager entityManager) {
+                return entityManager.createNativeQuery(nativeQuery);
             }
 
             @Override
@@ -102,7 +102,7 @@ public abstract class QueryBuilder implements QueryFactory {
     public QueryBuilder parameters(final Collection parameters) {
         checkNoParametersConfigured();
         parameterBuilder = new ParameterBuilder() {
-            public void populateQuery(JpaConsumer consumer, Query query) {
+            public void populateQuery(EntityManager entityManager, Query query) {
                 int counter = 0;
                 for (Object parameter : parameters) {
                     query.setParameter(counter++, parameter);
@@ -126,7 +126,7 @@ public abstract class QueryBuilder implements QueryFactory {
     public QueryBuilder parameters(final Map<String, Object> parameterMap) {
         checkNoParametersConfigured();
         parameterBuilder = new ParameterBuilder() {
-            public void populateQuery(JpaConsumer consumer, Query query) {
+            public void populateQuery(EntityManager entityManager, Query query) {
                 Set<Map.Entry<String, Object>> entries = parameterMap.entrySet();
                 for (Map.Entry<String, Object> entry : entries) {
                     query.setParameter(entry.getKey(), entry.getValue());
@@ -147,9 +147,9 @@ public abstract class QueryBuilder implements QueryFactory {
         }
     }
 
-    public Query createQuery(JpaConsumer consumer) {
-        Query query = makeQueryObject(consumer);
-        populateQuery(consumer, query);
+    public Query createQuery(EntityManager entityManager) {
+        Query query = makeQueryObject(entityManager);
+        populateQuery(entityManager, query);
         return query;
     }
 
@@ -162,18 +162,18 @@ public abstract class QueryBuilder implements QueryFactory {
         }
     }
 
-    protected void populateQuery(JpaConsumer consumer, Query query) {
+    protected void populateQuery(EntityManager entityManager, Query query) {
         if (parameterBuilder != null) {
-            parameterBuilder.populateQuery(consumer, query);
+            parameterBuilder.populateQuery(entityManager, query);
         }
     }
 
-    protected abstract Query makeQueryObject(JpaConsumer consumer);
+    protected abstract Query makeQueryObject(EntityManager entityManager);
 
     /**
      * A plugin strategy to populate the query with parameters
      */
     protected abstract static class ParameterBuilder {
-        public abstract void populateQuery(JpaConsumer consumer, Query query);
+        public abstract void populateQuery(EntityManager entityManager, Query query);
     }
 }

@@ -17,54 +17,44 @@
  */
 package org.apache.camel.component.jpa;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultProducer;
+import org.springframework.orm.jpa.JpaTemplate;
+import org.springframework.orm.jpa.JpaCallback;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceException;
 import java.util.Iterator;
 
 /**
  * @version $Revision$
  */
 public class JpaProducer extends DefaultProducer<Exchange> {
-    private EntityManager entityManager;
-    private final JpaEndpoint endpoint;
-    private Expression<Exchange> expression;
+    private final TransactionStrategy template;
+    private final Expression<Exchange> expression;
 
-    public JpaProducer(JpaEndpoint endpoint, EntityManager entityManager, Expression<Exchange> expression) {
+    public JpaProducer(JpaEndpoint endpoint, Expression<Exchange> expression) {
         super(endpoint);
-        this.endpoint = endpoint;
-        this.entityManager = entityManager;
         this.expression = expression;
+        this.template = endpoint.createTransactionStrategy();
     }
 
     public void onExchange(Exchange exchange) {
-        Object values = expression.evaluate(exchange);
+        final Object values = expression.evaluate(exchange);
         if (values != null) {
-            // TODO remove explicit transaction handling?
-            EntityTransaction transaction = entityManager.getTransaction();
-            transaction.begin();
-            try {
-                Iterator iter = ObjectConverter.iterator(values);
-                while (iter.hasNext()) {
-                    Object value = iter.next();
-                    entityManager.persist(value);
+            template.execute(new JpaCallback() {
+                public Object doInJpa(EntityManager entityManager) throws PersistenceException {
+                    Iterator iter = ObjectConverter.iterator(values);
+                    while (iter.hasNext()) {
+                        Object value = iter.next();
+                        entityManager.persist(value);
+                    }
+                    return null;
                 }
-                transaction.commit();
-            }
-            catch (RuntimeException e) {
-                transaction.rollback();
-                throw e;
-            }
+            });
         }
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        entityManager.close();
-        super.doStop();
     }
 }
