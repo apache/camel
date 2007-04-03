@@ -151,7 +151,6 @@ public class URISupport {
      * @param uri
      * @param rc
      * @param ssp
-     * @param p
      * @throws URISyntaxException
      */
     private static void parseComposite(URI uri, CompositeData rc, String ssp) throws URISyntaxException {
@@ -200,7 +199,7 @@ public class URISupport {
     }
 
     /**
-     * @param componentString
+     * @param str
      * @return
      */
     private static String[] splitComponents(String str) {
