@@ -51,8 +51,8 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     private String room;
     private String participant;
 
-    public XmppEndpoint(String uri, CamelContext context) {
-        super(uri, context);
+    public XmppEndpoint(String uri, XmppComponent component) {
+        super(uri, component);
     }
 
     public Producer<XmppExchange> createProducer() throws Exception {

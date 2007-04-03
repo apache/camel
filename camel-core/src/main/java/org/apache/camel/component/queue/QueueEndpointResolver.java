@@ -63,7 +63,7 @@ public class QueueEndpointResolver<E extends Exchange> implements EndpointResolv
 		String id[] = getEndpointId(uri);        
     	QueueComponent<E> component = resolveQueueComponent(container, id[0]);  
     	BlockingQueue<E> queue = component.createQueue();
-		return new QueueEndpoint<E>(uri, container, queue);
+		return new QueueEndpoint<E>(uri, component, queue);
     }
 
 	/**

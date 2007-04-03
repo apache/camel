@@ -19,20 +19,26 @@ package org.apache.camel.component.jpa;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.impl.PollingConsumer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.EntityTransaction;
 import java.util.List;
 
 /**
  * @version $Revision$
  */
-public class JpaConsumer extends DefaultConsumer<Exchange> {
+public class JpaConsumer extends PollingConsumer<Exchange> {
+    private static final transient Log log = LogFactory.getLog(JpaConsumer.class);
+
     private final JpaEndpoint endpoint;
     private final EntityManager entityManager;
     private QueryFactory queryFactory;
     private DeleteHandler<Object> deleteHandler;
+    private EntityTransaction transaction;
 
     public JpaConsumer(JpaEndpoint endpoint, Processor<Exchange> processor, EntityManager entityManager) {
         super(endpoint, processor);
@@ -43,15 +49,33 @@ public class JpaConsumer extends DefaultConsumer<Exchange> {
     /**
      * Invoked whenever we should be polled
      */
-    public void run() {
-        Query query = queryFactory.createQuery(this);
-        configureParameters(query);
-        List results = query.getResultList();
-        for (Object result : results) {
-            // lets turn the result into an exchange and fire it into the processor
-            Exchange exchange = createExchange(result);
-            getProcessor().onExchange(exchange);
-            deleteHandler.deleteObject(this, result);
+    public synchronized void run() {
+        log.debug("Starting to poll for new database entities to process");
+        transaction = entityManager.getTransaction();
+        transaction.begin();
+
+        try {
+            Query query = getQueryFactory().createQuery(this);
+            configureParameters(query);
+            List results = query.getResultList();
+            for (Object result : results) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Processing new entity: " + result);
+                }
+                // lets turn the result into an exchange and fire it into the processor
+                Exchange exchange = createExchange(result);
+                getProcessor().onExchange(exchange);
+                getDeleteHandler().deleteObject(this, result);
+            }
+
+            transaction.commit();
+            transaction = null;
+        }
+        catch (RuntimeException e) {
+            log.warn("Caught: " + e, e);
+            if (transaction != null) {
+                transaction.rollback();
+            }
         }
     }
 
@@ -78,6 +102,9 @@ public class JpaConsumer extends DefaultConsumer<Exchange> {
     }
 
     public DeleteHandler getDeleteHandler() {
+        if (deleteHandler == null) {
+            deleteHandler = createDeleteHandler();
+        }
         return deleteHandler;
     }
 
@@ -88,7 +115,10 @@ public class JpaConsumer extends DefaultConsumer<Exchange> {
     // Implementation methods
     //-------------------------------------------------------------------------
     @Override
-    protected void doStop() throws Exception {
+    protected synchronized void doStop() throws Exception {
+        if (transaction != null) {
+            transaction.rollback();
+        }
         entityManager.close();
         super.doStop();
     }
@@ -101,6 +131,16 @@ public class JpaConsumer extends DefaultConsumer<Exchange> {
         else {
             return QueryBuilder.query("select x from " + entityType.getName() + " x");
         }
+    }
+
+    protected DeleteHandler<Object> createDeleteHandler() {
+        // TODO auto-discover an annotation in the entity bean to indicate the process completed method call?
+
+        return new DeleteHandler<Object>() {
+            public void deleteObject(JpaConsumer consumer, Object entityBean) {
+                consumer.getEntityManager().remove(entityBean);
+            }
+        };
     }
 
     protected void configureParameters(Query query) {

@@ -73,7 +73,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         IoAcceptor acceptor = new VmPipeAcceptor();
         SocketAddress address = new VmPipeAddress(connectUri.getPort());
         IoConnector connector = new VmPipeConnector();
-        return new MinaEndpoint(uri, getContext(), address, acceptor, connector, null);
+        return new MinaEndpoint(uri, this, address, acceptor, connector, null);
     }
 
     protected MinaEndpoint createSocketEndpoint(String uri, URI connectUri) {
@@ -85,7 +85,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         SocketConnectorConfig config = new SocketConnectorConfig();
         config.getFilterChain().addLast("codec", new ProtocolCodecFilter(new ObjectSerializationCodecFactory()));
 
-        return new MinaEndpoint(uri, getContext(), address, acceptor, connector, config);
+        return new MinaEndpoint(uri, this, address, acceptor, connector, config);
     }
 
     protected MinaEndpoint createDatagramEndpoint(String uri, URI connectUri) {
@@ -97,6 +97,6 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         DatagramConnectorConfig config = new DatagramConnectorConfig();
         config.getFilterChain().addLast("codec", new ProtocolCodecFilter(new ObjectSerializationCodecFactory()));
 
-        return new MinaEndpoint(uri, getContext(), address, acceptor, connector, config);
+        return new MinaEndpoint(uri, this, address, acceptor, connector, config);
     }
 }

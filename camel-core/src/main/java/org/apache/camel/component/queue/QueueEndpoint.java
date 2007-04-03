@@ -37,8 +37,8 @@ import java.util.concurrent.BlockingQueue;
 public class QueueEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     private BlockingQueue<E> queue;
 
-    public QueueEndpoint(String uri, CamelContext container, BlockingQueue<E> queue) {
-        super(uri, container);
+    public QueueEndpoint(String uri, QueueComponent<E> component, BlockingQueue<E> queue) {
+        super(uri, component);
         this.queue = queue;
     }
 

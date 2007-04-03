@@ -37,8 +37,8 @@ public class HttpEndpoint extends DefaultEndpoint<HttpExchange> {
 
     private HttpBinding binding;
 
-    protected HttpEndpoint(String uri, CamelContext camelContext) {
-        super(uri, camelContext);
+    protected HttpEndpoint(String uri, HttpComponent component) {
+        super(uri, component);
     }
 
     public Producer<HttpExchange> createProducer() throws Exception {

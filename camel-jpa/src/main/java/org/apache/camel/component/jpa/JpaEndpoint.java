@@ -39,7 +39,7 @@ public class JpaEndpoint extends DefaultEndpoint<Exchange> {
     private Class<?> entityType;
 
     public JpaEndpoint(String uri, JpaComponent component) {
-        super(uri, component.getContext());
+        super(uri, component);
         this.component = component;
     }
 
@@ -48,11 +48,11 @@ public class JpaEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     public Producer<Exchange> createProducer() throws Exception {
-        return new JpaProducer(this, createEntityManager(), getProducerExpression());
+        return startService(new JpaProducer(this, createEntityManager(), getProducerExpression()));
     }
 
     public Consumer<Exchange> createConsumer(Processor<Exchange> processor) throws Exception {
-        return new JpaConsumer(this, processor, createEntityManager());
+        return startService(new JpaConsumer(this, processor, createEntityManager()));
     }
 
     // Properties

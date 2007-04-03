@@ -18,6 +18,8 @@ package org.apache.camel.component.queue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultComponent;
 
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
@@ -30,21 +32,10 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @org.apache.xbean.XBean
  * @version $Revision: 519973 $
  */
-public class QueueComponent<E> implements Component<E> {
+public class QueueComponent<E extends Exchange> extends DefaultComponent<E> {
 	
-    private CamelContext container;
-
-    public void setCamelContext(CamelContext container) {
-        this.container = container;
-    }
-
 	public BlockingQueue<E> createQueue() {
 		return new LinkedBlockingQueue<E>();
 	}
-
-	public CamelContext getContainer() {
-		return container;
-	}
-
 
 }

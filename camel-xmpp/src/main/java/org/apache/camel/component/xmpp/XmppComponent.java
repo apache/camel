@@ -54,9 +54,9 @@ public class XmppComponent extends DefaultComponent<XmppExchange> {
     }
 
     public XmppEndpoint createEndpoint(String uri, String path) throws URISyntaxException {
-        ObjectHelper.notNull(getContext(), "context");
+        ObjectHelper.notNull(getCamelContext(), "context");
 
-        XmppEndpoint endpoint = new XmppEndpoint(uri, getContext());
+        XmppEndpoint endpoint = new XmppEndpoint(uri, this);
 
         URI u = new URI(uri);
         endpoint.setHost(u.getHost());

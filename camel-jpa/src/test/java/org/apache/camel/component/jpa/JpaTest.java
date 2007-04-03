@@ -50,15 +50,21 @@ public class JpaTest extends TestCase {
     protected Consumer<Exchange> consumer;
     protected Exchange receivedExchange;
     protected CountDownLatch latch = new CountDownLatch(1);
-    protected String queryText = "select o from " + SendEmail.class.getName() + " o";
+    protected String entityName = SendEmail.class.getName();
+    protected String queryText = "select o from " + entityName + " o";
     protected EntityTransaction transaction;
 
     public void testProducerInsertsIntoDatabaseThenConsumerFiresMessageExchange() throws Exception {
         // lets assert that there are no existing send mail tasks
         transaction = entityManager.getTransaction();
         transaction.begin();
+
+        // lets delete any exiting records before the test
+        entityManager.createQuery("delete from " + entityName).executeUpdate();
+
         List results = entityManager.createQuery(queryText).getResultList();
         assertEquals("Should have no results: " + results, 0, results.size());
+        transaction.commit();
 
         // lets produce some objects
         client.send(endpoint, new Processor<Exchange>() {
@@ -66,7 +72,6 @@ public class JpaTest extends TestCase {
                 exchange.getIn().setBody(new SendEmail("foo@bar.com"));
             }
         });
-        transaction.commit();
 
         // now lets assert that there is a result
         transaction.begin();
@@ -74,6 +79,8 @@ public class JpaTest extends TestCase {
         assertEquals("Should have no results: " + results, 1, results.size());
         SendEmail mail = (SendEmail) results.get(0);
         assertEquals("address property", "foo@bar.com", mail.getAddress());
+        transaction.commit();
+        transaction = null;
 
         // now lets create a consumer to consume it
         consumer = endpoint.createConsumer(new Processor<Exchange>() {
@@ -84,8 +91,8 @@ public class JpaTest extends TestCase {
             }
         });
 
-        boolean received = latch.await(5, TimeUnit.SECONDS);
-        assertTrue("Did not recieve the message!", received);
+        boolean received = latch.await(50, TimeUnit.SECONDS);
+        assertTrue("Did not receive the message!", received);
 
         assertNotNull(receivedExchange);
         SendEmail result = receivedExchange.getIn().getBody(SendEmail.class);

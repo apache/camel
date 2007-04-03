@@ -24,6 +24,7 @@ import org.apache.servicemix.common.ServiceUnit;
 import org.apache.servicemix.jbi.util.IntrospectionSupport;
 import org.apache.servicemix.jbi.util.URISupport;
 import org.apache.servicemix.jbi.resolver.URIResolver;
+import org.apache.servicemix.executors.Executor;
 
 import javax.jbi.servicedesc.ServiceEndpoint;
 import javax.xml.namespace.QName;
@@ -32,6 +33,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * Deploys the camel endpoints within JBI
@@ -41,6 +44,7 @@ import java.util.Map;
 public class CamelJbiComponent extends DefaultComponent implements Component<JbiExchange>, EndpointResolver {
     private JbiBinding binding;
     private CamelContext camelContext;
+    private ScheduledExecutorService executorService;
 
     /**
      * @return List of endpoints
@@ -65,6 +69,7 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Jbi
     protected Class[] getEndpointClasses() {
         return new Class[]{CamelJbiEndpoint.class};
     }
+
 
     /**
      * @return the binding
@@ -137,6 +142,13 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Jbi
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public ScheduledExecutorService getExecutorService() {
+        if (executorService == null) {
+            executorService = new ScheduledThreadPoolExecutor(5);
+        }
+        return executorService;
     }
 
     /**

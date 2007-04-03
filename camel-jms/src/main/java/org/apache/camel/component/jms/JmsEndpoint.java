@@ -41,8 +41,8 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     private String selector;
     private JmsConfiguration configuration;
 
-    public JmsEndpoint(String uri, CamelContext context, String destination, boolean pubSubDomain, JmsConfiguration configuration) {
-        super(uri, context);
+    public JmsEndpoint(String uri, JmsComponent component, String destination, boolean pubSubDomain, JmsConfiguration configuration) {
+        super(uri, component);
         this.configuration = configuration;
         this.destination = destination;
         this.pubSubDomain = pubSubDomain;
