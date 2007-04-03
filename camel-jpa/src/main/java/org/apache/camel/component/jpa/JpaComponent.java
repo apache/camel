@@ -22,14 +22,31 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointResolver;
 import org.apache.camel.Exchange;
+import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.springframework.orm.jpa.JpaTemplate;
+import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.SharedEntityManagerCreator;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.JpaCallback;
+import org.springframework.jca.support.LocalConnectionFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.jta.JtaTransactionManager;
+import org.springframework.dao.DataAccessException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.net.URI;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * A JPA Component
@@ -40,6 +57,7 @@ public class JpaComponent extends DefaultComponent<Exchange> implements Endpoint
     private EntityManagerFactory entityManagerFactory;
     private Map entityManagerProperties;
     private String entityManagerName = "camel";
+    private JpaTemplate template;
 
     public Component resolveComponent(CamelContext container, String uri) throws Exception {
         return null;
@@ -65,6 +83,17 @@ public class JpaComponent extends DefaultComponent<Exchange> implements Endpoint
 
     // Properties
     //-------------------------------------------------------------------------
+    public JpaTemplate getTemplate() {
+        if (template == null) {
+            template = createTemplate();
+        }
+        return template;
+    }
+
+    public void setTemplate(JpaTemplate template) {
+        this.template = template;
+    }
+
     public EntityManagerFactory getEntityManagerFactory() {
         if (entityManagerFactory == null) {
             entityManagerFactory = createEntityManagerFactory();
@@ -97,6 +126,34 @@ public class JpaComponent extends DefaultComponent<Exchange> implements Endpoint
 
     // Implementation methods
     //-------------------------------------------------------------------------
+    protected JpaTemplate createTemplate() {
+  /*      EntityManagerFactory emf = getEntityManagerFactory();
+        JpaTransactionManager transactionManager = new JpaTransactionManager(emf);
+        transactionManager.afterPropertiesSet();
+
+        final TransactionTemplate tranasctionTemplate = new TransactionTemplate(transactionManager);
+        tranasctionTemplate.afterPropertiesSet();
+
+        // lets auto-default to a JpaTemplate which implicitly creates a transaction
+        // TODO surely there's a cleaner way to get the JpaTemplate to create a transaction if one is not present??
+        return new JpaTemplate(emf) {
+            @Override
+            public Object execute(final JpaCallback action, final boolean exposeNativeEntityManager) throws DataAccessException {
+                return tranasctionTemplate.execute(new TransactionCallback() {
+                    public Object doInTransaction(TransactionStatus status) {
+                        return doExecute(action, exposeNativeEntityManager);
+                    }
+                });
+
+            }
+
+            public Object doExecute(final JpaCallback action, final boolean exposeNativeEntityManager) throws DataAccessException {
+                return super.execute(action, exposeNativeEntityManager);
+            }
+        };*/
+        return new JpaTemplate(getEntityManagerFactory());
+    }
+
     protected EntityManagerFactory createEntityManagerFactory() {
         //return Persistence.createEntityManagerFactory(entityManagerName);
         return Persistence.createEntityManagerFactory(entityManagerName, getEntityManagerProperties());

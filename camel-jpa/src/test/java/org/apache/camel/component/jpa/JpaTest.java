@@ -30,11 +30,12 @@ import static org.apache.camel.util.ServiceHelper.startServices;
 import static org.apache.camel.util.ServiceHelper.stopServices;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.orm.jpa.JpaCallback;
+import org.springframework.orm.jpa.JpaTemplate;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceException;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -46,25 +47,25 @@ public class JpaTest extends TestCase {
     protected CamelContext camelContext = new DefaultCamelContext();
     protected CamelClient client = new CamelClient(camelContext);
     protected JpaEndpoint endpoint;
-    protected EntityManager entityManager;
+    protected TransactionStrategy transactionStrategy;
+    protected JpaTemplate template;
     protected Consumer<Exchange> consumer;
     protected Exchange receivedExchange;
     protected CountDownLatch latch = new CountDownLatch(1);
     protected String entityName = SendEmail.class.getName();
     protected String queryText = "select o from " + entityName + " o";
-    protected EntityTransaction transaction;
 
     public void testProducerInsertsIntoDatabaseThenConsumerFiresMessageExchange() throws Exception {
-        // lets assert that there are no existing send mail tasks
-        transaction = entityManager.getTransaction();
-        transaction.begin();
+        transactionStrategy.execute(new JpaCallback() {
+            public Object doInJpa(EntityManager entityManager) throws PersistenceException {
+                // lets delete any exiting records before the test
+                entityManager.createQuery("delete from " + entityName).executeUpdate();
+                return null;
+            }
+        });
 
-        // lets delete any exiting records before the test
-        entityManager.createQuery("delete from " + entityName).executeUpdate();
-
-        List results = entityManager.createQuery(queryText).getResultList();
+        List results = template.find(queryText);
         assertEquals("Should have no results: " + results, 0, results.size());
-        transaction.commit();
 
         // lets produce some objects
         client.send(endpoint, new Processor<Exchange>() {
@@ -74,13 +75,10 @@ public class JpaTest extends TestCase {
         });
 
         // now lets assert that there is a result
-        transaction.begin();
-        results = entityManager.createQuery(queryText).getResultList();
+        results = template.find(queryText);
         assertEquals("Should have no results: " + results, 1, results.size());
         SendEmail mail = (SendEmail) results.get(0);
         assertEquals("address property", "foo@bar.com", mail.getAddress());
-        transaction.commit();
-        transaction = null;
 
         // now lets create a consumer to consume it
         consumer = endpoint.createConsumer(new Processor<Exchange>() {
@@ -112,10 +110,13 @@ public class JpaTest extends TestCase {
         assertTrue("Should be a JPA endpoint but was: " + value, value instanceof JpaEndpoint);
         endpoint = (JpaEndpoint) value;
 
-        entityManager = endpoint.createEntityManager();
+        transactionStrategy = endpoint.createTransactionStrategy();
+        template = endpoint.getTemplate();
     }
 
     protected JpaComponent createJpaComponent() {
+        // TODO zap this!
+        
         JpaComponent answer = new JpaComponent();
 /*
         Properties properties = new Properties();
@@ -130,13 +131,7 @@ public class JpaTest extends TestCase {
 
     @Override
     protected void tearDown() throws Exception {
-        if (transaction != null) {
-            transaction.rollback();
-            transaction = null;
-        }
-        if (entityManager != null) {
-            entityManager.close();
-        }
+
         stopServices(consumer, client, camelContext);
 
         super.tearDown();

@@ -22,11 +22,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.PollingConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.orm.jpa.JpaTemplate;
+import org.springframework.orm.jpa.JpaCallback;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.LockModeType;
 import javax.persistence.Query;
+import javax.persistence.PersistenceException;
 import java.util.List;
 
 /**
@@ -35,15 +37,14 @@ import java.util.List;
 public class JpaConsumer extends PollingConsumer<Exchange> {
     private static final transient Log log = LogFactory.getLog(JpaConsumer.class);
     private final JpaEndpoint endpoint;
-    private final EntityManager entityManager;
+    private final TransactionStrategy template;
     private QueryFactory queryFactory;
     private DeleteHandler<Object> deleteHandler;
-    private EntityTransaction transaction;
 
-    public JpaConsumer(JpaEndpoint endpoint, Processor<Exchange> processor, EntityManager entityManager) {
+    public JpaConsumer(JpaEndpoint endpoint, Processor<Exchange> processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        this.entityManager = entityManager;
+        this.template = endpoint.createTransactionStrategy();
     }
 
     /**
@@ -51,44 +52,35 @@ public class JpaConsumer extends PollingConsumer<Exchange> {
      */
     public synchronized void run() {
         log.debug("Starting to poll for new database entities to process");
-        transaction = entityManager.getTransaction();
-        transaction.begin();
-
         try {
-            Query query = getQueryFactory().createQuery(this);
-            configureParameters(query);
-            List results = query.getResultList();
-            for (Object result : results) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Processing new entity: " + result);
-                }
+            template.execute(new JpaCallback() {
+                public Object doInJpa(EntityManager entityManager) throws PersistenceException {
+                    Query query = getQueryFactory().createQuery(entityManager);
+                    configureParameters(query);
+                    List results = query.getResultList();
+                    for (Object result : results) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Processing new entity: " + result);
+                        }
 
-                if (lockEntity(result)) {
-                    // lets turn the result into an exchange and fire it into the processor
-                    Exchange exchange = createExchange(result);
-                    getProcessor().onExchange(exchange);
-                    getDeleteHandler().deleteObject(this, result);
+                        if (lockEntity(result, entityManager)) {
+                            // lets turn the result into an exchange and fire it into the processor
+                            Exchange exchange = createExchange(result);
+                            getProcessor().onExchange(exchange);
+                            getDeleteHandler().deleteObject(entityManager, result);
+                        }
+                    }
+                    return null;
                 }
-            }
-
-            transaction.commit();
-            transaction = null;
+            });
         }
         catch (RuntimeException e) {
             log.warn("Caught: " + e, e);
-            if (transaction != null) {
-                transaction.rollback();
-            }
         }
     }
 
     // Properties
     //-------------------------------------------------------------------------
-
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
-
     public JpaEndpoint getEndpoint() {
         return endpoint;
     }
@@ -117,22 +109,15 @@ public class JpaConsumer extends PollingConsumer<Exchange> {
 
     // Implementation methods
     //-------------------------------------------------------------------------
-    @Override
-    protected synchronized void doStop() throws Exception {
-        if (transaction != null) {
-            transaction.rollback();
-        }
-        entityManager.close();
-        super.doStop();
-    }
 
     /**
      * A strategy method to lock an object with an exclusive lock so that it can be processed
      *
      * @param entity the entity to be locked
+     * @param entityManager
      * @return true if the entity was locked
      */
-    protected boolean lockEntity(Object entity) {
+    protected boolean lockEntity(Object entity, EntityManager entityManager) {
         try {
             if (log.isDebugEnabled()) {
                 log.debug("Acquiring exclusive lock on entity: " + entity);
@@ -162,8 +147,8 @@ public class JpaConsumer extends PollingConsumer<Exchange> {
         // TODO auto-discover an annotation in the entity bean to indicate the process completed method call?
 
         return new DeleteHandler<Object>() {
-            public void deleteObject(JpaConsumer consumer, Object entityBean) {
-                consumer.getEntityManager().remove(entityBean);
+            public void deleteObject(EntityManager entityManager, Object entityBean) {
+                entityManager.remove(entityBean);
             }
         };
     }
