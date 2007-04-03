@@ -57,7 +57,6 @@ public class JbiEndpoint extends DefaultEndpoint<Exchange> {
             protected void doStart() throws Exception {
                 super.doStart();
                 jbiEndpoint = jbiComponent.activateJbiEndpoint(JbiEndpoint.this, processor);
-                System.out.println(">>>>Êactivated endpoint: " + jbiEndpoint);
             }
 
             @Override
