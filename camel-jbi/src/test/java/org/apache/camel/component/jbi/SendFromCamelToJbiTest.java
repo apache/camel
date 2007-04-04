@@ -65,6 +65,6 @@ public class SendFromCamelToJbiTest extends JbiTestSupport {
 
     @Override
     protected void tearDown() throws Exception {
-        camelContext.deactivateEndpoints();
+        camelContext.stop();
     }
 }

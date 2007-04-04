@@ -53,12 +53,12 @@ public class TimerRouteTest extends TestCase {
             }
         });
         
-        container.activateEndpoints();
+        container.start();
 
         // now lets wait for the timer to fire a few times.
         Thread.sleep(1000*2);
         assertTrue("", hitCount.get()>= 3 );
         
-        container.deactivateEndpoints();
+        container.stop();
     }
 }
