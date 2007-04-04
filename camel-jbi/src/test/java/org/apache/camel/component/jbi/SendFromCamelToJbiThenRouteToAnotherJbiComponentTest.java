@@ -65,6 +65,6 @@ public class SendFromCamelToJbiThenRouteToAnotherJbiComponentTest extends JbiTes
 
     @Override
     protected void tearDown() throws Exception {
-        camelContext.deactivateEndpoints();
+        camelContext.stop();
     }
 }

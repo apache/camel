@@ -55,7 +55,7 @@ public class PojoRouteTest extends TestCase {
         });
 
         
-        container.activateEndpoints();
+        container.start();
 
         // now lets fire in a message
         PojoConsumer consumer = component.getConsumer("hello");        
@@ -64,6 +64,6 @@ public class PojoRouteTest extends TestCase {
         assertEquals("Good Bye!", rc);
         assertEquals(1, hitCount.get());
         
-        container.deactivateEndpoints();
+        container.stop();
     }
 }

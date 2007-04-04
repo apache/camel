@@ -54,7 +54,7 @@ public class QueueRouteTest extends TestCase {
         });
 
         
-        container.activateEndpoints();
+        container.start();
         
         // now lets fire in a message
         Endpoint<Exchange> endpoint = container.resolveEndpoint("queue:test.a");
@@ -68,6 +68,6 @@ public class QueueRouteTest extends TestCase {
         boolean received = latch.await(5, TimeUnit.SECONDS);
         assertTrue("Did not receive the message!", received);
 
-        container.deactivateEndpoints();
+        container.stop();
     }
 }

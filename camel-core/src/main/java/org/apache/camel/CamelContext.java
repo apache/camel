@@ -70,19 +70,10 @@ public interface CamelContext extends Service {
     Endpoint resolveEndpoint(String uri);
 
     /**
-     * Activates all the starting endpoints in that were added as routes.
-     */
-    void activateEndpoints() throws Exception;
-
-    /**
-     * Deactivates all the starting endpoints in that were added as routes.
-     */
-    void deactivateEndpoints() throws Exception;
-
-    /**
      * Returns the collection of all active endpoints currently registered
      */
     Collection<Endpoint> getEndpoints();
+
 
     // Route Management Methods
     //-----------------------------------------------------------------------
@@ -96,6 +87,7 @@ public interface CamelContext extends Service {
 
     void addRoutes(RouteFactory factory) throws Exception;
 
+    
     // Properties
     //-----------------------------------------------------------------------
     ExchangeConverter getExchangeConverter();

@@ -169,34 +169,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return answer;
     }
 
-    /**
-     * Activates all the starting endpoints in that were added as routes.
-     */
-    public void activateEndpoints() throws Exception {
-        if (routes != null) {
-            for (Route<Exchange> route : routes) {
-                Processor<Exchange> processor = route.getProcessor();
-                Consumer<Exchange> consumer = route.getEndpoint().createConsumer(processor);
-                if (consumer != null) {
-                    consumer.start();
-                    servicesToClose.add(consumer);
-                }
-                if (processor instanceof Service) {
-                    Service service = (Service) processor;
-                    service.start();
-                    servicesToClose.add(service);
-                }
-            }
-        }
-    }
-
-    /**
-     * Deactivates all the starting endpoints in that were added as routes.
-     */
-    public void deactivateEndpoints() throws Exception {
-        ServiceHelper.stopServices(servicesToClose);
-    }
-
     // Route Management Methods
     //-----------------------------------------------------------------------
     public List<Route> getRoutes() {
@@ -270,11 +242,25 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     //-----------------------------------------------------------------------
 
     protected void doStart() throws Exception {
-        activateEndpoints();
+        if (routes != null) {
+            for (Route<Exchange> route : routes) {
+                Processor<Exchange> processor = route.getProcessor();
+                Consumer<Exchange> consumer = route.getEndpoint().createConsumer(processor);
+                if (consumer != null) {
+                    consumer.start();
+                    servicesToClose.add(consumer);
+                }
+                if (processor instanceof Service) {
+                    Service service = (Service) processor;
+                    service.start();
+                    servicesToClose.add(service);
+                }
+            }
+        }
     }
 
     protected void doStop() throws Exception {
-        deactivateEndpoints();
+        ServiceHelper.stopServices(servicesToClose);
     }
 
     /**

@@ -64,11 +64,11 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
         installRoutes();
 
         // now lets activate the routes
-        getContext().activateEndpoints();
+        getContext().start();
     }
 
     public void destroy() throws Exception {
-        getContext().deactivateEndpoints();
+        getContext().stop();
     }
 
     // Properties

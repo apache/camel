@@ -104,13 +104,13 @@ public abstract class JbiTestSupport extends TestSupport {
         endpoint = camelContext.resolveEndpoint(startEndpointUri);
         assertNotNull("No endpoint found!", endpoint);
 
-        camelContext.activateEndpoints();
+        camelContext.start();
     }
 
     @Override
     protected void tearDown() throws Exception {
         client.stop();
-        camelContext.deactivateEndpoints();
+        camelContext.stop();
         super.tearDown();
     }
 

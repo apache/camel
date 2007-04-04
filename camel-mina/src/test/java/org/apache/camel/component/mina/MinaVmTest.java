@@ -59,7 +59,7 @@ public class MinaVmTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         container.addRoutes(createRouteBuilder());
-        container.activateEndpoints();
+        container.start();
     }
 
 
@@ -68,7 +68,7 @@ public class MinaVmTest extends TestCase {
         if (producer != null) {
             producer.stop();
         }
-        container.deactivateEndpoints();
+        container.stop();
     }
 
     protected RouteBuilder createRouteBuilder() {

@@ -133,7 +133,7 @@ public class XmppRouteTest extends TestCase {
             assertNotNull("No endpoint found!", endpoint);
         }
 
-        container.activateEndpoints();
+        container.start();
     }
 
     protected String getUriPrefix() {
@@ -146,6 +146,6 @@ public class XmppRouteTest extends TestCase {
     @Override
     protected void tearDown() throws Exception {
         client.stop();
-        container.deactivateEndpoints();
+        container.stop();
     }
 }

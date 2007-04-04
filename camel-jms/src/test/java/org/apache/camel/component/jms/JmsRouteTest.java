@@ -115,12 +115,12 @@ public class JmsRouteTest extends TestCase {
         endpoint = container.resolveEndpoint("jms:queue:test.a");
         assertNotNull("No endpoint found!", endpoint);
 
-        container.activateEndpoints();
+        container.start();
     }
 
     @Override
     protected void tearDown() throws Exception {
         client.stop();
-        container.deactivateEndpoints();
+        container.stop();
     }
 }
