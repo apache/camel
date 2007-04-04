@@ -27,5 +27,5 @@ public interface Processor<E> {
     /**
      * Processes the message exchange
      */
-    void onExchange(E exchange);
+    void process(E exchange);
 }

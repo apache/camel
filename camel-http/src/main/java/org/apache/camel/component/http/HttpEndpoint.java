@@ -21,7 +21,6 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.Processor;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Producer;
 import org.apache.camel.Consumer;
 
@@ -43,7 +42,7 @@ public class HttpEndpoint extends DefaultEndpoint<HttpExchange> {
 
     public Producer<HttpExchange> createProducer() throws Exception {
         return startService(new DefaultProducer<HttpExchange>(this) {
-            public void onExchange(HttpExchange exchange) {
+            public void process(HttpExchange exchange) {
                 /** TODO */
             }
         });

@@ -66,7 +66,7 @@ public class JmsRouteTest extends TestCase {
 
     protected void sendExchange(final Object expectedBody) {
         client.send(endpoint, new Processor<JmsExchange>() {
-            public void onExchange(JmsExchange exchange) {
+            public void process(JmsExchange exchange) {
                 // now lets fire in a message
                 JmsMessage in = exchange.getIn();
                 in.setBody(expectedBody);
@@ -104,7 +104,7 @@ public class JmsRouteTest extends TestCase {
             public void configure() {
                 from("jms:queue:test.a").to("jms:queue:test.b");
                 from("jms:queue:test.b").process(new Processor<JmsExchange>() {
-                    public void onExchange(JmsExchange e) {
+                    public void process(JmsExchange e) {
                         System.out.println("Received exchange: " + e.getIn());
                         receivedExchange = e;
                         latch.countDown();

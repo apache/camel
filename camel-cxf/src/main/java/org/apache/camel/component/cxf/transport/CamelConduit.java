@@ -143,7 +143,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
 
         private void commitOutputMessage() {
             base.client.send(targetCamelEndpointUri, new Processor<org.apache.camel.Exchange>() {
-                public void onExchange(org.apache.camel.Exchange reply) {
+                public void process(org.apache.camel.Exchange reply) {
                     Object request = null;
 
                     if (isTextPayload()) {

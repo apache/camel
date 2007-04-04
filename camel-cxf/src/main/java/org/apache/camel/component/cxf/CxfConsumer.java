@@ -62,6 +62,6 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
 
     protected void incomingCxfMessage(Message message) {
         CxfExchange exchange = endpoint.createExchange(message);
-        getProcessor().onExchange(exchange);
+        getProcessor().process(exchange);
     }
 }

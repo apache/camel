@@ -27,7 +27,6 @@ import junit.framework.TestCase;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsEndpoint;
@@ -35,8 +34,6 @@ import org.apache.camel.component.jms.JmsExchange;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.pojo.PojoComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.ProducerCache;
-
 import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
 import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 
@@ -87,7 +84,7 @@ public class JmsIntegrationTest extends TestCase {
         JmsMessage in = exchange.getIn();
         in.setBody("Hello");
         in.setHeader("cheese", 123);
-        producer.onExchange(exchange);
+        producer.process(exchange);
         
         // The Activated endpoint should send it to the pojo due to the configured route.
         assertTrue("The message ware received by the Pojo", receivedCountDown.await(5, TimeUnit.SECONDS));

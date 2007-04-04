@@ -40,6 +40,6 @@ public class FromJbiProcessor implements MessageExchangeListener {
 
     public void onMessageExchange(MessageExchange messageExchange) throws MessagingException {
         JbiExchange exchange = new JbiExchange(context, binding, messageExchange);
-        processor.onExchange(exchange);
+        processor.process(exchange);
     }
 }

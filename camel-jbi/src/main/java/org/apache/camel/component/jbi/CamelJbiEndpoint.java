@@ -15,7 +15,6 @@ package org.apache.camel.component.jbi;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ProducerCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.servicemix.common.ServiceUnit;
@@ -53,7 +52,7 @@ public class CamelJbiEndpoint extends ProviderEndpoint {
             log.debug("Received exchange: " + exchange);
         }
         JbiExchange camelExchange = new JbiExchange(camelEndpoint.getContext(), binding, exchange);
-        processor.onExchange(camelExchange);
+        processor.process(camelExchange);
     }
 
     protected void processInOut(MessageExchange exchange, NormalizedMessage in, NormalizedMessage out) throws Exception {

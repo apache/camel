@@ -47,7 +47,7 @@ public class EndpointMessageListener<E extends Exchange> implements MessageListe
             log.debug(endpoint + " receiving JMS message: " + message);
         }
         JmsExchange exchange = createExchange(message);
-        processor.onExchange((E) exchange);
+        processor.process((E) exchange);
     }
 
     public JmsExchange createExchange(Message message) {

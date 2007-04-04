@@ -54,7 +54,7 @@ public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implem
         return "DeadLetterChannel[" + output + ", " + deadLetter + ", " + redeliveryPolicy + "]";
     }
 
-    public void onExchange(E exchange) {
+    public void process(E exchange) {
         int redeliveryCounter = 0;
         long redeliveryDelay = 0;
 
@@ -67,7 +67,7 @@ public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implem
             }
 
             try {
-                output.onExchange(exchange);
+                output.process(exchange);
                 return;
             }
             catch (RuntimeException e) {
@@ -77,7 +77,7 @@ public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implem
         while (redeliveryPolicy.shouldRedeliver(redeliveryCounter));
 
         // now lets send to the dead letter queue
-        deadLetter.onExchange(exchange);
+        deadLetter.process(exchange);
     }
 
     // Properties

@@ -49,14 +49,14 @@ public class Splitter<E extends Exchange> extends ServiceSupport implements Proc
         return "Splitter[on: " + expression + " to: " + processor + "]";
     }
 
-    public void onExchange(E exchange) {
+    public void process(E exchange) {
         Object value = expression.evaluate(exchange);
         Iterator iter = ObjectConverter.iterator(value);
         while (iter.hasNext()) {
             Object part = iter.next();
             E newExchange = (E) exchange.copy();
             newExchange.getIn().setBody(part);
-            processor.onExchange(newExchange);
+            processor.process(newExchange);
         }
     }
 

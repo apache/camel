@@ -35,7 +35,7 @@ public class Pipeline<E extends Exchange> extends MulticastProcessor<E> implemen
         super(endpoints);
     }
 
-    public void onExchange(E exchange) {
+    public void process(E exchange) {
         E nextExchange = exchange;
         boolean first = true;
         for (Producer<E> producer : getProducers()) {
@@ -45,7 +45,7 @@ public class Pipeline<E extends Exchange> extends MulticastProcessor<E> implemen
             else {
                 nextExchange = createNextExchange(producer, nextExchange);
             }
-            producer.onExchange(nextExchange);
+            producer.process(nextExchange);
         }
     }
 

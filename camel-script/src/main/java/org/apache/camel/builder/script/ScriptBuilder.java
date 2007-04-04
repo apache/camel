@@ -73,7 +73,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
         return ObjectConverter.toBoolean(evaluateScript(exchange));
     }
 
-    public void onExchange(E exchange) {
+    public void process(E exchange) {
         evaluateScript(exchange);
     }
 

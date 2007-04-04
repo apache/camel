@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.queue;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Consumer;
@@ -44,7 +43,7 @@ public class QueueEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
 
     public Producer<E> createProducer() throws Exception {
         return startService(new DefaultProducer<E>(this) {
-            public void onExchange(E exchange) {
+            public void process(E exchange) {
                 queue.add(exchange);
             }
         });

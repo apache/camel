@@ -45,7 +45,7 @@ public class QueueRouteTest extends TestCase {
             public void configure() {
                 from("queue:test.a").to("queue:test.b");
                 from("queue:test.b").process(new Processor<Exchange>() {
-                    public void onExchange(Exchange e) {
+                    public void process(Exchange e) {
                         System.out.println("Received exchange: " + e.getIn());
                         latch.countDown();
                     }
@@ -62,7 +62,7 @@ public class QueueRouteTest extends TestCase {
         exchange.getIn().setHeader("cheese", 123);
 
         Producer<Exchange> producer = endpoint.createProducer();
-        producer.onExchange(exchange);
+        producer.process(exchange);
 
         // now lets sleep for a while
         boolean received = latch.await(5, TimeUnit.SECONDS);

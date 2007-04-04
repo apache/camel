@@ -47,7 +47,7 @@ public class GroovyTest extends TestSupport {
     }
 
     public void testProcessorMutatesTheExchange() throws Exception {
-        groovy("request.headers.myNewHeader = 'ABC'").onExchange(exchange);
+        groovy("request.headers.myNewHeader = 'ABC'").process(exchange);
 
         assertInMessageHeader(exchange, "myNewHeader", "ABC");
     }

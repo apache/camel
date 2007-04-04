@@ -40,6 +40,6 @@ public class MessageListenerProcessor implements MessageListener {
 
     public void onMessage(Message message) {
         Exchange exchange = endpoint.createExchange(message);
-        processor.onExchange(exchange);
+        processor.process(exchange);
     }
 }
