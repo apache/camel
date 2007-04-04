@@ -17,6 +17,9 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.net.URI;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
@@ -27,11 +30,6 @@ import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.DestinationFactoryManager;
 import org.apache.cxf.transport.local.LocalTransportFactory;
 import org.xmlsoap.schemas.wsdl.http.AddressType;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
 
 /**
  * @version $Revision$
@@ -44,11 +42,6 @@ public class CxfComponent extends DefaultComponent<CxfExchange> {
 
     public CxfComponent(CamelContext context) {
         super(context);
-    }
-
-    @Override
-    public String[] getUriPrefixes() {
-        return new String[] {"cxf"};
     }
 
     @Override

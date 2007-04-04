@@ -80,11 +80,6 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
     }
 
     @Override
-    public String[] getUriPrefixes() {
-        return new String[]{"jms"};
-    }
-
-    @Override
     protected Endpoint<JmsExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
 
         boolean pubSubDomain = false;

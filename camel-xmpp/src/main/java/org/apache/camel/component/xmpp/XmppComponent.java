@@ -48,11 +48,6 @@ public class XmppComponent extends DefaultComponent<XmppExchange> {
     }
 
     @Override
-    public String[] getUriPrefixes() {
-        return new String[] {"xmpp"};
-    }
-
-    @Override
     protected Endpoint<XmppExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         XmppEndpoint endpoint = new XmppEndpoint(uri, this);
 

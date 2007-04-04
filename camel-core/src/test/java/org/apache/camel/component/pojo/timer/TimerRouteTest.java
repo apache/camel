@@ -44,7 +44,7 @@ public class TimerRouteTest extends TestCase {
 				hitCount.incrementAndGet();
 			}
         });
-        container.addComponent("default", component);
+        container.addComponent("pojo", component);
         
         // lets add some routes
         container.addRoutes(new RouteBuilder() {

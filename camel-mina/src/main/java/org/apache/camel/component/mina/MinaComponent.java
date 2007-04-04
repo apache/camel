@@ -53,11 +53,6 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
     }
 
     @Override
-    public String[] getUriPrefixes() {
-        return new String[] { "mina" };
-    }
-
-    @Override
     protected Endpoint<MinaExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         URI u = new URI(remaining);
 

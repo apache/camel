@@ -57,11 +57,7 @@ public class PojoComponent extends DefaultComponent<PojoExchange> {
         return consumers.get(uri);
     }
 
-    @Override
-    public String[] getUriPrefixes() {
-        return new String[] {"pojo"};
-    }
-    
+
     @Override
     protected Endpoint<PojoExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         return new PojoEndpoint(uri, this, remaining);

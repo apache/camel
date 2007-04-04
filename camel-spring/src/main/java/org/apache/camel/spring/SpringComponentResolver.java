@@ -18,13 +18,13 @@
 package org.apache.camel.spring;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
-import org.apache.camel.spi.ComponentResolver;
-import org.apache.camel.Component;
-import org.apache.camel.CamelContext;
-import org.apache.camel.util.ObjectHelper;
-import org.springframework.context.ApplicationContext;
 
 import java.net.URI;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+import org.apache.camel.spi.ComponentResolver;
+import org.springframework.context.ApplicationContext;
 
 /**
  * An implementation of {@link ComponentResolver} which tries to find a Camel {@link Component}
