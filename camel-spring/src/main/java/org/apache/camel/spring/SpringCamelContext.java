@@ -18,7 +18,9 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultComponentResolver;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.CamelContext;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.DisposableBean;
@@ -59,5 +61,11 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     @Override
     protected Injector createInjector() {
         return new SpringInjector(getApplicationContext());
+    }
+
+    @Override
+    protected ComponentResolver createComponentResolver() {
+        ComponentResolver defaultResolver = super.createComponentResolver();
+        return new SpringComponentResolver(getApplicationContext(), defaultResolver);
     }
 }
