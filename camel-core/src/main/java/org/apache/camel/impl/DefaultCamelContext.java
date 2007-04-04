@@ -23,10 +23,8 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.converter.Injector;
 import org.apache.camel.impl.converter.ReflectionInjector;
 import org.apache.camel.util.FactoryFinder;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.NoFactoryAvailableException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.util.ServiceHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -45,7 +42,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @org.apache.xbean.XBean element="container" rootElement="true"
  */
 public class DefaultCamelContext extends ServiceSupport implements CamelContext, Service {
-    private static final transient Log log = LogFactory.getLog(DefaultCamelContext.class);
     private Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
     private Map<String, Component> components = new HashMap<String, Component>();
     private List<EndpointResolver> resolvers = new CopyOnWriteArrayList<EndpointResolver>();
@@ -55,7 +51,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private EndpointResolver endpointResolver;
     private ExchangeConverter exchangeConverter;
     private Injector injector;
-    private AtomicBoolean started = new AtomicBoolean(false);
+    private DefaultComponentResolver componentResolver = new DefaultComponentResolver();
 
     /**
      * Adds a component to the container.
@@ -137,10 +133,27 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             answer = endpoints.get(uri);
             if (answer == null) {
                 try {
-                    for (EndpointResolver resolver : resolvers) {
-                        answer = resolver.resolveEndpoint(this, uri);
-                        if (answer != null) {
-                            break;
+                    synchronized (components) {
+                        Collection<Component> componentSet = components.values();
+                        for (Component component : componentSet) {
+                            answer = component.createEndpoint(uri);
+                            if (answer != null) {
+                                break;
+                            }
+                        }
+                    }
+                    if (answer == null) {
+                        Component component = componentResolver.resolveComponent(uri, this);
+                        if (component != null) {
+                            answer = component.createEndpoint(uri);
+                        }
+                    }
+                    if (answer == null) {
+                        for (EndpointResolver resolver : resolvers) {
+                            answer = resolver.resolveEndpoint(this, uri);
+                            if (answer != null) {
+                                break;
+                            }
                         }
                     }
                     if (answer == null) {

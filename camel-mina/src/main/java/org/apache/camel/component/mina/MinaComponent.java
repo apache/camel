@@ -18,6 +18,7 @@
 package org.apache.camel.component.mina;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.IoConnector;
@@ -38,6 +39,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 /**
  * @version $Revision$
@@ -50,9 +52,14 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         super(context);
     }
 
-    public synchronized MinaEndpoint createEndpoint(String uri, String[] urlParts) throws IOException, URISyntaxException {
-        String remainingUrl = uri.substring("mina:".length());
-        URI u = new URI(remainingUrl);
+    @Override
+    public String[] getUriPrefixes() {
+        return new String[] { "mina" };
+    }
+
+    @Override
+    protected Endpoint<MinaExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        URI u = new URI(remaining);
 
         String protocol = u.getScheme();
         if (protocol.equals("tcp")) {

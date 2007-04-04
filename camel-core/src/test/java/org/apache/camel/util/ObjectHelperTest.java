@@ -15,16 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jpa;
+package org.apache.camel.util;
 
-import org.apache.camel.examples.SendEmail;
+import junit.framework.TestCase;
 
 /**
  * @version $Revision$
  */
-public class JpaUsingCustomPersistenceUnitTest extends JpaTest {
-
-    protected String getEndpointUri() {
-        return "jpa://" + SendEmail.class.getName() + "?persistenceUnit=custom";
+public class ObjectHelperTest extends TestCase {
+    public void testRemoveInitialCharacters() throws Exception {
+        assertEquals(ObjectHelper.removeStartingCharacters("foo", '/'), "foo");
+        assertEquals(ObjectHelper.removeStartingCharacters("/foo", '/'), "foo");
+        assertEquals(ObjectHelper.removeStartingCharacters("//foo", '/'), "foo");
     }
 }

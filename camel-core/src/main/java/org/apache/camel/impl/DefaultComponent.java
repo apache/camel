@@ -19,8 +19,14 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.URISupport;
+import org.apache.camel.util.ObjectHelper;
 
+import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
@@ -29,6 +35,7 @@ import java.util.concurrent.ThreadFactory;
  * @version $Revision$
  */
 public class DefaultComponent<E extends Exchange> extends ServiceSupport implements Component<E> {
+    protected static String[] EMPTY_ARRAY = {};
     private int defaultThreadPoolSize = 5;
     private CamelContext camelContext;
     private ScheduledExecutorService executorService;
@@ -38,6 +45,36 @@ public class DefaultComponent<E extends Exchange> extends ServiceSupport impleme
 
     public DefaultComponent(CamelContext context) {
         this.camelContext = context;
+    }
+
+    public String[] getUriPrefixes() {
+        return EMPTY_ARRAY;
+    }
+
+    public Endpoint<E> createEndpoint(String uri) throws Exception {
+        ObjectHelper.notNull(getCamelContext(), "camelContext");
+        String remaining = matchesPrefixes(uri);
+        if (remaining == null) {
+            return null;
+        }
+        if (remaining.startsWith(":")) {
+            remaining = remaining.substring(1);
+        }
+        URI u = new URI(uri);
+        String path = u.getHost();
+        if (path == null) {
+            path = u.getSchemeSpecificPart();
+        }
+        Map parameters = URISupport.parseParamters(u);
+
+        Endpoint<E> endpoint = createEndpoint(uri, path, parameters);
+        if (endpoint == null) {
+            return null;
+        }
+        if (parameters != null) {
+            IntrospectionSupport.setProperties(endpoint, parameters);
+        }
+        return endpoint;
     }
 
     public CamelContext getCamelContext() {
@@ -81,5 +118,34 @@ public class DefaultComponent<E extends Exchange> extends ServiceSupport impleme
         if (executorService != null) {
             executorService.shutdown();
         }
+    }
+
+    /**
+     * Returns true if the uri matches one of the available prefixes from {@link #getUriPrefixes()}
+     *
+     * @param uri the URI
+     * @return true if the URI matches one of the available prefixes
+     */
+    protected String matchesPrefixes(String uri) {
+        String[] prefixes = getUriPrefixes();
+        for (String prefix : prefixes) {
+            if (uri.startsWith(prefix)) {
+                return uri.substring(prefix.length());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * A factory method allowing derived components to create a new endpoint from the given URI,
+     * remaining path and optional parameters
+     *
+     * @param uri        the full URI of the endpoint
+     * @param remaining  the remaining part of the URI without the query parameters or component prefix
+     * @param parameters the optional parameters passed in
+     * @return a newly created endpoint or null if the endpoint cannot be created based on the inputs
+     */
+    protected Endpoint<E> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        return null;
     }
 }

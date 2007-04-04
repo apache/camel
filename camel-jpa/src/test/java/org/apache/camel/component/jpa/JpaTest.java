@@ -114,7 +114,7 @@ public class JpaTest extends TestCase {
     }
 
     protected String getEndpointUri() {
-        return "jpa:" + SendEmail.class.getName();
+        return "jpa://" + SendEmail.class.getName();
     }
 
     @Override

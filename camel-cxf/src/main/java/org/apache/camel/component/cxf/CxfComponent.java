@@ -18,6 +18,7 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusException;
@@ -30,6 +31,7 @@ import org.xmlsoap.schemas.wsdl.http.AddressType;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 /**
  * @version $Revision$
@@ -44,14 +46,19 @@ public class CxfComponent extends DefaultComponent<CxfExchange> {
         super(context);
     }
 
-    public synchronized CxfEndpoint createEndpoint(String uri, String[] urlParts) throws IOException, URISyntaxException {
-        String remainingUrl = uri.substring("cxf:".length());
-        URI u = new URI(remainingUrl);
+    @Override
+    public String[] getUriPrefixes() {
+        return new String[] {"cxf"};
+    }
+
+    @Override
+    protected Endpoint<CxfExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        URI u = new URI(remaining);
 
         // TODO this is a hack!!!
         EndpointInfo endpointInfo = new EndpointInfo(null, "http://schemas.xmlsoap.org/soap/http");
         AddressType a = new AddressType();
-        a.setLocation(remainingUrl);
+        a.setLocation(remaining);
         endpointInfo.addExtensor(a);
 
         return new CxfEndpoint(uri, this, endpointInfo);

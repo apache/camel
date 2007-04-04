@@ -23,31 +23,33 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.orm.jpa.JpaTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.util.Map;
 
 /**
  * @version $Revision$
  */
 public class JpaEndpoint extends DefaultEndpoint<Exchange> {
-    private final JpaComponent component;
+    private EntityManagerFactory entityManagerFactory;
+    private String persistenceUnit = "camel";
     private JpaTemplate template;
     private Expression<Exchange> producerExpression;
     private int maximumResults = -1;
     private Class<?> entityType;
     private Map consumerProperties;
+    private Map entityManagerProperties;
 
     public JpaEndpoint(String uri, JpaComponent component) {
         super(uri, component);
-        this.component = component;
-        this.template = component.getTemplate();
+        entityManagerFactory = component.getEntityManagerFactory();
     }
 
     public Exchange createExchange() {
@@ -66,10 +68,12 @@ public class JpaEndpoint extends DefaultEndpoint<Exchange> {
         return startService(consumer);
     }
 
-
     // Properties
     //-------------------------------------------------------------------------
     public JpaTemplate getTemplate() {
+        if (template == null) {
+            template = createTemplate();
+        }
         return template;
     }
 
@@ -112,14 +116,52 @@ public class JpaEndpoint extends DefaultEndpoint<Exchange> {
         this.consumerProperties = consumerProperties;
     }
 
+    public EntityManagerFactory getEntityManagerFactory() {
+        if (entityManagerFactory == null) {
+            entityManagerFactory = createEntityManagerFactory();
+        }
+        return entityManagerFactory;
+    }
+
+    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
+    }
+
+    public Map getEntityManagerProperties() {
+        if (entityManagerProperties == null) {
+            entityManagerProperties = System.getProperties();
+        }
+        return entityManagerProperties;
+    }
+
+    public void setEntityManagerProperties(Map entityManagerProperties) {
+        this.entityManagerProperties = entityManagerProperties;
+    }
+
+    public String getPersistenceUnit() {
+        return persistenceUnit;
+    }
+
+    public void setPersistenceUnit(String persistenceUnit) {
+        this.persistenceUnit = persistenceUnit;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
+    protected JpaTemplate createTemplate() {
+        return new JpaTemplate(getEntityManagerFactory());
+    }
+
+    protected EntityManagerFactory createEntityManagerFactory() {
+        return Persistence.createEntityManagerFactory(persistenceUnit, getEntityManagerProperties());
+    }
+
     protected EntityManager createEntityManager() {
-        return component.createEntityManager();
+        return getEntityManagerFactory().createEntityManager();
     }
 
     protected TransactionStrategy createTransactionStrategy() {
-        EntityManagerFactory emf = component.getEntityManagerFactory();
+        EntityManagerFactory emf = getEntityManagerFactory();
         return JpaTemplateTransactionStrategy.newInstance(emf, getTemplate());
         //return new DefaultTransactionStrategy(emf);
     }

@@ -55,37 +55,42 @@ import java.util.ArrayList;
  *
  * @version $Revision$
  */
-public class JpaComponent extends DefaultComponent<Exchange> implements EndpointResolver {
+public class JpaComponent extends DefaultComponent<Exchange> {
     private EntityManagerFactory entityManagerFactory;
-    private Map entityManagerProperties;
-    private String entityManagerName = "camel";
-    private JpaTemplate template;
 
     public Component resolveComponent(CamelContext container, String uri) throws Exception {
         return null;
     }
 
-    public Endpoint resolveEndpoint(CamelContext container, String uri) throws Exception {
-        if (!uri.startsWith("jpa:")) {
-            return null;
-        }
-        URI u = new URI(uri);
-        String path = u.getHost();
-        if (path == null) {
-            path = u.getSchemeSpecificPart();
-        }
-        String[] paths = ObjectHelper.splitOnCharacter(path, ":", 4);
-        // ignore a prefix
-        if (paths[1] != null) {
-            path = paths[1];
-        }
+    // Properties
+    //-------------------------------------------------------------------------
+    public EntityManagerFactory getEntityManagerFactory() {
+        return entityManagerFactory;
+    }
+
+    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
+    }
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+
+    @Override
+    public String[] getUriPrefixes() {
+        return new String[] { "jpa" };
+    }
+
+    @Override
+    protected Endpoint<Exchange> createEndpoint(String uri, String path, Map options) throws Exception {
         JpaEndpoint endpoint = new JpaEndpoint(uri, this);
-        Map options = URISupport.parseParamters(u);
         Map consumerProperties = IntrospectionSupport.extractProperties(options, "consumer.");
         if (consumerProperties != null) {
             endpoint.setConsumerProperties(consumerProperties);
         }
-        IntrospectionSupport.setProperties(endpoint, options);
+        Map emProperties = IntrospectionSupport.extractProperties(options, "emf.");
+        if (emProperties != null) {
+            endpoint.setEntityManagerProperties(emProperties);
+        }
 
         // lets interpret the next string as a class
         if (path != null) {
@@ -97,85 +102,4 @@ public class JpaComponent extends DefaultComponent<Exchange> implements Endpoint
         return endpoint;
     }
 
-    // Properties
-    //-------------------------------------------------------------------------
-    public JpaTemplate getTemplate() {
-        if (template == null) {
-            template = createTemplate();
-        }
-        return template;
-    }
-
-    public void setTemplate(JpaTemplate template) {
-        this.template = template;
-    }
-
-    public EntityManagerFactory getEntityManagerFactory() {
-        if (entityManagerFactory == null) {
-            entityManagerFactory = createEntityManagerFactory();
-        }
-        return entityManagerFactory;
-    }
-
-    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
-    }
-
-    public Map getEntityManagerProperties() {
-        if (entityManagerProperties == null) {
-            entityManagerProperties = System.getProperties();
-        }
-        return entityManagerProperties;
-    }
-
-    public void setEntityManagerProperties(Map entityManagerProperties) {
-        this.entityManagerProperties = entityManagerProperties;
-    }
-
-    public String getEntityManagerName() {
-        return entityManagerName;
-    }
-
-    public void setEntityManagerName(String entityManagerName) {
-        this.entityManagerName = entityManagerName;
-    }
-
-    // Implementation methods
-    //-------------------------------------------------------------------------
-    protected JpaTemplate createTemplate() {
-  /*      EntityManagerFactory emf = getEntityManagerFactory();
-        JpaTransactionManager transactionManager = new JpaTransactionManager(emf);
-        transactionManager.afterPropertiesSet();
-
-        final TransactionTemplate tranasctionTemplate = new TransactionTemplate(transactionManager);
-        tranasctionTemplate.afterPropertiesSet();
-
-        // lets auto-default to a JpaTemplate which implicitly creates a transaction
-        // TODO surely there's a cleaner way to get the JpaTemplate to create a transaction if one is not present??
-        return new JpaTemplate(emf) {
-            @Override
-            public Object execute(final JpaCallback action, final boolean exposeNativeEntityManager) throws DataAccessException {
-                return tranasctionTemplate.execute(new TransactionCallback() {
-                    public Object doInTransaction(TransactionStatus status) {
-                        return doExecute(action, exposeNativeEntityManager);
-                    }
-                });
-
-            }
-
-            public Object doExecute(final JpaCallback action, final boolean exposeNativeEntityManager) throws DataAccessException {
-                return super.execute(action, exposeNativeEntityManager);
-            }
-        };*/
-        return new JpaTemplate(getEntityManagerFactory());
-    }
-
-    protected EntityManagerFactory createEntityManagerFactory() {
-        //return Persistence.createEntityManagerFactory(entityManagerName);
-        return Persistence.createEntityManagerFactory(entityManagerName, getEntityManagerProperties());
-    }
-
-    protected EntityManager createEntityManager() {
-        return getEntityManagerFactory().createEntityManager();
-    }
 }
