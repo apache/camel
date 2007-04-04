@@ -46,11 +46,11 @@ public interface Component<E extends Exchange>  {
     ScheduledExecutorService getExecutorService();
 
     /**
-     * Attempt to create an endpoint for the given URI if the component is capable of handling the URI
+     * Attempt to resolve an endpoint for the given URI if the component is capable of handling the URI
      *
      * @param uri the URI to create
      * @return a newly created endpoint or null if this component cannot create instances of the given
      * uri
      */
-    Endpoint<E> createEndpoint(String uri) throws Exception;
+    Endpoint<E> resolveEndpoint(String uri) throws Exception;
 }

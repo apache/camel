@@ -114,4 +114,7 @@ public class TimerConsumer extends DefaultConsumer<PojoExchange> implements Invo
         }
         return exchange.getOut().getBody();
 	}
+  
+
+
 }

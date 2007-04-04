@@ -35,7 +35,7 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
     private final PojoComponent component;
 	private final String pojoId;
 
-    public PojoEndpoint(String uri, String pojoId, PojoComponent component) {
+    public PojoEndpoint(String uri, PojoComponent component, String pojoId) {
         super(uri, component);
 		this.pojoId = pojoId;
         this.component = component;

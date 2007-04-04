@@ -19,9 +19,11 @@ package org.apache.camel.component.queue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
+import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -38,4 +40,13 @@ public class QueueComponent<E extends Exchange> extends DefaultComponent<E> {
 		return new LinkedBlockingQueue<E>();
 	}
 
+    @Override
+    public String[] getUriPrefixes() {
+        return new String[] {"queue"};
+    }
+
+    @Override
+    protected Endpoint<E> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        return new QueueEndpoint<E>(uri, this);
+    }
 }

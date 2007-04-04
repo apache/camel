@@ -17,8 +17,10 @@
 package org.apache.camel.component.pojo;
 
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.Endpoint;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents the component that manages {@link PojoEndpoint}.  It holds the
@@ -53,5 +55,15 @@ public class PojoComponent extends DefaultComponent<PojoExchange> {
 
     public PojoConsumer getConsumer(String uri) {
         return consumers.get(uri);
+    }
+
+    @Override
+    public String[] getUriPrefixes() {
+        return new String[] {"pojo"};
+    }
+    
+    @Override
+    protected Endpoint<PojoExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        return new PojoEndpoint(uri, this, remaining);
     }
 }

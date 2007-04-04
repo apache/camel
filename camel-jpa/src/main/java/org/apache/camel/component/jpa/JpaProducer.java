@@ -17,12 +17,10 @@
  */
 package org.apache.camel.component.jpa;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultProducer;
-import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.orm.jpa.JpaCallback;
 
 import javax.persistence.EntityManager;

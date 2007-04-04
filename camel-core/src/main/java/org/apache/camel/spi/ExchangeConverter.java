@@ -14,24 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.spi;
+
+import org.apache.camel.Exchange;
 
 /**
- * A resolver of endpoints from a String URI
+ * This converter is capable of converting from an exchange to another type
  *
  * @version $Revision$
  */
-public interface EndpointResolver<E extends Exchange> {
+public interface ExchangeConverter {
 
-    /**
-     * Resolves the component for a given uri or returns null if now component handles it.
-     */
-    public Component resolveComponent(CamelContext container, String uri) throws Exception;
-
-
-    /**
-     * Resolves the endpoint for a given uri or returns null if no endpoint could be found
-     */
-    public Endpoint<E> resolveEndpoint(CamelContext container, String uri) throws Exception;
-    
+     <T> T  convertTo(Class<T> type, Exchange exchange);
 }

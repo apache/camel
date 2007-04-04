@@ -17,15 +17,12 @@
  */
 package org.apache.camel.component.jpa;
 
-import org.springframework.orm.jpa.JpaCallback;
 import org.apache.camel.Service;
-
-import javax.persistence.EntityManager;
+import org.springframework.orm.jpa.JpaCallback;
 
 /**
  * @version $Revision$
  */
 public interface TransactionStrategy extends Service {
-
     public Object execute(JpaCallback callback);
 }

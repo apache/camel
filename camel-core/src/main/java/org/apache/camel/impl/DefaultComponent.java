@@ -51,7 +51,7 @@ public class DefaultComponent<E extends Exchange> extends ServiceSupport impleme
         return EMPTY_ARRAY;
     }
 
-    public Endpoint<E> createEndpoint(String uri) throws Exception {
+    public Endpoint<E> resolveEndpoint(String uri) throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
         String remaining = matchesPrefixes(uri);
         if (remaining == null) {

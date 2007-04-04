@@ -19,6 +19,7 @@ package org.apache.camel.component.xmpp;
 
 import com.sun.jndi.toolkit.url.Uri;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -39,23 +40,20 @@ public class XmppComponent extends DefaultComponent<XmppExchange> {
         return new XmppComponent();
     }
 
-    protected XmppComponent() {
+    public XmppComponent() {
     }
 
     public XmppComponent(CamelContext context) {
         super(context);
     }
 
-    public XmppEndpoint createEndpoint(Uri uri) throws URISyntaxException {
-        // lets figure out from the URI whether its a queue, topic etc
-
-        String path = uri.getPath();
-        return createEndpoint(uri.toString(), path);
+    @Override
+    public String[] getUriPrefixes() {
+        return new String[] {"xmpp"};
     }
 
-    public XmppEndpoint createEndpoint(String uri, String path) throws URISyntaxException {
-        ObjectHelper.notNull(getCamelContext(), "context");
-
+    @Override
+    protected Endpoint<XmppExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         XmppEndpoint endpoint = new XmppEndpoint(uri, this);
 
         URI u = new URI(uri);
@@ -75,9 +73,6 @@ public class XmppComponent extends DefaultComponent<XmppExchange> {
                 endpoint.setParticipant(remainingPath);
             }
         }
-
-        Map options = URISupport.parseParamters(u);
-        IntrospectionSupport.setProperties(endpoint, options);
         return endpoint;
     }
 }

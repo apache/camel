@@ -15,16 +15,13 @@ package org.apache.camel.component.jbi;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointResolver;
 import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.servicemix.common.DefaultComponent;
-import org.apache.servicemix.common.ServiceUnit;
 import org.apache.servicemix.jbi.util.IntrospectionSupport;
 import org.apache.servicemix.jbi.util.URISupport;
 import org.apache.servicemix.jbi.resolver.URIResolver;
-import org.apache.servicemix.executors.Executor;
 
 import javax.jbi.servicedesc.ServiceEndpoint;
 import javax.xml.namespace.QName;
@@ -123,7 +120,7 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Exc
 
     // Resolve Camel Endpoints
     //-------------------------------------------------------------------------
-    public Endpoint<Exchange> createEndpoint(String uri) {
+    public Endpoint<Exchange> resolveEndpoint(String uri) {
         if (uri.startsWith("jbi:")) {
             uri = uri.substring("jbi:".length());
 

@@ -61,7 +61,7 @@ public class DefaultTransactionStrategy extends ServiceSupport implements Transa
     }
 
     public EntityManager getEntityManager() {
-        if (entityManager == null){
+        if (entityManager == null) {
             entityManager = entityManagerFactory.createEntityManager();
         }
         return entityManager;
@@ -77,5 +77,4 @@ public class DefaultTransactionStrategy extends ServiceSupport implements Transa
             entityManager.close();
         }
     }
-
 }

@@ -49,7 +49,7 @@ public class TimerRouteTest extends TestCase {
         // lets add some routes
         container.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("timer:foo?fixedRate=true&delay=0&period=500").to("pojo:default:bar");
+                from("timer://foo?fixedRate=true&delay=0&period=500").to("pojo:bar");
             }
         });
         

@@ -17,8 +17,8 @@
  */
 package org.apache.camel.component.jpa;
 
-import javax.persistence.Query;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 /**
  * A Strategy to create a query to search for objects in a database
@@ -26,7 +26,6 @@ import javax.persistence.EntityManager;
  * @version $Revision$
  */
 public interface QueryFactory {
-
     /**
      * Creates a new query to find objects to be processed
      *

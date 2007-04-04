@@ -18,6 +18,7 @@
 package org.apache.camel.impl.converter;
 
 import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.Injector;
 
 /**
  * @version $Revision$
