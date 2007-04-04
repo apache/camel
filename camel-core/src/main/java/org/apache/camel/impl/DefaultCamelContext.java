@@ -50,7 +50,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private TypeConverter typeConverter;
     private ExchangeConverter exchangeConverter;
     private Injector injector;
-    private ComponentResolver componentResolver = new DefaultComponentResolver();
+    private ComponentResolver componentResolver;
 
     /**
      * Adds a component to the container.
@@ -139,7 +139,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                         }
                     }
                     if (answer == null) {
-                        Component component = componentResolver.resolveComponent(uri, this);
+                        Component component = getComponentResolver().resolveComponent(uri, this);
                         if (component != null) {
                             ServiceHelper.startServices(component);
                             answer = component.resolveEndpoint(uri);
@@ -238,6 +238,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.injector = injector;
     }
 
+    public ComponentResolver getComponentResolver() {
+        if (componentResolver == null) {
+            componentResolver = createComponentResolver();
+        }
+        return componentResolver;
+    }
+
+    public void setComponentResolver(ComponentResolver componentResolver) {
+        this.componentResolver = componentResolver;
+    }
+
     // Implementation methods
     //-----------------------------------------------------------------------
 
@@ -302,4 +313,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             throw new RuntimeCamelException(e);
         }
     }
+
+    /**
+     * Lazily create a default implementation
+     */
+    protected ComponentResolver createComponentResolver() {
+        return new DefaultComponentResolver();
+    }
+
 }
