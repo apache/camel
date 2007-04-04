@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
- * A default endpoint useful for implementation inheritence
+ * A default endpoint useful for implementation inheritance
  * 
  * @version $Revision$
  */

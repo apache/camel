@@ -16,7 +16,6 @@
  */
 package org.apache.camel;
 
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Implements the <a href="http://activemq.apache.org/camel/message-endpoint.html">Message Endpoint</a>
@@ -63,10 +62,4 @@ public interface Endpoint<E extends Exchange> {
      */
     Consumer<E> createConsumer(Processor<E> processor) throws Exception;
 
-    /**
-     * Returns the executor for this endpoint which typically defaults to the components executor
-     *
-     * @return the executor for this endpoint
-     */
-    ScheduledExecutorService getExecutorService();
 }
