@@ -18,7 +18,8 @@
 package org.apache.camel;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.converter.Injector;
+import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.ExchangeConverter;
 
 import java.util.Collection;
 import java.util.List;
@@ -97,8 +98,6 @@ public interface CamelContext extends Service {
 
     // Properties
     //-----------------------------------------------------------------------
-    EndpointResolver getEndpointResolver();
-
     ExchangeConverter getExchangeConverter();
 
     /**

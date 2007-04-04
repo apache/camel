@@ -17,7 +17,6 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.impl.converter.Injector;
 import org.apache.camel.impl.converter.TypeConverterRegistry;
 
 /**

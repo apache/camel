@@ -17,28 +17,24 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.Component;
-import org.apache.camel.EndpointResolver;
-import org.apache.camel.Exchange;
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.converter.Injector;
+import org.apache.camel.Component;
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.util.FactoryFinder;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.NoFactoryAvailableException;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * An implementation of {@link org.apache.camel.EndpointResolver} that delegates to
- * other {@link EndpointResolver} which are selected based on the uri prefix.
- * <p/>
- * The delegate {@link EndpointResolver} are associated with uri prefixes by
- * adding a property file with the same uri prefix in the
- * META-INF/services/org/apache/camel/EndpointResolver/
+ * The default implementation of {@link ComponentResolver}
+ * which tries to find components by using the URI scheme prefix and searching for a file of the URI
+ * scheme name in the <b>META-INF/services/org/apache/camel/component/</b>
  * directory on the classpath.
  *
  * @version $Revision$
  */
-public class DefaultComponentResolver<E extends Exchange> {
-    static final private FactoryFinder componentFactory = new FactoryFinder("META-INF/services/org/apache/camel/component/");
+public class DefaultComponentResolver<E extends Exchange> implements ComponentResolver<E> {
+    protected static final FactoryFinder componentFactory = new FactoryFinder("META-INF/services/org/apache/camel/component/");
 
     public Component<E> resolveComponent(String uri, CamelContext context) {
         String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);

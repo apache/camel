@@ -20,35 +20,13 @@ package org.apache.camel.component.jpa;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointResolver;
 import org.apache.camel.Exchange;
-import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.URISupport;
 import org.apache.camel.util.IntrospectionSupport;
-import org.springframework.orm.jpa.JpaTemplate;
-import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.SharedEntityManagerCreator;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.JpaCallback;
-import org.springframework.jca.support.LocalConnectionFactoryBean;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.jta.JtaTransactionManager;
-import org.springframework.dao.DataAccessException;
+import org.apache.camel.util.ObjectHelper;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import java.net.URI;
 import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * A JPA Component
@@ -77,7 +55,7 @@ public class JpaComponent extends DefaultComponent<Exchange> {
 
     @Override
     public String[] getUriPrefixes() {
-        return new String[] { "jpa" };
+        return new String[]{"jpa"};
     }
 
     @Override
@@ -101,5 +79,4 @@ public class JpaComponent extends DefaultComponent<Exchange> {
         }
         return endpoint;
     }
-
 }

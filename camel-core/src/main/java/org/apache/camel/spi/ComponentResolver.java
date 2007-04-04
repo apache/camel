@@ -15,20 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.converter;
+package org.apache.camel.spi;
+
+import org.apache.camel.Component;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultComponentResolver;
 
 /**
- * A pluggable strategy for creating and possibly dependency injecting objects
- * which could be implemented using straight forward reflection or using Spring or Guice to perform dependency injection.
+ * Represents a resolver of components from a URI to be able to auto-load them using some
+ * discovery mechanism like {@link DefaultComponentResolver}
  *
  * @version $Revision$
  */
-public interface Injector<T> {
+public interface ComponentResolver<E extends Exchange> {
+    
     /**
-     * Instantiates a new instance of the given type possibly injecting values into the object in the process
+     * Attempts to resolve the component for the given URI
      *
-     * @param type the type of object to create
-     * @return a newly created instance
+     * @param uri the URI to resolve
+     * @param context the context to load the component if it can be resolved
+     * @return the component which is added to the context or null if it can not be resolved
      */
-    T newInstance(Class<T> type);
+    Component<E> resolveComponent(String uri, CamelContext context);
 }

@@ -46,7 +46,7 @@ public class TimerEndpoint extends DefaultEndpoint<PojoExchange> {
     private boolean daemon=true;
 
 
-    public TimerEndpoint(String fullURI, String timerPartURI, TimerComponent component) throws URISyntaxException {
+    public TimerEndpoint(String fullURI, TimerComponent component, String timerPartURI) throws URISyntaxException {
         super(fullURI, component);
         this.component = component;
 		

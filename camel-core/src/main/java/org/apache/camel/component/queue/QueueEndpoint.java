@@ -37,9 +37,9 @@ import java.util.concurrent.BlockingQueue;
 public class QueueEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     private BlockingQueue<E> queue;
 
-    public QueueEndpoint(String uri, QueueComponent<E> component, BlockingQueue<E> queue) {
+    public QueueEndpoint(String uri, QueueComponent<E> component) {
         super(uri, component);
-        this.queue = queue;
+        this.queue = component.createQueue();
     }
 
     public Producer<E> createProducer() throws Exception {

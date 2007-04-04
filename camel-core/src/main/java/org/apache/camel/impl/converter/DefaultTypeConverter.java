@@ -24,6 +24,8 @@ import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.impl.ReflectionInjector;
+import org.apache.camel.spi.Injector;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

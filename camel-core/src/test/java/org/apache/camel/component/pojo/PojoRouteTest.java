@@ -50,7 +50,7 @@ public class PojoRouteTest extends TestCase {
         // lets add some routes
         container.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("pojo:default:hello").intercept(tracingInterceptor).target().to("pojo:default:bye");
+                from("pojo:hello").intercept(tracingInterceptor).target().to("pojo:bye");
             }
         });
 

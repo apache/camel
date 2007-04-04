@@ -22,8 +22,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
 /**
@@ -34,10 +34,9 @@ import javax.persistence.NamedQuery;
  * @version $Revision$
  */
 @Entity
-@NamedQuery(name = "step1", query="select x from MultiSteps x where x.step = 1")
+@NamedQuery(name = "step1", query = "select x from MultiSteps x where x.step = 1")
 public class MultiSteps {
     private static final transient Log log = LogFactory.getLog(MultiSteps.class);
-    
     private Long id;
     private String address;
     private int step;

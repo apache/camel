@@ -17,12 +17,12 @@
  */
 package org.apache.camel.component.jpa;
 
-import javax.persistence.Query;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.Collection;
 
 /**
  * A builder of query expressions

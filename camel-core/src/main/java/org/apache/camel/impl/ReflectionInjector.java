@@ -15,9 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.converter;
+package org.apache.camel.impl;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Injector;
 
 /**
  * A simple implementation of {@link Injector} which just uses reflection to instantiate new objects

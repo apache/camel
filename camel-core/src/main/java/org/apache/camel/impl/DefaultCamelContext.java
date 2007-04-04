@@ -18,10 +18,12 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.*;
+import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.converter.Injector;
-import org.apache.camel.impl.converter.ReflectionInjector;
+import org.apache.camel.impl.ReflectionInjector;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ServiceHelper;
@@ -33,7 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -44,14 +45,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class DefaultCamelContext extends ServiceSupport implements CamelContext, Service {
     private Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
     private Map<String, Component> components = new HashMap<String, Component>();
-    private List<EndpointResolver> resolvers = new CopyOnWriteArrayList<EndpointResolver>();
     private List<Route> routes;
     private List<Service> servicesToClose = new ArrayList<Service>();
     private TypeConverter typeConverter;
-    private EndpointResolver endpointResolver;
     private ExchangeConverter exchangeConverter;
     private Injector injector;
-    private DefaultComponentResolver componentResolver = new DefaultComponentResolver();
+    private ComponentResolver componentResolver = new DefaultComponentResolver();
 
     /**
      * Adds a component to the container.
@@ -63,9 +62,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
             component.setCamelContext(this);
             components.put(componentName, component);
-            if (component instanceof EndpointResolver) {
-                resolvers.add((EndpointResolver) component);
-            }
         }
     }
 
@@ -136,7 +132,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     synchronized (components) {
                         Collection<Component> componentSet = components.values();
                         for (Component component : componentSet) {
-                            answer = component.createEndpoint(uri);
+                            answer = component.resolveEndpoint(uri);
                             if (answer != null) {
                                 break;
                             }
@@ -145,20 +141,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     if (answer == null) {
                         Component component = componentResolver.resolveComponent(uri, this);
                         if (component != null) {
-                            answer = component.createEndpoint(uri);
+                            answer = component.resolveEndpoint(uri);
                         }
-                    }
-                    if (answer == null) {
-                        for (EndpointResolver resolver : resolvers) {
-                            answer = resolver.resolveEndpoint(this, uri);
-                            if (answer != null) {
-                                break;
-                            }
-                        }
-                    }
-                    if (answer == null) {
-                        EndpointResolver er = getEndpointResolver();
-                        answer = er.resolveEndpoint(this, uri);
                     }
                     if (answer != null) {
                         endpoints.put(uri, answer);
@@ -247,17 +231,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     // Properties
     //-----------------------------------------------------------------------
-    public EndpointResolver getEndpointResolver() {
-        if (endpointResolver == null) {
-            endpointResolver = createEndpointResolver();
-        }
-        return endpointResolver;
-    }
-
-    public void setEndpointResolver(EndpointResolver endpointResolver) {
-        this.endpointResolver = endpointResolver;
-    }
-
     public ExchangeConverter getExchangeConverter() {
         if (exchangeConverter == null) {
             exchangeConverter = createExchangeConverter();
@@ -300,13 +273,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     protected void doStop() throws Exception {
         deactivateEndpoints();
-    }
-
-    /**
-     * Lazily create a default implementation
-     */
-    protected EndpointResolver createEndpointResolver() {
-        return new DefaultEndpointResolver();
     }
 
     /**

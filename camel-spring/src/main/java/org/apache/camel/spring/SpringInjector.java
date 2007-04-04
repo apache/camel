@@ -17,8 +17,8 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.impl.converter.Injector;
-import org.apache.camel.impl.converter.ReflectionInjector;
+import org.apache.camel.spi.Injector;
+import org.apache.camel.impl.ReflectionInjector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
