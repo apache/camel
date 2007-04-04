@@ -23,7 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
  *
  * @version $Revision: 519901 $
  */
-public interface Component<E>  {
+public interface Component<E extends Exchange>  {
     
     /**
      * Returns the context
@@ -44,5 +44,13 @@ public interface Component<E>  {
      * @return the executor for this endpoint
      */
     ScheduledExecutorService getExecutorService();
-	
+
+    /**
+     * Attempt to create an endpoint for the given URI if the component is capable of handling the URI
+     *
+     * @param uri the URI to create
+     * @return a newly created endpoint or null if this component cannot create instances of the given
+     * uri
+     */
+    Endpoint<E> createEndpoint(String uri) throws Exception;
 }

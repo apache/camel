@@ -48,6 +48,15 @@ public class FactoryFinder {
     public Object newInstance(String key, String propertyPrefix)
             throws IllegalAccessException, InstantiationException, IOException, ClassNotFoundException
     {
+        Class clazz = findClass(key, propertyPrefix);
+        return clazz.newInstance();
+    }
+
+    public Class findClass(String key) throws ClassNotFoundException, IOException {
+        return findClass(key, null);
+    }
+
+    public Class findClass(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
         if (propertyPrefix == null)
             propertyPrefix = "";
 
@@ -56,7 +65,7 @@ public class FactoryFinder {
             clazz = newInstance(doFindFactoryProperies(key), propertyPrefix);
             classMap.put(propertyPrefix + key, clazz);
         }
-        return clazz.newInstance();
+        return clazz;
     }
 
     private Class newInstance(Properties properties, String propertyPrefix) throws ClassNotFoundException, IOException {

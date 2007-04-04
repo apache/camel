@@ -41,7 +41,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
  *
  * @version $Revision: 426415 $
  */
-public class CamelJbiComponent extends DefaultComponent implements Component<JbiExchange>, EndpointResolver {
+public class CamelJbiComponent extends DefaultComponent implements Component<Exchange> {
     private JbiBinding binding;
     private CamelContext camelContext;
     private ScheduledExecutorService executorService;
@@ -123,11 +123,7 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Jbi
 
     // Resolve Camel Endpoints
     //-------------------------------------------------------------------------
-    public Component resolveComponent(CamelContext context, String uri) throws Exception {
-        return null;
-    }
-
-    public Endpoint resolveEndpoint(CamelContext context, String uri) throws Exception {
+    public Endpoint<Exchange> createEndpoint(String uri) {
         if (uri.startsWith("jbi:")) {
             uri = uri.substring("jbi:".length());
 

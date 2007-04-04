@@ -70,7 +70,9 @@ public class CxfBinding {
     public void storeCxfResponse(CxfExchange exchange, Message response) {
         // no need to process headers as we use the CXF message
         CxfMessage out = exchange.getOut();
-        out.setMessage(response);
-        out.setBody(getBody(response));
+        if (response != null) {
+            out.setMessage(response);
+            out.setBody(getBody(response));
+        }
     }
 }

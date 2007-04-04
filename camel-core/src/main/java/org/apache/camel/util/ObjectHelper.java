@@ -95,6 +95,26 @@ public class ObjectHelper {
     }
 
     /**
+     * Removes any starting characters on the given text which match the given character
+     *
+     * @param text the string
+     * @param ch the initial characters to remove
+     * @return either the original string or the new substring
+     */
+    public static String removeStartingCharacters(String text, char ch) {
+        int idx = 0;
+        while (text.charAt(idx) == ch) {
+            idx++;
+        }
+        if (idx > 0) {
+            return text.substring(idx);
+        }
+        return text;
+    }
+
+
+
+    /**
      * Returns true if the collection contains the specified value
      */
     public static boolean contains(Object collectionOrArray, Object value) {

@@ -17,25 +17,22 @@
  */
 package org.apache.camel.component.jms;
 
-import com.sun.jndi.toolkit.url.Uri;
+import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Processor;
+import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.URISupport;
 
 import javax.jms.ConnectionFactory;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 
 /**
  * @version $Revision:520964 $
  */
 public class JmsComponent extends DefaultComponent<JmsExchange> {
-    public static final String QUEUE_PREFIX = "queue/";
-    public static final String TOPIC_PREFIX = "topic/";
+    public static final String QUEUE_PREFIX = "queue:";
+    public static final String TOPIC_PREFIX = "topic:";
     private JmsConfiguration configuration;
 
     /**
@@ -69,7 +66,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
         return jmsComponent(template);
     }
 
-    protected JmsComponent() {
+    public JmsComponent() {
         this.configuration = new JmsConfiguration();
     }
 
@@ -82,38 +79,34 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
         this.configuration = new JmsConfiguration();
     }
 
-    public JmsEndpoint createEndpoint(Uri uri) throws URISyntaxException {
-        // lets figure out from the URI whether its a queue, topic etc
-
-        String path = uri.getPath();
-        return createEndpoint(uri.toString(), path);
+    @Override
+    public String[] getUriPrefixes() {
+        return new String[]{"jms"};
     }
 
-    public JmsEndpoint createEndpoint(String uri, String path) throws URISyntaxException {
-        ObjectHelper.notNull(getCamelContext(), "camelContext");
+    @Override
+    protected Endpoint<JmsExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
 
         boolean pubSubDomain = false;
-        if (path.startsWith(QUEUE_PREFIX)) {
+        if (remaining.startsWith(QUEUE_PREFIX)) {
             pubSubDomain = false;
-            path = path.substring(QUEUE_PREFIX.length());
+            remaining = removeStartingCharacters(remaining.substring(QUEUE_PREFIX.length()), '/');
         }
-        else if (path.startsWith(TOPIC_PREFIX)) {
+        else if (remaining.startsWith(TOPIC_PREFIX)) {
             pubSubDomain = true;
-            path = path.substring(TOPIC_PREFIX.length());
+            remaining = removeStartingCharacters(remaining.substring(TOPIC_PREFIX.length()), '/');
         }
 
-        final String subject = convertPathToActualDestination(path);
+        final String subject = convertPathToActualDestination(remaining);
 
         // lets make sure we copy the configuration as each endpoint can customize its own version
         JmsEndpoint endpoint = new JmsEndpoint(uri, this, subject, pubSubDomain, getConfiguration().copy());
 
-        URI u = new URI(uri);
-        Map options = URISupport.parseParamters(u);
-        String selector = (String) options.remove("selector");
+        String selector = (String) parameters.remove("selector");
         if (selector != null) {
             endpoint.setSelector(selector);
         }
-        IntrospectionSupport.setProperties(endpoint.getConfiguration(), options);
+        IntrospectionSupport.setProperties(endpoint.getConfiguration(), parameters);
         return endpoint;
     }
 
@@ -136,13 +129,5 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
      */
     protected String convertPathToActualDestination(String path) {
         return path;
-    }
-
-    public void activate(JmsEndpoint endpoint, Processor<JmsExchange> processor) {
-        // TODO Auto-generated method stub
-    }
-
-    public void deactivate(JmsEndpoint endpoint) {
-        // TODO Auto-generated method stub
     }
 }

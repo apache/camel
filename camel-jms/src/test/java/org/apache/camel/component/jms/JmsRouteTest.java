@@ -102,8 +102,8 @@ public class JmsRouteTest extends TestCase {
         // lets add some routes
         container.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("jms:activemq:test.a").to("jms:activemq:test.b");
-                from("jms:activemq:test.b").process(new Processor<JmsExchange>() {
+                from("jms:queue:test.a").to("jms:queue:test.b");
+                from("jms:queue:test.b").process(new Processor<JmsExchange>() {
                     public void onExchange(JmsExchange e) {
                         System.out.println("Received exchange: " + e.getIn());
                         receivedExchange = e;
@@ -112,7 +112,7 @@ public class JmsRouteTest extends TestCase {
                 });
             }
         });
-        endpoint = container.resolveEndpoint("jms:activemq:test.a");
+        endpoint = container.resolveEndpoint("jms:queue:test.a");
         assertNotNull("No endpoint found!", endpoint);
 
         container.activateEndpoints();
