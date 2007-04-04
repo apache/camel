@@ -17,6 +17,15 @@
  */
 package org.apache.camel.component.jpa;
 
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+
+import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.PersistenceException;
+import javax.persistence.Query;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.PollingConsumer;
@@ -24,13 +33,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.jpa.JpaCallback;
-
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
-import java.lang.reflect.Method;
-import java.util.List;
 
 /**
  * @version $Revision$
@@ -45,8 +47,8 @@ public class JpaConsumer extends PollingConsumer<Exchange> {
     private String namedQuery;
     private String nativeQuery;
 
-    public JpaConsumer(JpaEndpoint endpoint, Processor<Exchange> processor) {
-        super(endpoint, processor);
+    public JpaConsumer(JpaEndpoint endpoint, Processor<Exchange> processor, ScheduledExecutorService executor) {
+        super(endpoint, processor, executor);
         this.endpoint = endpoint;
         this.template = endpoint.createTransactionStrategy();
     }

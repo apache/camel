@@ -61,7 +61,7 @@ public class JpaEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     public Consumer<Exchange> createConsumer(Processor<Exchange> processor) throws Exception {
-        JpaConsumer consumer = new JpaConsumer(this, processor);
+        JpaConsumer consumer = new JpaConsumer(this, processor, getExecutorService());
         if (consumerProperties != null) {
             IntrospectionSupport.setProperties(consumer, consumerProperties);
         }
