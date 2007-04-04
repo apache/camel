@@ -56,11 +56,7 @@ public class DefaultComponentResolver<E extends Exchange> implements ComponentRe
             return null;
         }
         if (Component.class.isAssignableFrom(type)) {
-            Component<E> answer = (Component<E>) context.getInjector().newInstance(type);
-            // lets add the component using the prefix
-            context.addComponent(scheme, answer);
-            // TODO should we start it?
-            return answer;
+            return (Component<E>)context.getInjector().newInstance(type);
         }
         else {
             throw new IllegalArgumentException("Type is not a Component implementation. Found: " + type.getName());

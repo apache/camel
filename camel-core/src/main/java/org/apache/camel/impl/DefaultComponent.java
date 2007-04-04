@@ -35,8 +35,8 @@ import java.util.concurrent.ThreadFactory;
  * @version $Revision$
  */
 public class DefaultComponent<E extends Exchange> extends ServiceSupport implements Component<E> {
-    protected static String[] EMPTY_ARRAY = {};
-    private int defaultThreadPoolSize = 5;
+
+	private int defaultThreadPoolSize = 5;
     private CamelContext camelContext;
     private ScheduledExecutorService executorService;
 
@@ -47,19 +47,9 @@ public class DefaultComponent<E extends Exchange> extends ServiceSupport impleme
         this.camelContext = context;
     }
 
-    public String[] getUriPrefixes() {
-        return EMPTY_ARRAY;
-    }
 
     public Endpoint<E> resolveEndpoint(String uri) throws Exception {
-        ObjectHelper.notNull(getCamelContext(), "camelContext");
-        String remaining = matchesPrefixes(uri);
-        if (remaining == null) {
-            return null;
-        }
-        if (remaining.startsWith(":")) {
-            remaining = remaining.substring(1);
-        }
+        ObjectHelper.notNull(getCamelContext(), "camelContext");        
         URI u = new URI(uri);
         String path = u.getHost();
         if (path == null) {
@@ -120,21 +110,6 @@ public class DefaultComponent<E extends Exchange> extends ServiceSupport impleme
         }
     }
 
-    /**
-     * Returns true if the uri matches one of the available prefixes from {@link #getUriPrefixes()}
-     *
-     * @param uri the URI
-     * @return true if the URI matches one of the available prefixes
-     */
-    protected String matchesPrefixes(String uri) {
-        String[] prefixes = getUriPrefixes();
-        for (String prefix : prefixes) {
-            if (uri.startsWith(prefix)) {
-                return uri.substring(prefix.length());
-            }
-        }
-        return null;
-    }
 
     /**
      * A factory method allowing derived components to create a new endpoint from the given URI,

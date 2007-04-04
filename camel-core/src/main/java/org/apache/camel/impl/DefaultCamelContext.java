@@ -17,17 +17,6 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.*;
-import org.apache.camel.spi.ComponentResolver;
-import org.apache.camel.spi.Injector;
-import org.apache.camel.spi.ExchangeConverter;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.ReflectionInjector;
-import org.apache.camel.util.FactoryFinder;
-import org.apache.camel.util.NoFactoryAvailableException;
-import org.apache.camel.util.ServiceHelper;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,6 +24,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.Route;
+import org.apache.camel.RouteFactory;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Service;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.ExchangeConverter;
+import org.apache.camel.spi.Injector;
+import org.apache.camel.util.FactoryFinder;
+import org.apache.camel.util.NoFactoryAvailableException;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -129,22 +140,37 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             answer = endpoints.get(uri);
             if (answer == null) {
                 try {
+                	
+                	// Use the URI prefix to find the component.
+                    String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
+                    if (splitURI[1] == null) {
+                        throw new IllegalArgumentException("Invalid URI, it did not contain a scheme: " + uri);
+                    }
+                    String scheme = splitURI[0];
+                    Component component = null;
+                    
+                	// synchronize the look up and auto create so that 2 threads can't 
+                	// concurrently auto create the same component. 
                     synchronized (components) {
-                        Collection<Component> componentSet = components.values();
-                        for (Component component : componentSet) {
-                            answer = component.resolveEndpoint(uri);
-                            if (answer != null) {
-                                break;
-                            }
-                        }
+                    	component = components.get(scheme);
+                    	if( component == null ) {
+                            component = getComponentResolver().resolveComponent(uri, this);
+                    		addComponent(scheme, component);
+                    		if( isStarted() ) {
+                    			// If the component is looked up after the context is started,
+                    			// lets start it up.
+                    			ServiceHelper.startServices(component);
+                    		}
+                    	}
                     }
-                    if (answer == null) {
-                        Component component = getComponentResolver().resolveComponent(uri, this);
-                        if (component != null) {
-                            ServiceHelper.startServices(component);
-                            answer = component.resolveEndpoint(uri);
-                        }
+                    
+                	// Ask the component to resolve the endpoint.
+                    if (component != null) {
+                        answer = component.resolveEndpoint(uri);
                     }
+                    
+                    // HC: What's the idea behind starting an endpoint?
+                    // I don't think we have any endpoints that are services do we?
                     if (answer != null) {
                         ServiceHelper.startServices(answer);
                         endpoints.put(uri, answer);

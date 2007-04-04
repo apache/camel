@@ -41,11 +41,6 @@ public class QueueComponent<E extends Exchange> extends DefaultComponent<E> {
 	}
 
     @Override
-    public String[] getUriPrefixes() {
-        return new String[] {"queue"};
-    }
-
-    @Override
     protected Endpoint<E> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         return new QueueEndpoint<E>(uri, this);
     }

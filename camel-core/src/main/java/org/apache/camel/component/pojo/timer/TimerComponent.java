@@ -40,12 +40,6 @@ public class TimerComponent extends DefaultComponent<PojoExchange> {
         return timers.remove(consumer);
     }
 
-
-    @Override
-    public String[] getUriPrefixes() {
-        return new String[] {"timer"};
-    }
-
     @Override
     protected Endpoint<PojoExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         return new TimerEndpoint(uri, this, remaining);

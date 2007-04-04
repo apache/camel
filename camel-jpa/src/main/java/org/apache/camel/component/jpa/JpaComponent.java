@@ -54,11 +54,6 @@ public class JpaComponent extends DefaultComponent<Exchange> {
     //-------------------------------------------------------------------------
 
     @Override
-    public String[] getUriPrefixes() {
-        return new String[]{"jpa"};
-    }
-
-    @Override
     protected Endpoint<Exchange> createEndpoint(String uri, String path, Map options) throws Exception {
         JpaEndpoint endpoint = new JpaEndpoint(uri, this);
         Map consumerProperties = IntrospectionSupport.extractProperties(options, "consumer.");
