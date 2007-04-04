@@ -74,14 +74,14 @@ public class JmsIntegrationTest extends TestCase {
         // lets add a jms -> pojo route
         container.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("jms:activemq:test").to("pojo:default:listener");
+                from("jms:test").to("pojo:listener");
             }
         });
         
-        container.activateEndpoints();
+        container.start();
         
         // Send a message to the JMS endpoint
-        JmsEndpoint endpoint = (JmsEndpoint) container.resolveEndpoint("jms:activemq:test");        
+        JmsEndpoint endpoint = (JmsEndpoint) container.resolveEndpoint("jms:test");        
         Producer<JmsExchange> producer = endpoint.createProducer();
         JmsExchange exchange = producer.createExchange();
         JmsMessage in = exchange.getIn();
@@ -92,8 +92,13 @@ public class JmsIntegrationTest extends TestCase {
         // The Activated endpoint should send it to the pojo due to the configured route.
         assertTrue("The message ware received by the Pojo", receivedCountDown.await(5, TimeUnit.SECONDS));
         
-        container.deactivateEndpoints();
-        
+
 	}
-	
+
+    @Override
+    protected void tearDown() throws Exception {
+        container.stop();
+
+        super.tearDown();
+    }
 }
