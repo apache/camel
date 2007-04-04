@@ -26,12 +26,15 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.service.Service;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
+import org.apache.cxf.wsdl11.WSDLServiceFactory;
 import org.easymock.classextension.EasyMock;
 
+import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
@@ -45,7 +48,7 @@ public abstract class CamelTestSupport extends TestCase {
     protected Message inMessage;
 
     public void setUp() throws Exception {
-        camelContext.activateEndpoints();
+        camelContext.start();
         BusFactory bf = BusFactory.newInstance();
         bus = bf.createBus();
         BusFactory.setDefaultBus(bus);
@@ -56,21 +59,17 @@ public abstract class CamelTestSupport extends TestCase {
         if (System.getProperty("cxf.config.file") != null) {
             System.clearProperty("cxf.config.file");
         }
-        camelContext.deactivateEndpoints();
+        camelContext.stop();
     }
 
     protected void setupServiceInfo(String ns, String wsdl, String serviceName, String portName) {
         URL wsdlUrl = getClass().getResource(wsdl);
 
-        // TODO
-/*
-        assertNotNull(wsdlUrl);
+        assertNotNull("Could not find WSDL: " + wsdl, wsdlUrl);
         WSDLServiceFactory factory = new WSDLServiceFactory(bus, wsdlUrl, new QName(ns, serviceName));
 
-        Service service = factory.create();        
+        Service service = factory.create();
         endpointInfo = service.getServiceInfo().getEndpoint(new QName(ns, portName));
-*/
-
     }
 
     protected void sendoutMessage(Conduit conduit, Message message, Boolean isOneWay) throws IOException {
