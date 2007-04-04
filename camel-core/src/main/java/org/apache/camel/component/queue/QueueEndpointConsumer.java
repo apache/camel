@@ -53,7 +53,7 @@ public class QueueEndpointConsumer<E extends Exchange> extends ServiceSupport im
             }
             if (exchange != null) {
                 try {
-                    processor.onExchange(exchange);
+                    processor.process(exchange);
                 }
                 catch (Throwable e) {
                     e.printStackTrace();

@@ -25,7 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 
 import java.util.Map;
-import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -59,7 +58,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
      */
     public void send(Endpoint<E> endpoint, E exchange) {
         Producer<E> producer = getProducer(endpoint);
-        producer.onExchange(exchange);
+        producer.process(exchange);
     }
 
     /**
@@ -73,10 +72,10 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
         E exchange = producer.createExchange();
 
         // lets populate using the processor callback
-        processor.onExchange(exchange);
+        processor.process(exchange);
 
         // now lets dispatch
-        producer.onExchange(exchange);
+        producer.process(exchange);
         return exchange;
     }
 

@@ -70,7 +70,7 @@ public class CxfTest extends TestCase {
 
         // now lets invoke it via Camel
         CxfExchange exchange = (CxfExchange) client.send("cxf:http://localhost/test", new Processor<Exchange>() {
-            public void onExchange(Exchange exchange) {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader("requestHeader", "foo");
                 exchange.getIn().setBody("<hello>world</hello>");
             }

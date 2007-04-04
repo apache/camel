@@ -55,10 +55,10 @@ public class MulticastProcessor<E extends Exchange> extends ServiceSupport imple
         return "Multicast" + getEndpoints();
     }
 
-    public void onExchange(E exchange) {
+    public void process(E exchange) {
         for (Producer<E> producer : producers) {
             E copy = copyExchangeStrategy(producer, exchange);
-            producer.onExchange(copy);
+            producer.process(copy);
         }
     }
 

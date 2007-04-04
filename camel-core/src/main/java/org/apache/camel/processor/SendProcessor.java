@@ -50,11 +50,11 @@ public class SendProcessor<E extends Exchange> extends ServiceSupport implements
         this.producer = destination.createProducer();
     }
 
-    public void onExchange(E exchange) {
+    public void process(E exchange) {
         if (producer == null) {
             throw new IllegalStateException("No producer, this processor has not been started!");
         }
-        producer.onExchange(exchange);
+        producer.process(exchange);
     }
 
     public Endpoint<E> getDestination() {

@@ -35,9 +35,9 @@ public class CompositeProcessor<E> extends ServiceSupport implements Processor<E
         this.processors = processors;
     }
 
-    public void onExchange(E exchange) {
+    public void process(E exchange) {
         for (Processor<E> processor : processors) {
-            processor.onExchange(exchange);
+            processor.process(exchange);
         }
     }
 

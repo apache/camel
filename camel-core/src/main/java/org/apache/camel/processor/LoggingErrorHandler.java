@@ -49,9 +49,9 @@ public class LoggingErrorHandler<E extends Exchange> extends ServiceSupport impl
         return "LoggingErrorHandler[" + output + "]";
     }
 
-    public void onExchange(E exchange) {
+    public void process(E exchange) {
         try {
-            output.onExchange(exchange);
+            output.process(exchange);
         }
         catch (RuntimeException e) {
             logError(exchange, e);

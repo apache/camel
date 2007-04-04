@@ -38,16 +38,16 @@ public class ChoiceProcessor<E> implements Processor<E> {
         this.otherwise = otherwise;
     }
 
-    public void onExchange(E exchange) {
+    public void process(E exchange) {
         for (FilterProcessor<E> filterProcessor : filters) {
             Predicate<E> predicate = filterProcessor.getPredicate();
             if (predicate != null) {
-                filterProcessor.getProcessor().onExchange(exchange);
+                filterProcessor.getProcessor().process(exchange);
                 return;
             }
         }
         if (otherwise != null) {
-            otherwise.onExchange(exchange);
+            otherwise.process(exchange);
         }
     }
 

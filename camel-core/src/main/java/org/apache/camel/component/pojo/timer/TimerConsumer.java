@@ -107,7 +107,7 @@ public class TimerConsumer extends DefaultConsumer<PojoExchange> implements Invo
         PojoInvocation invocation = new PojoInvocation(proxy, method, args);
         PojoExchange exchange = getEndpoint().createExchange();
         exchange.setInvocation(invocation);
-        getProcessor().onExchange(exchange);
+        getProcessor().process(exchange);
         Throwable fault = exchange.getException();
         if (fault != null) {
             throw new InvocationTargetException(fault);

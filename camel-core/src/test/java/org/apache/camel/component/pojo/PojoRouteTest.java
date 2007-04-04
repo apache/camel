@@ -42,8 +42,8 @@ public class PojoRouteTest extends TestCase {
         final AtomicInteger hitCount = new AtomicInteger();
         final InterceptorProcessor<PojoExchange> tracingInterceptor = new InterceptorProcessor<PojoExchange>() {
         	@Override
-        	public void onExchange(PojoExchange exchange) {
-        		super.onExchange(exchange);
+        	public void process(PojoExchange exchange) {
+        		super.process(exchange);
         		hitCount.incrementAndGet();
         	}
         };

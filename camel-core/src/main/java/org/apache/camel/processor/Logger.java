@@ -50,7 +50,7 @@ public class Logger<E extends Exchange> implements Processor<E> {
         return "Logger[" + log + "]";
     }
 
-    public void onExchange(E exchange) {
+    public void process(E exchange) {
         switch (level) {
             case DEBUG:
                 if (log.isDebugEnabled()) {

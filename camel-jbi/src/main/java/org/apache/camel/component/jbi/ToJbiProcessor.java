@@ -43,7 +43,7 @@ public class ToJbiProcessor implements Processor<Exchange> {
         this.destinationUri = destinationUri;
     }
 
-    public void onExchange(Exchange exchange) {
+    public void process(Exchange exchange) {
         try {
             DeliveryChannel deliveryChannel = componentContext.getDeliveryChannel();
             MessageExchangeFactory exchangeFactory = deliveryChannel.createExchangeFactory();

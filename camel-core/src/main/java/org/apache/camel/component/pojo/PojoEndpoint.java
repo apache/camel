@@ -47,7 +47,7 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
         	throw new NoSuchEndpointException(getEndpointUri());
         
         return startService(new DefaultProducer<PojoExchange>(this) {
-            public void onExchange(PojoExchange exchange) {
+            public void process(PojoExchange exchange) {
                 invoke(pojo, exchange);
             }
         });

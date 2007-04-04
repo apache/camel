@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 public class MyProcessor implements Processor<Exchange> {
-    public void onExchange(Exchange exchange) {
+    public void process(Exchange exchange) {
         System.out.println("Called with exchange: " + exchange);
     }
 

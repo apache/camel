@@ -40,7 +40,7 @@ public class JpaProducer extends DefaultProducer<Exchange> {
         this.template = endpoint.createTransactionStrategy();
     }
 
-    public void onExchange(Exchange exchange) {
+    public void process(Exchange exchange) {
         final Object values = expression.evaluate(exchange);
         if (values != null) {
             template.execute(new JpaCallback() {

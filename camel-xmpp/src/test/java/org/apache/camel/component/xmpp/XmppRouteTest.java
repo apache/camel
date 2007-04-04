@@ -81,7 +81,7 @@ public class XmppRouteTest extends TestCase {
 
     protected void sendExchange(final Object expectedBody) {
         client.send(endpoint, new Processor<XmppExchange>() {
-            public void onExchange(XmppExchange exchange) {
+            public void process(XmppExchange exchange) {
                 // now lets fire in a message
                 XmppMessage in = exchange.getIn();
                 in.setBody(expectedBody);
@@ -121,7 +121,7 @@ public class XmppRouteTest extends TestCase {
                 public void configure() {
                     from(uri1).to(uri2);
                     from(uri2).process(new Processor<XmppExchange>() {
-                        public void onExchange(XmppExchange e) {
+                        public void process(XmppExchange e) {
                             log.info("Received exchange: " + e);
                             receivedExchange = e;
                             latch.countDown();

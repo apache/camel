@@ -26,8 +26,6 @@ import org.apache.mina.common.IoConnector;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
-import org.apache.mina.common.IoServiceConfig;
-import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
 import java.net.SocketAddress;
 
@@ -46,7 +44,7 @@ public class MinaProducer extends DefaultProducer<MinaExchange> {
         this.endpoint = endpoint;
     }
 
-    public void onExchange(MinaExchange exchange) {
+    public void process(MinaExchange exchange) {
         if (session == null) {
             throw new IllegalStateException("Not started yet!");
         }

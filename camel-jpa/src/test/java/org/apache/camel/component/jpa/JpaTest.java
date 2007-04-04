@@ -69,7 +69,7 @@ public class JpaTest extends TestCase {
 
         // lets produce some objects
         client.send(endpoint, new Processor<Exchange>() {
-            public void onExchange(Exchange exchange) {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(new SendEmail("foo@bar.com"));
             }
         });
@@ -82,7 +82,7 @@ public class JpaTest extends TestCase {
 
         // now lets create a consumer to consume it
         consumer = endpoint.createConsumer(new Processor<Exchange>() {
-            public void onExchange(Exchange e) {
+            public void process(Exchange e) {
                 log.info("Received exchange: " + e.getIn());
                 receivedExchange = e;
                 latch.countDown();

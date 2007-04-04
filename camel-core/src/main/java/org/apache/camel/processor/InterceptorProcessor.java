@@ -30,9 +30,9 @@ public class InterceptorProcessor<E> extends ServiceSupport implements Processor
     public InterceptorProcessor() {
     }
 
-    public void onExchange(E exchange) {
+    public void process(E exchange) {
         if (next != null) {
-            next.onExchange(exchange);
+            next.process(exchange);
         }
     }
 

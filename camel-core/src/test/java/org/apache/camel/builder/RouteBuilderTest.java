@@ -141,7 +141,7 @@ public class RouteBuilderTest extends TestSupport {
     protected RouteBuilder<Exchange> buildCustomProcessor() {
 		// START SNIPPET: e4
         myProcessor = new Processor<Exchange>() {
-            public void onExchange(Exchange exchange) {
+            public void process(Exchange exchange) {
                 System.out.println("Called with exchange: " + exchange);
             }
         };

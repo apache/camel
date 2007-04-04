@@ -50,7 +50,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         this.transportFactory = transportFactory;
     }
 
-    public void onExchange(CxfExchange exchange) {
+    public void process(CxfExchange exchange) {
         try {
             CxfBinding binding = endpoint.getBinding();
             MessageImpl m = binding.createCxfMessage(exchange);

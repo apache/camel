@@ -45,10 +45,10 @@ public class JmsProducer extends DefaultProducer<JmsExchange> {
     public void onExchange(Exchange exchange) {
         // lets convert to the type of an exchange
         JmsExchange jmsExchange = endpoint.convertTo(JmsExchange.class, exchange);
-        onExchange(jmsExchange);
+        process(jmsExchange);
     }
 
-    public void onExchange(final JmsExchange exchange) {
+    public void process(final JmsExchange exchange) {
         template.send(endpoint.getDestination(), new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 Message message = endpoint.getBinding().makeJmsMessage(exchange.getIn(), session);

@@ -52,7 +52,7 @@ public abstract class JbiTestSupport extends TestSupport {
      */
     protected void sendExchange(final Object expectedBody) {
         client.send(endpoint, new Processor<Exchange>() {
-            public void onExchange(Exchange exchange) {
+            public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody(expectedBody);
                 in.setHeader("cheese", 123);

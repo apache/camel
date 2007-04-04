@@ -18,7 +18,6 @@
 package org.apache.camel.component.xmpp;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,10 +46,10 @@ public class XmppGroupChatProducer extends DefaultProducer<XmppExchange> {
     public void onExchange(Exchange exchange) {
         // lets convert to the type of an exchange
         XmppExchange xmppExchange = endpoint.convertTo(XmppExchange.class, exchange);
-        onExchange(xmppExchange);
+        process(xmppExchange);
     }
 
-    public void onExchange(XmppExchange exchange) {
+    public void process(XmppExchange exchange) {
         // TODO it would be nice if we could reuse the message from the exchange
         Message message = chat.createMessage();
         message.setTo(room);

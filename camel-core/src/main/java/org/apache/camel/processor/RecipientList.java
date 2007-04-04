@@ -49,13 +49,13 @@ public class RecipientList<E extends Exchange> extends ServiceSupport implements
         return "RecipientList[" + expression + "]";
     }
 
-    public void onExchange(E exchange) {
+    public void process(E exchange) {
         Object receipientList = expression.evaluate(exchange);
         Iterator iter = ObjectConverter.iterator(receipientList);
         while (iter.hasNext()) {
             Object recipient = iter.next();
             Endpoint<E> endpoint = resolveEndpoint(exchange, recipient);
-            producerCache.getProducer(endpoint).onExchange(exchange);
+            producerCache.getProducer(endpoint).process(exchange);
         }
     }
 

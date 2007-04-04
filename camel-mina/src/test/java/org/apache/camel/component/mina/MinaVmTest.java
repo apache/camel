@@ -49,7 +49,7 @@ public class MinaVmTest extends TestCase {
         message.setHeader("cheese", 123);
 
         producer = endpoint.createProducer();
-        producer.onExchange(exchange);
+        producer.process(exchange);
 
         // now lets sleep for a while
         boolean received = latch.await(5, TimeUnit.SECONDS);
@@ -75,7 +75,7 @@ public class MinaVmTest extends TestCase {
         return new RouteBuilder() {
             public void configure() {
                 from(uri).process(new Processor<MinaExchange>() {
-                    public void onExchange(MinaExchange e) {
+                    public void process(MinaExchange e) {
                         System.out.println("Received exchange: " + e.getIn());
                         receivedExchange = e;
                         latch.countDown();
