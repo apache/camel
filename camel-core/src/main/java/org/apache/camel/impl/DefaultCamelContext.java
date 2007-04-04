@@ -141,10 +141,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     if (answer == null) {
                         Component component = componentResolver.resolveComponent(uri, this);
                         if (component != null) {
+                            ServiceHelper.startServices(component);
                             answer = component.resolveEndpoint(uri);
                         }
                     }
                     if (answer != null) {
+                        ServiceHelper.startServices(answer);
                         endpoints.put(uri, answer);
                     }
                 }
