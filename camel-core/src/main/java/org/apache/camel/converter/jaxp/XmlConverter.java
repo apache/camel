@@ -59,7 +59,7 @@ import org.apache.camel.Converter;
  * @version $Revision$
  */
 @Converter
-public class JaxpConverter {
+public class XmlConverter {
     public static final String DEFAULT_CHARSET_PROPERTY = "org.apache.camel.default.charset";
 
     public static String defaultCharset = ObjectHelper.getSystemProperty(DEFAULT_CHARSET_PROPERTY, "UTF-8");
@@ -85,10 +85,10 @@ public class JaxpConverter {
     }
 
 
-    public JaxpConverter() {
+    public XmlConverter() {
     }
 
-    public JaxpConverter(DocumentBuilderFactory documentBuilderFactory) {
+    public XmlConverter(DocumentBuilderFactory documentBuilderFactory) {
         this.documentBuilderFactory = documentBuilderFactory;
     }
 
