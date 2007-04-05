@@ -1,0 +1,31 @@
+// we could define endpoints first (so that properties can be specified on them)
+// then an endpoint reference could be explicit or implicit.
+//
+// e.g.
+//
+// endpoint foo { uri = "jms://foo.bar"; foo = true }
+// from foo to bar
+//
+// or
+// 
+// from jms://foo.bar
+
+
+Routes :
+	(routes+=Route)*;
+
+Route :
+	"from" from=ID 
+	(processors+=Processor)* 
+	";";
+
+Processor :
+	Send | Process;
+		
+Send : 
+	"to" uri=ID;
+	
+Process :
+	"process" type=ID;
+	
+	

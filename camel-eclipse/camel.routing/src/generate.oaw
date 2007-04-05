@@ -1,0 +1,4 @@
+<workflow>
+   <property file='generate.properties'/>
+   <component file='org/openarchitectureware/xtext/Generator.oaw' inheritAll='true'/>
+</workflow>

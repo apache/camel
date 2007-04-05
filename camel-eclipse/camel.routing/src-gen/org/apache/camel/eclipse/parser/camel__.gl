@@ -1,0 +1,48 @@
+lexer grammar camel;
+@header {
+package org.apache.camel.eclipse.parser; 
+}
+
+T10 : 'from' ;
+T11 : ';' ;
+T12 : 'to' ;
+T13 : 'process' ;
+
+// $ANTLR src "..//camel.routing/src-gen//org/apache/camel/eclipse/parser/camel.g" 122
+STRING :  
+    '"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\') | ~('\\'|'"') )* '"' |
+    '\'' ( '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\') | ~('\\'|'\'') )* '\'';
+
+
+
+// $ANTLR src "..//camel.routing/src-gen//org/apache/camel/eclipse/parser/camel.g" 128
+ID	:
+	('^')?('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
+;
+
+
+
+// $ANTLR src "..//camel.routing/src-gen//org/apache/camel/eclipse/parser/camel.g" 134
+INT :
+	('0'..'9')+ 
+;
+
+
+
+// $ANTLR src "..//camel.routing/src-gen//org/apache/camel/eclipse/parser/camel.g" 140
+ML_COMMENT
+    :   '/*' ( options {greedy=false;} : . )* '*/' {skip();}
+    ;
+
+
+
+// $ANTLR src "..//camel.routing/src-gen//org/apache/camel/eclipse/parser/camel.g" 146
+SL_COMMENT
+    : '//' ~('\n'|'\r')* '\r'? '\n' {skip();}
+    ;
+
+
+
+// $ANTLR src "..//camel.routing/src-gen//org/apache/camel/eclipse/parser/camel.g" 152
+WS : (' '|'\t'|'\r'|'\n')+ {skip();} ; 
+
