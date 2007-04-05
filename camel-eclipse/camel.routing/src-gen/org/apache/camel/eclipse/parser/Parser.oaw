@@ -1,0 +1,13 @@
+<workflow>
+	<component class="org.apache.camel.eclipse.parser.ParserComponent">
+        <metaModel idRef="metaModel"/>
+		<modelFile value="${modelFile}"/>
+		<outputSlot value="${outputSlot}"/>
+	</component>
+	
+	<component class="oaw.check.CheckComponent">
+	   <metaModel idRef="metaModel"/>
+       <expression value="${outputSlot}.eAllContents.union({${outputSlot}})"/>
+	   <checkFile value="org::apache::camel::eclipse::camelChecks"/>
+	</component>
+</workflow>

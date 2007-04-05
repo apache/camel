@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: camel.routing.generator
+Bundle-SymbolicName: camel.routing.generator; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Localization: plugin
+Require-Bundle: org.openarchitectureware.core.check,
+ org.openarchitectureware.core.emftools,
+ org.openarchitectureware.xtext.editor.base,
+ camel.routing,
+ org.openarchitectureware.xtext.core,
+ org.openarchitectureware.core.xpand2

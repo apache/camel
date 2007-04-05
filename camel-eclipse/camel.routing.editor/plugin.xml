@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.apache.camel.eclipse.editor.camelEditor"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            extensions="camel"
+            icon="icons/default.gif"
+            id="camel.routing.editor.camelEditor"
+            name="camel Editor">
+      </editor>
+   </extension>
+
+</plugin>

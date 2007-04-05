@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: camel Editor Plug-in
+Bundle-SymbolicName: camel.routing.editor; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.apache.camel.eclipse.camelEditorPlugin
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.jface.text,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.ui.views,
+ org.eclipse.core.resources,
+ org.eclipse.ui.ide,
+ org.openarchitectureware.xtext.editor.base,
+ org.openarchitectureware.xtext.core,
+ camel.routing
+Eclipse-LazyStart: true
+Export-Package: org.apache.camel.eclipse,
+ org.apache.camel.eclipse.editor
+Bundle-ClassPath: .
+

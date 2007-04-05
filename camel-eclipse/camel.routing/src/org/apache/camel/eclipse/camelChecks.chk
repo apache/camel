@@ -1,0 +1,22 @@
+import camel;
+
+/*
+ * This check file is used by the parser
+ * and by the editor. Add your constraints here!
+ */
+
+context Routes ERROR "Write your constraint message here...!" :
+   true;
+
+context Route ERROR "Write your constraint message here...!" :
+   true;
+
+context Processor ERROR "Write your constraint message here...!" :
+   true;
+
+context Send ERROR "Write your constraint message here...!" :
+   true;
+
+context Process ERROR "Write your constraint message here...!" :
+   true;
+
