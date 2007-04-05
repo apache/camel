@@ -22,6 +22,10 @@
 
   <modelVersion>4.0.0</modelVersion>
 
+  <properties>
+    <cxf.version>2.0-incubator-RC-SNAPSHOT</cxf.version>
+  </properties>
+
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
@@ -51,25 +55,38 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-local</artifactId>
-      <version>2.0-incubator-RC-SNAPSHOT</version>
+      <version>${cxf.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-transports-http</artifactId>
+      <version>${cxf.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-frontend-simple</artifactId>
+      <version>${cxf.version}</version>
     </dependency>
 
 
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-management</artifactId>
-      <version>2.0-incubator-RC-SNAPSHOT</version>
+      <version>${cxf.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-testutils</artifactId>
-      <version>2.0-incubator-RC-SNAPSHOT</version>
+      <version>${cxf.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-tools-common</artifactId>
-      <version>2.0-incubator-RC-SNAPSHOT</version>
+      <version>${cxf.version}</version>
     </dependency>
 
 
