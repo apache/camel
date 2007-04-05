@@ -29,6 +29,7 @@ import java.util.Set;
  * @version $Revision$
  */
 public class CxfBinding {
+
     public Object extractBodyFromCxf(CxfExchange exchange, Message message) {
         //  TODO how do we choose a format?
         return getBody(message);
@@ -73,6 +74,13 @@ public class CxfBinding {
         if (response != null) {
             out.setMessage(response);
             out.setBody(getBody(response));
+        }
+    }
+
+    public void storeCxfResponse(CxfExchange exchange, Object response) {
+        CxfMessage out = exchange.getOut();
+        if (response != null) {
+            out.setBody(response);
         }
     }
 }

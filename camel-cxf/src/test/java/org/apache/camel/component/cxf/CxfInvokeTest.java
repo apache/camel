@@ -18,51 +18,34 @@
 package org.apache.camel.component.cxf;
 
 import junit.framework.TestCase;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.CamelClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.cxf.Bus;
-import org.apache.cxf.frontend.ServerFactoryBean;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Processor;
+import org.apache.camel.util.CamelClient;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.cxf.endpoint.ServerImpl;
+import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.bus.CXFBusFactory;
-import org.apache.cxf.message.Message;
-import org.apache.cxf.message.MessageImpl;
-import org.apache.cxf.service.model.EndpointInfo;
-import org.apache.cxf.transport.Conduit;
-import org.apache.cxf.transport.Destination;
-import org.apache.cxf.transport.DestinationFactory;
-import org.apache.cxf.transport.DestinationFactoryManager;
-import org.apache.cxf.transport.MessageObserver;
-import org.apache.cxf.transport.local.LocalConduit;
-import org.apache.cxf.transport.local.LocalTransportFactory;
-import org.xmlsoap.schemas.wsdl.http.AddressType;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Map;
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @version $Revision$
  */
-public class CxfTest extends TestCase {
-    private static final transient Log log = LogFactory.getLog(CxfTest.class);
+public class CxfInvokeTest extends TestCase {
+    private static final transient Log log = LogFactory.getLog(CxfInvokeTest.class);
     protected CamelContext camelContext = new DefaultCamelContext();
     protected CamelClient<CxfExchange> client = new CamelClient<CxfExchange>(camelContext);
 
     final private String transportAddress = "http://localhost:28080/test";
     final private String testMessage = "Hello World!";
     private ServerImpl server;
-    
+
     @Override
     protected void setUp() throws Exception {
-        
+
         // start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
 
@@ -73,17 +56,17 @@ public class CxfTest extends TestCase {
         server = (ServerImpl)svrBean.create();
         server.start();
     }
-    
+
     @Override
     protected void tearDown() throws Exception {
         if (server != null) {
             server.stop();
         }
     }
-    
+
     public void testInvokeOfServer() throws Exception {
 
-        CxfExchange exchange = (CxfExchange) 
+        CxfExchange exchange =
             client.send(getUri(),
                         new Processor<CxfExchange>() {
                             public void process(final CxfExchange exchange) {
@@ -97,12 +80,12 @@ public class CxfTest extends TestCase {
 
         Object[] output = (Object[])out.getBody();
         log.info("Received output text: " + output[0]);
-        
+
         assertEquals("reply body on Camel", testMessage, output[0]);
     }
 
     private String getUri() {
-        return "cxf:" + transportAddress 
+        return "cxf-invoke:" + transportAddress
             + "?sei=org.apache.camel.component.cxf.HelloService&method=echo";
     }
 }
