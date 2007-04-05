@@ -24,6 +24,8 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.w3c.dom.Document;
 
+import javax.xml.transform.Source;
+
 /**
  * @version $Revision$
  */
@@ -32,7 +34,7 @@ public class JaxpTest extends TestCase {
 
     protected TypeConverter converter = new DefaultTypeConverter();
 
-    public void testConvert() throws Exception {
+    public void testConvertToDocument() throws Exception {
         Document document = converter.convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
         assertNotNull(document);
 
@@ -43,5 +45,12 @@ public class JaxpTest extends TestCase {
         String text = converter.convertTo(String.class, document);
         // The preamble changes a little under Java 1.6 it adds a standalone="no" attribute.
         assertTrue("Converted to String", text.endsWith("?><hello>world!</hello>"));
+    }
+
+    public void testConvertToSource() throws Exception {
+        Source source = converter.convertTo(Source.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
+        assertNotNull(source);
+
+        log.debug("Found document: " + source);
     }
 }
