@@ -33,15 +33,11 @@ public class XQueryTest extends TestCase {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext());
         exchange.getIn().setBody("<products><product type='food'><pizza/></product><product type='beer'><stella/></product></products>");
 
-        Object result = xquery("//product[@type = 'beer']").asList().evaluate(exchange);
-
-        System.out.println("Returned: " + result);
-/*
+        Object result = xquery(".//product[@type = 'beer']/*").evaluate(exchange);
 
         assertTrue("Should be a document but was: " + className(result), result instanceof Document);
 
         Document doc = (Document) result;
-        assertEquals("Root document element name", "", doc.getDocumentElement().getLocalName());
-*/
+        assertEquals("Root document element name", "stella", doc.getDocumentElement().getLocalName());
     }
 }

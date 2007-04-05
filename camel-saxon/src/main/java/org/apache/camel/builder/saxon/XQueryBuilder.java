@@ -28,7 +28,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.converter.jaxp.BytesSource;
-import org.apache.camel.converter.jaxp.JaxpConverter;
+import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.w3c.dom.Node;
 
@@ -57,7 +57,7 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
     private XQueryExpression expression;
     private StaticQueryContext staticQueryContext;
     private Map<String, Object> parameters = new HashMap<String, Object>();
-    private JaxpConverter converter = new JaxpConverter();
+    private XmlConverter converter = new XmlConverter();
     private ResultFormat resultsFormat = ResultFormat.DOM;
     private Properties properties = new Properties();
 
