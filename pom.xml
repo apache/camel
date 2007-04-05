@@ -113,6 +113,7 @@
   <modules>
     <module>apache-camel</module>
     <module>camel-core</module>
+    <module>camel-jaxb</module>
     <module>camel-cxf</module>
     <module>camel-http</module>
     <module>camel-itest</module>
@@ -148,6 +149,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-http</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jaxb</artifactId>
         <version>${camel-version}</version>
       </dependency>
       <dependency>

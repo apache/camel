@@ -48,6 +48,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jaxb</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jbi</artifactId>
     </dependency>
     <dependency>
@@ -160,7 +164,7 @@
               <goal>createbundle</goal>
             </goals>
             <configuration>
-              <includes>camel-core,camel-cxf,camel-http,camel-jbi,camel-jms,camel-jpa,camel-mina,camel-script,camel-spring,commons-logging</includes>
+              <includes>camel-core,camel-cxf,camel-http,camel-jaxb,camel-jbi,camel-jms,camel-jpa,camel-mina,camel-saxon,camel-script,camel-spring,commons-logging</includes>
             </configuration>
           </execution>
         </executions>
