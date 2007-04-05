@@ -164,6 +164,13 @@ public class ObjectHelper {
     }
 
     /**
+     * Returns the type name of the given value
+     */
+    public static String className(Object value) {
+        return name(value != null ? value.getClass() : null);
+    }
+
+    /**
      * Attempts to load the given class name using the thread context class loader
      * or the class loader used to load this class
      *

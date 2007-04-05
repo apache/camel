@@ -17,11 +17,6 @@
  */
 package org.apache.camel.impl.converter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.ReflectionInjector;
@@ -29,6 +24,12 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @version $Revision$
@@ -61,13 +62,14 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         if (converter != null) {
             return converter.convertTo(toType, value);
         }
-        
+
         for (TypeConverter fallback : fallbackConverters) {
-			T rc = fallback.convertTo(toType, value);
-			if( rc!=null )
-				return rc;
-		}
-        
+            T rc = fallback.convertTo(toType, value);
+            if (rc != null) {
+                return rc;
+            }
+        }
+
         return null;
     }
 
@@ -123,16 +125,6 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
      * Tries to auto-discover any available type converters
      */
     protected TypeConverter findTypeConverter(Class toType, Class fromType, Object value) {
-        // lets try the super classes of the to type
-        for (Class toSuperClass = toType.getSuperclass();
-             toSuperClass != null && !toSuperClass.equals(Object.class);
-             toSuperClass = toSuperClass.getSuperclass()) {
-
-            TypeConverter converter = getTypeConverter(toSuperClass, fromType);
-            if (converter != null) {
-                return converter;
-            }
-        }
 
         // TODO should we filter out any interfaces which are super-interfaces?
         for (Class type : toType.getInterfaces()) {
@@ -162,6 +154,20 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
                 }
             }
         }
+
+        // lets try classes derived from this toType
+
+        Set<Map.Entry<TypeMapping, TypeConverter>> entries = typeMappings.entrySet();
+        for (Map.Entry<TypeMapping, TypeConverter> entry : entries) {
+            TypeMapping key = entry.getKey();
+            Class aToType = key.getToType();
+            if (toType.isAssignableFrom(aToType)) {
+                if (fromType.isAssignableFrom(key.getFromType())) {
+                    return entry.getValue();
+                }
+            }
+        }
+
         // TODO look at constructors of toType?
         return null;
     }
@@ -220,10 +226,10 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
             }
             return answer;
         }
-        
+
         @Override
         public String toString() {
-        	return "["+fromType+"=>"+toType+"]";
+            return "[" + fromType + "=>" + toType + "]";
         }
     }
 }
