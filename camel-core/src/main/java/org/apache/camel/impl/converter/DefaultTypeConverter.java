@@ -46,6 +46,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         typeConverterLoaders.add(new AnnotationTypeConverterLoader());
         fallbackConverters.add(new PropertyEditorTypeConverter());
         fallbackConverters.add(new ToStringTypeConverter());
+        fallbackConverters.add(new ToArrayTypeConverter());
     }
 
     public DefaultTypeConverter(Injector injector) {
@@ -151,6 +152,22 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
                 TypeConverter converter = getTypeConverter(toType, type);
                 if (converter != null) {
                     return converter;
+                }
+            }
+
+            // lets test for arrays
+            if (fromType.isArray() && !fromType.getComponentType().isPrimitive()) {
+                // TODO can we try walking the inheritence-tree for the element types?
+                if (!fromType.equals(Object[].class)) {
+                    fromSuperClass = Object[].class;
+
+                    TypeConverter converter = getTypeConverter(toType, fromSuperClass);
+                    if (converter == null) {
+                        converter = findTypeConverter(toType, fromSuperClass, value);
+                    }
+                    if (converter != null) {
+                        return converter;
+                    }
                 }
             }
         }
