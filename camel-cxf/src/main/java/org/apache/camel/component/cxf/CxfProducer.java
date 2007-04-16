@@ -59,7 +59,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
             m.put(LocalConduit.DIRECT_DISPATCH, Boolean.TRUE);
             m.setDestination(destination);
             synchronized (conduit) {
-                conduit.send(m);
+                conduit.prepare(m);
 
                 // now lets wait for the response
                 if (endpoint.isInOut()) {

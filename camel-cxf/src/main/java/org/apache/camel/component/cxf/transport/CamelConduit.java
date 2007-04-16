@@ -71,7 +71,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     }
 
     // prepare the message for send out , not actually send out the message
-    public void send(Message message) throws IOException {
+    public void prepare(Message message) throws IOException {
         getLogger().log(Level.FINE, "CamelConduit send message");
 
         message.setContent(OutputStream.class,
@@ -290,4 +290,5 @@ public class CamelConduit extends AbstractConduit implements Configurable {
             return decoupledMessageObserver;
         }
     }
+
 }
