@@ -25,12 +25,12 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A type converter which is used to create derived types of arrays
- * from collections
+ * A type converter which is used to convert to and from array types particularly for derived types of array
+ * component types and dealing with primitive array types.
  *
  * @version $Revision: $
  */
-public class ToArrayTypeConverter implements TypeConverter {
+public class ArrayTypeConverter implements TypeConverter {
     public <T> T convertTo(Class<T> type, Object value) {
         if (type.isArray()) {
             if (value instanceof Collection) {
