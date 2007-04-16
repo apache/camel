@@ -170,7 +170,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
          *
          * @param message the message to be sent.
          */
-        public void send(Message message) throws IOException {
+        public void prepare(Message message) throws IOException {
             // setup the message to be send back
             message.put(CamelConstants.CAMEL_REQUEST_MESSAGE,
                     inMessage.get(CamelConstants.CAMEL_REQUEST_MESSAGE));
@@ -181,6 +181,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         protected Logger getLogger() {
             return LOG;
         }
+
     }
 
     private class CamelOutputStream extends AbstractCachedOutputStream {

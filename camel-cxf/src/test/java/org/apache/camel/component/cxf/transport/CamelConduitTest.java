@@ -64,7 +64,7 @@ public class CamelConduitTest extends CamelTestSupport {
         CamelConduit conduit = setupCamelConduit(false, false);
         Message message = new MessageImpl();
         try {
-            conduit.send(message);
+            conduit.prepare(message);
         }
         catch (Exception ex) {
             ex.printStackTrace();

@@ -28,6 +28,7 @@ import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.service.Service;
 import org.apache.cxf.service.model.EndpointInfo;
+import org.apache.cxf.service.model.ServiceInfo;
 import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
@@ -38,6 +39,7 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.List;
 
 public abstract class CamelTestSupport extends TestCase {
     protected CamelContext camelContext = new DefaultCamelContext();
@@ -69,7 +71,13 @@ public abstract class CamelTestSupport extends TestCase {
         WSDLServiceFactory factory = new WSDLServiceFactory(bus, wsdlUrl, new QName(ns, serviceName));
 
         Service service = factory.create();
-        endpointInfo = service.getServiceInfo().getEndpoint(new QName(ns, portName));
+        List<ServiceInfo> list = service.getServiceInfos();
+        for (ServiceInfo serviceInfo : list) {
+            endpointInfo = serviceInfo.getEndpoint(new QName(ns, portName));
+            if (endpointInfo != null) {
+                break;
+            }
+        }
     }
 
     protected void sendoutMessage(Conduit conduit, Message message, Boolean isOneWay) throws IOException {
@@ -79,7 +87,7 @@ public abstract class CamelTestSupport extends TestCase {
         message.setExchange(exchange);
         exchange.setInMessage(message);
         try {
-            conduit.send(message);
+            conduit.prepare(message);
         }
         catch (IOException ex) {
             assertFalse("CamelConduit can't perpare to send out message", false);
