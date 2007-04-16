@@ -65,7 +65,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-transports-http</artifactId>
+      <artifactId>cxf-rt-transports-http-jetty</artifactId>
       <version>${cxf.version}</version>
       <scope>test</scope>
     </dependency>
@@ -93,6 +93,42 @@
         <exclusion>
           <groupId>com.sun.xml.bind</groupId>
           <artifactId>jaxb-impl</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- TODO for some reason the jaxb used by CXF is unavailable so we have to provide our own -->
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <version>2.0.1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.xml</groupId>
+          <artifactId>jsr173</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.jws</groupId>
+          <artifactId>jsr181-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.activation</groupId>
+          <artifactId>activation</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>javax.xml</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>2.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.xml</groupId>
+          <artifactId>jsr173</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.activation</groupId>
+          <artifactId>activation</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -131,7 +167,8 @@
           </includes>
           <excludes>
             <!-- TODO re-enable ASAP! -->
-            <exclude>**/*Test.*</exclude>
+            <exclude>**/CxfTest.*</exclude>
+            <exclude>**/transport/*Test.*</exclude>
           </excludes>
         </configuration>
       </plugin>
