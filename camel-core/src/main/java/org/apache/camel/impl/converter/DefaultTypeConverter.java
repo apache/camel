@@ -46,7 +46,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         typeConverterLoaders.add(new AnnotationTypeConverterLoader());
         fallbackConverters.add(new PropertyEditorTypeConverter());
         fallbackConverters.add(new ToStringTypeConverter());
-        fallbackConverters.add(new ToArrayTypeConverter());
+        fallbackConverters.add(new ArrayTypeConverter());
     }
 
     public DefaultTypeConverter(Injector injector) {
@@ -126,15 +126,6 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
      * Tries to auto-discover any available type converters
      */
     protected TypeConverter findTypeConverter(Class toType, Class fromType, Object value) {
-
-        // TODO should we filter out any interfaces which are super-interfaces?
-        for (Class type : toType.getInterfaces()) {
-            TypeConverter converter = getTypeConverter(type, fromType);
-            if (converter != null) {
-                return converter;
-            }
-        }
-
         // lets try the super classes of the from type
         if (fromType != null) {
             Class fromSuperClass = fromType.getSuperclass();
