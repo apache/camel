@@ -286,7 +286,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
             decoupledMessageObserver = observer;
         }
 
-        protected synchronized MessageObserver getMessageObserver() {
+        public synchronized MessageObserver getMessageObserver() {
             return decoupledMessageObserver;
         }
     }
