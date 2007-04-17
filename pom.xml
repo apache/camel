@@ -121,6 +121,7 @@
     <module>camel-jms</module>
     <module>camel-jpa</module>
     <module>camel-mina</module>
+    <module>camel-saxon</module>
     <module>camel-script</module>
     <module>camel-spring</module>
     <module>camel-xmpp</module>
