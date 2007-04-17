@@ -75,6 +75,6 @@
 
 
   <properties>
-    <saxon-version>8.8</saxon-version>
+    <saxon-version>8.7</saxon-version>
   </properties>
 </project>
