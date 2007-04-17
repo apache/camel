@@ -115,8 +115,8 @@ public class CxfExchange extends DefaultExchange {
         return getExchange().getDestination();
     }
 
-    public Conduit getConduit() {
-        return getExchange().getConduit();
+    public Conduit getConduit(Message message) {
+        return getExchange().getConduit(message);
     }
 
     @Override
