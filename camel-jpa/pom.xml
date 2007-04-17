@@ -116,7 +116,7 @@
                     <include name="org/apache/camel/examples/*.class"/>
                   </fileset>
                 </openjpac>
-                <copy todir="${basedir}/target/test-classes">
+                <copy overwrite="true" todir="${basedir}/target/test-classes">
                   <fileset dir="${basedir}/target/jpa-classes"/>
                 </copy>
               </tasks>
