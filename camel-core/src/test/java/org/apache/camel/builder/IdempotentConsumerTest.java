@@ -17,26 +17,8 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.Processor;
-import org.apache.camel.processor.RecipientList;
-
 /**
- * Creates a dynamic <a href="http://activemq.apache.org/camel/recipient-list.html">Recipient List</a> pattern.
- *
- * @version $Revision$
+ * @version $Revision: 1.1 $
  */
-public class RecipientListBuilder<E extends Exchange> extends BuilderSupport<E> implements ProcessorFactory<E> {
-    private final ExpressionFactory<E> expressionFactory;
-
-    public RecipientListBuilder(FromBuilder<E> parent, ExpressionFactory<E> expressionFactory) {
-        super(parent);
-        this.expressionFactory = expressionFactory;
-    }
-
-    public Processor<E> createProcessor() {
-        Expression<E> expression = expressionFactory.createExpression();
-        return new RecipientList<E>(expression);
-    }
+public class IdempotentConsumerTest {
 }
