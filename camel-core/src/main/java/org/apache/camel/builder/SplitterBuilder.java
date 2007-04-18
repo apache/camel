@@ -29,17 +29,17 @@ import org.apache.camel.processor.Splitter;
  * @version $Revision$
  */
 public class SplitterBuilder<E extends Exchange> extends FromBuilder<E> {
-    private final ValueBuilder<E> valueBuilder;
+    private final ExpressionFactory<E> expressionFactory;
 
-    public SplitterBuilder(FromBuilder<E> parent, ValueBuilder<E> valueBuilder) {
+    public SplitterBuilder(FromBuilder<E> parent, ExpressionFactory<E> expressionFactory) {
         super(parent);
-        this.valueBuilder = valueBuilder;
+        this.expressionFactory = expressionFactory;
     }
 
     public Processor<E> createProcessor() throws Exception {
         // lets create a single processor for all child predicates
         Processor<E> destination = super.createProcessor();
-        Expression<E> expression = valueBuilder.getExpression();
+        Expression<E> expression = expressionFactory.createExpression();
         return new Splitter<E>(destination, expression);
     }
 }

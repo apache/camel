@@ -25,7 +25,7 @@ import org.apache.camel.Predicate;
  *
  * @version $Revision: $
  */
-public class ValueBuilder<E extends Exchange> {
+public class ValueBuilder<E extends Exchange> implements ExpressionFactory<E> {
     private Expression<E> expression;
 
     public ValueBuilder(Expression<E> expression) {
@@ -33,6 +33,11 @@ public class ValueBuilder<E extends Exchange> {
     }
     
     public Expression<E> getExpression() {
+        return expression;
+    }
+
+
+    public Expression<E> createExpression() {
         return expression;
     }
 
@@ -124,4 +129,5 @@ public class ValueBuilder<E extends Exchange> {
     public ValueBuilder<E> convertToString() {
         return convertTo(String.class);
     }
+
 }

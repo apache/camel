@@ -16,12 +16,9 @@
  */
 package org.apache.camel.builder;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.CompositeProcessor;
@@ -29,6 +26,12 @@ import org.apache.camel.processor.InterceptorProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
+import org.apache.camel.processor.idempotent.IdempotentConsumer;
+import org.apache.camel.processor.idempotent.MessageIdRepository;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @version $Revision$
@@ -55,7 +58,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * Sends the exchange to the given endpoint URI
      */
     @Fluent
-    public ProcessorFactory<E> to(@FluentArg("uri") String uri) {
+    public ProcessorFactory<E> to(@FluentArg("uri")String uri) {
         return to(endpoint(uri));
     }
 
@@ -63,7 +66,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * Sends the exchange to the given endpoint
      */
     @Fluent
-    public ProcessorFactory<E> to(@FluentArg("endpoint") Endpoint<E> endpoint) {
+    public ProcessorFactory<E> to(@FluentArg("endpoint")Endpoint<E> endpoint) {
         ToBuilder<E> answer = new ToBuilder<E>(this, endpoint);
         addProcessBuilder(answer);
         return answer;
@@ -74,8 +77,8 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      */
     @Fluent
     public ProcessorFactory<E> to(
-    		@FluentArg(value="uri", attribute=false, element=true) 
-    		String... uris) {
+            @FluentArg(value = "uri", attribute = false, element = true)
+            String... uris) {
         return to(endpoints(uris));
     }
 
@@ -84,8 +87,8 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      */
     @Fluent
     public ProcessorFactory<E> to(
-    		@FluentArg(value="endpoint", attribute=false, element=true) 
-    		Endpoint<E>... endpoints) {
+            @FluentArg(value = "endpoint", attribute = false, element = true)
+            Endpoint<E>... endpoints) {
         return to(endpoints(endpoints));
     }
 
@@ -93,7 +96,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * Sends the exchange to a list of endpoint using the {@link MulticastProcessor} pattern
      */
     @Fluent
-    public ProcessorFactory<E> to(@FluentArg("endpoints") Collection<Endpoint<E>> endpoints) {
+    public ProcessorFactory<E> to(@FluentArg("endpoints")Collection<Endpoint<E>> endpoints) {
         return addProcessBuilder(new MulticastBuilder<E>(this, endpoints));
     }
 
@@ -102,7 +105,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * and for request/response the output of one endpoint will be the input of the next endpoint
      */
     @Fluent
-    public ProcessorFactory<E> pipeline(@FluentArg("uris") String... uris) {
+    public ProcessorFactory<E> pipeline(@FluentArg("uris")String... uris) {
         return pipeline(endpoints(uris));
     }
 
@@ -111,7 +114,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * and for request/response the output of one endpoint will be the input of the next endpoint
      */
     @Fluent
-    public ProcessorFactory<E> pipeline(@FluentArg("endpoints") Endpoint<E>... endpoints) {
+    public ProcessorFactory<E> pipeline(@FluentArg("endpoints")Endpoint<E>... endpoints) {
         return pipeline(endpoints(endpoints));
     }
 
@@ -120,15 +123,32 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * and for request/response the output of one endpoint will be the input of the next endpoint
      */
     @Fluent
-    public ProcessorFactory<E> pipeline(@FluentArg("endpoints") Collection<Endpoint<E>> endpoints) {
+    public ProcessorFactory<E> pipeline(@FluentArg("endpoints")Collection<Endpoint<E>> endpoints) {
         return addProcessBuilder(new PipelineBuilder<E>(this, endpoints));
+    }
+
+    /**
+     * Creates an {@link IdempotentConsumer} to avoid duplicate messages
+     */
+    @Fluent
+    public IdempotentConsumerBuilder<E> idempotentConsumer(
+            @FluentArg("messageIdExpression")Expression<E> messageIdExpression,
+            @FluentArg("MessageIdRepository")MessageIdRepository messageIdRepository) {
+        return (IdempotentConsumerBuilder<E>) addProcessBuilder(new IdempotentConsumerBuilder<E>(this, messageIdExpression, messageIdRepository));
+    }
+
+    /**
+     * Creates an {@link IdempotentConsumer} to avoid duplicate messages
+     */
+    public IdempotentConsumerBuilder<E> idempotentConsumer(ExpressionFactory<E> messageIdExpressionFactory, MessageIdRepository messageIdRepository) {
+        return idempotentConsumer(messageIdExpressionFactory.createExpression(), messageIdRepository);
     }
 
     /**
      * Adds the custom processor to this destination
      */
     @Fluent
-    public ConstantProcessorBuilder<E> process(@FluentArg("ref") Processor<E> processor) {
+    public ConstantProcessorBuilder<E> process(@FluentArg("ref")Processor<E> processor) {
         ConstantProcessorBuilder<E> answer = new ConstantProcessorBuilder<E>(processor);
         addProcessBuilder(answer);
         return answer;
@@ -142,8 +162,8 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      */
     @Fluent
     public FilterBuilder<E> filter(
-    		@FluentArg(value="predicate",element=true) 
-    		Predicate<E> predicate) {
+            @FluentArg(value = "predicate", element = true)
+            Predicate<E> predicate) {
         FilterBuilder<E> answer = new FilterBuilder<E>(this, predicate);
         addProcessBuilder(answer);
         return answer;
@@ -154,7 +174,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      *
      * @return the builder for a choice expression
      */
-    @Fluent(nestedActions=true)
+    @Fluent(nestedActions = true)
     public ChoiceBuilder<E> choice() {
         ChoiceBuilder<E> answer = new ChoiceBuilder<E>(this);
         addProcessBuilder(answer);
@@ -168,8 +188,8 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      */
     @Fluent
     public RecipientListBuilder<E> recipientList(
-    		@FluentArg(value="recipients",element=true) 
-    		ValueBuilder<E> receipients) {
+            @FluentArg(value = "recipients", element = true)
+            ValueBuilder<E> receipients) {
         RecipientListBuilder<E> answer = new RecipientListBuilder<E>(this, receipients);
         addProcessBuilder(answer);
         return answer;
@@ -183,7 +203,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * @return the builder
      */
     @Fluent
-    public SplitterBuilder<E> splitter(@FluentArg(value="recipients", element=true) ValueBuilder<E> receipients) {
+    public SplitterBuilder<E> splitter(@FluentArg(value = "recipients", element = true)ValueBuilder<E> receipients) {
         SplitterBuilder<E> answer = new SplitterBuilder<E>(this, receipients);
         addProcessBuilder(answer);
         return answer;
@@ -196,7 +216,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * @return the current builder with the error handler configured
      */
     @Fluent
-    public FromBuilder<E> errorHandler(@FluentArg("handler") ErrorHandlerBuilder errorHandlerBuilder) {
+    public FromBuilder<E> errorHandler(@FluentArg("handler")ErrorHandlerBuilder errorHandlerBuilder) {
         setErrorHandlerBuilder(errorHandlerBuilder);
         return this;
     }
@@ -208,12 +228,12 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * @return the current builder
      */
     @Fluent
-    public FromBuilder<E> inheritErrorHandler(@FluentArg("condition") boolean condition) {
+    public FromBuilder<E> inheritErrorHandler(@FluentArg("condition")boolean condition) {
         setInheritErrorHandler(condition);
         return this;
     }
-    
-    @Fluent(nestedActions=true)
+
+    @Fluent(nestedActions = true)
     public InterceptorBuilder<E> intercept() {
         InterceptorBuilder<E> answer = new InterceptorBuilder<E>(this);
         addProcessBuilder(answer);
@@ -221,13 +241,12 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     }
 
     @Fluent
-    public InterceptorBuilder<E> intercept(@FluentArg("interceptor") InterceptorProcessor<E> interceptor) {
+    public InterceptorBuilder<E> intercept(@FluentArg("interceptor")InterceptorProcessor<E> interceptor) {
         InterceptorBuilder<E> answer = new InterceptorBuilder<E>(this);
         answer.add(interceptor);
         addProcessBuilder(answer);
         return answer;
     }
-
 
     // Properties
     //-------------------------------------------------------------------------
@@ -274,11 +293,31 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      */
     protected Processor<E> makeProcessor(ProcessorFactory<E> processFactory) throws Exception {
         Processor<E> processor = processFactory.createProcessor();
+        processor = wrapProcessor(processor);
+        return wrapInErrorHandler(processor);
+    }
+
+    /**
+     * A strategy method to allow newly created processors to be wrapped in an error handler. This feature
+     * could be disabled for child builders such as {@link IdempotentConsumerBuilder} which will rely on the
+     * {@link FromBuilder} to perform the error handling to avoid doubly-wrapped processors with 2 nested error handlers
+     */
+    protected Processor<E> wrapInErrorHandler(Processor<E> processor) throws Exception {
         return getErrorHandlerBuilder().createErrorHandler(processor);
+    }
+
+    /**
+     * A strategy method which allows derived classes to wrap the child processor in some kind of interceptor such as
+     * a filter for the {@link IdempotentConsumerBuilder}.
+     *
+     * @param processor the processor which can be wrapped
+     * @return the original processor or a new wrapped interceptor
+     */
+    protected Processor<E> wrapProcessor(Processor<E> processor) {
+        return processor;
     }
 
     public List<Processor<E>> getProcessors() {
         return processors;
     }
-
 }
