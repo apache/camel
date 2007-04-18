@@ -77,7 +77,7 @@ public class JmsRouteTest extends TestCase {
 
     protected Object assertReceivedValidExchange(Class type) throws Exception {
         // lets wait on the message being received
-        boolean received = latch.await(5, TimeUnit.SECONDS);
+        boolean received = latch.await(20, TimeUnit.SECONDS);
         assertTrue("Did not receive the message!", received);
 
         assertNotNull(receivedExchange);
