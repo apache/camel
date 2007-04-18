@@ -23,82 +23,42 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.queue.QueueEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ProducerCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class ChoiceTest extends TestCase {
-    private static final transient Log log = LogFactory.getLog(ChoiceTest.class);
+public class JoinRoutesTest extends TestCase {
+    private static final transient Log log = LogFactory.getLog(JoinRoutesTest.class);
 
     protected CamelContext container = new DefaultCamelContext();
-    protected CountDownLatch latch = new CountDownLatch(1);
+    protected CountDownLatch latch = new CountDownLatch(3);
     protected Endpoint<Exchange> endpoint;
     protected ProducerCache<Exchange> client = new ProducerCache<Exchange>();
     protected List<String> receivedBodies = new ArrayList<String>();
 
-    public void testSendToFirstWhen() throws Exception {
+    public void testMessagesThroughDifferentRoutes() throws Exception {
         sendMessage("bar", "one");
-        waitForMessageInQueue("b");
-        assertQueueContains("b", "one");
-        assertQueueEmpty("c");
-        assertQueueEmpty("d");
-    }
-
-    public void testSendToSecondWhen() throws Exception {
         sendMessage("cheese", "two");
-        waitForMessageInQueue("c");
-        assertQueueEmpty("b");
-        assertQueueContains("c", "two");
-        assertQueueEmpty("d");
+        sendMessage("somethingUndefined", "three");
+
+        // now lets wait for the results
+        latch.await(10, TimeUnit.SECONDS);
+
+        assertEquals("Number of receives: " + receivedBodies, 3, receivedBodies.size());
+        assertEquals("Received bodies", Arrays.asList(new Object[]{"one", "two", "three"}), receivedBodies);
+
+        log.debug("Received on queue:e the bodies: " + receivedBodies);
     }
-
-    public void testSendToOtherwiseClause() throws Exception {
-        sendMessage("somethingUndefined", "two");
-        waitForMessageInQueue("d");
-        assertQueueEmpty("b");
-        assertQueueEmpty("c");
-        assertQueueContains("d", "two");
-    }
-
-    protected void assertQueueContains(String name, String expectedBody) {
-        QueueEndpoint endpoint = getQueue(name);
-        BlockingQueue queue = endpoint.getQueue();
-        assertEquals("Queue size for: " + name + " but was: " + queue, 1, queue.size());
-
-        Exchange exchange = (Exchange) queue.peek();
-        Object firstBody = exchange.getIn().getBody();
-        assertEquals("First body", expectedBody, firstBody);
-    }
-
-    protected void assertQueueEmpty(String name) {
-        QueueEndpoint queue = getQueue(name);
-        assertEquals("Queue size for: " + name, 0, queue.getQueue().size());
-    }
-
-
-    protected void waitForMessageInQueue(String name) throws InterruptedException {
-        // TODO we should replace with actual processors on each queue using a latch
-        QueueEndpoint endpoint = getQueue(name);
-        BlockingQueue queue = endpoint.getQueue();
-        for (int i = 0; i < 100 && queue.isEmpty(); i++) {
-            Thread.sleep(100);
-        }
-    }
-
-    protected QueueEndpoint getQueue(String name) {
-        return (QueueEndpoint) container.resolveEndpoint("queue:" + name);
-    }
-
 
     protected void sendMessage(final Object headerValue, final Object body) throws Exception {
         client.send(endpoint, new Processor<Exchange>() {
@@ -141,6 +101,12 @@ public class ChoiceTest extends TestCase {
                         .when(header("foo").isEqualTo("bar")).to("queue:b")
                         .when(header("foo").isEqualTo("cheese")).to("queue:c")
                         .otherwise().to("queue:d");
+
+                from("queue:b").to("queue:e");
+                from("queue:c").to("queue:e");
+                from("queue:d").to("queue:e");
+
+                from("queue:e").process(processor);
             }
         };
     }
