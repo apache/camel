@@ -46,7 +46,7 @@ public class QueueEndpointConsumer<E extends Exchange> extends ServiceSupport im
         while (!isStopping()) {
             E exchange;
             try {
-                exchange = endpoint.getQueue().poll(100, TimeUnit.MILLISECONDS);
+                exchange = endpoint.getQueue().poll(1000, TimeUnit.MILLISECONDS);
             }
             catch (InterruptedException e) {
                 break;
