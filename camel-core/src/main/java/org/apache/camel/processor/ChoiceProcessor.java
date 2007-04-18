@@ -19,6 +19,8 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.impl.ServiceSupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,7 @@ import java.util.List;
  *
  * @version $Revision$
  */
-public class ChoiceProcessor<E> implements Processor<E> {
+public class ChoiceProcessor<E> extends ServiceSupport implements Processor<E> {
     private List<FilterProcessor<E>> filters = new ArrayList<FilterProcessor<E>>();
     private Processor<E> otherwise;
 
@@ -41,7 +43,7 @@ public class ChoiceProcessor<E> implements Processor<E> {
     public void process(E exchange) {
         for (FilterProcessor<E> filterProcessor : filters) {
             Predicate<E> predicate = filterProcessor.getPredicate();
-            if (predicate != null) {
+            if (predicate != null && predicate.matches(exchange)) {
                 filterProcessor.getProcessor().process(exchange);
                 return;
             }
@@ -81,5 +83,16 @@ public class ChoiceProcessor<E> implements Processor<E> {
 
     public Processor<E> getOtherwise() {
         return otherwise;
+    }
+
+
+    protected void doStart() throws Exception {
+        ServiceHelper.startServices(filters);
+        ServiceHelper.startServices(otherwise);
+    }
+
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(otherwise);
+        ServiceHelper.stopServices(filters);
     }
 }
