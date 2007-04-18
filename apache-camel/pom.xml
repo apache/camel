@@ -98,7 +98,7 @@
 
     <dependency>
       <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
+      <artifactId>commons-logging-api</artifactId>
       <optional>false</optional>
     </dependency>
 
