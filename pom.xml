@@ -75,6 +75,11 @@
         <enabled>false</enabled>
       </releases>
     </repository>
+    <repository>
+      <id>logicblaze.repo</id>
+      <name>LogicBlaze Repository</name>
+      <url>http://repo.logicblaze.com/maven2-all</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -119,6 +124,7 @@
     <module>camel-itest</module>
     <module>camel-jbi</module>
     <module>camel-jms</module>
+    <module>camel-josql</module>
     <module>camel-jpa</module>
     <module>camel-mina</module>
     <module>camel-saxon</module>
@@ -176,6 +182,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jpa</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-josql</artifactId>
         <version>${camel-version}</version>
       </dependency>
       <dependency>
