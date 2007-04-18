@@ -110,6 +110,7 @@
                 <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask">
                   <classpath refid="cp"/>
                 </taskdef>
+                <mkdir dir="${basedir}/target/jpa-classes"/>
                 <openjpac directory="${basedir}/target/jpa-classes">
                   <classpath refid="cp"/>
                   <fileset dir="${basedir}/target/test-classes">
