@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteBuilderTest;
-import org.apache.camel.processor.InterceptorProcessor;
+import org.apache.camel.processor.DelegateProcess;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -70,8 +70,8 @@ public class XmlRouteBuilderTest extends RouteBuilderTest {
 	
 	@Override
 	protected RouteBuilder<Exchange> buildRouteWithInterceptor() {
-		interceptor1 = (InterceptorProcessor<Exchange>) ctx.getBean("interceptor1");
-		interceptor2 = (InterceptorProcessor<Exchange>) ctx.getBean("interceptor2");
+		interceptor1 = (DelegateProcess<Exchange>) ctx.getBean("interceptor1");
+		interceptor2 = (DelegateProcess<Exchange>) ctx.getBean("interceptor2");
 		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildRouteWithInterceptor");
 		assertNotNull(builder);
 		return builder;

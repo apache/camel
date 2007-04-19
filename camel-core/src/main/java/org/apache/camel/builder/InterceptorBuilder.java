@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.InterceptorProcessor;
+import org.apache.camel.processor.DelegateProcess;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 
@@ -29,7 +29,7 @@ import org.apache.camel.RuntimeCamelException;
  * @version $Revision: 519943 $
  */
 public class InterceptorBuilder<E extends Exchange> implements ProcessorFactory<E> {
-    private final List<InterceptorProcessor<E>> intercepts = new ArrayList<InterceptorProcessor<E>>();
+    private final List<DelegateProcess<E>> intercepts = new ArrayList<DelegateProcess<E>>();
 	private final FromBuilder<E> parent;
 	private FromBuilder<E> target;
 
@@ -38,7 +38,7 @@ public class InterceptorBuilder<E extends Exchange> implements ProcessorFactory<
 	}
 	
 	@Fluent("interceptor")
-	public InterceptorBuilder<E> add(@FluentArg("ref") InterceptorProcessor<E> interceptor) {
+	public InterceptorBuilder<E> add(@FluentArg("ref") DelegateProcess<E> interceptor) {
 		intercepts.add(interceptor);
 		return this;
 	}
@@ -56,9 +56,9 @@ public class InterceptorBuilder<E extends Exchange> implements ProcessorFactory<
     		throw new RuntimeCamelException("target provided.");
     	
     	// Interceptors are optional
-    	InterceptorProcessor<E> first=null;
-    	InterceptorProcessor<E> last=null;
-        for (InterceptorProcessor<E> p : intercepts) {
+    	DelegateProcess<E> first=null;
+    	DelegateProcess<E> last=null;
+        for (DelegateProcess<E> p : intercepts) {
             if( first == null ) {
             	first = p;
             }

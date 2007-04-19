@@ -73,7 +73,7 @@ public class IdempotentConsumerTest extends TestSupport {
     protected void setUp() throws Exception {
         context = createContext();
 
-        String fromUri = "queue:test.a";
+        String fromUri = "direct:test.a";
         String toUri = "mock:result";
 
         // lets add some routes

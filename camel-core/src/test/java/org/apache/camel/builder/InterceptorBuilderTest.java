@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.processor.InterceptorProcessor;
+import org.apache.camel.processor.DelegateProcess;
 
 /**
  * @version $Revision: 530102 $
@@ -41,7 +41,7 @@ public class InterceptorBuilderTest extends TestSupport {
         CamelContext container = new DefaultCamelContext();
         final ArrayList<String> order = new ArrayList<String>();
 
-        final InterceptorProcessor<Exchange> interceptor1 = new InterceptorProcessor<Exchange>() {
+        final DelegateProcess<Exchange> interceptor1 = new DelegateProcess<Exchange>() {
         	@Override
         	public void process(Exchange exchange) {
         		order.add("START:1");
@@ -49,7 +49,7 @@ public class InterceptorBuilderTest extends TestSupport {
         		order.add("END:1");
         	}
         };
-        final InterceptorProcessor<Exchange> interceptor2 = new InterceptorProcessor<Exchange>() {
+        final DelegateProcess<Exchange> interceptor2 = new DelegateProcess<Exchange>() {
         	@Override
         	public void process(Exchange exchange) {
         		order.add("START:2");
