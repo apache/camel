@@ -32,38 +32,33 @@ import org.apache.camel.processor.DelegateProcess;
 public class PojoRouteTest extends TestCase {
 	
     public void testPojoRoutes() throws Exception {
-
-        CamelContext container = new DefaultCamelContext();
+    	
+        CamelContext camelContext = new DefaultCamelContext();
         
+        // START SNIPPET: register
         PojoComponent component = new PojoComponent();
+        camelContext.addComponent("pojo", component);
         component.addService("bye", new SayService("Good Bye!"));
-        container.addComponent("default", component);
+        // END SNIPPET: register
         
-        final AtomicInteger hitCount = new AtomicInteger();
-        final DelegateProcess<PojoExchange> tracingInterceptor = new DelegateProcess<PojoExchange>() {
-        	@Override
-        	public void process(PojoExchange exchange) {
-        		super.process(exchange);
-        		hitCount.incrementAndGet();
-        	}
-        };
-        // lets add some routes
-        container.addRoutes(new RouteBuilder() {
+        // START SNIPPET: route
+        // lets add simple route
+        camelContext.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("pojo:hello").intercept(tracingInterceptor).to("pojo:bye");
+                from("pojo:hello").to("pojo:bye");
             }
         });
+        // END SNIPPET: route
 
+        camelContext.start();
         
-        container.start();
-
-        // now lets fire in a message
+        // START SNIPPET: invoke
         PojoConsumer consumer = component.getConsumer("hello");        
         ISay proxy = consumer.createProxy(ISay.class);
         String rc = proxy.say();
         assertEquals("Good Bye!", rc);
-        assertEquals(1, hitCount.get());
+        // END SNIPPET: invoke
         
-        container.stop();
+        camelContext.stop();
     }
 }
