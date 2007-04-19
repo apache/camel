@@ -241,11 +241,11 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     }
 
     @Fluent
-    public InterceptorBuilder<E> intercept(@FluentArg("interceptor")InterceptorProcessor<E> interceptor) {
+    public FromBuilder<E> intercept(@FluentArg("interceptor")InterceptorProcessor<E> interceptor) {
         InterceptorBuilder<E> answer = new InterceptorBuilder<E>(this);
         answer.add(interceptor);
         addProcessBuilder(answer);
-        return answer;
+        return answer.target();
     }
 
     // Properties
