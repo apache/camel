@@ -16,7 +16,6 @@
  */
 package org.apache.camel;
 
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Represents a component which manages a set of {@link Endpoint} objects.
@@ -36,14 +35,6 @@ public interface Component<E extends Exchange>  {
      * The {@link CamelContext} is injected into the component when it is added to it
      */
     void setCamelContext(CamelContext context);
-
-
-    /**
-     * Returns the executor for this endpoint which typically defaults to the components executor
-     *
-     * @return the executor for this endpoint
-     */
-    ScheduledExecutorService getExecutorService();
 
     /**
      * Attempt to resolve an endpoint for the given URI if the component is capable of handling the URI
