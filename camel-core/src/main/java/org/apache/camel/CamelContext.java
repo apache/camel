@@ -41,6 +41,9 @@ public interface CamelContext extends Service {
      */
     void addComponent(String componentName, Component component);
 
+    /**
+     * Gets a component from the container by name.
+     */
     Component getComponent(String componentName);
 
     /**
