@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * The default implementation of {@link ComponentResolver}
@@ -36,21 +35,16 @@ import org.apache.camel.util.ObjectHelper;
 public class DefaultComponentResolver<E extends Exchange> implements ComponentResolver<E> {
     protected static final FactoryFinder componentFactory = new FactoryFinder("META-INF/services/org/apache/camel/component/");
 
-    public Component<E> resolveComponent(String uri, CamelContext context) {
-        String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
-        if (splitURI[1] == null) {
-            throw new IllegalArgumentException("Invalid URI, it did not contain a scheme: " + uri);
-        }
-        String scheme = splitURI[0];
+    public Component<E> resolveComponent(String name, CamelContext context) {
         Class type;
         try {
-            type = componentFactory.findClass(scheme);
+            type = componentFactory.findClass(name);
         }
         catch (NoFactoryAvailableException e) {
             return null;
         }
         catch (Throwable e) {
-            throw new IllegalArgumentException("Invalid URI, no EndpointResolver registered for scheme : " + scheme, e);
+            throw new IllegalArgumentException("Invalid URI, no EndpointResolver registered for scheme : " + name, e);
         }
         if (type == null) {
             return null;

@@ -33,9 +33,9 @@ public interface ComponentResolver<E extends Exchange> {
     /**
      * Attempts to resolve the component for the given URI
      *
-     * @param uri the URI to resolve
+     * @param name the component name to resolve
      * @param context the context to load the component if it can be resolved
      * @return the component which is added to the context or null if it can not be resolved
      */
-    Component<E> resolveComponent(String uri, CamelContext context) throws Exception;
+    Component<E> resolveComponent(String name, CamelContext context) throws Exception;
 }

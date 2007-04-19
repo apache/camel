@@ -62,7 +62,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private ExchangeConverter exchangeConverter;
     private Injector injector;
     private ComponentResolver componentResolver;
-
+    private boolean autoCreateComponents=true;
+    
     /**
      * Adds a component to the container.
      */
@@ -76,9 +77,25 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
-    public Component getComponent(String componentName) {
+    public Component getComponent(String name) {
+    	// synchronize the look up and auto create so that 2 threads can't 
+    	// concurrently auto create the same component. 
         synchronized (components) {
-            return components.get(componentName);
+        	Component component = components.get(name);
+        	if( component == null && autoCreateComponents ) {
+                try {
+					component = getComponentResolver().resolveComponent(name, this);
+					addComponent(name, component);
+					if( isStarted() ) {
+						// If the component is looked up after the context is started,
+						// lets start it up.
+						ServiceHelper.startServices(component);
+					}
+				} catch (Exception e) {
+					throw new RuntimeCamelException("Could not auto create component: "+name, e);
+				}
+        	}
+        	return component;
         }
     }
 
@@ -109,13 +126,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 try {
                     component = factory.call();
                     if (component == null) {
-                        throw new IllegalArgumentException("Factory failed to create the " + componentName + " component, it returned null.");
+                        throw new RuntimeCamelException("Factory failed to create the " + componentName + " component, it returned null.");
                     }
                     components.put(componentName, component);
                     component.setCamelContext(this);
                 }
                 catch (Exception e) {
-                    throw new IllegalArgumentException("Factory failed to create the " + componentName + " component", e);
+                    throw new RuntimeCamelException("Factory failed to create the " + componentName + " component", e);
                 }
             }
             return component;
@@ -147,22 +164,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                         throw new IllegalArgumentException("Invalid URI, it did not contain a scheme: " + uri);
                     }
                     String scheme = splitURI[0];
-                    Component component = null;
+                    Component component = getComponent(scheme);
                     
-                	// synchronize the look up and auto create so that 2 threads can't 
-                	// concurrently auto create the same component. 
-                    synchronized (components) {
-                    	component = components.get(scheme);
-                    	if( component == null ) {
-                            component = getComponentResolver().resolveComponent(uri, this);
-                    		addComponent(scheme, component);
-                    		if( isStarted() ) {
-                    			// If the component is looked up after the context is started,
-                    			// lets start it up.
-                    			ServiceHelper.startServices(component);
-                    		}
-                    	}
-                    }
                     
                 	// Ask the component to resolve the endpoint.
                     if (component != null) {
@@ -346,5 +349,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     protected ComponentResolver createComponentResolver() {
         return new DefaultComponentResolver();
     }
+
+	public boolean isAutoCreateComponents() {
+		return autoCreateComponents;
+	}
+
+	public void setAutoCreateComponents(boolean autoCreateComponents) {
+		this.autoCreateComponents = autoCreateComponents;
+	}
 
 }
