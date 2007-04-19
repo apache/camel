@@ -19,6 +19,7 @@ package org.apache.camel.component.queue;
 
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -70,4 +71,42 @@ public class QueueRouteTest extends TestCase {
 
         container.stop();
     }
+    
+    
+    public void xtestThatShowsEndpointResolutionIsNotConsistent() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        CamelContext container = new DefaultCamelContext();
+        
+        // lets add some routes
+        container.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("queue:test.a").to("queue:test.b");
+                from("queue:test.b").process(new Processor<Exchange>() {
+                    public void process(Exchange e) {
+                        System.out.println("Received exchange: " + e.getIn());
+                        latch.countDown();
+                    }
+                });
+            }
+        });
+
+        
+        container.start();
+        
+        // now lets fire in a message
+        Endpoint<Exchange> endpoint = container.getComponent("queue").resolveEndpoint("queue:test.a");
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setHeader("cheese", 123);
+
+        Producer<Exchange> producer = endpoint.createProducer();
+        producer.process(exchange);
+
+        // now lets sleep for a while
+        boolean received = latch.await(5, TimeUnit.SECONDS);
+        assertTrue("Did not receive the message!", received);
+
+        container.stop();
+    }
+    
 }
