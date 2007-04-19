@@ -53,14 +53,26 @@ public class DefaultExchange implements Exchange {
     }
 
     public void copyFrom(Exchange exchange) {
-        setHeaders(new HashMap<String, Object>(exchange.getProperties()));
-        setIn(exchange.getIn().copy());
-        setOut(exchange.getOut().copy());
-        setFault(exchange.getFault().copy());
+        setHeaders(safeCopy(exchange.getProperties()));
+        setIn(safeCopy(exchange.getIn()));
+        setOut(safeCopy(exchange.getOut()));
+       	setFault(safeCopy(exchange.getFault()));        
         setException(exchange.getException());
     }
 
-    public Exchange newInstance() {
+    static private Map<String, Object> safeCopy(Map<String, Object> properties) {
+		if(properties == null)
+			return null;
+		return new HashMap<String, Object>(properties);
+	}
+
+	static private Message safeCopy(Message message) {
+    	if( message == null)
+    		return null;
+    	return message.copy();
+	}
+
+	public Exchange newInstance() {
         return new DefaultExchange(context);
     }
 
