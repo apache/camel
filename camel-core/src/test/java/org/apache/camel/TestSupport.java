@@ -84,4 +84,15 @@ public abstract class TestSupport extends TestCase {
         assertEquals("Predicate: " + expression + " on Exchange: " + exchange, expected, value);
         return value;
     }
+
+    /**
+     * Resolves an endpoint and asserts that it is found
+     */
+    protected Endpoint<Exchange> resolveMandatoryEndpoint(CamelContext context, String uri) {
+        Endpoint endpoint = context.resolveEndpoint(uri);
+
+        assertNotNull("No endpoint found for URI: " + uri, endpoint);
+
+        return endpoint;
+    }
 }
