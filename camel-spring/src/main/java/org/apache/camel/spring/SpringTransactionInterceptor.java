@@ -35,6 +35,13 @@ public class SpringTransactionInterceptor<E> implements Interceptor<E> {
 
     private TransactionTemplate template;
 
+    public SpringTransactionInterceptor() {
+    }
+
+    public SpringTransactionInterceptor(TransactionTemplate template) {
+        this.template = template;
+    }
+
     public Processor<E> addIntercetors(final Processor<E> processor) {
         final TransactionTemplate transactionTemplate = getTemplate();
         if (transactionTemplate == null) {
