@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.builder;
+package org.apache.camel.spring.xml;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,7 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * 
  * @version $Revision: 520164 $
  */
-public class SpringRouteBuilderTest extends RouteBuilderTest {
+public class XmlRouteBuilderTest extends RouteBuilderTest {
 	private ClassPathXmlApplicationContext ctx;
 
 	@Override

@@ -1,1 +1,1 @@
-class=org.apache.camel.spring.SpringTransactionInterceptor
+class=org.apache.camel.spring.spi.SpringTransactionInterceptor

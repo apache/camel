@@ -48,7 +48,7 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
     }
 
     public Class getObjectType() {
-        return CamelContext.class;
+        return SpringCamelContext.class;
     }
 
     public boolean isSingleton() {
@@ -73,9 +73,9 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
 
     // Properties
     //-------------------------------------------------------------------------
-    public CamelContext getContext() {
+    public CamelContext getContext() throws Exception {
         if (context == null) {
-            context = new DefaultCamelContext();
+            context = SpringCamelContext.springCamelContext(getApplicationContext());
         }
         return context;
     }
