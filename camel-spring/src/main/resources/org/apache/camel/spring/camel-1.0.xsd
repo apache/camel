@@ -93,6 +93,13 @@
   </xs:element>
   <xs:element name="recipientList" type="c:recipients"/>
   <xs:element name="splitter" type="c:recipients"/>
+
+  <xs:element name="idempotentConsumer">
+    <xs:complexType>
+      <!--<xs:attribute name="messageIdRepositoryRef" use="required"/>-->
+    </xs:complexType>
+  </xs:element>
+
   <xs:complexType name="predicate">
     <xs:sequence>
       <xs:element ref="c:predicate"/>

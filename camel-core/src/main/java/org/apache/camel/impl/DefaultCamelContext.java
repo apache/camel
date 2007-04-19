@@ -318,7 +318,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * Lazily create a default implementation
      */
     protected Injector createInjector() {
-        FactoryFinder finder = new FactoryFinder("META-INF/services/org/apache/camel/");
+        FactoryFinder finder = new FactoryFinder();
         try {
             return (Injector) finder.newInstance("Injector");
         }

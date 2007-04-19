@@ -209,5 +209,21 @@
     </routeBuilder>
     <!-- END SNIPPET: splitter -->
 
+    <!--
+        from("queue:a").idempotentConsumer(header("myMessageId"), memoryMessageIdRepository()).to("queue:b");
+     -->
+    <!-- START SNIPPET: idempotent -->
+    <routeBuilder id="buildIdempotentConsumer" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+       <route>
+         <from uri="queue:a"/>
+<!--
+         <idempotentConsumer>
+         </idempotentConsumer>
+-->
+         <to uri="queue:b"/>
+       </route>
+    </routeBuilder>
+    <!-- END SNIPPET: idempotent -->
+
 </beans>
 <!-- END SNIPPET: example -->

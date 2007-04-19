@@ -119,4 +119,16 @@ public class SpringRouteBuilderTest extends RouteBuilderTest {
 		assertNotNull(builder);
 		return builder;
 	}
+
+    @Override
+    protected RouteBuilder<Exchange> buildIdempotentConsumer() {
+        RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildIdempotentConsumer");
+        assertNotNull(builder);
+        return builder;
+    }
+
+    @Override
+    public void testIdempotentConsumer() throws Exception {
+        // TODO
+    }
 }
