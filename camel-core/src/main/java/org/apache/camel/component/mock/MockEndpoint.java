@@ -26,6 +26,8 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,12 +43,43 @@ import java.util.concurrent.TimeUnit;
  * @version $Revision: 1.1 $
  */
 public class MockEndpoint extends DefaultEndpoint<Exchange> {
+    private static final transient Log log = LogFactory.getLog(MockEndpoint.class);
     private int receivedCounter;
     private int expectedCount = -1;
     private Map<Integer, Processor<Exchange>> processors = new HashMap<Integer, Processor<Exchange>>();
     private List<Exchange> exchangesReceived = new ArrayList<Exchange>();
     private List<Throwable> failures = new ArrayList<Throwable>();
+    private List<Runnable> tests = new ArrayList<Runnable>();
     private CountDownLatch latch = new CountDownLatch(1);
+
+    public static void assertIsSatisfied(MockEndpoint... endpoints) throws InterruptedException {
+        // lets only wait on the first empty endpoint
+        int count = 0;
+        for (MockEndpoint endpoint : endpoints) {
+            if (endpoint.getExpectedCount() != 0) {
+                endpoint.assertIsSatisfied();
+                count++;
+            }
+        }
+
+        for (MockEndpoint endpoint : endpoints) {
+            if (endpoint.getExpectedCount() == 0) {
+                if (count == 0) {
+                    endpoint.assertIsSatisfied();
+                    count++;
+                }
+                else {
+                    endpoint.assertIsSatisfied(0);
+                }
+            }
+        }
+    }
+
+    public static void expectsMessageCount(int count, MockEndpoint... endpoints) throws InterruptedException {
+        for (MockEndpoint endpoint : endpoints) {
+            endpoint.expectsMessageCount(count);
+        }
+    }
 
     public MockEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -70,31 +103,41 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
 
     // Testing API
     //-------------------------------------------------------------------------
+
+    /**
+     * Validates that all the available expectations on this endpoint are satisfied; or throw an exception
+     */
     public void assertIsSatisfied() throws InterruptedException {
+        assertIsSatisfied(1000);
+    }
+
+    /**
+     * Validates that all the available expectations on this endpoint are satisfied; or throw an exception
+     */
+    public void assertIsSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {
         if (latch != null) {
             // now lets wait for the results
             latch.await(10, TimeUnit.SECONDS);
         }
         else if (expectedCount == 0) {
             // lets wait a little bit just in case
-            Thread.sleep(1000);
+            Thread.sleep(timeoutForEmptyEndpoints);
         }
 
         if (expectedCount >= 0) {
             assertEquals("Expected message count", expectedCount, receivedCounter);
         }
-    }
 
-    protected void assertEquals(String message, Object expectedValue, Object actualValue) {
-        if (!ObjectHelper.equals(expectedValue, actualValue)) {
-            throw new AssertionError(message + ". Expected: <" + expectedValue + "> but was: <" + actualValue + ">");
+        for (Runnable test : tests) {
+            test.run();
         }
     }
 
-    public void reset() {
-        receivedCounter = 0;
-    }
-
+    /**
+     * Specifies the expected number of message exchanges that should be received by this endpoint
+     *
+     * @param expectedCount the number of message exchanges that should be expected by this endpoint
+     */
     public void expectedMessageCount(int expectedCount) {
         this.expectedCount = expectedCount;
         if (expectedCount <= 0) {
@@ -103,6 +146,47 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         else {
             latch = new CountDownLatch(expectedCount);
         }
+    }
+
+    /**
+     * Adds an expectation that the given body values are received by this endpoint
+     */
+    public void expectedBodiesReceived(final List bodies) {
+        expectedMessageCount(bodies.size());
+
+        expects(new Runnable() {
+            public void run() {
+                int counter = 0;
+                for (Object expectedBody : bodies) {
+                    Exchange exchange = getExchangesReceived().get(counter++);
+                    assertTrue("No exchange received for counter: " + counter, exchange != null);
+
+                    Object actualBody = exchange.getIn().getBody();
+
+                    assertEquals("Body of message: " + counter, expectedBody, actualBody);
+
+                    log.debug("Received message: " + counter + " with body: " + actualBody);
+                }
+            }
+        });
+    }
+
+    /**
+     * Adds the expection which will be invoked when enough messages are received
+     */
+    public void expects(Runnable runnable) {
+        tests.add(runnable);
+    }
+
+    /**
+     * Adds an expectation that the given body values are received by this endpoint
+     */
+    public void expectedBodiesReceived(Object... bodies) {
+        List bodyList = new ArrayList();
+        for (Object body : bodies) {
+            bodyList.add(body);
+        }
+        expectedBodiesReceived(bodyList);
     }
 
     // Properties
@@ -117,6 +201,10 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
 
     public List<Exchange> getExchangesReceived() {
         return exchangesReceived;
+    }
+
+    public int getExpectedCount() {
+        return expectedCount;
     }
 
     // Implementation methods
@@ -136,6 +224,18 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         }
         catch (Exception e) {
             failures.add(e);
+        }
+    }
+
+    protected void assertEquals(String message, Object expectedValue, Object actualValue) {
+        if (!ObjectHelper.equals(expectedValue, actualValue)) {
+            throw new AssertionError(message + ". Expected: <" + expectedValue + "> but was: <" + actualValue + ">");
+        }
+    }
+
+    protected void assertTrue(String message, boolean predicate) {
+        if (!predicate) {
+            throw new AssertionError(message);
         }
     }
 }

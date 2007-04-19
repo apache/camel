@@ -17,25 +17,16 @@
  */
 package org.apache.camel.processor;
 
-import junit.framework.TestCase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Message;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.TestSupport;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.ProducerCache;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
+import org.apache.camel.util.ProducerCache;
 
 /**
  * @version $Revision: 1.1 $
@@ -67,7 +58,7 @@ public class FilterTest extends TestSupport {
         context.addRoutes(createRouteBuilder());
 
         startEndpoint = resolveMandatoryEndpoint(context, "queue:a");
-        resultEndpoint = (MockEndpoint)resolveMandatoryEndpoint(context, "mock:result");
+        resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:result");
 
         context.start();
     }

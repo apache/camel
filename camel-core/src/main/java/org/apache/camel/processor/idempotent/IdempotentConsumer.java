@@ -20,7 +20,9 @@ package org.apache.camel.processor.idempotent;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ExpressionHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -30,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision: 1.1 $
  */
-public class IdempotentConsumer<E extends Exchange> implements Processor<E> {
+public class IdempotentConsumer<E extends Exchange> extends ServiceSupport implements Processor<E> {
     private static final transient Log log = LogFactory.getLog(IdempotentConsumer.class);
     private Expression<E> messageIdExpression;
     private Processor<E> nextProcessor;
@@ -72,6 +74,18 @@ public class IdempotentConsumer<E extends Exchange> implements Processor<E> {
 
     public Processor<E> getNextProcessor() {
         return nextProcessor;
+    }
+
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+
+    protected void doStart() throws Exception {
+        ServiceHelper.startServices(nextProcessor);
+    }
+
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(nextProcessor);
     }
 
     /**

@@ -16,92 +16,62 @@
  */
 package org.apache.camel.processor;
 
-import junit.framework.TestCase;
+import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
+import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.queue.QueueEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ProducerCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class ChoiceTest extends TestCase {
-    private static final transient Log log = LogFactory.getLog(ChoiceTest.class);
-
-    protected CamelContext container = new DefaultCamelContext();
-    protected CountDownLatch latch = new CountDownLatch(1);
-    protected Endpoint<Exchange> endpoint;
+public class ChoiceTest extends TestSupport {
+    protected CamelContext context = new DefaultCamelContext();
     protected ProducerCache<Exchange> client = new ProducerCache<Exchange>();
-    protected List<String> receivedBodies = new ArrayList<String>();
+    protected Endpoint<Exchange> startEndpoint;
+    protected MockEndpoint x, y, z;
 
     public void testSendToFirstWhen() throws Exception {
+        x.expectedBodiesReceived("one");
+        expectsMessageCount(0, y, z);
+
         sendMessage("bar", "one");
-        waitForMessageInQueue("b");
-        assertQueueContains("b", "one");
-        assertQueueEmpty("c");
-        assertQueueEmpty("d");
+
+        assertIsSatisfied(x, y, z);
     }
 
     public void testSendToSecondWhen() throws Exception {
+        y.expectedBodiesReceived("two");
+        expectsMessageCount(0, x, z);
+
         sendMessage("cheese", "two");
-        waitForMessageInQueue("c");
-        assertQueueEmpty("b");
-        assertQueueContains("c", "two");
-        assertQueueEmpty("d");
+
+        assertIsSatisfied(x, y, z);
     }
 
     public void testSendToOtherwiseClause() throws Exception {
-        sendMessage("somethingUndefined", "two");
-        waitForMessageInQueue("d");
-        assertQueueEmpty("b");
-        assertQueueEmpty("c");
-        assertQueueContains("d", "two");
+        z.expectedBodiesReceived("three");
+        expectsMessageCount(0, x, y);
+
+        sendMessage("somethingUndefined", "three");
+
+        assertIsSatisfied(x, y, z);
     }
-
-    protected void assertQueueContains(String name, String expectedBody) {
-        QueueEndpoint endpoint = getQueue(name);
-        BlockingQueue queue = endpoint.getQueue();
-        assertEquals("Queue size for: " + name + " but was: " + queue, 1, queue.size());
-
-        Exchange exchange = (Exchange) queue.peek();
-        Object firstBody = exchange.getIn().getBody();
-        assertEquals("First body", expectedBody, firstBody);
-    }
-
-    protected void assertQueueEmpty(String name) {
-        QueueEndpoint queue = getQueue(name);
-        assertEquals("Queue size for: " + name, 0, queue.getQueue().size());
-    }
-
-
-    protected void waitForMessageInQueue(String name) throws InterruptedException {
-        // TODO we should replace with actual processors on each queue using a latch
-        QueueEndpoint endpoint = getQueue(name);
-        BlockingQueue queue = endpoint.getQueue();
-        for (int i = 0; i < 100 && queue.isEmpty(); i++) {
-            Thread.sleep(100);
-        }
-    }
-
-    protected QueueEndpoint getQueue(String name) {
-        return (QueueEndpoint) container.resolveEndpoint("queue:" + name);
-    }
-
 
     protected void sendMessage(final Object headerValue, final Object body) throws Exception {
-        client.send(endpoint, new Processor<Exchange>() {
+        client.send(startEndpoint, new Processor<Exchange>() {
             public void process(Exchange exchange) {
                 // now lets fire in a message
                 Message in = exchange.getIn();
@@ -113,34 +83,24 @@ public class ChoiceTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        final Processor<Exchange> processor = new Processor<Exchange>() {
-            public void process(Exchange e) {
-                Message in = e.getIn();
-                String body = in.getBody(String.class);
+        context.addRoutes(createRouteBuilder());
 
-                log.debug("Received body: " + body + " on exchange: " + e);
+        startEndpoint = resolveMandatoryEndpoint(context, "queue:a");
 
-                receivedBodies.add(body);
-                latch.countDown();
-            }
-        };
-        final String endpointUri = "queue:a";
+        x = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:x");
+        y = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:y");
+        z = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:z");
 
-        // lets add some routes
-        container.addRoutes(createRouteBuilder(endpointUri, processor));
-        endpoint = container.resolveEndpoint(endpointUri);
-        assertNotNull("No endpoint found for URI: " + endpointUri, endpoint);
-
-        container.start();
+        context.start();
     }
 
-    protected RouteBuilder createRouteBuilder(final String endpointUri, final Processor<Exchange> processor) {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder<Exchange>() {
             public void configure() {
                 from("queue:a").choice()
-                        .when(header("foo").isEqualTo("bar")).to("queue:b")
-                        .when(header("foo").isEqualTo("cheese")).to("queue:c")
-                        .otherwise().to("queue:d");
+                        .when(header("foo").isEqualTo("bar")).to("mock:x")
+                        .when(header("foo").isEqualTo("cheese")).to("mock:y")
+                        .otherwise().to("mock:z");
             }
         };
     }
@@ -148,6 +108,6 @@ public class ChoiceTest extends TestCase {
     @Override
     protected void tearDown() throws Exception {
         client.stop();
-        container.stop();
+        context.stop();
     }
 }
