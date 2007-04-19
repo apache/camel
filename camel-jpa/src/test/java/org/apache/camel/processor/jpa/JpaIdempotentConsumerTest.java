@@ -42,14 +42,14 @@ public class JpaIdempotentConsumerTest extends IdempotentConsumerTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder(final String endpointUri, final Processor<Exchange> processor) {
+    protected RouteBuilder createRouteBuilder(final String fromUri, final String toUri) {
         // START SNIPPET: idempotent
         return new SpringRouteBuilder<Exchange>() {
             public void configure() {
-                from(endpointUri).idempotentConsumer(
+                from(fromUri).idempotentConsumer(
                         header("messageId"),
                         jpaMessageIdRepository(bean(JpaTemplate.class), "myProcessorName")
-                ).process(processor);
+                ).to(toUri);
             }
         };
         // END SNIPPET: idempotent
