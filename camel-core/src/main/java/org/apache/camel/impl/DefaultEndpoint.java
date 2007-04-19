@@ -16,16 +16,16 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
-import org.apache.camel.Component;
 import org.apache.camel.util.ObjectHelper;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * A default endpoint useful for implementation inheritance
@@ -76,7 +76,12 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
     }
 
     public ScheduledExecutorService getExecutorService() {
-        return getComponent().getExecutorService();
+    	Component c = getComponent();
+    	if( c!=null && c instanceof DefaultComponent ) {
+    		DefaultComponent dc = (DefaultComponent) c;
+    		return dc.getExecutorService();
+    	}
+		return null;
     }
 
     /**
