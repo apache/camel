@@ -247,13 +247,6 @@
         <groupId>org.apache.activemq</groupId>
         <artifactId>apache-activemq</artifactId>
         <version>4.1.0-incubator</version>
-        <optional>true</optional>
-        <exclusions>
-          <exclusion>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
 
       <dependency>
@@ -304,7 +297,6 @@
         <groupId>org.springframework</groupId>
         <artifactId>spring</artifactId>
         <version>2.0.3</version>
-        <optional>true</optional>
         <exclusions>
           <exclusion>
             <groupId>javax.mail</groupId>
