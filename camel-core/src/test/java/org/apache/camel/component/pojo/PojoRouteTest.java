@@ -17,14 +17,11 @@
  */
 package org.apache.camel.component.pojo;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import junit.framework.TestCase;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.processor.DelegateProcess;
 
 /**
  * @version $Revision: 520220 $

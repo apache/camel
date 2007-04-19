@@ -175,13 +175,6 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     /**
-     * Adds the expection which will be invoked when enough messages are received
-     */
-    public void expects(Runnable runnable) {
-        tests.add(runnable);
-    }
-
-    /**
      * Adds an expectation that the given body values are received by this endpoint
      */
     public void expectedBodiesReceived(Object... bodies) {
@@ -191,6 +184,15 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         }
         expectedBodiesReceived(bodyList);
     }
+
+
+    /**
+     * Adds the expection which will be invoked when enough messages are received
+     */
+    public void expects(Runnable runnable) {
+        tests.add(runnable);
+    }
+    
 
     // Properties
     //-------------------------------------------------------------------------
