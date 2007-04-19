@@ -17,38 +17,37 @@
  */
 package org.apache.camel.processor;
 
-import static org.apache.camel.processor.idempotent.MemoryMessageIdRepository.memoryMessageIdRepository;
-import junit.framework.TestCase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.TestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.ProducerCache;
 import org.apache.camel.impl.DefaultCamelContext;
+import static org.apache.camel.processor.idempotent.MemoryMessageIdRepository.memoryMessageIdRepository;
+import org.apache.camel.util.ProducerCache;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class IdempotentConsumerTest extends TestCase {
-    private static final transient Log log = LogFactory.getLog(IdempotentConsumerTest.class);
-
+public class IdempotentConsumerTest extends TestSupport {
     protected CamelContext context;
-    protected CountDownLatch latch = new CountDownLatch(3);
-    protected Endpoint<Exchange> endpoint;
     protected ProducerCache<Exchange> client = new ProducerCache<Exchange>();
-    protected List<String> receivedBodies = new ArrayList<String>();
+
+    protected Endpoint<Exchange> startEndpoint;
+    protected MockEndpoint resultEndpoint;
 
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
+        resultEndpoint.expectedBodiesReceived("one", "two", "three");
+
         sendMessage("1", "one");
         sendMessage("2", "two");
         sendMessage("1", "one");
@@ -56,19 +55,11 @@ public class IdempotentConsumerTest extends TestCase {
         sendMessage("1", "one");
         sendMessage("3", "three");
 
-        // lets wait on the message being received
-        boolean received = latch.await(20, TimeUnit.SECONDS);
-        assertTrue("Did not receive the message!", received);
-
-        assertEquals("Should have received 3 responses: " + receivedBodies, 3, receivedBodies.size());
-
-        assertEquals("received bodies", Arrays.asList(new Object[] { "one", "two", "three"}), receivedBodies);
-
-        log.debug("Received bodies: " + receivedBodies);
+        resultEndpoint.assertIsSatisfied();
     }
 
     protected void sendMessage(final Object messageId, final Object body) {
-        client.send(endpoint, new Processor<Exchange>() {
+        client.send(startEndpoint, new Processor<Exchange>() {
             public void process(Exchange exchange) {
                 // now lets fire in a message
                 Message in = exchange.getIn();
@@ -82,23 +73,14 @@ public class IdempotentConsumerTest extends TestCase {
     protected void setUp() throws Exception {
         context = createContext();
 
-        final Processor<Exchange> processor = new Processor<Exchange>() {
-            public void process(Exchange e) {
-                Message in = e.getIn();
-                String body = in.getBody(String.class);
-
-                log.debug("Received body: " + body + " on exchange: " + e);
-
-                receivedBodies.add(body);
-                latch.countDown();
-            }
-        };
-        final String endpointUri = "queue:test.a";
+        String fromUri = "queue:test.a";
+        String toUri = "mock:result";
 
         // lets add some routes
-        context.addRoutes(createRouteBuilder(endpointUri, processor));
-        endpoint = context.resolveEndpoint(endpointUri);
-        assertNotNull("No endpoint found for URI: " + endpointUri, endpoint);
+        context.addRoutes(createRouteBuilder(fromUri, toUri));
+
+        startEndpoint = resolveMandatoryEndpoint(context, fromUri);
+        resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint(context, toUri);
 
         context.start();
     }
@@ -107,10 +89,10 @@ public class IdempotentConsumerTest extends TestCase {
         return new DefaultCamelContext();
     }
 
-    protected RouteBuilder createRouteBuilder(final String endpointUri, final Processor<Exchange> processor) {
+    protected RouteBuilder createRouteBuilder(final String fromUri, final String toUri) {
         return new RouteBuilder() {
             public void configure() {
-                from(endpointUri).idempotentConsumer(header("messageId"), memoryMessageIdRepository()).process(processor);
+                from(fromUri).idempotentConsumer(header("messageId"), memoryMessageIdRepository()).to(toUri);
             }
         };
     }

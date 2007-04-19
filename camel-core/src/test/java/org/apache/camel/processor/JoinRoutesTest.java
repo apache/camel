@@ -16,52 +16,38 @@
  */
 package org.apache.camel.processor;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ProducerCache;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class JoinRoutesTest extends TestCase {
-    private static final transient Log log = LogFactory.getLog(JoinRoutesTest.class);
-
-    protected CamelContext container = new DefaultCamelContext();
-    protected CountDownLatch latch = new CountDownLatch(3);
-    protected Endpoint<Exchange> endpoint;
+public class JoinRoutesTest extends TestSupport {
+    protected CamelContext context = new DefaultCamelContext();
+    protected Endpoint<Exchange> startEndpoint;
+    protected MockEndpoint resultEndpoint;
     protected ProducerCache<Exchange> client = new ProducerCache<Exchange>();
-    protected List<String> receivedBodies = new ArrayList<String>();
 
     public void testMessagesThroughDifferentRoutes() throws Exception {
+        resultEndpoint.expectedBodiesReceived("one", "two", "three");
+
         sendMessage("bar", "one");
         sendMessage("cheese", "two");
         sendMessage("somethingUndefined", "three");
 
-        // now lets wait for the results
-        latch.await(10, TimeUnit.SECONDS);
-
-        assertEquals("Number of receives: " + receivedBodies, 3, receivedBodies.size());
-        assertEquals("Received bodies", Arrays.asList(new Object[]{"one", "two", "three"}), receivedBodies);
-
-        log.debug("Received on queue:e the bodies: " + receivedBodies);
+        resultEndpoint.assertIsSatisfied();
     }
 
     protected void sendMessage(final Object headerValue, final Object body) throws Exception {
-        client.send(endpoint, new Processor<Exchange>() {
+        client.send(startEndpoint, new Processor<Exchange>() {
             public void process(Exchange exchange) {
                 // now lets fire in a message
                 Message in = exchange.getIn();
@@ -73,28 +59,15 @@ public class JoinRoutesTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        final Processor<Exchange> processor = new Processor<Exchange>() {
-            public void process(Exchange e) {
-                Message in = e.getIn();
-                String body = in.getBody(String.class);
+        context.addRoutes(createRouteBuilder());
 
-                log.debug("Received body: " + body + " on exchange: " + e);
+        startEndpoint = resolveMandatoryEndpoint(context, "queue:a");
+        resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:result");
 
-                receivedBodies.add(body);
-                latch.countDown();
-            }
-        };
-        final String endpointUri = "queue:a";
-
-        // lets add some routes
-        container.addRoutes(createRouteBuilder(endpointUri, processor));
-        endpoint = container.resolveEndpoint(endpointUri);
-        assertNotNull("No endpoint found for URI: " + endpointUri, endpoint);
-
-        container.start();
+        context.start();
     }
 
-    protected RouteBuilder createRouteBuilder(final String endpointUri, final Processor<Exchange> processor) {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder<Exchange>() {
             public void configure() {
                 from("queue:a").choice()
@@ -102,11 +75,9 @@ public class JoinRoutesTest extends TestCase {
                         .when(header("foo").isEqualTo("cheese")).to("queue:c")
                         .otherwise().to("queue:d");
 
-                from("queue:b").to("queue:e");
-                from("queue:c").to("queue:e");
-                from("queue:d").to("queue:e");
-
-                from("queue:e").process(processor);
+                from("queue:b").to("mock:result");
+                from("queue:c").to("mock:result");
+                from("queue:d").to("mock:result");
             }
         };
     }
@@ -114,6 +85,6 @@ public class JoinRoutesTest extends TestCase {
     @Override
     protected void tearDown() throws Exception {
         client.stop();
-        container.stop();
+        context.stop();
     }
 }
