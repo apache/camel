@@ -15,19 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring;
+package org.apache.camel.spring.spi;
 
 import org.apache.camel.spi.Injector;
 import org.apache.camel.impl.ReflectionInjector;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
-import org.springframework.beans.factory.wiring.BeanConfigurerSupport;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-
-import java.util.Arrays;
 
 /**
  * A Spring implementation of {@link Injector} allowing Spring to be used to dependency inject newly created POJOs
@@ -38,7 +33,7 @@ public class SpringInjector extends ReflectionInjector {
     private static final transient Log log = LogFactory.getLog(SpringInjector.class);
 
     private final AbstractRefreshableApplicationContext applicationContext;
-    private int autowireMode = AutowireCapableBeanFactory.AUTOWIRE_AUTODETECT;
+    private int autowireMode = AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR;
     private boolean dependencyCheck = false;
 
     public SpringInjector(AbstractRefreshableApplicationContext applicationContext) {
@@ -46,6 +41,7 @@ public class SpringInjector extends ReflectionInjector {
     }
 
     public Object newInstance(Class type) {
+        // TODO support annotations for mandatory injection points?
         return applicationContext.getBeanFactory().createBean(type, autowireMode, dependencyCheck);
     }
 

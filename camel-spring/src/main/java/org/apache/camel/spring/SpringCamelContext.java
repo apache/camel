@@ -18,10 +18,11 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultComponentResolver;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.CamelContext;
+import org.apache.camel.spring.spi.SpringComponentResolver;
+import org.apache.camel.spring.spi.SpringInjector;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.BeansException;
