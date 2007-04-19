@@ -17,6 +17,7 @@
  */
 package org.apache.camel.processor;
 
+import static org.apache.camel.processor.idempotent.MemoryMessageIdRepository.memoryMessageIdRepository;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,7 +26,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.processor.idempotent.MemoryMessageIdRepository;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ProducerCache;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -42,7 +42,7 @@ import java.util.Arrays;
 public class IdempotentConsumerTest extends TestCase {
     private static final transient Log log = LogFactory.getLog(IdempotentConsumerTest.class);
 
-    protected CamelContext container = new DefaultCamelContext();
+    protected CamelContext context;
     protected CountDownLatch latch = new CountDownLatch(3);
     protected Endpoint<Exchange> endpoint;
     protected ProducerCache<Exchange> client = new ProducerCache<Exchange>();
@@ -80,6 +80,8 @@ public class IdempotentConsumerTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
+        context = createContext();
+
         final Processor<Exchange> processor = new Processor<Exchange>() {
             public void process(Exchange e) {
                 Message in = e.getIn();
@@ -94,17 +96,21 @@ public class IdempotentConsumerTest extends TestCase {
         final String endpointUri = "queue:test.a";
 
         // lets add some routes
-        container.addRoutes(createRouteBuilder(endpointUri, processor));
-        endpoint = container.resolveEndpoint(endpointUri);
+        context.addRoutes(createRouteBuilder(endpointUri, processor));
+        endpoint = context.resolveEndpoint(endpointUri);
         assertNotNull("No endpoint found for URI: " + endpointUri, endpoint);
 
-        container.start();
+        context.start();
+    }
+
+    protected CamelContext createContext() throws Exception {
+        return new DefaultCamelContext();
     }
 
     protected RouteBuilder createRouteBuilder(final String endpointUri, final Processor<Exchange> processor) {
         return new RouteBuilder() {
             public void configure() {
-                from(endpointUri).idempotentConsumer(header("messageId"), MemoryMessageIdRepository.memoryMessageIdRepository()).process(processor);
+                from(endpointUri).idempotentConsumer(header("messageId"), memoryMessageIdRepository()).process(processor);
             }
         };
     }
@@ -112,6 +118,6 @@ public class IdempotentConsumerTest extends TestCase {
     @Override
     protected void tearDown() throws Exception {
         client.stop();
-        container.stop();
+        context.stop();
     }
 }

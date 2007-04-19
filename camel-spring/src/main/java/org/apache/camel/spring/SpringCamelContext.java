@@ -27,6 +27,8 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.AbstractRefreshableApplicationContext;
 
 /**
  * A Spring aware implementation of {@link CamelContext} which will automatically register itself with Springs lifecycle
@@ -38,6 +40,16 @@ import org.springframework.context.ApplicationContext;
  */
 public class SpringCamelContext extends DefaultCamelContext implements InitializingBean, DisposableBean, ApplicationContextAware {
     private ApplicationContext applicationContext;
+
+    public static SpringCamelContext springCamelContext(ApplicationContext applicationContext) throws Exception {
+        SpringCamelContext answer = new SpringCamelContext();
+        answer.setApplicationContext(applicationContext);
+        return answer;
+    }
+
+    public static SpringCamelContext springCamelContext(String configLocations) throws Exception {
+        return springCamelContext(new ClassPathXmlApplicationContext(configLocations));
+    }
 
     public void afterPropertiesSet() throws Exception {
         // lets force lazy initialisation
@@ -60,7 +72,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     @Override
     protected Injector createInjector() {
-        return new SpringInjector(getApplicationContext());
+        return new SpringInjector((AbstractRefreshableApplicationContext) getApplicationContext());
     }
 
     @Override

@@ -280,12 +280,14 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         if (answer.size() == 0) {
             return null;
         }
+        Processor<E> processor = null;
         if (answer.size() == 1) {
-            return answer.get(0);
+            processor = answer.get(0);
         }
         else {
-            return new CompositeProcessor<E>(answer);
+            processor = new CompositeProcessor<E>(answer);
         }
+        return wrapInTransactionInterceptor(processor);
     }
 
     /**
@@ -304,6 +306,13 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      */
     protected Processor<E> wrapInErrorHandler(Processor<E> processor) throws Exception {
         return getErrorHandlerBuilder().createErrorHandler(processor);
+    }
+
+    /**
+     * A strategy method which allows transaction interceptors to be applied to a processor
+     */
+    protected Processor<E> wrapInTransactionInterceptor(Processor<E> processor) throws Exception {
+        return getBuilder().getTransactionInterceptor().addIntercetors(processor);
     }
 
     /**

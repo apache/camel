@@ -17,14 +17,14 @@
  */
 package org.apache.camel.spring;
 
-import static org.apache.camel.util.ObjectHelper.notNull;
-
-import java.net.URI;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.spi.ComponentResolver;
+import static org.apache.camel.util.ObjectHelper.notNull;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
+
+import java.net.URI;
 
 /**
  * An implementation of {@link ComponentResolver} which tries to find a Camel {@link Component}
@@ -44,7 +44,13 @@ public class SpringComponentResolver implements ComponentResolver {
 
     public Component resolveComponent(String uri, CamelContext context) throws Exception {
         String scheme = new URI(uri).getScheme();
-        Object bean = applicationContext.getBean(scheme);
+        Object bean = null;
+        try {
+            bean = applicationContext.getBean(scheme);
+        }
+        catch (NoSuchBeanDefinitionException e) {
+            // ignore its not an error
+        }
         if (bean != null) {
             if (bean instanceof Component) {
                 return (Component) bean;

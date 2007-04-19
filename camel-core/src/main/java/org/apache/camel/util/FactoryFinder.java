@@ -17,6 +17,8 @@
  */
 package org.apache.camel.util;
 
+import org.apache.camel.spi.Injector;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,9 +26,12 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FactoryFinder {
-
     private final String path;
     private final ConcurrentHashMap classMap = new ConcurrentHashMap();
+
+    public FactoryFinder() {
+        this("META-INF/services/org/apache/camel/");
+    }
 
     public FactoryFinder(String path) {
         this.path = path;
@@ -40,16 +45,23 @@ public class FactoryFinder {
      * @return a newly created instance
      */
     public Object newInstance(String key)
-            throws IllegalAccessException, InstantiationException, IOException, ClassNotFoundException
-    {
-        return newInstance(key, null);
+            throws IllegalAccessException, InstantiationException, IOException, ClassNotFoundException {
+        return newInstance(key, (String) null);
     }
 
     public Object newInstance(String key, String propertyPrefix)
-            throws IllegalAccessException, InstantiationException, IOException, ClassNotFoundException
-    {
+            throws IllegalAccessException, InstantiationException, IOException, ClassNotFoundException {
         Class clazz = findClass(key, propertyPrefix);
         return clazz.newInstance();
+    }
+
+    public Object newInstance(String key, Injector injector) throws IOException, ClassNotFoundException {
+        return newInstance(key, injector, null);
+    }
+
+    public Object newInstance(String key, Injector injector, String propertyPrefix) throws IOException, ClassNotFoundException {
+        Class type = findClass(key, propertyPrefix);
+        return injector.newInstance(type);
     }
 
     public Class findClass(String key) throws ClassNotFoundException, IOException {
@@ -57,8 +69,9 @@ public class FactoryFinder {
     }
 
     public Class findClass(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
-        if (propertyPrefix == null)
+        if (propertyPrefix == null) {
             propertyPrefix = "";
+        }
 
         Class clazz = (Class) classMap.get(propertyPrefix + key);
         if (clazz == null) {
@@ -77,7 +90,8 @@ public class FactoryFinder {
         Class clazz;
         try {
             clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
-        } catch (ClassNotFoundException e) {
+        }
+        catch (ClassNotFoundException e) {
             clazz = FactoryFinder.class.getClassLoader().loadClass(className);
         }
 
@@ -89,7 +103,9 @@ public class FactoryFinder {
 
         // lets try the thread context class loader first
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if (classLoader == null) classLoader = getClass().getClassLoader();
+        if (classLoader == null) {
+            classLoader = getClass().getClassLoader();
+        }
         InputStream in = classLoader.getResourceAsStream(uri);
         if (in == null) {
             in = FactoryFinder.class.getClassLoader().getResourceAsStream(uri);
@@ -105,10 +121,12 @@ public class FactoryFinder {
             Properties properties = new Properties();
             properties.load(reader);
             return properties;
-        } finally {
+        }
+        finally {
             try {
                 reader.close();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
             }
         }
     }
