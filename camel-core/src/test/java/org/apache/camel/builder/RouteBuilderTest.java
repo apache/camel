@@ -24,7 +24,7 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.processor.InterceptorProcessor;
+import org.apache.camel.processor.DelegateProcess;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.SendProcessor;
@@ -41,8 +41,8 @@ import java.util.List;
  */
 public class RouteBuilderTest extends TestSupport {
     protected Processor<Exchange> myProcessor = new MyProcessor();
-    protected InterceptorProcessor<Exchange> interceptor1;
-    protected InterceptorProcessor<Exchange> interceptor2;
+    protected DelegateProcess<Exchange> interceptor1;
+    protected DelegateProcess<Exchange> interceptor2;
 
     protected RouteBuilder<Exchange> buildSimpleRoute() {
         // START SNIPPET: e1
@@ -232,7 +232,7 @@ public class RouteBuilderTest extends TestSupport {
     }
 
     protected RouteBuilder<Exchange> buildRouteWithInterceptor() {
-        interceptor1 = new InterceptorProcessor<Exchange>() {
+        interceptor1 = new DelegateProcess<Exchange>() {
         };
 
         // START SNIPPET: e7        
@@ -264,10 +264,10 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
-            InterceptorProcessor<Exchange> p1 = assertIsInstanceOf(InterceptorProcessor.class, processor);
+            DelegateProcess<Exchange> p1 = assertIsInstanceOf(DelegateProcess.class, processor);
             processor = p1.getNext();
 
-            InterceptorProcessor<Exchange> p2 = assertIsInstanceOf(InterceptorProcessor.class, processor);
+            DelegateProcess<Exchange> p2 = assertIsInstanceOf(DelegateProcess.class, processor);
 
             assertSendTo(p2.getNext(), "queue:d");
         }

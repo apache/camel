@@ -44,13 +44,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class MockEndpoint extends DefaultEndpoint<Exchange> {
     private static final transient Log log = LogFactory.getLog(MockEndpoint.class);
-    private int receivedCounter;
     private int expectedCount = -1;
     private Map<Integer, Processor<Exchange>> processors = new HashMap<Integer, Processor<Exchange>>();
     private List<Exchange> exchangesReceived = new ArrayList<Exchange>();
     private List<Throwable> failures = new ArrayList<Throwable>();
     private List<Runnable> tests = new ArrayList<Runnable>();
-    private CountDownLatch latch = new CountDownLatch(1);
+    private CountDownLatch latch;
+    private long sleepForEmptyTest = 0L;
 
     public static void assertIsSatisfied(MockEndpoint... endpoints) throws InterruptedException {
         // lets only wait on the first empty endpoint
@@ -108,7 +108,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
      * Validates that all the available expectations on this endpoint are satisfied; or throw an exception
      */
     public void assertIsSatisfied() throws InterruptedException {
-        assertIsSatisfied(1000);
+        assertIsSatisfied(sleepForEmptyTest);
     }
 
     /**
@@ -121,10 +121,13 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         }
         else if (expectedCount == 0) {
             // lets wait a little bit just in case
-            Thread.sleep(timeoutForEmptyEndpoints);
+            if (timeoutForEmptyEndpoints > 0) {
+                Thread.sleep(timeoutForEmptyEndpoints);
+            }
         }
 
         if (expectedCount >= 0) {
+            int receivedCounter = getReceivedCounter();
             assertEquals("Expected message count", expectedCount, receivedCounter);
         }
 
@@ -196,7 +199,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     public int getReceivedCounter() {
-        return receivedCounter;
+        return getExchangesReceived().size();
     }
 
     public List<Exchange> getExchangesReceived() {
@@ -207,19 +210,35 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         return expectedCount;
     }
 
+    public long getSleepForEmptyTest() {
+        return sleepForEmptyTest;
+    }
+
+    /**
+     * Allows a sleep to be specified to wait to check that this endpoint really is empty when
+     * {@link #expectedMessageCount(int)} is called with zero
+     *
+     * @param sleepForEmptyTest the milliseconds to sleep for to determine that this endpoint really is empty
+     */
+    public void setSleepForEmptyTest(long sleepForEmptyTest) {
+        this.sleepForEmptyTest = sleepForEmptyTest;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
     protected synchronized void onExchange(Exchange exchange) {
         try {
+            log.debug("Received exchange: " + exchange);
+
             exchangesReceived.add(exchange);
+
+            Processor<Exchange> processor = processors.get(getReceivedCounter());
+            if (processor != null) {
+                processor.process(exchange);
+            }
 
             if (latch != null) {
                 latch.countDown();
-            }
-
-            Processor<Exchange> processor = processors.get(++receivedCounter);
-            if (processor != null) {
-                processor.process(exchange);
             }
         }
         catch (Exception e) {

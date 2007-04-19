@@ -18,19 +18,31 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Processor;
+import org.apache.camel.spi.Interceptor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 
 /**
+ * A Delegate pattern which delegates processing to a nested processor which can be useful for implementation inheritence
+ * when writing an {@link Interceptor}
+ *
  * @version $Revision: 519941 $
  */
-public class InterceptorProcessor<E> extends ServiceSupport implements Processor<E> {
+public class DelegateProcess<E> extends ServiceSupport implements Processor<E> {
     protected Processor<E> next;
 
-    public InterceptorProcessor() {
+    public DelegateProcess() {
+    }
+
+    public DelegateProcess(Processor<E> next) {
+        this.next = next;
     }
 
     public void process(E exchange) {
+        processNext(exchange);
+    }
+
+    protected void processNext(E exchange) {
         if (next != null) {
             next.process(exchange);
         }

@@ -18,6 +18,7 @@
 package org.apache.camel.spring.spi;
 
 import org.apache.camel.Processor;
+import org.apache.camel.processor.DelegateProcess;
 import org.apache.camel.spi.Interceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,25 +43,26 @@ public class SpringTransactionInterceptor<E> implements Interceptor<E> {
         this.template = template;
     }
 
-    public Processor<E> addIntercetors(final Processor<E> processor) {
+    public Processor<E> addIntercetors(Processor<E> processor) {
         final TransactionTemplate transactionTemplate = getTemplate();
         if (transactionTemplate == null) {
             log.warn("No TransactionTemplate available so transactions will not be enabled!");
             return processor;
         }
 
-        return new Processor<E>() {
+        return new DelegateProcess<E>(processor) {
+
             public void process(final E exchange) {
                 transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
-                        processor.process(exchange);
+                        processNext(exchange);
                     }
                 });
             }
 
             @Override
             public String toString() {
-                return "SpringTransaction[" + processor + "]";
+                return "SpringTransaction[" + getNext() + "]";
             }
         };
     }

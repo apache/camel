@@ -57,7 +57,7 @@ public class FilterTest extends TestSupport {
     protected void setUp() throws Exception {
         context.addRoutes(createRouteBuilder());
 
-        startEndpoint = resolveMandatoryEndpoint(context, "queue:a");
+        startEndpoint = resolveMandatoryEndpoint(context, "direct:a");
         resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:result");
 
         context.start();
@@ -66,7 +66,7 @@ public class FilterTest extends TestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder<Exchange>() {
             public void configure() {
-                from("queue:a").filter(header("foo").isEqualTo("bar")).to("mock:result");
+                from("direct:a").filter(header("foo").isEqualTo("bar")).to("mock:result");
             }
         };
     }

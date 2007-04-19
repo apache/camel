@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.processor.InterceptorProcessor;
+import org.apache.camel.processor.DelegateProcess;
 
 /**
  * @version $Revision: 520220 $
@@ -40,7 +40,7 @@ public class PojoRouteTest extends TestCase {
         container.addComponent("default", component);
         
         final AtomicInteger hitCount = new AtomicInteger();
-        final InterceptorProcessor<PojoExchange> tracingInterceptor = new InterceptorProcessor<PojoExchange>() {
+        final DelegateProcess<PojoExchange> tracingInterceptor = new DelegateProcess<PojoExchange>() {
         	@Override
         	public void process(PojoExchange exchange) {
         		super.process(exchange);

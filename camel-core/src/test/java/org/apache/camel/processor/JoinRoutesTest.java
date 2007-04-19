@@ -61,7 +61,7 @@ public class JoinRoutesTest extends TestSupport {
     protected void setUp() throws Exception {
         context.addRoutes(createRouteBuilder());
 
-        startEndpoint = resolveMandatoryEndpoint(context, "queue:a");
+        startEndpoint = resolveMandatoryEndpoint(context, "direct:a");
         resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:result");
 
         context.start();
@@ -70,14 +70,14 @@ public class JoinRoutesTest extends TestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder<Exchange>() {
             public void configure() {
-                from("queue:a").choice()
-                        .when(header("foo").isEqualTo("bar")).to("queue:b")
-                        .when(header("foo").isEqualTo("cheese")).to("queue:c")
-                        .otherwise().to("queue:d");
+                from("direct:a").choice()
+                        .when(header("foo").isEqualTo("bar")).to("direct:b")
+                        .when(header("foo").isEqualTo("cheese")).to("direct:c")
+                        .otherwise().to("direct:d");
 
-                from("queue:b").to("mock:result");
-                from("queue:c").to("mock:result");
-                from("queue:d").to("mock:result");
+                from("direct:b").to("mock:result");
+                from("direct:c").to("mock:result");
+                from("direct:d").to("mock:result");
             }
         };
     }

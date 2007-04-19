@@ -85,7 +85,7 @@ public class ChoiceTest extends TestSupport {
     protected void setUp() throws Exception {
         context.addRoutes(createRouteBuilder());
 
-        startEndpoint = resolveMandatoryEndpoint(context, "queue:a");
+        startEndpoint = resolveMandatoryEndpoint(context, "direct:a");
 
         x = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:x");
         y = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:y");
@@ -97,7 +97,7 @@ public class ChoiceTest extends TestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder<Exchange>() {
             public void configure() {
-                from("queue:a").choice()
+                from("direct:a").choice()
                         .when(header("foo").isEqualTo("bar")).to("mock:x")
                         .when(header("foo").isEqualTo("cheese")).to("mock:y")
                         .otherwise().to("mock:z");
