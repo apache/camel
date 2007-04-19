@@ -18,7 +18,7 @@
 package org.apache.camel.spring.spi;
 
 import org.apache.camel.Processor;
-import org.apache.camel.processor.DelegateProcess;
+import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.Interceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,7 +50,7 @@ public class SpringTransactionInterceptor<E> implements Interceptor<E> {
             return processor;
         }
 
-        return new DelegateProcess<E>(processor) {
+        return new DelegateProcessor<E>(processor) {
 
             public void process(final E exchange) {
                 transactionTemplate.execute(new TransactionCallbackWithoutResult() {

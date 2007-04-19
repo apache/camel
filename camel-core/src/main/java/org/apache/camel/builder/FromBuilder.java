@@ -22,7 +22,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.CompositeProcessor;
-import org.apache.camel.processor.DelegateProcess;
+import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
@@ -241,7 +241,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     }
 
     @Fluent
-    public FromBuilder<E> intercept(@FluentArg("interceptor")DelegateProcess<E> interceptor) {
+    public FromBuilder<E> intercept(@FluentArg("interceptor")DelegateProcessor<E> interceptor) {
         InterceptorBuilder<E> answer = new InterceptorBuilder<E>(this);
         answer.add(interceptor);
         addProcessBuilder(answer);

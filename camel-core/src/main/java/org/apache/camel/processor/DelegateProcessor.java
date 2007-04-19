@@ -28,13 +28,13 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version $Revision: 519941 $
  */
-public class DelegateProcess<E> extends ServiceSupport implements Processor<E> {
+public class DelegateProcessor<E> extends ServiceSupport implements Processor<E> {
     protected Processor<E> next;
 
-    public DelegateProcess() {
+    public DelegateProcessor() {
     }
 
-    public DelegateProcess(Processor<E> next) {
+    public DelegateProcessor(Processor<E> next) {
         this.next = next;
     }
 
@@ -50,7 +50,7 @@ public class DelegateProcess<E> extends ServiceSupport implements Processor<E> {
 
     @Override
     public String toString() {
-        return "intercept(" + next + ")";
+        return "delegate(" + next + ")";
     }
 
     public Processor<E> getNext() {
