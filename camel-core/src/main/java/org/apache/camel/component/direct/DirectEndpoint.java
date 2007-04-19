@@ -38,7 +38,7 @@ public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
 
 	private final CopyOnWriteArrayList<DefaultConsumer<E>> consumers = new CopyOnWriteArrayList<DefaultConsumer<E>>();
 	
-	boolean allowMutlipleConsumers=true;	
+	boolean allowMultipleConsumers=true;	
 	
     public DirectEndpoint(String uri, DirectComponent<E> component) {
         super(uri, component);
@@ -62,7 +62,7 @@ public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
 		DefaultConsumer<E> consumer = new DefaultConsumer<E>(this, processor) {
 			@Override
 			public void start() throws Exception {
-				if( !allowMutlipleConsumers && !consumers.isEmpty() )
+				if( !allowMultipleConsumers && !consumers.isEmpty() )
 					throw new IllegalStateException("Endpoint "+getEndpointUri()+" only allows 1 active consumer but you attempted to start a 2nd consumer.");
 				
 				consumers.add(this);
@@ -85,11 +85,11 @@ public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
         return (E) new DefaultExchange(getContext());
     }
 
-	public boolean isAllowMutlipleConsumers() {
-		return allowMutlipleConsumers;
+	public boolean isAllowMultipleConsumers() {
+		return allowMultipleConsumers;
 	}
-	public void setAllowMutlipleConsumers(boolean allowMutlipleConsumers) {
-		this.allowMutlipleConsumers = allowMutlipleConsumers;
+	public void setAllowMultipleConsumers(boolean allowMutlipleConsumers) {
+		this.allowMultipleConsumers = allowMutlipleConsumers;
 	}
 
 
