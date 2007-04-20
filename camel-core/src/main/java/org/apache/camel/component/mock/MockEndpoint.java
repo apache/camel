@@ -134,6 +134,13 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         for (Runnable test : tests) {
             test.run();
         }
+
+        for (Throwable failure : failures) {
+           if (failure != null) {
+               log.error("Caught: " + failure, failure);
+               throw new AssertionError("Failed due to caught exception: " + failure);
+           }
+        }
     }
 
     /**
