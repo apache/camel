@@ -32,12 +32,13 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implements ErrorHandler<E> {
-    public static final String REDELIVERY_COUNT_HEADER = "org.apache.camel.redeliveryCount";
+    public static final String REDELIVERY_COUNTER = "org.apache.camel.RedeliveryCounter";
+    public static final String REDELIVERED = "org.apache.camel.Redelivered";
+
     private static final transient Log log = LogFactory.getLog(DeadLetterChannel.class);
     private Processor<E> output;
     private Processor<E> deadLetter;
     private RedeliveryPolicy redeliveryPolicy;
-    private String redeliveryCountHeader = REDELIVERY_COUNT_HEADER;
 
     public DeadLetterChannel(Processor<E> output, Processor<E> deadLetter) {
         this(output, deadLetter, new RedeliveryPolicy());
@@ -59,11 +60,10 @@ public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implem
         long redeliveryDelay = 0;
 
         do {
-            if (redeliveryCounter++ > 0) {
+            if (redeliveryCounter > 0) {
                 // Figure out how long we should wait to resend this message.
                 redeliveryDelay = redeliveryPolicy.getRedeliveryDelay(redeliveryDelay);
                 sleep(redeliveryDelay);
-                appendRedeliveryHeaders(exchange, redeliveryCounter);
             }
 
             try {
@@ -73,6 +73,7 @@ public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implem
             catch (RuntimeException e) {
                 log.error("On delivery attempt: " + redeliveryCounter + " caught: " + e, e);
             }
+            redeliveryCounter = incrementRedeliveryCounter(exchange);
         }
         while (redeliveryPolicy.shouldRedeliver(redeliveryCounter));
 
@@ -108,27 +109,24 @@ public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implem
         this.redeliveryPolicy = redeliveryPolicy;
     }
 
-    public String getRedeliveryCountHeader() {
-        return redeliveryCountHeader;
-    }
-
-    /**
-     * Sets the message header name to be used to append the redelivery count value when a message has been redelivered
-     *
-     * @param redeliveryCountHeader the header name to use to append the redelivery count or null if you wish to disable
-     *                              this feature
-     */
-    public void setRedeliveryCountHeader(String redeliveryCountHeader) {
-        this.redeliveryCountHeader = redeliveryCountHeader;
-    }
 
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected void appendRedeliveryHeaders(E exchange, int redeliveryCounter) {
-        String header = getRedeliveryCountHeader();
-        if (header != null) {
-            exchange.getIn().setHeader(header, redeliveryCounter);
+
+    /**
+     * Increments the redelivery counter and adds the redelivered flag if the message has been redelivered
+     */
+    protected int incrementRedeliveryCounter(E exchange) {
+        Integer counter = exchange.getProperty(REDELIVERY_COUNTER, Integer.class);
+        int next = 1;
+        if (counter != null) {
+            next = counter + 1;
         }
+        exchange.setProperty(REDELIVERY_COUNTER, next);
+        if (next > 1) {
+            exchange.setProperty(REDELIVERED, true);
+        }
+        return next;
     }
 
     protected void sleep(long redeliveryDelay) {
