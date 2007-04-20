@@ -70,7 +70,9 @@ public class MulticastTest extends ContextTestSupport {
 
         return new RouteBuilder<Exchange>() {
             public void configure() {
+                // START SNIPPET: example
                 from("direct:a").to("direct:x", "direct:y", "direct:z");
+                // END SNIPPET: example
 
                 from("direct:x").process(processor).to("mock:x");
                 from("direct:y").process(processor).to("mock:y");
