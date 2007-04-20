@@ -175,7 +175,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
 
                     assertEquals("Body of message: " + counter, expectedBody, actualBody);
 
-                    log.debug("Received message: " + counter + " with body: " + actualBody);
+                    log.debug(getEndpointUri() + " >>>> message: " + counter + " with body: " + actualBody);
                 }
             }
         });
@@ -237,7 +237,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     //-------------------------------------------------------------------------
     protected synchronized void onExchange(Exchange exchange) {
         try {
-            log.debug("Received exchange: " + exchange);
+            log.debug(getEndpointUri() + " >>>> " + exchange);
 
             exchangesReceived.add(exchange);
 
