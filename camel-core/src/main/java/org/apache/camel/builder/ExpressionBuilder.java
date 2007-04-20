@@ -240,4 +240,22 @@ public class ExpressionBuilder {
         Object value = expression.evaluate(exchange);
         return exchange.getContext().getTypeConverter().convertTo(String.class, value);
     }
+
+    /**
+     * Returns an expression for the given system property
+     */
+    public static <E extends Exchange> Expression<E> systemProperty(final String name) {
+        return systemProperty(name, null);
+    }
+
+    /**
+     * Returns an expression for the given system property
+     */
+    public static <E extends Exchange> Expression<E> systemProperty(final String name, final String defaultValue) {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return System.getProperty(name, defaultValue);
+            }
+        };
+    }
 }
