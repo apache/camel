@@ -128,7 +128,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
 
         if (expectedCount >= 0) {
             int receivedCounter = getReceivedCounter();
-            assertEquals("Expected message count", expectedCount, receivedCounter);
+            assertEquals("Received message count" , expectedCount, receivedCounter);
         }
 
         for (Runnable test : tests) {
@@ -137,8 +137,8 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
 
         for (Throwable failure : failures) {
            if (failure != null) {
-               log.error("Caught: " + failure, failure);
-               throw new AssertionError("Failed due to caught exception: " + failure);
+               log.error("Caught on " + getEndpointUri() + " Exception: " + failure, failure);
+               fail("Failed due to caught exception: " + failure);
            }
         }
     }
@@ -199,7 +199,51 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     public void expects(Runnable runnable) {
         tests.add(runnable);
     }
-    
+
+    /**
+     * Adds an assertion to the given message index
+     *
+     * @param messageIndex the number of the message
+     * @return the assertion clause
+     */
+    public AssertionClause message(final int messageIndex) {
+        AssertionClause clause = new AssertionClause() {
+            public void run() {
+                applyAssertionOn(messageIndex, assertExchangeReceived(messageIndex));
+            }
+        };
+        expects(clause);
+        return clause;
+    }
+
+    /**
+     * Adds an assertion to all the received messages
+     *
+     * @param messageIndex the number of the message
+     * @return the assertion clause
+     */
+    public AssertionClause allMessages() {
+        AssertionClause clause = new AssertionClause() {
+            public void run() {
+                List<Exchange> list = getExchangesReceived();
+                int index = 0;
+                for (Exchange exchange : list) {
+                    applyAssertionOn(index++, exchange);
+                }
+            }
+        };
+        expects(clause);
+        return clause;
+    }
+
+    /**
+     * Asserts that the given index of message is received (starting at zero)
+     */
+    public Exchange assertExchangeReceived(int index) {
+        int count = getReceivedCounter();
+        assertTrue("Not enough messages received. Was: " + count, count > index);
+        return getExchangesReceived().get(count);
+    }
 
     // Properties
     //-------------------------------------------------------------------------
@@ -257,13 +301,17 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
 
     protected void assertEquals(String message, Object expectedValue, Object actualValue) {
         if (!ObjectHelper.equals(expectedValue, actualValue)) {
-            throw new AssertionError(message + ". Expected: <" + expectedValue + "> but was: <" + actualValue + ">");
+            fail(message + ". Expected: <" + expectedValue + "> but was: <" + actualValue + ">");
         }
     }
 
     protected void assertTrue(String message, boolean predicate) {
         if (!predicate) {
-            throw new AssertionError(message);
+            fail(message);
         }
+    }
+
+    protected void fail(Object message) {
+        throw new AssertionError(getEndpointUri() + " " + message);
     }
 }

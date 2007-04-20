@@ -59,7 +59,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      * Returns true if the policy decides that the message exchange should be redelivered
      */
     public boolean shouldRedeliver(int redeliveryCounter) {
-        return redeliveryCounter <= getMaximumRedeliveries();
+        return redeliveryCounter < getMaximumRedeliveries();
     }
 
     // Builder methods
