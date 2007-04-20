@@ -30,7 +30,7 @@
   <description>Camel Parent POM</description>
 
   <prerequisites>
-    <maven>2.0.4</maven>
+    <maven>2.0.5</maven>
   </prerequisites>
 
   <properties>
