@@ -36,8 +36,6 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
     private String endpointUri;
     private final Component component;
     private CamelContext context;
-    protected AtomicBoolean activated = new AtomicBoolean(false);
-    protected AtomicBoolean deactivated = new AtomicBoolean(false);
 
     protected DefaultEndpoint(String endpointUri, Component component) {
         this.endpointUri = endpointUri;

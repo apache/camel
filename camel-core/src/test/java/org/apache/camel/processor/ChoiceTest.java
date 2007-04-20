@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.TestSupport;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.queue.QueueEndpoint;
@@ -37,9 +38,7 @@ import java.util.concurrent.BlockingQueue;
 /**
  * @version $Revision: 1.1 $
  */
-public class ChoiceTest extends TestSupport {
-    protected CamelContext context = new DefaultCamelContext();
-    protected ProducerCache<Exchange> client = new ProducerCache<Exchange>();
+public class ChoiceTest extends ContextTestSupport {
     protected Endpoint<Exchange> startEndpoint;
     protected MockEndpoint x, y, z;
 
@@ -83,15 +82,13 @@ public class ChoiceTest extends TestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        context.addRoutes(createRouteBuilder());
+        super.setUp();
 
-        startEndpoint = resolveMandatoryEndpoint(context, "direct:a");
+        startEndpoint = resolveMandatoryEndpoint("direct:a");
 
         x = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:x");
         y = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:y");
         z = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:z");
-
-        context.start();
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -105,9 +102,4 @@ public class ChoiceTest extends TestSupport {
         };
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        client.stop();
-        context.stop();
-    }
 }
