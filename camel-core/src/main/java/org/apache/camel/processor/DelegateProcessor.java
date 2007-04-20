@@ -18,13 +18,13 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Processor;
-import org.apache.camel.spi.Interceptor;
+import org.apache.camel.spi.Policy;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 
 /**
  * A Delegate pattern which delegates processing to a nested processor which can be useful for implementation inheritence
- * when writing an {@link Interceptor}
+ * when writing an {@link Policy}
  *
  * @version $Revision: 519941 $
  */

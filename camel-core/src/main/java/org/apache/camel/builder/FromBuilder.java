@@ -326,7 +326,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      * A strategy method which allows transaction interceptors to be applied to a processor
      */
     protected Processor<E> wrapInTransactionInterceptor(Processor<E> processor) throws Exception {
-        return getBuilder().getTransactionInterceptor().addIntercetors(processor);
+        return getBuilder().getTransactionPolicy().wrap(processor);
     }
 
     /**
