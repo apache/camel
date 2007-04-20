@@ -36,20 +36,20 @@ public class JpaIdempotentConsumerTest extends IdempotentConsumerTest {
     protected ApplicationContext applicationContext;
 
     @Override
-    protected CamelContext createContext() throws Exception {
+    protected CamelContext createCamelContext() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/processor/jpa/spring.xml");
         return SpringCamelContext.springCamelContext(applicationContext);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder(final String fromUri, final String toUri) {
+    protected RouteBuilder createRouteBuilder() {
         // START SNIPPET: idempotent
         return new SpringRouteBuilder<Exchange>() {
             public void configure() {
-                from(fromUri).idempotentConsumer(
+                from("direct:start").idempotentConsumer(
                         header("messageId"),
                         jpaMessageIdRepository(bean(JpaTemplate.class), "myProcessorName")
-                ).to(toUri);
+                ).to("mock:result");
             }
         };
         // END SNIPPET: idempotent

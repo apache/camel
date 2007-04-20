@@ -49,7 +49,7 @@ public abstract class ContextTestSupport extends TestSupport {
         context.stop();
     }
 
-    protected CamelContext createCamelContext() {
+    protected CamelContext createCamelContext() throws Exception {
         return new DefaultCamelContext();
     }
 

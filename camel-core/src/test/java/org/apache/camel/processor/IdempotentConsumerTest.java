@@ -71,14 +71,14 @@ public class IdempotentConsumerTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
-        startEndpoint = resolveMandatoryEndpoint("direct:test.a");
+        startEndpoint = resolveMandatoryEndpoint("direct:start");
         resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:result");
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:test.a").idempotentConsumer(header("messageId"), memoryMessageIdRepository()).to("mock:result");
+                from("direct:start").idempotentConsumer(header("messageId"), memoryMessageIdRepository()).to("mock:result");
             }
         };
     }
