@@ -29,11 +29,11 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
-import org.apache.camel.spi.Interceptor;
+import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ReflectionInjector;
-import org.apache.camel.impl.NoInterceptor;
+import org.apache.camel.impl.NoPolicy;
 
 /**
  * A <a href="http://activemq.apache.org/camel/dsl.html">Java DSL</a>
@@ -45,7 +45,7 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     private List<FromBuilder<E>> fromBuilders = new ArrayList<FromBuilder<E>>();
     private AtomicBoolean initalized = new AtomicBoolean(false);
     private List<Route<E>> routes = new ArrayList<Route<E>>();
-    private Interceptor<E> transactionInterceptor;
+    private Policy<E> transactionPolicy;
 
     protected RouteBuilder() {
         this(null);
@@ -100,8 +100,8 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
      * @param interceptor the transaction interceptor to use
      * @return the current builder
      */
-    public RouteBuilder<E> transactionInterceptor(Interceptor<E> interceptor) {
-        setTransactionInterceptor(interceptor);
+    public RouteBuilder<E> transactionPolicy(Policy<E> interceptor) {
+        setTransactionPolicy(interceptor);
         return this;
     }
 
@@ -132,18 +132,18 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
         return fromBuilders;
     }
 
-    public Interceptor<E> getTransactionInterceptor() throws Exception {
-        if (transactionInterceptor == null) {
-            transactionInterceptor = createTransactionInterceptor();
+    public Policy<E> getTransactionPolicy() throws Exception {
+        if (transactionPolicy == null) {
+            transactionPolicy = createTransactionPolicy();
         }
-        return transactionInterceptor;
+        return transactionPolicy;
     }
 
     /**
      * Sets the interceptor used wrap processors in a transaction
      */
-    public void setTransactionInterceptor(Interceptor<E> transactionInterceptor) {
-        this.transactionInterceptor = transactionInterceptor;
+    public void setTransactionPolicy(Policy<E> transactionInterceptor) {
+        this.transactionPolicy = transactionInterceptor;
     }
 
     // Implementation methods
@@ -188,14 +188,14 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     /**
      * Factory method
      */
-    protected Interceptor<E> createTransactionInterceptor() throws Exception {
+    protected Policy<E> createTransactionPolicy() throws Exception {
         FactoryFinder finder = new FactoryFinder();
         try {
-            return (Interceptor<E>) finder.newInstance("TransactionInterceptor", getContext().getInjector());
+            return (Policy<E>) finder.newInstance("TransactionPolicy", getContext().getInjector());
         }
         catch (NoFactoryAvailableException e) {
             // lets use the default
-            return new NoInterceptor<E>();
+            return new NoPolicy<E>();
         }
     }
 

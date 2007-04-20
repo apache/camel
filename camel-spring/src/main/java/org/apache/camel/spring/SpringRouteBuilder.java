@@ -19,7 +19,7 @@ package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.spring.spi.SpringTransactionInterceptor;
+import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -42,7 +42,7 @@ public abstract class SpringRouteBuilder<E extends Exchange> extends RouteBuilde
      */
     public SpringRouteBuilder<E> transactionInterceptor(String transactionTemplateName) {
         TransactionTemplate template = bean(TransactionTemplate.class, transactionTemplateName);
-        setTransactionInterceptor(new SpringTransactionInterceptor(template));
+        setTransactionPolicy(new SpringTransactionPolicy(template));
         return this;
     }
 
