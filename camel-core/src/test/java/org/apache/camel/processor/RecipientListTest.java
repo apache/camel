@@ -28,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision: 1.1 $
  */
-public class RecipientTest extends ContextTestSupport {
+public class RecipientListTest extends ContextTestSupport {
     protected MockEndpoint x, y, z;
 
     public void testSendingAMessageUsingMulticastReceivesItsOwnExchange() throws Exception {
