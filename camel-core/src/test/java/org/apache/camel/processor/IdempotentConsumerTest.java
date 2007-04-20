@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.TestSupport;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -38,10 +39,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  * @version $Revision: 1.1 $
  */
-public class IdempotentConsumerTest extends TestSupport {
-    protected CamelContext context;
-    protected ProducerCache<Exchange> client = new ProducerCache<Exchange>();
-
+public class IdempotentConsumerTest extends ContextTestSupport {
     protected Endpoint<Exchange> startEndpoint;
     protected MockEndpoint resultEndpoint;
 
@@ -71,35 +69,17 @@ public class IdempotentConsumerTest extends TestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        context = createContext();
+        super.setUp();
 
-        String fromUri = "direct:test.a";
-        String toUri = "mock:result";
-
-        // lets add some routes
-        context.addRoutes(createRouteBuilder(fromUri, toUri));
-
-        startEndpoint = resolveMandatoryEndpoint(context, fromUri);
-        resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint(context, toUri);
-
-        context.start();
+        startEndpoint = resolveMandatoryEndpoint("direct:test.a");
+        resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:result");
     }
 
-    protected CamelContext createContext() throws Exception {
-        return new DefaultCamelContext();
-    }
-
-    protected RouteBuilder createRouteBuilder(final String fromUri, final String toUri) {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fromUri).idempotentConsumer(header("messageId"), memoryMessageIdRepository()).to(toUri);
+                from("direct:test.a").idempotentConsumer(header("messageId"), memoryMessageIdRepository()).to("mock:result");
             }
         };
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        client.stop();
-        context.stop();
     }
 }

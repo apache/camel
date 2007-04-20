@@ -50,7 +50,7 @@ public class PipelineTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
-        resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:result");
+        resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:result");
     }
 
     protected RouteBuilder createRouteBuilder() {
