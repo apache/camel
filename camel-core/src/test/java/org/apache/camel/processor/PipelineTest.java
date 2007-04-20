@@ -69,7 +69,9 @@ public class PipelineTest extends ContextTestSupport {
 
         return new RouteBuilder<Exchange>() {
             public void configure() {
+                // START SNIPPET: example
                 from("direct:a").pipeline("direct:x", "direct:y", "direct:z", "mock:result");
+                // END SNIPPET: example
 
                 from("direct:x").process(processor);
                 from("direct:y").process(processor);
