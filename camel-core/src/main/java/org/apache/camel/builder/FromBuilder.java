@@ -145,13 +145,13 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     }
 
     /**
-     * Adds the custom processor to this destination
+     * Adds the custom processor to this destination which could be a final destination, or could be a transformation in a pipeline
      */
     @Fluent
-    public ConstantProcessorBuilder<E> process(@FluentArg("ref")Processor<E> processor) {
+    public FromBuilder<E> process(@FluentArg("ref")Processor<E> processor) {
         ConstantProcessorBuilder<E> answer = new ConstantProcessorBuilder<E>(processor);
         addProcessBuilder(answer);
-        return answer;
+        return this;
     }
 
     /**
@@ -204,6 +204,20 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      */
     @Fluent
     public SplitterBuilder<E> splitter(@FluentArg(value = "recipients", element = true)ValueBuilder<E> receipients) {
+        SplitterBuilder<E> answer = new SplitterBuilder<E>(this, receipients.getExpression());
+        addProcessBuilder(answer);
+        return answer;
+    }
+
+    /**
+     * A builder for the <a href="http://activemq.apache.org/camel/splitter.html">Splitter</a> pattern
+     * where an expression is evaluated to iterate through each of the parts of a message and then each part is then send to some endpoint.
+     *
+     * @param receipients the expression on which to split
+     * @return the builder
+     */
+    @Fluent
+    public SplitterBuilder<E> splitter(@FluentArg(value = "recipients", element = true) Expression<E> receipients) {
         SplitterBuilder<E> answer = new SplitterBuilder<E>(this, receipients);
         addProcessBuilder(answer);
         return answer;
