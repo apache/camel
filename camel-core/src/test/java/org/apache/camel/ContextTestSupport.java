@@ -58,4 +58,20 @@ public abstract class ContextTestSupport extends TestSupport {
     protected Endpoint<Exchange> resolveMandatoryEndpoint(String uri) {
         return resolveMandatoryEndpoint(context, uri);
     }
+
+    /**
+     * Sends a message to the given endpoint URI with the body value
+     *
+     * @param endpointUri the URI of the endpoint to send to
+     * @param body the body for the message
+     */
+    protected void send(String endpointUri, final Object body) {
+        client.send(endpointUri, new Processor<Exchange>() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                in.setBody(body);
+                in.setHeader("testCase", getName());
+            }
+        });
+    }
 }
