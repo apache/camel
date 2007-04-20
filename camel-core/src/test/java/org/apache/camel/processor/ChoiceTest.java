@@ -86,9 +86,9 @@ public class ChoiceTest extends ContextTestSupport {
 
         startEndpoint = resolveMandatoryEndpoint("direct:a");
 
-        x = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:x");
-        y = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:y");
-        z = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:z");
+        x = (MockEndpoint) resolveMandatoryEndpoint("mock:x");
+        y = (MockEndpoint) resolveMandatoryEndpoint("mock:y");
+        z = (MockEndpoint) resolveMandatoryEndpoint("mock:z");
     }
 
     protected RouteBuilder createRouteBuilder() {

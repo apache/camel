@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.TestSupport;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -31,11 +32,9 @@ import org.apache.camel.util.ProducerCache;
 /**
  * @version $Revision: 1.1 $
  */
-public class FilterTest extends TestSupport {
-    protected CamelContext context = new DefaultCamelContext();
+public class FilterTest extends ContextTestSupport {
     protected Endpoint<Exchange> startEndpoint;
     protected MockEndpoint resultEndpoint;
-    protected ProducerCache<Exchange> client = new ProducerCache<Exchange>();
 
     public void testSendMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(1);
@@ -55,12 +54,10 @@ public class FilterTest extends TestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        context.addRoutes(createRouteBuilder());
+        super.setUp();
 
-        startEndpoint = resolveMandatoryEndpoint(context, "direct:a");
-        resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:result");
-
-        context.start();
+        startEndpoint = resolveMandatoryEndpoint("direct:a");
+        resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:result");
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -80,11 +77,5 @@ public class FilterTest extends TestSupport {
                 in.setHeader("foo", headerValue);
             }
         });
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        client.stop();
-        context.stop();
     }
 }
