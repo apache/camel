@@ -36,8 +36,10 @@ public class DeadLetterChannelTest extends ContextTestSupport {
 
     public void testFirstFewAttemptsFail() throws Exception {
         successEndpoint.expectedBodiesReceived(body);
-        //successEndpoint.message(0).header(DeadLetterChannel.REDELIVERED).isEqualTo(true);
-        
+        successEndpoint.message(0).header(DeadLetterChannel.REDELIVERED).isEqualTo(true);
+        // TODO convert to AND
+        successEndpoint.message(0).header(DeadLetterChannel.REDELIVERY_COUNTER).isEqualTo(1);
+
         deadEndpoint.expectedMessageCount(0);
 
         send("direct:start", body);
@@ -49,6 +51,9 @@ public class DeadLetterChannelTest extends ContextTestSupport {
         failUntilAttempt = 5;
 
         deadEndpoint.expectedBodiesReceived(body);
+        deadEndpoint.message(0).header(DeadLetterChannel.REDELIVERED).isEqualTo(true);
+        // TODO convert to AND
+        deadEndpoint.message(0).header(DeadLetterChannel.REDELIVERY_COUNTER).isEqualTo(2);
         successEndpoint.expectedMessageCount(0);
 
         send("direct:start", body);
@@ -67,7 +72,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         final Processor<Exchange> processor = new Processor<Exchange>() {
             public void process(Exchange exchange) {
-                Integer counter = exchange.getProperty(DeadLetterChannel.REDELIVERY_COUNTER, Integer.class);
+                Integer counter = exchange.getIn().getHeader(DeadLetterChannel.REDELIVERY_COUNTER, Integer.class);
                 int attempt = (counter == null) ? 1 : counter + 1;
                 if (attempt < failUntilAttempt) {
                     throw new RuntimeException("Failed to process due to attempt: " + attempt + " being less than: " + failUntilAttempt);
