@@ -46,7 +46,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     private static final transient Log log = LogFactory.getLog(MockEndpoint.class);
     private int expectedCount = -1;
     private Map<Integer, Processor<Exchange>> processors = new HashMap<Integer, Processor<Exchange>>();
-    private List<Exchange> exchangesReceived = new ArrayList<Exchange>();
+    private List<Exchange> receivedExchanges = new ArrayList<Exchange>();
     private List<Throwable> failures = new ArrayList<Throwable>();
     private List<Runnable> tests = new ArrayList<Runnable>();
     private CountDownLatch latch;
@@ -168,7 +168,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
             public void run() {
                 int counter = 0;
                 for (Object expectedBody : bodies) {
-                    Exchange exchange = getExchangesReceived().get(counter++);
+                    Exchange exchange = getReceivedExchanges().get(counter++);
                     assertTrue("No exchange received for counter: " + counter, exchange != null);
 
                     Object actualBody = exchange.getIn().getBody();
@@ -224,7 +224,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     public AssertionClause allMessages() {
         AssertionClause clause = new AssertionClause() {
             public void run() {
-                List<Exchange> list = getExchangesReceived();
+                List<Exchange> list = getReceivedExchanges();
                 int index = 0;
                 for (Exchange exchange : list) {
                     applyAssertionOn(MockEndpoint.this, index++, exchange);
@@ -241,7 +241,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     public Exchange assertExchangeReceived(int index) {
         int count = getReceivedCounter();
         assertTrue("Not enough messages received. Was: " + count, count > index);
-        return getExchangesReceived().get(index);
+        return getReceivedExchanges().get(index);
     }
 
     // Properties
@@ -251,11 +251,11 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     public int getReceivedCounter() {
-        return getExchangesReceived().size();
+        return getReceivedExchanges().size();
     }
 
-    public List<Exchange> getExchangesReceived() {
-        return exchangesReceived;
+    public List<Exchange> getReceivedExchanges() {
+        return receivedExchanges;
     }
 
     public int getExpectedCount() {
@@ -282,7 +282,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         try {
             log.debug(getEndpointUri() + " >>>> " + exchange);
 
-            exchangesReceived.add(exchange);
+            receivedExchanges.add(exchange);
 
             Processor<Exchange> processor = processors.get(getReceivedCounter());
             if (processor != null) {

@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Message;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -117,15 +118,14 @@ public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implem
      * Increments the redelivery counter and adds the redelivered flag if the message has been redelivered
      */
     protected int incrementRedeliveryCounter(E exchange) {
-        Integer counter = exchange.getProperty(REDELIVERY_COUNTER, Integer.class);
+        Message in = exchange.getIn();
+        Integer counter = in.getHeader(REDELIVERY_COUNTER, Integer.class);
         int next = 1;
         if (counter != null) {
             next = counter + 1;
         }
-        exchange.setProperty(REDELIVERY_COUNTER, next);
-        if (next > 1) {
-            exchange.setProperty(REDELIVERED, true);
-        }
+        in.setHeader(REDELIVERY_COUNTER, next);
+            in.setHeader(REDELIVERED, true);
         return next;
     }
 
