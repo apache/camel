@@ -209,7 +209,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     public AssertionClause message(final int messageIndex) {
         AssertionClause clause = new AssertionClause() {
             public void run() {
-                applyAssertionOn(messageIndex, assertExchangeReceived(messageIndex));
+                applyAssertionOn(MockEndpoint.this, messageIndex, assertExchangeReceived(messageIndex));
             }
         };
         expects(clause);
@@ -219,7 +219,6 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     /**
      * Adds an assertion to all the received messages
      *
-     * @param messageIndex the number of the message
      * @return the assertion clause
      */
     public AssertionClause allMessages() {
@@ -228,7 +227,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
                 List<Exchange> list = getExchangesReceived();
                 int index = 0;
                 for (Exchange exchange : list) {
-                    applyAssertionOn(index++, exchange);
+                    applyAssertionOn(MockEndpoint.this, index++, exchange);
                 }
             }
         };
@@ -242,7 +241,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     public Exchange assertExchangeReceived(int index) {
         int count = getReceivedCounter();
         assertTrue("Not enough messages received. Was: " + count, count > index);
-        return getExchangesReceived().get(count);
+        return getExchangesReceived().get(index);
     }
 
     // Properties
