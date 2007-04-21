@@ -36,6 +36,8 @@ public class DeadLetterChannelTest extends ContextTestSupport {
 
     public void testFirstFewAttemptsFail() throws Exception {
         successEndpoint.expectedBodiesReceived(body);
+        //successEndpoint.message(0).header(DeadLetterChannel.REDELIVERED).isEqualTo(true);
+        
         deadEndpoint.expectedMessageCount(0);
 
         send("direct:start", body);
