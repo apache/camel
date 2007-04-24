@@ -99,9 +99,7 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
      */
     protected void applyAssertionOn(MockEndpoint endpoint, int index, E exchange) {
         for (Predicate<E> predicate : predicates) {
-            if (!predicate.matches(exchange)) {
-                endpoint.fail("Message " + index + " failed Predicate " + predicate + " with " + exchange);
-            }
+            predicate.assertMatches(endpoint.getEndpointUri() + " ", exchange);
         }
     }
 
@@ -114,7 +112,6 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
         public PredicateValueBuilder(Expression<E> expression) {
             super(expression);
         }
-
 
         protected Predicate<E> onNewPredicate(Predicate<E> predicate) {
             addPredicate(predicate);

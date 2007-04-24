@@ -85,8 +85,10 @@ public class DeadLetterChannelTest extends ContextTestSupport {
 
         return new RouteBuilder<Exchange>() {
             public void configure() {
-                from("direct:start").errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(2).initialRedeliveryDelay(1))
-                        .process(processor);
+                from("direct:start").errorHandler(deadLetterChannel("mock:failed")
+                        .maximumRedeliveries(2).initialRedeliveryDelay(1).loggingLevel(LoggingLevel.DEBUG)
+
+                ).process(processor);
 
                 /*  TODO - currently process().to() results in two separate operations which have their own error handler
 

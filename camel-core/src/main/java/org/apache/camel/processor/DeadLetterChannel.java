@@ -40,15 +40,21 @@ public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implem
     private Processor<E> output;
     private Processor<E> deadLetter;
     private RedeliveryPolicy redeliveryPolicy;
+    private Logger<E> logger;
 
-    public DeadLetterChannel(Processor<E> output, Processor<E> deadLetter) {
-        this(output, deadLetter, new RedeliveryPolicy());
+    public static <E extends Exchange> Logger<E> createDefaultLogger() {
+        return new Logger<E>(log, LoggingLevel.ERROR);
     }
 
-    public DeadLetterChannel(Processor<E> output, Processor<E> deadLetter, RedeliveryPolicy redeliveryPolicy) {
+    public DeadLetterChannel(Processor<E> output, Processor<E> deadLetter) {
+        this(output, deadLetter, new RedeliveryPolicy(), DeadLetterChannel.<E>createDefaultLogger());
+    }
+
+    public DeadLetterChannel(Processor<E> output, Processor<E> deadLetter, RedeliveryPolicy redeliveryPolicy, Logger<E> logger) {
         this.deadLetter = deadLetter;
         this.output = output;
         this.redeliveryPolicy = redeliveryPolicy;
+        this.logger = logger;
     }
 
     @Override
@@ -72,7 +78,7 @@ public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implem
                 return;
             }
             catch (RuntimeException e) {
-                log.error("On delivery attempt: " + redeliveryCounter + " caught: " + e, e);
+                logger.log("On delivery attempt: " + redeliveryCounter + " caught: " + e, e);
             }
             redeliveryCounter = incrementRedeliveryCounter(exchange);
         }
@@ -110,6 +116,16 @@ public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implem
         this.redeliveryPolicy = redeliveryPolicy;
     }
 
+    public Logger<E> getLogger() {
+        return logger;
+    }
+
+    /**
+     * Sets the logger strategy; which {@link Log} to use and which {@link LoggingLevel} to use
+     */
+    public void setLogger(Logger<E> logger) {
+        this.logger = logger;
+    }
 
     // Implementation methods
     //-------------------------------------------------------------------------
