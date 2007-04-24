@@ -51,6 +51,7 @@
       <includes>
         <include>org.apache.camel:camel-core</include>
         <include>org.apache.camel:camel-cxf</include>
+        <include>org.apache.camel:camel-file</include>
         <include>org.apache.camel:camel-http</include>
         <include>org.apache.camel:camel-jaxb</include>
         <include>org.apache.camel:camel-jbi</include>

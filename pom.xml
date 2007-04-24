@@ -118,10 +118,11 @@
   <modules>
     <module>apache-camel</module>
     <module>camel-core</module>
-    <module>camel-jaxb</module>
     <module>camel-cxf</module>
+    <module>camel-file</module>
     <module>camel-http</module>
     <module>camel-itest</module>
+    <module>camel-jaxb</module>
     <module>camel-jbi</module>
     <module>camel-jms</module>
     <module>camel-josql</module>
@@ -158,6 +159,11 @@
             <artifactId>jaxb-impl</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-file</artifactId>
+        <version>${camel-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
