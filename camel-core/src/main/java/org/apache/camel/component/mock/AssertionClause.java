@@ -117,8 +117,7 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
 
 
         protected Predicate<E> onNewPredicate(Predicate<E> predicate) {
-            //addPredicate(predicate);
-            predicates.add(predicate);
+            addPredicate(predicate);
             return predicate;
         }
     }

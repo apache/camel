@@ -21,6 +21,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
+import org.apache.camel.util.ObjectHelper;
 import org.josql.Query;
 import org.josql.QueryExecutionException;
 import org.josql.QueryParseException;
@@ -51,18 +52,14 @@ public class SqlBuilder<E extends Exchange> implements Expression<E>, Predicate<
 
     public boolean matches(E exchange) {
         List list = evaluateQuery(exchange);
-        if (!list.isEmpty()) {
-            Object value = list.get(0);
-            if (value instanceof Boolean) {
-                Boolean flag = (Boolean) value;
-                return flag.booleanValue();
-            }
-            else {
-                // lets assume non-empty results are true
-                return true;
-            }
+        return matches(exchange, list);
+    }
+
+    public void assertMatches(String text, E exchange) throws AssertionError {
+        List list = evaluateQuery(exchange);
+        if (!matches(exchange, list)) {
+            throw new AssertionError(this + " failed on " + exchange + " as found " + list);
         }
-        return false;
     }
 
     // Builder API
@@ -103,6 +100,10 @@ public class SqlBuilder<E extends Exchange> implements Expression<E>, Predicate<
 
     // Implementation methods
     //-----------------------------------------------------------------------
+    protected boolean matches(E exchange, List list) {
+        return ObjectHelper.matches(list);
+    }
+
     protected List evaluateQuery(E exchange) {
         configureQuery(exchange);
         Message in = exchange.getIn();

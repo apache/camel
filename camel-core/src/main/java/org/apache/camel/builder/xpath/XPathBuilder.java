@@ -17,6 +17,7 @@
  */
 package org.apache.camel.builder.xpath;
 
+import static org.apache.camel.converter.ObjectConverter.toBoolean;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -66,7 +67,15 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     }
 
     public boolean matches(E exchange) {
-        return ObjectConverter.toBoolean(evaluateAs(exchange, XPathConstants.BOOLEAN));
+        Object booleanResult = evaluateAs(exchange, XPathConstants.BOOLEAN);
+        return toBoolean(booleanResult);
+    }
+
+    public void assertMatches(String text, E exchange) throws AssertionError {
+        Object booleanResult = evaluateAs(exchange, XPathConstants.BOOLEAN);
+        if (!toBoolean(booleanResult)) {
+            throw new AssertionError(this + " failed on " + exchange + " as returned <" + booleanResult + ">");
+        }
     }
 
     public Object evaluate(E exchange) {

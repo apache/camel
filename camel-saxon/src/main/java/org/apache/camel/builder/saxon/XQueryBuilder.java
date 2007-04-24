@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.converter.jaxp.BytesSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.converter.jaxp.StringSource;
@@ -60,6 +61,11 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
     private XmlConverter converter = new XmlConverter();
     private ResultFormat resultsFormat = ResultFormat.DOM;
     private Properties properties = new Properties();
+
+    @Override
+    public String toString() {
+        return "XQuery[" + expression + "]";
+    }
 
     public Object evaluate(E exchange) {
         try {
@@ -123,11 +129,22 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
     public boolean matches(E exchange) {
         try {
             List list = evaluateAsList(exchange);
-            System.out.println("Found list: " + list);
-            return false;
+            return matches(exchange, list);
         }
         catch (Exception e) {
             throw new RuntimeExpressionException(e);
+        }
+    }
+
+    public void assertMatches(String text, E exchange) throws AssertionError {
+        try {
+            List list = evaluateAsList(exchange);
+            if (!matches(exchange, list)) {
+                throw new AssertionError(this + " failed on " + exchange + " as evaluated: " + list);
+            }
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
         }
     }
 
@@ -307,5 +324,9 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
     protected void clearBuilderReferences() {
         staticQueryContext = null;
         configuration = null;
+    }
+
+    protected boolean matches(E exchange, List results) {
+        return ObjectHelper.matches(results);
     }
 }
