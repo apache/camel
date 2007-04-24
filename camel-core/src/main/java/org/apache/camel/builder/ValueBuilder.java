@@ -40,6 +40,11 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
         return expression;
     }
 
+    @Override
+    public String toString() {
+        return expression.toString();
+    }
+
     // Predicate builders
     //-------------------------------------------------------------------------
 
