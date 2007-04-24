@@ -145,16 +145,6 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     }
 
     /**
-     * Adds the custom processor to this destination which could be a final destination, or could be a transformation in a pipeline
-     */
-    @Fluent
-    public FromBuilder<E> process(@FluentArg("ref")Processor<E> processor) {
-        ConstantProcessorBuilder<E> answer = new ConstantProcessorBuilder<E>(processor);
-        addProcessBuilder(answer);
-        return this;
-    }
-
-    /**
      * Creates a predicate which is applied and only if it is true then
      * the exchange is forwarded to the destination
      *
@@ -262,6 +252,74 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         return answer.target();
     }
 
+    // Transformers
+    //-------------------------------------------------------------------------
+
+    /**
+     * Adds the custom processor to this destination which could be a final destination, or could be a transformation in a pipeline
+     */
+    @Fluent
+    public FromBuilder<E> process(@FluentArg("ref")Processor<E> processor) {
+        addProcessorBuilder(processor);
+        return this;
+    }
+
+    /**
+     * Adds a processor which sets the body on the IN message
+     */
+    @Fluent
+    public FromBuilder<E> setBody(Expression<E> expression) {
+        addProcessorBuilder(ProcessorBuilder.setBody(expression));
+        return this;
+    }
+
+    /**
+     * Adds a processor which sets the body on the IN message
+     */
+    @Fluent
+    public FromBuilder<E> setBody(ExpressionFactory<E> expressionFactory) {
+        return setBody(expressionFactory.createExpression());
+    }
+
+    /**
+     * Adds a processor which sets the body on the OUT message
+     */
+    @Fluent
+    public FromBuilder<E> setOutBody(Expression<E> expression) {
+        addProcessorBuilder(ProcessorBuilder.setOutBody(expression));
+        return this;
+    }
+
+    /**
+     * Adds a processor which sets the header on the IN message
+     */
+    @Fluent
+    public FromBuilder<E> setHeader(String name, Expression<E> expression) {
+        addProcessorBuilder(ProcessorBuilder.setHeader(name, expression));
+        return this;
+    }
+
+    /**
+     * Adds a processor which sets the header on the OUT message
+     */
+    @Fluent
+    public FromBuilder<E> setOutHeader(String name, Expression<E> expression) {
+        addProcessorBuilder(ProcessorBuilder.setOutHeader(name, expression));
+        return this;
+    }
+
+
+    /**
+     * Adds a processor which sets the exchange property
+     */
+    @Fluent
+    public FromBuilder<E> setProperty(String name, Expression<E> expression) {
+        addProcessorBuilder(ProcessorBuilder.setProperty(name, expression));
+        return this;
+    }
+
+
+
     // Properties
     //-------------------------------------------------------------------------
     public RouteBuilder<E> getBuilder() {
@@ -275,6 +333,10 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     public ProcessorFactory<E> addProcessBuilder(ProcessorFactory<E> processFactory) {
         processFactories.add(processFactory);
         return processFactory;
+    }
+
+    protected void addProcessorBuilder(Processor<E> processor) {
+        addProcessBuilder(new ConstantProcessorBuilder<E>(processor));
     }
 
     public void addProcessor(Processor<E> processor) {

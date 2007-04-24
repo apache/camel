@@ -229,6 +229,23 @@ public class ExpressionBuilder {
         };
     }
 
+
+    /**
+     * Appends the String evaluations of the two expressions together
+     */
+    public static <E extends Exchange> Expression<E> append(final Expression<E> left, final Expression<E> right) {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return evaluateStringExpression(left, exchange) + evaluateStringExpression(right, exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "append(" + left + ", " + right + ")";
+            }
+        };
+    }
+
     /**
      * Evaluates the expression on the given exchange and returns the String representation
      *
