@@ -25,11 +25,16 @@ import org.apache.camel.Predicate;
  *
  * @version $Revision: $
  */
+//public class ValueBuilder<E extends Exchange> implements Expression<E>, ExpressionFactory<E> {
 public class ValueBuilder<E extends Exchange> implements ExpressionFactory<E> {
     private Expression<E> expression;
 
     public ValueBuilder(Expression<E> expression) {
         this.expression = expression;
+    }
+
+    public Object evaluate(E exchange) {
+        return expression.evaluate(exchange);
     }
 
     public Expression<E> getExpression() {
@@ -111,7 +116,7 @@ public class ValueBuilder<E extends Exchange> implements ExpressionFactory<E> {
     }
 
 
-    // Transformers
+    // Expression builders
     //-------------------------------------------------------------------------
 
     @Fluent
@@ -175,6 +180,16 @@ public class ValueBuilder<E extends Exchange> implements ExpressionFactory<E> {
         return convertTo(String.class);
     }
 
+    /**
+     * Appends the string evaluation of this expression with the given value
+     * @param value the value or expression to append
+     * @return the current builder
+     */
+    @Fluent
+    public ValueBuilder<E> append(@FluentArg("value") Object value) {
+        return new ValueBuilder<E>(ExpressionBuilder.append(expression, asExpression(value)));
+    }
+
     
     // Implementation methods
     //-------------------------------------------------------------------------
@@ -199,5 +214,4 @@ public class ValueBuilder<E extends Exchange> implements ExpressionFactory<E> {
             return ExpressionBuilder.constantExpression(value);
         }
     }
-
 }
