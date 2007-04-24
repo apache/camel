@@ -28,15 +28,15 @@ import org.apache.camel.processor.RecipientList;
  * @version $Revision$
  */
 public class RecipientListBuilder<E extends Exchange> extends BuilderSupport<E> implements ProcessorFactory<E> {
-    private final ExpressionFactory<E> expressionFactory;
+    private final Expression<E> expression;
 
-    public RecipientListBuilder(FromBuilder<E> parent, ExpressionFactory<E> expressionFactory) {
+
+    public RecipientListBuilder(FromBuilder<E> parent, Expression<E> expression) {
         super(parent);
-        this.expressionFactory = expressionFactory;
+        this.expression = expression;
     }
 
     public Processor<E> createProcessor() {
-        Expression<E> expression = expressionFactory.createExpression();
         return new RecipientList<E>(expression);
     }
 }
