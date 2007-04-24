@@ -62,7 +62,7 @@ public class SpringTransactionPolicy<E> implements Policy<E> {
 
             @Override
             public String toString() {
-                return "SpringTransaction[" + getNext() + "]";
+                return "SpringTransactionPolicy[" + getNext() + "]";
             }
         };
     }

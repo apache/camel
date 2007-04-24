@@ -19,8 +19,8 @@ package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -40,7 +40,7 @@ public abstract class SpringRouteBuilder<E extends Exchange> extends RouteBuilde
      *                                {@link TransactionTemplate} to use
      * @return this builder
      */
-    public SpringRouteBuilder<E> transactionInterceptor(String transactionTemplateName) {
+    public SpringRouteBuilder<E> transactionPolicy(String transactionTemplateName) {
         TransactionTemplate template = bean(TransactionTemplate.class, transactionTemplateName);
         setTransactionPolicy(new SpringTransactionPolicy(template));
         return this;
