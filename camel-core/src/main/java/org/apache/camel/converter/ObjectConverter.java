@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Collections;
 import java.util.Collection;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Some core java.lang based 
@@ -66,4 +67,5 @@ public class ObjectConverter {
         }
         return false;
     }
+ 
 }

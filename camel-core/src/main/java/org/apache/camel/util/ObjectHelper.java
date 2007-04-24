@@ -133,6 +133,29 @@ public class ObjectHelper {
         }
     }
 
+
+    /**
+     * Returns the predicate matching boolean on a {@link List} result set
+     * where if the first element is a boolean its value is used
+     * otherwise this method returns true if the collection is not empty
+     *
+     * @returns true if the first element is a boolean and its value is true or if the list is non empty
+     */
+    public static boolean matches(List list) {
+        if (!list.isEmpty()) {
+            Object value = list.get(0);
+            if (value instanceof Boolean) {
+                Boolean flag = (Boolean) value;
+                return flag.booleanValue();
+            }
+            else {
+                // lets assume non-empty results are true
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean isNotNullOrBlank(String text) {
         return text != null && text.trim().length() > 0;
     }

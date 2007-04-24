@@ -70,7 +70,15 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     public boolean matches(E exchange) {
-        return ObjectConverter.toBoolean(evaluateScript(exchange));
+        Object scriptValue = evaluateScript(exchange);
+        return matches(exchange, scriptValue);
+    }
+
+    public void assertMatches(String text, E exchange) throws AssertionError {
+        Object scriptValue = evaluateScript(exchange);
+        if (!matches(exchange, scriptValue)) {
+            throw new AssertionError(this + " failed on " + exchange + " as script returned <" + scriptValue + ">");
+        }
     }
 
     public void process(E exchange) {
@@ -380,6 +388,11 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
             }
         }
     }
+    
+    protected boolean matches(E exchange, Object scriptValue) {
+        return ObjectConverter.toBoolean(scriptValue);
+    }
+
     protected ScriptEngine createScriptEngine() {
         ScriptEngineManager manager = new ScriptEngineManager();
         return manager.getEngineByName(scriptEngineName);
