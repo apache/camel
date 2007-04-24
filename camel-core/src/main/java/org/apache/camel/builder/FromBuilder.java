@@ -138,13 +138,6 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     }
 
     /**
-     * Creates an {@link IdempotentConsumer} to avoid duplicate messages
-     */
-    public IdempotentConsumerBuilder<E> idempotentConsumer(ExpressionFactory<E> messageIdExpressionFactory, MessageIdRepository messageIdRepository) {
-        return idempotentConsumer(messageIdExpressionFactory.createExpression(), messageIdRepository);
-    }
-
-    /**
      * Creates a predicate which is applied and only if it is true then
      * the exchange is forwarded to the destination
      *
@@ -271,14 +264,6 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     public FromBuilder<E> setBody(Expression<E> expression) {
         addProcessorBuilder(ProcessorBuilder.setBody(expression));
         return this;
-    }
-
-    /**
-     * Adds a processor which sets the body on the IN message
-     */
-    @Fluent
-    public FromBuilder<E> setBody(ExpressionFactory<E> expressionFactory) {
-        return setBody(expressionFactory.createExpression());
     }
 
     /**

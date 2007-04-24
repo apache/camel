@@ -25,8 +25,7 @@ import org.apache.camel.Predicate;
  *
  * @version $Revision: $
  */
-//public class ValueBuilder<E extends Exchange> implements Expression<E>, ExpressionFactory<E> {
-public class ValueBuilder<E extends Exchange> implements ExpressionFactory<E> {
+public class ValueBuilder<E extends Exchange> implements Expression<E> {
     private Expression<E> expression;
 
     public ValueBuilder(Expression<E> expression) {
@@ -38,10 +37,6 @@ public class ValueBuilder<E extends Exchange> implements ExpressionFactory<E> {
     }
 
     public Expression<E> getExpression() {
-        return expression;
-    }
-
-    public Expression<E> createExpression() {
         return expression;
     }
 
@@ -205,10 +200,6 @@ public class ValueBuilder<E extends Exchange> implements ExpressionFactory<E> {
     protected Expression<E> asExpression(Object value) {
         if (value instanceof Expression) {
             return (Expression<E>) value;
-        }
-        else if (value instanceof ExpressionFactory) {
-            ExpressionFactory expressionFactory = (ExpressionFactory) value;
-            return expressionFactory.createExpression();
         }
         else {
             return ExpressionBuilder.constantExpression(value);
