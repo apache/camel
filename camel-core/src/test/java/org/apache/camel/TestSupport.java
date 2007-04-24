@@ -76,12 +76,35 @@ public abstract class TestSupport extends TestCase {
     /**
      * Asserts that the predicate returns the expected value on the exchange
      */
-    protected boolean assertPredicate(Predicate expression, Exchange exchange, boolean expected) {
-        boolean value = expression.matches(exchange);
+    protected void assertPredicateMatches(Predicate predicate, Exchange exchange) {
+        assertPredicate(predicate, exchange, true);
+    }
 
-        log.debug("Evaluated predicate: " + expression + " on exchange: " + exchange + " result: " + value);
+    /**
+     * Asserts that the predicate returns the expected value on the exchange
+     */
+    protected void assertPredicateDoesNotMatch(Predicate predicate, Exchange exchange) {
+        try {
+            predicate.assertMatches("Predicate should match", exchange);
+        }
+        catch (AssertionError e) {
+            log.debug("Caught expected assertion error: " + e);
+        }
+        assertPredicate(predicate, exchange, false);
+    }
 
-        assertEquals("Predicate: " + expression + " on Exchange: " + exchange, expected, value);
+    /**
+     * Asserts that the predicate returns the expected value on the exchange
+     */
+    protected boolean assertPredicate(Predicate predicate, Exchange exchange, boolean expected) {
+        if (expected) {
+            predicate.assertMatches("Predicate failed", exchange);
+        }
+        boolean value = predicate.matches(exchange);
+
+        log.debug("Evaluated predicate: " + predicate + " on exchange: " + exchange + " result: " + value);
+
+        assertEquals("Predicate: " + predicate + " on Exchange: " + exchange, expected, value);
         return value;
     }
 
