@@ -23,6 +23,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.processor.Logger;
+import org.apache.camel.processor.LoggingLevel;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A builder of a <a href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter Channel</a>
@@ -35,6 +39,7 @@ public class DeadLetterChannelBuilder<E extends Exchange> implements ErrorHandle
     private Processor<E> defaultDeadLetterEndpoint;
     private Expression<E> defaultDeadLetterEndpointExpression;
     private String defaultDeadLetterEndpointUri = "log:org.apache.camel.DeadLetterChannel:error";
+    private Logger<E> logger = DeadLetterChannel.createDefaultLogger();
 
     public DeadLetterChannelBuilder() {
     }
@@ -55,7 +60,7 @@ public class DeadLetterChannelBuilder<E extends Exchange> implements ErrorHandle
 
     public Processor<E> createErrorHandler(Processor<E> processor) throws Exception {
         Processor<E> deadLetter = getDeadLetterFactory().createProcessor();
-        return new DeadLetterChannel<E>(processor, deadLetter, getRedeliveryPolicy());
+        return new DeadLetterChannel<E>(processor, deadLetter, getRedeliveryPolicy(), getLogger());
     }
 
     // Builder methods
@@ -88,6 +93,44 @@ public class DeadLetterChannelBuilder<E extends Exchange> implements ErrorHandle
     public DeadLetterChannelBuilder<E> useExponentialBackOff() {
         getRedeliveryPolicy().useExponentialBackOff();
         return this;
+    }
+
+    /**
+     * Sets the logger used for caught exceptions
+     */
+    public DeadLetterChannelBuilder<E> logger(Logger<E> logger) {
+        setLogger(logger);
+        return this;
+    }
+
+    /**
+     * Sets the logging level of exceptions caught
+     */
+    public DeadLetterChannelBuilder<E> loggingLevel(LoggingLevel level) {
+        getLogger().setLevel(level);
+        return this;
+    }
+
+    /**
+     * Sets the log used for caught exceptions
+     */
+    public DeadLetterChannelBuilder<E> log(Log log) {
+        getLogger().setLog(log);
+        return this;
+    }
+
+    /**
+     * Sets the log used for caught exceptions
+     */
+    public DeadLetterChannelBuilder<E> log(String log) {
+        return log(LogFactory.getLog(log));
+    }
+
+    /**
+     * Sets the log used for caught exceptions
+     */
+    public DeadLetterChannelBuilder<E> log(Class log) {
+        return log(LogFactory.getLog(log));
     }
 
     // Properties
@@ -162,5 +205,13 @@ public class DeadLetterChannelBuilder<E extends Exchange> implements ErrorHandle
      */
     public void setDefaultDeadLetterEndpointUri(String defaultDeadLetterEndpointUri) {
         this.defaultDeadLetterEndpointUri = defaultDeadLetterEndpointUri;
+    }
+
+    public Logger<E> getLogger() {
+        return logger;
+    }
+
+    public void setLogger(Logger<E> logger) {
+        this.logger = logger;
     }
 }

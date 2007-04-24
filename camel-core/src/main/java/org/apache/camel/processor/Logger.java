@@ -87,6 +87,80 @@ public class Logger<E extends Exchange> implements Processor<E> {
         }
     }
 
+    public void log(String message) {
+        switch (level) {
+            case DEBUG:
+                if (log.isDebugEnabled()) {
+                    log.debug(message);
+                }
+                break;
+            case ERROR:
+                if (log.isErrorEnabled()) {
+                    log.error(message);
+                }
+                break;
+            case FATAL:
+                if (log.isFatalEnabled()) {
+                    log.fatal(message);
+                }
+                break;
+            case INFO:
+                if (log.isInfoEnabled()) {
+                    log.debug(message);
+                }
+                break;
+            case TRACE:
+                if (log.isTraceEnabled()) {
+                    log.trace(message);
+                }
+                break;
+            case WARN:
+                if (log.isWarnEnabled()) {
+                    log.warn(message);
+                }
+                break;
+            default:
+                log.error("Unknown level: " + level + " when trying to log exchange: " + message);
+        }
+    }
+
+    public void log(String message, Throwable exception) {
+        switch (level) {
+            case DEBUG:
+                if (log.isDebugEnabled()) {
+                    log.debug(message, exception);
+                }
+                break;
+            case ERROR:
+                if (log.isErrorEnabled()) {
+                    log.error(message, exception);
+                }
+                break;
+            case FATAL:
+                if (log.isFatalEnabled()) {
+                    log.fatal(message, exception);
+                }
+                break;
+            case INFO:
+                if (log.isInfoEnabled()) {
+                    log.debug(message, exception);
+                }
+                break;
+            case TRACE:
+                if (log.isTraceEnabled()) {
+                    log.trace(message, exception);
+                }
+                break;
+            case WARN:
+                if (log.isWarnEnabled()) {
+                    log.warn(message, exception);
+                }
+                break;
+            default:
+                log.error("Unknown level: " + level + " when trying to log exchange: " + message, exception);
+        }
+    }
+
     protected Object logMessage(E exchange) {
         return exchange;
     }
@@ -97,5 +171,13 @@ public class Logger<E extends Exchange> implements Processor<E> {
 
     public void setLog(Log log) {
         this.log = log;
+    }
+
+    public LoggingLevel getLevel() {
+        return level;
+    }
+
+    public void setLevel(LoggingLevel level) {
+        this.level = level;
     }
 }
