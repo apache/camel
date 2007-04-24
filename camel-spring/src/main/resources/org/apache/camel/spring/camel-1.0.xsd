@@ -43,8 +43,8 @@
     <xs:complexType>
       <xs:attribute name="endpoint" type="xs:NMTOKEN"/>
       <xs:attribute name="endpoints" type="xs:NMTOKEN"/>
-      <xs:attribute name="uri" type="xs:NMTOKEN"/>
-      <xs:attribute name="uris" type="xs:NMTOKEN"/>
+      <xs:attribute name="uri" type="xs:anyURI"/>
+      <xs:attribute name="uris" type="xs:anyURI"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="filter" type="c:predicate"/>
@@ -136,11 +136,11 @@
       </xs:sequence>
       <xs:attribute name="endpoint" type="xs:NMTOKEN"/>
       <xs:attribute name="endpoints" type="xs:NMTOKEN"/>
-      <xs:attribute name="uri" type="xs:NMTOKEN"/>
-      <xs:attribute name="uris" type="xs:NMTOKEN"/>
+      <xs:attribute name="uri" type="xs:anyURI"/>
+      <xs:attribute name="uris" type="xs:anyURI"/>
     </xs:complexType>
   </xs:element>
-  <xs:element name="uri" type="xs:NMTOKEN"/>
+  <xs:element name="uri" type="xs:anyURI"/>
   <xs:complexType name="recipients">
     <xs:sequence>
       <xs:element ref="c:recipients"/>
