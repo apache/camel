@@ -17,16 +17,13 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.TestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.Message;
-import static org.apache.camel.builder.PredicateBuilder.*;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.Predicate;
+import org.apache.camel.TestSupport;
+import static org.apache.camel.builder.Builder.*;
 import org.apache.camel.impl.DefaultCamelContext;
-
-import java.util.Arrays;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
  * @version $Revision$
@@ -34,14 +31,18 @@ import java.util.Arrays;
 public class PredicateBuilderTest extends TestSupport {
     protected Exchange exchange = new DefaultExchange(new DefaultCamelContext());
 
-    public void testRegexTokenize() throws Exception {
-        Expression<Exchange> locationHeader = ExpressionBuilder.headerExpression("location");
+    public void testRegexPredicates() throws Exception {
+        assertMatches(header("location").regex("[a-zA-Z]+,London,UK"));
+        assertDoesNotMatch(header("location").regex("[a-zA-Z]+,Westminster,[a-zA-Z]+"));
+    }
 
-        Predicate<Exchange> predicate = regex(locationHeader, "[a-zA-Z]+,London,UK");
-        assertPredicate(predicate, exchange, true);
+    public void testPredicates() throws Exception {
+        assertMatches(header("name").isEqualTo(constant("James")));
+    }
 
-        predicate = regex(locationHeader, "[a-zA-Z]+,Westminster,[a-zA-Z]+");
-        assertPredicate(predicate, exchange, false);
+    public void testFailingPredicates() throws Exception {
+        assertDoesNotMatch(header("name").isEqualTo(constant("Hiram")));
+        assertDoesNotMatch(header("size").isGreaterThan(constant(100)));
     }
 
     @Override
@@ -51,5 +52,15 @@ public class PredicateBuilderTest extends TestSupport {
         in.setBody("Hello there!");
         in.setHeader("name", "James");
         in.setHeader("location", "Islington,London,UK");
+        in.setHeader("size", 10);
     }
+
+    protected void assertMatches(Predicate<Exchange> predicate) {
+        assertPredicateMatches(predicate, exchange);
+    }
+
+    protected void assertDoesNotMatch(Predicate<Exchange> predicate) {
+        assertPredicateDoesNotMatch(predicate, exchange);
+    }
+
 }

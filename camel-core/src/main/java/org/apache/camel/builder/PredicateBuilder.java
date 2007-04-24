@@ -162,11 +162,11 @@ public class PredicateBuilder {
     }
 
     public static <E extends Exchange> Predicate<E> isNull(final Expression<E> expression) {
-        return isEqualTo(expression, (Expression<E>) ExpressionBuilder.constantExpression(null));
+        return isEqualTo(expression, ExpressionBuilder.<E>constantExpression(null));
     }
 
     public static <E extends Exchange> Predicate<E> isNotNull(final Expression<E> expression) {
-        return isNotEqualTo(expression, (Expression<E>) ExpressionBuilder.constantExpression(null));
+        return isNotEqualTo(expression, ExpressionBuilder.<E>constantExpression(null));
     }
 
     public static <E extends Exchange> Predicate<E> isInstanceOf(final Expression<E> expression, final Class type) {
