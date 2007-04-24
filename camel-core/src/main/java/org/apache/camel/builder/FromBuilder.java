@@ -16,6 +16,10 @@
  */
 package org.apache.camel.builder;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -28,15 +32,17 @@ import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MessageIdRepository;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import org.apache.camel.spi.Policy;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
 public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implements ProcessorFactory<E> {
+	
+	public static final String DEFAULT_TRACE_CATEGORY = "org.apache.camel.TRACE";
+
     private RouteBuilder<E> builder;
     private Endpoint<E> from;
     private List<Processor<E>> processors = new ArrayList<Processor<E>>();
@@ -236,11 +242,56 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         addProcessBuilder(answer);
         return answer;
     }
+    
+    /**
+     * Trace logs the exchange before it goes to the next processing step using the {@link DEFAULT_TRACE_CATEGORY} logging
+     * category.
+     * 
+     * @return
+     */
+    @Fluent
+	public FromBuilder<E> trace() {
+		return trace(DEFAULT_TRACE_CATEGORY);
+	}
+	
+    /**
+     * Trace logs the exchange before it goes to the next processing step using the specified logging
+     * category.
+     * 
+     * @param category the logging category trace messages will sent to.
+     * @return
+     */
+    @Fluent
+	public FromBuilder<E> trace(@FluentArg("category")String category) {
+		final Log log = LogFactory.getLog(category);
+		return intercept(new DelegateProcessor<E>(){
+			@Override
+			public void process(E exchange) {
+				log.trace(exchange);
+				processNext(exchange);
+			}
+		});
+	}    
 
     @Fluent
     public FromBuilder<E> intercept(@FluentArg("interceptor")DelegateProcessor<E> interceptor) {
         InterceptorBuilder<E> answer = new InterceptorBuilder<E>(this);
         answer.add(interceptor);
+        addProcessBuilder(answer);
+        return answer.target();
+    }
+
+    @Fluent(nestedActions = true)
+    public PolicyBuilder<E> policies() {
+    	PolicyBuilder<E> answer = new PolicyBuilder<E>(this);
+        addProcessBuilder(answer);
+        return answer;
+    }
+
+    @Fluent
+    public FromBuilder<E> policy(@FluentArg("policy")Policy<E> policy) {
+        PolicyBuilder<E> answer = new PolicyBuilder<E>(this);
+        answer.add(policy);
         addProcessBuilder(answer);
         return answer.target();
     }
@@ -302,8 +353,6 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         addProcessorBuilder(ProcessorBuilder.setProperty(name, expression));
         return this;
     }
-
-
 
     // Properties
     //-------------------------------------------------------------------------
@@ -390,4 +439,5 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     public List<Processor<E>> getProcessors() {
         return processors;
     }
+
 }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <bean id="PROPAGATION_REQUIRED" class="org.springframework.transaction.support.TransactionTemplate">
+    <property name="transactionManager" ref="jmsTransactionManager"/>
+  </bean>
+  
+  <bean id="PROPAGATION_NOT_SUPPORTED" class="org.springframework.transaction.support.TransactionTemplate">
+    <property name="transactionManager" ref="jmsTransactionManager"/>
+    <property name="propagationBehaviorName" value="PROPAGATION_NOT_SUPPORTED"/>
+  </bean>
+
+  <bean id="PROPAGATION_REQUIRES_NEW" class="org.springframework.transaction.support.TransactionTemplate">
+    <property name="transactionManager" ref="jmsTransactionManager"/>
+    <property name="propagationBehaviorName" value="PROPAGATION_REQUIRES_NEW"/>
+  </bean>
+
+  <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
+    <property name="connectionFactory" ref="jmsConnectionFactory" />
+  </bean>
+  
+  <bean id="jpsTemplate" class="org.springframework.jms.core.JmsTemplate">
+    <property name="connectionFactory" ref="jmsConnectionFactory"/>
+  </bean>
+
+  <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+    <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+  </bean>
+
+</beans>

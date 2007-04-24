@@ -51,27 +51,11 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     private List<Runnable> tests = new ArrayList<Runnable>();
     private CountDownLatch latch;
     private long sleepForEmptyTest = 0L;
+	private int expectedMinimumCount=-1;
 
     public static void assertIsSatisfied(MockEndpoint... endpoints) throws InterruptedException {
-        // lets only wait on the first empty endpoint
-        int count = 0;
         for (MockEndpoint endpoint : endpoints) {
-            if (endpoint.getExpectedCount() != 0) {
-                endpoint.assertIsSatisfied();
-                count++;
-            }
-        }
-
-        for (MockEndpoint endpoint : endpoints) {
-            if (endpoint.getExpectedCount() == 0) {
-                if (count == 0) {
-                    endpoint.assertIsSatisfied();
-                    count++;
-                }
-                else {
-                    endpoint.assertIsSatisfied(0);
-                }
-            }
+            endpoint.assertIsSatisfied();
         }
     }
 
@@ -130,6 +114,12 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
             int receivedCounter = getReceivedCounter();
             assertEquals("Received message count" , expectedCount, receivedCounter);
         }
+        
+        if( expectedMinimumCount >= 0 ) {
+            int receivedCounter = getReceivedCounter();
+            assertTrue("Received message count "+receivedCounter+", expected at least "+expectedCount, expectedCount <= receivedCounter);
+        	
+        }
 
         for (Runnable test : tests) {
             test.run();
@@ -155,6 +145,21 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         }
         else {
             latch = new CountDownLatch(expectedCount);
+        }
+    }
+
+    /**
+     * Specifies the minimum number of expected message exchanges that should be received by this endpoint
+     *
+     * @param expectedCount the number of message exchanges that should be expected by this endpoint
+     */
+    public void expectedMinimumMessageCount(int expectedCount) {
+        this.expectedMinimumCount = expectedCount;
+        if (expectedCount <= 0) {
+            latch = null;
+        }
+        else {
+            latch = new CountDownLatch(expectedMinimumCount);
         }
     }
 
@@ -313,4 +318,8 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     protected void fail(Object message) {
         throw new AssertionError(getEndpointUri() + " " + message);
     }
+
+	public int getExpectedMinimumCount() {
+		return expectedMinimumCount;
+	}
 }

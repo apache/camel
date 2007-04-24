@@ -41,6 +41,8 @@ import javax.jms.ExceptionListener;
  */
 public class JmsConfiguration implements Cloneable {
     protected static final String TRANSACTED = "TRANSACTED";
+    protected static final String CLIENT_ACKNOWLEDGE = "CLIENT_ACKNOWLEDGE";
+    
     private ConnectionFactory connectionFactory;
     private ConnectionFactory producerConnectionFactory;
     private ConsumerType consumerType = ConsumerType.Default;

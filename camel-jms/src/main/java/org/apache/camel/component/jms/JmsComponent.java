@@ -19,10 +19,12 @@ package org.apache.camel.component.jms;
 
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.jms.ConnectionFactory;
 import java.util.Map;
@@ -61,10 +63,25 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
      */
     public static JmsComponent jmsComponentClientAcknowledge(ConnectionFactory connectionFactory) {
         JmsConfiguration template = new JmsConfiguration(connectionFactory);
-        template.setProducerAcknowledgementMode("CLIENT_ACKNOWLEDGE");
-        template.setConsumerAcknowledgementMode("CLIENT_ACKNOWLEDGE");
+        template.setProducerAcknowledgementMode(JmsConfiguration.CLIENT_ACKNOWLEDGE);
+        template.setConsumerAcknowledgementMode(JmsConfiguration.CLIENT_ACKNOWLEDGE);
         return jmsComponent(template);
     }
+
+    public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory) {
+        JmsConfiguration template = new JmsConfiguration(connectionFactory);
+        template.setProducerAcknowledgementMode(JmsConfiguration.TRANSACTED);
+        template.setConsumerAcknowledgementMode(JmsConfiguration.TRANSACTED);
+        return jmsComponent(template);
+    }
+
+	public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory, PlatformTransactionManager transactionManager) {
+        JmsConfiguration template = new JmsConfiguration(connectionFactory);
+        template.setProducerAcknowledgementMode(JmsConfiguration.TRANSACTED);
+        template.setConsumerAcknowledgementMode(JmsConfiguration.TRANSACTED);
+        template.setTransactionManager(transactionManager);
+        return jmsComponent(template);
+	}
 
     public JmsComponent() {
         this.configuration = new JmsConfiguration();

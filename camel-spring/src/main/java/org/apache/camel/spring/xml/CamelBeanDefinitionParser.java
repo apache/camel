@@ -29,9 +29,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.camel.Expression;
 import org.apache.camel.builder.Fluent;
 import org.apache.camel.builder.FluentArg;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.ValueBuilder;
 import org.springframework.beans.SimpleTypeConverter;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -200,12 +202,25 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 				
 				ArrayList<BuilderAction> actions = new ArrayList<BuilderAction>();
 				Class type = parseBuilderElement(element, RouteBuilder.class, actions);
+
+				if ( type == ValueBuilder.class && clazz==Expression.class ) {					
+					Method method;
+					try {
+						method = ValueBuilder.class.getMethod("getExpression", new Class[]{});
+					} catch (Throwable e) {
+						throw new RuntimeException(ValueBuilder.class.getName()+" does not have the getExpression() method.");
+					}
+					MethodInfo methodInfo = new MethodInfo(method, null, new LinkedHashMap<String, Class>(), new LinkedHashMap<String, FluentArg>());
+					actions.add(new BuilderAction(methodInfo, new HashMap<String, Object>()));
+					type = Expression.class;
+				} 
+				
 				BuilderStatement statement = new BuilderStatement();
 				statement.setReturnType(type);
 				statement.setActions(actions);
 				
-				if( !clazz.isAssignableFrom( statement.getReturnType() ) ) {
-					throw new IllegalStateException("Builder does not produce object of expected type: "+clazz.getName());
+				if( !clazz.isAssignableFrom( statement.getReturnType() ) ) {					
+					throw new IllegalStateException("Builder does not produce object of expected type: "+clazz.getName()+", it produced: "+statement.getReturnType());
 				}
 				
 				return statement;
