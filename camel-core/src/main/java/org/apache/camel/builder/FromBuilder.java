@@ -244,7 +244,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     }
     
     /**
-     * Trace logs the exchange before it goes to the next processing step using the {@link DEFAULT_TRACE_CATEGORY} logging
+     * Trace logs the exchange before it goes to the next processing step using the {@link #DEFAULT_TRACE_CATEGORY} logging
      * category.
      * 
      * @return
@@ -351,6 +351,25 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
     @Fluent
     public FromBuilder<E> setProperty(String name, Expression<E> expression) {
         addProcessorBuilder(ProcessorBuilder.setProperty(name, expression));
+        return this;
+    }
+
+
+    /**
+     * Converts the IN message body to the specified type
+     */
+    @Fluent
+    public FromBuilder<E> convertBodyTo(Class type) {
+        addProcessorBuilder(ProcessorBuilder.<E>setBody(Builder.<E>body().convertTo(type)));
+        return this;
+    }
+
+    /**
+     * Converts the OUT message body to the specified type
+     */
+    @Fluent
+    public FromBuilder<E> convertOutBodyTo(Class type) {
+        addProcessorBuilder(ProcessorBuilder.<E>setOutBody(Builder.<E>outBody().convertTo(type)));
         return this;
     }
 
