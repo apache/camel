@@ -78,7 +78,9 @@ public class IdempotentConsumerTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").idempotentConsumer(header("messageId"), memoryMessageIdRepository()).to("mock:result");
+                from("direct:start").idempotentConsumer(
+                        header("messageId"), memoryMessageIdRepository(200)
+                ).to("mock:result");
             }
         };
     }

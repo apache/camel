@@ -17,43 +17,59 @@
  */
 package org.apache.camel.processor.idempotent;
 
+import org.apache.camel.util.LRUCache;
+
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
- * A simple memory implementation of {@link MessageIdRepository}; though warning this could use up lots of RAM!
+ * A memory based implementation of {@link MessageIdRepository}.
+ * Care should be taken to use a suitable underlying {@link Map} to avoid this class being a memory leak
  *
  * @version $Revision: 1.1 $
  */
 public class MemoryMessageIdRepository implements MessageIdRepository {
-    private Set set;
+    private Map cache;
 
     /**
-     * Creates a new MemoryMessageIdRepository with a memory based respository
+     * Creates a new MemoryMessageIdRepository with a memory based respository. <b>Warning</b> this
+     * method should only really be used for testing as it will involve keeping all message IDs in RAM.
      */
     public static MessageIdRepository memoryMessageIdRepository() {
-        return memoryMessageIdRepository(new HashSet());
+        return memoryMessageIdRepository(new HashMap());
     }
 
     /**
-     * Creates a new MemoryMessageIdRepository using the given {@link Set} to use to store the
-     * processed Message ID objects
+     * Creates a new MemoryMessageIdRepository with a memory based respository. <b>Warning</b> this
+     * method should only really be used for testing as it will involve keeping all message IDs in RAM.
      */
-    public static MessageIdRepository memoryMessageIdRepository(Set set) {
-        return new MemoryMessageIdRepository(set);
+    public static MessageIdRepository memoryMessageIdRepository(int cacheSize) {
+        return memoryMessageIdRepository(new LRUCache(cacheSize));
     }
 
-    public MemoryMessageIdRepository(Set set) {
-        this.set = set;
+    /**
+     * Creates a new MemoryMessageIdRepository using the given {@link Map} to use to store the
+     * processed Message ID objects. Warning be cafeful of the implementation of Map you use as
+     * if you are not careful it could be a memory leak.
+     */
+    public static MessageIdRepository memoryMessageIdRepository(Map cache) {
+        return new MemoryMessageIdRepository(cache);
+    }
+
+    public MemoryMessageIdRepository(Map set) {
+        this.cache = set;
     }
 
     public boolean contains(String messageId) {
-        synchronized (set) {
-            if (set.contains(messageId)) {
+        synchronized (cache) {
+            if (cache.containsKey(messageId)) {
                 return true;
             }
             else {
-                set.add(messageId);
+                cache.put(messageId, messageId);
                 return false;
             }
         }
