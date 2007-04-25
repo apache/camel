@@ -18,7 +18,7 @@
 package org.apache.camel;
 
 /**
- * Provides a channel on which clients can create and invoke exchanges on the endpoint
+ * Provides a channel on which clients can create and invoke message exchanges on an {@link Endpoint}
  *
  * @version $Revision$
  */

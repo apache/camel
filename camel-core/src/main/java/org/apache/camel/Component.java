@@ -18,7 +18,7 @@ package org.apache.camel;
 
 
 /**
- * Represents a component which manages a set of {@link Endpoint} objects.
+ * A <a href="http://activemq.apache.org/camel/component.html">component</a> is a factory of {@link Endpoint} objects.
  *
  * @version $Revision: 519901 $
  */

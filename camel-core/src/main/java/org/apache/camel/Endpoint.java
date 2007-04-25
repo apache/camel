@@ -18,9 +18,11 @@ package org.apache.camel;
 
 
 /**
- * Implements the <a href="http://activemq.apache.org/camel/message-endpoint.html">Message Endpoint</a>
+ * An <a href="http://activemq.apache.org/camel/endpoint.html">endpoint</a> implements the 
+ * <a href="http://activemq.apache.org/camel/message-endpoint.html">Message Endpoint</a>
  * pattern and represents an endpoint that can send and receive message exchanges
  *
+ * @see Exchange, Message
  * @version $Revision$
  */
 public interface Endpoint<E extends Exchange> {

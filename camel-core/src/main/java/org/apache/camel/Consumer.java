@@ -18,7 +18,7 @@
 package org.apache.camel;
 
 /**
- * Represents a consumer of an endpoint
+ * A consumer of message exchanges from an {@link Endpoint}
  *
  * @version $Revision$
  */

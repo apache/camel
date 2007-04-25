@@ -15,10 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.spi;
 
 /**
+ * A provider of newly constructed objects
+ *
  * @version $Revision$
  */
-public interface RouteBuilderFinder {
+public interface Provider<T> {
+
+    /**
+     * Returns the newly constructed instance
+     */
+    T get();
 }

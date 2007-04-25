@@ -24,7 +24,17 @@ package org.apache.camel;
  */
 public interface Service {
 
+    /**
+     * Starts the service
+     *
+     * @throws Exception
+     */
     void start() throws Exception;
 
+    /**
+     * Stops the service
+     *
+     * @throws Exception
+     */
     void stop() throws Exception;
 }
