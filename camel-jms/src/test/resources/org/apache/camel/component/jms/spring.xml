@@ -25,8 +25,12 @@
     <property name="connectionFactory" ref="jmsConnectionFactory"/>
   </bean>
 
-  <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-    <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+  <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory" depends-on="broker">
+    <property name="brokerURL" value="vm://localhost"/>
+  </bean>
+
+  <bean id="broker" class="org.apache.activemq.xbean.BrokerFactoryBean">
+    <property name="config" value="org/apache/camel/component/jms/activemq.xml"/>
   </bean>
 
 </beans>

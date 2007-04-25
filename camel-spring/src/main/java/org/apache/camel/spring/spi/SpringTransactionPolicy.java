@@ -22,6 +22,7 @@ import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.Policy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -62,8 +63,28 @@ public class SpringTransactionPolicy<E> implements Policy<E> {
 
             @Override
             public String toString() {
-                return "SpringTransactionPolicy[" + getNext() + "]";
+                return "SpringTransactionPolicy:"+propagationBehaviorToString(transactionTemplate.getPropagationBehavior())+"[" + getNext() + "]";
             }
+
+			private String propagationBehaviorToString(int propagationBehavior) {
+				switch( propagationBehavior ) {
+				case TransactionDefinition.PROPAGATION_MANDATORY:
+					return "PROPAGATION_MANDATORY";
+				case TransactionDefinition.PROPAGATION_NESTED:
+					return "PROPAGATION_NESTED";
+				case TransactionDefinition.PROPAGATION_NEVER:
+					return "PROPAGATION_NEVER";
+				case TransactionDefinition.PROPAGATION_NOT_SUPPORTED:
+					return "PROPAGATION_NOT_SUPPORTED";
+				case TransactionDefinition.PROPAGATION_REQUIRED:
+					return "PROPAGATION_REQUIRED";
+				case TransactionDefinition.PROPAGATION_REQUIRES_NEW:
+					return "PROPAGATION_REQUIRES_NEW";
+				case TransactionDefinition.PROPAGATION_SUPPORTS:
+					return "PROPAGATION_SUPPORTS";
+				}
+				return "UNKOWN";
+			}
         };
     }
 

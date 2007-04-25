@@ -416,7 +416,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
         else {
             processor = new CompositeProcessor<E>(answer);
         }
-        return wrapInTransactionInterceptor(processor);
+        return processor;
     }
 
     /**
@@ -435,13 +435,6 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport<E> implement
      */
     protected Processor<E> wrapInErrorHandler(Processor<E> processor) throws Exception {
         return getErrorHandlerBuilder().createErrorHandler(processor);
-    }
-
-    /**
-     * A strategy method which allows transaction interceptors to be applied to a processor
-     */
-    protected Processor<E> wrapInTransactionInterceptor(Processor<E> processor) throws Exception {
-        return getBuilder().getTransactionPolicy().wrap(processor);
     }
 
     /**

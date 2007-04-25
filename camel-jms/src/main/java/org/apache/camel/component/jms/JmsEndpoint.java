@@ -131,4 +131,5 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     public void setSelector(String selector) {
         this.selector = selector;
     }
+
 }

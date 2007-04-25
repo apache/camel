@@ -17,6 +17,13 @@
  */
 package org.apache.camel.component.mock;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -28,13 +35,6 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A Mock endpoint which provides a literate, fluent API for testing routes using
@@ -52,6 +52,26 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     private CountDownLatch latch;
     private long sleepForEmptyTest = 0L;
 	private int expectedMinimumCount=-1;
+
+    public static void assertWait(long timeout, TimeUnit unit, MockEndpoint... endpoints) throws InterruptedException {
+    	long start = System.currentTimeMillis();
+    	long left = unit.toMillis(timeout);
+    	long end = start + left;
+        for (MockEndpoint endpoint : endpoints) {
+			if( !endpoint.await(left, TimeUnit.MILLISECONDS) )
+	    		throw new AssertionError("Timeout waiting for endpoints to receive enough messages. "+endpoint.getEndpointUri()+" timed out.");
+			left = end - System.currentTimeMillis();
+			if( left <= 0 )
+				left = 0;
+        }
+    }
+
+    public static void assertIsSatisfied(long timeout, TimeUnit unit, MockEndpoint... endpoints) throws InterruptedException {
+    	assertWait(timeout, unit, endpoints);
+        for (MockEndpoint endpoint : endpoints) {
+            endpoint.assertIsSatisfied();
+        }
+    }
 
     public static void assertIsSatisfied(MockEndpoint... endpoints) throws InterruptedException {
         for (MockEndpoint endpoint : endpoints) {
@@ -94,7 +114,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     public void assertIsSatisfied() throws InterruptedException {
         assertIsSatisfied(sleepForEmptyTest);
     }
-
+    
     /**
      * Validates that all the available expectations on this endpoint are satisfied; or throw an exception
      */
@@ -321,5 +341,18 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
 
 	public int getExpectedMinimumCount() {
 		return expectedMinimumCount;
+	}
+
+	public void await() throws InterruptedException {
+		if( latch!=null ) {
+			latch.await();
+		}
+	}
+
+	public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
+		if( latch!=null ) {
+			return latch.await(timeout, unit);
+		}
+		return true;
 	}
 }
