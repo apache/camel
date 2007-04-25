@@ -51,7 +51,7 @@ public class QueueEndpointConsumer<E extends Exchange> extends ServiceSupport im
             catch (InterruptedException e) {
                 break;
             }
-            if (exchange != null) {
+            if (exchange != null && !isStopping()) {
                 try {
                     processor.process(exchange);
                 }

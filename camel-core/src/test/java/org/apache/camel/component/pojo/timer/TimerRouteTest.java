@@ -25,11 +25,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.pojo.PojoComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision: 520220 $
  */
 public class TimerRouteTest extends TestCase {
+    private static final transient Log log = LogFactory.getLog(TimerRouteTest.class);
 	
     public void testPojoRoutes() throws Exception {
 
@@ -40,7 +43,7 @@ public class TimerRouteTest extends TestCase {
         PojoComponent component = new PojoComponent();
         component.addService("bar", new Runnable(){
 			public void run() {
-		        System.out.println("hit");
+		        log.debug("hit");
 				hitCount.incrementAndGet();
 			}
         });
