@@ -373,7 +373,9 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: idempotent
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
-                from("queue:a").idempotentConsumer(header("myMessageId"), memoryMessageIdRepository()).to("queue:b");
+                from("queue:a").idempotentConsumer(
+                        header("myMessageId"), memoryMessageIdRepository(200)
+                ).to("queue:b");
             }
         };
         // END SNIPPET: idempotent
