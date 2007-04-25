@@ -20,9 +20,7 @@ package org.apache.camel.spring;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.springframework.context.ApplicationContext;
-import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * An extension of the {@link RouteBuilder} to provide some additional helper methods
@@ -31,20 +29,6 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public abstract class SpringRouteBuilder<E extends Exchange> extends RouteBuilder<E> {
     private ApplicationContext applicationContext;
-
-    /**
-     * Configures a transaction interceptor on routes created by this builder using the named spring bean
-     * for the {@link TransactionTemplate} to use for the transaction
-     *
-     * @param transactionTemplateName the name of the spring bean in the application context which is the
-     *                                {@link TransactionTemplate} to use
-     * @return this builder
-     */
-    public SpringRouteBuilder<E> transactionPolicy(String transactionTemplateName) {
-        TransactionTemplate template = bean(TransactionTemplate.class, transactionTemplateName);
-        setTransactionPolicy(new SpringTransactionPolicy(template));
-        return this;
-    }
 
     /**
      * Looks up the bean with the given name in the application context and returns it, or throws an exception if the

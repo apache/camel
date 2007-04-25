@@ -19,21 +19,13 @@ package org.apache.camel.builder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.io.IOException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.util.FactoryFinder;
-import org.apache.camel.util.NoFactoryAvailableException;
-import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.Injector;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.ReflectionInjector;
-import org.apache.camel.impl.NoPolicy;
 
 /**
  * A <a href="http://activemq.apache.org/camel/dsl.html">Java DSL</a>
@@ -45,7 +37,6 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     private List<FromBuilder<E>> fromBuilders = new ArrayList<FromBuilder<E>>();
     private AtomicBoolean initalized = new AtomicBoolean(false);
     private List<Route<E>> routes = new ArrayList<Route<E>>();
-    private Policy<E> transactionPolicy;
 
     protected RouteBuilder() {
         this(null);
@@ -94,17 +85,6 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
         return this;
     }
 
-    /**
-     * Specifies the transaction interceptor to be used for routes created from this builder
-     *
-     * @param interceptor the transaction interceptor to use
-     * @return the current builder
-     */
-    public RouteBuilder<E> transactionPolicy(Policy<E> interceptor) {
-        setTransactionPolicy(interceptor);
-        return this;
-    }
-
     // Properties
     //-----------------------------------------------------------------------
     public CamelContext getContext() {
@@ -130,20 +110,6 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     public List<FromBuilder<E>> getFromBuilders() throws Exception {
         checkInitialized();
         return fromBuilders;
-    }
-
-    public Policy<E> getTransactionPolicy() throws Exception {
-        if (transactionPolicy == null) {
-            transactionPolicy = createTransactionPolicy();
-        }
-        return transactionPolicy;
-    }
-
-    /**
-     * Sets the interceptor used wrap processors in a transaction
-     */
-    public void setTransactionPolicy(Policy<E> transactionInterceptor) {
-        this.transactionPolicy = transactionInterceptor;
     }
 
     // Implementation methods
@@ -183,20 +149,6 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
      */
     protected CamelContext createContainer() {
         return new DefaultCamelContext();
-    }
-
-    /**
-     * Factory method
-     */
-    protected Policy<E> createTransactionPolicy() throws Exception {
-        FactoryFinder finder = new FactoryFinder();
-        try {
-            return (Policy<E>) finder.newInstance("TransactionPolicy", getContext().getInjector());
-        }
-        catch (NoFactoryAvailableException e) {
-            // lets use the default
-            return new NoPolicy<E>();
-        }
     }
 
 }

@@ -18,13 +18,18 @@
 package org.apache.camel.component.jms;
 
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
+import static org.apache.camel.component.mock.MockEndpoint.assertWait;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.builder.ProcessorFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.DelegateProcessor;
@@ -57,26 +62,68 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 		        Policy notsupported = new SpringTransactionPolicy(bean(TransactionTemplate.class, "PROPAGATION_NOT_SUPPORTED"));
 		        Policy requirenew = new SpringTransactionPolicy(bean(TransactionTemplate.class, "PROPAGATION_REQUIRES_NEW"));
 
-		        DelegateProcessor rollback = new DelegateProcessor() {
-		        	@Override
-		        	public void process(Object exchange) {
-		        		processNext(exchange);
-		        		throw new RuntimeException("rollback");
-		        	}
+		        Policy rollback = new Policy() {
+					public Processor wrap(Processor processor) {
+						return new DelegateProcessor(processor) {
+				        	@Override
+				        	public void process(Object exchange) {
+				        		processNext(exchange);
+				        		throw new RuntimeException("rollback");
+				        	}
+				        	
+				        	@Override
+				        	public String toString() {
+				                return "rollback(" + next + ")";
+				        	}
+				        };
+					}
 		        };
-		        				
-		        // Used to verify that transacted sends will succeed.
-				from("activemq:queue:mock.a").trace().to("mock:a");      // Used to validate messages are sent to the target.
+		        
+		        Policy catchRollback = new Policy() {
+					public Processor wrap(Processor processor) {
+						return new DelegateProcessor(processor) {
+				        	@Override
+				        	public void process(Object exchange) {
+				        		try {
+				        			processNext(exchange);
+				        		} catch ( Throwable e ) {
+				        		}
+				        	}
+				        	@Override
+				        	public String toString() {
+				                return "catchRollback(" + next + ")";
+				        	}
+				        };
+					}
+		        };
+		        
+				// NOTE: ErrorHandler has to be disabled since it operates within the failed transaction.
+		        inheritErrorHandler(false);		        
+		        // Used to validate messages are sent to the target.
+				from("activemq:queue:mock.a").trace().to("mock:a");
 		        
 				// Receive from a and send to target in 1 tx.
-		        transactionPolicy("PROPAGATION_REQUIRED");
-				from("activemq:queue:a").trace().to("activemq:queue:mock.a");
+				from("activemq:queue:a").to("activemq:queue:mock.a");
 				
 				// Cause an error after processing the send.  The send to activemq:queue:mock.a should rollback 
 				// since it is participating in the inbound transaction, but mock:b does not participate so we should see the message get
 				// there.  Also, expect multiple inbound retries as the message is rolled back.
-				from("activemq:queue:b").inheritErrorHandler(false).trace().intercept(rollback).to("activemq:queue:mock.a", "mock:b"); 
+		        //transactionPolicy(requried);
+				from("activemq:queue:b").policy(rollback).to("activemq:queue:mock.a", "mock:b"); 
+				
+				// Cause an error after processing the send in a new transaction.  The send to activemq:queue:mock.a should rollback 
+				// since the rollback is within it's transaction, but mock:b does not participate so we should see the message get
+				// there.  Also, expect the message to be successfully consumed since the rollback error is not propagated.
+		        //transactionPolicy(requried);
+				from("activemq:queue:c").policy(catchRollback).policy(requirenew).policy(rollback).to("activemq:queue:mock.a", "mock:b");
+				
+				// Cause an error after processing the send in without a transaction.  The send to activemq:queue:mock.a should succeed. 
+				// Also, expect the message to be successfully consumed since the rollback error is not propagated.
+		        from("activemq:queue:d").policy(catchRollback).policy(notsupported).policy(rollback).to("activemq:queue:mock.a"); 
 
+//		        JmsEndpoint endpoint = (JmsEndpoint)endpoint("activemq:queue:e");
+//		        from(endpoint).policy(catchRollback).policy(notsupported).policy(rollback).to("activemq:queue:mock.a"); 
+				
 			}
 		};
 	}
@@ -95,40 +142,62 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        
+        for (Route route : this.context.getRoutes()) {
+    		System.out.println(route);
+		}
+        
         mockEndpointA = (MockEndpoint) resolveMandatoryEndpoint("mock:a");
         mockEndpointB = (MockEndpoint) resolveMandatoryEndpoint("mock:b");
     }
+    
+    @Override
+    protected void tearDown() throws Exception {
+    	super.tearDown();
+    	spring.destroy();
+    }
 
-	public void testReuqiredSend() throws Exception {
+	public void testSenarioA() throws Exception {
 		String expected = getName()+": "+System.currentTimeMillis();
         mockEndpointA.expectedBodiesReceived(expected);
         send("activemq:queue:a", expected);
         assertIsSatisfied(mockEndpointA);
 	}
 
-	public void testRequiredSendAndRollback() throws Exception {
+	public void testSenarioB() throws Exception {
 		String expected = getName()+": "+System.currentTimeMillis();
-        mockEndpointA.expectedMessageCount(0);
-        mockEndpointB.expectedMinimumMessageCount(5); // May be more since spring seems to go into tight loop redelivering.
+		mockEndpointA.expectedMessageCount(0);
+        mockEndpointB.expectedMinimumMessageCount(2); // May be more since spring seems to go into tight loop re-delivering.
         send("activemq:queue:b", expected);
-        assertIsSatisfied(mockEndpointA,mockEndpointB);
-        int t = mockEndpointB.getReceivedCounter();
-        System.out.println("Actual Deliveries: "+t);
+        assertIsSatisfied(5, TimeUnit.SECONDS, mockEndpointA,mockEndpointB);
 	}
 
-	/** 
-	 * Validates that the send was done in a new transaction.  Message should be consumed from A,
-	 * But
-	 * 
-	 * @throws Exception
-	 */
-	public void xtestSendRequireNewAndRollack() throws Exception {
+	public void testSenarioC() throws Exception {
 		String expected = getName()+": "+System.currentTimeMillis();
-        mockEndpointA.expectedMessageCount(0);
+		mockEndpointA.expectedMessageCount(0);
+        mockEndpointB.expectedMessageCount(1); // Should only get 1 message the incoming transaction does not rollback.
+        send("activemq:queue:c", expected);
 
-        send("activemq:queue:a", expected);
+        // Wait till the endpoints get their messages.
+        assertWait(5, TimeUnit.SECONDS, mockEndpointA,mockEndpointB);
 
+        // Wait a little more to make sure extra messages are not received.
+        Thread.sleep(1000);
+        
+        assertIsSatisfied(mockEndpointA,mockEndpointB);
+	}
+
+	public void testSenarioD() throws Exception {
+		String expected = getName()+": "+System.currentTimeMillis();
+		mockEndpointA.expectedMessageCount(1);
+        send("activemq:queue:d", expected);
+
+        // Wait till the endpoints get their messages.
+        assertWait(5, TimeUnit.SECONDS, mockEndpointA,mockEndpointB);
+
+        // Wait a little more to make sure extra messages are not received.
+        Thread.sleep(1000);
+        
         assertIsSatisfied(mockEndpointA);
 	}
-
 }
