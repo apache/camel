@@ -18,8 +18,8 @@
 package org.apache.camel;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.ExchangeConverter;
+import org.apache.camel.spi.Injector;
 
 import java.util.Collection;
 import java.util.List;
@@ -80,19 +80,44 @@ public interface CamelContext extends Service {
 
     // Route Management Methods
     //-----------------------------------------------------------------------
+
+    /**
+     * Returns the current routes in this context
+     *
+     * @return the current routes in this context
+     */
     List<Route> getRoutes();
 
+    /**
+     * Sets the routes for this context, replacing any current routes
+     *
+     * @param routes the new routes to use
+     */
     void setRoutes(List<Route> routes);
 
-    void addRoutes(List<Route> routes);
+    /**
+     * Adds a collection of routes to this context
+     *
+     * @param routes the routes to add
+     */
+    void addRoutes(Collection<Route> routes);
 
+    /**
+     * Adds a collection of routes to this context using the given builder
+     * to build them
+     *
+     * @param builder the builder which will create the routes and add them to this context
+     * @throws Exception if the routes could not be created for whatever reason
+     */
     void addRoutes(RouteBuilder builder) throws Exception;
 
-    void addRoutes(RouteFactory factory) throws Exception;
-
-    
     // Properties
     //-----------------------------------------------------------------------
+
+    /**
+     * Returns the converter of exchanges from one type to another
+     * @return
+     */
     ExchangeConverter getExchangeConverter();
 
     /**

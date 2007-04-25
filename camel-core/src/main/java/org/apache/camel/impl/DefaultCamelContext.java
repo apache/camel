@@ -17,26 +17,7 @@
  */
 package org.apache.camel.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.Route;
-import org.apache.camel.RouteFactory;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Service;
-import org.apache.camel.TypeConverter;
+import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.spi.ComponentResolver;
@@ -46,6 +27,14 @@ import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -208,7 +197,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.routes = routes;
     }
 
-    public void addRoutes(List<Route> routes) {
+    public void addRoutes(Collection<Route> routes) {
         if (this.routes == null) {
             this.routes = new ArrayList<Route>(routes);
         }
@@ -221,15 +210,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         // lets now add the routes from the builder
         builder.setContext(this);
         addRoutes(builder.getRouteList());
-    }
-
-    public void addRoutes(final RouteFactory factory) throws Exception {
-        RouteBuilder builder = new RouteBuilder(this) {
-            public void configure() {
-                factory.build(this);
-            }
-        };
-        addRoutes(builder);
     }
 
     // Properties

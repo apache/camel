@@ -21,8 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A route defines the processing used on an inbound message exchange
- * from a specific {@see Endpoint}
+ * A <a href="http://activemq.apache.org/camel/routes.html">Route</a>
+ * defines the processing used on an inbound message exchange
+ * from a specific {@see Endpoint} within a {@link CamelContext}
  * 
  * @version $Revision$
  */

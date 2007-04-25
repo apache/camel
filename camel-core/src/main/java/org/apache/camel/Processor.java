@@ -17,8 +17,11 @@
 package org.apache.camel;
 
 /**
- * Implements the <a href="http://activemq.apache.org/camel/event-driven-consumer.html">Event Driven Consumer</a>
- * pattern to process message exchanges
+ * A <a href="http://activemq.apache.org/camel/processor.html">processor</a>
+ * is used to implement the
+ * <a href="http://activemq.apache.org/camel/event-driven-consumer.html">Event Driven Consumer</a>
+ * and <a href="http://activemq.apache.org/camel/message-transformer.html">Message Transformer</a>
+ * patterns and to process message exchanges.
  *
  * @version $Revision$
  */

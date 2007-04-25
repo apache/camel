@@ -18,7 +18,7 @@
 -->
 
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -81,7 +81,7 @@
         </executions>
       </plugin>
 
-           <plugin>
+      <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <childDelegation>false</childDelegation>
@@ -92,6 +92,47 @@
           <excludes>
             <exclude>**/PojoRouteTest.*</exclude>
           </excludes>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <groups>
+            <group>
+              <title>Camel API</title>
+              <packages>org.apache.camel</packages>
+            </group>
+            <group>
+              <title>Fluent API for building routes</title>
+              <packages>org.apache.camel.builder:org.apache.camel.builder.*</packages>
+            </group>
+            <group>
+              <title>Strategy APIs for implementors to extend Camel</title>
+              <packages>org.apache.camel.spi</packages>
+            </group>
+            <group>
+              <title>Processors to implement the Enterprise Integration Patterns</title>
+              <packages>org.apache.camel.processor:org.apache.camel.processor.*</packages>
+            </group>
+            <group>
+              <title>Camel Components</title>
+              <packages>org.apache.camel.component.*</packages>
+            </group>
+            <group>
+              <title>Camel Runtime</title>
+              <packages>org.apache.camel.impl:org.apache.camel.impl.*</packages>
+            </group>
+            <group>
+              <title>Type conversion helper classes</title>
+              <packages>org.apache.camel.converter:org.apache.camel.converter.*</packages>
+            </group>
+            <group>
+              <title>Utility classes for component implementors</title>
+              <packages>org.apache.camel.util:org.apache.camel.view</packages>
+            </group>
+          </groups>
         </configuration>
       </plugin>
     </plugins>
