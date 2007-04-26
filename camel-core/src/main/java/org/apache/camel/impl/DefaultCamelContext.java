@@ -17,6 +17,8 @@
  */
 package org.apache.camel.impl;
 
+import static org.apache.camel.util.ServiceHelper.stopServices;
+import static org.apache.camel.util.ServiceHelper.startServices;
 import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
@@ -78,7 +80,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 					if( isStarted() ) {
 						// If the component is looked up after the context is started,
 						// lets start it up.
-						ServiceHelper.startServices(component);
+						startServices(component);
 					}
 				} catch (Exception e) {
 					throw new RuntimeCamelException("Could not auto create component: "+name, e);
@@ -137,6 +139,26 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
+    public Endpoint addEndpoint(String uri, Endpoint endpoint) throws Exception {
+        Endpoint oldEndpoint;
+        synchronized (endpoints) {
+            startServices(endpoint);
+            oldEndpoint = endpoints.remove(uri);
+            endpoints.put(uri, endpoint);
+            stopServices(oldEndpoint);
+        }
+        return oldEndpoint;
+    }
+
+    public Endpoint removeEndpoint(String uri) throws Exception {
+        Endpoint oldEndpoint;
+        synchronized (endpoints) {
+            oldEndpoint = endpoints.remove(uri);
+            stopServices(oldEndpoint);
+        }
+        return oldEndpoint;
+    }
+
     /**
      * Resolves the given URI to an endpoint
      */
@@ -164,7 +186,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     // HC: What's the idea behind starting an endpoint?
                     // I don't think we have any endpoints that are services do we?
                     if (answer != null) {
-                        ServiceHelper.startServices(answer);
+                        startServices(answer);
                         endpoints.put(uri, answer);
                     }
                 }
@@ -280,7 +302,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(servicesToClose);
+        stopServices(servicesToClose);
     }
 
     /**
