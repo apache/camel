@@ -79,4 +79,9 @@ public class JbiEndpoint extends DefaultEndpoint<Exchange> {
     public JbiBinding getBinding() {
         return jbiComponent.getBinding();
     }
+    
+	public boolean isSingleton() {
+		return true;
+	}
+
 }

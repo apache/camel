@@ -100,7 +100,7 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Exc
         URI uri = new URI(ep.getEndpointName());
         Map map = URISupport.parseQuery(uri.getQuery());
         String camelUri = uri.getSchemeSpecificPart();
-        Endpoint camelEndpoint = getCamelContext().resolveEndpoint(camelUri);
+        Endpoint camelEndpoint = getCamelContext().getEndpoint(camelUri);
         Processor<Exchange> processor = null;
         try {
             processor = camelEndpoint.createProducer();

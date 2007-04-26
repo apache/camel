@@ -92,7 +92,7 @@ public class CamelClient<E extends Exchange> extends ServiceSupport {
     }
 
     protected Endpoint resolveMandatoryEndpoint(String endpointUri) {
-        Endpoint endpoint = context.resolveEndpoint(endpointUri);
+        Endpoint endpoint = context.getEndpoint(endpointUri);
         if (endpoint == null) {
             throw new NoSuchEndpointException(endpointUri);
         }

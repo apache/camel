@@ -27,13 +27,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class UriConfigurationTest extends TestCase {
     protected CamelContext context = new DefaultCamelContext();
 
     public void testPrivateChatConfiguration() throws Exception {
-        Endpoint endpoint = context.resolveEndpoint("xmpp://camel-user@localhost:123/test-user@localhost");
+        Endpoint endpoint = context.getEndpoint("xmpp://camel-user@localhost:123/test-user@localhost");
         assertTrue("Endpoint not an XmppEndpoint: " + endpoint, endpoint instanceof XmppEndpoint);
         XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
 
@@ -45,7 +45,7 @@ public class UriConfigurationTest extends TestCase {
     }
 
     public void testGroupChatConfiguration() throws Exception {
-        Endpoint endpoint = context.resolveEndpoint("xmpp://camel-user@im.google.com:123?room=cheese");
+        Endpoint endpoint = context.getEndpoint("xmpp://camel-user@im.google.com:123?room=cheese");
         assertTrue("Endpoint not an XmppEndpoint: " + endpoint, endpoint instanceof XmppEndpoint);
         XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
 

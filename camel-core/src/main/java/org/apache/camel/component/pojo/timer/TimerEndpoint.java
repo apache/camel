@@ -119,4 +119,8 @@ public class TimerEndpoint extends DefaultEndpoint<PojoExchange> {
 		this.time = time;
 	}
 
+	public boolean isSingleton() {
+		return true;
+	}
+
 }

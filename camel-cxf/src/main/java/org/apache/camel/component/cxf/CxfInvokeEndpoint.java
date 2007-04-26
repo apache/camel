@@ -89,4 +89,9 @@ public class CxfInvokeEndpoint extends DefaultEndpoint<CxfExchange> {
     public Bus getBus() {
         return component.getBus();
     }
+    
+	public boolean isSingleton() {
+		return true;
+	}
+
 }

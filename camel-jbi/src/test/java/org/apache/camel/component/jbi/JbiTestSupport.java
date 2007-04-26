@@ -101,7 +101,7 @@ public abstract class JbiTestSupport extends TestSupport {
 
         // lets add some routes
         camelContext.addRoutes(createRoutes());
-        endpoint = camelContext.resolveEndpoint(startEndpointUri);
+        endpoint = camelContext.getEndpoint(startEndpointUri);
         assertNotNull("No endpoint found!", endpoint);
 
         camelContext.start();

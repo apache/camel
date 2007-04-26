@@ -68,7 +68,7 @@ public class MulticastTest extends ContextTestSupport {
             }
         };
 
-        return new RouteBuilder<Exchange>() {
+        return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
                 from("direct:a").to("direct:x", "direct:y", "direct:z");

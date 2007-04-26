@@ -154,7 +154,7 @@ public class ErrorHandlerTest extends TestSupport {
     public void testDisablingInheritenceOfErrorHandlers() throws Exception {
 
         // START SNIPPET: e5
-        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+        RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 inheritErrorHandler(false);
 
@@ -163,7 +163,7 @@ public class ErrorHandlerTest extends TestSupport {
         };
         // END SNIPPET: e5
 
-        List<Route<Exchange>> routes = builder.getRouteList();
+        List<Route> routes = builder.getRouteList();
         assertEquals("Number routes created", 1, routes.size());
         for (Route<Exchange> route : routes) {
             Endpoint<Exchange> key = route.getEndpoint();

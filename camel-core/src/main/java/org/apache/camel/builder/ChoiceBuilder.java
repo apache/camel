@@ -16,25 +16,24 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.Exchange;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @version $Revision$
  */
-public class ChoiceBuilder<E extends Exchange> extends FromBuilder<E> {
+public class ChoiceBuilder extends FromBuilder {
 
-    private final FromBuilder<E> parent;
-    private List<WhenBuilder<E>> predicateBuilders = new ArrayList<WhenBuilder<E>>();
-    private FromBuilder<E> otherwise;
+    private final FromBuilder parent;
+    private List<WhenBuilder> predicateBuilders = new ArrayList<WhenBuilder>();
+    private FromBuilder otherwise;
 
-    public ChoiceBuilder(FromBuilder<E> parent) {
+    public ChoiceBuilder(FromBuilder parent) {
         super(parent);
         this.parent = parent;
     }
@@ -45,38 +44,38 @@ public class ChoiceBuilder<E extends Exchange> extends FromBuilder<E> {
      * @return a builder for creating a when predicate clause and action
      */
     @Fluent(nestedActions=true)
-    public WhenBuilder<E> when(
+    public WhenBuilder when(
     		@FluentArg(value="predicate",element=true) 
-    		Predicate<E> predicate) {
-        WhenBuilder<E> answer = new WhenBuilder<E>(this, predicate);
+    		Predicate predicate) {
+        WhenBuilder answer = new WhenBuilder(this, predicate);
         predicateBuilders.add(answer);
         return answer;
     }
 
     @Fluent(nestedActions=true)
-    public FromBuilder<E> otherwise() {
-        this.otherwise = new FromBuilder<E>(parent);
+    public FromBuilder otherwise() {
+        this.otherwise = new FromBuilder(parent);
         return otherwise;
     }
 
-    public List<WhenBuilder<E>> getPredicateBuilders() {
+    public List<WhenBuilder> getPredicateBuilders() {
         return predicateBuilders;
     }
 
-    public FromBuilder<E> getOtherwise() {
+    public FromBuilder getOtherwise() {
         return otherwise;
     }
 
     @Override
-    public Processor<E> createProcessor() throws Exception {
-        List<FilterProcessor<E>> filters = new ArrayList<FilterProcessor<E>>();
-        for (WhenBuilder<E> predicateBuilder : predicateBuilders) {
+    public Processor createProcessor() throws Exception {
+        List<FilterProcessor> filters = new ArrayList<FilterProcessor>();
+        for (WhenBuilder predicateBuilder : predicateBuilders) {
             filters.add(predicateBuilder.createProcessor());
         }
-        Processor<E> otherwiseProcessor = null;
+        Processor otherwiseProcessor = null;
         if (otherwise != null) {
             otherwiseProcessor = otherwise.createProcessor();
         }
-        return new ChoiceProcessor<E>(filters, otherwiseProcessor);
+        return new ChoiceProcessor(filters, otherwiseProcessor);
     }
 }

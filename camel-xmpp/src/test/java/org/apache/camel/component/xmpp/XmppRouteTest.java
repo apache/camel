@@ -129,7 +129,7 @@ public class XmppRouteTest extends TestCase {
                     });
                 }
             });
-            endpoint = container.resolveEndpoint(uri1);
+            endpoint = container.getEndpoint(uri1);
             assertNotNull("No endpoint found!", endpoint);
         }
 

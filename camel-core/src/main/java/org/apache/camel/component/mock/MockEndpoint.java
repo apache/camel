@@ -355,4 +355,9 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
 		}
 		return true;
 	}
+	
+	public boolean isSingleton() {
+		return true;
+	}
+	
 }

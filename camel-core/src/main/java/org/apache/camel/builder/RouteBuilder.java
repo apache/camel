@@ -33,10 +33,10 @@ import org.apache.camel.impl.DefaultCamelContext;
  *
  * @version $Revision$
  */
-public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E> {
-    private List<FromBuilder<E>> fromBuilders = new ArrayList<FromBuilder<E>>();
+public abstract class RouteBuilder extends BuilderSupport {
+    private List<FromBuilder> fromBuilders = new ArrayList<FromBuilder>();
     private AtomicBoolean initalized = new AtomicBoolean(false);
-    private List<Route<E>> routes = new ArrayList<Route<E>>();
+    private List<Route> routes = new ArrayList<Route>();
 
     protected RouteBuilder() {
         this(null);
@@ -52,13 +52,13 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     public abstract void configure();
 
     @Fluent
-    public FromBuilder<E> from( @FluentArg("uri") String uri) {
+    public FromBuilder from( @FluentArg("uri") String uri) {
         return from(endpoint(uri));
     }
 
     @Fluent
-    public FromBuilder<E> from( @FluentArg("endpoint") Endpoint<E> endpoint) {
-        FromBuilder<E> answer = new FromBuilder<E>(this, endpoint);
+    public FromBuilder from( @FluentArg("endpoint") Endpoint endpoint) {
+        FromBuilder answer = new FromBuilder(this, endpoint);
         fromBuilders.add(answer);
         return answer;
     }
@@ -69,7 +69,7 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
      * @param errorHandlerBuilder the error handler to be used by default for all child routes
      * @return the current builder with the error handler configured
      */
-    public RouteBuilder<E> errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
+    public RouteBuilder errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
         setErrorHandlerBuilder(errorHandlerBuilder);
         return this;
     }
@@ -80,7 +80,7 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
      * @param value the flag as to whether error handlers should be inherited or not
      * @return the current builder
      */
-    public RouteBuilder<E> inheritErrorHandler(boolean value) {
+    public RouteBuilder inheritErrorHandler(boolean value) {
         setInheritErrorHandler(value);
         return this;
     }
@@ -99,7 +99,7 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     /**
      * Returns the routing map from inbound endpoints to processors
      */
-    public List<Route<E>> getRouteList() throws Exception {
+    public List<Route> getRouteList() throws Exception {
         checkInitialized();
         return routes;
     }
@@ -107,7 +107,7 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
     /**
      * Returns the builders which have been created
      */
-    public List<FromBuilder<E>> getFromBuilders() throws Exception {
+    public List<FromBuilder> getFromBuilders() throws Exception {
         checkInitialized();
         return fromBuilders;
     }
@@ -121,14 +121,14 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
         }
     }
 
-    protected void populateRoutes(List<Route<E>> routes) throws Exception {
-        for (FromBuilder<E> builder : fromBuilders) {
-            Endpoint<E> from = builder.getFrom();
-            Processor<E> processor = makeProcessor(from, builder);
+    protected void populateRoutes(List<Route> routes) throws Exception {
+        for (FromBuilder builder : fromBuilders) {
+            Endpoint from = builder.getFrom();
+            Processor processor = makeProcessor(from, builder);
             if (processor == null) {
                 throw new IllegalArgumentException("No processor created for DestinationBuilder: " + builder);
             }
-            routes.add(new Route<E>(from, processor));
+            routes.add(new Route(from, processor));
         }
     }
 
@@ -140,7 +140,7 @@ public abstract class RouteBuilder<E extends Exchange> extends BuilderSupport<E>
      * @param builder the builder which is the factory of the processor
      * @return
      */
-    protected Processor<E> makeProcessor(Endpoint<E> from, FromBuilder<E> builder) throws Exception {
+    protected Processor makeProcessor(Endpoint from, FromBuilder builder) throws Exception {
         return builder.createProcessor();
     }
 

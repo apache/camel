@@ -92,5 +92,8 @@ public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
 		this.allowMultipleConsumers = allowMutlipleConsumers;
 	}
 
+	public boolean isSingleton() {
+		return true;
+	}
 
 }

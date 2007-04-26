@@ -71,4 +71,9 @@ public class HttpEndpoint extends DefaultEndpoint<HttpExchange> {
     public void setBinding(HttpBinding binding) {
         this.binding = binding;
     }
+    
+	public boolean isSingleton() {
+		return true;
+	}
+
 }

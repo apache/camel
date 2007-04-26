@@ -58,7 +58,7 @@ public class QueueRouteTest extends TestCase {
         container.start();
         
         // now lets fire in a message
-        Endpoint<Exchange> endpoint = container.resolveEndpoint("queue:test.a");
+        Endpoint<Exchange> endpoint = container.getEndpoint("queue:test.a");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader("cheese", 123);
 

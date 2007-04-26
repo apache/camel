@@ -17,18 +17,8 @@
  */
 package org.apache.camel.impl;
 
-import static org.apache.camel.util.ServiceHelper.stopServices;
 import static org.apache.camel.util.ServiceHelper.startServices;
-import org.apache.camel.*;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.spi.ComponentResolver;
-import org.apache.camel.spi.ExchangeConverter;
-import org.apache.camel.spi.Injector;
-import org.apache.camel.util.FactoryFinder;
-import org.apache.camel.util.NoFactoryAvailableException;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import static org.apache.camel.util.ServiceHelper.stopServices;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,6 +27,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Service;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.ExchangeConverter;
+import org.apache.camel.spi.Injector;
+import org.apache.camel.util.FactoryFinder;
+import org.apache.camel.util.NoFactoryAvailableException;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -133,13 +143,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     // Endpoint Management Methods
     //-----------------------------------------------------------------------
 
-    public Collection<Endpoint> getEndpoints() {
+    public Collection<Endpoint> getSingletonEndpoints() {
         synchronized (endpoints) {
             return new ArrayList<Endpoint>(endpoints.values());
         }
     }
 
-    public Endpoint addEndpoint(String uri, Endpoint endpoint) throws Exception {
+    public Endpoint addSingletonEndpoint(String uri, Endpoint endpoint) throws Exception {
         Endpoint oldEndpoint;
         synchronized (endpoints) {
             startServices(endpoint);
@@ -150,7 +160,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return oldEndpoint;
     }
 
-    public Endpoint removeEndpoint(String uri) throws Exception {
+    public Endpoint removeSingletonEndpoint(String uri) throws Exception {
         Endpoint oldEndpoint;
         synchronized (endpoints) {
             oldEndpoint = endpoints.remove(uri);
@@ -162,7 +172,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     /**
      * Resolves the given URI to an endpoint
      */
-    public Endpoint resolveEndpoint(String uri) {
+    public Endpoint getEndpoint(String uri) {
         Endpoint answer;
         synchronized (endpoints) {
             answer = endpoints.get(uri);
@@ -194,17 +204,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     throw new ResolveEndpointFailedException(uri, e);
                 }
             }
-        }
-        return answer;
-    }
-
-    /**
-     * Looks up the current active endpoint by URI without auto-creating it.
-     */
-    public Endpoint getEndpoint(String uri) {
-        Endpoint answer;
-        synchronized (endpoints) {
-            answer = endpoints.get(uri);
         }
         return answer;
     }

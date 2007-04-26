@@ -68,14 +68,36 @@ public interface CamelContext extends Service {
     //-----------------------------------------------------------------------
 
     /**
-     * Resolves the given URI to an endpoint
+     * Resolves the given URI to an {@see Endpoint}.  If the URI has a singleton endpoint
+     * registered, then the singleton is returned.  Otherwise, a new {@see Endpoint} is created
+     * and auto registered as a singleton if it is a singleton endpoint.
      */
-    Endpoint resolveEndpoint(String uri);
+    Endpoint getEndpoint(String uri);
 
     /**
-     * Returns the collection of all active endpoints currently registered
+     * Returns the collection of all registered singleton endpoints.
      */
-    Collection<Endpoint> getEndpoints();
+    Collection<Endpoint> getSingletonEndpoints();
+
+    /**
+     * Adds the endpoint to the context using the given URI.  The endpoint will be registered as a singleton.
+     *
+     * @param uri the URI to be used to resolve this endpoint
+     * @param endpoint the endpoint to be added to the context
+     * @return the old endpoint that was previously registered to the context if there was
+     * already an endpoint for that URI
+     * @throws Exception if the new endpoint could not be started or the old endpoint could not be stopped
+     */
+    Endpoint addSingletonEndpoint(String uri, Endpoint endpoint) throws Exception;
+
+    /**
+     * Removes the singleton endpoint with the given URI
+     *
+     * @param uri the URI to be used to remove
+     * @return the endpoint that was removed or null if there is no endpoint for this URI
+     * @throws Exception if endpoint could not be stopped
+     */
+    Endpoint removeSingletonEndpoint(String uri) throws Exception;
 
 
     // Route Management Methods
@@ -130,23 +152,4 @@ public interface CamelContext extends Service {
      */
     Injector getInjector();
 
-    /**
-     * Adds the endpoint to the context using the given URI
-     *
-     * @param uri the URI to be used to resolve this endpoint
-     * @param endpoint the endpoint to be added to the context
-     * @return the old endpoint that was previously registered to the context if there was
-     * already an endpoint for that URI
-     * @throws Exception if the new endpoint could not be started or the old endpoint could not be stopped
-     */
-    Endpoint addEndpoint(String uri, Endpoint endpoint) throws Exception;
-
-    /**
-     * Removes the endpoint with the given URI
-     *
-     * @param uri the URI to be used to remove
-     * @return the endpoint that was removed or null if there is no endpoint for this URI
-     * @throws Exception if endpoint could not be stopped
-     */
-    Endpoint removeEndpoint(String uri) throws Exception;
 }

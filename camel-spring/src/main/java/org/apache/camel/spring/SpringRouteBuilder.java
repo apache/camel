@@ -27,7 +27,7 @@ import org.springframework.context.ApplicationContext;
  *
  * @version $Revision: 1.1 $
  */
-public abstract class SpringRouteBuilder<E extends Exchange> extends RouteBuilder<E> {
+public abstract class SpringRouteBuilder extends RouteBuilder {
     private ApplicationContext applicationContext;
 
     /**

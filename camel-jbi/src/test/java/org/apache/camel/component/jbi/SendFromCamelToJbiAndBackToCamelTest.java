@@ -38,7 +38,7 @@ public class SendFromCamelToJbiAndBackToCamelTest extends JbiTestSupport {
     public void testCamelInvokingJbi() throws Exception {
         senderComponent.sendMessages(1);
 
-        QueueEndpoint receiverEndpoint = (QueueEndpoint) camelContext.resolveEndpoint("queue:receiver");
+        QueueEndpoint receiverEndpoint = (QueueEndpoint) camelContext.getEndpoint("queue:receiver");
 
         BlockingQueue<Exchange> queue = receiverEndpoint.getQueue();
         Exchange exchange = queue.poll(5, TimeUnit.SECONDS);
