@@ -73,4 +73,8 @@ public class ProcessorEndpoint extends DefaultEndpoint<Exchange> {
         // now lets output to the load balancer
         loadBalancer.process(exchange);
     }
+
+	public boolean isSingleton() {
+		return true;
+	}
 }

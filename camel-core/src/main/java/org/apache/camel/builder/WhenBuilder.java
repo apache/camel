@@ -18,30 +18,29 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 
 /**
  * @version $Revision$
  */
-public class WhenBuilder<E extends Exchange> extends FilterBuilder<E> {
-    private final ChoiceBuilder<E> parent;
+public class WhenBuilder extends FilterBuilder {
+    private final ChoiceBuilder parent;
 
-    public WhenBuilder(ChoiceBuilder<E> parent, Predicate<E> predicate) {
+    public WhenBuilder(ChoiceBuilder parent, Predicate predicate) {
         super(parent, predicate);
         this.parent = parent;
     }
 
     @Override
     @Fluent
-    public ChoiceBuilder<E> to(@FluentArg("endpoint") Endpoint<E> endpoint) {
+    public ChoiceBuilder to(@FluentArg("endpoint") Endpoint endpoint) {
         super.to(endpoint);
         return parent;
     }
 
     @Override
     @Fluent
-    public ChoiceBuilder<E> to(@FluentArg("uri")  String uri) {
+    public ChoiceBuilder to(@FluentArg("uri")  String uri) {
         super.to(uri);
         return parent;
     }

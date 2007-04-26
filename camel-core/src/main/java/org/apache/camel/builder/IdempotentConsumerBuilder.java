@@ -32,7 +32,7 @@ public class IdempotentConsumerBuilder<E extends Exchange> extends FromBuilder<E
     private final Expression<E> messageIdExpression;
     private final MessageIdRepository messageIdRegistry;
 
-    public IdempotentConsumerBuilder(FromBuilder<E> fromBuilder, Expression<E> messageIdExpression, MessageIdRepository messageIdRegistry) {
+    public IdempotentConsumerBuilder(FromBuilder fromBuilder, Expression messageIdExpression, MessageIdRepository messageIdRegistry) {
         super(fromBuilder);
         this.messageIdRegistry = messageIdRegistry;
         this.messageIdExpression = messageIdExpression;
@@ -47,13 +47,13 @@ public class IdempotentConsumerBuilder<E extends Exchange> extends FromBuilder<E
     // Implementation methods
     //-------------------------------------------------------------------------
     @Override
-    protected Processor<E> wrapInErrorHandler(Processor<E> processor) throws Exception {
+    protected Processor wrapInErrorHandler(Processor processor) throws Exception {
         // lets do no wrapping in error handlers as the parent FromBuilder will do that
         return processor;
     }
 
     @Override
-    protected Processor<E> wrapProcessor(Processor<E> processor) {
-        return new IdempotentConsumer<E>(messageIdExpression, messageIdRegistry, processor);
+    protected Processor wrapProcessor(Processor processor) {
+        return new IdempotentConsumer(messageIdExpression, messageIdRegistry, processor);
     }
 }

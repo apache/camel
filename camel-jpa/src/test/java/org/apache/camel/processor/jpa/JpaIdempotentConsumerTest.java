@@ -17,16 +17,15 @@
  */
 package org.apache.camel.processor.jpa;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import static org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository.jpaMessageIdRepository;
+
 import org.apache.camel.CamelContext;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.IdempotentConsumerTest;
-import static org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository.jpaMessageIdRepository;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.spring.SpringRouteBuilder;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.jpa.JpaTemplate;
 
 /**
@@ -44,7 +43,7 @@ public class JpaIdempotentConsumerTest extends IdempotentConsumerTest {
     @Override
     protected RouteBuilder createRouteBuilder() {
         // START SNIPPET: idempotent
-        return new SpringRouteBuilder<Exchange>() {
+        return new SpringRouteBuilder() {
             public void configure() {
                 from("direct:start").idempotentConsumer(
                         header("messageId"),

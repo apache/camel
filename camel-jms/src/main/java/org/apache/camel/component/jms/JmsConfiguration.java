@@ -42,48 +42,48 @@ import javax.jms.ExceptionListener;
 public class JmsConfiguration implements Cloneable {
     protected static final String TRANSACTED = "TRANSACTED";
     protected static final String CLIENT_ACKNOWLEDGE = "CLIENT_ACKNOWLEDGE";
-    
+
+    // General Setting used for both the JmsTemplate and JMS Container
     private ConnectionFactory connectionFactory;
-    private ConnectionFactory producerConnectionFactory;
+	private int acknowledgementMode=-1;
+    private String acknowledgementModeName;
+    
+    // Used to configure the spring Container
+    private ExceptionListener exceptionListener;
     private ConsumerType consumerType = ConsumerType.Default;
-    private boolean useVersion102;
     private boolean autoStartup;
     private boolean acceptMessagesWhileStopping;
-    private String consumerClientId;
+    private String clientId;
     private String durableSubscriptionName;
-    private ExceptionListener exceptionListener;
-    private String producerAcknowledgementMode = TRANSACTED;
     private boolean subscriptionDurable;
-    private String consumerAcknowledgementMode = TRANSACTED;
     private boolean exposeListenerSession;
-    // not used for ServerSessionMessageListenerContainer 
     private TaskExecutor taskExecutor;
-    // SimpleMessageListenerContainer only
     private boolean pubSubNoLocal;
-    // not used for ServerSessionMessageListenerContainer
     private int concurrentConsumers = -1;
-    // not used for SimpleMessageListenerContainer
     private int maxMessagesPerTask = -1;
-    // ServerSessionMessageListenerContainer only
     private ServerSessionFactory serverSessionFactory;
-    //  DefaultMessageListenerContainer only
     private int cacheLevel = -1;
-    private String cacheName;
+    private String cacheLevelName;
     private long recoveryInterval = -1;
     private long receiveTimeout = -1;
-    private PlatformTransactionManager transactionManager;
-    private String transactionName;
-    private int transactionTimeout = -1;
     private int idleTaskExecutionLimit = -1;
     private int maxConcurrentConsumers = -1;
+    
     // JmsTemplate only
+    private boolean useVersion102;
     private boolean explicitQosEnabled;
     private boolean deliveryPersistent = true;
     private long timeToLive = -1;
     private MessageConverter messageConverter;
     private boolean messageIdEnabled = true;
     private boolean messageTimestampEnabled;
-    private int priority = -1;
+    private int priority = -1;     
+	
+	// Transaction related configuration
+	private boolean transacted;
+    private PlatformTransactionManager transactionManager;
+    private String transactionName;
+    private int transactionTimeout = -1;
 
     public JmsConfiguration() {
     }
@@ -106,8 +106,8 @@ public class JmsConfiguration implements Cloneable {
 
     public JmsOperations createJmsOperations(boolean pubSubDomain, String destination) {
         JmsTemplate template = useVersion102
-                ? new JmsTemplate102(getProducerConnectionFactory(), pubSubDomain)
-                : new JmsTemplate(getProducerConnectionFactory());
+                ? new JmsTemplate102(getConnectionFactory(), pubSubDomain)
+                : new JmsTemplate(getConnectionFactory());
         template.setPubSubDomain(pubSubDomain);
         template.setDefaultDestinationName(destination);
 
@@ -129,11 +129,13 @@ public class JmsConfiguration implements Cloneable {
             template.setTimeToLive(timeToLive);
         }
 
-        boolean transacted = TRANSACTED.equals(producerAcknowledgementMode);
-        template.setSessionTransacted(transacted);
-        if (!transacted) {
-            // TODO not sure if Spring can handle TRANSACTED as an ack mode
-            template.setSessionAcknowledgeModeName(producerAcknowledgementMode);
+        template.setSessionTransacted( transacted );
+        
+        // This is here for completeness, but the template should not get used for receiving messages.
+        if( acknowledgementMode >= 0 ) {
+        	template.setSessionAcknowledgeMode(acknowledgementMode);
+        } else if( acknowledgementModeName!= null ) {
+        	template.setSessionAcknowledgeModeName(acknowledgementModeName);
         }
         return template;
     }
@@ -149,8 +151,8 @@ public class JmsConfiguration implements Cloneable {
         if (autoStartup) {
             container.setAutoStartup(true);
         }
-        if (consumerClientId != null) {
-            container.setClientId(consumerClientId);
+        if (clientId != null) {
+            container.setClientId(clientId);
         }
         if (durableSubscriptionName != null) {
             container.setDurableSubscriptionName(durableSubscriptionName);
@@ -158,14 +160,17 @@ public class JmsConfiguration implements Cloneable {
         if (exceptionListener != null) {
             container.setExceptionListener(exceptionListener);
         }
+
         container.setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);
         container.setExposeListenerSession(exposeListenerSession);
-        boolean transacted = TRANSACTED.equals(consumerAcknowledgementMode);
         container.setSessionTransacted(transacted);
-        if (!transacted) {
-            // TODO not sure if Spring can handle TRANSACTED as an ack mode
-            container.setSessionAcknowledgeModeName(consumerAcknowledgementMode);
+        
+        if( acknowledgementMode >= 0 ) {
+            container.setSessionAcknowledgeMode(acknowledgementMode);
+        } else if( acknowledgementModeName!= null ) {
+            container.setSessionAcknowledgeModeName(acknowledgementModeName);
         }
+
         container.setSubscriptionDurable(subscriptionDurable);
 
         if (container instanceof DefaultMessageListenerContainer) {
@@ -177,8 +182,8 @@ public class JmsConfiguration implements Cloneable {
             
             if (cacheLevel >= 0) {
                 listenerContainer.setCacheLevel(cacheLevel);
-            } else if (cacheName != null) {
-                listenerContainer.setCacheLevelName(cacheName);
+            } else if (cacheLevelName != null) {
+                listenerContainer.setCacheLevelName(cacheLevelName);
             } else {
             	// Default to CACHE_CONSUMER unless specified.  This works best with most JMS providers.
             	listenerContainer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
@@ -246,23 +251,6 @@ public class JmsConfiguration implements Cloneable {
         this.connectionFactory = connectionFactory;
     }
 
-    public ConnectionFactory getProducerConnectionFactory() {
-        if (producerConnectionFactory == null) {
-            return getConnectionFactory();
-        }
-        return producerConnectionFactory;
-    }
-
-    /**
-     * Allows the connection factory for the producer side (sending) to be different from the connection factory used for consuming.
-     * By default the {@link #getConnectionFactory()} will be used for both.
-     *
-     * @param producerConnectionFactory the connection factory to be used for sending.
-     */
-    public void setProducerConnectionFactory(ConnectionFactory producerConnectionFactory) {
-        this.producerConnectionFactory = producerConnectionFactory;
-    }
-
     public boolean isUseVersion102() {
         return useVersion102;
     }
@@ -287,12 +275,12 @@ public class JmsConfiguration implements Cloneable {
         this.acceptMessagesWhileStopping = acceptMessagesWhileStopping;
     }
 
-    public String getConsumerClientId() {
-        return consumerClientId;
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setConsumerClientId(String consumerClientId) {
-        this.consumerClientId = consumerClientId;
+    public void setClientId(String consumerClientId) {
+        this.clientId = consumerClientId;
     }
 
     public String getDurableSubscriptionName() {
@@ -311,14 +299,6 @@ public class JmsConfiguration implements Cloneable {
         this.exceptionListener = exceptionListener;
     }
 
-    public String getProducerAcknowledgementMode() {
-        return producerAcknowledgementMode;
-    }
-
-    public void setProducerAcknowledgementMode(String producerAcknowledgementMode) {
-        this.producerAcknowledgementMode = producerAcknowledgementMode;
-    }
-
     public boolean isSubscriptionDurable() {
         return subscriptionDurable;
     }
@@ -327,12 +307,13 @@ public class JmsConfiguration implements Cloneable {
         this.subscriptionDurable = subscriptionDurable;
     }
 
-    public String getConsumerAcknowledgementMode() {
-        return consumerAcknowledgementMode;
+    public String getAcknowledgementModeName() {
+        return acknowledgementModeName;        
     }
 
-    public void setConsumerAcknowledgementMode(String consumerAcknowledgementMode) {
-        this.consumerAcknowledgementMode = consumerAcknowledgementMode;
+    public void setAcknowledgementModeName(String consumerAcknowledgementMode) {
+        this.acknowledgementModeName = consumerAcknowledgementMode;
+        this.acknowledgementMode=-1;
     }
 
     public boolean isExposeListenerSession() {
@@ -391,12 +372,12 @@ public class JmsConfiguration implements Cloneable {
         this.cacheLevel = cacheLevel;
     }
 
-    public String getCacheName() {
-        return cacheName;
+    public String getCacheLevelName() {
+        return cacheLevelName;
     }
 
-    public void setCacheName(String cacheName) {
-        this.cacheName = cacheName;
+    public void setCacheLevelName(String cacheName) {
+        this.cacheLevelName = cacheName;
     }
 
     public long getRecoveryInterval() {
@@ -534,4 +515,22 @@ public class JmsConfiguration implements Cloneable {
                 throw new IllegalArgumentException("Unknown consumer type: " + consumerType);
         }
     }
+
+	public int getAcknowledgementMode() {
+		return acknowledgementMode;
+	}
+
+	public void setAcknowledgementMode(int consumerAcknowledgementMode) {
+		this.acknowledgementMode = consumerAcknowledgementMode;
+		this.acknowledgementModeName=null;
+	}
+
+	public boolean isTransacted() {
+		return transacted;
+	}
+
+	public void setTransacted(boolean consumerTransacted) {
+		this.transacted = consumerTransacted;
+	}
+
 }

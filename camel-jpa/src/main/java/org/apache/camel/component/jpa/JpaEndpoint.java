@@ -190,4 +190,9 @@ public class JpaEndpoint extends DefaultEndpoint<Exchange> {
             };
         }
     }
+    
+	public boolean isSingleton() {
+		return true;
+	}
+
 }

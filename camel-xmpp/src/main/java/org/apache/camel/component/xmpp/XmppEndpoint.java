@@ -234,4 +234,9 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
         }
         return connection;
     }
+    
+	public boolean isSingleton() {
+		return true;
+	}
+
 }

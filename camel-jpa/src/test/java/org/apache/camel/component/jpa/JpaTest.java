@@ -104,7 +104,7 @@ public class JpaTest extends TestCase {
 
         startServices(client, camelContext);
 
-        Endpoint value = camelContext.resolveEndpoint(getEndpointUri());
+        Endpoint value = camelContext.getEndpoint(getEndpointUri());
         assertNotNull("Could not find endpoint!", value);
         assertTrue("Should be a JPA endpoint but was: " + value, value instanceof JpaEndpoint);
         endpoint = (JpaEndpoint) value;

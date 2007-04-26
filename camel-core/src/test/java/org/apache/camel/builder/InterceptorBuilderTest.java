@@ -58,7 +58,7 @@ public class InterceptorBuilderTest extends TestSupport {
         	}
         };
 
-        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+        RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("direct:a")
                         .intercept()
@@ -70,7 +70,7 @@ public class InterceptorBuilderTest extends TestSupport {
         container.addRoutes(builder);
         container.start();
         
-        Endpoint<Exchange> endpoint = container.resolveEndpoint("direct:a");
+        Endpoint<Exchange> endpoint = container.getEndpoint("direct:a");
         Exchange exchange = endpoint.createExchange();
         Producer<Exchange> producer = endpoint.createProducer();
         producer.process(exchange);

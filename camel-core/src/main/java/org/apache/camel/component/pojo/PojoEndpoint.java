@@ -91,4 +91,8 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
 		return pojoId;
 	}
 
+	public boolean isSingleton() {
+		return true;
+	}
+
 }

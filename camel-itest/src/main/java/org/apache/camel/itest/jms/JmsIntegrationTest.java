@@ -78,7 +78,7 @@ public class JmsIntegrationTest extends TestCase {
         container.start();
         
         // Send a message to the JMS endpoint
-        JmsEndpoint endpoint = (JmsEndpoint) container.resolveEndpoint("jms:test");        
+        JmsEndpoint endpoint = (JmsEndpoint) container.getEndpoint("jms:test");        
         Producer<JmsExchange> producer = endpoint.createProducer();
         JmsExchange exchange = producer.createExchange();
         JmsMessage in = exchange.getIn();

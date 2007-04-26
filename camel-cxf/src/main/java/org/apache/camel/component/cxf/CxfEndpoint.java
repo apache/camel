@@ -89,4 +89,9 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     public CxfComponent getComponent() {
         return component;
     }
+    
+	public boolean isSingleton() {
+		return true;
+	}
+
 }

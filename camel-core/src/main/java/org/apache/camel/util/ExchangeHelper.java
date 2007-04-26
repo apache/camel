@@ -46,7 +46,7 @@ public class ExchangeHelper {
         }
         else {
             String uri = value.toString();
-            endpoint = (Endpoint<E>) exchange.getContext().resolveEndpoint(uri);
+            endpoint = (Endpoint<E>) exchange.getContext().getEndpoint(uri);
             if (endpoint == null) {
                 throw new NoSuchEndpointException(uri);
             }

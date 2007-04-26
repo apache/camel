@@ -42,7 +42,7 @@ public class MinaVmTest extends TestCase {
     public void testMinaRoute() throws Exception {
 
         // now lets fire in a message
-        Endpoint<MinaExchange> endpoint = container.resolveEndpoint(uri);
+        Endpoint<MinaExchange> endpoint = container.getEndpoint(uri);
         MinaExchange exchange = endpoint.createExchange();
         Message message = exchange.getIn();
         message.setBody("Hello there!");

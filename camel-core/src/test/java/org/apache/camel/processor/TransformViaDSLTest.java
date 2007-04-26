@@ -18,7 +18,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -44,7 +43,7 @@ public class TransformViaDSLTest extends ContextTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder<Exchange>() {
+        return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
                 from("direct:start").setBody(body().append(" World!")).to("mock:result");

@@ -99,7 +99,8 @@ public class FileEndpoint extends DefaultEndpoint<FileExchange> {
         return file;
     }
 
+	public boolean isSingleton() {
+		return true;
+	}
   
-    
-
 }

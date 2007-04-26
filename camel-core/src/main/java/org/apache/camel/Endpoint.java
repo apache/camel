@@ -28,9 +28,16 @@ package org.apache.camel;
 public interface Endpoint<E extends Exchange> {
 
     /**
+     * Returns if the endpoint should be a CamelContext singleton.  If the endpoint is a Singleton,
+     * then a single Endpoint instance will be shared by all routes with the same URI.  Because the endpoint
+     * is shared, it should be treated as an immutable.
+     */
+    boolean isSingleton();
+
+    /**
      * Returns the string representation of the endpoint URI
      */
-    public String getEndpointUri();
+    String getEndpointUri();
     
     /**
      * Create a new exchange for communicating with this endpoint

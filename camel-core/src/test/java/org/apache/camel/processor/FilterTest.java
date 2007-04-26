@@ -17,17 +17,13 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.TestSupport;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.ProducerCache;
 
 /**
  * @version $Revision: 1.1 $
@@ -61,7 +57,7 @@ public class FilterTest extends ContextTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder<Exchange>() {
+        return new RouteBuilder() {
             public void configure() {
                 from("direct:a").filter(header("foo").isEqualTo("bar")).to("mock:result");
             }

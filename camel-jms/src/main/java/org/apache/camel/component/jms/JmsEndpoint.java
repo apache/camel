@@ -132,4 +132,8 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
         this.selector = selector;
     }
 
+	public boolean isSingleton() {
+		return true;
+	}
+
 }

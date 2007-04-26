@@ -16,6 +16,11 @@
  */
 package org.apache.camel.builder;
 
+import static org.apache.camel.processor.idempotent.MemoryMessageIdRepository.memoryMessageIdRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -23,18 +28,14 @@ import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.DeadLetterChannel;
-import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MemoryMessageIdRepository;
-import static org.apache.camel.processor.idempotent.MemoryMessageIdRepository.memoryMessageIdRepository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @version $Revision$
@@ -44,9 +45,9 @@ public class RouteBuilderTest extends TestSupport {
     protected DelegateProcessor<Exchange> interceptor1;
     protected DelegateProcessor<Exchange> interceptor2;
 
-    protected RouteBuilder<Exchange> buildSimpleRoute() {
+    protected RouteBuilder buildSimpleRoute() {
         // START SNIPPET: e1
-        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+        RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("queue:a").to("queue:b");
             }
@@ -56,9 +57,9 @@ public class RouteBuilderTest extends TestSupport {
     }
 
     public void testSimpleRoute() throws Exception {
-        RouteBuilder<Exchange> builder = buildSimpleRoute();
+        RouteBuilder builder = buildSimpleRoute();
 
-        List<Route<Exchange>> routes = builder.getRouteList();
+        List<Route> routes = builder.getRouteList();
         assertEquals("Number routes created", 1, routes.size());
         for (Route<Exchange> route : routes) {
             Endpoint<Exchange> key = route.getEndpoint();
@@ -70,9 +71,9 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
-    protected RouteBuilder<Exchange> buildSimpleRouteWithHeaderPredicate() {
+    protected RouteBuilder buildSimpleRouteWithHeaderPredicate() {
         // START SNIPPET: e2
-        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+        RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("queue:a").filter(header("foo").isEqualTo("bar")).to("queue:b");
             }
@@ -82,14 +83,14 @@ public class RouteBuilderTest extends TestSupport {
     }
 
     public void testSimpleRouteWithHeaderPredicate() throws Exception {
-        RouteBuilder<Exchange> builder = buildSimpleRouteWithHeaderPredicate();
+        RouteBuilder builder = buildSimpleRouteWithHeaderPredicate();
 
-        List<Route<Exchange>> routes = builder.getRouteList();
+        List<Route> routes = builder.getRouteList();
         System.out.println("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
-        for (Route<Exchange> route : routes) {
-            Endpoint<Exchange> key = route.getEndpoint();
+        for (Route route : routes) {
+            Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
@@ -99,9 +100,9 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
-    protected RouteBuilder<Exchange> buildSimpleRouteWithChoice() {
+    protected RouteBuilder buildSimpleRouteWithChoice() {
         // START SNIPPET: e3
-        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+        RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("queue:a").choice()
                         .when(header("foo").isEqualTo("bar")).to("queue:b")
@@ -114,32 +115,32 @@ public class RouteBuilderTest extends TestSupport {
     }
 
     public void testSimpleRouteWithChoice() throws Exception {
-        RouteBuilder<Exchange> builder = buildSimpleRouteWithChoice();
+        RouteBuilder builder = buildSimpleRouteWithChoice();
 
-        List<Route<Exchange>> routes = builder.getRouteList();
+        List<Route> routes = builder.getRouteList();
         System.out.println("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
-        for (Route<Exchange> route : routes) {
-            Endpoint<Exchange> key = route.getEndpoint();
+        for (Route route : routes) {
+            Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
-            ChoiceProcessor<Exchange> choiceProcessor = assertIsInstanceOf(ChoiceProcessor.class, processor);
-            List<FilterProcessor<Exchange>> filters = choiceProcessor.getFilters();
+            ChoiceProcessor choiceProcessor = assertIsInstanceOf(ChoiceProcessor.class, processor);
+            List<FilterProcessor> filters = choiceProcessor.getFilters();
             assertEquals("Should be two when clauses", 2, filters.size());
 
-            FilterProcessor<Exchange> filter1 = filters.get(0);
+            FilterProcessor filter1 = filters.get(0);
             assertSendTo(filter1.getProcessor(), "queue:b");
 
-            FilterProcessor<Exchange> filter2 = filters.get(1);
+            FilterProcessor filter2 = filters.get(1);
             assertSendTo(filter2.getProcessor(), "queue:c");
 
             assertSendTo(choiceProcessor.getOtherwise(), "queue:d");
         }
     }
 
-    protected RouteBuilder<Exchange> buildCustomProcessor() {
+    protected RouteBuilder buildCustomProcessor() {
         // START SNIPPET: e4
         myProcessor = new Processor<Exchange>() {
             public void process(Exchange exchange) {
@@ -147,7 +148,7 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
 
-        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+        RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("queue:a").process(myProcessor);
             }
@@ -157,13 +158,13 @@ public class RouteBuilderTest extends TestSupport {
     }
 
     public void testCustomProcessor() throws Exception {
-        RouteBuilder<Exchange> builder = buildCustomProcessor();
+        RouteBuilder builder = buildCustomProcessor();
 
-        List<Route<Exchange>> routes = builder.getRouteList();
+        List<Route> routes = builder.getRouteList();
 
         assertEquals("Number routes created", 1, routes.size());
-        for (Route<Exchange> route : routes) {
-            Endpoint<Exchange> key = route.getEndpoint();
+        for (Route route : routes) {
+            Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
@@ -171,9 +172,9 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
-    protected RouteBuilder<Exchange> buildCustomProcessorWithFilter() {
+    protected RouteBuilder buildCustomProcessorWithFilter() {
         // START SNIPPET: e5
-        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+        RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("queue:a").filter(header("foo").isEqualTo("bar")).process(myProcessor);
             }
@@ -183,14 +184,14 @@ public class RouteBuilderTest extends TestSupport {
     }
 
     public void testCustomProcessorWithFilter() throws Exception {
-        RouteBuilder<Exchange> builder = buildCustomProcessorWithFilter();
+        RouteBuilder builder = buildCustomProcessorWithFilter();
 
-        List<Route<Exchange>> routes = builder.getRouteList();
+        List<Route> routes = builder.getRouteList();
         System.out.println("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
-        for (Route<Exchange> route : routes) {
-            Endpoint<Exchange> key = route.getEndpoint();
+        for (Route route : routes) {
+            Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
@@ -199,9 +200,9 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
-    protected RouteBuilder<Exchange> buildWireTap() {
+    protected RouteBuilder buildWireTap() {
         // START SNIPPET: e6
-        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+        RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("queue:a").to("queue:tap", "queue:b");
             }
@@ -211,19 +212,19 @@ public class RouteBuilderTest extends TestSupport {
     }
 
     public void testWireTap() throws Exception {
-        RouteBuilder<Exchange> builder = buildWireTap();
+        RouteBuilder builder = buildWireTap();
 
-        List<Route<Exchange>> routes = builder.getRouteList();
+        List<Route> routes = builder.getRouteList();
         System.out.println("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
-        for (Route<Exchange> route : routes) {
-            Endpoint<Exchange> key = route.getEndpoint();
+        for (Route route : routes) {
+            Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
-            MulticastProcessor<Exchange> multicastProcessor = assertIsInstanceOf(MulticastProcessor.class, processor);
-            List<Endpoint<Exchange>> endpoints = new ArrayList<Endpoint<Exchange>>(multicastProcessor.getEndpoints());
+            MulticastProcessor multicastProcessor = assertIsInstanceOf(MulticastProcessor.class, processor);
+            List<Endpoint> endpoints = new ArrayList<Endpoint>(multicastProcessor.getEndpoints());
             assertEquals("Should have 2 endpoints", 2, endpoints.size());
 
             assertEndpointUri(endpoints.get(0), "queue:tap");
@@ -231,14 +232,14 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
-    protected RouteBuilder<Exchange> buildRouteWithInterceptor() {
-        interceptor1 = new DelegateProcessor<Exchange>() {
+    protected RouteBuilder buildRouteWithInterceptor() {
+        interceptor1 = new DelegateProcessor() {
         };
 
         // START SNIPPET: e7        
         interceptor2 = new MyInterceptorProcessor();
 
-        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+        RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("queue:a")
                         .intercept()
@@ -253,21 +254,21 @@ public class RouteBuilderTest extends TestSupport {
 
     public void testRouteWithInterceptor() throws Exception {
 
-        RouteBuilder<Exchange> builder = buildRouteWithInterceptor();
+        RouteBuilder builder = buildRouteWithInterceptor();
 
-        List<Route<Exchange>> routes = builder.getRouteList();
+        List<Route> routes = builder.getRouteList();
         System.out.println("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
-        for (Route<Exchange> route : routes) {
-            Endpoint<Exchange> key = route.getEndpoint();
+        for (Route route : routes) {
+            Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
-            DelegateProcessor<Exchange> p1 = assertIsInstanceOf(DelegateProcessor.class, processor);
+            DelegateProcessor p1 = assertIsInstanceOf(DelegateProcessor.class, processor);
             processor = p1.getNext();
 
-            DelegateProcessor<Exchange> p2 = assertIsInstanceOf(DelegateProcessor.class, processor);
+            DelegateProcessor p2 = assertIsInstanceOf(DelegateProcessor.class, processor);
 
             assertSendTo(p2.getNext(), "queue:d");
         }
@@ -275,7 +276,7 @@ public class RouteBuilderTest extends TestSupport {
 
     public void testComplexExpressions() throws Exception {
         // START SNIPPET: e7
-        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+        RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("queue:a").filter(header("foo").isEqualTo(123)).to("queue:b");
                 from("queue:a").filter(header("bar").isGreaterThan(45)).to("queue:b");
@@ -283,12 +284,12 @@ public class RouteBuilderTest extends TestSupport {
         };
         // END SNIPPET: e7
 
-        List<Route<Exchange>> routes = builder.getRouteList();
+        List<Route> routes = builder.getRouteList();
         System.out.println("Created routes: " + routes);
 
         assertEquals("Number routes created", 2, routes.size());
-        for (Route<Exchange> route : routes) {
-            Endpoint<Exchange> key = route.getEndpoint();
+        for (Route route : routes) {
+            Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
@@ -302,9 +303,9 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
-    protected RouteBuilder<Exchange> buildStaticRecipientList() {
+    protected RouteBuilder buildStaticRecipientList() {
         // START SNIPPET: e8
-        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+        RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("queue:a").to("queue:b", "queue:c", "queue:d");
             }
@@ -313,9 +314,9 @@ public class RouteBuilderTest extends TestSupport {
         return builder;
     }
 
-    protected RouteBuilder<Exchange> buildDynamicRecipientList() {
+    protected RouteBuilder buildDynamicRecipientList() {
         // START SNIPPET: e9
-        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+        RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("queue:a").recipientList(header("foo"));
             }
@@ -326,24 +327,24 @@ public class RouteBuilderTest extends TestSupport {
 
     public void testRouteDynamicReceipentList() throws Exception {
 
-        RouteBuilder<Exchange> builder = buildDynamicRecipientList();
+        RouteBuilder builder = buildDynamicRecipientList();
 
-        List<Route<Exchange>> routes = builder.getRouteList();
+        List<Route> routes = builder.getRouteList();
         System.out.println("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
-        for (Route<Exchange> route : routes) {
-            Endpoint<Exchange> key = route.getEndpoint();
+        for (Route route : routes) {
+            Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
-            RecipientList<Exchange> p1 = assertIsInstanceOf(RecipientList.class, processor);
+            RecipientList p1 = assertIsInstanceOf(RecipientList.class, processor);
         }
     }
 
-    protected RouteBuilder<Exchange> buildSplitter() {
+    protected RouteBuilder buildSplitter() {
         // START SNIPPET: splitter
-        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+        RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("queue:a").splitter(bodyAs(String.class).tokenize("\n")).to("queue:b");
             }
@@ -354,24 +355,24 @@ public class RouteBuilderTest extends TestSupport {
 
     public void testSplitter() throws Exception {
 
-        RouteBuilder<Exchange> builder = buildSplitter();
+        RouteBuilder builder = buildSplitter();
 
-        List<Route<Exchange>> routes = builder.getRouteList();
+        List<Route> routes = builder.getRouteList();
         System.out.println("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
-        for (Route<Exchange> route : routes) {
-            Endpoint<Exchange> key = route.getEndpoint();
+        for (Route route : routes) {
+            Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
-            Splitter<Exchange> p1 = assertIsInstanceOf(Splitter.class, processor);
+            Splitter p1 = assertIsInstanceOf(Splitter.class, processor);
         }
     }
 
-    protected RouteBuilder<Exchange> buildIdempotentConsumer() {
+    protected RouteBuilder buildIdempotentConsumer() {
         // START SNIPPET: idempotent
-        RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
+        RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("queue:a").idempotentConsumer(
                         header("myMessageId"), memoryMessageIdRepository(200)
@@ -384,18 +385,18 @@ public class RouteBuilderTest extends TestSupport {
 
     public void testIdempotentConsumer() throws Exception {
 
-        RouteBuilder<Exchange> builder = buildIdempotentConsumer();
+        RouteBuilder builder = buildIdempotentConsumer();
 
-        List<Route<Exchange>> routes = builder.getRouteList();
+        List<Route> routes = builder.getRouteList();
         System.out.println("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
-        for (Route<Exchange> route : routes) {
-            Endpoint<Exchange> key = route.getEndpoint();
+        for (Route route : routes) {
+            Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
-            IdempotentConsumer<Exchange> idempotentConsumer = assertIsInstanceOf(IdempotentConsumer.class, processor);
+            IdempotentConsumer idempotentConsumer = assertIsInstanceOf(IdempotentConsumer.class, processor);
 
             assertEquals("messageIdExpression", "header(myMessageId)", idempotentConsumer.getMessageIdExpression().toString());
 
@@ -416,12 +417,12 @@ public class RouteBuilderTest extends TestSupport {
     /**
      * By default routes should be wrapped in the {@link DeadLetterChannel} so lets unwrap that and return the actual processor
      */
-    protected Processor<Exchange> getProcessorWithoutErrorHandler(Route route) {
-        Processor<Exchange> processor = route.getProcessor();
+    protected Processor getProcessorWithoutErrorHandler(Route route) {
+        Processor processor = route.getProcessor();
         return unwrapErrorHandler(processor);
     }
 
-    protected Processor<Exchange> unwrapErrorHandler(Processor<Exchange> processor) {
+    protected Processor unwrapErrorHandler(Processor processor) {
         assertTrue("Processor should be a DeadLetterChannel but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof DeadLetterChannel);
         DeadLetterChannel deadLetter = (DeadLetterChannel) processor;
         return deadLetter.getOutput();

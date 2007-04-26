@@ -18,16 +18,17 @@
 package org.apache.camel.component.jms;
 
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+
+import java.util.Map;
+
+import javax.jms.ConnectionFactory;
+import javax.jms.Session;
+
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.springframework.transaction.PlatformTransactionManager;
-
-import javax.jms.ConnectionFactory;
-import java.util.Map;
 
 /**
  * @version $Revision:520964 $
@@ -63,23 +64,20 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
      */
     public static JmsComponent jmsComponentClientAcknowledge(ConnectionFactory connectionFactory) {
         JmsConfiguration template = new JmsConfiguration(connectionFactory);
-        template.setProducerAcknowledgementMode(JmsConfiguration.CLIENT_ACKNOWLEDGE);
-        template.setConsumerAcknowledgementMode(JmsConfiguration.CLIENT_ACKNOWLEDGE);
+        template.setAcknowledgementMode(Session.AUTO_ACKNOWLEDGE);
         return jmsComponent(template);
     }
 
     public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory) {
         JmsConfiguration template = new JmsConfiguration(connectionFactory);
-        template.setProducerAcknowledgementMode(JmsConfiguration.TRANSACTED);
-        template.setConsumerAcknowledgementMode(JmsConfiguration.TRANSACTED);
+        template.setTransacted(true);
         return jmsComponent(template);
     }
 
 	public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory, PlatformTransactionManager transactionManager) {
         JmsConfiguration template = new JmsConfiguration(connectionFactory);
-        template.setProducerAcknowledgementMode(JmsConfiguration.TRANSACTED);
-        template.setConsumerAcknowledgementMode(JmsConfiguration.TRANSACTED);
         template.setTransactionManager(transactionManager);
+        template.setTransacted(true);
         return jmsComponent(template);
 	}
 

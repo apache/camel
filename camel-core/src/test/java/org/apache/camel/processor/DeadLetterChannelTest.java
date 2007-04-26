@@ -83,7 +83,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
             }
         };
 
-        return new RouteBuilder<Exchange>() {
+        return new RouteBuilder() {
             public void configure() {
                 from("direct:start").errorHandler(deadLetterChannel("mock:failed")
                         .maximumRedeliveries(2).initialRedeliveryDelay(1).loggingLevel(LoggingLevel.DEBUG)

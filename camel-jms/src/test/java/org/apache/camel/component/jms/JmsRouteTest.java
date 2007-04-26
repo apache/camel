@@ -110,9 +110,17 @@ public class JmsRouteTest extends TestCase {
                         latch.countDown();
                     }
                 });
+                
+                JmsEndpoint endpoint1 = (JmsEndpoint) endpoint("activemq:topic:quote.IONA");
+                endpoint1.getConfiguration().setTransacted(true);
+                from(endpoint1).to("mock:transactedClient");
+                
+                JmsEndpoint endpoint2 = (JmsEndpoint) endpoint("activemq:topic:quote.IONA");
+                endpoint1.getConfiguration().setTransacted(true);
+                from(endpoint2).to("mock:nonTrasnactedClient");
             }
         });
-        endpoint = container.resolveEndpoint("activemq:queue:test.a");
+        endpoint = container.getEndpoint("activemq:queue:test.a");
         assertNotNull("No endpoint found!", endpoint);
 
         container.start();

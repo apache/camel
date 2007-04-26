@@ -19,9 +19,8 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -57,7 +56,7 @@ public class RecipientListTest extends ContextTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder<Exchange>() {
+        return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
                 from("direct:a").recipientList(header("recipientListHeader").tokenize(","));

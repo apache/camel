@@ -86,4 +86,8 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
         return config;
     }
 
+	public boolean isSingleton() {
+		return true;
+	}
+
 }

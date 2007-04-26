@@ -23,13 +23,12 @@ import static org.apache.camel.component.mock.MockEndpoint.assertWait;
 import java.util.concurrent.TimeUnit;
 
 import javax.jms.ConnectionFactory;
+import javax.jms.Session;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.builder.ProcessorFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.DelegateProcessor;
@@ -52,10 +51,12 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 	private MockEndpoint mockEndpointA;
 	private MockEndpoint mockEndpointB;
 	private ClassPathXmlApplicationContext spring;
+	private MockEndpoint mockEndpointC;
+	private MockEndpoint mockEndpointD;
 
 	@Override
 	protected RouteBuilder createRouteBuilder() {
-		return new SpringRouteBuilder<Exchange>() {
+		return new SpringRouteBuilder() {
 			public void configure() {
 				
 		        Policy requried = new SpringTransactionPolicy(bean(TransactionTemplate.class, "PROPAGATION_REQUIRED"));
@@ -121,9 +122,27 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 				// Also, expect the message to be successfully consumed since the rollback error is not propagated.
 		        from("activemq:queue:d").policy(catchRollback).policy(notsupported).policy(rollback).to("activemq:queue:mock.a"); 
 
-//		        JmsEndpoint endpoint = (JmsEndpoint)endpoint("activemq:queue:e");
-//		        from(endpoint).policy(catchRollback).policy(notsupported).policy(rollback).to("activemq:queue:mock.a"); 
-				
+		        // Receive message on a non transacted JMS endpoint, start a transaction, send and then rollback.
+		        // mock:a should never get the message (due to rollback) but mock:b should get only 1 since the 
+		        // inbound was not transacted.
+		        JmsEndpoint endpoint = (JmsEndpoint)endpoint("activemq:queue:e");
+		        endpoint.getConfiguration().setTransacted(false);
+		        endpoint.getConfiguration().setAcknowledgementMode(Session.AUTO_ACKNOWLEDGE);
+		        from(endpoint).policy(requried).policy(rollback).to("activemq:queue:mock.a", "mock:b");
+		        
+		        
+		        //
+		        // Sets up 2 consumers on single topic, one being transacted the other not.  Used to verify 
+		        // That each consumer can have independently configured transaction settings. 
+		        // Do a rollback, should cause the transacted consumer to re-deliver but not the un-trasacted one.
+                JmsEndpoint endpoint1 = (JmsEndpoint) endpoint("activemq:topic:f");
+                endpoint1.getConfiguration().setTransacted(true);
+                from(endpoint1).policy(requried).policy(rollback).to("activemq:queue:mock.a", "mock:b"); 
+                
+                JmsEndpoint endpoint2 = (JmsEndpoint) endpoint("activemq:topic:f");
+                endpoint1.getConfiguration().setTransacted(false);
+                from(endpoint2).policy(requried).policy(rollback).to("activemq:queue:mock.c", "mock:d");
+
 			}
 		};
 	}
@@ -149,6 +168,8 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
         
         mockEndpointA = (MockEndpoint) resolveMandatoryEndpoint("mock:a");
         mockEndpointB = (MockEndpoint) resolveMandatoryEndpoint("mock:b");
+        mockEndpointC = (MockEndpoint) resolveMandatoryEndpoint("mock:c");
+        mockEndpointD = (MockEndpoint) resolveMandatoryEndpoint("mock:d");
     }
     
     @Override
@@ -200,4 +221,37 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
         
         assertIsSatisfied(mockEndpointA);
 	}
+	
+	public void testSenarioE() throws Exception {
+		String expected = getName()+": "+System.currentTimeMillis();
+		mockEndpointA.expectedMessageCount(0);
+		mockEndpointB.expectedMessageCount(1);		
+        send("activemq:queue:e", expected);
+
+        // Wait till the endpoints get their messages.
+        assertWait(5, TimeUnit.SECONDS, mockEndpointA,mockEndpointB);
+
+        // Wait a little more to make sure extra messages are not received.
+        Thread.sleep(1000);
+        
+        assertIsSatisfied(mockEndpointA, mockEndpointB);
+	}
+	
+	public void disabletestSenarioF() throws Exception {
+		String expected = getName()+": "+System.currentTimeMillis();
+		mockEndpointA.expectedMessageCount(0);
+		mockEndpointB.expectedMinimumMessageCount(2);		
+		mockEndpointC.expectedMessageCount(0);
+		mockEndpointD.expectedMessageCount(1);
+        send("activemq:queue:e", expected);
+
+        // Wait till the endpoints get their messages.
+        assertWait(5, TimeUnit.SECONDS, mockEndpointA,mockEndpointB);
+
+        // Wait a little more to make sure extra messages are not received.
+        Thread.sleep(1000);
+        
+        assertIsSatisfied(mockEndpointA, mockEndpointB);
+	}
+	
 }

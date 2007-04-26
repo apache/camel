@@ -87,7 +87,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
 
         try {
             getLogger().log(Level.FINE, "establishing Camel connection");
-            endpoint = camelContext.resolveEndpoint(camelUri);
+            endpoint = camelContext.getEndpoint(camelUri);
         }
         catch (Exception ex) {
             getLogger().log(Level.SEVERE, "Camel connect failed with EException : ", ex);

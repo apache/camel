@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.queue;
 
+import java.util.concurrent.BlockingQueue;
+
+import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Consumer;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
-
-import java.util.concurrent.BlockingQueue;
 
 /**
  * Represents a queue endpoint that uses a {@link BlockingQueue}
@@ -62,5 +62,10 @@ public class QueueEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     public BlockingQueue<E> getQueue() {
         return queue;
     }
+    
+	public boolean isSingleton() {
+		return true;
+	}
+
 
 }

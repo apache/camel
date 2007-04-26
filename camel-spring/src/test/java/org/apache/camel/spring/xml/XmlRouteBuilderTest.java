@@ -46,83 +46,83 @@ public class XmlRouteBuilderTest extends RouteBuilderTest {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	protected RouteBuilder<Exchange> buildSimpleRoute() {
-		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildSimpleRoute");
+	protected RouteBuilder buildSimpleRoute() {
+		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildSimpleRoute");
 		assertNotNull(builder);
 		return builder;
 	}
 	
 	@Override
-	protected RouteBuilder<Exchange> buildCustomProcessor() {
+	protected RouteBuilder buildCustomProcessor() {
 		myProcessor = (Processor<Exchange>) ctx.getBean("myProcessor");
-		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildCustomProcessor");
+		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildCustomProcessor");
 		assertNotNull(builder);
 		return builder;
 	}
 	
 	@Override
-	protected RouteBuilder<Exchange> buildCustomProcessorWithFilter() {
+	protected RouteBuilder buildCustomProcessorWithFilter() {
 		myProcessor = (Processor<Exchange>) ctx.getBean("myProcessor");
-		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildCustomProcessorWithFilter");
+		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildCustomProcessorWithFilter");
 		assertNotNull(builder);
 		return builder;
 	}
 	
 	@Override
-	protected RouteBuilder<Exchange> buildRouteWithInterceptor() {
+	protected RouteBuilder buildRouteWithInterceptor() {
 		interceptor1 = (DelegateProcessor<Exchange>) ctx.getBean("interceptor1");
 		interceptor2 = (DelegateProcessor<Exchange>) ctx.getBean("interceptor2");
-		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildRouteWithInterceptor");
+		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildRouteWithInterceptor");
 		assertNotNull(builder);
 		return builder;
 	}
 	
 	@Override
-	protected RouteBuilder<Exchange> buildSimpleRouteWithHeaderPredicate() {
-		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildSimpleRouteWithHeaderPredicate");
+	protected RouteBuilder buildSimpleRouteWithHeaderPredicate() {
+		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildSimpleRouteWithHeaderPredicate");
 		assertNotNull(builder);
 		return builder;
 	}
 
 	@Override
-	protected RouteBuilder<Exchange> buildSimpleRouteWithChoice() {
-		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildSimpleRouteWithChoice");
+	protected RouteBuilder buildSimpleRouteWithChoice() {
+		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildSimpleRouteWithChoice");
 		assertNotNull(builder);
 		return builder;
 	}
 	
 	
 	@Override
-	protected RouteBuilder<Exchange> buildWireTap() {
-		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildWireTap");
+	protected RouteBuilder buildWireTap() {
+		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildWireTap");
 		assertNotNull(builder);
 		return builder;
 	}
 	
 	@Override
-	protected RouteBuilder<Exchange> buildDynamicRecipientList() {
-		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildDynamicRecipientList");
+	protected RouteBuilder buildDynamicRecipientList() {
+		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildDynamicRecipientList");
 		assertNotNull(builder);
 		return builder;
 	}
 	
 	@Override
-	protected RouteBuilder<Exchange> buildStaticRecipientList() {
-		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildStaticRecipientList");
+	protected RouteBuilder buildStaticRecipientList() {
+		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildStaticRecipientList");
 		assertNotNull(builder);
 		return builder;
 	}
 	
 	@Override
-	protected RouteBuilder<Exchange> buildSplitter() {
-		RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildSplitter");
+	protected RouteBuilder buildSplitter() {
+		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildSplitter");
 		assertNotNull(builder);
 		return builder;
 	}
 
     @Override
-    protected RouteBuilder<Exchange> buildIdempotentConsumer() {
-        RouteBuilder<Exchange> builder = (RouteBuilder<Exchange>) ctx.getBean("buildIdempotentConsumer");
+    protected RouteBuilder buildIdempotentConsumer() {
+        RouteBuilder builder = (RouteBuilder) ctx.getBean("buildIdempotentConsumer");
         assertNotNull(builder);
         return builder;
     }
