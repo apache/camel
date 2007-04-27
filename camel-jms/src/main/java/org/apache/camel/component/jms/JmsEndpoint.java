@@ -133,7 +133,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     }
 
 	public boolean isSingleton() {
-		return true;
+		return false;
 	}
 
 }
