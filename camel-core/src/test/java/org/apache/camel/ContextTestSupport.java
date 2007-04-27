@@ -53,9 +53,15 @@ public abstract class ContextTestSupport extends TestSupport {
         return new DefaultCamelContext();
     }
 
-    protected abstract RouteBuilder createRouteBuilder();
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                // no routes added by default
+            }
+        };
+    }
 
-    protected Endpoint<Exchange> resolveMandatoryEndpoint(String uri) {
+    protected Endpoint resolveMandatoryEndpoint(String uri) {
         return resolveMandatoryEndpoint(context, uri);
     }
 

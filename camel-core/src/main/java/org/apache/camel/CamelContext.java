@@ -70,7 +70,7 @@ public interface CamelContext extends Service {
     /**
      * Resolves the given URI to an {@see Endpoint}.  If the URI has a singleton endpoint
      * registered, then the singleton is returned.  Otherwise, a new {@see Endpoint} is created
-     * and auto registered as a singleton if it is a singleton endpoint.
+     * and if the endpoint is a singleton it is registered as a singleton endpoint.
      */
     Endpoint getEndpoint(String uri);
 
