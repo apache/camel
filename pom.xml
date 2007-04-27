@@ -411,6 +411,13 @@
         <scope>test</scope>
       </dependency>
 
+      <!-- optional JavaMail -->
+      <dependency>
+        <groupId>javax.mail</groupId>
+        <artifactId>mail</artifactId>
+        <version>1.4</version>
+      </dependency>
+
       <!-- common testing dependencies -->
       <dependency>
         <groupId>org.apache.derby</groupId>
