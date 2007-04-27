@@ -74,7 +74,7 @@ public class JmsMessage extends DefaultMessage {
                 answer = jmsMessage.getObjectProperty(name);
             }
             catch (JMSException e) {
-                throw new MessagePropertyAcessException(name, e);
+                throw new MessagePropertyAccessException(name, e);
             }
         }
         if (answer == null) {
@@ -104,7 +104,7 @@ public class JmsMessage extends DefaultMessage {
                 names = jmsMessage.getPropertyNames();
             }
             catch (JMSException e) {
-                throw new MessagePropertyNamesAcessException(e);
+                throw new MessagePropertyNamesAccessException(e);
             }
             while (names.hasMoreElements()) {
                 String name = names.nextElement().toString();
@@ -113,7 +113,7 @@ public class JmsMessage extends DefaultMessage {
                     map.put(name, value);
                 }
                 catch (JMSException e) {
-                    throw new MessagePropertyAcessException(name, e);
+                    throw new MessagePropertyAccessException(name, e);
                 }
             }
         }
