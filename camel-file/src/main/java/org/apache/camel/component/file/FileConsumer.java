@@ -135,8 +135,8 @@ public class FileConsumer extends PollingConsumer<FileExchange>{
     /**
      * @param attemptFileLock the attemptFileLock to set
      */
-    public void setAttemptFileLock(boolean checkAppending){
-        this.attemptFileLock=checkAppending;
+    public void setAttemptFileLock(boolean attemptFileLock){
+        this.attemptFileLock=attemptFileLock;
     }
 
     /**
