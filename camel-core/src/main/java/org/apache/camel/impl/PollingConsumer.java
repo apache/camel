@@ -109,13 +109,13 @@ public abstract class PollingConsumer<E extends Exchange> extends DefaultConsume
 
     @Override
     protected void doStart() throws Exception {
+        super.doStart();
         if (isUseFixedDelay()) {
             future = executor.scheduleWithFixedDelay(this, getInitialDelay(), getDelay(), getTimeUnit());
         }
         else {
             future = executor.scheduleAtFixedRate(this, getInitialDelay(), getDelay(), getTimeUnit());
         }
-        super.doStart();
     }
 
     @Override
