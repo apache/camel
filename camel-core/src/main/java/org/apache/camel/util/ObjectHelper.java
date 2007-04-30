@@ -98,7 +98,7 @@ public class ObjectHelper {
      * Removes any starting characters on the given text which match the given character
      *
      * @param text the string
-     * @param ch the initial characters to remove
+     * @param ch   the initial characters to remove
      * @return either the original string or the new substring
      */
     public static String removeStartingCharacters(String text, char ch) {
@@ -111,8 +111,6 @@ public class ObjectHelper {
         }
         return text;
     }
-
-
 
     /**
      * Returns true if the collection contains the specified value
@@ -132,7 +130,6 @@ public class ObjectHelper {
             return false;
         }
     }
-
 
     /**
      * Returns the predicate matching boolean on a {@link List} result set
@@ -270,5 +267,30 @@ public class ObjectHelper {
         }
         while (type != null);
         return answer;
+    }
+
+    /**
+     * Turns the given object arrays into a meaningful string
+     *
+     * @param objects an array of objects or null
+     * @return a meaningful string
+     */
+    public static String asString(Object[] objects) {
+        if (objects == null) {
+            return "null";
+        }
+        else {
+            StringBuffer buffer = new StringBuffer("{");
+            int counter = 0;
+            for (Object object : objects) {
+                if (counter++ > 0) {
+                    buffer.append(", ");
+                }
+                String text = (object == null) ? "null" : object.toString();
+                buffer.append(text);
+            }
+            buffer.append("}");
+            return buffer.toString();
+        }
     }
 }
