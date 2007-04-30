@@ -43,5 +43,5 @@ public interface Component<E extends Exchange>  {
      * @return a newly created endpoint or null if this component cannot create instances of the given
      * uri
      */
-    Endpoint<E> resolveEndpoint(String uri) throws Exception;
+    Endpoint<E> createEndpoint(String uri) throws Exception;
 }
