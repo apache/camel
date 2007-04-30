@@ -15,29 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-
-import java.io.File;
-import java.util.Map;
+package org.apache.camel.spi;
 
 /**
- * @version $Revision: 523772 $
+ * A Strategy pattern for handling exceptions; particularly in asynchronous processes such as consumers
+ *
+ * @version $Revision: 1.1 $
  */
-public class FileComponent extends DefaultComponent<FileExchange> {
-    public FileComponent() {
-    }
-
-    public FileComponent(CamelContext context) {
-        super(context);
-    }
-
-    protected Endpoint<FileExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        File file = new File(remaining);
-        FileEndpoint result = new FileEndpoint(file, remaining, this);
-        return result;
-    }
+public interface ExceptionHandler {
+    
+    /**
+     * Handles the given exception
+     *
+     * @param exception the exception
+     */
+    void handleException(Throwable exception);
 }

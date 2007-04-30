@@ -17,60 +17,29 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.PollingEndpoint;
 import org.apache.camel.util.IntrospectionSupport;
+
+import java.io.File;
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * @version $Revision: 523016 $
  */
-public class FileEndpoint extends DefaultEndpoint<FileExchange> {
+public class FileEndpoint extends PollingEndpoint<FileExchange> {
     private File file;
-    private Map parameters;
-    protected FileEndpoint(File file,String endpointUri, Component component,Map parameters){
-        super(endpointUri,component);
-        this.file = file;
-        this.parameters=parameters;
-        IntrospectionSupport.setProperties(this, parameters);
-    }
-
-   
     private ScheduledExecutorService executor;
 
-    /**
-     * @param file
-     * @return a Consumer
-     * @throws Exception
-     * @see org.apache.camel.Endpoint#createConsumer(org.apache.camel.Processor)
-     */
-    public Consumer<FileExchange> createConsumer(Processor<FileExchange> file) throws Exception{
-        Consumer<FileExchange> result =  new FileConsumer(this, file, getExecutor());
-        IntrospectionSupport.setProperties(result, parameters);
-        return result;
-    }
-
-    /**
-     * @param file 
-     * @return a FileExchange
-     * @see org.apache.camel.Endpoint#createExchange()
-     */
-    public FileExchange createExchange(File file){
-        return new FileExchange(getContext(),file);
-    }
-    
-    /**
-     * @return an Exchange
-     * @see org.apache.camel.Endpoint#createExchange()
-     */
-    public FileExchange createExchange(){
-        return createExchange(this.file);
+    protected FileEndpoint(File file, String endpointUri, FileComponent component) {
+        super(endpointUri, component);
+        this.file = file;
+        this.executor = component.getExecutorService();
     }
 
 
@@ -79,39 +48,62 @@ public class FileEndpoint extends DefaultEndpoint<FileExchange> {
      * @throws Exception
      * @see org.apache.camel.Endpoint#createProducer()
      */
-    public Producer<FileExchange> createProducer() throws Exception{
-        Producer<FileExchange> result =  new FileProducer(this);
-        IntrospectionSupport.setProperties(result, parameters);
-        return result;
+    public Producer<FileExchange> createProducer() throws Exception {
+        Producer<FileExchange> result = new FileProducer(this);
+        return startService(result);
     }
 
-    
+    /**
+     * @param file
+     * @return a Consumer
+     * @throws Exception
+     * @see org.apache.camel.Endpoint#createConsumer(org.apache.camel.Processor)
+     */
+    public Consumer<FileExchange> createConsumer(Processor<FileExchange> file) throws Exception {
+        Consumer<FileExchange> result = new FileConsumer(this, file, getExecutor());
+        configureConsumer(result);
+        return startService(result);
+    }
+
+    /**
+     * @param file
+     * @return a FileExchange
+     * @see org.apache.camel.Endpoint#createExchange()
+     */
+    public FileExchange createExchange(File file) {
+        return new FileExchange(getContext(), file);
+    }
+
+    /**
+     * @return an Exchange
+     * @see org.apache.camel.Endpoint#createExchange()
+     */
+    public FileExchange createExchange() {
+        return createExchange(this.file);
+    }
+
     /**
      * @return the executor
      */
-    public synchronized ScheduledExecutorService getExecutor(){
-        if (this.executor==null) {
-            this.executor=new ScheduledThreadPoolExecutor(10);
+    public synchronized ScheduledExecutorService getExecutor() {
+        if (this.executor == null) {
+            this.executor = new ScheduledThreadPoolExecutor(10);
         }
         return executor;
     }
 
-    
     /**
      * @param executor the executor to set
      */
-    public synchronized void setExecutor(ScheduledExecutorService executor){
-        this.executor=executor;
+    public synchronized void setExecutor(ScheduledExecutorService executor) {
+        this.executor = executor;
     }
-    
+
     public File getFile() {
         return file;
     }
 
-	public boolean isSingleton() {
-		return true;
-	}
-  
-    
-
+    public boolean isSingleton() {
+        return true;
+    }
 }

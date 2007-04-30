@@ -31,8 +31,8 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision: 523016 $
  */
 public class FileConsumer extends PollingConsumer<FileExchange>{
-
     private static final transient Log log=LogFactory.getLog(FileConsumer.class);
+
     private final FileEndpoint endpoint;
     private boolean recursive=true;
     private boolean attemptFileLock=false;

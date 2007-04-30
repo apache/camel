@@ -26,6 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.PollingEndpoint;
 import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.orm.jpa.JpaTemplate;
 
@@ -37,14 +38,13 @@ import java.util.Map;
 /**
  * @version $Revision$
  */
-public class JpaEndpoint extends DefaultEndpoint<Exchange> {
+public class JpaEndpoint extends PollingEndpoint<Exchange> {
     private EntityManagerFactory entityManagerFactory;
     private String persistenceUnit = "camel";
     private JpaTemplate template;
     private Expression<Exchange> producerExpression;
     private int maximumResults = -1;
     private Class<?> entityType;
-    private Map consumerProperties;
     private Map entityManagerProperties;
 
     public JpaEndpoint(String uri, JpaComponent component) {
@@ -62,11 +62,22 @@ public class JpaEndpoint extends DefaultEndpoint<Exchange> {
 
     public Consumer<Exchange> createConsumer(Processor<Exchange> processor) throws Exception {
         JpaConsumer consumer = new JpaConsumer(this, processor, getExecutorService());
-        if (consumerProperties != null) {
-            IntrospectionSupport.setProperties(consumer, consumerProperties);
-        }
+        configureConsumer(consumer);
         return startService(consumer);
     }
+
+    @Override
+    public void configureProperties(Map options) {
+        super.configureProperties(options);
+        Map emProperties = IntrospectionSupport.extractProperties(options, "emf.");
+        if (emProperties != null) {
+            setEntityManagerProperties(emProperties);
+        }
+    }
+
+    public boolean isSingleton() {
+		return false;
+	}
 
     // Properties
     //-------------------------------------------------------------------------
@@ -106,14 +117,6 @@ public class JpaEndpoint extends DefaultEndpoint<Exchange> {
 
     public void setEntityType(Class<?> entityType) {
         this.entityType = entityType;
-    }
-
-    public Map getConsumerProperties() {
-        return consumerProperties;
-    }
-
-    public void setConsumerProperties(Map consumerProperties) {
-        this.consumerProperties = consumerProperties;
     }
 
     public EntityManagerFactory getEntityManagerFactory() {
@@ -190,9 +193,4 @@ public class JpaEndpoint extends DefaultEndpoint<Exchange> {
             };
         }
     }
-    
-	public boolean isSingleton() {
-		return true;
-	}
-
 }
