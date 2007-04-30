@@ -66,7 +66,6 @@ public class MailComponent extends DefaultComponent<MailExchange> {
 
         MailConfiguration config = getConfiguration().copy();
         config.configure(new URI(uri));
-        //config.configure(new URL(uri));
 
         // lets make sure we copy the configuration as each endpoint can customize its own version
         MailEndpoint endpoint = new MailEndpoint(uri, this, config);

@@ -37,6 +37,8 @@ public class MailConfiguration implements Cloneable {
     private Session session;
     private String username;
     private int port = -1;
+    private String destination;
+    private String from = "camel@localhost";
 
     public MailConfiguration() {
     }
@@ -71,6 +73,17 @@ public class MailConfiguration implements Cloneable {
         if (port >= 0) {
             setPort(port);
         }
+
+        // we can either be invoked with
+        // mailto:address
+        // or
+        // smtp:user@host:port/name@address
+
+        String fragment = uri.getFragment();
+        if (fragment == null || fragment.length() == 0) {
+            fragment = userInfo + "@" + host;
+        }
+        setDestination(fragment);
     }
 
     public JavaMailConnection createJavaMailConnection(MailEndpoint mailEndpoint) {
@@ -168,5 +181,21 @@ public class MailConfiguration implements Cloneable {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
     }
 }

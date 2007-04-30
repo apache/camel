@@ -19,7 +19,9 @@ package org.apache.camel.component.mail;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Address;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.InternetAddress;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,14 +32,29 @@ import java.util.Set;
  * @version $Revision: 521240 $
  */
 public class MailBinding {
-    public void populateMailMessage(MimeMessage mimeMessage, MailExchange exchange) {
+    public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, MailExchange exchange) {
         try {
             appendMailHeaders(mimeMessage, exchange.getIn());
-            mimeMessage.setContent(exchange.getIn().getBody(), "body");
+
+            if (empty(mimeMessage.getAllRecipients())) {
+                // lets default the address to the endpoint destination
+                String destination = endpoint.getConfiguration().getDestination();
+                mimeMessage.setRecipients(Message.RecipientType.TO, destination);
+            }
+            if (empty(mimeMessage.getFrom())) {
+                // lets default the address to the endpoint destination
+                String from = endpoint.getConfiguration().getFrom();
+                mimeMessage.setFrom(new InternetAddress(from));
+            }
+            mimeMessage.setText(exchange.getIn().getBody(String.class));
         }
         catch (Exception e) {
             throw new RuntimeMailException("Failed to populate body due to: " + e + ". Exchange: " + exchange, e);
         }
+    }
+
+    protected boolean empty(Address[] addresses) {
+        return addresses == null || addresses.length == 0;
     }
 
     /**
