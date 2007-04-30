@@ -41,4 +41,8 @@
   </bean>
   <!-- END SNIPPET: example2 -->
   
+  <!-- START SNIPPET: example3 -->
+  <camelContext id="camel3" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd" packages="org.apache.camel.spring.example"/>
+  <!-- END SNIPPET: example3 -->
+
 </beans>
