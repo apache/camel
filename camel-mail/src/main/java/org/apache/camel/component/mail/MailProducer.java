@@ -43,7 +43,7 @@ public class MailProducer extends DefaultProducer<MailExchange> {
     public void process(final MailExchange exchange) {
         sender.send(new MimeMessagePreparator() {
             public void prepare(MimeMessage mimeMessage) throws Exception {
-                endpoint.getBinding().populateMailMessage(mimeMessage, exchange);
+                endpoint.getBinding().populateMailMessage(endpoint, mimeMessage, exchange);
             }
         });
     }

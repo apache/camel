@@ -32,13 +32,22 @@
   <name>Camel :: Mail</name>
   <description>Camel Mail support</description>
 
+  <repositories>
+    <repository>
+      <id>maven2-repository.dev.java.net</id>
+      <name>Java.net Repository for Maven</name>
+      <url>http://download.java.net/maven/2/</url>
+      <layout>default</layout>
+    </repository>
+  </repositories>
+
   <dependencies>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -49,7 +58,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
       <optional>true</optional>
-      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -60,6 +68,15 @@
     <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
+    </dependency>
+
+
+    <!-- testing -->
+    <dependency>
+      <groupId>org.jvnet.mock-javamail</groupId>
+      <artifactId>mock-javamail</artifactId>
+      <version>1.1</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
