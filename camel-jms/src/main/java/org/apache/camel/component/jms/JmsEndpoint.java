@@ -16,20 +16,15 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.CamelContext;
+import javax.jms.Message;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.util.URISupport;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
-
-import javax.jms.Message;
-import java.net.URI;
-import java.util.Map;
 
 /**
  * @version $Revision:520964 $

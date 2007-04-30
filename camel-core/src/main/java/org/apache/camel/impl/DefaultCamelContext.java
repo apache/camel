@@ -190,15 +190,19 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     
                 	// Ask the component to resolve the endpoint.
                     if (component != null) {
-                        answer = component.resolveEndpoint(uri);
+                    	
+                    	// Have the component create the endpoint if it can.
+                        answer = component.createEndpoint(uri);
+                        
+                        // If it's a singleton then auto register it.
+                        if( answer!=null && answer.isSingleton() ) {
+    	                    if (answer != null) {
+    	                        startServices(answer);
+    	                        endpoints.put(uri, answer);
+    	                    }
+                        }
                     }
                     
-                    // HC: What's the idea behind starting an endpoint?
-                    // I don't think we have any endpoints that are services do we?
-                    if (answer != null) {
-                        startServices(answer);
-                        endpoints.put(uri, answer);
-                    }
                 }
                 catch (Exception e) {
                     throw new ResolveEndpointFailedException(uri, e);

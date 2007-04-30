@@ -50,7 +50,6 @@ public class JmsConsumer extends DefaultConsumer<JmsExchange> {
     protected void doStart() throws Exception {
         super.doStart();
         listenerContainer.afterPropertiesSet();
-        listenerContainer.initialize();
         listenerContainer.start();
     }
 

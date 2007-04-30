@@ -120,7 +120,7 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Exc
 
     // Resolve Camel Endpoints
     //-------------------------------------------------------------------------
-    public Endpoint<Exchange> resolveEndpoint(String uri) {
+    public Endpoint<Exchange> createEndpoint(String uri) {
         if (uri.startsWith("jbi:")) {
             uri = uri.substring("jbi:".length());
 

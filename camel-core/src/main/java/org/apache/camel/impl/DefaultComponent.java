@@ -48,7 +48,7 @@ public class DefaultComponent<E extends Exchange> extends ServiceSupport impleme
     }
 
 
-    public Endpoint<E> resolveEndpoint(String uri) throws Exception {
+    public Endpoint<E> createEndpoint(String uri) throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");        
         URI u = new URI(uri);
         String path = u.getHost();

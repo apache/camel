@@ -28,7 +28,6 @@ import javax.jms.Session;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.DelegateProcessor;
@@ -102,6 +101,9 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 		        inheritErrorHandler(false);		        
 		        // Used to validate messages are sent to the target.
 				from("activemq:queue:mock.a").trace().to("mock:a");
+				from("activemq:queue:mock.b").trace().to("mock:b");
+				from("activemq:queue:mock.c").trace().to("mock:c");
+				from("activemq:queue:mock.d").trace().to("mock:d");
 		        
 				// Receive from a and send to target in 1 tx.
 				from("activemq:queue:a").to("activemq:queue:mock.a");
@@ -134,15 +136,22 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 		        //
 		        // Sets up 2 consumers on single topic, one being transacted the other not.  Used to verify 
 		        // That each consumer can have independently configured transaction settings. 
-		        // Do a rollback, should cause the transacted consumer to re-deliver but not the un-trasacted one.
+		        // Do a rollback, should cause the transacted consumer to re-deliver (since we are using a durable subscription) but not the un-transacted one.
+		        // TODO: find out why re-delivery is not working with a non durable transacted topic.
                 JmsEndpoint endpoint1 = (JmsEndpoint) endpoint("activemq:topic:f");
                 endpoint1.getConfiguration().setTransacted(true);
+                endpoint1.getConfiguration().setSubscriptionDurable(true);
+                endpoint1.getConfiguration().setClientId("client2");
+                endpoint1.getConfiguration().setDurableSubscriptionName("sub");
                 from(endpoint1).policy(requried).policy(rollback).to("activemq:queue:mock.a", "mock:b"); 
                 
                 JmsEndpoint endpoint2 = (JmsEndpoint) endpoint("activemq:topic:f");
-                endpoint1.getConfiguration().setTransacted(false);
+                endpoint2.getConfiguration().setTransacted(false);
+		        endpoint2.getConfiguration().setAcknowledgementMode(Session.AUTO_ACKNOWLEDGE);
+                endpoint2.getConfiguration().setSubscriptionDurable(true);
+                endpoint2.getConfiguration().setClientId("client1");
+                endpoint2.getConfiguration().setDurableSubscriptionName("sub");
                 from(endpoint2).policy(requried).policy(rollback).to("activemq:queue:mock.c", "mock:d");
-
 			}
 		};
 	}
@@ -162,9 +171,9 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
         
-        for (Route route : this.context.getRoutes()) {
-    		System.out.println(route);
-		}
+//        for (Route route : this.context.getRoutes()) {
+//    		System.out.println(route);
+//		}
         
         mockEndpointA = (MockEndpoint) resolveMandatoryEndpoint("mock:a");
         mockEndpointB = (MockEndpoint) resolveMandatoryEndpoint("mock:b");
@@ -177,6 +186,27 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
     	super.tearDown();
     	spring.destroy();
     }
+
+    /**
+     * This test seems to be fail every other run. 
+     * @throws Exception
+     */
+	public void disabledtestSenarioF() throws Exception {
+		String expected = getName()+": "+System.currentTimeMillis();
+		mockEndpointA.expectedMessageCount(0);
+		mockEndpointB.expectedMinimumMessageCount(2);		
+		mockEndpointC.expectedMessageCount(0);
+		mockEndpointD.expectedMessageCount(1);
+        send("activemq:topic:f", expected);
+
+        // Wait till the endpoints get their messages.
+        assertWait(10, TimeUnit.SECONDS, mockEndpointA,mockEndpointB,mockEndpointC,mockEndpointD);
+
+        // Wait a little more to make sure extra messages are not received.
+        Thread.sleep(1000);
+        
+        assertIsSatisfied(mockEndpointA,mockEndpointB,mockEndpointC,mockEndpointD);
+	}
 
 	public void testSenarioA() throws Exception {
 		String expected = getName()+": "+System.currentTimeMillis();
@@ -237,21 +267,5 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
         assertIsSatisfied(mockEndpointA, mockEndpointB);
 	}
 	
-	public void disabletestSenarioF() throws Exception {
-		String expected = getName()+": "+System.currentTimeMillis();
-		mockEndpointA.expectedMessageCount(0);
-		mockEndpointB.expectedMinimumMessageCount(2);		
-		mockEndpointC.expectedMessageCount(0);
-		mockEndpointD.expectedMessageCount(1);
-        send("activemq:queue:e", expected);
-
-        // Wait till the endpoints get their messages.
-        assertWait(5, TimeUnit.SECONDS, mockEndpointA,mockEndpointB);
-
-        // Wait a little more to make sure extra messages are not received.
-        Thread.sleep(1000);
-        
-        assertIsSatisfied(mockEndpointA, mockEndpointB);
-	}
 	
 }

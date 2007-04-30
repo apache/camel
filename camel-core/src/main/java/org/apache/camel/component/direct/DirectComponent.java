@@ -47,7 +47,7 @@ public class DirectComponent<E extends Exchange> implements Component<E> {
 		return null;
 	}
 
-	public Endpoint<E> resolveEndpoint(String uri) throws Exception {
+	public Endpoint<E> createEndpoint(String uri) throws Exception {
 
         ObjectHelper.notNull(getCamelContext(), "camelContext");        
         URI u = new URI(uri);
