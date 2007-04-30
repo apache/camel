@@ -29,8 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A Spring {@link FactoryBean} to create and initialize a Camel {@CamelContext}
- * and install routes either explicitly configured in Spring or found by searching the classpath.
+ * A Spring {@link FactoryBean} to create and initialize a {@link SpringCamelContext}
+ * and install routes either explicitly configured in Spring XML or found by searching the classpath for Java classes
+ * which extend {@link RouteBuilder} using the nested {@link #setPackages(String[])}.
  *
  * @version $Revision$
  */
@@ -87,10 +88,16 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
         return routeBuilder;
     }
 
+    /**
+     * Set a single {@link RouteBuilder} to be used to create the default routes on startup
+     */
     public void setRouteBuilder(RouteBuilder routeBuilder) {
         this.routeBuilder = routeBuilder;
     }
 
+    /**
+     * Set a collection of {@link RouteBuilder} instances to be used to create the default routes on startup
+     */
     public void setRouteBuilders(RouteBuilder[] builders) {
         for (RouteBuilder builder : builders) {
             additionalBuilders.add(builder);
@@ -109,6 +116,12 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
         return packages;
     }
 
+    /**
+     * Sets the package names to be recursively searched for Java classes which extend {@link RouteBuilder} to be auto-wired up to the
+     * {@link SpringCamelContext} as a route. Note that classes are excluded if they are specifically configured in the spring.xml
+     *
+     * @param packages the package names which are recursively searched
+     */
     public void setPackages(String[] packages) {
         this.packages = packages;
     }
