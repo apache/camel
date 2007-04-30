@@ -24,7 +24,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import javax.mail.Message;
-import javax.mail.Transport;
+import javax.mail.Folder;
 
 /**
  * @version $Revision:520964 $
@@ -52,19 +52,28 @@ public class MailEndpoint extends DefaultEndpoint<MailExchange> {
 
     public Consumer<MailExchange> createConsumer(Processor<MailExchange> processor) throws Exception {
         JavaMailConnection connection = configuration.createJavaMailConnection(this);
-        return createConsumer(processor, connection.createTransport());
+        String protocol = getConfiguration().getProtocol();
+        if (protocol.equals("smtp")) {
+            protocol = "pop3";
+        }
+        String folderName = getConfiguration().getFolderName();
+        Folder folder = connection.getFolder(protocol, folderName);
+        if (folder == null) {
+            throw new IllegalArgumentException("No folder for protocol: " + protocol + " and name: " + folderName);
+        }
+        return createConsumer(processor, folder);
     }
 
     /**
      * Creates a consumer using the given processor and transport
      *
      * @param processor the processor to use to process the messages
-     * @param transport the JavaMail transport to use for inbound messages
+     * @param folder the JavaMail Folder to use for inbound messages
      * @return a newly created consumer
      * @throws Exception if the consumer cannot be created
      */
-    public Consumer<MailExchange> createConsumer(Processor<MailExchange> processor, Transport transport) throws Exception {
-        return startService(new MailConsumer(this, processor, transport));
+    public Consumer<MailExchange> createConsumer(Processor<MailExchange> processor, Folder folder) throws Exception {
+        return startService(new MailConsumer(this, processor, folder));
     }
 
     public MailExchange createExchange() {

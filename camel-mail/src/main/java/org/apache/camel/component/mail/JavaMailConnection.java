@@ -25,6 +25,8 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 import javax.mail.Transport;
+import javax.mail.Folder;
+import javax.mail.Store;
 
 /**
  * An extension of Spring's {@link JavaMailSenderImpl} to provide helper methods for listening for new mail
@@ -33,23 +35,14 @@ import javax.mail.Transport;
  */
 public class JavaMailConnection extends JavaMailSenderImpl {
 
-    /**
-     * Create a new {@link Transport} which can then be used to consume new messages
-     *
-     * @throws MailAuthenticationException in case of authentication failure
-     * @throws MailSendException           in case of failure when sending a message
-     */
-    public Transport createTransport() throws MailException {
+    public Folder getFolder(String protocol, String folderName) {
         try {
-            Transport transport = getTransport(getSession());
-            transport.connect(getHost(), getPort(), getUsername(), getPassword());
-            return transport;
+            Store store = getSession().getStore(protocol);
+            store.connect(getHost(), getPort(), getUsername(), getPassword());
+            return store.getFolder(folderName);
         }
-        catch (AuthenticationFailedException ex) {
-            throw new MailAuthenticationException(ex);
-        }
-        catch (MessagingException ex) {
-            throw new MailSendException("Mail server connection failed", ex);
+        catch (MessagingException e) {
+            throw new MailSendException("Mail server connection failed", e);
         }
     }
 }
