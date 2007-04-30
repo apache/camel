@@ -37,8 +37,7 @@ public class FileComponent extends DefaultComponent<FileExchange> {
 
     protected Endpoint<FileExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         File file = new File(remaining);
-        FileEndpoint result =  new FileEndpoint(file, remaining, this);
-        IntrospectionSupport.setProperties(result, parameters);
+        FileEndpoint result =  new FileEndpoint(file, remaining, this,parameters);
         return result;
     }
     

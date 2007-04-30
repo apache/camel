@@ -18,6 +18,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import org.apache.camel.Component;
@@ -25,15 +26,19 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.util.IntrospectionSupport;
 
 /**
  * @version $Revision: 523016 $
  */
 public class FileEndpoint extends DefaultEndpoint<FileExchange> {
     private File file;
-    protected FileEndpoint(File file,String endpointUri, Component component){
+    private Map parameters;
+    protected FileEndpoint(File file,String endpointUri, Component component,Map parameters){
         super(endpointUri,component);
         this.file = file;
+        this.parameters=parameters;
+        IntrospectionSupport.setProperties(this, parameters);
     }
 
    
@@ -46,7 +51,9 @@ public class FileEndpoint extends DefaultEndpoint<FileExchange> {
      * @see org.apache.camel.Endpoint#createConsumer(org.apache.camel.Processor)
      */
     public Consumer<FileExchange> createConsumer(Processor<FileExchange> file) throws Exception{
-        return new FileConsumer(this, file, getExecutor());
+        Consumer<FileExchange> result =  new FileConsumer(this, file, getExecutor());
+        IntrospectionSupport.setProperties(result, parameters);
+        return result;
     }
 
     /**
@@ -73,7 +80,9 @@ public class FileEndpoint extends DefaultEndpoint<FileExchange> {
      * @see org.apache.camel.Endpoint#createProducer()
      */
     public Producer<FileExchange> createProducer() throws Exception{
-        return new FileProducer(this);
+        Producer<FileExchange> result =  new FileProducer(this);
+        IntrospectionSupport.setProperties(result, parameters);
+        return result;
     }
 
     
