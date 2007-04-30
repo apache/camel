@@ -41,6 +41,17 @@ public class CamelContextFactoryBeanTest extends TestSupport {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camel_context_factory_bean_test.xml");
 
         CamelContext context = (CamelContext) applicationContext.getBean("camel");
+        assertValidContext(context);
+    }
+
+    public void testClassPathRouteLoadingUsingNamespaces() throws Exception {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camel_context_factory_bean_test.xml");
+
+        CamelContext context = (CamelContext) applicationContext.getBean("camel3");
+        assertValidContext(context);
+    }
+
+    protected void assertValidContext(CamelContext context) {
         assertNotNull("No context found!", context);
 
         List<Route> routes = context.getRoutes();
@@ -55,7 +66,7 @@ public class CamelContextFactoryBeanTest extends TestSupport {
             assertEndpointUri(key, "queue:test.a");
         }
     }
-    
+
     public void testXMLRouteLoading() throws Exception {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camel_context_factory_bean_test.xml");
 
