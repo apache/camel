@@ -17,18 +17,18 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.TestSupport;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.TestSupport;
+import org.apache.camel.Route;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.CamelClient;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.util.List;
 
 /**
  * @version $Revision: 521586 $
@@ -38,10 +38,10 @@ public class RoutingUsingCamelContextFactoryTest extends TestSupport {
     protected AbstractXmlApplicationContext applicationContext;
 
     public void testXMLRouteLoading() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/routingUsingCamelContextFactoryTest.xml");
+        applicationContext = createApplicationContext();
 
-        CamelContext context = (CamelContext) applicationContext.getBean("camel");
-        assertNotNull("No context found!", context);
+        SpringCamelContext context = (SpringCamelContext) applicationContext.getBean("camel");
+        assertValidContext(context);
 
         MockEndpoint resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:result");
         resultEndpoint.expectedBodiesReceived(body);
@@ -55,14 +55,27 @@ public class RoutingUsingCamelContextFactoryTest extends TestSupport {
                 in.setBody(body);
             }
         });
-        
 
         resultEndpoint.assertIsSatisfied();
+    }
+
+    protected void assertValidContext(SpringCamelContext context) {
+        assertNotNull("No context found!", context);
+
+        List<Route> routes = context.getRoutes();
+        assertNotNull("Should have some routes defined", routes);
+        assertEquals("Number of routes defined", 1, routes.size());
+    }
+
+    protected ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/routingUsingCamelContextFactoryTest.xml");
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        applicationContext.destroy();
+        if (applicationContext != null) {
+            applicationContext.destroy();
+        }
     }
 }

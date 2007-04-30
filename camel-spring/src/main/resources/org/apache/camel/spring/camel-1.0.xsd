@@ -1,26 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema 
-  xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-  elementFormDefault="qualified" 
-  attributeFormDefault="unqualified"
-  targetNamespace="http://activemq.apache.org/camel/schema/camel-1.0.xsd" 
-  xmlns:c="http://activemq.apache.org/camel/schema/camel-1.0.xsd"
-  xmlns:s="http://www.springframework.org/schema/beans"
-  >
- 
+<xs:schema
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified"
+        attributeFormDefault="unqualified"
+        targetNamespace="http://activemq.apache.org/camel/schema/camel-1.0.xsd"
+        xmlns:c="http://activemq.apache.org/camel/schema/camel-1.0.xsd"
+        xmlns:s="http://www.springframework.org/schema/beans"
+        >
+
   <xs:import namespace="http://www.springframework.org/schema/beans"/>
+
+  <xs:element name="camelContext">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="s:identifiedType">
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" ref="c:routes"/>
+          </xs:sequence>
+          <xs:attribute name="packages" type="xs:NMTOKEN"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="routes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="c:route"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
   <xs:element name="routeBuilder">
     <xs:complexType>
       <xs:complexContent>
         <xs:extension base="s:identifiedType">
-		  <xs:sequence>
-		    <xs:element minOccurs="0" maxOccurs="unbounded" ref="c:route"/>
-		  </xs:sequence>
-	    </xs:extension>
-  	  </xs:complexContent>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" ref="c:route"/>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
     </xs:complexType>
   </xs:element>
-  
+
   <xs:element name="route">
     <xs:complexType>
       <xs:sequence>

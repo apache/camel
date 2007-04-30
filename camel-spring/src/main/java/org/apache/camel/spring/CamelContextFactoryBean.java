@@ -19,7 +19,6 @@ package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -84,13 +83,19 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
         this.context = context;
     }
 
-	public RouteBuilder getRouteBuilder() {
-		return routeBuilder;
-	}
+    public RouteBuilder getRouteBuilder() {
+        return routeBuilder;
+    }
 
-	public void setRouteBuilder(RouteBuilder routeBuilder) {
-		this.routeBuilder = routeBuilder;
-	}
+    public void setRouteBuilder(RouteBuilder routeBuilder) {
+        this.routeBuilder = routeBuilder;
+    }
+
+    public void setRouteBuilders(RouteBuilder[] builders) {
+        for (RouteBuilder builder : builders) {
+            additionalBuilders.add(builder);
+        }
+    }
 
     public ApplicationContext getApplicationContext() {
         return applicationContext;
@@ -108,7 +113,6 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
         this.packages = packages;
     }
 
-
     // Implementation methods
     //-------------------------------------------------------------------------
 
@@ -119,8 +123,9 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
         for (RouteBuilder routeBuilder : additionalBuilders) {
             getContext().addRoutes(routeBuilder);
         }
-        if( routeBuilder!=null )
-        	getContext().addRoutes(routeBuilder);
+        if (routeBuilder != null) {
+            getContext().addRoutes(routeBuilder);
+        }
     }
 
     /**
