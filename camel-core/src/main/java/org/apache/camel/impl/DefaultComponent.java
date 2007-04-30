@@ -62,6 +62,10 @@ public class DefaultComponent<E extends Exchange> extends ServiceSupport impleme
             return null;
         }
         if (parameters != null) {
+            if (endpoint instanceof PollingEndpoint) {
+                PollingEndpoint pollingEndpoint = (PollingEndpoint) endpoint;
+                pollingEndpoint.configureProperties(parameters);
+            }
             IntrospectionSupport.setProperties(endpoint, parameters);
         }
         return endpoint;

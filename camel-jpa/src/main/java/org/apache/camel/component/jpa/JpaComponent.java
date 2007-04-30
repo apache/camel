@@ -56,14 +56,6 @@ public class JpaComponent extends DefaultComponent<Exchange> {
     @Override
     protected Endpoint<Exchange> createEndpoint(String uri, String path, Map options) throws Exception {
         JpaEndpoint endpoint = new JpaEndpoint(uri, this);
-        Map consumerProperties = IntrospectionSupport.extractProperties(options, "consumer.");
-        if (consumerProperties != null) {
-            endpoint.setConsumerProperties(consumerProperties);
-        }
-        Map emProperties = IntrospectionSupport.extractProperties(options, "emf.");
-        if (emProperties != null) {
-            endpoint.setEntityManagerProperties(emProperties);
-        }
 
         // lets interpret the next string as a class
         if (path != null) {
