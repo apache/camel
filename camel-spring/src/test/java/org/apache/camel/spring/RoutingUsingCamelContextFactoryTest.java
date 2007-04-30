@@ -28,15 +28,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 
 /**
  * @version $Revision: 521586 $
  */
 public class RoutingUsingCamelContextFactoryTest extends TestSupport {
     protected String body = "<hello>world!</hello>";
+    protected AbstractXmlApplicationContext applicationContext;
 
     public void testXMLRouteLoading() throws Exception {
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/routingUsingCamelContextFactoryTest.xml");
+        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/routingUsingCamelContextFactoryTest.xml");
 
         CamelContext context = (CamelContext) applicationContext.getBean("camel");
         assertNotNull("No context found!", context);
@@ -58,4 +60,9 @@ public class RoutingUsingCamelContextFactoryTest extends TestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        applicationContext.destroy();
+    }
 }
