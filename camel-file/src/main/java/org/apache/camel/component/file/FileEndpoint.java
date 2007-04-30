@@ -46,7 +46,7 @@ public class FileEndpoint extends DefaultEndpoint<FileExchange> {
      * @see org.apache.camel.Endpoint#createConsumer(org.apache.camel.Processor)
      */
     public Consumer<FileExchange> createConsumer(Processor<FileExchange> file) throws Exception{
-        return new FileConsumer(this, file, executor);
+        return new FileConsumer(this, file, getExecutor());
     }
 
     /**
@@ -103,4 +103,6 @@ public class FileEndpoint extends DefaultEndpoint<FileExchange> {
 		return true;
 	}
   
+    
+
 }
