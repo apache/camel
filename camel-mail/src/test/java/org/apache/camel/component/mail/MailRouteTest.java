@@ -20,6 +20,7 @@ package org.apache.camel.component.mail;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.builder.Builder.constant;
 import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.util.ObjectHelper.asString;
@@ -34,7 +35,12 @@ import java.io.IOException;
  * @version $Revision: 1.1 $
  */
 public class MailRouteTest extends ContextTestSupport {
+    private MockEndpoint resultEndpoint;
+
     public void testSendAndReceiveMails() throws Exception {
+        resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:result");
+        resultEndpoint.expectedMessageCount(1);
+
         client.send("smtp://james@localhost", new Processor<Exchange>() {
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("hello world!");
@@ -45,8 +51,9 @@ public class MailRouteTest extends ContextTestSupport {
         assertMailboxReceivedMessages("james@localhost");
 
         // lets test the receive worked
-        // TODO 
-        // assertMailboxReceivedMessages("result@localhost");
+        resultEndpoint.assertIsSatisfied(5000);
+
+        assertMailboxReceivedMessages("copy@localhost");
     }
 
     protected void assertMailboxReceivedMessages(String name) throws IOException, MessagingException {
@@ -62,8 +69,9 @@ public class MailRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("smtp://james@localhost").to("direct:a");
-                from("direct:a").setHeader("name", constant("James")).to("pop3:result@localhost");
+                from("smtp://james@localhost").to("queue:a");
+                from("queue:a").to("smtp://result@localhost", "smtp://copy@localhost");
+                from("smtp://result@localhost").to("mock:result");
             }
         };
     }

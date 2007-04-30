@@ -19,12 +19,18 @@ package org.apache.camel.component.mail;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.impl.PollingConsumer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
+import javax.mail.Flags;
+import javax.mail.Folder;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Transport;
-import javax.mail.event.TransportEvent;
-import javax.mail.event.TransportListener;
+import javax.mail.event.MessageCountEvent;
+import javax.mail.event.MessageCountListener;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * A {@link Consumer} which consumes messages from JavaMail using a {@link Transport} and dispatches them
@@ -32,37 +38,96 @@ import javax.mail.event.TransportListener;
  *
  * @version $Revision: 523430 $
  */
-public class MailConsumer extends DefaultConsumer<MailExchange> implements TransportListener {
+public class MailConsumer extends PollingConsumer<MailExchange> implements MessageCountListener {
+    private static final transient Log log = LogFactory.getLog(MailConsumer.class);
     private final MailEndpoint endpoint;
-    private final Transport transport;
+    private final Folder folder;
 
-    public MailConsumer(MailEndpoint endpoint, Processor<MailExchange> processor, Transport transport) {
-        super(endpoint, processor);
+    public MailConsumer(MailEndpoint endpoint, Processor<MailExchange> processor, Folder folder) {
+        super(endpoint, processor, endpoint.getExecutorService());
         this.endpoint = endpoint;
-        this.transport = transport;
+        this.folder = folder;
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        transport.addTransportListener(this);
+        ensureFolderIsOpen();
+        folder.addMessageCountListener(this);
     }
 
     @Override
     protected void doStop() throws Exception {
-        transport.close();
+        folder.removeMessageCountListener(this);
+        folder.close(true);
         super.doStop();
     }
 
-    public void messageDelivered(TransportEvent transportEvent) {
-        Message message = transportEvent.getMessage();
+    public void messagesAdded(MessageCountEvent event) {
+        Message[] messages = event.getMessages();
+        for (Message message : messages) {
+            try {
+                if (!message.getFlags().contains(Flags.Flag.DELETED)) {
+                    processMessage(message);
+
+                    flagMessageDeleted(message);
+                }
+            }
+            catch (MessagingException e) {
+                handleException(e);
+            }
+        }
+    }
+
+    public void messagesRemoved(MessageCountEvent event) {
+        Message[] messages = event.getMessages();
+        for (Message message : messages) {
+            if (log.isDebugEnabled()) {
+                try {
+                    log.debug("Removing message: " + message.getSubject());
+                }
+                catch (MessagingException e) {
+                    log.debug("Ignored: " + e);
+                }
+            }
+        }
+    }
+
+    protected void poll() throws Exception {
+        ensureFolderIsOpen();
+
+        int count = folder.getMessageCount();
+        if (count > 0) {
+            Message message = folder.getMessage(1);
+
+            processMessage(message);
+
+            flagMessageDeleted(message);
+        }
+        else if (count == -1) {
+            throw new MessagingException("Folder: " + folder.getFullName() + " is closed");
+        }
+
+        folder.close(true);
+    }
+
+    protected void processMessage(Message message) {
         MailExchange exchange = endpoint.createExchange(message);
         getProcessor().process(exchange);
     }
 
-    public void messageNotDelivered(TransportEvent transportEvent) {
+    protected void ensureFolderIsOpen() throws MessagingException {
+        if (!folder.isOpen()) {
+            folder.open(Folder.READ_WRITE);
+        }
     }
 
-    public void messagePartiallyDelivered(TransportEvent transportEvent) {
+    protected void flagMessageDeleted(Message message) throws MessagingException {
+        if (endpoint.getConfiguration().isDeleteProcessedMessages()) {
+            message.setFlag(Flags.Flag.DELETED, true);
+        }
+        else {
+            message.setFlag(Flags.Flag.SEEN, true);
+        }
     }
 }

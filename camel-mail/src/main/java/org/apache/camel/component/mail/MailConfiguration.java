@@ -39,6 +39,8 @@ public class MailConfiguration implements Cloneable {
     private int port = -1;
     private String destination;
     private String from = "camel@localhost";
+    private boolean deleteProcessedMessages = true;
+    private String folderName = "INBOX";
 
     public MailConfiguration() {
     }
@@ -82,6 +84,9 @@ public class MailConfiguration implements Cloneable {
         String fragment = uri.getFragment();
         if (fragment == null || fragment.length() == 0) {
             fragment = userInfo + "@" + host;
+        }
+        else {
+            setFolderName(fragment);
         }
         setDestination(fragment);
     }
@@ -197,5 +202,21 @@ public class MailConfiguration implements Cloneable {
 
     public void setFrom(String from) {
         this.from = from;
+    }
+
+    public boolean isDeleteProcessedMessages() {
+        return deleteProcessedMessages;
+    }
+
+    public void setDeleteProcessedMessages(boolean deleteProcessedMessages) {
+        this.deleteProcessedMessages = deleteProcessedMessages;
+    }
+
+    public String getFolderName() {
+        return folderName;
+    }
+
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
     }
 }
