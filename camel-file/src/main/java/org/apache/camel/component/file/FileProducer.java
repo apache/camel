@@ -24,30 +24,32 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A {@link Producer} implementation for MINA
+ * A {@link Producer} implementation for File
  * 
  * @version $Revision: 523016 $
  */
 public class FileProducer extends DefaultProducer<FileExchange>{
-    private static final transient Log log = LogFactory.getLog(FileProducer.class);
 
+    private static final transient Log log=LogFactory.getLog(FileProducer.class);
     private final FileEndpoint endpoint;
+
     public FileProducer(FileEndpoint endpoint){
         super(endpoint);
-        this.endpoint = endpoint;
+        this.endpoint=endpoint;
     }
 
     /**
-     * @param arg0
+     * @param exchange
      * @see org.apache.camel.Processor#process(java.lang.Object)
      */
     public void process(FileExchange exchange){
-        ByteBuffer payload = exchange.getIn().getBody(ByteBuffer.class);
-        File file = null;
-        if (endpoint.getFile() != null && endpoint.getFile().isDirectory()) {
-            file = new File(endpoint.getFile(),exchange.getFile().getName());
-        }else {
-            file = exchange.getFile();
+        ByteBuffer payload=exchange.getIn().getBody(ByteBuffer.class);
+        payload.flip();
+        File file=null;
+        if(endpoint.getFile()!=null&&endpoint.getFile().isDirectory()){
+            file=new File(endpoint.getFile(),exchange.getFile().getName());
+        }else{
+            file=exchange.getFile();
         }
         try{
             FileChannel fc=new RandomAccessFile(file,"rw").getChannel();
@@ -55,7 +57,7 @@ public class FileProducer extends DefaultProducer<FileExchange>{
             fc.write(payload);
             fc.close();
         }catch(Throwable e){
-            log.error("Failed to write to File: " + file,e);
+            log.error("Failed to write to File: "+file,e);
         }
     }
 }
