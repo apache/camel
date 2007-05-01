@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class PollingConsumer<E extends Exchange> extends DefaultConsumer<E> implements Runnable {
     private static final transient Log log = LogFactory.getLog(PollingConsumer.class);
-
+    
     private final ScheduledExecutorService executor;
     private long initialDelay = 1000;
     private long delay = 500;
@@ -42,12 +42,16 @@ public abstract class PollingConsumer<E extends Exchange> extends DefaultConsume
     private boolean useFixedDelay;
     private ScheduledFuture<?> future;
 
+    public PollingConsumer(DefaultEndpoint<E> endpoint, Processor<E> processor) {
+        this(endpoint, processor, endpoint.getExecutorService());
+    }
+
     public PollingConsumer(Endpoint<E> endpoint, Processor<E> processor, ScheduledExecutorService executor) {
         super(endpoint, processor);
-        this.executor=executor;
-        
-        if( executor == null )
-        	throw new IllegalArgumentException("A non null ScheduledExecutorService must be provided.");
+        this.executor = executor;
+        if (executor == null) {
+            throw new IllegalArgumentException("A non null ScheduledExecutorService must be provided.");
+        }
     }
 
     /**
@@ -102,7 +106,7 @@ public abstract class PollingConsumer<E extends Exchange> extends DefaultConsume
 
     /**
      * The polling method which is invoked periodically to poll this consumer
-     * 
+     *
      * @throws Exception
      */
     protected abstract void poll() throws Exception;

@@ -17,96 +17,101 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
-import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.PollingConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+
 /**
  * @version $Revision: 523016 $
  */
-public class FileConsumer extends PollingConsumer<FileExchange>{
-    private static final transient Log log=LogFactory.getLog(FileConsumer.class);
-
+public class FileConsumer extends PollingConsumer<FileExchange> {
+    private static final transient Log log = LogFactory.getLog(FileConsumer.class);
     private final FileEndpoint endpoint;
-    private boolean recursive=true;
-    private boolean attemptFileLock=false;
-    private String regexPattern="";
-    private long lastPollTime=0l;
+    private boolean recursive = true;
+    private boolean attemptFileLock = false;
+    private String regexPattern = "";
+    private long lastPollTime = 0l;
 
-    public FileConsumer(final FileEndpoint endpoint,Processor<FileExchange> processor,ScheduledExecutorService executor){
-        super(endpoint,processor,executor);
-        this.endpoint=endpoint;
+    public FileConsumer(final FileEndpoint endpoint, Processor<FileExchange> processor) {
+        super(endpoint, processor);
+        this.endpoint = endpoint;
     }
 
-    protected void poll() throws Exception{
-        pollFileOrDirectory(endpoint.getFile(),isRecursive());
-        lastPollTime=System.currentTimeMillis();
+    protected void poll() throws Exception {
+        pollFileOrDirectory(endpoint.getFile(), isRecursive());
+        lastPollTime = System.currentTimeMillis();
     }
 
-    protected void pollFileOrDirectory(File fileOrDirectory,boolean processDir){
-        if(!fileOrDirectory.isDirectory()){
+    protected void pollFileOrDirectory(File fileOrDirectory, boolean processDir) {
+        if (!fileOrDirectory.isDirectory()) {
             pollFile(fileOrDirectory); // process the file
-        }else if(processDir){
-            log.debug("Polling directory "+fileOrDirectory);
-            File[] files=fileOrDirectory.listFiles();
-            for(int i=0;i<files.length;i++){
-                pollFileOrDirectory(files[i],isRecursive()); // self-recursion
+        }
+        else if (processDir) {
+            log.debug("Polling directory " + fileOrDirectory);
+            File[] files = fileOrDirectory.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                pollFileOrDirectory(files[i], isRecursive()); // self-recursion
             }
-        }else{
-            log.debug("Skipping directory "+fileOrDirectory);
+        }
+        else {
+            log.debug("Skipping directory " + fileOrDirectory);
         }
     }
 
-    protected void pollFile(final File file){
-        if(file.exists()&&file.lastModified()>lastPollTime){
-            if(isValidFile(file)){
+    protected void pollFile(final File file) {
+        if (file.exists() && file.lastModified() > lastPollTime) {
+            if (isValidFile(file)) {
                 processFile(file);
             }
         }
     }
 
-    protected void processFile(File file){
+    protected void processFile(File file) {
         getProcessor().process(endpoint.createExchange(file));
     }
 
-    protected boolean isValidFile(File file){
-        boolean result=false;
-        if(file!=null&&file.exists()){
-            if(isMatched(file)){
-                if(isAttemptFileLock()){
-                    FileChannel fc=null;
-                    try{
-                        fc=new RandomAccessFile(file,"rw").getChannel();
+    protected boolean isValidFile(File file) {
+        boolean result = false;
+        if (file != null && file.exists()) {
+            if (isMatched(file)) {
+                if (isAttemptFileLock()) {
+                    FileChannel fc = null;
+                    try {
+                        fc = new RandomAccessFile(file, "rw").getChannel();
                         fc.lock();
-                        result=true;
-                    }catch(Throwable e){
-                        log.debug("Failed to get the lock on file: " + file,e);
-                    }finally{
-                        if(fc!=null){
-                            try{
+                        result = true;
+                    }
+                    catch (Throwable e) {
+                        log.debug("Failed to get the lock on file: " + file, e);
+                    }
+                    finally {
+                        if (fc != null) {
+                            try {
                                 fc.close();
-                            }catch(IOException e){
+                            }
+                            catch (IOException e) {
                             }
                         }
                     }
-                }else{
-                    result=true;
+                }
+                else {
+                    result = true;
                 }
             }
         }
         return result;
     }
 
-    protected boolean isMatched(File file){
-        boolean result=true;
-        if(regexPattern!=null&&regexPattern.length()>0){
-            result=file.getName().matches(getRegexPattern());
+    protected boolean isMatched(File file) {
+        boolean result = true;
+        if (regexPattern != null && regexPattern.length() > 0) {
+            result = file.getName().matches(getRegexPattern());
         }
         return result;
     }
@@ -114,42 +119,42 @@ public class FileConsumer extends PollingConsumer<FileExchange>{
     /**
      * @return the recursive
      */
-    public boolean isRecursive(){
+    public boolean isRecursive() {
         return this.recursive;
     }
 
     /**
      * @param recursive the recursive to set
      */
-    public void setRecursive(boolean recursive){
-        this.recursive=recursive;
+    public void setRecursive(boolean recursive) {
+        this.recursive = recursive;
     }
 
     /**
      * @return the attemptFileLock
      */
-    public boolean isAttemptFileLock(){
+    public boolean isAttemptFileLock() {
         return this.attemptFileLock;
     }
 
     /**
      * @param attemptFileLock the attemptFileLock to set
      */
-    public void setAttemptFileLock(boolean attemptFileLock){
-        this.attemptFileLock=attemptFileLock;
+    public void setAttemptFileLock(boolean attemptFileLock) {
+        this.attemptFileLock = attemptFileLock;
     }
 
     /**
      * @return the regexPattern
      */
-    public String getRegexPattern(){
+    public String getRegexPattern() {
         return this.regexPattern;
     }
 
     /**
      * @param regexPattern the regexPattern to set
      */
-    public void setRegexPattern(String regexPattern){
-        this.regexPattern=regexPattern;
+    public void setRegexPattern(String regexPattern) {
+        this.regexPattern = regexPattern;
     }
 }

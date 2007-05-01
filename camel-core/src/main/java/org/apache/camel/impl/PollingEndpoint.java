@@ -24,6 +24,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.util.IntrospectionSupport;
 
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * A base class for {@link Endpoint} which creates a {@link PollingConsumer}
@@ -57,4 +59,5 @@ public abstract class PollingEndpoint<E extends Exchange> extends DefaultEndpoin
             setConsumerProperties(consumerProperties);
         }
     }
+
 }

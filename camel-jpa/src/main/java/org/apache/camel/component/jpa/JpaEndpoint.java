@@ -61,7 +61,7 @@ public class JpaEndpoint extends PollingEndpoint<Exchange> {
     }
 
     public Consumer<Exchange> createConsumer(Processor<Exchange> processor) throws Exception {
-        JpaConsumer consumer = new JpaConsumer(this, processor, getExecutorService());
+        JpaConsumer consumer = new JpaConsumer(this, processor);
         configureConsumer(consumer);
         return startService(consumer);
     }

@@ -17,31 +17,25 @@
  */
 package org.apache.camel.component.file;
 
-import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.PollingEndpoint;
-import org.apache.camel.util.IntrospectionSupport;
 
 import java.io.File;
-import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
+ * A <a href="http://activemq.apache.org/camel/file.html">File Endpoint</a> for working with file systems
+ *
  * @version $Revision: 523016 $
  */
 public class FileEndpoint extends PollingEndpoint<FileExchange> {
     private File file;
-    private ScheduledExecutorService executor;
 
     protected FileEndpoint(File file, String endpointUri, FileComponent component) {
         super(endpointUri, component);
         this.file = file;
-        this.executor = component.getExecutorService();
     }
-
 
     /**
      * @return a Producer
@@ -60,7 +54,7 @@ public class FileEndpoint extends PollingEndpoint<FileExchange> {
      * @see org.apache.camel.Endpoint#createConsumer(org.apache.camel.Processor)
      */
     public Consumer<FileExchange> createConsumer(Processor<FileExchange> file) throws Exception {
-        Consumer<FileExchange> result = new FileConsumer(this, file, getExecutor());
+        Consumer<FileExchange> result = new FileConsumer(this, file);
         configureConsumer(result);
         return startService(result);
     }
@@ -80,23 +74,6 @@ public class FileEndpoint extends PollingEndpoint<FileExchange> {
      */
     public FileExchange createExchange() {
         return createExchange(this.file);
-    }
-
-    /**
-     * @return the executor
-     */
-    public synchronized ScheduledExecutorService getExecutor() {
-        if (this.executor == null) {
-            this.executor = new ScheduledThreadPoolExecutor(10);
-        }
-        return executor;
-    }
-
-    /**
-     * @param executor the executor to set
-     */
-    public synchronized void setExecutor(ScheduledExecutorService executor) {
-        this.executor = executor;
     }
 
     public File getFile() {

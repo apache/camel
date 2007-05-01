@@ -16,9 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
@@ -27,15 +24,19 @@ import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.util.ObjectHelper;
 
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+
 /**
  * A default endpoint useful for implementation inheritance
- * 
+ *
  * @version $Revision$
  */
 public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E> {
     private String endpointUri;
     private final Component component;
     private CamelContext context;
+    private ScheduledExecutorService executorService;
 
     protected DefaultEndpoint(String endpointUri, Component component) {
         this.endpointUri = endpointUri;
@@ -73,13 +74,28 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         return component;
     }
 
-    public ScheduledExecutorService getExecutorService() {
-    	Component c = getComponent();
-    	if( c!=null && c instanceof DefaultComponent ) {
-    		DefaultComponent dc = (DefaultComponent) c;
-    		return dc.getExecutorService();
-    	}
-		return null;
+    /**
+     * @return the executor
+     */
+    public synchronized ScheduledExecutorService getExecutorService() {
+        if (executorService == null) {
+            Component c = getComponent();
+            if (c != null && c instanceof DefaultComponent) {
+                DefaultComponent dc = (DefaultComponent) c;
+                executorService = dc.getExecutorService();
+            }
+            if (executorService == null) {
+                executorService = createExecutorService();
+            }
+        }
+        return executorService;
+    }
+
+    /**
+     * @param executorService the executor to set
+     */
+    public synchronized void setExecutorService(ScheduledExecutorService executorService) {
+        this.executorService = executorService;
     }
 
     /**
@@ -105,5 +121,9 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
     protected <T extends Service> T startService(T service) throws Exception {
         service.start();
         return service;
+    }
+
+    protected ScheduledThreadPoolExecutor createExecutorService() {
+        return new ScheduledThreadPoolExecutor(10);
     }
 }

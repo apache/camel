@@ -21,6 +21,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.PollingEndpoint;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import javax.mail.Message;
@@ -29,7 +30,7 @@ import javax.mail.Folder;
 /**
  * @version $Revision:520964 $
  */
-public class MailEndpoint extends DefaultEndpoint<MailExchange> {
+public class MailEndpoint extends PollingEndpoint<MailExchange> {
     private MailBinding binding;
     private MailConfiguration configuration;
 
@@ -73,7 +74,9 @@ public class MailEndpoint extends DefaultEndpoint<MailExchange> {
      * @throws Exception if the consumer cannot be created
      */
     public Consumer<MailExchange> createConsumer(Processor<MailExchange> processor, Folder folder) throws Exception {
-        return startService(new MailConsumer(this, processor, folder));
+        MailConsumer answer = new MailConsumer(this, processor, folder);
+        configureConsumer(answer);
+        return startService(answer);
     }
 
     public MailExchange createExchange() {
