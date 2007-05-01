@@ -20,6 +20,7 @@ package org.apache.camel.component.pojo;
 import junit.framework.TestCase;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
@@ -33,8 +34,7 @@ public class PojoRouteTest extends TestCase {
         CamelContext camelContext = new DefaultCamelContext();
         
         // START SNIPPET: register
-        PojoComponent component = new PojoComponent();
-        camelContext.addComponent("pojo", component);
+        PojoComponent component = (PojoComponent)camelContext.getComponent("pojo");
         component.addService("bye", new SayService("Good Bye!"));
         // END SNIPPET: register
         
@@ -42,7 +42,7 @@ public class PojoRouteTest extends TestCase {
         // lets add simple route
         camelContext.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("pojo:hello").to("pojo:bye");
+                from("direct:hello").to("pojo:bye");
             }
         });
         // END SNIPPET: route
@@ -50,8 +50,8 @@ public class PojoRouteTest extends TestCase {
         camelContext.start();
         
         // START SNIPPET: invoke
-        PojoConsumer consumer = component.getConsumer("hello");        
-        ISay proxy = consumer.createProxy(ISay.class);
+        Endpoint endpoint = camelContext.getEndpoint("direct:hello");
+        ISay proxy = PojoComponent.createProxy(endpoint, ISay.class);
         String rc = proxy.say();
         assertEquals("Good Bye!", rc);
         // END SNIPPET: invoke
