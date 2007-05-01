@@ -120,7 +120,6 @@
     <module>apache-camel</module>
     <module>camel-core</module>
     <module>camel-cxf</module>
-    <module>camel-file</module>
     <module>camel-http</module>
     <module>camel-itest</module>
     <module>camel-jaxb</module>
@@ -163,11 +162,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-file</artifactId>
-        <version>${camel-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-http</artifactId>
         <version>${camel-version}</version>
       </dependency>
@@ -194,6 +188,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-josql</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-mail</artifactId>
         <version>${camel-version}</version>
       </dependency>
       <dependency>
