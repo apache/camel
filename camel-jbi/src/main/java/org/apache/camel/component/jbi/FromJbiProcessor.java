@@ -39,7 +39,11 @@ public class FromJbiProcessor implements MessageExchangeListener {
     }
 
     public void onMessageExchange(MessageExchange messageExchange) throws MessagingException {
-        JbiExchange exchange = new JbiExchange(context, binding, messageExchange);
-        processor.process(exchange);
+        try {
+			JbiExchange exchange = new JbiExchange(context, binding, messageExchange);
+			processor.process(exchange);
+		} catch (Exception e) {
+			throw new MessagingException(e);
+		}
     }
 }

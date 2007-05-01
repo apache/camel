@@ -40,7 +40,7 @@ public class ChoiceProcessor<E> extends ServiceSupport implements Processor<E> {
         this.otherwise = otherwise;
     }
 
-    public void process(E exchange) {
+    public void process(E exchange) throws Exception {
         for (FilterProcessor<E> filterProcessor : filters) {
             Predicate<E> predicate = filterProcessor.getPredicate();
             if (predicate != null && predicate.matches(exchange)) {

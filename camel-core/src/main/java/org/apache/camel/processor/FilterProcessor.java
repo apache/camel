@@ -34,7 +34,7 @@ public class FilterProcessor<E> extends ServiceSupport implements Processor<E> {
         this.processor = processor;
     }
 
-    public void process(E exchange) {
+    public void process(E exchange) throws Exception {
         if (predicate.matches(exchange)) {
             processor.process(exchange);
         }

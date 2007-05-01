@@ -17,11 +17,9 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.Service;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.camel.Service;
 
 /**
  * A useful base class which ensures that a service is only initialized once and provides some helper methods for

@@ -30,7 +30,7 @@ import java.util.List;
  */
 public abstract class QueueLoadBalancer<E extends Exchange> extends LoadBalancerSupport<E> {
 
-    public void process(E exchange) {
+    public void process(E exchange) throws Exception {
         List<Processor<E>> list = getProcessors();
         if (list.isEmpty()) {
             throw new IllegalStateException("No processors available to process " + exchange);

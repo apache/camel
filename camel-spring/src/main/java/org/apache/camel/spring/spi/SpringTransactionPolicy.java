@@ -18,6 +18,7 @@
 package org.apache.camel.spring.spi;
 
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.Policy;
 import org.apache.commons.logging.Log;
@@ -56,7 +57,11 @@ public class SpringTransactionPolicy<E> implements Policy<E> {
             public void process(final E exchange) {
                 transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
-                        processNext(exchange);
+                        try {
+							processNext(exchange);
+						} catch (Exception e) {
+							throw new RuntimeCamelException(e);
+						}
                     }
                 });
             }

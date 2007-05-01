@@ -43,7 +43,7 @@ public class InterceptorBuilderTest extends TestSupport {
 
         final DelegateProcessor<Exchange> interceptor1 = new DelegateProcessor<Exchange>() {
         	@Override
-        	public void process(Exchange exchange) {
+        	public void process(Exchange exchange) throws Exception {
         		order.add("START:1");
         		super.process(exchange);
         		order.add("END:1");
@@ -51,7 +51,7 @@ public class InterceptorBuilderTest extends TestSupport {
         };
         final DelegateProcessor<Exchange> interceptor2 = new DelegateProcessor<Exchange>() {
         	@Override
-        	public void process(Exchange exchange) {
+        	public void process(Exchange exchange) throws Exception {
         		order.add("START:2");
         		super.process(exchange);
         		order.add("END:2");

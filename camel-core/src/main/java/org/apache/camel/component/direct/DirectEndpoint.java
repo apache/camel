@@ -46,13 +46,13 @@ public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
 
     public Producer<E> createProducer() throws Exception {
         return startService(new DefaultProducer<E>(this) {
-            public void process(E exchange) {
+            public void process(E exchange) throws Exception {
             	DirectEndpoint.this.process(exchange);
             }
         });    	
     }
 
-    protected void process(E exchange) {
+    protected void process(E exchange) throws Exception {
     	for (DefaultConsumer<E> consumer : consumers) {
 			consumer.getProcessor().process(exchange);
 		}

@@ -62,7 +62,7 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
      * This causes us to invoke the endpoint Pojo using reflection.
      * @param pojo 
      */
-    public void invoke(Object pojo, PojoExchange exchange) {
+    static public void invoke(Object pojo, PojoExchange exchange) {
         PojoInvocation invocation = exchange.getInvocation();
         try {
             Object response = invocation.getMethod().invoke(pojo, invocation.getArgs());

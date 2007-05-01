@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -39,7 +40,11 @@ public class MessageListenerProcessor implements MessageListener {
     }
 
     public void onMessage(Message message) {
-        Exchange exchange = endpoint.createExchange(message);
-        processor.process(exchange);
+        try {
+			Exchange exchange = endpoint.createExchange(message);
+			processor.process(exchange);
+		} catch (Exception e) {
+			throw new RuntimeCamelException(e);
+		}
     }
 }

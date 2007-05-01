@@ -22,6 +22,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.ServiceSupport;
 
 import java.util.Map;
@@ -57,8 +58,12 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
      * @param exchange the exchange to send
      */
     public void send(Endpoint<E> endpoint, E exchange) {
-        Producer<E> producer = getProducer(endpoint);
-        producer.process(exchange);
+        try {
+			Producer<E> producer = getProducer(endpoint);
+			producer.process(exchange);
+		} catch (Exception e) {
+			throw new RuntimeCamelException(e);
+		}
     }
 
     /**
@@ -68,15 +73,19 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
      * @param processor the transformer used to populate the new exchange
      */
     public E send(Endpoint<E> endpoint, Processor<E> processor) {
-        Producer<E> producer = getProducer(endpoint);
-        E exchange = producer.createExchange();
-
-        // lets populate using the processor callback
-        processor.process(exchange);
-
-        // now lets dispatch
-        producer.process(exchange);
-        return exchange;
+    	try {
+	        Producer<E> producer = getProducer(endpoint);
+	        E exchange = producer.createExchange();
+	
+	        // lets populate using the processor callback
+	        processor.process(exchange);
+	
+	        // now lets dispatch
+	        producer.process(exchange);
+	        return exchange;
+		} catch (Exception e) {
+			throw new RuntimeCamelException(e);
+		}
     }
 
     protected void doStop() throws Exception {

@@ -287,6 +287,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     //-----------------------------------------------------------------------
 
     protected void doStart() throws Exception {
+    	if (components != null) {
+            for (Component component : components.values()) {
+            	startServices(component);
+            }
+        }
+        
         if (routes != null) {
             for (Route<Exchange> route : routes) {
                 Processor<Exchange> processor = route.getProcessor();
@@ -306,6 +312,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     protected void doStop() throws Exception {
         stopServices(servicesToClose);
+    	if (components != null) {
+            for (Component component : components.values()) {
+                stopServices(component);
+            }
+        }
     }
 
     /**

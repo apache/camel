@@ -49,7 +49,7 @@ public class LoggingErrorHandler<E extends Exchange> extends ServiceSupport impl
         return "LoggingErrorHandler[" + output + "]";
     }
 
-    public void process(E exchange) {
+    public void process(E exchange) throws Exception {
         try {
             output.process(exchange);
         }

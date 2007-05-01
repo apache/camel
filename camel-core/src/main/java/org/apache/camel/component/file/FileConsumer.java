@@ -73,7 +73,11 @@ public class FileConsumer extends PollingConsumer<FileExchange> {
     }
 
     protected void processFile(File file) {
-        getProcessor().process(endpoint.createExchange(file));
+        try {
+			getProcessor().process(endpoint.createExchange(file));
+		} catch (Throwable e) {
+			handleException(e);
+		}
     }
 
     protected boolean isValidFile(File file) {

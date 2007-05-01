@@ -49,7 +49,7 @@ public class ProcessorEndpoint extends DefaultEndpoint<Exchange> {
 
     public Producer<Exchange> createProducer() throws Exception {
         return startService(new DefaultProducer<Exchange>(this) {
-            public void process(Exchange exchange) {
+            public void process(Exchange exchange) throws Exception {
                 onExchange(exchange);
             }
         });
@@ -67,7 +67,7 @@ public class ProcessorEndpoint extends DefaultEndpoint<Exchange> {
         return loadBalancer;
     }
 
-    protected void onExchange(Exchange exchange) {
+    protected void onExchange(Exchange exchange) throws Exception {
         processor.process(exchange);
 
         // now lets output to the load balancer

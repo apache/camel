@@ -266,7 +266,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport implements P
 		final Log log = LogFactory.getLog(category);
 		return intercept(new DelegateProcessor<Exchange>(){
 			@Override
-			public void process(Exchange exchange) {
+			public void process(Exchange exchange) throws Exception {
 				log.trace(exchange);
 				processNext(exchange);
 			}

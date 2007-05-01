@@ -35,7 +35,7 @@ public class Pipeline<E extends Exchange> extends MulticastProcessor<E> implemen
         super(endpoints);
     }
 
-    public void process(E exchange) {
+    public void process(E exchange) throws Exception {
         E nextExchange = exchange;
         boolean first = true;
         for (Producer<E> producer : getProducers()) {
