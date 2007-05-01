@@ -29,10 +29,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class QueueEndpointConsumer<E extends Exchange> extends ServiceSupport implements Consumer<E>, Runnable {
     private QueueEndpoint<E> endpoint;
-    private Processor<E> processor;
+    private Processor processor;
     private Thread thread;
 
-    public QueueEndpointConsumer(QueueEndpoint<E> endpoint, Processor<E> processor) {
+    public QueueEndpointConsumer(QueueEndpoint<E> endpoint, Processor processor) {
         this.endpoint = endpoint;
         this.processor = processor;
     }

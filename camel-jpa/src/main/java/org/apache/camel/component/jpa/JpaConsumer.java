@@ -47,7 +47,7 @@ public class JpaConsumer extends PollingConsumer<Exchange> {
     private String namedQuery;
     private String nativeQuery;
 
-    public JpaConsumer(JpaEndpoint endpoint, Processor<Exchange> processor) {
+    public JpaConsumer(JpaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.template = endpoint.createTransactionStrategy();

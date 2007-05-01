@@ -28,14 +28,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @version $Revision: 1.1 $
  */
-public abstract class LoadBalancerSupport<E extends Exchange> implements LoadBalancer<E> {
-    private List<Processor<E>> processors = new CopyOnWriteArrayList<Processor<E>>();
+public abstract class LoadBalancerSupport implements LoadBalancer {
+    private List<Processor> processors = new CopyOnWriteArrayList<Processor>();
 
-    public void addProcessor(Processor<E> processor) {
+    public void addProcessor(Processor processor) {
         processors.add(processor);
     }
 
-    public void removeProcessor(Processor<E> processor) {
+    public void removeProcessor(Processor processor) {
         processors.remove(processor);
     }
 
@@ -44,7 +44,7 @@ public abstract class LoadBalancerSupport<E extends Exchange> implements LoadBal
      *
      * @return the processors available
      */
-    public List<Processor<E>> getProcessors() {
+    public List<Processor> getProcessors() {
         return processors;
     }
 }

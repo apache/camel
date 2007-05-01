@@ -41,7 +41,7 @@ public class MailRouteTest extends ContextTestSupport {
         resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("hello world!");
 
-        client.send("smtp://james@localhost", new Processor<Exchange>() {
+        client.send("smtp://james@localhost", new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("hello world!");
             }

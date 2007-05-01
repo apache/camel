@@ -18,6 +18,7 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
@@ -37,7 +38,7 @@ import java.util.concurrent.CountDownLatch;
  *
  * @version $Revision$
  */
-public class CxfProducer extends DefaultProducer<CxfExchange> {
+public class CxfProducer extends DefaultProducer {
     private CxfEndpoint endpoint;
     private final LocalTransportFactory transportFactory;
     private Destination destination;
@@ -48,6 +49,11 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         super(endpoint);
         this.endpoint = endpoint;
         this.transportFactory = transportFactory;
+    }
+
+    public void process(Exchange exchange) {
+        CxfExchange cxfExchange = endpoint.toExchangeType(exchange);
+        process(cxfExchange);
     }
 
     public void process(CxfExchange exchange) {

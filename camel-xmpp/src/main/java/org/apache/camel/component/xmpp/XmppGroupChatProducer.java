@@ -28,7 +28,7 @@ import org.jivesoftware.smack.packet.Message;
 /**
  * @version $Revision$
  */
-public class XmppGroupChatProducer extends DefaultProducer<XmppExchange> {
+public class XmppGroupChatProducer extends DefaultProducer {
     private static final transient Log log = LogFactory.getLog(XmppGroupChatProducer.class);
     private final XmppEndpoint endpoint;
     private final String room;
@@ -43,13 +43,7 @@ public class XmppGroupChatProducer extends DefaultProducer<XmppExchange> {
         }
     }
 
-    public void onExchange(Exchange exchange) {
-        // lets convert to the type of an exchange
-        XmppExchange xmppExchange = endpoint.convertTo(XmppExchange.class, exchange);
-        process(xmppExchange);
-    }
-
-    public void process(XmppExchange exchange) {
+    public void process(Exchange exchange) {
         // TODO it would be nice if we could reuse the message from the exchange
         Message message = chat.createMessage();
         message.setTo(room);

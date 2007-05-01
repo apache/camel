@@ -18,6 +18,7 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 
@@ -28,15 +29,15 @@ import java.util.Collection;
  *
  * @version $Revision$
  */
-public class CompositeProcessor<E> extends ServiceSupport implements Processor<E> {
-    private final Collection<Processor<E>> processors;
+public class CompositeProcessor extends ServiceSupport implements Processor {
+    private final Collection<Processor> processors;
 
-    public CompositeProcessor(Collection<Processor<E>> processors) {
+    public CompositeProcessor(Collection<Processor> processors) {
         this.processors = processors;
     }
 
-    public void process(E exchange) throws Exception {
-        for (Processor<E> processor : processors) {
+    public void process(Exchange exchange) throws Exception {
+        for (Processor processor : processors) {
             processor.process(exchange);
         }
     }
@@ -45,7 +46,7 @@ public class CompositeProcessor<E> extends ServiceSupport implements Processor<E
     public String toString() {
         StringBuilder builder = new StringBuilder("[ ");
         boolean first = true;
-        for (Processor<E> processor : processors) {
+        for (Processor processor : processors) {
             if (first) {
                 first = false;
             }
@@ -58,7 +59,7 @@ public class CompositeProcessor<E> extends ServiceSupport implements Processor<E
         return builder.toString();
     }
 
-    public Collection<Processor<E>> getProcessors() {
+    public Collection<Processor> getProcessors() {
         return processors;
     }
 

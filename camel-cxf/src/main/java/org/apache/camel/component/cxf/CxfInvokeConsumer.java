@@ -32,7 +32,7 @@ public class CxfInvokeConsumer extends DefaultConsumer<CxfExchange> {
     protected CxfInvokeEndpoint cxfEndpoint;
     private ServerImpl server;
 
-    public CxfInvokeConsumer(CxfInvokeEndpoint endpoint, Processor<CxfExchange> processor) {
+    public CxfInvokeConsumer(CxfInvokeEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.cxfEndpoint = endpoint;
     }

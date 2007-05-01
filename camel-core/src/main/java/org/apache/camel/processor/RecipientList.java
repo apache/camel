@@ -35,11 +35,11 @@ import java.util.Iterator;
  *
  * @version $Revision$
  */
-public class RecipientList<E extends Exchange> extends ServiceSupport implements Processor<E> {
-    private final Expression<E> expression;
-    private ProducerCache<E> producerCache = new ProducerCache<E>();
+public class RecipientList extends ServiceSupport implements Processor {
+    private final Expression<Exchange> expression;
+    private ProducerCache<Exchange> producerCache = new ProducerCache<Exchange>();
 
-    public RecipientList(Expression<E> expression) {
+    public RecipientList(Expression<Exchange> expression) {
         notNull(expression, "expression");
         this.expression = expression;
     }
@@ -49,17 +49,17 @@ public class RecipientList<E extends Exchange> extends ServiceSupport implements
         return "RecipientList[" + expression + "]";
     }
 
-    public void process(E exchange) throws Exception {
+    public void process(Exchange exchange) throws Exception {
         Object receipientList = expression.evaluate(exchange);
         Iterator iter = ObjectConverter.iterator(receipientList);
         while (iter.hasNext()) {
             Object recipient = iter.next();
-            Endpoint<E> endpoint = resolveEndpoint(exchange, recipient);
+            Endpoint<Exchange> endpoint = resolveEndpoint(exchange, recipient);
             producerCache.getProducer(endpoint).process(exchange);
         }
     }
 
-    protected Endpoint<E> resolveEndpoint(E exchange, Object recipient) {
+    protected Endpoint<Exchange> resolveEndpoint(Exchange exchange, Object recipient) {
         return ExchangeHelper.resolveEndpoint(exchange, recipient);
     }
 

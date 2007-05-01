@@ -25,5 +25,5 @@ import org.apache.camel.Processor;
  *
  * @version $Revision$
  */
-public interface ErrorHandler<E extends Exchange> extends Processor<E> {
+public interface ErrorHandler extends Processor {
 }

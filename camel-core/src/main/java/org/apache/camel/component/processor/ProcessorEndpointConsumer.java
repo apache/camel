@@ -27,7 +27,7 @@ import org.apache.camel.impl.DefaultConsumer;
 public class ProcessorEndpointConsumer extends DefaultConsumer<Exchange> {
     private final ProcessorEndpoint endpoint;
 
-    public ProcessorEndpointConsumer(ProcessorEndpoint endpoint, Processor<Exchange> processor) {
+    public ProcessorEndpointConsumer(ProcessorEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
     }

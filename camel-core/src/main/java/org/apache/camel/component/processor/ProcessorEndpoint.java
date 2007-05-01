@@ -34,10 +34,10 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
  * @version $Revision: 1.1 $
  */
 public class ProcessorEndpoint extends DefaultEndpoint<Exchange> {
-    private final Processor<Exchange> processor;
-    private final LoadBalancer<Exchange> loadBalancer;
+    private final Processor processor;
+    private final LoadBalancer loadBalancer;
 
-    protected ProcessorEndpoint(String endpointUri, Component component, Processor<Exchange> processor, LoadBalancer<Exchange> loadBalancer) {
+    protected ProcessorEndpoint(String endpointUri, Component component, Processor processor, LoadBalancer loadBalancer) {
         super(endpointUri, component);
         this.processor = processor;
         this.loadBalancer = loadBalancer;
@@ -55,15 +55,15 @@ public class ProcessorEndpoint extends DefaultEndpoint<Exchange> {
         });
     }
 
-    public Consumer<Exchange> createConsumer(Processor<Exchange> processor) throws Exception {
+    public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
         return startService(new ProcessorEndpointConsumer(this, processor));
     }
 
-    public Processor<Exchange> getProcessor() {
+    public Processor getProcessor() {
         return processor;
     }
 
-    public LoadBalancer<Exchange> getLoadBalancer() {
+    public LoadBalancer getLoadBalancer() {
         return loadBalancer;
     }
 

@@ -33,64 +33,64 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class DeadLetterChannelBuilder<E extends Exchange> implements ErrorHandlerBuilder<E> {
+public class DeadLetterChannelBuilder implements ErrorHandlerBuilder {
     private RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
-    private ProcessorFactory<E> deadLetterFactory;
-    private Processor<E> defaultDeadLetterEndpoint;
-    private Expression<E> defaultDeadLetterEndpointExpression;
+    private ProcessorFactory deadLetterFactory;
+    private Processor defaultDeadLetterEndpoint;
+    private Expression defaultDeadLetterEndpointExpression;
     private String defaultDeadLetterEndpointUri = "log:org.apache.camel.DeadLetterChannel:error";
-    private Logger<E> logger = DeadLetterChannel.createDefaultLogger();
+    private Logger logger = DeadLetterChannel.createDefaultLogger();
 
     public DeadLetterChannelBuilder() {
     }
 
-    public DeadLetterChannelBuilder(Processor<E> processor) {
-        this(new ConstantProcessorBuilder<E>(processor));
+    public DeadLetterChannelBuilder(Processor processor) {
+        this(new ConstantProcessorBuilder(processor));
     }
 
-    public DeadLetterChannelBuilder(ProcessorFactory<E> deadLetterFactory) {
+    public DeadLetterChannelBuilder(ProcessorFactory deadLetterFactory) {
         this.deadLetterFactory = deadLetterFactory;
     }
 
-    public ErrorHandlerBuilder<E> copy() {
-        DeadLetterChannelBuilder<E> answer = new DeadLetterChannelBuilder<E>(deadLetterFactory);
+    public ErrorHandlerBuilder copy() {
+        DeadLetterChannelBuilder answer = new DeadLetterChannelBuilder(deadLetterFactory);
         answer.setRedeliveryPolicy(getRedeliveryPolicy().copy());
         return answer;
     }
 
-    public Processor<E> createErrorHandler(Processor<E> processor) throws Exception {
-        Processor<E> deadLetter = getDeadLetterFactory().createProcessor();
-        return new DeadLetterChannel<E>(processor, deadLetter, getRedeliveryPolicy(), getLogger());
+    public Processor createErrorHandler(Processor processor) throws Exception {
+        Processor deadLetter = getDeadLetterFactory().createProcessor();
+        return new DeadLetterChannel(processor, deadLetter, getRedeliveryPolicy(), getLogger());
     }
 
     // Builder methods
     //-------------------------------------------------------------------------
-    public DeadLetterChannelBuilder<E> backOffMultiplier(double backOffMultiplier) {
+    public DeadLetterChannelBuilder backOffMultiplier(double backOffMultiplier) {
         getRedeliveryPolicy().backOffMultiplier(backOffMultiplier);
         return this;
     }
 
-    public DeadLetterChannelBuilder<E> collisionAvoidancePercent(short collisionAvoidancePercent) {
+    public DeadLetterChannelBuilder collisionAvoidancePercent(short collisionAvoidancePercent) {
         getRedeliveryPolicy().collisionAvoidancePercent(collisionAvoidancePercent);
         return this;
     }
 
-    public DeadLetterChannelBuilder<E> initialRedeliveryDelay(long initialRedeliveryDelay) {
+    public DeadLetterChannelBuilder initialRedeliveryDelay(long initialRedeliveryDelay) {
         getRedeliveryPolicy().initialRedeliveryDelay(initialRedeliveryDelay);
         return this;
     }
 
-    public DeadLetterChannelBuilder<E> maximumRedeliveries(int maximumRedeliveries) {
+    public DeadLetterChannelBuilder maximumRedeliveries(int maximumRedeliveries) {
         getRedeliveryPolicy().maximumRedeliveries(maximumRedeliveries);
         return this;
     }
 
-    public DeadLetterChannelBuilder<E> useCollisionAvoidance() {
+    public DeadLetterChannelBuilder useCollisionAvoidance() {
         getRedeliveryPolicy().useCollisionAvoidance();
         return this;
     }
 
-    public DeadLetterChannelBuilder<E> useExponentialBackOff() {
+    public DeadLetterChannelBuilder useExponentialBackOff() {
         getRedeliveryPolicy().useExponentialBackOff();
         return this;
     }
@@ -98,7 +98,7 @@ public class DeadLetterChannelBuilder<E extends Exchange> implements ErrorHandle
     /**
      * Sets the logger used for caught exceptions
      */
-    public DeadLetterChannelBuilder<E> logger(Logger<E> logger) {
+    public DeadLetterChannelBuilder logger(Logger logger) {
         setLogger(logger);
         return this;
     }
@@ -106,7 +106,7 @@ public class DeadLetterChannelBuilder<E extends Exchange> implements ErrorHandle
     /**
      * Sets the logging level of exceptions caught
      */
-    public DeadLetterChannelBuilder<E> loggingLevel(LoggingLevel level) {
+    public DeadLetterChannelBuilder loggingLevel(LoggingLevel level) {
         getLogger().setLevel(level);
         return this;
     }
@@ -114,7 +114,7 @@ public class DeadLetterChannelBuilder<E extends Exchange> implements ErrorHandle
     /**
      * Sets the log used for caught exceptions
      */
-    public DeadLetterChannelBuilder<E> log(Log log) {
+    public DeadLetterChannelBuilder log(Log log) {
         getLogger().setLog(log);
         return this;
     }
@@ -122,14 +122,14 @@ public class DeadLetterChannelBuilder<E extends Exchange> implements ErrorHandle
     /**
      * Sets the log used for caught exceptions
      */
-    public DeadLetterChannelBuilder<E> log(String log) {
+    public DeadLetterChannelBuilder log(String log) {
         return log(LogFactory.getLog(log));
     }
 
     /**
      * Sets the log used for caught exceptions
      */
-    public DeadLetterChannelBuilder<E> log(Class log) {
+    public DeadLetterChannelBuilder log(Class log) {
         return log(LogFactory.getLog(log));
     }
 
@@ -146,10 +146,10 @@ public class DeadLetterChannelBuilder<E extends Exchange> implements ErrorHandle
         this.redeliveryPolicy = redeliveryPolicy;
     }
 
-    public ProcessorFactory<E> getDeadLetterFactory() {
+    public ProcessorFactory getDeadLetterFactory() {
         if (deadLetterFactory == null) {
-            deadLetterFactory = new ProcessorFactory<E>() {
-                public Processor<E> createProcessor() {
+            deadLetterFactory = new ProcessorFactory() {
+                public Processor createProcessor() {
                     return getDefaultDeadLetterEndpoint();
                 }
             };
@@ -160,13 +160,13 @@ public class DeadLetterChannelBuilder<E extends Exchange> implements ErrorHandle
     /**
      * Sets the default dead letter queue factory
      */
-    public void setDeadLetterFactory(ProcessorFactory<E> deadLetterFactory) {
+    public void setDeadLetterFactory(ProcessorFactory deadLetterFactory) {
         this.deadLetterFactory = deadLetterFactory;
     }
 
-    public Processor<E> getDefaultDeadLetterEndpoint() {
+    public Processor getDefaultDeadLetterEndpoint() {
         if (defaultDeadLetterEndpoint == null) {
-            defaultDeadLetterEndpoint = new RecipientList<E>(getDefaultDeadLetterEndpointExpression());
+            defaultDeadLetterEndpoint = new RecipientList(getDefaultDeadLetterEndpointExpression());
         }
         return defaultDeadLetterEndpoint;
     }
@@ -174,11 +174,11 @@ public class DeadLetterChannelBuilder<E extends Exchange> implements ErrorHandle
     /**
      * Sets the default dead letter endpoint used
      */
-    public void setDefaultDeadLetterEndpoint(Processor<E> defaultDeadLetterEndpoint) {
+    public void setDefaultDeadLetterEndpoint(Processor defaultDeadLetterEndpoint) {
         this.defaultDeadLetterEndpoint = defaultDeadLetterEndpoint;
     }
 
-    public Expression<E> getDefaultDeadLetterEndpointExpression() {
+    public Expression getDefaultDeadLetterEndpointExpression() {
         if (defaultDeadLetterEndpointExpression == null) {
             defaultDeadLetterEndpointExpression = ExpressionBuilder.constantExpression(getDefaultDeadLetterEndpointUri());
         }
@@ -189,7 +189,7 @@ public class DeadLetterChannelBuilder<E extends Exchange> implements ErrorHandle
      * Sets the expression used to decide the dead letter channel endpoint for an exchange
      * if no factory is provided via {@link #setDeadLetterFactory(ProcessorFactory)}
      */
-    public void setDefaultDeadLetterEndpointExpression(Expression<E> defaultDeadLetterEndpointExpression) {
+    public void setDefaultDeadLetterEndpointExpression(Expression defaultDeadLetterEndpointExpression) {
         this.defaultDeadLetterEndpointExpression = defaultDeadLetterEndpointExpression;
     }
 
@@ -207,11 +207,11 @@ public class DeadLetterChannelBuilder<E extends Exchange> implements ErrorHandle
         this.defaultDeadLetterEndpointUri = defaultDeadLetterEndpointUri;
     }
 
-    public Logger<E> getLogger() {
+    public Logger getLogger() {
         return logger;
     }
 
-    public void setLogger(Logger<E> logger) {
+    public void setLogger(Logger logger) {
         this.logger = logger;
     }
 }

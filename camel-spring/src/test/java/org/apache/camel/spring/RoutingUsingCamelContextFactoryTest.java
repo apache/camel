@@ -47,7 +47,7 @@ public class RoutingUsingCamelContextFactoryTest extends TestSupport {
 
         // now lets send a message
         CamelClient<Exchange> client = new CamelClient<Exchange>(context);
-        client.send("queue:start", new Processor<Exchange>() {
+        client.send("queue:start", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setHeader("name", "James");

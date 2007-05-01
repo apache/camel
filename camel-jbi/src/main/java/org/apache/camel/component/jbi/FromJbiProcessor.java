@@ -30,9 +30,9 @@ import javax.jbi.messaging.MessagingException;
 public class FromJbiProcessor implements MessageExchangeListener {
     private CamelContext context;
     private JbiBinding binding;
-    private Processor<JbiExchange> processor;
+    private Processor processor;
 
-    public FromJbiProcessor(CamelContext context, JbiBinding binding, Processor<JbiExchange> processor) {
+    public FromJbiProcessor(CamelContext context, JbiBinding binding, Processor processor) {
         this.context = context;
         this.binding = binding;
         this.processor = processor;

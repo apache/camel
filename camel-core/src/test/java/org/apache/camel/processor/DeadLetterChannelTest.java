@@ -70,7 +70,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() {
-        final Processor<Exchange> processor = new Processor<Exchange>() {
+        final Processor processor = new Processor() {
             public void process(Exchange exchange) {
                 Integer counter = exchange.getIn().getHeader(DeadLetterChannel.REDELIVERY_COUNTER, Integer.class);
                 int attempt = (counter == null) ? 1 : counter + 1;

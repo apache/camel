@@ -22,7 +22,8 @@ package org.apache.camel;
  *
  * @version $Revision$
  */
-public interface Producer<E extends Exchange> extends Processor<E>, Service {
+public interface Producer<E extends Exchange> extends Processor, Service {
+
     Endpoint<E> getEndpoint();
 
     /**

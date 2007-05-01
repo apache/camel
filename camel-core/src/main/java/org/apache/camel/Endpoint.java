@@ -48,7 +48,12 @@ public interface Endpoint<E extends Exchange> {
      * Creates a new exchange for communicating with this exchange using the given exchange to pre-populate the values
      * of the headers and messages
      */
-    E createExchange(E exchange);
+    E createExchange(Exchange exchange);
+
+    /**
+     * Converts the given exchange to this endpoints required type
+     */
+    E toExchangeType(Exchange exchange);
 
     /**
      * Returns the context which created the endpoint
@@ -69,6 +74,5 @@ public interface Endpoint<E extends Exchange> {
      *
      * @return a newly created consumer
      */
-    Consumer<E> createConsumer(Processor<E> processor) throws Exception;
-
+    Consumer<E> createConsumer(Processor processor) throws Exception;
 }

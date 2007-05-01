@@ -47,7 +47,7 @@ public class CxfInvokeEndpoint extends DefaultEndpoint<CxfExchange> {
         return startService(new CxfInvokeProducer(this));
     }
 
-    public Consumer<CxfExchange> createConsumer(Processor<CxfExchange> processor) throws Exception {
+    public Consumer<CxfExchange> createConsumer(Processor processor) throws Exception {
         return startService(new CxfInvokeConsumer(this, processor));
     }
 

@@ -28,6 +28,7 @@ import javax.jms.Session;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.DelegateProcessor;
@@ -66,7 +67,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 					public Processor wrap(Processor processor) {
 						return new DelegateProcessor(processor) {
 				        	@Override
-				        	public void process(Object exchange) throws Exception {
+				        	public void process(Exchange exchange) throws Exception {
 				        		processNext(exchange);
 				        		throw new RuntimeException("rollback");
 				        	}
@@ -83,7 +84,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 					public Processor wrap(Processor processor) {
 						return new DelegateProcessor(processor) {
 				        	@Override
-				        	public void process(Object exchange) {
+				        	public void process(Exchange exchange) {
 				        		try {
 				        			processNext(exchange);
 				        		} catch ( Throwable e ) {

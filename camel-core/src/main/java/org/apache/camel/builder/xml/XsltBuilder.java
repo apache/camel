@@ -45,7 +45,7 @@ import java.util.Set;
  *
  * @version $Revision: 531854 $
  */
-public class XsltBuilder<E extends Exchange> implements Processor<E> {
+public class XsltBuilder implements Processor {
     private Map<String, Object> parameters = new HashMap<String, Object>();
     private XmlConverter converter = new XmlConverter();
     private Transformer transformer;
@@ -64,7 +64,7 @@ public class XsltBuilder<E extends Exchange> implements Processor<E> {
         return "XSLT[" + transformer + "]";
     }
 
-    public synchronized void process(E exchange) throws Exception {
+    public synchronized void process(Exchange exchange) throws Exception {
         Transformer transformer = getTransformer();
         if (transformer == null) {
             throw new IllegalArgumentException("No transformer configured!");
@@ -82,16 +82,16 @@ public class XsltBuilder<E extends Exchange> implements Processor<E> {
     /**
      * Creates an XSLT processor using the given transformer instance
      */
-    public static <E extends Exchange> XsltBuilder<E> xslt(Transformer transformer) {
-        return new XsltBuilder<E>(transformer);
+    public static XsltBuilder xslt(Transformer transformer) {
+        return new XsltBuilder(transformer);
     }
 
     /**
      * Creates an XSLT processor using the given XSLT source
      */
-    public static <E extends Exchange> XsltBuilder<E> xslt(Source xslt) throws TransformerConfigurationException {
+    public static XsltBuilder xslt(Source xslt) throws TransformerConfigurationException {
         notNull(xslt, "xslt");
-        XsltBuilder<E> answer = new XsltBuilder<E>();
+        XsltBuilder answer = new XsltBuilder();
         answer.setTransformerSource(xslt);
         return answer;
     }
@@ -99,7 +99,7 @@ public class XsltBuilder<E extends Exchange> implements Processor<E> {
     /**
      * Creates an XSLT processor using the given XSLT source
      */
-    public static <E extends Exchange> XsltBuilder<E> xslt(File xslt) throws TransformerConfigurationException {
+    public static XsltBuilder xslt(File xslt) throws TransformerConfigurationException {
         notNull(xslt, "xslt");
         return xslt(new StreamSource(xslt));
     }
@@ -107,7 +107,7 @@ public class XsltBuilder<E extends Exchange> implements Processor<E> {
     /**
      * Creates an XSLT processor using the given XSLT source
      */
-    public static <E extends Exchange> XsltBuilder<E> xslt(URL xslt) throws TransformerConfigurationException, IOException {
+    public static XsltBuilder xslt(URL xslt) throws TransformerConfigurationException, IOException {
         notNull(xslt, "xslt");
         return xslt(xslt.openStream());
     }
@@ -115,7 +115,7 @@ public class XsltBuilder<E extends Exchange> implements Processor<E> {
     /**
      * Creates an XSLT processor using the given XSLT source
      */
-    public static <E extends Exchange> XsltBuilder<E> xslt(InputStream xslt) throws TransformerConfigurationException, IOException {
+    public static XsltBuilder xslt(InputStream xslt) throws TransformerConfigurationException, IOException {
         notNull(xslt, "xslt");
         return xslt(new StreamSource(xslt));
     }
@@ -123,7 +123,7 @@ public class XsltBuilder<E extends Exchange> implements Processor<E> {
     /**
      * Sets the output as being a byte[]
      */
-    public XsltBuilder<E> outputBytes() {
+    public XsltBuilder outputBytes() {
         setResultHandler(new StreamResultHandler());
         return this;
     }
@@ -131,7 +131,7 @@ public class XsltBuilder<E extends Exchange> implements Processor<E> {
     /**
      * Sets the output as being a String
      */
-    public XsltBuilder<E> outputString() {
+    public XsltBuilder outputString() {
         setResultHandler(new StringResultHandler());
         return this;
     }
@@ -139,12 +139,12 @@ public class XsltBuilder<E extends Exchange> implements Processor<E> {
     /**
      * Sets the output as being a DOM
      */
-    public XsltBuilder<E> outputDOM() {
+    public XsltBuilder outputDOM() {
         setResultHandler(new DomResultHandler());
         return this;
     }
 
-    public XsltBuilder<E> parameter(String name, Object value) {
+    public XsltBuilder parameter(String name, Object value) {
         parameters.put(name, value);
         return this;
     }
@@ -194,7 +194,7 @@ public class XsltBuilder<E extends Exchange> implements Processor<E> {
     /**
      * Converts the inbound body to a {@link Source}
      */
-    protected Source getSource(E exchange) {
+    protected Source getSource(Exchange exchange) {
         Message in = exchange.getIn();
         Source source = in.getBody(Source.class);
         if (source == null) {

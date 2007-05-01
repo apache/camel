@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
@@ -35,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 public class MinaVmTest extends TestCase {
     protected CamelContext container = new DefaultCamelContext();
     protected CountDownLatch latch = new CountDownLatch(1);
-    protected MinaExchange receivedExchange;
+    protected Exchange receivedExchange;
     protected String uri = "mina:vm://localhost:8080";
     protected Producer<MinaExchange> producer;
 
@@ -74,8 +75,8 @@ public class MinaVmTest extends TestCase {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(uri).process(new Processor<MinaExchange>() {
-                    public void process(MinaExchange e) {
+                from(uri).process(new Processor() {
+                    public void process(Exchange e) {
                         System.out.println("Received exchange: " + e.getIn());
                         receivedExchange = e;
                         latch.countDown();

@@ -34,16 +34,16 @@ public class CamelJbiEndpoint extends ProviderEndpoint {
     private static final QName SERVICE_NAME = new QName("http://camel.apache.org/service", "CamelEndpointComponent");
     private Endpoint camelEndpoint;
     private JbiBinding binding;
-    private Processor<Exchange> processor;
+    private Processor processor;
 
-    public CamelJbiEndpoint(ServiceUnit serviceUnit, QName service, String endpoint, Endpoint camelEndpoint, JbiBinding binding, Processor<Exchange> processor) {
+    public CamelJbiEndpoint(ServiceUnit serviceUnit, QName service, String endpoint, Endpoint camelEndpoint, JbiBinding binding, Processor processor) {
         super(serviceUnit, service, endpoint);
         this.processor = processor;
         this.camelEndpoint = camelEndpoint;
         this.binding = binding;
     }
 
-    public CamelJbiEndpoint(ServiceUnit serviceUnit, Endpoint camelEndpoint, JbiBinding binding, Processor<Exchange> processor) {
+    public CamelJbiEndpoint(ServiceUnit serviceUnit, Endpoint camelEndpoint, JbiBinding binding, Processor processor) {
         this(serviceUnit, SERVICE_NAME, camelEndpoint.getEndpointUri(), camelEndpoint, binding, processor);
     }
 

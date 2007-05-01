@@ -32,5 +32,5 @@ public interface ErrorHandlerBuilder<E extends Exchange> {
     /**
      * Creates the error handler interceptor
      */
-    Processor<E> createErrorHandler(Processor<E> processor) throws Exception;
+    Processor createErrorHandler(Processor processor) throws Exception;
 }

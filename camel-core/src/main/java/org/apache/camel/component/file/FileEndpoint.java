@@ -53,7 +53,7 @@ public class FileEndpoint extends PollingEndpoint<FileExchange> {
      * @throws Exception
      * @see org.apache.camel.Endpoint#createConsumer(org.apache.camel.Processor)
      */
-    public Consumer<FileExchange> createConsumer(Processor<FileExchange> file) throws Exception {
+    public Consumer<FileExchange> createConsumer(Processor file) throws Exception {
         Consumer<FileExchange> result = new FileConsumer(this, file);
         configureConsumer(result);
         return startService(result);

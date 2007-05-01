@@ -28,36 +28,36 @@ import org.apache.camel.spi.Policy;
 /**
  * @version $Revision: 519943 $
  */
-public class PolicyBuilder<E extends Exchange> implements ProcessorFactory<E> {
-    private final ArrayList<Policy<E>> policies = new ArrayList<Policy<E>>();
-	private final FromBuilder<E> parent;
-	private FromBuilder<E> target;
+public class PolicyBuilder implements ProcessorFactory {
+    private final ArrayList<Policy> policies = new ArrayList<Policy>();
+	private final FromBuilder parent;
+	private FromBuilder target;
 
-	public PolicyBuilder(FromBuilder<E> parent) {
+	public PolicyBuilder(FromBuilder parent) {
         this.parent = parent;
 	}
 	
 	@Fluent("policy")
-	public PolicyBuilder<E> add(@FluentArg("ref") Policy<E> interceptor) {
+	public PolicyBuilder add(@FluentArg("ref") Policy interceptor) {
 		policies.add(interceptor);
 		return this;
 	}
 	
 	@Fluent(callOnElementEnd=true)
-    public FromBuilder<E> target() {
-        this.target = new FromBuilder<E>(parent);
+    public FromBuilder target() {
+        this.target = new FromBuilder(parent);
         return target;
     }
 
-    public Processor<E> createProcessor() throws Exception {
+    public Processor createProcessor() throws Exception {
     	
     	// The target is required.
     	if( target == null ) 
     		throw new RuntimeCamelException("target not provided.");
     	
-        Processor<E> last = target.createProcessor();
+        Processor last = target.createProcessor();
     	Collections.reverse(policies);
-        for (Policy<E> p : policies) {
+        for (Policy p : policies) {
             last = p.wrap(last);
         }
         

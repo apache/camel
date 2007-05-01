@@ -45,10 +45,10 @@ public class ErrorHandlerTest extends TestSupport {
         };
         // END SNIPPET: e1
 
-        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
-        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
+        Map<Endpoint<Exchange>, Processor> routeMap = builder.getRouteMap();
+        Set<Map.Entry<Endpoint<Exchange>, Processor>> routes = routeMap.entrySet();
         assertEquals("Number routes created", 1, routes.size());
-        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
+        for (Map.Entry<Endpoint<Exchange>, Processor> route : routes) {
             Endpoint<Exchange> key = route.getKey();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = route.getValue();
@@ -70,12 +70,12 @@ public class ErrorHandlerTest extends TestSupport {
         };
         // END SNIPPET: e2
 
-        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
+        Map<Endpoint<Exchange>, Processor> routeMap = builder.getRouteMap();
         log.info(routeMap);
 
-        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
+        Set<Map.Entry<Endpoint<Exchange>, Processor>> routes = routeMap.entrySet();
         assertEquals("Number routes created", 2, routes.size());
-        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
+        for (Map.Entry<Endpoint<Exchange>, Processor> route : routes) {
             Endpoint<Exchange> key = route.getKey();
             String endpointUri = key.getEndpointUri();
             Processor processor = route.getValue();
@@ -108,10 +108,10 @@ public class ErrorHandlerTest extends TestSupport {
         };
         // END SNIPPET: e3
 
-        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
-        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
+        Map<Endpoint<Exchange>, Processor> routeMap = builder.getRouteMap();
+        Set<Map.Entry<Endpoint<Exchange>, Processor>> routes = routeMap.entrySet();
         assertEquals("Number routes created", 1, routes.size());
-        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
+        for (Map.Entry<Endpoint<Exchange>, Processor> route : routes) {
             Endpoint<Exchange> key = route.getKey();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = route.getValue();
@@ -134,10 +134,10 @@ public class ErrorHandlerTest extends TestSupport {
         };
         // END SNIPPET: e4
 
-        Map<Endpoint<Exchange>, Processor<Exchange>> routeMap = builder.getRouteMap();
-        Set<Map.Entry<Endpoint<Exchange>, Processor<Exchange>>> routes = routeMap.entrySet();
+        Map<Endpoint<Exchange>, Processor> routeMap = builder.getRouteMap();
+        Set<Map.Entry<Endpoint<Exchange>, Processor>> routes = routeMap.entrySet();
         assertEquals("Number routes created", 1, routes.size());
-        for (Map.Entry<Endpoint<Exchange>, Processor<Exchange>> route : routes) {
+        for (Map.Entry<Endpoint<Exchange>, Processor> route : routes) {
             Endpoint<Exchange> key = route.getKey();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = route.getValue();

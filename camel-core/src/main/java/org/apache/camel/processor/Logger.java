@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class Logger<E extends Exchange> implements Processor<E> {
+public class Logger implements Processor {
     private Log log;
     private LoggingLevel level;
 
@@ -50,7 +50,7 @@ public class Logger<E extends Exchange> implements Processor<E> {
         return "Logger[" + log + "]";
     }
 
-    public void process(E exchange) {
+    public void process(Exchange exchange) {
         switch (level) {
             case DEBUG:
                 if (log.isDebugEnabled()) {
@@ -161,7 +161,7 @@ public class Logger<E extends Exchange> implements Processor<E> {
         }
     }
 
-    protected Object logMessage(E exchange) {
+    protected Object logMessage(Exchange exchange) {
         return exchange;
     }
 

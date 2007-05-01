@@ -32,7 +32,7 @@ import javax.jbi.messaging.MessagingException;
  *
  * @version $Revision$
  */
-public class ToJbiProcessor implements Processor<Exchange> {
+public class ToJbiProcessor implements Processor {
     private JbiBinding binding;
     private ComponentContext componentContext;
     private String destinationUri;

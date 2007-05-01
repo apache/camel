@@ -27,9 +27,9 @@ import java.util.List;
  *
  * @version $Revision: 1.1 $
  */
-public class RandomLoadBalancer<E extends Exchange> extends QueueLoadBalancer<E> {
+public class RandomLoadBalancer extends QueueLoadBalancer {
 
-    protected synchronized Processor<E> chooseProcessor(List<Processor<E>> processors, E exchange) {
+    protected synchronized Processor chooseProcessor(List<Processor> processors, Exchange exchange) {
         int size = processors.size();
         while (true) {
             int index = (int) Math.round(Math.random() * size);

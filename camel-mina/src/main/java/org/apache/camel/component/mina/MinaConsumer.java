@@ -40,7 +40,7 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
     private final SocketAddress address;
     private final IoAcceptor acceptor;
 
-    public MinaConsumer(final MinaEndpoint endpoint, Processor<MinaExchange> processor) {
+    public MinaConsumer(final MinaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
          address = endpoint.getAddress();

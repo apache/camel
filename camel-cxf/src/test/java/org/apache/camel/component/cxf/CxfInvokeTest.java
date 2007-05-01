@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.CamelClient;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ServerFactoryBean;
@@ -68,8 +69,8 @@ public class CxfInvokeTest extends TestCase {
 
         CxfExchange exchange =
             client.send(getUri(),
-                        new Processor<CxfExchange>() {
-                            public void process(final CxfExchange exchange) {
+                        new Processor() {
+                            public void process(final Exchange exchange) {
                                 final List<String> params = new ArrayList<String>();
                                 params.add(testMessage);
                                 exchange.getIn().setBody(params);

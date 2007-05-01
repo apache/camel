@@ -38,7 +38,7 @@ public class MulticastTest extends ContextTestSupport {
         y.expectedBodiesReceived("input+output");
         z.expectedBodiesReceived("input+output");
 
-        client.send("direct:a", new Processor<Exchange>() {
+        client.send("direct:a", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody("input");
@@ -59,7 +59,7 @@ public class MulticastTest extends ContextTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() {
-        final Processor<Exchange> processor = new Processor<Exchange>() {
+        final Processor processor = new Processor() {
             public void process(Exchange exchange) {
                 // lets transform the IN message
                 Message in = exchange.getIn();

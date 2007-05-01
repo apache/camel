@@ -29,16 +29,16 @@ import java.util.Collection;
  *
  * @version $Revision$
  */
-public class PipelineBuilder<E extends Exchange> extends FromBuilder<E> {
-    private final Collection<Endpoint<E>> endpoints;
+public class PipelineBuilder extends FromBuilder {
+    private final Collection<Endpoint> endpoints;
 
-    public PipelineBuilder(FromBuilder<E> parent, Collection<Endpoint<E>> endpoints) {
+    public PipelineBuilder(FromBuilder parent, Collection<Endpoint> endpoints) {
         super(parent);
         this.endpoints = endpoints;
     }
 
     @Override
-    public Processor<E> createProcessor() throws Exception {
-        return new Pipeline<E>(endpoints);
+    public Processor createProcessor() throws Exception {
+        return new Pipeline(endpoints);
     }
 }

@@ -32,9 +32,9 @@ import javax.jms.MessageListener;
  */
 public class MessageListenerProcessor implements MessageListener {
     private final JmsEndpoint endpoint;
-    private final Processor<Exchange> processor;
+    private final Processor processor;
 
-    public MessageListenerProcessor(JmsEndpoint endpoint, Processor<Exchange> processor) {
+    public MessageListenerProcessor(JmsEndpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
         this.processor = processor;
     }

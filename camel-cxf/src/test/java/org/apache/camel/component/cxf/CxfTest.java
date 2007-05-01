@@ -85,8 +85,8 @@ public class CxfTest extends TestCase {
 
         CxfExchange exchange = (CxfExchange) 
             client.send(getUri(),
-                        new Processor<CxfExchange>() {
-                            public void process(final CxfExchange exchange) {
+                        new Processor() {
+                            public void process(final Exchange exchange) {
                                 final List<String> params = new ArrayList<String>();
                                 params.add(testMessage);
                                 exchange.getIn().setBody(params);

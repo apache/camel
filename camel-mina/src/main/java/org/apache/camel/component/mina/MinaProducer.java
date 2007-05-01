@@ -18,6 +18,7 @@
 package org.apache.camel.component.mina;
 
 import org.apache.camel.Producer;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,7 +35,7 @@ import java.net.SocketAddress;
  *
  * @version $Revision$
  */
-public class MinaProducer extends DefaultProducer<MinaExchange> {
+public class MinaProducer extends DefaultProducer {
     private static final transient Log log = LogFactory.getLog(MinaProducer.class);
     private IoSession session;
     private MinaEndpoint endpoint;
@@ -44,7 +45,7 @@ public class MinaProducer extends DefaultProducer<MinaExchange> {
         this.endpoint = endpoint;
     }
 
-    public void process(MinaExchange exchange) {
+    public void process(Exchange exchange) {
         if (session == null) {
             throw new IllegalStateException("Not started yet!");
         }

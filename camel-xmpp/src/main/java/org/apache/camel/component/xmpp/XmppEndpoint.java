@@ -75,7 +75,7 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
         return startService(new XmppPrivateChatProducer(this, participant));
     }
 
-    public Consumer<XmppExchange> createConsumer(Processor<XmppExchange> processor) throws Exception {
+    public Consumer<XmppExchange> createConsumer(Processor processor) throws Exception {
         return startService(new XmppConsumer(this, processor));
     }
 

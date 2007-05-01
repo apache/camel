@@ -31,9 +31,9 @@ public class ProcessorBuilder {
     /**
      * Creates a processor which sets the body of the IN message to the value of the expression
      */
-    public static <E extends Exchange> Processor<E> setBody(final Expression<E> expression) {
-        return new Processor<E>() {
-            public void process(E exchange) {
+    public static Processor setBody(final Expression expression) {
+        return new Processor() {
+            public void process(Exchange exchange) {
                 Object newBody = expression.evaluate(exchange);
                 exchange.getIn().setBody(newBody);
             }
@@ -48,9 +48,9 @@ public class ProcessorBuilder {
     /**
      * Creates a processor which sets the body of the IN message to the value of the expression
      */
-    public static <E extends Exchange> Processor<E> setOutBody(final Expression<E> expression) {
-        return new Processor<E>() {
-            public void process(E exchange) {
+    public static Processor setOutBody(final Expression expression) {
+        return new Processor() {
+            public void process(Exchange exchange) {
                 Object newBody = expression.evaluate(exchange);
                 exchange.getOut().setBody(newBody);
             }
@@ -65,9 +65,9 @@ public class ProcessorBuilder {
     /**
      * Sets the header on the IN message
      */
-    public static <E extends Exchange> Processor<E> setHeader(final String name, final Expression<E> expression) {
-        return new Processor<E>() {
-            public void process(E exchange) {
+    public static Processor setHeader(final String name, final Expression expression) {
+        return new Processor() {
+            public void process(Exchange exchange) {
                 Object value = expression.evaluate(exchange);
                 exchange.getIn().setHeader(name, value);
             }
@@ -82,9 +82,9 @@ public class ProcessorBuilder {
     /**
      * Sets the header on the OUT message
      */
-    public static <E extends Exchange> Processor<E> setOutHeader(final String name, final Expression<E> expression) {
-        return new Processor<E>() {
-            public void process(E exchange) {
+    public static Processor setOutHeader(final String name, final Expression expression) {
+        return new Processor() {
+            public void process(Exchange exchange) {
                 Object value = expression.evaluate(exchange);
                 exchange.getOut().setHeader(name, value);
             }
@@ -99,9 +99,9 @@ public class ProcessorBuilder {
     /**
      * Sets the property on the exchange
      */
-    public static <E extends Exchange> Processor<E> setProperty(final String name, final Expression<E> expression) {
-        return new Processor<E>() {
-            public void process(E exchange) {
+    public static Processor setProperty(final String name, final Expression expression) {
+        return new Processor() {
+            public void process(Exchange exchange) {
                 Object value = expression.evaluate(exchange);
                 exchange.setProperty(name, value);
             }

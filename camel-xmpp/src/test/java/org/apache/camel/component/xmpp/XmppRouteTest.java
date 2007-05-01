@@ -23,6 +23,7 @@ import junit.textui.TestRunner;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -80,12 +81,11 @@ public class XmppRouteTest extends TestCase {
     }
 
     protected void sendExchange(final Object expectedBody) {
-        client.send(endpoint, new Processor<XmppExchange>() {
-            public void process(XmppExchange exchange) {
+        client.send(endpoint, new Processor() {
+            public void process(Exchange exchange) {
                 // now lets fire in a message
-                XmppMessage in = exchange.getIn();
-                in.setBody(expectedBody);
-                in.setHeader("cheese", 123);
+                exchange.getIn().setBody(expectedBody);
+                exchange.getIn().setHeader("cheese", 123);
             }
         });
     }
@@ -120,10 +120,10 @@ public class XmppRouteTest extends TestCase {
             container.addRoutes(new RouteBuilder() {
                 public void configure() {
                     from(uri1).to(uri2);
-                    from(uri2).process(new Processor<XmppExchange>() {
-                        public void process(XmppExchange e) {
+                    from(uri2).process(new Processor() {
+                        public void process(Exchange e) {
                             log.info("Received exchange: " + e);
-                            receivedExchange = e;
+                            receivedExchange = (XmppExchange) e;
                             latch.countDown();
                         }
                     });

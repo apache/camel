@@ -32,7 +32,7 @@ import org.apache.camel.impl.DefaultProducer;
  * @version $Revision$
  */
 public class JbiEndpoint extends DefaultEndpoint<Exchange> {
-    private Processor<Exchange> toJbiProcessor;
+    private Processor toJbiProcessor;
     private final CamelJbiComponent jbiComponent;
 
     public JbiEndpoint(CamelJbiComponent jbiComponent, String uri) {
@@ -49,7 +49,7 @@ public class JbiEndpoint extends DefaultEndpoint<Exchange> {
         });
     }
 
-    public Consumer<Exchange> createConsumer(final Processor<Exchange> processor) throws Exception {
+    public Consumer<Exchange> createConsumer(final Processor processor) throws Exception {
         return startService(new DefaultConsumer<Exchange>(this, processor) {
             CamelJbiEndpoint jbiEndpoint;
 

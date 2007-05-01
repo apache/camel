@@ -51,7 +51,7 @@ public class MailEndpoint extends PollingEndpoint<MailExchange> {
         return startService(new MailProducer(this, sender));
     }
 
-    public Consumer<MailExchange> createConsumer(Processor<MailExchange> processor) throws Exception {
+    public Consumer<MailExchange> createConsumer(Processor processor) throws Exception {
         JavaMailConnection connection = configuration.createJavaMailConnection(this);
         String protocol = getConfiguration().getProtocol();
         if (protocol.equals("smtp")) {
@@ -73,7 +73,7 @@ public class MailEndpoint extends PollingEndpoint<MailExchange> {
      * @return a newly created consumer
      * @throws Exception if the consumer cannot be created
      */
-    public Consumer<MailExchange> createConsumer(Processor<MailExchange> processor, Folder folder) throws Exception {
+    public Consumer<MailExchange> createConsumer(Processor processor, Folder folder) throws Exception {
         MailConsumer answer = new MailConsumer(this, processor, folder);
         configureConsumer(answer);
         return startService(answer);

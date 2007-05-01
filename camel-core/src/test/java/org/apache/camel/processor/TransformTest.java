@@ -49,7 +49,7 @@ public class TransformTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").process(new Processor<Exchange>() {
+                from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) {
                         Message in = exchange.getIn();
                         in.setBody(in.getBody(String.class) + " World!");

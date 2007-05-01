@@ -45,7 +45,7 @@ public class QueueRouteTest extends TestCase {
         container.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("queue:test.a").to("queue:test.b");
-                from("queue:test.b").process(new Processor<Exchange>() {
+                from("queue:test.b").process(new Processor() {
                     public void process(Exchange e) {
                         System.out.println("Received exchange: " + e.getIn());
                         latch.countDown();
@@ -82,7 +82,7 @@ public class QueueRouteTest extends TestCase {
         container.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("queue:test.a").to("queue:test.b");
-                from("queue:test.b").process(new Processor<Exchange>() {
+                from("queue:test.b").process(new Processor() {
                     public void process(Exchange e) {
                         System.out.println("Received exchange: " + e.getIn());
                         latch.countDown();

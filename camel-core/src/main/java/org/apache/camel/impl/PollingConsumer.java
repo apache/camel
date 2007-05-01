@@ -42,11 +42,11 @@ public abstract class PollingConsumer<E extends Exchange> extends DefaultConsume
     private boolean useFixedDelay;
     private ScheduledFuture<?> future;
 
-    public PollingConsumer(DefaultEndpoint<E> endpoint, Processor<E> processor) {
+    public PollingConsumer(DefaultEndpoint<E> endpoint, Processor processor) {
         this(endpoint, processor, endpoint.getExecutorService());
     }
 
-    public PollingConsumer(Endpoint<E> endpoint, Processor<E> processor, ScheduledExecutorService executor) {
+    public PollingConsumer(Endpoint<E> endpoint, Processor processor, ScheduledExecutorService executor) {
         super(endpoint, processor);
         this.executor = executor;
         if (executor == null) {

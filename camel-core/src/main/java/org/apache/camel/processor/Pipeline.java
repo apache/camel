@@ -30,15 +30,15 @@ import java.util.Collection;
  *
  * @version $Revision$
  */
-public class Pipeline<E extends Exchange> extends MulticastProcessor<E> implements Processor<E> {
-    public Pipeline(Collection<Endpoint<E>> endpoints) throws Exception {
+public class Pipeline extends MulticastProcessor implements Processor {
+    public Pipeline(Collection<Endpoint> endpoints) throws Exception {
         super(endpoints);
     }
 
-    public void process(E exchange) throws Exception {
-        E nextExchange = exchange;
+    public void process(Exchange exchange) throws Exception {
+        Exchange nextExchange = exchange;
         boolean first = true;
-        for (Producer<E> producer : getProducers()) {
+        for (Producer producer : getProducers()) {
             if (first) {
                 first = false;
             }
@@ -56,8 +56,8 @@ public class Pipeline<E extends Exchange> extends MulticastProcessor<E> implemen
      * @param previousExchange the previous exchange
      * @return a new exchange
      */
-    protected E createNextExchange(Producer<E> producer, E previousExchange) {
-        E answer = producer.createExchange(previousExchange);
+    protected Exchange createNextExchange(Producer producer, Exchange previousExchange) {
+        Exchange answer = producer.createExchange(previousExchange);
 
         // now lets set the input of the next exchange to the output of the previous message if it is not null
         Object output = previousExchange.getOut().getBody();
@@ -74,8 +74,8 @@ public class Pipeline<E extends Exchange> extends MulticastProcessor<E> implemen
      * @param exchange
      * @return the current exchange if no copying is required such as for a pipeline otherwise a new copy of the exchange is returned.
      */
-    protected E copyExchangeStrategy(E exchange) {
-        return (E) exchange.copy();
+    protected Exchange copyExchangeStrategy(Exchange exchange) {
+        return exchange.copy();
     }
 
     @Override

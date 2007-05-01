@@ -22,6 +22,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -65,12 +66,11 @@ public class JmsRouteTest extends TestCase {
     }
 
     protected void sendExchange(final Object expectedBody) {
-        client.send(endpoint, new Processor<JmsExchange>() {
-            public void process(JmsExchange exchange) {
+        client.send(endpoint, new Processor() {
+            public void process(Exchange exchange) {
                 // now lets fire in a message
-                JmsMessage in = exchange.getIn();
-                in.setBody(expectedBody);
-                in.setHeader("cheese", 123);
+                exchange.getIn().setBody(expectedBody);
+                exchange.getIn().setHeader("cheese", 123);
             }
         });
     }
@@ -103,10 +103,10 @@ public class JmsRouteTest extends TestCase {
         container.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("activemq:queue:test.a").to("activemq:queue:test.b");
-                from("activemq:queue:test.b").process(new Processor<JmsExchange>() {
-                    public void process(JmsExchange e) {
+                from("activemq:queue:test.b").process(new Processor() {
+                    public void process(Exchange e) {
                         System.out.println("Received exchange: " + e.getIn());
-                        receivedExchange = e;
+                        receivedExchange = (JmsExchange) e;
                         latch.countDown();
                     }
                 });

@@ -72,7 +72,7 @@ public class JpaWithNamedQueryTest extends TestCase {
         assertEquals("Should have no results: " + results, 0, results.size());
 
         // lets produce some objects
-        client.send(endpoint, new Processor<Exchange>() {
+        client.send(endpoint, new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setBody(new MultiSteps("foo@bar.com"));
             }
@@ -85,7 +85,7 @@ public class JpaWithNamedQueryTest extends TestCase {
         assertEquals("address property", "foo@bar.com", mail.getAddress());
 
         // now lets create a consumer to consume it
-        consumer = endpoint.createConsumer(new Processor<Exchange>() {
+        consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange e) {
                 log.info("Received exchange: " + e.getIn());
                 receivedExchange = e;

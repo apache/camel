@@ -18,6 +18,7 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Exchange;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
@@ -28,21 +29,21 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version $Revision: 519941 $
  */
-public class DelegateProcessor<E> extends ServiceSupport implements Processor<E> {
-    protected Processor<E> next;
+public class DelegateProcessor extends ServiceSupport implements Processor {
+    protected Processor next;
 
     public DelegateProcessor() {
     }
 
-    public DelegateProcessor(Processor<E> next) {
+    public DelegateProcessor(Processor next) {
         this.next = next;
     }
 
-    public void process(E exchange) throws Exception {
+    public void process(Exchange exchange) throws Exception {
         processNext(exchange);
     }
 
-    protected void processNext(E exchange) throws Exception {
+    protected void processNext(Exchange exchange) throws Exception {
         if (next != null) {
             next.process(exchange);
         }
@@ -53,11 +54,11 @@ public class DelegateProcessor<E> extends ServiceSupport implements Processor<E>
         return "delegate(" + next + ")";
     }
 
-    public Processor<E> getNext() {
+    public Processor getNext() {
         return next;
     }
 
-    public void setNext(Processor<E> next) {
+    public void setNext(Processor next) {
         this.next = next;
     }
 

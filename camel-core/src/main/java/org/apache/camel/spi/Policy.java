@@ -33,5 +33,5 @@ public interface Policy<E> {
      * @param processor the processor to be intercepted
      * @return either the original processor or a processor wrapped in one or more interceptors
      */
-    Processor<E> wrap(Processor<E> processor);
+    Processor wrap(Processor processor);
 }

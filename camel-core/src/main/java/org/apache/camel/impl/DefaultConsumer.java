@@ -29,10 +29,10 @@ import org.apache.camel.util.ServiceHelper;
  */
 public class DefaultConsumer<E extends Exchange> extends ServiceSupport implements Consumer<E> {
     private Endpoint<E> endpoint;
-    private Processor<E> processor;
+    private Processor processor;
     private ExceptionHandler exceptionHandler;
 
-    public DefaultConsumer(Endpoint<E> endpoint, Processor<E> processor) {
+    public DefaultConsumer(Endpoint<E> endpoint, Processor processor) {
         this.endpoint = endpoint;
         this.processor = processor;
     }
@@ -41,7 +41,7 @@ public class DefaultConsumer<E extends Exchange> extends ServiceSupport implemen
         return endpoint;
     }
 
-    public Processor<E> getProcessor() {
+    public Processor getProcessor() {
         return processor;
     }
 

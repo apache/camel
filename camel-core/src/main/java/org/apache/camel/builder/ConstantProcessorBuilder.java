@@ -23,14 +23,14 @@ import org.apache.camel.Processor;
 /**
  * @version $Revision$
  */
-public class ConstantProcessorBuilder<E extends Exchange> implements ProcessorFactory<E> {
-    private Processor<E> processor;
+public class ConstantProcessorBuilder implements ProcessorFactory {
+    private Processor processor;
 
-    public ConstantProcessorBuilder(Processor<E> processor) {
+    public ConstantProcessorBuilder(Processor processor) {
         this.processor = processor;
     }
 
-    public Processor<E> createProcessor() {
+    public Processor createProcessor() {
         return processor;
     }
 }

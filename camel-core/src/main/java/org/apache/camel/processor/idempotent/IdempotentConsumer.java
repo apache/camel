@@ -32,13 +32,13 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision: 1.1 $
  */
-public class IdempotentConsumer<E extends Exchange> extends ServiceSupport implements Processor<E> {
+public class IdempotentConsumer extends ServiceSupport implements Processor {
     private static final transient Log log = LogFactory.getLog(IdempotentConsumer.class);
-    private Expression<E> messageIdExpression;
-    private Processor<E> nextProcessor;
+    private Expression<Exchange> messageIdExpression;
+    private Processor nextProcessor;
     private MessageIdRepository messageIdRepository;
 
-    public IdempotentConsumer(Expression<E> messageIdExpression, MessageIdRepository messageIdRepository, Processor<E> nextProcessor) {
+    public IdempotentConsumer(Expression<Exchange> messageIdExpression, MessageIdRepository messageIdRepository, Processor nextProcessor) {
         this.messageIdExpression = messageIdExpression;
         this.messageIdRepository = messageIdRepository;
         this.nextProcessor = nextProcessor;
@@ -49,7 +49,7 @@ public class IdempotentConsumer<E extends Exchange> extends ServiceSupport imple
         return "IdempotentConsumer[expression=" + messageIdExpression + ", repository=" + messageIdRepository + ", processor=" + nextProcessor + "]";
     }
 
-    public void process(E exchange) throws Exception {
+    public void process(Exchange exchange) throws Exception {
         String messageId = ExpressionHelper.evaluateAsString(messageIdExpression, exchange);
         if (messageId == null) {
             throw new NoMessageIdException(exchange, messageIdExpression);
@@ -64,7 +64,7 @@ public class IdempotentConsumer<E extends Exchange> extends ServiceSupport imple
 
     // Properties
     //-------------------------------------------------------------------------
-    public Expression<E> getMessageIdExpression() {
+    public Expression<Exchange> getMessageIdExpression() {
         return messageIdExpression;
     }
 
@@ -72,7 +72,7 @@ public class IdempotentConsumer<E extends Exchange> extends ServiceSupport imple
         return messageIdRepository;
     }
 
-    public Processor<E> getNextProcessor() {
+    public Processor getNextProcessor() {
         return nextProcessor;
     }
 
@@ -94,7 +94,7 @@ public class IdempotentConsumer<E extends Exchange> extends ServiceSupport imple
      * @param exchange the exchange
      * @param messageId the message ID of this exchange
      */
-    protected void onDuplicateMessage(E exchange, String messageId) {
+    protected void onDuplicateMessage(Exchange exchange, String messageId) {
         if (log.isDebugEnabled()) {
             log.debug("Ignoring duplicate message with id: " + messageId + " for exchange: " + exchange);
         }

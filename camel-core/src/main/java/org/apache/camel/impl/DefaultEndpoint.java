@@ -109,10 +109,15 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         return getContext().getExchangeConverter().convertTo(type, exchange);
     }
 
-    public E createExchange(E exchange) {
+    public E createExchange(Exchange exchange) {
         E answer = createExchange();
         answer.copyFrom(exchange);
         return answer;
+    }
+
+    public E toExchangeType(Exchange exchange) {
+        // TODO avoid cloning exchanges if E == Exchange!
+        return createExchange(exchange);
     }
 
     /**

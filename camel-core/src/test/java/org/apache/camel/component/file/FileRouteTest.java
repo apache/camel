@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.Log;
@@ -37,7 +38,7 @@ public class FileRouteTest extends TestCase {
     private static final transient Log log = LogFactory.getLog(FileRouteTest.class);
     protected CamelContext container = new DefaultCamelContext();
     protected CountDownLatch latch = new CountDownLatch(1);
-    protected FileExchange receivedExchange;
+    protected Exchange receivedExchange;
     protected String uri = "file://foo.txt";
     protected Producer<FileExchange> producer;
 
@@ -77,8 +78,8 @@ public class FileRouteTest extends TestCase {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(uri).process(new Processor<FileExchange>() {
-                    public void process(FileExchange e) {
+                from(uri).process(new Processor() {
+                    public void process(Exchange e) {
                         System.out.println("Received exchange: " + e.getIn());
                         receivedExchange = e;
                         latch.countDown();

@@ -44,7 +44,7 @@ public class DirectRouteTest extends TestCase {
         container.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:test.a").to("direct:test.b");
-                from("direct:test.b").process(new Processor<Exchange>() {
+                from("direct:test.b").process(new Processor() {
                     public void process(Exchange e) {
                     	invoked.set(true);
                     }

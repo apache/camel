@@ -26,11 +26,12 @@ import java.rmi.registry.Registry;
 import org.apache.camel.component.pojo.PojoEndpoint;
 import org.apache.camel.component.pojo.PojoExchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.Exchange;
 
 /**
  * @version $Revision: 533076 $
  */
-public class RmiProducer extends DefaultProducer<PojoExchange> {
+public class RmiProducer extends DefaultProducer {
 
 	private final RmiEndpoint endpoint;
 	private Remote remote;
@@ -40,9 +41,9 @@ public class RmiProducer extends DefaultProducer<PojoExchange> {
 		this.endpoint = endpoint;
 	}
 
-	public void process(PojoExchange exchange) throws AccessException, RemoteException, NotBoundException {
-		
-		PojoEndpoint.invoke(getRemote(), exchange);
+	public void process(Exchange exchange) throws AccessException, RemoteException, NotBoundException {
+        PojoExchange pojoExchange = endpoint.toExchangeType(exchange);
+        PojoEndpoint.invoke(getRemote(), pojoExchange);
 	}
 
 	public Remote getRemote() throws AccessException, RemoteException, NotBoundException {

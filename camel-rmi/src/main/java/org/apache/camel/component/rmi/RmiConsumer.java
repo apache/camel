@@ -42,7 +42,7 @@ public class RmiConsumer extends DefaultConsumer<PojoExchange> implements Invoca
 	private Remote stub;
 	private Remote proxy;
 
-	public RmiConsumer(RmiEndpoint endpoint, Processor<PojoExchange> processor) {
+	public RmiConsumer(RmiEndpoint endpoint, Processor processor) {
 		super(endpoint, processor);
 		this.endpoint = endpoint;
 		

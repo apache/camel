@@ -25,12 +25,12 @@ package org.apache.camel;
  *
  * @version $Revision$
  */
-public interface Processor<E> {
+public interface Processor {
 
     /**
      * Processes the message exchange
      * 
      * @throws Exception if an internal processing error has occurred. 
      */
-    void process(E exchange) throws Exception;
+    void process(Exchange exchange) throws Exception;
 }

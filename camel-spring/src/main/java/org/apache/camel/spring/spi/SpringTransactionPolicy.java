@@ -19,6 +19,7 @@ package org.apache.camel.spring.spi;
 
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Exchange;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.Policy;
 import org.apache.commons.logging.Log;
@@ -45,16 +46,16 @@ public class SpringTransactionPolicy<E> implements Policy<E> {
         this.template = template;
     }
 
-    public Processor<E> wrap(Processor<E> processor) {
+    public Processor wrap(Processor processor) {
         final TransactionTemplate transactionTemplate = getTemplate();
         if (transactionTemplate == null) {
             log.warn("No TransactionTemplate available so transactions will not be enabled!");
             return processor;
         }
 
-        return new DelegateProcessor<E>(processor) {
+        return new DelegateProcessor(processor) {
 
-            public void process(final E exchange) {
+            public void process(final Exchange exchange) {
                 transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         try {

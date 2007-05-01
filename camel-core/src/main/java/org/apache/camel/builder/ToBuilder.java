@@ -25,16 +25,16 @@ import org.apache.camel.processor.SendProcessor;
 /**
  * @version $Revision$
  */
-public class ToBuilder<E extends Exchange> extends FromBuilder<E> {
-    private Endpoint<E> destination;
+public class ToBuilder<E extends Exchange> extends FromBuilder {
+    private Endpoint destination;
 
-    public ToBuilder(FromBuilder<E> parent, Endpoint<E> endpoint) {
+    public ToBuilder(FromBuilder parent, Endpoint endpoint) {
         super(parent);
         this.destination = endpoint;
     }
 
     @Override
-    public Processor<E> createProcessor() {
-        return new SendProcessor<E>(destination);
+    public Processor createProcessor() {
+        return new SendProcessor(destination);
     }
 }

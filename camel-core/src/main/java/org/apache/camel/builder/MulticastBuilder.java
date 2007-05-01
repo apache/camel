@@ -29,16 +29,16 @@ import java.util.Collection;
  *
  * @version $Revision$
  */
-public class MulticastBuilder<E extends Exchange> extends FromBuilder<E> {
-    private final Collection<Endpoint<E>> endpoints;
+public class MulticastBuilder extends FromBuilder {
+    private final Collection<Endpoint> endpoints;
 
-    public MulticastBuilder(FromBuilder<E> parent, Collection<Endpoint<E>> endpoints) {
+    public MulticastBuilder(FromBuilder parent, Collection<Endpoint> endpoints) {
         super(parent);
         this.endpoints = endpoints;
     }
 
     @Override
-    public Processor<E> createProcessor() throws Exception {
-        return new MulticastProcessor<E>(endpoints);
+    public Processor createProcessor() throws Exception {
+        return new MulticastProcessor(endpoints);
     }
 }

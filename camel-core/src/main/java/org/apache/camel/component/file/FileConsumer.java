@@ -38,7 +38,7 @@ public class FileConsumer extends PollingConsumer<FileExchange> {
     private String regexPattern = "";
     private long lastPollTime = 0l;
 
-    public FileConsumer(final FileEndpoint endpoint, Processor<FileExchange> processor) {
+    public FileConsumer(final FileEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
     }

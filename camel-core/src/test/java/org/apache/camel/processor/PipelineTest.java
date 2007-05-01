@@ -33,7 +33,7 @@ public class PipelineTest extends ContextTestSupport {
     public void testSendMessageThroughAPipeline() throws Exception {
         resultEndpoint.expectedBodiesReceived(4);
 
-        client.send("direct:a", new Processor<Exchange>() {
+        client.send("direct:a", new Processor() {
             public void process(Exchange exchange) {
                 // now lets fire in a message
                 Message in = exchange.getIn();
@@ -53,7 +53,7 @@ public class PipelineTest extends ContextTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() {
-        final Processor<Exchange> processor = new Processor<Exchange>() {
+        final Processor processor = new Processor() {
             public void process(Exchange exchange) {
                 Integer number = exchange.getIn().getBody(Integer.class);
                 if (number == null) {

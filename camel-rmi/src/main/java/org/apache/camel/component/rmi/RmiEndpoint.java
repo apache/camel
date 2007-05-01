@@ -54,7 +54,7 @@ public class RmiEndpoint extends DefaultEndpoint<PojoExchange> {
 		return new PojoExchange(getContext());
 	}
 
-	public Consumer<PojoExchange> createConsumer(Processor<PojoExchange> processor) throws Exception {
+	public Consumer<PojoExchange> createConsumer(Processor processor) throws Exception {
 		if( remoteInterfaces == null || remoteInterfaces.size()==0 )
 			throw new RuntimeCamelException("To create an RMI consumer, the RMI endpoint's remoteInterfaces property must be be configured.");
 		return new RmiConsumer(this, processor);

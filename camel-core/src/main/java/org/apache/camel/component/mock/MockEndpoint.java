@@ -45,7 +45,7 @@ import org.apache.commons.logging.LogFactory;
 public class MockEndpoint extends DefaultEndpoint<Exchange> {
     private static final transient Log log = LogFactory.getLog(MockEndpoint.class);
     private int expectedCount = -1;
-    private Map<Integer, Processor<Exchange>> processors = new HashMap<Integer, Processor<Exchange>>();
+    private Map<Integer, Processor> processors = new HashMap<Integer, Processor>();
     private List<Exchange> receivedExchanges = new ArrayList<Exchange>();
     private List<Throwable> failures = new ArrayList<Throwable>();
     private List<Runnable> tests = new ArrayList<Runnable>();
@@ -93,7 +93,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         return new DefaultExchange(getContext());
     }
 
-    public Consumer<Exchange> createConsumer(Processor<Exchange> processor) throws Exception {
+    public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot consume from this endpoint");
     }
 
@@ -309,7 +309,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
 
             receivedExchanges.add(exchange);
 
-            Processor<Exchange> processor = processors.get(getReceivedCounter());
+            Processor processor = processors.get(getReceivedCounter());
             if (processor != null) {
                 processor.process(exchange);
             }

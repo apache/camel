@@ -38,7 +38,7 @@ public class XmppConsumer extends DefaultConsumer<XmppExchange> implements Packe
     private static final transient Log log = LogFactory.getLog(XmppConsumer.class);
     private final XmppEndpoint endpoint;
 
-    public XmppConsumer(XmppEndpoint endpoint, Processor<XmppExchange> processor) {
+    public XmppConsumer(XmppEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
     }

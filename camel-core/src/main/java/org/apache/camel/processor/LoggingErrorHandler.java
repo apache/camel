@@ -29,16 +29,16 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class LoggingErrorHandler<E extends Exchange> extends ServiceSupport implements ErrorHandler<E> {
-    private Processor<E> output;
+public class LoggingErrorHandler extends ServiceSupport implements ErrorHandler {
+    private Processor output;
     private Log log;
     private LoggingLevel level;
 
-    public LoggingErrorHandler(Processor<E> output) {
+    public LoggingErrorHandler(Processor output) {
         this(output, LogFactory.getLog(LoggingErrorHandler.class), LoggingLevel.INFO);
     }
 
-    public LoggingErrorHandler(Processor<E> output, Log log, LoggingLevel level) {
+    public LoggingErrorHandler(Processor output, Log log, LoggingLevel level) {
         this.output = output;
         this.log = log;
         this.level = level;
@@ -49,7 +49,7 @@ public class LoggingErrorHandler<E extends Exchange> extends ServiceSupport impl
         return "LoggingErrorHandler[" + output + "]";
     }
 
-    public void process(E exchange) throws Exception {
+    public void process(Exchange exchange) throws Exception {
         try {
             output.process(exchange);
         }
@@ -64,7 +64,7 @@ public class LoggingErrorHandler<E extends Exchange> extends ServiceSupport impl
     /**
      * Returns the output processor
      */
-    public Processor<E> getOutput() {
+    public Processor getOutput() {
         return output;
     }
 
@@ -86,7 +86,7 @@ public class LoggingErrorHandler<E extends Exchange> extends ServiceSupport impl
 
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected void logError(E exchange, RuntimeException e) {
+    protected void logError(Exchange exchange, RuntimeException e) {
         switch (level) {
             case DEBUG:
                 if (log.isDebugEnabled()) {
@@ -123,7 +123,7 @@ public class LoggingErrorHandler<E extends Exchange> extends ServiceSupport impl
         }
     }
 
-    protected Object logMessage(E exchange, RuntimeException e) {
+    protected Object logMessage(Exchange exchange, RuntimeException e) {
         return e + " while processing exchange: " + exchange;
     }
 

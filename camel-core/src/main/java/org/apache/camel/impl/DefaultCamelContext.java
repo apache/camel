@@ -295,7 +295,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         
         if (routes != null) {
             for (Route<Exchange> route : routes) {
-                Processor<Exchange> processor = route.getProcessor();
+                Processor processor = route.getProcessor();
                 Consumer<Exchange> consumer = route.getEndpoint().createConsumer(processor);
                 if (consumer != null) {
                     consumer.start();
