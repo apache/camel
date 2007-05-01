@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.xpath;
+package org.apache.camel.builder.xml;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -23,7 +23,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.TestSupport;
-import static org.apache.camel.builder.xpath.XPathBuilder.*;
+import static org.apache.camel.builder.xml.XPathBuilder.*;
+import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
