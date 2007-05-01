@@ -15,26 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.xpath;
-
-import org.apache.camel.RuntimeExpressionException;
-
-import javax.xml.xpath.XPathException;
+package org.apache.camel;
 
 /**
- * An exception thrown if am XPath expression could not be parsed or evaluated
- *
- * @version $Revision$
+ * Thrown if a message transformation fails
+ * 
+ * @version $Revision: 521156 $
  */
-public class InvalidXPathExpression extends RuntimeExpressionException {
-    private final String xpath;
+public class RuntimeTransformException extends RuntimeCamelException {
 
-    public InvalidXPathExpression(String xpath, XPathException e) {
-        super("Invalid xpath: " + xpath + ". Reason: " + e, e);
-        this.xpath = xpath;
+	private static final long serialVersionUID = -8417806626073055262L;
+
+    public RuntimeTransformException(String message) {
+        super(message);
     }
 
-    public String getXpath() {
-        return xpath;
+    public RuntimeTransformException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public RuntimeTransformException(Throwable cause) {
+        super(cause);
     }
 }
