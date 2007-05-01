@@ -49,11 +49,7 @@ public class JmsMessage extends DefaultMessage {
         }
     }
 
-    @Override
-    public JmsExchange getExchange() {
-        return (JmsExchange) super.getExchange();
-    }
-
+       
     /**
      * Returns the underlying JMS message
      *
@@ -90,8 +86,9 @@ public class JmsMessage extends DefaultMessage {
 
     @Override
     protected Object createBody() {
-        if (jmsMessage != null) {
-            return getExchange().getBinding().extractBodyFromJms(getExchange(), jmsMessage);
+        if (jmsMessage != null && getExchange() instanceof JmsExchange) {
+            JmsExchange exchange = (JmsExchange)getExchange();
+            return (exchange.getBinding().extractBodyFromJms(exchange, jmsMessage));
         }
         return null;
     }
