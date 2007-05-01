@@ -17,29 +17,27 @@
  */
 package org.apache.camel.builder.xml;
 
-import static org.apache.camel.util.ObjectHelper.notNull;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeTransformException;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.stream.StreamSource;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Creates a <a href="http://activemq.apache.org/camel/processor.html">Processor</a>
@@ -66,7 +64,7 @@ public class XsltBuilder<E extends Exchange> implements Processor<E> {
         return "XSLT[" + transformer + "]";
     }
 
-    public synchronized void process(E exchange) {
+    public synchronized void process(E exchange) throws Exception {
         Transformer transformer = getTransformer();
         if (transformer == null) {
             throw new IllegalArgumentException("No transformer configured!");
@@ -74,7 +72,7 @@ public class XsltBuilder<E extends Exchange> implements Processor<E> {
         configureTransformer(transformer, exchange);
         Source source = getSource(exchange);
         Result result = resultHandler.getResult();
-        transform(transformer, source, result);
+        transformer.transform(source, result);
         resultHandler.setBody(exchange.getIn());
     }
 
@@ -151,7 +149,6 @@ public class XsltBuilder<E extends Exchange> implements Processor<E> {
         return this;
     }
 
-
     // Properties
     //-------------------------------------------------------------------------
 
@@ -191,7 +188,6 @@ public class XsltBuilder<E extends Exchange> implements Processor<E> {
         setTransformer(converter.getTransformerFactory().newTransformer(source));
     }
 
-
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -215,18 +211,6 @@ public class XsltBuilder<E extends Exchange> implements Processor<E> {
             }
         }
         return source;
-    }
-
-    /**
-     * Performs the transformation, wrapping any thrown exceptions
-     */
-    protected void transform(Transformer transformer, Source source, Result result) {
-        try {
-            transformer.transform(source, result);
-        }
-        catch (TransformerException e) {
-            throw new RuntimeTransformException(e);
-        }
     }
 
     /**
