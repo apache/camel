@@ -51,7 +51,7 @@ public class MailRouteTest extends ContextTestSupport {
         assertMailboxReceivedMessages("james@localhost");
 
         // lets test the receive worked
-        resultEndpoint.assertIsSatisfied(5000);
+        resultEndpoint.assertIsSatisfied(10000);
 
         assertMailboxReceivedMessages("copy@localhost");
     }
