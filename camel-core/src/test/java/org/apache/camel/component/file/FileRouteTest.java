@@ -39,7 +39,7 @@ public class FileRouteTest extends TestCase {
     protected CamelContext container = new DefaultCamelContext();
     protected CountDownLatch latch = new CountDownLatch(1);
     protected Exchange receivedExchange;
-    protected String uri = "file://foo.txt";
+    protected String uri = "file://target/foo.txt";
     protected Producer<FileExchange> producer;
 
     
