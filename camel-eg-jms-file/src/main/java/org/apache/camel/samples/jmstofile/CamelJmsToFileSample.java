@@ -56,11 +56,7 @@ public class CamelJmsToFileSample  {
         
         CamelClient client = new CamelClient(context);
         context.start();
-        client.send("jms:queue:test.a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("foo");
-            }
-        });
+        client.sendBody("jms:queue:test.a", "foo");
         Thread.sleep(1000);
         context.stop();
     }
