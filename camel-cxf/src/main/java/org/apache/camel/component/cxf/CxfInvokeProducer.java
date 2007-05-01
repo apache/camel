@@ -42,6 +42,7 @@ public class CxfInvokeProducer extends DefaultProducer {
     public void process(Exchange exchange) {
         CxfExchange cxfExchange = endpoint.toExchangeType(exchange);
         process(cxfExchange);
+        exchange.copyFrom(cxfExchange);
     }
 
     public void process(CxfExchange exchange) {

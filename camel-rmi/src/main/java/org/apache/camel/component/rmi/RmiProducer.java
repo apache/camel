@@ -44,7 +44,8 @@ public class RmiProducer extends DefaultProducer {
 	public void process(Exchange exchange) throws AccessException, RemoteException, NotBoundException {
         PojoExchange pojoExchange = endpoint.toExchangeType(exchange);
         PojoEndpoint.invoke(getRemote(), pojoExchange);
-	}
+        exchange.copyFrom(pojoExchange);
+    }
 
 	public Remote getRemote() throws AccessException, RemoteException, NotBoundException {
 		if( remote == null ) {

@@ -25,6 +25,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
  * Represents a pojo endpoint that uses reflection
@@ -49,7 +50,9 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
         
         return startService(new DefaultProducer(this) {
             public void process(Exchange exchange) {
-                invoke(pojo, toExchangeType(exchange));
+                PojoExchange pojoExchange = toExchangeType(exchange);
+                invoke(pojo, pojoExchange);
+                exchange.copyFrom(pojoExchange);
             }
         });
     }
