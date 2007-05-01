@@ -209,6 +209,11 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
         return this;
     }
 
+    public XQueryBuilder<E> parameter(String name, Object value) {
+        parameters.put(name, value);
+        return this;
+    }
+
     // Properties
     //-------------------------------------------------------------------------
 
