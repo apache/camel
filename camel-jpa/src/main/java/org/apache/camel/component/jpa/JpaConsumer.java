@@ -67,7 +67,11 @@ public class JpaConsumer extends PollingConsumer<Exchange> {
                     if (lockEntity(result, entityManager)) {
                         // lets turn the result into an exchange and fire it into the processor
                         Exchange exchange = createExchange(result);
-                        getProcessor().process(exchange);
+                        try {
+							getProcessor().process(exchange);
+						} catch (Exception e) {
+							throw new PersistenceException(e);
+						}
                         getDeleteHandler().deleteObject(entityManager, result);
                     }
                 }

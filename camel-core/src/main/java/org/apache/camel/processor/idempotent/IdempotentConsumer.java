@@ -49,7 +49,7 @@ public class IdempotentConsumer<E extends Exchange> extends ServiceSupport imple
         return "IdempotentConsumer[expression=" + messageIdExpression + ", repository=" + messageIdRepository + ", processor=" + nextProcessor + "]";
     }
 
-    public void process(E exchange) {
+    public void process(E exchange) throws Exception {
         String messageId = ExpressionHelper.evaluateAsString(messageIdExpression, exchange);
         if (messageId == null) {
             throw new NoMessageIdException(exchange, messageIdExpression);

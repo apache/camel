@@ -38,11 +38,11 @@ public class DelegateProcessor<E> extends ServiceSupport implements Processor<E>
         this.next = next;
     }
 
-    public void process(E exchange) {
+    public void process(E exchange) throws Exception {
         processNext(exchange);
     }
 
-    protected void processNext(E exchange) {
+    protected void processNext(E exchange) throws Exception {
         if (next != null) {
             next.process(exchange);
         }

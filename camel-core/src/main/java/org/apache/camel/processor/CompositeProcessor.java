@@ -35,7 +35,7 @@ public class CompositeProcessor<E> extends ServiceSupport implements Processor<E
         this.processors = processors;
     }
 
-    public void process(E exchange) {
+    public void process(E exchange) throws Exception {
         for (Processor<E> processor : processors) {
             processor.process(exchange);
         }

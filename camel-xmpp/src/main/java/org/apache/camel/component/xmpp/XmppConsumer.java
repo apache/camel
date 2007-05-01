@@ -63,7 +63,12 @@ public class XmppConsumer extends DefaultConsumer<XmppExchange> implements Packe
                 log.debug("<<<< message: " + message.getBody());
             }
             XmppExchange exchange = endpoint.createExchange(message);
-            getProcessor().process(exchange);
+            try {
+				getProcessor().process(exchange);
+			} catch (Exception e) {
+				// TODO: what should we do when a processing failure occurs??
+				e.printStackTrace();
+			}
         }
         else if (packet instanceof RosterPacket) {
             RosterPacket rosterPacket = (RosterPacket) packet;

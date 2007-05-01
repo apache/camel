@@ -55,7 +55,7 @@ public class MulticastProcessor<E extends Exchange> extends ServiceSupport imple
         return "Multicast" + getEndpoints();
     }
 
-    public void process(E exchange) {
+    public void process(E exchange) throws Exception {
         for (Producer<E> producer : producers) {
             E copy = copyExchangeStrategy(producer, exchange);
             producer.process(copy);

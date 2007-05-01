@@ -29,6 +29,8 @@ public interface Processor<E> {
 
     /**
      * Processes the message exchange
+     * 
+     * @throws Exception if an internal processing error has occurred. 
      */
-    void process(E exchange);
+    void process(E exchange) throws Exception;
 }

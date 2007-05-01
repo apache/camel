@@ -62,7 +62,7 @@ public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implem
         return "DeadLetterChannel[" + output + ", " + deadLetter + ", " + redeliveryPolicy + "]";
     }
 
-    public void process(E exchange) {
+    public void process(E exchange) throws Exception {
         int redeliveryCounter = 0;
         long redeliveryDelay = 0;
 

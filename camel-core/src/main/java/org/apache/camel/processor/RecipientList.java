@@ -49,7 +49,7 @@ public class RecipientList<E extends Exchange> extends ServiceSupport implements
         return "RecipientList[" + expression + "]";
     }
 
-    public void process(E exchange) {
+    public void process(E exchange) throws Exception {
         Object receipientList = expression.evaluate(exchange);
         Iterator iter = ObjectConverter.iterator(receipientList);
         while (iter.hasNext()) {

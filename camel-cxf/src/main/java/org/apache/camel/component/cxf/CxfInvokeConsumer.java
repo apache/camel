@@ -67,7 +67,12 @@ public class CxfInvokeConsumer extends DefaultConsumer<CxfExchange> {
 
     // TODO this method currently is not being called.
     protected void incomingCxfMessage(Message message) {
-        CxfExchange exchange = cxfEndpoint.createExchange(message);
-        getProcessor().process(exchange);
+        try {
+			CxfExchange exchange = cxfEndpoint.createExchange(message);
+			getProcessor().process(exchange);
+		} catch (Exception e) {
+			// TODO: what do do if we are getting processing errors from camel?  Shutdown?
+			e.printStackTrace();
+		}
     }
 }

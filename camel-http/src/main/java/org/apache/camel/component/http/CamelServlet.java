@@ -17,14 +17,14 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.camel.Producer;
-import org.apache.camel.util.ProducerCache;
+import java.io.IOException;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
-import java.io.IOException;
+
+import org.apache.camel.util.ProducerCache;
 
 /**
  * @version $Revision$
@@ -47,14 +47,20 @@ public class CamelServlet extends HttpServlet {
             throw new ServletException("No endpoint found for request: " + request.getRequestURI());
         }
 
-        HttpExchange exchange = endpoint.createExchange(request, response);
-        producerCache.send(endpoint, exchange);
+        try {
+        	
+			HttpExchange exchange = endpoint.createExchange(request, response);
+			producerCache.send(endpoint, exchange);
 
-        // HC: The getBinding() interesting because it illustrates the impedance miss-match between
-        // HTTP's stream oriented protocol, and Camels more message oriented protocol exchanges.
+			// HC: The getBinding() interesting because it illustrates the impedance miss-match between
+			// HTTP's stream oriented protocol, and Camels more message oriented protocol exchanges.
 
-        // now lets output to the response
-        endpoint.getBinding().writeResponse(exchange);
+			// now lets output to the response
+			endpoint.getBinding().writeResponse(exchange);
+			
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
     }
 
     protected HttpEndpoint resolveEndpoint(HttpServletRequest request, HttpServletResponse response) {

@@ -17,14 +17,15 @@
  */
 package org.apache.camel.component.jms;
 
+import javax.jms.Message;
+import javax.jms.MessageListener;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.jms.Message;
-import javax.jms.MessageListener;
 
 /**
  * A JMS {@link MessageListener} which can be used to delegate processing to a Camel endpoint.
@@ -43,11 +44,17 @@ public class EndpointMessageListener<E extends Exchange> implements MessageListe
     }
 
     public void onMessage(Message message) {
-        if (log.isDebugEnabled()) {
-            log.debug(endpoint + " receiving JMS message: " + message);
-        }
-        JmsExchange exchange = createExchange(message);
-        processor.process((E) exchange);
+        try {
+			
+        	if (log.isDebugEnabled()) {
+			    log.debug(endpoint + " receiving JMS message: " + message);
+			}
+			JmsExchange exchange = createExchange(message);
+			processor.process((E) exchange);
+			
+		} catch (Exception e) {
+			throw new RuntimeCamelException(e);
+		}
     }
 
     public JmsExchange createExchange(Message message) {

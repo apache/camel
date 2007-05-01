@@ -29,7 +29,7 @@ import java.util.List;
  * @version $Revision: 1.1 $
  */
 public class TopicLoadBalancer<E extends Exchange> extends LoadBalancerSupport<E> {
-    public void process(E exchange) {
+    public void process(E exchange) throws Exception {
         List<Processor<E>> list = getProcessors();
         for (Processor<E> processor : list) {
             E copy = copyExchangeStrategy(processor, exchange);

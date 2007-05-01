@@ -66,7 +66,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 					public Processor wrap(Processor processor) {
 						return new DelegateProcessor(processor) {
 				        	@Override
-				        	public void process(Object exchange) {
+				        	public void process(Object exchange) throws Exception {
 				        		processNext(exchange);
 				        		throw new RuntimeException("rollback");
 				        	}

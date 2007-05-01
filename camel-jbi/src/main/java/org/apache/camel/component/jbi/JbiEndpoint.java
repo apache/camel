@@ -43,7 +43,7 @@ public class JbiEndpoint extends DefaultEndpoint<Exchange> {
 
     public Producer<Exchange> createProducer() throws Exception {
         return startService(new DefaultProducer<Exchange>(this) {
-            public void process(Exchange exchange) {
+            public void process(Exchange exchange) throws Exception {
                 toJbiProcessor.process(exchange);
             }
         });
