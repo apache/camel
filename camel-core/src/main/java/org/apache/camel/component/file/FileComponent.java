@@ -25,6 +25,8 @@ import java.io.File;
 import java.util.Map;
 
 /**
+ * The <a href="http://activemq.apache.org/camel/file.html">File Component</a> for working with file systems
+ *
  * @version $Revision: 523772 $
  */
 public class FileComponent extends DefaultComponent<FileExchange> {

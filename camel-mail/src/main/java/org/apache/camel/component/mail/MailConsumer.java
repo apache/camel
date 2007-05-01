@@ -44,7 +44,7 @@ public class MailConsumer extends PollingConsumer<MailExchange> implements Messa
     private final Folder folder;
 
     public MailConsumer(MailEndpoint endpoint, Processor<MailExchange> processor, Folder folder) {
-        super(endpoint, processor, endpoint.getExecutorService());
+        super(endpoint, processor);
         this.endpoint = endpoint;
         this.folder = folder;
     }

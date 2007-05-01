@@ -44,9 +44,9 @@ public class MailComponentTest extends ContextTestSupport {
     }
 
     public void testMailEndpointsAreConfiguredProperlyWhenUsingPop() throws Exception {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("pop://james@myhost:30/subject");
+        MailEndpoint endpoint = resolveMandatoryEndpoint("pop3://james@myhost:30/subject");
         MailConfiguration config = endpoint.getConfiguration();
-        assertEquals("getProtocol()", "pop", config.getProtocol());
+        assertEquals("getProtocol()", "pop3", config.getProtocol());
         assertEquals("getHost()", "myhost", config.getHost());
         assertEquals("getPort()", 30, config.getPort());
         assertEquals("getUsername()", "james", config.getUsername());
