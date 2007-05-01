@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision$
  */
-public class LoggingErrorHandlerBuilder<E extends Exchange> implements ErrorHandlerBuilder<E> {
+public class LoggingErrorHandlerBuilder implements ErrorHandlerBuilder {
     private Log log = LogFactory.getLog(Logger.class);
     private LoggingLevel level = LoggingLevel.INFO;
 
@@ -46,15 +46,15 @@ public class LoggingErrorHandlerBuilder<E extends Exchange> implements ErrorHand
         this.level = level;
     }
 
-    public ErrorHandlerBuilder<E> copy() {
-        LoggingErrorHandlerBuilder<E> answer = new LoggingErrorHandlerBuilder<E>();
+    public ErrorHandlerBuilder copy() {
+        LoggingErrorHandlerBuilder answer = new LoggingErrorHandlerBuilder();
         answer.setLog(getLog());
         answer.setLevel(getLevel());
         return answer;
     }
 
-    public Processor<E> createErrorHandler(Processor<E> processor) {
-        return new LoggingErrorHandler<E>(processor, log, level);
+    public Processor createErrorHandler(Processor processor) {
+        return new LoggingErrorHandler(processor, log, level);
     }
 
     public LoggingLevel getLevel() {

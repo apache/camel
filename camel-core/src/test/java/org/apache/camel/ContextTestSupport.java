@@ -70,7 +70,7 @@ public abstract class ContextTestSupport extends TestSupport {
      * @param body the body for the message
      */
     protected void send(String endpointUri, final Object body) {
-        client.send(endpointUri, new Processor<Exchange>() {
+        client.send(endpointUri, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody(body);

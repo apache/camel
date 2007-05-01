@@ -27,7 +27,7 @@ import org.apache.camel.Processor;
  */
 public class NoPolicy<E> implements Policy<E> {
 
-    public Processor<E> wrap(Processor<E> processor) {
+    public Processor wrap(Processor processor) {
         return processor;
     }
 }

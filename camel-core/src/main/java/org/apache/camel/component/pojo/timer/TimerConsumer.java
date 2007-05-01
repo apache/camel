@@ -38,7 +38,7 @@ public class TimerConsumer extends DefaultConsumer<PojoExchange> implements Invo
     private Timer timer;
     
 
-	public TimerConsumer(TimerEndpoint endpoint, Processor<PojoExchange> processor) {
+	public TimerConsumer(TimerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
 		this.endpoint = endpoint;
     }

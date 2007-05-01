@@ -41,7 +41,7 @@ public class InterceptorBuilderTest extends TestSupport {
         CamelContext container = new DefaultCamelContext();
         final ArrayList<String> order = new ArrayList<String>();
 
-        final DelegateProcessor<Exchange> interceptor1 = new DelegateProcessor<Exchange>() {
+        final DelegateProcessor interceptor1 = new DelegateProcessor() {
         	@Override
         	public void process(Exchange exchange) throws Exception {
         		order.add("START:1");
@@ -49,7 +49,7 @@ public class InterceptorBuilderTest extends TestSupport {
         		order.add("END:1");
         	}
         };
-        final DelegateProcessor<Exchange> interceptor2 = new DelegateProcessor<Exchange>() {
+        final DelegateProcessor interceptor2 = new DelegateProcessor() {
         	@Override
         	public void process(Exchange exchange) throws Exception {
         		order.add("START:2");

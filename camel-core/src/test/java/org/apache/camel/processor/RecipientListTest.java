@@ -35,7 +35,7 @@ public class RecipientListTest extends ContextTestSupport {
         y.expectedBodiesReceived("answer");
         z.expectedBodiesReceived("answer");
 
-        client.send("direct:a", new Processor<Exchange>() {
+        client.send("direct:a", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody("answer");

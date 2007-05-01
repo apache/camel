@@ -18,6 +18,7 @@
 package org.apache.camel.component.mail;
 
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.Exchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -40,7 +41,7 @@ public class MailProducer extends DefaultProducer<MailExchange> {
     }
 
 
-    public void process(final MailExchange exchange) {
+    public void process(final Exchange exchange) {
         sender.send(new MimeMessagePreparator() {
             public void prepare(MimeMessage mimeMessage) throws Exception {
                 endpoint.getBinding().populateMailMessage(endpoint, mimeMessage, exchange);

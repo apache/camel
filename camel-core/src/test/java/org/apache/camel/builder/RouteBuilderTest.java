@@ -41,9 +41,9 @@ import org.apache.camel.processor.idempotent.MemoryMessageIdRepository;
  * @version $Revision$
  */
 public class RouteBuilderTest extends TestSupport {
-    protected Processor<Exchange> myProcessor = new MyProcessor();
-    protected DelegateProcessor<Exchange> interceptor1;
-    protected DelegateProcessor<Exchange> interceptor2;
+    protected Processor myProcessor = new MyProcessor();
+    protected DelegateProcessor interceptor1;
+    protected DelegateProcessor interceptor2;
 
     protected RouteBuilder buildSimpleRoute() {
         // START SNIPPET: e1
@@ -142,7 +142,7 @@ public class RouteBuilderTest extends TestSupport {
 
     protected RouteBuilder buildCustomProcessor() {
         // START SNIPPET: e4
-        myProcessor = new Processor<Exchange>() {
+        myProcessor = new Processor() {
             public void process(Exchange exchange) {
                 System.out.println("Called with exchange: " + exchange);
             }

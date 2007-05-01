@@ -17,6 +17,8 @@
  */
 package org.apache.camel.component.jms;
 
+import org.apache.camel.Exchange;
+
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
@@ -77,33 +79,33 @@ public class JmsBinding {
      * @return a newly created JMS Message instance containing the
      * @throws JMSException if the message could not be created
      */
-    public Message makeJmsMessage(JmsMessage message, Session session) throws JMSException {
-        Message answer = createJmsMessage(message, session);
-        appendJmsProperties(answer, message, session);
+    public Message makeJmsMessage(Exchange exchange, Session session) throws JMSException {
+        Message answer = createJmsMessage(exchange.getIn().getBody(), session);
+        appendJmsProperties(answer, exchange, session);
         return answer;
     }
 
     /**
      * Appends the JMS headers from the Camel {@link JmsMessage}
      */
-    protected void appendJmsProperties(Message jmsMessage, JmsMessage camelMessage, Session session) throws JMSException {
-        Set<Map.Entry<String, Object>> entries = camelMessage.getHeaders().entrySet();
+    protected void appendJmsProperties(Message jmsMessage, Exchange exchange, Session session) throws JMSException {
+        org.apache.camel.Message in = exchange.getIn();
+        Set<Map.Entry<String, Object>> entries = in.getHeaders().entrySet();
         for (Map.Entry<String, Object> entry : entries) {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
-            if (shouldOutputHeader(camelMessage, headerName, headerValue)) {
+            if (shouldOutputHeader(in, headerName, headerValue)) {
                 jmsMessage.setObjectProperty(headerName, headerValue);
             }
         }
     }
 
-    protected Message createJmsMessage(JmsMessage message, Session session) throws JMSException {
-        Object value = message.getBody();
-        if (value instanceof String) {
-            return session.createTextMessage((String) value);
+    protected Message createJmsMessage(Object body, Session session) throws JMSException {
+        if (body instanceof String) {
+            return session.createTextMessage((String) body);
         }
-        else if (value instanceof Serializable) {
-            return session.createObjectMessage((Serializable) value);
+        else if (body instanceof Serializable) {
+            return session.createObjectMessage((Serializable) body);
         }
         else {
             return session.createMessage();
@@ -127,7 +129,7 @@ public class JmsBinding {
     /**
      * Strategy to allow filtering of headers which are put on the JMS message
      */
-    protected boolean shouldOutputHeader(JmsMessage camelMessage, String headerName, Object headerValue) {
+    protected boolean shouldOutputHeader(org.apache.camel.Message camelMessage, String headerName, Object headerValue) {
         return true;
     }
 }

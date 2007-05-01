@@ -15,36 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.example;
+package org.apache.camel.impl;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import org.apache.camel.CamelContext;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class MyProcessor implements Processor {
-    private static List exchanges = new CopyOnWriteArrayList();
+public class MyExchange extends DefaultExchange {
 
-    private String name = "James";
-
-    public static List getExchanges() {
-        return exchanges;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void process(Exchange exchange) {
-        exchange.getIn().setHeader("name", getName());
-        exchanges.add(exchange);
+    public MyExchange(CamelContext context) {
+        super(context);
     }
 }

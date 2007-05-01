@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 
@@ -46,14 +47,14 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
         if( pojo == null )
         	throw new NoSuchEndpointException(getEndpointUri());
         
-        return startService(new DefaultProducer<PojoExchange>(this) {
-            public void process(PojoExchange exchange) {
-                invoke(pojo, exchange);
+        return startService(new DefaultProducer(this) {
+            public void process(Exchange exchange) {
+                invoke(pojo, toExchangeType(exchange));
             }
         });
     }
 
-    public Consumer<PojoExchange> createConsumer(Processor<PojoExchange> processor) throws Exception {    	
+    public Consumer<PojoExchange> createConsumer(Processor processor) throws Exception {
         throw new Exception("You cannot consume from pojo endpoints.");
     }
 

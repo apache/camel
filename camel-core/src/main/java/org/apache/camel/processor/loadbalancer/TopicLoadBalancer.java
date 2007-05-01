@@ -28,11 +28,11 @@ import java.util.List;
  *
  * @version $Revision: 1.1 $
  */
-public class TopicLoadBalancer<E extends Exchange> extends LoadBalancerSupport<E> {
-    public void process(E exchange) throws Exception {
-        List<Processor<E>> list = getProcessors();
-        for (Processor<E> processor : list) {
-            E copy = copyExchangeStrategy(processor, exchange);
+public class TopicLoadBalancer extends LoadBalancerSupport {
+    public void process(Exchange exchange) throws Exception {
+        List<Processor> list = getProcessors();
+        for (Processor processor : list) {
+            Exchange copy = copyExchangeStrategy(processor, exchange);
             processor.process(copy);
         }
     }
@@ -44,7 +44,7 @@ public class TopicLoadBalancer<E extends Exchange> extends LoadBalancerSupport<E
      * @param processor the processor that will send the exchange
      * @param exchange @return the current exchange if no copying is required such as for a pipeline otherwise a new copy of the exchange is returned.
      */
-    protected E copyExchangeStrategy(Processor<E> processor, E exchange) {
-        return (E) exchange.copy();
+    protected Exchange copyExchangeStrategy(Processor processor, Exchange exchange) {
+        return exchange.copy();
     }
 }

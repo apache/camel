@@ -23,6 +23,7 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,14 +42,14 @@ public class HttpEndpoint extends DefaultEndpoint<HttpExchange> {
     }
 
     public Producer<HttpExchange> createProducer() throws Exception {
-        return startService(new DefaultProducer<HttpExchange>(this) {
-            public void process(HttpExchange exchange) {
+        return startService(new DefaultProducer(this) {
+            public void process(Exchange exchange) {
                 /** TODO */
             }
         });
     }
 
-    public Consumer<HttpExchange> createConsumer(Processor<HttpExchange> processor) throws Exception {
+    public Consumer<HttpExchange> createConsumer(Processor processor) throws Exception {
         // TODO
         return startService(new DefaultConsumer<HttpExchange>(this, processor) {});
     }

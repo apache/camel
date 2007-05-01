@@ -32,25 +32,25 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implements ErrorHandler<E> {
+public class DeadLetterChannel extends ServiceSupport implements ErrorHandler {
     public static final String REDELIVERY_COUNTER = "org.apache.camel.RedeliveryCounter";
     public static final String REDELIVERED = "org.apache.camel.Redelivered";
 
     private static final transient Log log = LogFactory.getLog(DeadLetterChannel.class);
-    private Processor<E> output;
-    private Processor<E> deadLetter;
+    private Processor output;
+    private Processor deadLetter;
     private RedeliveryPolicy redeliveryPolicy;
-    private Logger<E> logger;
+    private Logger logger;
 
-    public static <E extends Exchange> Logger<E> createDefaultLogger() {
-        return new Logger<E>(log, LoggingLevel.ERROR);
+    public static <E extends Exchange> Logger createDefaultLogger() {
+        return new Logger(log, LoggingLevel.ERROR);
     }
 
-    public DeadLetterChannel(Processor<E> output, Processor<E> deadLetter) {
-        this(output, deadLetter, new RedeliveryPolicy(), DeadLetterChannel.<E>createDefaultLogger());
+    public DeadLetterChannel(Processor output, Processor deadLetter) {
+        this(output, deadLetter, new RedeliveryPolicy(), DeadLetterChannel.createDefaultLogger());
     }
 
-    public DeadLetterChannel(Processor<E> output, Processor<E> deadLetter, RedeliveryPolicy redeliveryPolicy, Logger<E> logger) {
+    public DeadLetterChannel(Processor output, Processor deadLetter, RedeliveryPolicy redeliveryPolicy, Logger logger) {
         this.deadLetter = deadLetter;
         this.output = output;
         this.redeliveryPolicy = redeliveryPolicy;
@@ -62,7 +62,7 @@ public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implem
         return "DeadLetterChannel[" + output + ", " + deadLetter + ", " + redeliveryPolicy + "]";
     }
 
-    public void process(E exchange) throws Exception {
+    public void process(Exchange exchange) throws Exception {
         int redeliveryCounter = 0;
         long redeliveryDelay = 0;
 
@@ -94,14 +94,14 @@ public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implem
     /**
      * Returns the output processor
      */
-    public Processor<E> getOutput() {
+    public Processor getOutput() {
         return output;
     }
 
     /**
      * Returns the dead letter that message exchanges will be sent to if the redelivery attempts fail
      */
-    public Processor<E> getDeadLetter() {
+    public Processor getDeadLetter() {
         return deadLetter;
     }
 
@@ -116,14 +116,14 @@ public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implem
         this.redeliveryPolicy = redeliveryPolicy;
     }
 
-    public Logger<E> getLogger() {
+    public Logger getLogger() {
         return logger;
     }
 
     /**
      * Sets the logger strategy; which {@link Log} to use and which {@link LoggingLevel} to use
      */
-    public void setLogger(Logger<E> logger) {
+    public void setLogger(Logger logger) {
         this.logger = logger;
     }
 
@@ -133,7 +133,7 @@ public class DeadLetterChannel<E extends Exchange> extends ServiceSupport implem
     /**
      * Increments the redelivery counter and adds the redelivered flag if the message has been redelivered
      */
-    protected int incrementRedeliveryCounter(E exchange) {
+    protected int incrementRedeliveryCounter(Exchange exchange) {
         Message in = exchange.getIn();
         Integer counter = in.getHeader(REDELIVERY_COUNTER, Integer.class);
         int next = 1;

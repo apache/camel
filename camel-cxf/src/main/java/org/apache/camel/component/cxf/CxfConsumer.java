@@ -34,7 +34,7 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
     private final LocalTransportFactory transportFactory;
     private Destination destination;
 
-    public CxfConsumer(CxfEndpoint endpoint, Processor<CxfExchange> processor, LocalTransportFactory transportFactory) {
+    public CxfConsumer(CxfEndpoint endpoint, Processor processor, LocalTransportFactory transportFactory) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.transportFactory = transportFactory;

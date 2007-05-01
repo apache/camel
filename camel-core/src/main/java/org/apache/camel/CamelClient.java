@@ -58,7 +58,7 @@ public class CamelClient<E extends Exchange> extends ServiceSupport {
      * @param endpointUri the endpoint URI to send the exchange to
      * @param processor the transformer used to populate the new exchange
      */
-    public E send(String endpointUri, Processor<E> processor) {
+    public E send(String endpointUri, Processor processor) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         return send(endpoint,  processor);
     }
@@ -70,7 +70,8 @@ public class CamelClient<E extends Exchange> extends ServiceSupport {
      * @param exchange the exchange to send
      */
     public E send(Endpoint<E> endpoint, E exchange) {
-        producerCache.send(endpoint, exchange);
+        E convertedExchange = endpoint.toExchangeType(exchange);
+        producerCache.send(endpoint, convertedExchange);
         return exchange;
     }
 
@@ -80,7 +81,7 @@ public class CamelClient<E extends Exchange> extends ServiceSupport {
      * @param endpoint the endpoint to send the exchange to
      * @param processor the transformer used to populate the new exchange
      */
-    public E send(Endpoint<E> endpoint, Processor<E> processor) {
+    public E send(Endpoint<E> endpoint, Processor processor) {
         return producerCache.send(endpoint, processor);
     }
 

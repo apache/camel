@@ -51,7 +51,7 @@ public abstract class JbiTestSupport extends TestSupport {
      * Sends an exchange to the endpoint
      */
     protected void sendExchange(final Object expectedBody) {
-        client.send(endpoint, new Processor<Exchange>() {
+        client.send(endpoint, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody(expectedBody);

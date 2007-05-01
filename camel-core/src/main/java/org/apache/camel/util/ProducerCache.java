@@ -72,7 +72,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
      * @param endpoint the endpoint to send the exchange to
      * @param processor the transformer used to populate the new exchange
      */
-    public E send(Endpoint<E> endpoint, Processor<E> processor) {
+    public E send(Endpoint<E> endpoint, Processor processor) {
     	try {
 	        Producer<E> producer = getProducer(endpoint);
 	        E exchange = producer.createExchange();

@@ -28,14 +28,14 @@ import java.util.List;
  *
  * @version $Revision: 1.1 $
  */
-public abstract class QueueLoadBalancer<E extends Exchange> extends LoadBalancerSupport<E> {
+public abstract class QueueLoadBalancer extends LoadBalancerSupport {
 
-    public void process(E exchange) throws Exception {
-        List<Processor<E>> list = getProcessors();
+    public void process(Exchange exchange) throws Exception {
+        List<Processor> list = getProcessors();
         if (list.isEmpty()) {
             throw new IllegalStateException("No processors available to process " + exchange);
         }
-        Processor<E> processor = chooseProcessor(list, exchange);
+        Processor processor = chooseProcessor(list, exchange);
         if (processor == null) {
             throw new IllegalStateException("No processors could be chosen to process " + exchange);
         }
@@ -44,5 +44,5 @@ public abstract class QueueLoadBalancer<E extends Exchange> extends LoadBalancer
         }
     }
 
-    protected abstract Processor<E> chooseProcessor(List<Processor<E>> processors, E exchange);
+    protected abstract Processor chooseProcessor(List<Processor> processors, Exchange exchange);
 }

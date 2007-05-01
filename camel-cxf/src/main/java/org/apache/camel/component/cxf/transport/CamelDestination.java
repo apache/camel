@@ -135,7 +135,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
 */
     }
 
-    protected class ConsumerProcessor implements Processor<Exchange> {
+    protected class ConsumerProcessor implements Processor {
         public void process(Exchange exchange) {
             try {
                 incoming(exchange);
@@ -201,7 +201,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             //setup the reply message
             final String replyToUri = getReplyToDestination(inMessage);
 
-            base.client.send(replyToUri, new Processor<Exchange>() {
+            base.client.send(replyToUri, new Processor() {
                 public void process(Exchange reply) {
                     base.marshal(currentStream.toString(), replyToUri, reply);
 

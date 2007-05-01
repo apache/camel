@@ -32,21 +32,21 @@ import java.util.Collection;
  *
  * @version $Revision$
  */
-public class MulticastProcessor<E extends Exchange> extends ServiceSupport implements Processor<E> {
-    private Collection<Producer<E>> producers;
+public class MulticastProcessor extends ServiceSupport implements Processor {
+    private Collection<Producer> producers;
 
     /**
      * A helper method to convert a list of endpoints into a list of processors
      */
-    public static <E extends Exchange> Collection<Producer<E>> toProducers(Collection<Endpoint<E>> endpoints) throws Exception {
-        Collection<Producer<E>> answer = new ArrayList<Producer<E>>();
-        for (Endpoint<E> endpoint : endpoints) {
+    public static <E extends Exchange> Collection<Producer> toProducers(Collection<Endpoint> endpoints) throws Exception {
+        Collection<Producer> answer = new ArrayList<Producer>();
+        for (Endpoint endpoint : endpoints) {
             answer.add(endpoint.createProducer());
         }
         return answer;
     }
 
-    public MulticastProcessor(Collection<Endpoint<E>> endpoints) throws Exception {
+    public MulticastProcessor(Collection<Endpoint> endpoints) throws Exception {
         this.producers = toProducers(endpoints);
     }
 
@@ -55,21 +55,21 @@ public class MulticastProcessor<E extends Exchange> extends ServiceSupport imple
         return "Multicast" + getEndpoints();
     }
 
-    public void process(E exchange) throws Exception {
-        for (Producer<E> producer : producers) {
-            E copy = copyExchangeStrategy(producer, exchange);
+    public void process(Exchange exchange) throws Exception {
+        for (Producer producer : producers) {
+            Exchange copy = copyExchangeStrategy(producer, exchange);
             producer.process(copy);
         }
     }
 
     protected void doStop() throws Exception {
-        for (Producer<E> producer : producers) {
+        for (Producer producer : producers) {
             producer.stop();
         }
     }
 
     protected void doStart() throws Exception {
-        for (Producer<E> producer : producers) {
+        for (Producer producer : producers) {
             producer.start();
         }
     }
@@ -77,16 +77,16 @@ public class MulticastProcessor<E extends Exchange> extends ServiceSupport imple
     /**
      * Returns the producers to multicast to
      */
-    public Collection<Producer<E>> getProducers() {
+    public Collection<Producer> getProducers() {
         return producers;
     }
 
     /**
      * Returns the list of endpoints
      */
-    public Collection<Endpoint<E>> getEndpoints() {
-        Collection<Endpoint<E>> answer = new ArrayList<Endpoint<E>>();
-        for (Producer<E> producer : producers) {
+    public Collection<Endpoint> getEndpoints() {
+        Collection<Endpoint> answer = new ArrayList<Endpoint>();
+        for (Producer producer : producers) {
             answer.add(producer.getEndpoint());
         }
         return answer;
@@ -99,7 +99,7 @@ public class MulticastProcessor<E extends Exchange> extends ServiceSupport imple
      * @param producer the producer that will send the exchange
      * @param exchange @return the current exchange if no copying is required such as for a pipeline otherwise a new copy of the exchange is returned.
      */
-    protected E copyExchangeStrategy(Producer<E> producer, E exchange) {
+    protected Exchange copyExchangeStrategy(Producer producer, Exchange exchange) {
         return producer.createExchange(exchange);
     }
 }

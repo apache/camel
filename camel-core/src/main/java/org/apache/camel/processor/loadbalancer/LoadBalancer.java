@@ -26,18 +26,18 @@ import org.apache.camel.Processor;
  *
  * @version $Revision: 1.1 $
  */
-public interface LoadBalancer<E extends Exchange> extends Processor<E> {
+public interface LoadBalancer extends Processor {
     /**
      * Adds a new processor to the load balancer
      *
      * @param processor the processor to be added to the load balancer
      */
-    void addProcessor(Processor<E> processor);
+    void addProcessor(Processor processor);
 
     /**
      * Removes the given processor from the load balancer
      *
      * @param processor the processor to be removed from the load balancer
      */
-    void removeProcessor(Processor<E> processor);
+    void removeProcessor(Processor processor);
 }

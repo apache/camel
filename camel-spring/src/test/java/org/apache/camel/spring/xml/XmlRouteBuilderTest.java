@@ -54,7 +54,7 @@ public class XmlRouteBuilderTest extends RouteBuilderTest {
 	
 	@Override
 	protected RouteBuilder buildCustomProcessor() {
-		myProcessor = (Processor<Exchange>) ctx.getBean("myProcessor");
+		myProcessor = (Processor) ctx.getBean("myProcessor");
 		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildCustomProcessor");
 		assertNotNull(builder);
 		return builder;
@@ -62,7 +62,7 @@ public class XmlRouteBuilderTest extends RouteBuilderTest {
 	
 	@Override
 	protected RouteBuilder buildCustomProcessorWithFilter() {
-		myProcessor = (Processor<Exchange>) ctx.getBean("myProcessor");
+		myProcessor = (Processor) ctx.getBean("myProcessor");
 		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildCustomProcessorWithFilter");
 		assertNotNull(builder);
 		return builder;
@@ -70,8 +70,8 @@ public class XmlRouteBuilderTest extends RouteBuilderTest {
 	
 	@Override
 	protected RouteBuilder buildRouteWithInterceptor() {
-		interceptor1 = (DelegateProcessor<Exchange>) ctx.getBean("interceptor1");
-		interceptor2 = (DelegateProcessor<Exchange>) ctx.getBean("interceptor2");
+		interceptor1 = (DelegateProcessor) ctx.getBean("interceptor1");
+		interceptor2 = (DelegateProcessor) ctx.getBean("interceptor2");
 		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildRouteWithInterceptor");
 		assertNotNull(builder);
 		return builder;

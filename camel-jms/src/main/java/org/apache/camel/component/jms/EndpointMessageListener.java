@@ -35,10 +35,10 @@ import org.apache.commons.logging.LogFactory;
 public class EndpointMessageListener<E extends Exchange> implements MessageListener {
     private static final transient Log log = LogFactory.getLog(EndpointMessageListener.class);
     private Endpoint<E> endpoint;
-    private Processor<E> processor;
+    private Processor processor;
     private JmsBinding binding;
 
-    public EndpointMessageListener(Endpoint<E> endpoint, Processor<E> processor) {
+    public EndpointMessageListener(Endpoint<E> endpoint, Processor processor) {
         this.endpoint = endpoint;
         this.processor = processor;
     }

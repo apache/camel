@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Exchange;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.impl.ServiceSupport;
 
@@ -31,18 +32,18 @@ import java.util.List;
  *
  * @version $Revision$
  */
-public class ChoiceProcessor<E> extends ServiceSupport implements Processor<E> {
-    private List<FilterProcessor<E>> filters = new ArrayList<FilterProcessor<E>>();
-    private Processor<E> otherwise;
+public class ChoiceProcessor extends ServiceSupport implements Processor {
+    private List<FilterProcessor> filters = new ArrayList<FilterProcessor>();
+    private Processor otherwise;
 
-    public ChoiceProcessor(List<FilterProcessor<E>> filters, Processor<E> otherwise) {
+    public ChoiceProcessor(List<FilterProcessor> filters, Processor otherwise) {
         this.filters = filters;
         this.otherwise = otherwise;
     }
 
-    public void process(E exchange) throws Exception {
-        for (FilterProcessor<E> filterProcessor : filters) {
-            Predicate<E> predicate = filterProcessor.getPredicate();
+    public void process(Exchange exchange) throws Exception {
+        for (FilterProcessor filterProcessor : filters) {
+            Predicate<Exchange> predicate = filterProcessor.getPredicate();
             if (predicate != null && predicate.matches(exchange)) {
                 filterProcessor.getProcessor().process(exchange);
                 return;
@@ -57,7 +58,7 @@ public class ChoiceProcessor<E> extends ServiceSupport implements Processor<E> {
     public String toString() {
         StringBuilder builder = new StringBuilder("choice{");
         boolean first = true;
-        for (FilterProcessor<E> processor : filters) {
+        for (FilterProcessor processor : filters) {
             if (first) {
                 first = false;
             }
@@ -77,11 +78,11 @@ public class ChoiceProcessor<E> extends ServiceSupport implements Processor<E> {
         return builder.toString();
     }
 
-    public List<FilterProcessor<E>> getFilters() {
+    public List<FilterProcessor> getFilters() {
         return filters;
     }
 
-    public Processor<E> getOtherwise() {
+    public Processor getOtherwise() {
         return otherwise;
     }
 

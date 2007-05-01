@@ -42,14 +42,14 @@ public class QueueEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     }
 
     public Producer<E> createProducer() throws Exception {
-        return startService(new DefaultProducer<E>(this) {
-            public void process(E exchange) {
-                queue.add(exchange);
+        return startService(new DefaultProducer(this) {
+            public void process(Exchange exchange) {
+                queue.add(toExchangeType(exchange));
             }
         });
     }
 
-    public Consumer<E> createConsumer(Processor<E> processor) throws Exception {
+    public Consumer<E> createConsumer(Processor processor) throws Exception {
         return startService(new QueueEndpointConsumer<E>(this, processor));
     }
 

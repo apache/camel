@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @version $Revision$
  */
-public class FromBuilder<E extends Exchange> extends BuilderSupport implements ProcessorFactory<E> {
+public class FromBuilder extends BuilderSupport implements ProcessorFactory {
 	
 	public static final String DEFAULT_TRACE_CATEGORY = "org.apache.camel.TRACE";
 
@@ -264,7 +264,7 @@ public class FromBuilder<E extends Exchange> extends BuilderSupport implements P
     @Fluent
 	public FromBuilder trace(@FluentArg("category")String category) {
 		final Log log = LogFactory.getLog(category);
-		return intercept(new DelegateProcessor<Exchange>(){
+		return intercept(new DelegateProcessor(){
 			@Override
 			public void process(Exchange exchange) throws Exception {
 				log.trace(exchange);

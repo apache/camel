@@ -44,7 +44,7 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
 
         // now lets send a message
         CamelClient<Exchange> client = new CamelClient<Exchange>(context);
-        client.send("direct:start", new Processor<Exchange>() {
+        client.send("direct:start", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setHeader("name", "James");

@@ -28,8 +28,8 @@ import org.apache.camel.processor.idempotent.MessageIdRepository;
  *
  * @version $Revision: 1.1 $
  */
-public class IdempotentConsumerBuilder<E extends Exchange> extends FromBuilder<E> implements ProcessorFactory<E> {
-    private final Expression<E> messageIdExpression;
+public class IdempotentConsumerBuilder extends FromBuilder implements ProcessorFactory {
+    private final Expression messageIdExpression;
     private final MessageIdRepository messageIdRegistry;
 
     public IdempotentConsumerBuilder(FromBuilder fromBuilder, Expression messageIdExpression, MessageIdRepository messageIdRegistry) {

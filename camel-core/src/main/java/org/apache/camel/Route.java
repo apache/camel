@@ -31,9 +31,9 @@ public class Route<E extends Exchange> {
 
 	private final Map<String, Object> properties = new HashMap<String, Object>(16);
 	private Endpoint<E> endpoint;
-	private Processor<E> processor;
+	private Processor processor;
 
-	public Route(Endpoint<E> endpoint, Processor<E> processor) {
+	public Route(Endpoint<E> endpoint, Processor processor) {
 		this.endpoint = endpoint;
 		this.processor = processor;
 	}
@@ -51,11 +51,11 @@ public class Route<E extends Exchange> {
 		this.endpoint = endpoint;
 	}
 
-	public Processor<E> getProcessor() {
+	public Processor getProcessor() {
 		return processor;
 	}
 
-	public void setProcessor(Processor<E> processor) {
+	public void setProcessor(Processor processor) {
 		this.processor = processor;
 	}
 

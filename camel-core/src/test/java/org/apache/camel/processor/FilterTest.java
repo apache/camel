@@ -65,7 +65,7 @@ public class FilterTest extends ContextTestSupport {
     }
 
     protected void sendMessage(final Object headerValue, final Object body) throws Exception {
-        client.send(startEndpoint, new Processor<Exchange>() {
+        client.send(startEndpoint, new Processor() {
             public void process(Exchange exchange) {
                 // now lets fire in a message
                 Message in = exchange.getIn();

@@ -17,6 +17,8 @@
  */
 package org.apache.camel.component.mail;
 
+import org.apache.camel.Exchange;
+
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Address;
@@ -32,7 +34,7 @@ import java.util.Set;
  * @version $Revision: 521240 $
  */
 public class MailBinding {
-    public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, MailExchange exchange) {
+    public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange) {
         try {
             appendMailHeaders(mimeMessage, exchange.getIn());
 
@@ -75,7 +77,7 @@ public class MailBinding {
     /**
      * Appends the Mail headers from the Camel {@link MailMessage}
      */
-    protected void appendMailHeaders(MimeMessage mimeMessage, MailMessage camelMessage) throws MessagingException {
+    protected void appendMailHeaders(MimeMessage mimeMessage, org.apache.camel.Message camelMessage) throws MessagingException {
         Set<Map.Entry<String, Object>> entries = camelMessage.getHeaders().entrySet();
         for (Map.Entry<String, Object> entry : entries) {
             String headerName = entry.getKey();
@@ -91,7 +93,7 @@ public class MailBinding {
     /**
      * Strategy to allow filtering of headers which are put on the Mail message
      */
-    protected boolean shouldOutputHeader(MailMessage camelMessage, String headerName, Object headerValue) {
+    protected boolean shouldOutputHeader(org.apache.camel.Message camelMessage, String headerName, Object headerValue) {
         return true;
     }
 }

@@ -24,8 +24,8 @@ import org.apache.camel.Processor;
  * 
  * @version $Revision$
  */
-public interface ProcessorFactory<E extends Exchange> {
+public interface ProcessorFactory {
 
-    public Processor<E> createProcessor() throws Exception;
+    public Processor createProcessor() throws Exception;
 
 }

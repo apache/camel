@@ -44,21 +44,21 @@ public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
         super(uri, component);
     }
 
-    public Producer<E> createProducer() throws Exception {
-        return startService(new DefaultProducer<E>(this) {
-            public void process(E exchange) throws Exception {
+    public Producer createProducer() throws Exception {
+        return startService(new DefaultProducer(this) {
+            public void process(Exchange exchange) throws Exception {
             	DirectEndpoint.this.process(exchange);
             }
         });    	
     }
 
-    protected void process(E exchange) throws Exception {
+    protected void process(Exchange exchange) throws Exception {
     	for (DefaultConsumer<E> consumer : consumers) {
 			consumer.getProcessor().process(exchange);
 		}
 	}
 
-	public Consumer<E> createConsumer(Processor<E> processor) throws Exception {
+	public Consumer<E> createConsumer(Processor processor) throws Exception {
 		DefaultConsumer<E> consumer = new DefaultConsumer<E>(this, processor) {
 			@Override
 			public void start() throws Exception {

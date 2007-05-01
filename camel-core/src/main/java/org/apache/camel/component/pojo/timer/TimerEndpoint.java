@@ -62,7 +62,7 @@ public class TimerEndpoint extends DefaultEndpoint<PojoExchange> {
     	throw new RuntimeCamelException("Cannot produce to a TimerEndpoint: "+getEndpointUri());
     }
 
-    public Consumer<PojoExchange> createConsumer(Processor<PojoExchange> processor) throws Exception {    	
+    public Consumer<PojoExchange> createConsumer(Processor processor) throws Exception {    	
     	TimerConsumer consumer = new TimerConsumer(this, processor);
         return startService(consumer);
     }

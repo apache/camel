@@ -34,26 +34,26 @@ import java.util.Iterator;
  *
  * @version $Revision: 1.1 $
  */
-public class StickyLoadBalancer<E extends Exchange> extends QueueLoadBalancer<E> {
-    private Expression<E> correlationExpression;
+public class StickyLoadBalancer extends QueueLoadBalancer {
+    private Expression<Exchange> correlationExpression;
     private QueueLoadBalancer loadBalancer;
     private int numberOfHashGroups = 64 * 1024;
-    private Map<Object, Processor<E>> stickyMap = new HashMap<Object, Processor<E>>();
+    private Map<Object, Processor> stickyMap = new HashMap<Object, Processor>();
 
-    public StickyLoadBalancer(Expression<E> correlationExpression) {
+    public StickyLoadBalancer(Expression<Exchange> correlationExpression) {
         this(correlationExpression, new RoundRobinLoadBalancer());
     }
 
-    public StickyLoadBalancer(Expression<E> correlationExpression, QueueLoadBalancer loadBalancer) {
+    public StickyLoadBalancer(Expression<Exchange> correlationExpression, QueueLoadBalancer loadBalancer) {
         this.correlationExpression = correlationExpression;
         this.loadBalancer = loadBalancer;
     }
 
-    protected synchronized Processor<E> chooseProcessor(List<Processor<E>> processors, E exchange) {
+    protected synchronized Processor chooseProcessor(List<Processor> processors, Exchange exchange) {
         Object value = correlationExpression.evaluate(exchange);
         Object key = getStickyKey(value);
 
-        Processor<E> processor;
+        Processor processor;
         synchronized (stickyMap) {
             processor = stickyMap.get(key);
             if (processor == null) {
@@ -65,11 +65,11 @@ public class StickyLoadBalancer<E extends Exchange> extends QueueLoadBalancer<E>
     }
 
     @Override
-    public void removeProcessor(Processor<E> processor) {
+    public void removeProcessor(Processor processor) {
         synchronized (stickyMap) {
-            Iterator<Map.Entry<Object,Processor<E>>> iter = stickyMap.entrySet().iterator();
+            Iterator<Map.Entry<Object,Processor>> iter = stickyMap.entrySet().iterator();
             while (iter.hasNext()) {
-                Map.Entry<Object, Processor<E>> entry = iter.next();
+                Map.Entry<Object, Processor> entry = iter.next();
                 if (processor.equals(entry.getValue())) {
                     iter.remove();
                 }

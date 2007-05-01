@@ -27,10 +27,10 @@ import java.util.List;
  *
  * @version $Revision: 1.1 $
  */
-public class RoundRobinLoadBalancer<E extends Exchange> extends QueueLoadBalancer<E> {
+public class RoundRobinLoadBalancer extends QueueLoadBalancer {
     private int counter = -1;
 
-    protected synchronized Processor<E> chooseProcessor(List<Processor<E>> processors, E exchange) {
+    protected synchronized Processor chooseProcessor(List<Processor> processors, Exchange exchange) {
         int size = processors.size();
         if (++counter >= size) {
             counter = 0;

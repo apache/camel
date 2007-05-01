@@ -35,7 +35,7 @@ public class SplitterTest extends ContextTestSupport {
     public void testSendingAMessageUsingMulticastReceivesItsOwnExchange() throws Exception {
         resultEndpoint.expectedBodiesReceived("James", "Guillaume", "Hiram", "Rob");
 
-        client.send("direct:a", new Processor<Exchange>() {
+        client.send("direct:a", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody("James,Guillaume,Hiram,Rob");

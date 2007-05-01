@@ -28,37 +28,37 @@ import org.apache.camel.RuntimeCamelException;
 /**
  * @version $Revision: 519943 $
  */
-public class InterceptorBuilder<E extends Exchange> implements ProcessorFactory<E> {
-    private final List<DelegateProcessor<E>> intercepts = new ArrayList<DelegateProcessor<E>>();
-	private final FromBuilder<E> parent;
-	private FromBuilder<E> target;
+public class InterceptorBuilder implements ProcessorFactory {
+    private final List<DelegateProcessor> intercepts = new ArrayList<DelegateProcessor>();
+	private final FromBuilder parent;
+	private FromBuilder target;
 
-	public InterceptorBuilder(FromBuilder<E> parent) {
+	public InterceptorBuilder(FromBuilder parent) {
         this.parent = parent;
 	}
 	
 	@Fluent("interceptor")
-	public InterceptorBuilder<E> add(@FluentArg("ref") DelegateProcessor<E> interceptor) {
+	public InterceptorBuilder add(@FluentArg("ref") DelegateProcessor interceptor) {
 		intercepts.add(interceptor);
 		return this;
 	}
 	
 	@Fluent(callOnElementEnd=true)
-    public FromBuilder<E> target() {
-        this.target = new FromBuilder<E>(parent);
+    public FromBuilder target() {
+        this.target = new FromBuilder(parent);
         return target;
     }
 
-    public Processor<E> createProcessor() throws Exception {
+    public Processor createProcessor() throws Exception {
     	
     	// The target is required.
     	if( target == null ) 
     		throw new RuntimeCamelException("target provided.");
     	
     	// Interceptors are optional
-    	DelegateProcessor<E> first=null;
-    	DelegateProcessor<E> last=null;
-        for (DelegateProcessor<E> p : intercepts) {
+    	DelegateProcessor first=null;
+    	DelegateProcessor last=null;
+        for (DelegateProcessor p : intercepts) {
             if( first == null ) {
             	first = p;
             }
@@ -68,7 +68,7 @@ public class InterceptorBuilder<E extends Exchange> implements ProcessorFactory<
             last = p;
         }
         
-        Processor<E> p = target.createProcessor();
+        Processor p = target.createProcessor();
         if( last != null ) {
         	last.setNext(p);
         }

@@ -34,7 +34,7 @@ public class NoErrorHandlerBuilder<E extends Exchange> implements ErrorHandlerBu
         return this;
     }
 
-    public Processor<E> createErrorHandler(Processor<E> processor) {
+    public Processor createErrorHandler(Processor processor) {
         return processor;
     }
 }

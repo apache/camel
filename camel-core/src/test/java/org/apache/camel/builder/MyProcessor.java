@@ -19,7 +19,7 @@ package org.apache.camel.builder;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
-public class MyProcessor implements Processor<Exchange> {
+public class MyProcessor implements Processor {
     public void process(Exchange exchange) {
         System.out.println("Called with exchange: " + exchange);
     }

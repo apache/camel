@@ -101,7 +101,7 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Exc
         Map map = URISupport.parseQuery(uri.getQuery());
         String camelUri = uri.getSchemeSpecificPart();
         Endpoint camelEndpoint = getCamelContext().getEndpoint(camelUri);
-        Processor<Exchange> processor = null;
+        Processor processor = null;
         try {
             processor = camelEndpoint.createProducer();
         }
@@ -147,7 +147,7 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Exc
     /**
      * Returns a JBI endpoint created for the given Camel endpoint
      */
-    public CamelJbiEndpoint activateJbiEndpoint(JbiEndpoint camelEndpoint, Processor<Exchange> processor) throws Exception {
+    public CamelJbiEndpoint activateJbiEndpoint(JbiEndpoint camelEndpoint, Processor processor) throws Exception {
         CamelJbiEndpoint jbiEndpoint;
         String endpointUri = camelEndpoint.getEndpointUri();
         if (endpointUri.startsWith("endpoint:")) {

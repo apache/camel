@@ -31,7 +31,7 @@ import javax.jms.Session;
 /**
  * @version $Revision$
  */
-public class JmsProducer extends DefaultProducer<JmsExchange> {
+public class JmsProducer extends DefaultProducer {
     private static final transient Log log = LogFactory.getLog(JmsProducer.class);
     private final JmsEndpoint endpoint;
     private final JmsOperations template;
@@ -42,10 +42,10 @@ public class JmsProducer extends DefaultProducer<JmsExchange> {
         this.template = template;
     }
 
-    public void process(final JmsExchange exchange) {
+    public void process(final Exchange exchange) {
         template.send(endpoint.getDestination(), new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
-                Message message = endpoint.getBinding().makeJmsMessage(exchange.getIn(), session);
+                Message message = endpoint.getBinding().makeJmsMessage(exchange, session);
                 if (log.isDebugEnabled()) {
                     log.debug(endpoint + " sending JMS message: " + message);
                 }

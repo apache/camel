@@ -33,11 +33,11 @@ import java.util.Iterator;
  *
  * @version $Revision$
  */
-public class Splitter<E extends Exchange> extends ServiceSupport implements Processor<E> {
-    private final Processor<E> processor;
-    private final Expression<E> expression;
+public class Splitter extends ServiceSupport implements Processor {
+    private final Processor processor;
+    private final Expression expression;
 
-    public Splitter(Processor<E> destination, Expression<E> expression) {
+    public Splitter(Processor destination, Expression expression) {
         this.processor = destination;
         this.expression = expression;
         notNull(destination, "destination");
@@ -49,12 +49,12 @@ public class Splitter<E extends Exchange> extends ServiceSupport implements Proc
         return "Splitter[on: " + expression + " to: " + processor + "]";
     }
 
-    public void process(E exchange) throws Exception {
+    public void process(Exchange exchange) throws Exception {
         Object value = expression.evaluate(exchange);
         Iterator iter = ObjectConverter.iterator(value);
         while (iter.hasNext()) {
             Object part = iter.next();
-            E newExchange = (E) exchange.copy();
+            Exchange newExchange = exchange.copy();
             newExchange.getIn().setBody(part);
             processor.process(newExchange);
         }

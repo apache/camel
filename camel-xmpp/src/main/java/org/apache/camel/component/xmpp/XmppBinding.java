@@ -18,6 +18,7 @@
 package org.apache.camel.component.xmpp;
 
 import org.jivesoftware.smack.packet.Message;
+import org.apache.camel.Exchange;
 
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +33,7 @@ public class XmppBinding {
     /**
      * Populates the given XMPP message from the inbound exchange
      */
-    public void populateXmppMessage(Message message, XmppExchange exchange) {
+    public void populateXmppMessage(Message message, Exchange exchange) {
         message.setBody(exchange.getIn().getBody(String.class));
 
         Set<Map.Entry<String, Object>> entries = exchange.getIn().getHeaders().entrySet();
@@ -62,7 +63,7 @@ public class XmppBinding {
     /**
      * Strategy to allow filtering of headers which are put on the XMPP message
      */
-    protected boolean shouldOutputHeader(XmppExchange exchange, String headerName, Object headerValue) {
+    protected boolean shouldOutputHeader(Exchange exchange, String headerName, Object headerValue) {
         return true;
     }
 }

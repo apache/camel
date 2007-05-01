@@ -18,6 +18,7 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientFactoryBean;
@@ -29,26 +30,31 @@ import java.util.List;
  *
  * @version $Revision$
  */
-public class CxfInvokeProducer extends DefaultProducer<CxfExchange> {
-    private CxfInvokeEndpoint cxfEndpoint;
+public class CxfInvokeProducer extends DefaultProducer {
+    private CxfInvokeEndpoint endpoint;
     private Client client;
 
     public CxfInvokeProducer(CxfInvokeEndpoint endpoint) {
         super(endpoint);
-        cxfEndpoint = endpoint;
+        this.endpoint = endpoint;
+    }
+
+    public void process(Exchange exchange) {
+        CxfExchange cxfExchange = endpoint.toExchangeType(exchange);
+        process(cxfExchange);
     }
 
     public void process(CxfExchange exchange) {
         List params = exchange.getIn().getBody(List.class);
         Object[] response = null;
         try {
-            response = client.invoke(cxfEndpoint.getProperty(CxfConstants.METHOD), params.toArray());
+            response = client.invoke(endpoint.getProperty(CxfConstants.METHOD), params.toArray());
         }                                                           
         catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
 
-        CxfBinding binding = cxfEndpoint.getBinding();
+        CxfBinding binding = endpoint.getBinding();
         binding.storeCxfResponse(exchange, response);
     }
 
@@ -61,8 +67,8 @@ public class CxfInvokeProducer extends DefaultProducer<CxfExchange> {
         if (client == null) {
             ClientFactoryBean cfBean = new ClientFactoryBean();
             cfBean.setAddress(getEndpoint().getEndpointUri());
-            cfBean.setBus(cxfEndpoint.getBus());
-            cfBean.setServiceClass(Class.forName(cxfEndpoint.getProperty(CxfConstants.SEI)));
+            cfBean.setBus(endpoint.getBus());
+            cfBean.setServiceClass(Class.forName(endpoint.getProperty(CxfConstants.SEI)));
             client = cfBean.create();
         }
     }

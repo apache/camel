@@ -27,11 +27,11 @@ import org.apache.camel.impl.ServiceSupport;
 /**
  * @version $Revision$
  */
-public class SendProcessor<E extends Exchange> extends ServiceSupport implements Processor<E>, Service {
-    private Endpoint<E> destination;
-    private Producer<E> producer;
+public class SendProcessor extends ServiceSupport implements Processor, Service {
+    private Endpoint destination;
+    private Producer producer;
 
-    public SendProcessor(Endpoint<E> destination) {
+    public SendProcessor(Endpoint destination) {
         this.destination = destination;
     }
 
@@ -50,14 +50,14 @@ public class SendProcessor<E extends Exchange> extends ServiceSupport implements
         this.producer = destination.createProducer();
     }
 
-    public void process(E exchange) throws Exception {
+    public void process(Exchange exchange) throws Exception {
         if (producer == null) {
             throw new IllegalStateException("No producer, this processor has not been started!");
         }
         producer.process(exchange);
     }
 
-    public Endpoint<E> getDestination() {
+    public Endpoint getDestination() {
         return destination;
     }
 

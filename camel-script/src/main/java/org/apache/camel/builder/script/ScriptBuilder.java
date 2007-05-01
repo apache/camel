@@ -43,7 +43,7 @@ import java.net.URL;
  *
  * @version $Revision$
  */
-public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predicate<E>, Processor<E> {
+public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predicate<E>, Processor {
     private String scriptEngineName;
     private Resource scriptResource;
     private String scriptText;
@@ -81,7 +81,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
         }
     }
 
-    public void process(E exchange) {
+    public void process(Exchange exchange) {
         evaluateScript(exchange);
     }
 

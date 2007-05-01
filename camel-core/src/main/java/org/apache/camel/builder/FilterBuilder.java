@@ -24,10 +24,10 @@ import org.apache.camel.Processor;
 /**
  * @version $Revision$
  */
-public class FilterBuilder<E extends Exchange> extends FromBuilder<E> {
-    private Predicate<E> predicate;
+public class FilterBuilder extends FromBuilder {
+    private Predicate predicate;
 
-    public FilterBuilder(FromBuilder<E> builder, Predicate<E> predicate) {
+    public FilterBuilder(FromBuilder builder, Predicate predicate) {
         super(builder);
         this.predicate = predicate;
     }
@@ -35,7 +35,7 @@ public class FilterBuilder<E extends Exchange> extends FromBuilder<E> {
     /**
      * Adds another predicate using a logical AND
      */
-    public FilterBuilder<E> and(Predicate<E> predicate) {
+    public FilterBuilder and(Predicate predicate) {
         this.predicate = PredicateBuilder.and(this.predicate, predicate);
         return this;
     }
@@ -43,19 +43,19 @@ public class FilterBuilder<E extends Exchange> extends FromBuilder<E> {
     /**
      * Adds another predicate using a logical OR
      */
-    public FilterBuilder<E> or(Predicate<E> predicate) {
+    public FilterBuilder or(Predicate predicate) {
         this.predicate = PredicateBuilder.or(this.predicate, predicate);
         return this;
     }
 
-    public Predicate<E> getPredicate() {
+    public Predicate getPredicate() {
         return predicate;
     }
 
-    public FilterProcessor<E> createProcessor() throws Exception {
+    public FilterProcessor createProcessor() throws Exception {
         // lets create a single processor for all child predicates
-        Processor<E> childProcessor = super.createProcessor();
-        return new FilterProcessor<E>(predicate, childProcessor);
+        Processor childProcessor = super.createProcessor();
+        return new FilterProcessor(predicate, childProcessor);
     }
 
 }

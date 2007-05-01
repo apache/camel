@@ -60,7 +60,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
         return startService(new JmsProducer(this, template));
     }
 
-    public Consumer<JmsExchange> createConsumer(Processor<JmsExchange> processor) throws Exception {
+    public Consumer<JmsExchange> createConsumer(Processor processor) throws Exception {
         AbstractMessageListenerContainer listenerContainer = configuration.createMessageListenerContainer();
         return createConsumer(processor, listenerContainer);
     }
@@ -73,7 +73,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
      * @return a newly created consumer
      * @throws Exception if the consumer cannot be created
      */
-    public Consumer<JmsExchange> createConsumer(Processor<JmsExchange> processor, AbstractMessageListenerContainer listenerContainer) throws Exception {
+    public Consumer<JmsExchange> createConsumer(Processor processor, AbstractMessageListenerContainer listenerContainer) throws Exception {
         listenerContainer.setDestinationName(destination);
         listenerContainer.setPubSubDomain(pubSubDomain);
         if (selector != null) {

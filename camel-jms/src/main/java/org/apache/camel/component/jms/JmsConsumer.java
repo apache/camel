@@ -32,7 +32,7 @@ import javax.jms.MessageListener;
 public class JmsConsumer extends DefaultConsumer<JmsExchange> {
     private final AbstractMessageListenerContainer listenerContainer;
 
-    public JmsConsumer(JmsEndpoint endpoint, Processor<JmsExchange> processor, AbstractMessageListenerContainer listenerContainer) {
+    public JmsConsumer(JmsEndpoint endpoint, Processor processor, AbstractMessageListenerContainer listenerContainer) {
         super(endpoint, processor);
         this.listenerContainer = listenerContainer;
 
@@ -40,7 +40,7 @@ public class JmsConsumer extends DefaultConsumer<JmsExchange> {
         this.listenerContainer.setMessageListener(messageListener);
     }
 
-    protected MessageListener createMessageListener(JmsEndpoint endpoint, Processor<JmsExchange> processor) {
+    protected MessageListener createMessageListener(JmsEndpoint endpoint, Processor processor) {
         EndpointMessageListener<JmsExchange> messageListener = new EndpointMessageListener<JmsExchange>(endpoint, processor);
         messageListener.setBinding(endpoint.getBinding());
         return messageListener;
