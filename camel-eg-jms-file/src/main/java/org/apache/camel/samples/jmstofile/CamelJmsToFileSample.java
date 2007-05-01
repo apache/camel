@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileExchange;
 import org.apache.camel.component.jms.JmsEndpoint;
@@ -55,7 +56,12 @@ public class CamelJmsToFileSample  {
         
         CamelClient client = new CamelClient(context);
         context.start();
-        client.sendValue("activemq:queue:test.a", "foo");
+        client.send("jms:queue:test.a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("foo");
+            }
+        });
         Thread.sleep(1000);
+        context.stop();
     }
 }
