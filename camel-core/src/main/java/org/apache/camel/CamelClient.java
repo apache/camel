@@ -84,6 +84,22 @@ public class CamelClient<E extends Exchange> extends ServiceSupport {
     public E send(Endpoint<E> endpoint, Processor processor) {
         return producerCache.send(endpoint, processor);
     }
+   
+    /**
+     * Send the body to an endpoint
+     * @param endpointUri
+     * @param body = the payload 
+     * @return the result
+     */
+    public Object sendBody (String endpointUri,final Object body) {
+        E result =  send(endpointUri, new Processor() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                in.setBody(body);
+            }
+        });
+        return result != null ? result.getOut().getBody() : null;
+    }
 
     public Producer<E> getProducer(Endpoint<E> endpoint) {
         return producerCache.getProducer(endpoint);
