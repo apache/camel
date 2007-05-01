@@ -64,6 +64,15 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
      */
     public static JmsComponent jmsComponentClientAcknowledge(ConnectionFactory connectionFactory) {
         JmsConfiguration template = new JmsConfiguration(connectionFactory);
+        template.setAcknowledgementMode(Session.CLIENT_ACKNOWLEDGE);
+        return jmsComponent(template);
+    }
+    
+    /**
+     * Static builder method
+     */
+    public static JmsComponent jmsComponentAutoAcknowledge(ConnectionFactory connectionFactory) {
+        JmsConfiguration template = new JmsConfiguration(connectionFactory);
         template.setAcknowledgementMode(Session.AUTO_ACKNOWLEDGE);
         return jmsComponent(template);
     }
