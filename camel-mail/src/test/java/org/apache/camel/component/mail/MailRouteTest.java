@@ -39,7 +39,7 @@ public class MailRouteTest extends ContextTestSupport {
 
     public void testSendAndReceiveMails() throws Exception {
         resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:result");
-        resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.expectedBodiesReceived("hello world!");
 
         client.send("smtp://james@localhost", new Processor<Exchange>() {
             public void process(Exchange exchange) {
@@ -71,7 +71,7 @@ public class MailRouteTest extends ContextTestSupport {
             public void configure() {
                 from("smtp://james@localhost").to("queue:a");
                 from("queue:a").to("smtp://result@localhost", "smtp://copy@localhost");
-                from("smtp://result@localhost").to("mock:result");
+                from("smtp://result@localhost").convertBodyTo(String.class).to("mock:result");
             }
         };
     }
