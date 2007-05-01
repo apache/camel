@@ -23,8 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Message;
 import org.apache.camel.Route;
 import org.apache.camel.spring.example.MyProcessor;
-import org.apache.camel.util.CamelClient;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.CamelClient;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

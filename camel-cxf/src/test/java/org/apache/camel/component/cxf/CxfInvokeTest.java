@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.util.CamelClient;
+import org.apache.camel.CamelClient;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ServerFactoryBean;
