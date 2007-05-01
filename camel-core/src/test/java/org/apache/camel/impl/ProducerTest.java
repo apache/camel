@@ -33,7 +33,7 @@ public class ProducerTest extends TestSupport {
     private CamelContext context = new DefaultCamelContext();
 
     public void testUsingADerivedExchange() throws Exception {
-        Endpoint<MyExchange> endpoint = new DefaultEndpoint<MyExchange>("foo", new DefaultComponent()) {
+        DefaultEndpoint<MyExchange> endpoint = new DefaultEndpoint<MyExchange>("foo", new DefaultComponent()) {
             public Consumer<MyExchange> createConsumer(Processor processor) throws Exception {
                 return null;
             }
@@ -60,5 +60,19 @@ public class ProducerTest extends TestSupport {
         // now lets try send in a normal exchange
         Exchange exchange = new DefaultExchange(context);
         producer.process(exchange);
+
+        Class type = endpoint.getExchangeType();
+        assertEquals("exchange type", MyExchange.class, type);
+
+        MyExchange actual = endpoint.toExchangeType(exchange);
+        assertNotNull(actual);
+        assertTrue("Not same exchange", actual != exchange);
+
+
+        MyExchange expected = new MyExchange(context);
+        actual = endpoint.toExchangeType(expected);
+
+        assertSame("Should not copy an exchange when of the correct type", expected, actual);
+
     }
 }
