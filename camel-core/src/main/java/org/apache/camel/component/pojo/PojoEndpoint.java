@@ -54,8 +54,7 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
     }
 
     public Consumer<PojoExchange> createConsumer(Processor<PojoExchange> processor) throws Exception {    	
-    	PojoConsumer consumer = new PojoConsumer(this, processor);
-        return startService(consumer);
+        throw new Exception("You cannot consume from pojo endpoints.");
     }
 
     /**
