@@ -17,11 +17,13 @@
  */
 package org.apache.camel.builder.xml;
 
+import static org.apache.camel.util.ObjectHelper.notNull;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeTransformException;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.converter.jaxp.XmlConverter;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -35,6 +37,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 /**
  * Creates a <a href="http://activemq.apache.org/camel/processor.html">Processor</a>
@@ -46,7 +51,7 @@ public class XsltBuilder<E extends Exchange> implements Processor<E> {
     private Map<String, Object> parameters = new HashMap<String, Object>();
     private XmlConverter converter = new XmlConverter();
     private Transformer transformer;
-    private ResultHandler resultHandler = new DomResultHandler();
+    private ResultHandler resultHandler = new StringResultHandler();
     private boolean failOnNullBody = true;
 
     public XsltBuilder() {
@@ -87,6 +92,7 @@ public class XsltBuilder<E extends Exchange> implements Processor<E> {
      * Creates an XSLT processor using the given XSLT source
      */
     public static <E extends Exchange> XsltBuilder<E> xslt(Source xslt) throws TransformerConfigurationException {
+        notNull(xslt, "xslt");
         XsltBuilder<E> answer = new XsltBuilder<E>();
         answer.setTransformerSource(xslt);
         return answer;
@@ -96,6 +102,23 @@ public class XsltBuilder<E extends Exchange> implements Processor<E> {
      * Creates an XSLT processor using the given XSLT source
      */
     public static <E extends Exchange> XsltBuilder<E> xslt(File xslt) throws TransformerConfigurationException {
+        notNull(xslt, "xslt");
+        return xslt(new StreamSource(xslt));
+    }
+
+    /**
+     * Creates an XSLT processor using the given XSLT source
+     */
+    public static <E extends Exchange> XsltBuilder<E> xslt(URL xslt) throws TransformerConfigurationException, IOException {
+        notNull(xslt, "xslt");
+        return xslt(xslt.openStream());
+    }
+
+    /**
+     * Creates an XSLT processor using the given XSLT source
+     */
+    public static <E extends Exchange> XsltBuilder<E> xslt(InputStream xslt) throws TransformerConfigurationException, IOException {
+        notNull(xslt, "xslt");
         return xslt(new StreamSource(xslt));
     }
 

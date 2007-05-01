@@ -49,7 +49,7 @@ public abstract class RouteBuilder extends BuilderSupport {
     /**
      * Called on initialization to to build the required destinationBuilders
      */
-    public abstract void configure();
+    public abstract void configure() throws Exception;
 
     @Fluent
     public FromBuilder from( @FluentArg("uri") String uri) {
