@@ -18,9 +18,7 @@
 package org.apache.camel;
 
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.ProducerCache;
-import org.apache.camel.util.CamelClient;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.CamelClient;
 import org.apache.camel.builder.RouteBuilder;
 
 /**

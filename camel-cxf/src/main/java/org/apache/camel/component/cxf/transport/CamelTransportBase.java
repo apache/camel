@@ -19,7 +19,7 @@ package org.apache.camel.component.cxf.transport;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.CamelClient;
+import org.apache.camel.CamelClient;
 import org.apache.cxf.Bus;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.CamelContext;
@@ -23,10 +23,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.util.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
 
 /**
- * A helper client for working with Camel
+ * A Client object for working with Camel and invoking {@link Endpoint} instances with {@link Exchange} instances
  * 
  * @version $Revision$
  */
