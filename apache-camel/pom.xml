@@ -80,6 +80,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-rmi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-script</artifactId>
     </dependency>
     <dependency>
@@ -180,7 +184,7 @@
               <goal>createbundle</goal>
             </goals>
             <configuration>
-              <includes>camel-core,camel-cxf,camel-file,camel-http,camel-jaxb,camel-jbi,camel-jms,camel-josql,camel-jpa,camel-mina,camel-saxon,camel-script,camel-spring,camel-xmpp,commons-logging</includes>
+              <includes>camel-core,camel-cxf,camel-file,camel-http,camel-jaxb,camel-jbi,camel-jms,camel-josql,camel-jpa,camel-mail,camel-mina,camel-rmi,camel-saxon,camel-script,camel-spring,camel-xmpp,commons-logging</includes>
             </configuration>
           </execution>
         </executions>

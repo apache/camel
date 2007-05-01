@@ -53,6 +53,9 @@ public class DefaultExchange implements Exchange {
     }
 
     public void copyFrom(Exchange exchange) {
+        if (exchange == this) {
+            return;
+        }
         setHeaders(safeCopy(exchange.getProperties()));
         setIn(safeCopy(exchange.getIn()));
         setOut(safeCopy(exchange.getOut()));
