@@ -46,8 +46,11 @@ public class MailRouteTest extends ContextTestSupport {
         // lets test the first sent worked
         assertMailboxReceivedMessages("james@localhost");
 
+        // lets sleep to check that the mail poll does not redeliver duplicate mails
+        Thread.sleep(3000);
+
         // lets test the receive worked
-        resultEndpoint.assertIsSatisfied(10000);
+        resultEndpoint.assertIsSatisfied();
 
         assertMailboxReceivedMessages("copy@localhost");
     }
@@ -65,8 +68,8 @@ public class MailRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("smtp://james@localhost").to("queue:a");
-                from("queue:a").to("smtp://result@localhost", "smtp://copy@localhost");
+                from("smtp://james@localhost").to("direct:a");
+                from("direct:a").to("smtp://result@localhost", "smtp://copy@localhost");
                 from("smtp://result@localhost").convertBodyTo(String.class).to("mock:result");
             }
         };
