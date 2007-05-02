@@ -17,6 +17,12 @@
  */
 package org.apache.camel.component.mail;
 
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.impl.PollingConsumer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -24,12 +30,6 @@ import javax.mail.MessagingException;
 import javax.mail.Transport;
 import javax.mail.event.MessageCountEvent;
 import javax.mail.event.MessageCountListener;
-
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.impl.PollingConsumer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * A {@link Consumer} which consumes messages from JavaMail using a {@link Transport} and dispatches them
@@ -97,11 +97,9 @@ public class MailConsumer extends PollingConsumer<MailExchange> implements Messa
 
         int count = folder.getMessageCount();
         if (count > 0) {
-            Message message = folder.getMessage(1);
-
-            processMessage(message);
-
-            flagMessageDeleted(message);
+            Message[] messages = folder.getMessages();
+            MessageCountEvent event = new MessageCountEvent(folder, MessageCountEvent.ADDED, true, messages);
+            messagesAdded(event);
         }
         else if (count == -1) {
             throw new MessagingException("Folder: " + folder.getFullName() + " is closed");
@@ -112,11 +110,12 @@ public class MailConsumer extends PollingConsumer<MailExchange> implements Messa
 
     protected void processMessage(Message message) {
         try {
-			MailExchange exchange = endpoint.createExchange(message);
-			getProcessor().process(exchange);
-		} catch (Throwable e) {
-			handleException(e);
-		}
+            MailExchange exchange = endpoint.createExchange(message);
+            getProcessor().process(exchange);
+        }
+        catch (Throwable e) {
+            handleException(e);
+        }
     }
 
     protected void ensureFolderIsOpen() throws MessagingException {
