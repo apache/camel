@@ -46,25 +46,36 @@ public class FileProducer extends DefaultProducer {
         process(endpoint.toExchangeType(exchange));
     }
 
-    public void process(FileExchange exchange) {
-        ByteBuffer payload = exchange.getIn().getBody(ByteBuffer.class);
+    public void process(FileExchange exchange){
+        String fileName = exchange.getIn().getMessageId();
+        ByteBuffer payload=exchange.getIn().getBody(ByteBuffer.class);
         payload.flip();
         File file = null;
-
-        if (endpoint.getFile() != null && endpoint.getFile().isDirectory()) {
-            file = new File(endpoint.getFile(), exchange.getFile().getName());
+        if(endpoint.getFile()!=null&&endpoint.getFile().isDirectory()){
+            
+            file=new File(endpoint.getFile(),fileName);
+           
+        }else{
+            file=new File(fileName);
         }
-        else {
-            file = exchange.getFile();
-        }
-        try {
-            FileChannel fc = new RandomAccessFile(file, "rw").getChannel();
+        buildDirectory(file);
+        try{
+            FileChannel fc=new RandomAccessFile(file,"rw").getChannel();
             fc.position(fc.size());
             fc.write(payload);
             fc.close();
+        }catch(Throwable e){
+            log.error("Failed to write to File: "+file,e);
         }
-        catch (Throwable e) {
-            log.error("Failed to write to File: " + file, e);
+    }
+    
+    private void buildDirectory(File file) {
+        String dirName = file.getAbsolutePath();
+        int index = dirName.lastIndexOf(File.separatorChar);
+        if (index > 0) {
+            dirName = dirName.substring(0,index);
+            File dir = new File(dirName);
+            dir.mkdirs();
         }
     }
 }
