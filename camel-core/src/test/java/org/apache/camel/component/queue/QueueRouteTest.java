@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
@@ -33,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @version $Revision: 520220 $
  */
-public class QueueRouteTest extends TestCase {
+public class QueueRouteTest extends TestSupport {
 
 	
     public void testSedaQueue() throws Exception {
@@ -47,7 +48,7 @@ public class QueueRouteTest extends TestCase {
                 from("queue:test.a").to("queue:test.b");
                 from("queue:test.b").process(new Processor() {
                     public void process(Exchange e) {
-                        System.out.println("Received exchange: " + e.getIn());
+                        log.debug("Received exchange: " + e.getIn());
                         latch.countDown();
                     }
                 });
@@ -84,7 +85,7 @@ public class QueueRouteTest extends TestCase {
                 from("queue:test.a").to("queue:test.b");
                 from("queue:test.b").process(new Processor() {
                     public void process(Exchange e) {
-                        System.out.println("Received exchange: " + e.getIn());
+                        log.debug("Received exchange: " + e.getIn());
                         latch.countDown();
                     }
                 });

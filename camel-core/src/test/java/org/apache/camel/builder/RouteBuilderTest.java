@@ -86,7 +86,7 @@ public class RouteBuilderTest extends TestSupport {
         RouteBuilder builder = buildSimpleRouteWithHeaderPredicate();
 
         List<Route> routes = builder.getRouteList();
-        System.out.println("Created routes: " + routes);
+        log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
@@ -118,7 +118,7 @@ public class RouteBuilderTest extends TestSupport {
         RouteBuilder builder = buildSimpleRouteWithChoice();
 
         List<Route> routes = builder.getRouteList();
-        System.out.println("Created routes: " + routes);
+        log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
@@ -144,7 +144,7 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e4
         myProcessor = new Processor() {
             public void process(Exchange exchange) {
-                System.out.println("Called with exchange: " + exchange);
+                log.debug("Called with exchange: " + exchange);
             }
         };
 
@@ -187,7 +187,7 @@ public class RouteBuilderTest extends TestSupport {
         RouteBuilder builder = buildCustomProcessorWithFilter();
 
         List<Route> routes = builder.getRouteList();
-        System.out.println("Created routes: " + routes);
+        log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
@@ -215,7 +215,7 @@ public class RouteBuilderTest extends TestSupport {
         RouteBuilder builder = buildWireTap();
 
         List<Route> routes = builder.getRouteList();
-        System.out.println("Created routes: " + routes);
+        log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
@@ -257,7 +257,7 @@ public class RouteBuilderTest extends TestSupport {
         RouteBuilder builder = buildRouteWithInterceptor();
 
         List<Route> routes = builder.getRouteList();
-        System.out.println("Created routes: " + routes);
+        log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
@@ -285,7 +285,7 @@ public class RouteBuilderTest extends TestSupport {
         // END SNIPPET: e7
 
         List<Route> routes = builder.getRouteList();
-        System.out.println("Created routes: " + routes);
+        log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 2, routes.size());
         for (Route route : routes) {
@@ -293,7 +293,7 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
-            System.out.println("processor: " + processor);
+            log.debug("processor: " + processor);
             /* TODO
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
 
@@ -330,7 +330,7 @@ public class RouteBuilderTest extends TestSupport {
         RouteBuilder builder = buildDynamicRecipientList();
 
         List<Route> routes = builder.getRouteList();
-        System.out.println("Created routes: " + routes);
+        log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
@@ -358,7 +358,7 @@ public class RouteBuilderTest extends TestSupport {
         RouteBuilder builder = buildSplitter();
 
         List<Route> routes = builder.getRouteList();
-        System.out.println("Created routes: " + routes);
+        log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
@@ -388,7 +388,7 @@ public class RouteBuilderTest extends TestSupport {
         RouteBuilder builder = buildIdempotentConsumer();
 
         List<Route> routes = builder.getRouteList();
-        System.out.println("Created routes: " + routes);
+        log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {

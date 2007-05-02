@@ -80,7 +80,7 @@ public class FileRouteTest extends TestCase {
             public void configure() {
                 from(uri).process(new Processor() {
                     public void process(Exchange e) {
-                        System.out.println("Received exchange: " + e.getIn());
+                        log.debug("Received exchange: " + e.getIn());
                         receivedExchange = e;
                         latch.countDown();
                     }
