@@ -129,7 +129,7 @@ public class ConverterTest extends TestCase {
         // now lets go back to a List again
         List resultList = converter.convertTo(List.class, intArray);
         assertEquals("List size", 2, resultList.size());
-        log.info("From primitive type array we've created the list: " + resultList);
+        log.debug("From primitive type array we've created the list: " + resultList);
 
     }
 

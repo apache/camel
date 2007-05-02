@@ -61,7 +61,7 @@ public class XPathTest extends TestSupport {
             instance = Class.forName("org.apache.xalan.extensions.XPathFunctionResolverImpl").newInstance();
         }
         catch (Throwable e) {
-            log.info("Could not find Xalan on the classpath so ignoring this test case: " + e);
+            log.debug("Could not find Xalan on the classpath so ignoring this test case: " + e);
         }
         
         if (instance instanceof XPathFunctionResolver) {

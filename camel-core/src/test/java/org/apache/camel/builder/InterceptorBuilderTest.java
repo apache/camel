@@ -68,7 +68,7 @@ public class InterceptorBuilderTest extends TestSupport {
             }
         };        
         container.addRoutes(builder);
-        container.start();
+        container.start();                                                   
         
         Endpoint<Exchange> endpoint = container.getEndpoint("direct:a");
         Exchange exchange = endpoint.createExchange();
@@ -82,7 +82,7 @@ public class InterceptorBuilderTest extends TestSupport {
         expected.add("END:2");
         expected.add("END:1");
         
-        System.out.println("Interceptor invocation order:"+order);
+        log.debug("Interceptor invocation order:"+order);
         assertEquals(expected, order);
         
     }

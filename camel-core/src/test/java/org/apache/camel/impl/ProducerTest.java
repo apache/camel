@@ -53,7 +53,7 @@ public class ProducerTest extends TestSupport {
 
         DefaultProducer producer = new DefaultProducer(endpoint) {
             public void process(Exchange exchange) throws Exception {
-                log.info("Received: " + exchange);
+                log.debug("Received: " + exchange);
             }
         };
 

@@ -71,7 +71,7 @@ public class ErrorHandlerTest extends TestSupport {
         // END SNIPPET: e2
 
         Map<Endpoint<Exchange>, Processor> routeMap = builder.getRouteMap();
-        log.info(routeMap);
+        log.debug(routeMap);
 
         Set<Map.Entry<Endpoint<Exchange>, Processor>> routes = routeMap.entrySet();
         assertEquals("Number routes created", 2, routes.size());
