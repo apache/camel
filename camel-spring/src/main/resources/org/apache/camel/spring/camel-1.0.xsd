@@ -143,12 +143,12 @@
   </xs:element>
   <xs:element name="isEqualTo">
     <xs:complexType>
-      <xs:attribute name="value" use="required" type="xs:NCName"/>
+      <xs:attribute name="value" use="required" type="xs:string"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="isNotEqualTo">
     <xs:complexType>
-      <xs:attribute name="value" use="required" type="xs:NCName"/>
+      <xs:attribute name="value" use="required" type="xs:string"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="to">
@@ -184,7 +184,7 @@
   </xs:element>
   <xs:element name="bodyAs">
     <xs:complexType>
-      <xs:attribute name="class" use="required" type="xs:NCName"/>
+      <xs:attribute name="class" use="required" type="xs:string"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="tokenize">
