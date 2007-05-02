@@ -40,7 +40,6 @@ public class MailProducer extends DefaultProducer<MailExchange> {
         this.sender = sender;
     }
 
-
     public void process(final Exchange exchange) {
         sender.send(new MimeMessagePreparator() {
             public void prepare(MimeMessage mimeMessage) throws Exception {
