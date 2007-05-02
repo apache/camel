@@ -1,5 +1,4 @@
-/**
- *
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,20 +16,25 @@
  */
 package org.apache.camel.spi;
 
-import org.apache.camel.Processor;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.stream.StreamResult;
 
 /**
- * A strategy capable of applying interceptors to a processor
+ * Marshallers that marshall to XML should extend this base class.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision: 520124 $
  */
-public interface Policy<E> {
-
-    /**
-     * Wraps any applicable interceptors around the given processor
-     *
-     * @param processor the processor to be intercepted
-     * @return either the original processor or a processor wrapped in one or more interceptors
+public abstract class XmlMarshaller implements Marshaller{
+	
+	/**
+     * Marshals the object to the given Stream.
      */
-    Processor wrap(Processor processor);
+	public void marshal(Object object, OutputStream result) throws IOException {
+		marshal(object, new StreamResult(result));
+	}
+
+	abstract public void marshal(Object object, Result result);
 }
