@@ -14,10 +14,21 @@
     <xs:complexType>
       <xs:complexContent>
         <xs:extension base="s:identifiedType">
-          <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" ref="c:routes"/>
-          </xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element minOccurs="0" maxOccurs="1" ref="c:endpoint"/>
+              <xs:element minOccurs="0" maxOccurs="1" ref="c:routes"/>
+            </xs:choice>
           <xs:attribute name="packages" type="xs:NMTOKEN"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="endpoint">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="s:identifiedType">
+          <xs:attribute name="uri" type="xs:anyURI"/>
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
