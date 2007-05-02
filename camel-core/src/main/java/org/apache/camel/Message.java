@@ -28,6 +28,17 @@ import java.util.Map;
 public interface Message {
     
     /**
+     * @return the id of the message
+     */
+    String getMessageId();
+    
+    /**
+     * set the id of the message
+     * @param messageId
+     */
+    void setMessageId(String messageId);
+    
+    /**
      * Accesses a specific header
      *
      * @param name
@@ -59,6 +70,12 @@ public interface Message {
      * @return all the headers in a Map
      */
     Map<String, Object> getHeaders();
+    
+    /**
+     * Set all the headers associated with this message
+     * @param headers
+     */
+    void setHeaders(Map<String,Object> headers);
 
     /**
      * Returns the body of the message as a POJO

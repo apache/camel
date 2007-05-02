@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.util.UIdGenerator;
 
 /**
  * A base class for implementation inheritence providing the core {@link Message} body
@@ -30,8 +31,11 @@ import org.apache.camel.Message;
  * @version $Revision$
  */
 public abstract class MessageSupport implements Message {
+    private static final UIdGenerator defaultIdGenerator = new UIdGenerator();
     private Exchange exchange;
     private Object body;
+    private String messageId = defaultIdGenerator.generateId();
+    
 
     public Object getBody() {
         if (body == null) {
@@ -66,6 +70,7 @@ public abstract class MessageSupport implements Message {
 
     public Message copy() {
         Message answer = newInstance();
+        answer.setMessageId(getMessageId());
         answer.setBody(getBody());
         answer.getHeaders().putAll(getHeaders());
         return answer;
@@ -94,5 +99,21 @@ public abstract class MessageSupport implements Message {
      */
     protected Object createBody() {
         return null;
+    }
+
+    
+    /**
+     * @return the messageId
+     */
+    public String getMessageId(){
+        return this.messageId;
+    }
+
+    
+    /**
+     * @param messageId the messageId to set
+     */
+    public void setMessageId(String messageId){
+        this.messageId=messageId;
     }
 }

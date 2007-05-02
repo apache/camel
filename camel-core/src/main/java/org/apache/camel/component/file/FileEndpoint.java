@@ -31,6 +31,7 @@ import java.io.File;
  */
 public class FileEndpoint extends PollingEndpoint<FileExchange> {
     private File file;
+    private boolean autoCreate=true;
 
     protected FileEndpoint(File file, String endpointUri, FileComponent component) {
         super(endpointUri, component);
@@ -73,14 +74,33 @@ public class FileEndpoint extends PollingEndpoint<FileExchange> {
      * @see org.apache.camel.Endpoint#createExchange()
      */
     public FileExchange createExchange() {
-        return createExchange(this.file);
+        return createExchange(getFile());
     }
 
     public File getFile() {
+        if (autoCreate && !file.exists()) {
+            file.mkdirs();
+        }
         return file;
     }
 
     public boolean isSingleton() {
         return true;
+    }
+
+    
+    /**
+     * @return the autoCreate
+     */
+    public boolean isAutoCreate(){
+        return this.autoCreate;
+    }
+
+    
+    /**
+     * @param autoCreate the autoCreate to set
+     */
+    public void setAutoCreate(boolean autoCreate){
+        this.autoCreate=autoCreate;
     }
 }
