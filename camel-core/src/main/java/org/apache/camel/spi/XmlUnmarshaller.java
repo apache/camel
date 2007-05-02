@@ -1,5 +1,4 @@
-/**
- *
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,20 +16,29 @@
  */
 package org.apache.camel.spi;
 
-import org.apache.camel.Processor;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 
 /**
- * A strategy capable of applying interceptors to a processor
- *
- * @version $Revision: 1.1 $
+ * Unmarshallers that unmarshall to XML should extend this base class.
+ * 
+ * @version $Revision: 520124 $
  */
-public interface Policy<E> {
-
-    /**
-     * Wraps any applicable interceptors around the given processor
-     *
-     * @param processor the processor to be intercepted
-     * @return either the original processor or a processor wrapped in one or more interceptors
+public abstract class XmlUnmarshaller implements Unmarshaller {
+	
+	/**
+     * Unmarshals the given stream into an object.
      */
-    Processor wrap(Processor processor);
+    public Object unmarshal(InputStream stream) throws IOException {
+    	return unmarshal(new StreamSource(stream));
+    }
+
+	/**
+     * Unmarshals the given stream into an object.
+     */
+    abstract public Object unmarshal(Source stream) throws IOException;
+    
 }
