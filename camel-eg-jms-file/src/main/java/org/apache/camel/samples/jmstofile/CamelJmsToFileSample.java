@@ -18,45 +18,67 @@
 
 package org.apache.camel.samples.jmstofile;
 
-import static
-org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import javax.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelClient;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.FileExchange;
-import org.apache.camel.component.jms.JmsEndpoint;
-import org.apache.camel.component.jms.JmsExchange;
 import org.apache.camel.impl.DefaultCamelContext;
 
-public class CamelJmsToFileSample  {
-    
-    
-    public static void main(String args[]) throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        
+
+/**
+ * An example class for demonstrating some of the basics behind camel
+ * 
+ * This example will send some text messages on to a JMS Queue, consume them and 
+ * persist them to disk
+ *
+ * @version $Revision: 529902 $
+ * 
+ */
+public class CamelJmsToFileSample{
+
+    public static void main(String args[]) throws Exception{
+        CamelContext context=new DefaultCamelContext();
+      
         //Set up the ActiveMQ JMS Components
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
-        context.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
-        //Endpoint<FileExchange> endpoint = context.getEndpoint("file://test");
+        ConnectionFactory connectionFactory=new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
+        //note we can explicity  name the component
+        context.addComponent("test-jms",jmsComponentAutoAcknowledge(connectionFactory));
         
-        
-        context.addRoutes(new RouteBuilder() {
-            public void configure() {
-                from("jms:queue:test.a").to("file://test");
-                
+        //Add some configuration by hand ...
+        context.addRoutes(new RouteBuilder(){
+
+            public void configure(){
+                from("test-jms:queue:test.queue").to("file://test");
+                // set up a listener on the file component
+                from("file://test").process(new Processor(){
+
+                    public void process(Exchange e){
+                        System.out.println("Received exchange: "+e.getIn());
+                    }
+                });
             }
         });
-        //Camel client - a handy class for kicking off exchanges
+        // Camel client - a handy class for kicking off exchanges
+        CamelClient client=new CamelClient(context);
         
-        CamelClient client = new CamelClient(context);
+        //Now everything is set up - lets start the context
         context.start();
-        client.sendBody("jms:queue:test.a", "foo");
+        
+        //now send some test text to a component - for this case a JMS Queue 
+        //The text get converted to JMS messages - and sent to the Queue test.queue
+        //The file component is listening for messages from the Queue test.queue, consumes
+        //them and stores them to disk. The content of each file will be the test test we sent here.
+        //The listener on the file component gets notfied when new files are found ...
+        //that's it!
+        
+        for(int i=0;i<10;i++){
+            client.sendBody("test-jms:queue:test.queue","Test Message: "+i);
+        }
+       
         Thread.sleep(1000);
         context.stop();
     }
