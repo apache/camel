@@ -17,12 +17,19 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.impl.DefaultMessage;
-
-import javax.jms.JMSException;
-import javax.jms.Message;
+import java.beans.DesignMode;
+import java.io.File;
 import java.util.Enumeration;
 import java.util.Map;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Queue;
+import javax.jms.TemporaryTopic;
+import javax.jms.Topic;
+import org.apache.camel.impl.DefaultMessage;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with JMS
@@ -30,13 +37,14 @@ import java.util.Map;
  * @version $Revision:520964 $
  */
 public class JmsMessage extends DefaultMessage {
+    private static final transient Log log = LogFactory.getLog(JmsMessage.class);
     private Message jmsMessage;
 
     public JmsMessage() {
     }
 
     public JmsMessage(Message jmsMessage) {
-        this.jmsMessage = jmsMessage;
+        setJmsMessage(jmsMessage);
     }
 
     @Override
@@ -59,8 +67,15 @@ public class JmsMessage extends DefaultMessage {
         return jmsMessage;
     }
 
-    public void setJmsMessage(Message jmsMessage) {
-        this.jmsMessage = jmsMessage;
+    public void setJmsMessage(Message jmsMessage){
+        this.jmsMessage=jmsMessage;
+        try{
+            String id=getDestinationAsString(jmsMessage.getJMSDestination());
+            id+=getSanitizedString(jmsMessage.getJMSMessageID());
+            setMessageId(id);
+        }catch(JMSException e){
+            log.error("Failed to get message id from message "+jmsMessage,e);
+        }
     }
 
     public Object getHeader(String name) {
@@ -114,6 +129,20 @@ public class JmsMessage extends DefaultMessage {
                 }
             }
         }
+    }
+    
+    private String getDestinationAsString(Destination destination) throws JMSException {
+        String result = "";
+        if (destination instanceof Topic) {
+            result += "topic" + File.separator + getSanitizedString(((Topic)destination).getTopicName());
+        }else {
+            result += "queue" + File.separator + getSanitizedString(((Queue)destination).getQueueName());
+        }
+        result += File.separator;
+        return result;
+    }
+    private String getSanitizedString(Object value) {
+        return value != null ? value.toString().replaceAll("[^a-zA-Z0-9\\.\\_\\-]", "_") : "";
     }
 }
 
