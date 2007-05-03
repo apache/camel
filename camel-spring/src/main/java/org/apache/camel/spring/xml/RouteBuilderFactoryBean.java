@@ -17,63 +17,40 @@
  */
 package org.apache.camel.spring.xml;
 
+import static org.apache.camel.util.ObjectHelper.notNull;
+
 import java.util.ArrayList;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.CamelContext;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
- * A {@link FactoryBean} which creates a RouteBuilder by parsing an XML file
+ * A {@link FactoryBean} which creates a RouteBuilder by parsing an XML file. This factory bean
+ * must be injected with a context and will then install the rules in the context when the routing rules
+ * are created. 
  *
  * @version $Revision: 521369 $
  */
-public class RouteBuilderFactory implements FactoryBean, BeanFactoryAware {
+public class RouteBuilderFactoryBean implements FactoryBean, BeanFactoryAware, InitializingBean {
 	private ArrayList<BuilderStatement> routes;
-	private boolean singleton;
 	private BeanFactory beanFactory;
+    private CamelContext context;
+    private StatementRouteBuilder builder = new StatementRouteBuilder();
 
-	class SpringRouteBuilder extends RouteBuilder {
-		private ArrayList<BuilderStatement> routes;
-		private BeanFactory beanFactory;
-
-		@Override
-		public void configure() {
-			for (BuilderStatement routeFactory : routes) {
-				routeFactory.create(beanFactory, this);
-			}
-		}
-
-		public ArrayList<BuilderStatement> getRoutes() {
-			return routes;
-		}
-		public void setRoutes(ArrayList<BuilderStatement> routes) {
-			this.routes = routes;
-		}
-
-		public void setBeanFactory(BeanFactory beanFactory) {
-			this.beanFactory = beanFactory;
-		}
-	}
-	
-	public Object getObject() throws Exception {
-		SpringRouteBuilder builder = new SpringRouteBuilder();
-		builder.setBeanFactory(beanFactory);
-		builder.setRoutes(routes);
-		return builder;
+    public Object getObject() throws Exception {
+        return builder;
 	}
 
 	public Class getObjectType() {
-		return SpringRouteBuilder.class;
+		return StatementRouteBuilder.class;
 	}
 
 	public boolean isSingleton() {
-		return singleton;
-	}
-	public void setSingleton(boolean singleton) {
-		this.singleton = singleton;
+		return true;
 	}
 
 	public ArrayList<BuilderStatement> getRoutes() {
@@ -87,4 +64,21 @@ public class RouteBuilderFactory implements FactoryBean, BeanFactoryAware {
 		this.beanFactory = beanFactory;
 	}
 
+    public CamelContext getContext() {
+        return context;
+    }
+
+    public void setContext(CamelContext context) {
+        this.context = context;
+    }
+
+    public void afterPropertiesSet() throws Exception {
+        notNull(context, "context");
+        notNull(routes, "routes");
+		builder.setBeanFactory(beanFactory);
+		builder.setRoutes(routes);
+
+        // now lets install the routes in the context
+        context.addRoutes(builder);
+    }
 }

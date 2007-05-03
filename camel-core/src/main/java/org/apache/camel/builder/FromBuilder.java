@@ -72,7 +72,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * Sends the exchange to the given endpoint
      */
     @Fluent
-    public ProcessorFactory to(@FluentArg("endpoint")Endpoint endpoint) {
+    public ProcessorFactory to(@FluentArg("ref")Endpoint endpoint) {
         ToBuilder answer = new ToBuilder(this, endpoint);
         addProcessBuilder(answer);
         return answer;

@@ -16,8 +16,8 @@
     limitations under the License.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
        http://activemq.apache.org/camel/schema/camel-1.0.xsd http://activemq.apache.org/camel/schema/camel-1.0.xsd
     ">
@@ -28,10 +28,14 @@
   </bean>
 
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
-    <endpoint id="endpoint1" uri="mock:endpoint1"/>
-    <routes>
-    </routes>
+    <endpoint id="endpoint1" uri="direct:start"/>
+    <endpoint id="endpoint2" uri="mock:end"/>
+
+    <route>
+      <from ref="endpoint1"/>
+      <to ref="endpoint2"/>
+    </route>
   </camelContext>
   <!-- END SNIPPET: example -->
-  
+
 </beans>

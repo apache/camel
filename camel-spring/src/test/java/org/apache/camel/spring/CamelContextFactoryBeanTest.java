@@ -18,8 +18,6 @@
 package org.apache.camel.spring;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -38,14 +36,14 @@ public class CamelContextFactoryBeanTest extends TestSupport {
     private static final transient Log log = LogFactory.getLog(CamelContextFactoryBeanTest.class);
     
     public void testClassPathRouteLoading() throws Exception {
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camel_context_factory_bean_test.xml");
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBeanTest.xml");
 
         CamelContext context = (CamelContext) applicationContext.getBean("camel");
         assertValidContext(context);
     }
 
     public void testClassPathRouteLoadingUsingNamespaces() throws Exception {
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camel_context_factory_bean_test.xml");
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBeanTest.xml");
 
         CamelContext context = (CamelContext) applicationContext.getBean("camel3");
         assertValidContext(context);
@@ -68,14 +66,15 @@ public class CamelContextFactoryBeanTest extends TestSupport {
     }
 
     public void testXMLRouteLoading() throws Exception {
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camel_context_factory_bean_test.xml");
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBeanTest.xml");
 
         CamelContext context = (CamelContext) applicationContext.getBean("camel2");
         assertNotNull("No context found!", context);
 
         List<Route> routes = context.getRoutes();
         log.debug("Found routes: " + routes);
-
+        
+        assertNotNull("Should have found some routes", routes);
         assertEquals("One Route should be found", 1, routes.size());
 
         for (Route route : routes) {

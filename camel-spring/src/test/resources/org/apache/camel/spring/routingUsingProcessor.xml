@@ -16,25 +16,21 @@
     limitations under the License.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
        http://activemq.apache.org/camel/schema/camel-1.0.xsd http://activemq.apache.org/camel/schema/camel-1.0.xsd
     ">
 
   <!-- START SNIPPET: example -->
-  <bean id="camel" class="org.apache.camel.spring.CamelContextFactoryBean">
-    <property name="routeBuilder">
-	    <routeBuilder xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
-	       <route>
-	         <from uri="direct:start"/>
-	         <process ref="#myProcessor"/>
-	       </route>
-	    </routeBuilder>
-    </property>
-  </bean>
+  <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+    <route>
+      <from uri="direct:start"/>
+      <process ref="myProcessor"/>
+    </route>
+  </camelContext>
 
   <bean id="myProcessor" class="org.apache.camel.spring.example.MyProcessor"/>
   <!-- END SNIPPET: example -->
-  
+
 </beans>

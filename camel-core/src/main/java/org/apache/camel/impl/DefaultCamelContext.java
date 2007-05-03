@@ -222,12 +222,15 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.routes = routes;
     }
 
-    public void addRoutes(Collection<Route> routes) {
+    public void addRoutes(Collection<Route> routes) throws Exception {
         if (this.routes == null) {
             this.routes = new ArrayList<Route>(routes);
         }
         else {
             this.routes.addAll(routes);
+        }
+        if (isStarted()) {
+            startRoutes(routes);
         }
     }
 
@@ -292,9 +295,21 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             	startServices(component);
             }
         }
-        
-        if (routes != null) {
-            for (Route<Exchange> route : routes) {
+        startRoutes(routes);
+    }
+
+    protected void doStop() throws Exception {
+        stopServices(servicesToClose);
+    	if (components != null) {
+            for (Component component : components.values()) {
+                stopServices(component);
+            }
+        }
+    }
+
+    protected void startRoutes(Collection<Route> routeList) throws Exception {
+        if (routeList != null) {
+            for (Route<Exchange> route : routeList) {
                 Processor processor = route.getProcessor();
                 Consumer<Exchange> consumer = route.getEndpoint().createConsumer(processor);
                 if (consumer != null) {
@@ -306,15 +321,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     service.start();
                     servicesToClose.add(service);
                 }
-            }
-        }
-    }
-
-    protected void doStop() throws Exception {
-        stopServices(servicesToClose);
-    	if (components != null) {
-            for (Component component : components.values()) {
-                stopServices(component);
             }
         }
     }

@@ -16,119 +16,112 @@
  */
 package org.apache.camel.spring.xml;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilderTest;
 import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.List;
+
 /**
- * TODO: re-implement the route building logic using spring and 
+ * TODO: re-implement the route building logic using spring and
  * then test it by overriding the buildXXX methods in the RouteBuilderTest
- * 
+ *
  * @version $Revision: 520164 $
  */
 public class XmlRouteBuilderTest extends RouteBuilderTest {
-	private ClassPathXmlApplicationContext ctx;
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		ctx = new ClassPathXmlApplicationContext("org/apache/camel/spring/builder/spring_route_builder_test.xml");
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		ctx.close();
-		super.tearDown();
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	protected RouteBuilder buildSimpleRoute() {
-		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildSimpleRoute");
-		assertNotNull(builder);
-		return builder;
-	}
-	
-	@Override
-	protected RouteBuilder buildCustomProcessor() {
-		myProcessor = (Processor) ctx.getBean("myProcessor");
-		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildCustomProcessor");
-		assertNotNull(builder);
-		return builder;
-	}
-	
-	@Override
-	protected RouteBuilder buildCustomProcessorWithFilter() {
-		myProcessor = (Processor) ctx.getBean("myProcessor");
-		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildCustomProcessorWithFilter");
-		assertNotNull(builder);
-		return builder;
-	}
-	
-	@Override
-	protected RouteBuilder buildRouteWithInterceptor() {
-		interceptor1 = (DelegateProcessor) ctx.getBean("interceptor1");
-		interceptor2 = (DelegateProcessor) ctx.getBean("interceptor2");
-		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildRouteWithInterceptor");
-		assertNotNull(builder);
-		return builder;
-	}
-	
-	@Override
-	protected RouteBuilder buildSimpleRouteWithHeaderPredicate() {
-		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildSimpleRouteWithHeaderPredicate");
-		assertNotNull(builder);
-		return builder;
-	}
-
-	@Override
-	protected RouteBuilder buildSimpleRouteWithChoice() {
-		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildSimpleRouteWithChoice");
-		assertNotNull(builder);
-		return builder;
-	}
-	
-	
-	@Override
-	protected RouteBuilder buildWireTap() {
-		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildWireTap");
-		assertNotNull(builder);
-		return builder;
-	}
-	
-	@Override
-	protected RouteBuilder buildDynamicRecipientList() {
-		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildDynamicRecipientList");
-		assertNotNull(builder);
-		return builder;
-	}
-	
-	@Override
-	protected RouteBuilder buildStaticRecipientList() {
-		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildStaticRecipientList");
-		assertNotNull(builder);
-		return builder;
-	}
-	
-	@Override
-	protected RouteBuilder buildSplitter() {
-		RouteBuilder builder = (RouteBuilder) ctx.getBean("buildSplitter");
-		assertNotNull(builder);
-		return builder;
-	}
+    private static ClassPathXmlApplicationContext applicationContext;
+    private static boolean closeContext = false;
 
     @Override
-    protected RouteBuilder buildIdempotentConsumer() {
-        RouteBuilder builder = (RouteBuilder) ctx.getBean("buildIdempotentConsumer");
-        assertNotNull(builder);
-        return builder;
+    protected void setUp() throws Exception {
+        super.setUp();
+        if (applicationContext == null) {
+            applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/builder/spring_route_builder_test.xml");
+        }
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        if (closeContext) {
+            applicationContext.close();
+            applicationContext = null;
+        }
+        super.tearDown();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected List<Route> buildSimpleRoute() {
+        return getRoutesFromContext("buildSimpleRoute");
+    }
+
+    @Override
+    protected List<Route> buildCustomProcessor() {
+        myProcessor = (Processor) applicationContext.getBean("myProcessor");
+        return getRoutesFromContext("buildCustomProcessor");
+    }
+
+    @Override
+    protected List<Route> buildCustomProcessorWithFilter() {
+        myProcessor = (Processor) applicationContext.getBean("myProcessor");
+        return getRoutesFromContext("buildCustomProcessorWithFilter");
+    }
+
+    @Override
+    protected List<Route> buildRouteWithInterceptor() {
+        interceptor1 = (DelegateProcessor) applicationContext.getBean("interceptor1");
+        interceptor2 = (DelegateProcessor) applicationContext.getBean("interceptor2");
+        return getRoutesFromContext("buildRouteWithInterceptor");
+    }
+
+    @Override
+    protected List<Route> buildSimpleRouteWithHeaderPredicate() {
+        return getRoutesFromContext("buildSimpleRouteWithHeaderPredicate");
+    }
+
+    @Override
+    protected List<Route> buildSimpleRouteWithChoice() {
+        return getRoutesFromContext("buildSimpleRouteWithChoice");
+    }
+
+    @Override
+    protected List<Route> buildWireTap() {
+        return getRoutesFromContext("buildWireTap");
+    }
+
+    @Override
+    protected List<Route> buildDynamicRecipientList() {
+        return getRoutesFromContext("buildDynamicRecipientList");
+    }
+
+    @Override
+    protected List<Route> buildStaticRecipientList() {
+        return getRoutesFromContext("buildStaticRecipientList");
+    }
+
+    @Override
+    protected List<Route> buildSplitter() {
+        return getRoutesFromContext("buildSplitter");
+    }
+
+    @Override
+    protected List<Route> buildIdempotentConsumer() {
+        return getRoutesFromContext("buildIdempotentConsumer");
     }
 
     @Override
     public void testIdempotentConsumer() throws Exception {
         // TODO
+    }
+
+    protected List<Route> getRoutesFromContext(String name) {
+        SpringCamelContext context = (SpringCamelContext) applicationContext.getBean(name);
+        assertNotNull("No Camel Context for name: " + name, context);
+        List<Route> routes = context.getRoutes();
+        assertNotNull("No routes available for context: " + name, routes);
+        return routes;
     }
 }

@@ -30,4 +30,5 @@ public @interface FluentArg {
 	String value();
 	boolean attribute() default true;
 	boolean element() default false;
+    boolean reference() default false;
 }

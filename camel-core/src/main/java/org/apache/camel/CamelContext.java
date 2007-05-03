@@ -122,7 +122,7 @@ public interface CamelContext extends Service {
      *
      * @param routes the routes to add
      */
-    void addRoutes(Collection<Route> routes);
+    void addRoutes(Collection<Route> routes) throws Exception;
 
     /**
      * Adds a collection of routes to this context using the given builder
