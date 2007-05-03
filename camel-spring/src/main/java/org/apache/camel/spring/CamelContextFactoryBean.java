@@ -37,7 +37,6 @@ import java.util.List;
  */
 public class CamelContextFactoryBean implements FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware {
     private CamelContext context;
-    private boolean singleton = true;
     private RouteBuilder routeBuilder;
     private List<RouteBuilder> additionalBuilders = new ArrayList<RouteBuilder>();
     private String[] packages = {};
@@ -52,7 +51,7 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
     }
 
     public boolean isSingleton() {
-        return singleton;
+        return true;
     }
 
     public void afterPropertiesSet() throws Exception {

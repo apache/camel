@@ -45,7 +45,7 @@ public class RouteBuilderTest extends TestSupport {
     protected DelegateProcessor interceptor1;
     protected DelegateProcessor interceptor2;
 
-    protected RouteBuilder buildSimpleRoute() {
+    protected List<Route> buildSimpleRoute() throws Exception {
         // START SNIPPET: e1
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
@@ -53,13 +53,12 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e1
-        return builder;
+        return builder.getRouteList();
     }
 
     public void testSimpleRoute() throws Exception {
-        RouteBuilder builder = buildSimpleRoute();
+        List<Route> routes = buildSimpleRoute();
 
-        List<Route> routes = builder.getRouteList();
         assertEquals("Number routes created", 1, routes.size());
         for (Route<Exchange> route : routes) {
             Endpoint<Exchange> key = route.getEndpoint();
@@ -71,7 +70,7 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
-    protected RouteBuilder buildSimpleRouteWithHeaderPredicate() {
+    protected List<Route> buildSimpleRouteWithHeaderPredicate() throws Exception {
         // START SNIPPET: e2
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
@@ -79,13 +78,12 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e2
-        return builder;
+        return builder.getRouteList();
     }
 
     public void testSimpleRouteWithHeaderPredicate() throws Exception {
-        RouteBuilder builder = buildSimpleRouteWithHeaderPredicate();
+        List<Route> routes = buildSimpleRouteWithHeaderPredicate();
 
-        List<Route> routes = builder.getRouteList();
         log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
@@ -100,7 +98,7 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
-    protected RouteBuilder buildSimpleRouteWithChoice() {
+    protected List<Route> buildSimpleRouteWithChoice() throws Exception {
         // START SNIPPET: e3
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
@@ -111,13 +109,12 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e3
-        return builder;
+        return builder.getRouteList();
     }
 
     public void testSimpleRouteWithChoice() throws Exception {
-        RouteBuilder builder = buildSimpleRouteWithChoice();
+        List<Route> routes = buildSimpleRouteWithChoice();
 
-        List<Route> routes = builder.getRouteList();
         log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
@@ -140,7 +137,7 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
-    protected RouteBuilder buildCustomProcessor() {
+    protected List<Route> buildCustomProcessor() throws Exception {
         // START SNIPPET: e4
         myProcessor = new Processor() {
             public void process(Exchange exchange) {
@@ -154,13 +151,11 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e4
-        return builder;
+        return builder.getRouteList();
     }
 
     public void testCustomProcessor() throws Exception {
-        RouteBuilder builder = buildCustomProcessor();
-
-        List<Route> routes = builder.getRouteList();
+        List<Route> routes = buildCustomProcessor();
 
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
@@ -172,7 +167,7 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
-    protected RouteBuilder buildCustomProcessorWithFilter() {
+    protected List<Route> buildCustomProcessorWithFilter() throws Exception {
         // START SNIPPET: e5
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
@@ -180,13 +175,12 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e5
-        return builder;
+        return builder.getRouteList();
     }
 
     public void testCustomProcessorWithFilter() throws Exception {
-        RouteBuilder builder = buildCustomProcessorWithFilter();
+        List<Route> routes = buildCustomProcessorWithFilter();
 
-        List<Route> routes = builder.getRouteList();
         log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
@@ -200,7 +194,7 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
-    protected RouteBuilder buildWireTap() {
+    protected List<Route> buildWireTap() throws Exception {
         // START SNIPPET: e6
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
@@ -208,13 +202,12 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e6
-        return builder;
+        return builder.getRouteList();
     }
 
     public void testWireTap() throws Exception {
-        RouteBuilder builder = buildWireTap();
+        List<Route> routes = buildWireTap();
 
-        List<Route> routes = builder.getRouteList();
         log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
@@ -232,7 +225,7 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
-    protected RouteBuilder buildRouteWithInterceptor() {
+    protected List<Route> buildRouteWithInterceptor() throws Exception {
         interceptor1 = new DelegateProcessor() {
         };
 
@@ -249,14 +242,13 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e7
-        return builder;
+        return builder.getRouteList();
     }
 
     public void testRouteWithInterceptor() throws Exception {
 
-        RouteBuilder builder = buildRouteWithInterceptor();
+        List<Route> routes = buildRouteWithInterceptor();
 
-        List<Route> routes = builder.getRouteList();
         log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
@@ -303,7 +295,7 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
-    protected RouteBuilder buildStaticRecipientList() {
+    protected List<Route> buildStaticRecipientList() throws Exception {
         // START SNIPPET: e8
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
@@ -311,10 +303,10 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e8
-        return builder;
+        return builder.getRouteList();
     }
 
-    protected RouteBuilder buildDynamicRecipientList() {
+    protected List<Route> buildDynamicRecipientList() throws Exception {
         // START SNIPPET: e9
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
@@ -322,14 +314,13 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e9
-        return builder;
+        return builder.getRouteList();
     }
 
     public void testRouteDynamicReceipentList() throws Exception {
 
-        RouteBuilder builder = buildDynamicRecipientList();
+        List<Route> routes = buildDynamicRecipientList();
 
-        List<Route> routes = builder.getRouteList();
         log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
@@ -342,7 +333,7 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
-    protected RouteBuilder buildSplitter() {
+    protected List<Route> buildSplitter() throws Exception {
         // START SNIPPET: splitter
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
@@ -350,14 +341,13 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: splitter
-        return builder;
+        return builder.getRouteList();
     }
 
     public void testSplitter() throws Exception {
 
-        RouteBuilder builder = buildSplitter();
+        List<Route> routes = buildSplitter();
 
-        List<Route> routes = builder.getRouteList();
         log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());
@@ -370,7 +360,7 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
-    protected RouteBuilder buildIdempotentConsumer() {
+    protected List<Route> buildIdempotentConsumer() throws Exception {
         // START SNIPPET: idempotent
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
@@ -380,14 +370,13 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: idempotent
-        return builder;
+        return builder.getRouteList();
     }
 
     public void testIdempotentConsumer() throws Exception {
 
-        RouteBuilder builder = buildIdempotentConsumer();
+        List<Route> routes = buildIdempotentConsumer();
 
-        List<Route> routes = builder.getRouteList();
         log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 1, routes.size());

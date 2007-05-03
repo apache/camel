@@ -16,163 +16,156 @@
     limitations under the License.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
        http://activemq.apache.org/camel/schema/camel-1.0.xsd http://activemq.apache.org/camel/schema/camel-1.0.xsd
     ">
-    
-    <!--  
-          put all combinations of possible usages in this file so that XML->XSD converters
-          (like trang) can generate a pretty good XSD.
-     -->
 
-    <routeBuilder id="buildSimpleRoute" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
-    </routeBuilder>
-    
-    <routeBuilder id="buildSimpleRoute" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
-       <route>
-         <from uri="queue:a"/>
-         <to uri="queue:b"/>
-       </route>
-       <route>
-         <from uris="queue:a"/>
-         <to uris="queue:b"/>
-       </route>
-       <route>
-         <from endpoint="queue:a"/>
-         <to endpoint="queue:b"/>
-       </route>
-       <route>
-         <from endpoints="queue:a"/>
-         <to endpoints="queue:b"/>
-       </route>
+  <!--
+       put all combinations of possible usages in this file so that XML->XSD converters
+       (like trang) can generate a pretty good XSD.
+  -->
 
-       <route>
-         <from uri="queue:a"/>
-         <process ref="myProcessor"/>
-       </route>
+  <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+    <route>
+      <from uri="queue:a"/>
+      <to uri="queue:b"/>
+    </route>
+    <route>
+      <from uri="queue:a"/>
+      <to uri="queue:b"/>
+    </route>
+    <route>
+      <from ref="a"/>
+      <to ref="b"/>
+    </route>
 
-       <route>
-         <from uri="queue:a"/>
-         <filter>
-             <predicate>
-                <header name="foo"/>
-                <isEqualTo value="bar"/>
-             </predicate>
-         </filter>
-         <filter>
-             <predicate>
-                <header name="foo"/>
-                <isEqualTo value="bar"/>
-             </predicate>
-         </filter>
-         <process ref="#myProcessor"/>
-       </route>
+    <route>
+      <from uri="queue:a"/>
+      <process ref="myProcessor"/>
+    </route>
 
-       <route>
-         <from uri="queue:a"/>
-         <intercept>
-             <interceptor ref="interceptor1"/>
-             <interceptor ref="#interceptor2"/>
-         </intercept>
-         <intercept>
-             <interceptor ref="#interceptor1"/>
-             <interceptor ref="interceptor2"/>
-         </intercept>
-         <to uri="queue:b"/>
-       </route>
+    <route>
+      <from uri="queue:a"/>
+      <filter>
+        <predicate>
+          <header name="foo"/>
+          <isEqualTo value="bar"/>
+        </predicate>
+      </filter>
+      <filter>
+        <predicate>
+          <header name="foo"/>
+          <isEqualTo value="bar"/>
+        </predicate>
+      </filter>
+      <process ref="#myProcessor"/>
+    </route>
 
-       <route>
-         <from uri="queue:a"/>
-         <choice>
-             <when>
-                 <predicate>
-                    <header name="foo"/>
-                    <isEqualTo value="bar"/>
-                 </predicate>
-                 <to uri="queue:b"/>
-             </when>
-             <when>
-                 <predicate>
-                    <header name="foo"/>
-                    <isNotEqualTo value="cheese"/>
-                 </predicate>
-                 <to endpoint="queue:c"/>
-             </when>
-             <otherwise>
-                 <to uri="queue:d"/>
-             </otherwise>
-         </choice>
-       </route>
+    <route>
+      <from uri="queue:a"/>
+      <intercept>
+        <interceptor ref="interceptor1"/>
+        <interceptor ref="#interceptor2"/>
+      </intercept>
+      <intercept>
+        <interceptor ref="#interceptor1"/>
+        <interceptor ref="interceptor2"/>
+      </intercept>
+      <to uri="queue:b"/>
+    </route>
 
-       <route>
-         <from uri="queue:a"/>
-         <filter>
-             <predicate>
-                <header name="foo"/>
-                <isEqualTo value="bar"/>
-             </predicate>
-         </filter>
-         <to uri="queue:b"/>
-       </route>
+    <route>
+      <from uri="queue:a"/>
+      <choice>
+        <when>
+          <predicate>
+            <header name="foo"/>
+            <isEqualTo value="bar"/>
+          </predicate>
+          <to uri="queue:b"/>
+        </when>
+        <when>
+          <predicate>
+            <header name="foo"/>
+            <isNotEqualTo value="cheese"/>
+          </predicate>
+          <to uri="queue:c"/>
+        </when>
+        <otherwise>
+          <to uri="queue:d"/>
+        </otherwise>
+      </choice>
+    </route>
 
-       <route>
-         <from uri="queue:a"/>
-         <to>
-            <uri>queue:tap</uri>
-            <uri>queue:a</uri>
-         </to>
-       </route>
-       
-       <route>
-         <from uri="queue:a"/>
-         <recipientList>
-         	<recipients>
-              <header name=""/>
-            </recipients>
-         </recipientList>
-       </route>
-       
-       <route>
-         <from uri="queue:a"/>
-         <recipientList>
-         	<recipients>
-              <header name=""/>
-              <tokenize token=","/>
-            </recipients>
-         </recipientList>
-       </route>
-       
-       <route>
-         <from uri="queue:a"/>
-         <filter>
-             <predicate>
-                <body/>
-                <isNotEqualTo value="none"/>
-             </predicate>
-         </filter>
-         <recipientList>
-         	<recipients>
-              <body/>
-            </recipients>
-         </recipientList>
-       </route>
-       
-       
-       <route>
-         <from uri="queue:a"/>
-         <splitter>
-         	<recipients>
-	            <bodyAs class="java.lang.String"/>
-	            <tokenize token="
+    <route>
+      <from uri="queue:a"/>
+      <filter>
+        <predicate>
+          <header name="foo"/>
+          <isEqualTo value="bar"/>
+        </predicate>
+      </filter>
+      <to uri="queue:b"/>
+    </route>
+
+    <route>
+      <from uri="queue:a"/>
+      <to>
+        <uri>queue:tap</uri>
+        <uri>queue:a</uri>
+      </to>
+    </route>
+
+    <route>
+      <from uri="queue:a"/>
+      <recipientList>
+        <recipients>
+          <header name=""/>
+        </recipients>
+      </recipientList>
+    </route>
+
+    <route>
+      <from uri="queue:a"/>
+      <recipientList>
+        <recipients>
+          <header name=""/>
+          <tokenize token=","/>
+        </recipients>
+      </recipientList>
+    </route>
+
+    <route>
+      <from uri="queue:a"/>
+      <filter>
+        <predicate>
+          <body/>
+          <isNotEqualTo value="none"/>
+        </predicate>
+      </filter>
+      <recipientList>
+        <recipients>
+          <body/>
+        </recipients>
+      </recipientList>
+    </route>
+
+
+    <route>
+      <from uri="queue:a"/>
+      <splitter>
+        <recipients>
+          <bodyAs class="java.lang.String"/>
+          <tokenize token="
 "/>
-         	</recipients>
-         </splitter>
-         <to uri="queue:b"/>
-       </route>
-       
-    </routeBuilder>
+        </recipients>
+      </splitter>
+      <to uri="queue:b"/>
+    </route>
+
+  </camelContext>
 
 </beans>
-<!-- END SNIPPET: example -->
+        <!-- END SNIPPET: example -->

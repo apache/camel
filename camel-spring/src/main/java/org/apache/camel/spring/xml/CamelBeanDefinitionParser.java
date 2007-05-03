@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
 
 import org.apache.camel.Expression;
 import org.apache.camel.builder.Fluent;
@@ -51,7 +52,7 @@ import org.w3c.dom.NodeList;
 public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
-		BeanDefinitionBuilder factory = BeanDefinitionBuilder.rootBeanDefinition(RouteBuilderFactory.class);
+		BeanDefinitionBuilder factory = BeanDefinitionBuilder.rootBeanDefinition(RouteBuilderFactoryBean.class);
 
 		List childElements = DomUtils.getChildElementsByTagName(element, "route");
 		ArrayList<BuilderStatement> routes = new ArrayList<BuilderStatement>(childElements.size());
@@ -159,7 +160,20 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		if (match == null)
 			throw new IllegalActionException(actionName, previousElement == null ? null : previousElement.getLocalName());
 
-		// Move element arguments into the attributeArguments map if needed. 
+        // lets convert any references
+        Set<Map.Entry<String, Object>> attributeEntries = attributeArguments.entrySet();
+        for (Map.Entry<String, Object> entry : attributeEntries) {
+            String name = entry.getKey();
+            FluentArg arg = match.parameterAnnotations.get(name);
+            if (arg != null && (arg.reference() || name.equals("ref"))) {
+                Object value = entry.getValue();
+                if (value instanceof String) {
+                    entry.setValue(new RuntimeBeanReference(value.toString()));
+                }
+            }
+        }
+
+        // Move element arguments into the attributeArguments map if needed.
 		Set<String> parameterNames = new HashSet<String>(match.parameters.keySet());
 		parameterNames.removeAll(attributeArguments.keySet());
 		for (String key : parameterNames) {

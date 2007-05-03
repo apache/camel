@@ -10,13 +10,20 @@
 
   <xs:import namespace="http://www.springframework.org/schema/beans"/>
 
+
+  <xs:annotation>
+    <xs:documentation>
+      The Apache Camel Configuration Schema
+    </xs:documentation>
+  </xs:annotation>
+  
   <xs:element name="camelContext">
     <xs:complexType>
       <xs:complexContent>
         <xs:extension base="s:identifiedType">
             <xs:choice minOccurs="0" maxOccurs="unbounded">
               <xs:element minOccurs="0" maxOccurs="1" ref="c:endpoint"/>
-              <xs:element minOccurs="0" maxOccurs="1" ref="c:routes"/>
+              <xs:element minOccurs="0" maxOccurs="1" ref="c:route"/>
             </xs:choice>
           <xs:attribute name="packages" type="xs:NMTOKEN"/>
         </xs:extension>
@@ -34,6 +41,7 @@
     </xs:complexType>
   </xs:element>
 
+  <!--
   <xs:element name="routes">
     <xs:complexType>
       <xs:sequence>
@@ -41,6 +49,7 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+-->
 
   <xs:element name="routeBuilder">
     <xs:complexType>
@@ -74,10 +83,8 @@
   </xs:element>
   <xs:element name="from">
     <xs:complexType>
-      <xs:attribute name="endpoint" type="xs:NMTOKEN"/>
-      <xs:attribute name="endpoints" type="xs:NMTOKEN"/>
       <xs:attribute name="uri" type="xs:anyURI"/>
-      <xs:attribute name="uris" type="xs:anyURI"/>
+      <xs:attribute name="ref" type="xs:string"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="filter" type="c:predicate"/>
@@ -167,10 +174,8 @@
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="c:uri"/>
       </xs:sequence>
-      <xs:attribute name="endpoint" type="xs:NMTOKEN"/>
-      <xs:attribute name="endpoints" type="xs:NMTOKEN"/>
+      <xs:attribute name="ref" type="xs:string"/>
       <xs:attribute name="uri" type="xs:anyURI"/>
-      <xs:attribute name="uris" type="xs:anyURI"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="uri" type="xs:anyURI"/>

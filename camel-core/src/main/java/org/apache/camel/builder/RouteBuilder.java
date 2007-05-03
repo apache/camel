@@ -57,7 +57,7 @@ public abstract class RouteBuilder extends BuilderSupport {
     }
 
     @Fluent
-    public FromBuilder from( @FluentArg("endpoint") Endpoint endpoint) {
+    public FromBuilder from( @FluentArg("ref") Endpoint endpoint) {
         FromBuilder answer = new FromBuilder(this, endpoint);
         fromBuilders.add(answer);
         return answer;
