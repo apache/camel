@@ -43,7 +43,7 @@ public class FilterProcessor extends ServiceSupport implements Processor {
 
     @Override
     public String toString() {
-        return "if (" + predicate + ") " + processor;
+        return "filter (" + predicate + ") " + processor;
     }
 
     public Predicate<Exchange> getPredicate() {

@@ -18,6 +18,7 @@
 package org.apache.camel;
 
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.CamelClient;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -39,6 +40,8 @@ public abstract class ContextTestSupport extends TestSupport {
         context.addRoutes(createRouteBuilder());
 
         context.start();
+
+        log.debug("Routing Rules are: " + context.getRoutes());
     }
 
     @Override
@@ -77,5 +80,17 @@ public abstract class ContextTestSupport extends TestSupport {
                 in.setHeader("testCase", getName());
             }
         });
+    }
+
+    /**
+     * Creates an exchange with the given body
+     */
+    protected Exchange createExchangeWithBody(Object body) {
+        Exchange exchange = new DefaultExchange(context);
+        Message message = exchange.getIn();
+        message.setHeader("testName", getName());
+        message.setHeader("testClass", getClass().getName());
+        message.setBody(body);
+        return exchange;
     }
 }

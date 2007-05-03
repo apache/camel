@@ -1,4 +1,5 @@
-/*
+/**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -6,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,100 +17,85 @@
  */
 package org.apache.camel.spring.xml;
 
-import org.apache.camel.Processor;
-import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilderTest;
-import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.Route;
+import org.apache.camel.Processor;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.processor.DelegateProcessor;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 
 import java.util.List;
 
 /**
- * TODO: re-implement the route building logic using spring and
- * then test it by overriding the buildXXX methods in the RouteBuilderTest
+ * A test case of the builder using Spring 2.0 to load the rules
  *
  * @version $Revision: 520164 $
  */
-public class XmlRouteBuilderTest extends RouteBuilderTest {
-    private static ClassPathXmlApplicationContext applicationContext;
-    private static boolean closeContext = false;
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        if (applicationContext == null) {
-            applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/builder/spring_route_builder_test.xml");
-        }
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        if (closeContext) {
-            applicationContext.close();
-            applicationContext = null;
-        }
-        super.tearDown();
-    }
+public class SpringXmlRouteBuilderTest extends RouteBuilderTest {
+    protected AbstractXmlApplicationContext applicationContext;
 
     @Override
     @SuppressWarnings("unchecked")
     protected List<Route> buildSimpleRoute() {
-        return getRoutesFromContext("buildSimpleRoute");
+        return getRoutesFromContext("org/apache/camel/spring/xml/buildSimpleRoute.xml");
     }
 
     @Override
     protected List<Route> buildCustomProcessor() {
+        List<Route> answer = getRoutesFromContext("org/apache/camel/spring/xml/buildCustomProcessor.xml");
         myProcessor = (Processor) applicationContext.getBean("myProcessor");
-        return getRoutesFromContext("buildCustomProcessor");
+        return answer;
     }
 
     @Override
     protected List<Route> buildCustomProcessorWithFilter() {
+        List<Route> answer = getRoutesFromContext("org/apache/camel/spring/xml/buildCustomProcessorWithFilter.xml");
         myProcessor = (Processor) applicationContext.getBean("myProcessor");
-        return getRoutesFromContext("buildCustomProcessorWithFilter");
+        return answer;
     }
 
     @Override
     protected List<Route> buildRouteWithInterceptor() {
+        List<Route> answer = getRoutesFromContext("org/apache/camel/spring/xml/buildRouteWithInterceptor.xml");
         interceptor1 = (DelegateProcessor) applicationContext.getBean("interceptor1");
         interceptor2 = (DelegateProcessor) applicationContext.getBean("interceptor2");
-        return getRoutesFromContext("buildRouteWithInterceptor");
+        return answer;
     }
 
     @Override
     protected List<Route> buildSimpleRouteWithHeaderPredicate() {
-        return getRoutesFromContext("buildSimpleRouteWithHeaderPredicate");
+        return getRoutesFromContext("org/apache/camel/spring/xml/buildSimpleRouteWithHeaderPredicate.xml");
     }
 
     @Override
     protected List<Route> buildSimpleRouteWithChoice() {
-        return getRoutesFromContext("buildSimpleRouteWithChoice");
+        return getRoutesFromContext("org/apache/camel/spring/xml/buildSimpleRouteWithChoice.xml");
     }
 
     @Override
     protected List<Route> buildWireTap() {
-        return getRoutesFromContext("buildWireTap");
+        return getRoutesFromContext("org/apache/camel/spring/xml/buildWireTap.xml");
     }
 
     @Override
     protected List<Route> buildDynamicRecipientList() {
-        return getRoutesFromContext("buildDynamicRecipientList");
+        return getRoutesFromContext("org/apache/camel/spring/xml/buildDynamicRecipientList.xml");
     }
 
     @Override
     protected List<Route> buildStaticRecipientList() {
-        return getRoutesFromContext("buildStaticRecipientList");
+        return getRoutesFromContext("org/apache/camel/spring/xml/buildStaticRecipientList.xml");
     }
 
     @Override
     protected List<Route> buildSplitter() {
-        return getRoutesFromContext("buildSplitter");
+        return getRoutesFromContext("org/apache/camel/spring/xml/buildSplitter.xml");
     }
 
     @Override
     protected List<Route> buildIdempotentConsumer() {
-        return getRoutesFromContext("buildIdempotentConsumer");
+        return getRoutesFromContext("org/apache/camel/spring/xml/buildIdempotentConsumer.xml");
     }
 
     @Override
@@ -117,11 +103,18 @@ public class XmlRouteBuilderTest extends RouteBuilderTest {
         // TODO
     }
 
-    protected List<Route> getRoutesFromContext(String name) {
+    @Override
+    public void testWireTap() throws Exception {
+        // TODO
+    }
+
+    protected List<Route> getRoutesFromContext(String classpathConfigFile) {
+        applicationContext = new ClassPathXmlApplicationContext(classpathConfigFile);
+        String name = "camel";
         SpringCamelContext context = (SpringCamelContext) applicationContext.getBean(name);
-        assertNotNull("No Camel Context for name: " + name, context);
+        assertNotNull("No Camel Context for name: " + name + " in file: " + classpathConfigFile, context);
         List<Route> routes = context.getRoutes();
-        assertNotNull("No routes available for context: " + name, routes);
+        assertNotNull("No routes available for context: " + name + " in file: " + classpathConfigFile, routes);
         return routes;
     }
 }

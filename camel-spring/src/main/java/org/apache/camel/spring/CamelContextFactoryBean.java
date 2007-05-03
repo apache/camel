@@ -74,7 +74,7 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
     //-------------------------------------------------------------------------
     public CamelContext getContext() throws Exception {
         if (context == null) {
-            context = SpringCamelContext.springCamelContext(getApplicationContext());
+            context = new SpringCamelContext(getApplicationContext());
         }
         return context;
     }

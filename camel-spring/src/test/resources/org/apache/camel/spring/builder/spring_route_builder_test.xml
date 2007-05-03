@@ -22,7 +22,14 @@
        http://activemq.apache.org/camel/schema/camel-1.0.xsd http://activemq.apache.org/camel/schema/camel-1.0.xsd
     ">
 
-    <!-- 
+
+    <!--
+      TODO: DELETE ME once we are sure there are no more snippet macros on the wiki pointing to this file!
+      TODO: This file has been replaced by the individual files in org/apache/camel/spring/xml/*.xml
+    -->
+
+
+    <!--
         from("queue:a").to("queue:b");
      -->
     <!-- START SNIPPET: e1 -->

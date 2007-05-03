@@ -16,10 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -36,13 +32,15 @@ import org.apache.camel.spi.Policy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * @version $Revision$
  */
 public class FromBuilder extends BuilderSupport implements ProcessorFactory {
-	
-	public static final String DEFAULT_TRACE_CATEGORY = "org.apache.camel.TRACE";
-
+    public static final String DEFAULT_TRACE_CATEGORY = "org.apache.camel.TRACE";
     private RouteBuilder builder;
     private Endpoint from;
     private List<Processor> processors = new ArrayList<Processor>();
@@ -82,9 +80,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * Sends the exchange to a list of endpoints using the {@link MulticastProcessor} pattern
      */
     @Fluent
-    public ProcessorFactory to(
-            @FluentArg(value = "uri", attribute = false, element = true)
-            String... uris) {
+    public ProcessorFactory to(String... uris) {
         return to(endpoints(uris));
     }
 
@@ -102,7 +98,8 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * Sends the exchange to a list of endpoint using the {@link MulticastProcessor} pattern
      */
     @Fluent
-    public ProcessorFactory to(@FluentArg("endpoints")Collection<Endpoint> endpoints) {
+    public ProcessorFactory to(@FluentArg(value = "endpoint", attribute = false, element = true)
+    Collection<Endpoint> endpoints) {
         return addProcessBuilder(new MulticastBuilder(this, endpoints));
     }
 
@@ -206,7 +203,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * @return the builder
      */
     @Fluent
-    public SplitterBuilder splitter(@FluentArg(value = "recipients", element = true) Expression receipients) {
+    public SplitterBuilder splitter(@FluentArg(value = "recipients", element = true)Expression receipients) {
         SplitterBuilder answer = new SplitterBuilder(this, receipients);
         addProcessBuilder(answer);
         return answer;
@@ -242,36 +239,36 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
         addProcessBuilder(answer);
         return answer;
     }
-    
+
     /**
      * Trace logs the exchange before it goes to the next processing step using the {@link #DEFAULT_TRACE_CATEGORY} logging
      * category.
-     * 
+     *
      * @return
      */
     @Fluent
-	public FromBuilder trace() {
-		return trace(DEFAULT_TRACE_CATEGORY);
-	}
-	
+    public FromBuilder trace() {
+        return trace(DEFAULT_TRACE_CATEGORY);
+    }
+
     /**
      * Trace logs the exchange before it goes to the next processing step using the specified logging
      * category.
-     * 
+     *
      * @param category the logging category trace messages will sent to.
      * @return
      */
     @Fluent
-	public FromBuilder trace(@FluentArg("category")String category) {
-		final Log log = LogFactory.getLog(category);
-		return intercept(new DelegateProcessor(){
-			@Override
-			public void process(Exchange exchange) throws Exception {
-				log.trace(exchange);
-				processNext(exchange);
-			}
-		});
-	}    
+    public FromBuilder trace(@FluentArg("category")String category) {
+        final Log log = LogFactory.getLog(category);
+        return intercept(new DelegateProcessor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                log.trace(exchange);
+                processNext(exchange);
+            }
+        });
+    }
 
     @Fluent
     public FromBuilder intercept(@FluentArg("interceptor")DelegateProcessor interceptor) {
@@ -283,7 +280,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
 
     @Fluent(nestedActions = true)
     public PolicyBuilder policies() {
-    	PolicyBuilder answer = new PolicyBuilder(this);
+        PolicyBuilder answer = new PolicyBuilder(this);
         addProcessBuilder(answer);
         return answer;
     }
@@ -344,7 +341,6 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
         return this;
     }
 
-
     /**
      * Adds a processor which sets the exchange property
      */
@@ -353,7 +349,6 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
         addProcessorBuilder(ProcessorBuilder.setProperty(name, expression));
         return this;
     }
-
 
     /**
      * Converts the IN message body to the specified type
@@ -451,5 +446,4 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
     public List<Processor> getProcessors() {
         return processors;
     }
-
 }
