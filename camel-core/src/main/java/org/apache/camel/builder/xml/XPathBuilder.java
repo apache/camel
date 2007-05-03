@@ -24,6 +24,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.Message;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import javax.xml.namespace.QName;
@@ -237,6 +238,10 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
             expression = createXPathExpression();
         }
         return expression;
+    }
+
+    public void setNamespacesFromDom(Element node) {
+        getNamespaceContext().setNamespacesFromDom(node);        
     }
 
     // Implementation methods

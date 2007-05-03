@@ -15,31 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.xml;
+package org.apache.camel.impl;
 
-import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
-import org.w3c.dom.Element;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
- * A base class for a parser for a bean.
+ * A helper class, usually used for testing which does not create any routes.
  *
  * @version $Revision: 1.1 $
  */
-public class BeanDefinitionParserSupport extends AbstractSimpleBeanDefinitionParser {
-    private Class type;
+public class NoRouteBuilder extends RouteBuilder {
+    private static final NoRouteBuilder instance = new NoRouteBuilder();
 
-    public BeanDefinitionParserSupport(Class type) {
-        this.type = type;
+    public static NoRouteBuilder getInstance() {
+        return instance;
     }
 
-    protected Class getBeanClass(Element element) {
-        return type;
+    public void configure() throws Exception {
     }
-
-    @Override
-    protected boolean isEligibleAttribute(String attributeName) {
-        return attributeName != null && super.isEligibleAttribute(attributeName) && !attributeName.equals("xmlns");
-    }
-
-    
 }

@@ -140,11 +140,14 @@
     </xs:complexType>
   </xs:element>
 
+  <!-- Predicate expressions -->
   <xs:complexType name="predicate">
-    <xs:sequence>
+    <xs:choice minOccurs="1" maxOccurs="1">
       <xs:element ref="c:predicate"/>
-    </xs:sequence>
+      <xs:element ref="c:xpath"/>
+    </xs:choice>
   </xs:complexType>
+
   <xs:element name="predicate">
     <xs:complexType>
       <xs:sequence>
@@ -159,6 +162,12 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+
+  <!-- Expressions -->
+  <xs:element name="xpath">
+  </xs:element>
+
+
   <xs:element name="isEqualTo">
     <xs:complexType>
       <xs:attribute name="value" use="required" type="xs:string"/>
@@ -172,13 +181,12 @@
   <xs:element name="to">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="c:uri"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="c:endpoint"/>
       </xs:sequence>
       <xs:attribute name="ref" type="xs:string"/>
       <xs:attribute name="uri" type="xs:anyURI"/>
     </xs:complexType>
   </xs:element>
-  <xs:element name="uri" type="xs:anyURI"/>
   <xs:complexType name="recipients">
     <xs:sequence>
       <xs:element ref="c:recipients"/>

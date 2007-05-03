@@ -17,6 +17,11 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.Attr;
+
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPathFactory;
 import java.util.HashMap;
@@ -94,5 +99,23 @@ public class DefaultNamespaceContext implements NamespaceContext {
             }
         }
         return set.iterator();
+    }
+
+    public void setNamespacesFromDom(Element element) {
+        // lets set the parent first in case we overload a prefix here
+        Node parentNode = element.getParentNode();
+        if (parentNode instanceof Element) {
+            setNamespacesFromDom((Element) parentNode);
+        }
+        NamedNodeMap attributes = element.getAttributes();
+        for (int i = 0, size = attributes.getLength(); i < size; i++) {
+            Attr node = (Attr) attributes.item(i);
+            String name = node.getName();
+            if (name.startsWith("xmlns:")) {
+                String prefix = name.substring("xmlns:".length());
+                String uri = node.getValue();
+                add(prefix, uri);
+            }
+        }
     }
 }

@@ -37,8 +37,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
 import org.springframework.beans.SimpleTypeConverter;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ChildBeanDefinition;
 import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.StringUtils;
@@ -50,8 +52,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
+    private final CamelNamespaceHandler namespaceHandler;
+    private int counter;
 
-	protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
+    public CamelBeanDefinitionParser(CamelNamespaceHandler namespaceHandler) {
+        this.namespaceHandler = namespaceHandler;
+    }
+
+    protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
 		BeanDefinitionBuilder factory = BeanDefinitionBuilder.rootBeanDefinition(RouteBuilderFactoryBean.class);
 
 		List childElements = DomUtils.getChildElementsByTagName(element, "route");
@@ -62,7 +70,7 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 				Element routeElement = (Element) childElements.get(i);
 
 				ArrayList<BuilderAction> actions = new ArrayList<BuilderAction>();
-				Class type = parseBuilderElement(routeElement, RouteBuilder.class, actions);
+				Class type = parseBuilderElement(parserContext, routeElement, RouteBuilder.class, actions);
 				BuilderStatement statement = new BuilderStatement();
 				statement.setReturnType(type);
 				statement.setActions(actions);
@@ -77,19 +85,19 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 	/**
 	 * Use reflection to figure out what is the valid next element.
 	 */
-	private Class parseBuilderElement(Element element, Class<RouteBuilder> builder, ArrayList<BuilderAction> actions) {
+	private Class parseBuilderElement(ParserContext parserContext, Element element, Class<RouteBuilder> builder, ArrayList<BuilderAction> actions) {
 		Class currentBuilder = builder;
 		NodeList childElements = element.getChildNodes();
 		Element previousElement = null;
 		for (int i = 0; i < childElements.getLength(); ++i) {
 			Node node = childElements.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				currentBuilder = parseAction(currentBuilder, actions, (Element) node, previousElement);
+				currentBuilder = parseAction(parserContext, currentBuilder, actions, (Element) node, previousElement);
 				previousElement = (Element) node;
 				BuilderAction action = actions.get(actions.size()-1);
 				
 				if( action.getMethodInfo().methodAnnotation.nestedActions() ) {
-					currentBuilder = parseBuilderElement((Element) node, currentBuilder, actions);
+					currentBuilder = parseBuilderElement(parserContext, (Element) node, currentBuilder, actions);
 				} else {
 					// Make sure the there are no child elements.
 					if( hasChildElements(node) ) {
@@ -131,7 +139,7 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		return false;
 	}
 
-	private Class parseAction(Class currentBuilder, ArrayList<BuilderAction> actions, Element element, Element previousElement) {
+	private Class parseAction(ParserContext parserContext, Class currentBuilder, ArrayList<BuilderAction> actions, Element element, Element previousElement) {
 
 		String actionName = element.getLocalName();
 
@@ -178,8 +186,11 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		parameterNames.removeAll(attributeArguments.keySet());
 		for (String key : parameterNames) {
 			ArrayList<Element> elements = elementArguments.get(key);
-			Class clazz = match.parameters.get(key);
-			Object value = convertTo(elements, clazz);
+            if (elements == null) {
+                elements = getFirstChildElements(element);
+            }
+            Class clazz = match.parameters.get(key);
+			Object value = convertTo(parserContext, elements, clazz);
 			attributeArguments.put(key, value);
 			for (Element el : elements) {
 				// remove the argument nodes so that they don't get interpreted as
@@ -192,17 +203,42 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		return match.method.getReturnType();
 	}
 
-	private Object convertTo(ArrayList<Element> elements, Class clazz) {
+    private ArrayList<Element> getFirstChildElements(Element element) {
+        ArrayList<Element> answer = new ArrayList<Element>();
+        NodeList list = element.getChildNodes();
+        for (int i = 0, size = list.getLength(); i < size; i++) {
+            Node node = list.item(i);
+            if (node instanceof Element) {
+                answer.add((Element) node);
+                break;
+            }
+        }
+        return answer;
+    }
+
+    private Object convertTo(ParserContext parserContext, ArrayList<Element> elements, Class clazz) {
 
 		if( clazz.isArray() || elements.size() > 1 ) {
-			Object array = Array.newInstance(clazz.getComponentType(), elements.size());
+            List list = new ArrayList();
 			for( int i=0; i < elements.size(); i ++ ) {
 				ArrayList<Element> e = new ArrayList<Element>(1);
 				e.add(elements.get(i));
-				Object value = convertTo(e, clazz.getComponentType());
-				Array.set(array, i, value);
+				Object value = convertTo(parserContext, e, clazz.getComponentType());
+
+                list.add(value);
+			}
+			return list;
+            /*
+            Object array = Array.newInstance(clazz.getComponentType(), elements.size());
+			for( int i=0; i < elements.size(); i ++ ) {
+				ArrayList<Element> e = new ArrayList<Element>(1);
+				e.add(elements.get(i));
+				Object value = convertTo(parserContext, e, clazz.getComponentType());
+
+                Array.set(array, i, value);
 			}
 			return array;
+			*/
 		} else {
 			
 			Element element = elements.get(0);
@@ -215,7 +251,7 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 			if( hasChildElements(element) ) {
 				
 				ArrayList<BuilderAction> actions = new ArrayList<BuilderAction>();
-				Class type = parseBuilderElement(element, RouteBuilder.class, actions);
+				Class type = parseBuilderElement(parserContext, element, RouteBuilder.class, actions);
 
 				if ( type == ValueBuilder.class && clazz==Expression.class ) {					
 					Method method;
@@ -239,14 +275,27 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 				
 				return statement;
 			} else {
-				// Just use the text in the element as the value.
+                // if we are on an element which has a custom parser, lets use that.
+                String name = element.getLocalName();
+                if (namespaceHandler.getParserElementNames().contains(name)) {
+                    String id = createBeanId(name);
+                    element.setAttribute("id", id);
+                    namespaceHandler.parse(element, parserContext);
+                    return new RuntimeBeanReference(id);
+                }
+
+                // Just use the text in the element as the value.
 				SimpleTypeConverter converter = new SimpleTypeConverter();
 				return converter.convertIfNecessary(element.getTextContent(), clazz);
 			}
 		}
 	}
 
-	private MethodInfo findMethodMatch(ArrayList<MethodInfo> methods, Set<String> attributeNames, Set<String> elementNames) {
+    protected synchronized String createBeanId(String name) {
+        return "_internal:camel:bean:" + name + (++counter);
+    }
+
+    private MethodInfo findMethodMatch(ArrayList<MethodInfo> methods, Set<String> attributeNames, Set<String> elementNames) {
 		for (MethodInfo method : methods) {
 
 			// make sure all the given attribute parameters can be assigned via
@@ -271,7 +320,8 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 			}
 
 			// We may still be able to match using elements as parameters.
-			for (String key : elementNames) {
+            /*
+            for (String key : elementNames) {
 				if (parameterNames.isEmpty()) {
 					break;
 				}
@@ -290,8 +340,9 @@ public class CamelBeanDefinitionParser extends AbstractBeanDefinitionParser {
 			if (parameterNames.isEmpty()) {
 				return method;
 			}
-
-		}
+			*/
+            return method;
+        }
 		return null;
 	}
 

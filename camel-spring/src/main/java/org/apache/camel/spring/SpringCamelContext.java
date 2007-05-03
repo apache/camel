@@ -42,7 +42,19 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
 public class SpringCamelContext extends DefaultCamelContext implements InitializingBean, DisposableBean, ApplicationContextAware {
     private ApplicationContext applicationContext;
 
+    public SpringCamelContext() {
+    }
+
+    public SpringCamelContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
     public static SpringCamelContext springCamelContext(ApplicationContext applicationContext) throws Exception {
+        // lets try and look up a configured camel context in the context
+        String[] names = applicationContext.getBeanNamesForType(SpringCamelContext.class);
+        if (names.length == 1) {
+            return (SpringCamelContext) applicationContext.getBean(names[0], SpringCamelContext.class);
+        }
         SpringCamelContext answer = new SpringCamelContext();
         answer.setApplicationContext(applicationContext);
         return answer;
