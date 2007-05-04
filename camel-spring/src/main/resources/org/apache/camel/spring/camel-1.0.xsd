@@ -16,15 +16,15 @@
       The Apache Camel Configuration Schema
     </xs:documentation>
   </xs:annotation>
-  
+
   <xs:element name="camelContext">
     <xs:complexType>
       <xs:complexContent>
         <xs:extension base="s:identifiedType">
-            <xs:choice minOccurs="0" maxOccurs="unbounded">
-              <xs:element minOccurs="0" maxOccurs="1" ref="c:endpoint"/>
-              <xs:element minOccurs="0" maxOccurs="1" ref="c:route"/>
-            </xs:choice>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element minOccurs="0" maxOccurs="1" ref="c:endpoint"/>
+            <xs:element minOccurs="0" maxOccurs="1" ref="c:route"/>
+          </xs:choice>
           <xs:attribute name="packages" type="xs:NMTOKEN"/>
         </xs:extension>
       </xs:complexContent>
@@ -145,6 +145,11 @@
     <xs:choice minOccurs="1" maxOccurs="1">
       <xs:element ref="c:predicate"/>
       <xs:element ref="c:xpath"/>
+      <xs:element ref="c:script"/>
+      <xs:element ref="c:javaScript"/>
+      <xs:element ref="c:groovy"/>
+      <xs:element ref="c:php"/>
+      <xs:element ref="c:ruby"/>
     </xs:choice>
   </xs:complexType>
 
@@ -167,6 +172,28 @@
   <xs:element name="xpath">
   </xs:element>
 
+  <xs:complexType name="scriptType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="resource" type="xs:string"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:element name="javaScript" type="c:scriptType"/>
+  <xs:element name="groovy" type="c:scriptType"/>
+  <xs:element name="php" type="c:scriptType"/>
+  <xs:element name="ruby" type="c:scriptType"/>
+
+  <xs:element name="script">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="c:scriptType">
+          <xs:attribute name="language" type="xs:string"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
 
   <xs:element name="isEqualTo">
     <xs:complexType>

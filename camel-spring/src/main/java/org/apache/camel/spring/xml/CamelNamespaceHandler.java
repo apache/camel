@@ -10,7 +10,6 @@ import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -21,15 +20,15 @@ import java.util.HashSet;
 
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected CamelBeanDefinitionParser routesParser = new CamelBeanDefinitionParser(this);
-    protected BeanDefinitionParserSupport endpointParser = new BeanDefinitionParserSupport(EndpointFactoryBean.class);
-    private Set<String> parserElementNames = new HashSet<String>();
+    protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(EndpointFactoryBean.class);
+    protected Set<String> parserElementNames = new HashSet<String>();
 
     public void init() {
         registerParser("routes", routesParser);
         registerParser("routeBuilder", routesParser);
         registerParser("endpoint", endpointParser);
 
-        registerParser("camelContext", new BeanDefinitionParserSupport(CamelContextFactoryBean.class) {
+        registerParser("camelContext", new BeanDefinitionParser(CamelContextFactoryBean.class) {
             @Override
             protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
                 super.doParse(element, parserContext, builder);
@@ -67,7 +66,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             }
         });
 
-        registerParser("xpath", new BeanDefinitionParserSupport(XPathBuilder.class) {
+        registerParser("xpath", new BeanDefinitionParser(XPathBuilder.class) {
             @Override
             protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
                 // lets create a child context
@@ -77,9 +76,21 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("namespacesFromDom", element);
             }
         });
+
+
+        // scripting expressions
+        registerScriptParser("script", null);
+        registerScriptParser("groovy", "groovy");
+        registerScriptParser("ruby", "jruby");
+        registerScriptParser("javaScript", "js");
+        registerScriptParser("php", "php");
     }
 
-    protected void registerParser(String name, BeanDefinitionParser parser) {
+    protected void registerScriptParser(String elementName, String engineName) {
+        registerParser(elementName, new ScriptDefinitionParser(engineName));
+    }
+
+    protected void registerParser(String name, org.springframework.beans.factory.xml.BeanDefinitionParser parser) {
         parserElementNames.add(name);
         registerBeanDefinitionParser(name, parser);
     }
