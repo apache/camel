@@ -149,6 +149,7 @@
       <xs:element ref="c:javaScript"/>
       <xs:element ref="c:groovy"/>
       <xs:element ref="c:php"/>
+      <xs:element ref="c:python"/>
       <xs:element ref="c:ruby"/>
     </xs:choice>
   </xs:complexType>
@@ -182,6 +183,7 @@
 
   <xs:element name="javaScript" type="c:scriptType"/>
   <xs:element name="groovy" type="c:scriptType"/>
+  <xs:element name="python" type="c:scriptType"/>
   <xs:element name="php" type="c:scriptType"/>
   <xs:element name="ruby" type="c:scriptType"/>
 

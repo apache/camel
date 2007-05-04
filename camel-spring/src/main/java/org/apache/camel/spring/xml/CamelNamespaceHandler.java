@@ -83,6 +83,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         registerScriptParser("groovy", "groovy");
         registerScriptParser("ruby", "jruby");
         registerScriptParser("javaScript", "js");
+        registerScriptParser("python", "python");
         registerScriptParser("php", "php");
     }
 
