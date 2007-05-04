@@ -489,8 +489,9 @@
         </plugin>
 
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-one-plugin</artifactId>
-          <version>1.0</version>
+          <extensions>true</extensions>
           <executions>
             <execution>
               <goals>
