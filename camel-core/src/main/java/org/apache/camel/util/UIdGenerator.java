@@ -50,7 +50,7 @@ public class UIdGenerator{
             try {
                 hostName = InetAddress.getLocalHost().getHostName();
                 ServerSocket ss = new ServerSocket(0);
-                stub="-" + ss.getLocalPort() + "-" + System.currentTimeMillis() + "-";
+                stub="/" + ss.getLocalPort() + "-" + System.currentTimeMillis() + "/";
                 Thread.sleep(100);
                 ss.close();
             }catch(Exception ioe){
@@ -80,12 +80,12 @@ public class UIdGenerator{
     
     public UIdGenerator(String prefix){
         synchronized(UNIQUE_STUB){
-            this.seed = prefix + UNIQUE_STUB +(instanceCount++) +":";
+            this.seed = prefix + UNIQUE_STUB +(instanceCount++) +"-";
         }
     }
     
     public UIdGenerator(){
-        this("ID:" + hostName);
+        this("ID-" + hostName);
     }
     
     /**
