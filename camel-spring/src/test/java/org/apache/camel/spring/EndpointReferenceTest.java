@@ -45,17 +45,19 @@ public class EndpointReferenceTest extends SpringTestSupport {
 
         log.debug("Found dummy bean: " + dummyBean);
 
-        SpringCamelContext context = (SpringCamelContext) applicationContext.getBean("camel");
-        assertValidContext(context);
 
-        MockEndpoint resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint(context, "mock:end");
+        MockEndpoint resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint(camelContext, "mock:end");
         resultEndpoint.expectedBodiesReceived(body);
 
         // now lets send a message
-        CamelClient<Exchange> client = new CamelClient<Exchange>(context);
+        CamelClient<Exchange> client = new CamelClient<Exchange>(camelContext);
         client.sendBody("direct:start", body);
 
         resultEndpoint.assertIsSatisfied();
+    }
+
+    protected SpringCamelContext createCamelContext() {
+        return (SpringCamelContext) applicationContext.getBean("camel");
     }
 
     public void testEndpointConfigurationAfterEnsuringThatTheStatementRouteBuilderWasCreated() throws Exception {
@@ -71,10 +73,9 @@ public class EndpointReferenceTest extends SpringTestSupport {
     }
 
     protected void assertValidContext(SpringCamelContext context) {
-        assertNotNull("No context found!", context);
+        super.assertValidContext(context);
 
         List<Route> routes = context.getRoutes();
-        assertNotNull("Should have some routes defined", routes);
         assertEquals("Number of routes defined", 1, routes.size());
     }
 

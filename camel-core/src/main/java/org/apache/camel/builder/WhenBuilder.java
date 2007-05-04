@@ -33,7 +33,7 @@ public class WhenBuilder extends FilterBuilder {
 
     @Override
     @Fluent
-    public ChoiceBuilder to(@FluentArg("endpoint") Endpoint endpoint) {
+    public ChoiceBuilder to(@FluentArg("ref") Endpoint endpoint) {
         super.to(endpoint);
         return parent;
     }

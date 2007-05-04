@@ -20,6 +20,7 @@ package org.apache.camel;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
  * A bunch of useful testing methods
@@ -117,5 +118,17 @@ public abstract class TestSupport extends TestCase {
         assertNotNull("No endpoint found for URI: " + uri, endpoint);
 
         return endpoint;
+    }
+
+    /**
+     * Creates an exchange with the given body
+     */
+    protected Exchange createExchangeWithBody(CamelContext camelContext, Object body) {
+        Exchange exchange = new DefaultExchange(camelContext);
+        Message message = exchange.getIn();
+        message.setHeader("testName", getName());
+        message.setHeader("testClass", getClass().getName());
+        message.setBody(body);
+        return exchange;
     }
 }
