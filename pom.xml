@@ -36,6 +36,7 @@
   <properties>
     <camel-version>1.0-SNAPSHOT</camel-version>
     <compiler.fork>false</compiler.fork>
+    <m1-dist-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-dist-repo-url>
   </properties>
 
   <url>http://apache.apache.org/camel/</url>
@@ -487,6 +488,22 @@
           </configuration>
         </plugin>
 
+        <plugin>
+          <artifactId>maven-one-plugin</artifactId>
+          <version>1.0</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>install-maven-one-repository</goal>
+                <goal>deploy-maven-one-repository</goal>
+              </goals>
+              <configuration>
+                <remoteRepositoryId>apache.m1.releases</remoteRepositoryId>
+                <remoteRepositoryUrl>${m1-dist-repo-url}</remoteRepositoryUrl>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
