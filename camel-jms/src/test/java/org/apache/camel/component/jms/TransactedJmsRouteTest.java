@@ -198,7 +198,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 		mockEndpointB.expectedMinimumMessageCount(2);		
 		mockEndpointC.expectedMessageCount(0);
 		mockEndpointD.expectedMessageCount(1);
-        send("activemq:topic:f", expected);
+        sendBody("activemq:topic:f", expected);
 
         // Wait till the endpoints get their messages.
         assertWait(10, TimeUnit.SECONDS, mockEndpointA,mockEndpointB,mockEndpointC,mockEndpointD);
@@ -212,7 +212,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 	public void testSenarioA() throws Exception {
 		String expected = getName()+": "+System.currentTimeMillis();
         mockEndpointA.expectedBodiesReceived(expected);
-        send("activemq:queue:a", expected);
+        sendBody("activemq:queue:a", expected);
         assertIsSatisfied(mockEndpointA);
 	}
 
@@ -220,7 +220,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 		String expected = getName()+": "+System.currentTimeMillis();
 		mockEndpointA.expectedMessageCount(0);
         mockEndpointB.expectedMinimumMessageCount(2); // May be more since spring seems to go into tight loop re-delivering.
-        send("activemq:queue:b", expected);
+        sendBody("activemq:queue:b", expected);
         assertIsSatisfied(5, TimeUnit.SECONDS, mockEndpointA,mockEndpointB);
 	}
 
@@ -228,7 +228,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 		String expected = getName()+": "+System.currentTimeMillis();
 		mockEndpointA.expectedMessageCount(0);
         mockEndpointB.expectedMessageCount(1); // Should only get 1 message the incoming transaction does not rollback.
-        send("activemq:queue:c", expected);
+        sendBody("activemq:queue:c", expected);
 
         // Wait till the endpoints get their messages.
         assertWait(5, TimeUnit.SECONDS, mockEndpointA,mockEndpointB);
@@ -242,7 +242,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 	public void testSenarioD() throws Exception {
 		String expected = getName()+": "+System.currentTimeMillis();
 		mockEndpointA.expectedMessageCount(1);
-        send("activemq:queue:d", expected);
+        sendBody("activemq:queue:d", expected);
 
         // Wait till the endpoints get their messages.
         assertWait(5, TimeUnit.SECONDS, mockEndpointA,mockEndpointB);
@@ -257,7 +257,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 		String expected = getName()+": "+System.currentTimeMillis();
 		mockEndpointA.expectedMessageCount(0);
 		mockEndpointB.expectedMessageCount(1);		
-        send("activemq:queue:e", expected);
+        sendBody("activemq:queue:e", expected);
 
         // Wait till the endpoints get their messages.
         assertWait(5, TimeUnit.SECONDS, mockEndpointA,mockEndpointB);
