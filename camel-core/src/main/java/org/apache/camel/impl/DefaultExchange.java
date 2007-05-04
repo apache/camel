@@ -19,7 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.util.UIdGenerator;
+import org.apache.camel.util.UuidGenerator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +30,7 @@ import java.util.Map;
  * @version $Revision$
  */
 public class DefaultExchange implements Exchange {
-    private static final UIdGenerator defaultIdGenerator = new UIdGenerator();
+    private static final UuidGenerator defaultIdGenerator = new UuidGenerator();
     protected final CamelContext context;
     private Map<String, Object> headers;
     private Message in;

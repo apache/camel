@@ -19,7 +19,7 @@ package org.apache.camel.impl;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.util.UIdGenerator;
+import org.apache.camel.util.UuidGenerator;
 
 /**
  * A base class for implementation inheritence providing the core {@link Message} body
@@ -31,7 +31,7 @@ import org.apache.camel.util.UIdGenerator;
  * @version $Revision$
  */
 public abstract class MessageSupport implements Message {
-    private static final UIdGenerator defaultIdGenerator = new UIdGenerator();
+    private static final UuidGenerator defaultIdGenerator = new UuidGenerator();
     private Exchange exchange;
     private Object body;
     private String messageId = defaultIdGenerator.generateId();
