@@ -18,7 +18,7 @@
 
 package org.apache.camel.samples.jmstofile;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import org.apache.camel.component.jms.JmsComponent;
 import javax.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelClient;
@@ -41,14 +41,17 @@ import org.apache.camel.impl.DefaultCamelContext;
 public class CamelJmsToFileSample{
 
     public static void main(String args[]) throws Exception{
+        // START SNIPPET: e1
         CamelContext context=new DefaultCamelContext();
-      
-        //Set up the ActiveMQ JMS Components
+        // END SNIPPET: e1
+        // Set up the ActiveMQ JMS Components
+        // START SNIPPET: e2
         ConnectionFactory connectionFactory=new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
-        //note we can explicity  name the component
-        context.addComponent("test-jms",jmsComponentAutoAcknowledge(connectionFactory));
-        
-        //Add some configuration by hand ...
+        // note we can explicity name the component
+        context.addComponent("test-jms",JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
+        // END SNIPPET: e2
+        // Add some configuration by hand ...
+        // START SNIPPET: e3
         context.addRoutes(new RouteBuilder(){
 
             public void configure(){
@@ -62,23 +65,24 @@ public class CamelJmsToFileSample{
                 });
             }
         });
+        // END SNIPPET: e3
         // Camel client - a handy class for kicking off exchanges
+        // START SNIPPET: e4
         CamelClient client=new CamelClient(context);
-        
-        //Now everything is set up - lets start the context
+        // END SNIPPET: e4
+        // Now everything is set up - lets start the context
         context.start();
-        
-        //now send some test text to a component - for this case a JMS Queue 
-        //The text get converted to JMS messages - and sent to the Queue test.queue
-        //The file component is listening for messages from the Queue test.queue, consumes
-        //them and stores them to disk. The content of each file will be the test test we sent here.
-        //The listener on the file component gets notfied when new files are found ...
-        //that's it!
-        
+        // now send some test text to a component - for this case a JMS Queue
+        // The text get converted to JMS messages - and sent to the Queue test.queue
+        // The file component is listening for messages from the Queue test.queue, consumes
+        // them and stores them to disk. The content of each file will be the test test we sent here.
+        // The listener on the file component gets notfied when new files are found ...
+        // that's it!
+        // START SNIPPET: e5
         for(int i=0;i<10;i++){
             client.sendBody("test-jms:queue:test.queue","Test Message: "+i);
         }
-       
+        // END SNIPPET: e5
         Thread.sleep(1000);
         context.stop();
     }
