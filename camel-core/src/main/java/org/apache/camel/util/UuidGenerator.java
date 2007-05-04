@@ -25,9 +25,9 @@ import java.util.logging.Logger;
  * Generator for Globally unique Strings.
  */
 
-public class UIdGenerator{
+public class UuidGenerator {
 
-    private static final Logger log = Logger.getLogger(UIdGenerator.class.getName());
+    private static final Logger log = Logger.getLogger(UuidGenerator.class.getName());
     private static final String UNIQUE_STUB;
     private static int instanceCount;
     private static String hostName;
@@ -78,13 +78,13 @@ public class UIdGenerator{
      *
      */
     
-    public UIdGenerator(String prefix){
+    public UuidGenerator(String prefix){
         synchronized(UNIQUE_STUB){
             this.seed = prefix + UNIQUE_STUB +(instanceCount++) +"-";
         }
     }
     
-    public UIdGenerator(){
+    public UuidGenerator(){
         this("ID-" + hostName);
     }
     
