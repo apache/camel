@@ -17,18 +17,12 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.util.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.ProducerCache;
 
 /**
  * A Client object for working with Camel and invoking {@link Endpoint} instances with {@link Exchange} instances
- * 
+ *
  * @version $Revision$
  */
 public class CamelClient<E extends Exchange> extends ServiceSupport {
@@ -39,12 +33,11 @@ public class CamelClient<E extends Exchange> extends ServiceSupport {
         this.context = context;
     }
 
-
     /**
      * Sends the exchange to the given endpoint
      *
      * @param endpointUri the endpoint URI to send the exchange to
-     * @param exchange the exchange to send
+     * @param exchange    the exchange to send
      */
     public E send(String endpointUri, E exchange) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
@@ -56,11 +49,11 @@ public class CamelClient<E extends Exchange> extends ServiceSupport {
      * Sends an exchange to an endpoint using a supplied @{link Processor} to populate the exchange
      *
      * @param endpointUri the endpoint URI to send the exchange to
-     * @param processor the transformer used to populate the new exchange
+     * @param processor   the transformer used to populate the new exchange
      */
     public E send(String endpointUri, Processor processor) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
-        return send(endpoint,  processor);
+        return send(endpoint, processor);
     }
 
     /**
@@ -78,27 +71,48 @@ public class CamelClient<E extends Exchange> extends ServiceSupport {
     /**
      * Sends an exchange to an endpoint using a supplied @{link Processor} to populate the exchange
      *
-     * @param endpoint the endpoint to send the exchange to
+     * @param endpoint  the endpoint to send the exchange to
      * @param processor the transformer used to populate the new exchange
      */
     public E send(Endpoint<E> endpoint, Processor processor) {
         return producerCache.send(endpoint, processor);
     }
-   
+
     /**
      * Send the body to an endpoint
+     *
      * @param endpointUri
-     * @param body = the payload 
+     * @param body        = the payload
      * @return the result
      */
-    public Object sendBody (String endpointUri,final Object body) {
-        E result =  send(endpointUri, new Processor() {
+    public Object sendBody(String endpointUri, final Object body) {
+        E result = send(endpointUri, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody(body);
             }
         });
-        return result != null ? result.getOut().getBody() : null;
+        return extractResultBody(result);
+    }
+
+    /**
+     * Sends the body to an endpoint with a specified header and header value
+     *
+     * @param endpointUri the endpoint URI to send to
+     * @param body        the payload send
+     * @param header      the header name
+     * @param headerValue the header value
+     * @return the result
+     */
+    public Object sendBody(String endpointUri, final Object body, final String header, final Object headerValue) {
+        E result = send(endpointUri, new Processor() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                in.setHeader(header, headerValue);
+                in.setBody(body);
+            }
+        });
+        return extractResultBody(result);
     }
 
     public Producer<E> getProducer(Endpoint<E> endpoint) {
@@ -123,5 +137,9 @@ public class CamelClient<E extends Exchange> extends ServiceSupport {
 
     protected void doStop() throws Exception {
         producerCache.stop();
+    }
+
+    protected Object extractResultBody(E result) {
+        return result != null ? result.getOut().getBody() : null;
     }
 }

@@ -193,7 +193,7 @@ public abstract class BuilderSupport {
     }
 
     @Fluent
-    public DeadLetterChannelBuilder deadLetterChannel(@FluentArg("endpoint")Endpoint deadLetterEndpoint) {
+    public DeadLetterChannelBuilder deadLetterChannel(@FluentArg("ref")Endpoint deadLetterEndpoint) {
         return new DeadLetterChannelBuilder(new SendProcessor(deadLetterEndpoint));
     }
 

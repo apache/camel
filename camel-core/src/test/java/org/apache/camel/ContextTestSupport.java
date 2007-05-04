@@ -86,11 +86,6 @@ public abstract class ContextTestSupport extends TestSupport {
      * Creates an exchange with the given body
      */
     protected Exchange createExchangeWithBody(Object body) {
-        Exchange exchange = new DefaultExchange(context);
-        Message message = exchange.getIn();
-        message.setHeader("testName", getName());
-        message.setHeader("testClass", getClass().getName());
-        message.setBody(body);
-        return exchange;
+        return createExchangeWithBody(context, body);
     }
 }
