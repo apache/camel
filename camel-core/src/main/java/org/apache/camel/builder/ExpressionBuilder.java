@@ -56,6 +56,25 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression for the property value with the given name
+     *
+     * @param propertyName the name of the property the expression will return
+     * @return an expression object which will return the property value
+     */
+    public static <E extends Exchange> Expression<E> propertyExpression(final String propertyName) {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange.getProperty(propertyName);
+            }
+
+            @Override
+            public String toString() {
+                return "property(" + propertyName + ")";
+            }
+        };
+    }
+
+    /**
      * Returns an expression for the contant value
      *
      * @param value the value the expression will return
@@ -119,6 +138,38 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "outBody";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the exchange
+     */
+    public static <E extends Exchange> Expression<E> exchangeExpression() {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange;
+            }
+
+            @Override
+            public String toString() {
+                return "exchange";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the IN message
+     */
+    public static <E extends Exchange> Expression<E> inMessageExpression() {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange.getIn();
+            }
+
+            @Override
+            public String toString() {
+                return "inMessage";
             }
         };
     }
