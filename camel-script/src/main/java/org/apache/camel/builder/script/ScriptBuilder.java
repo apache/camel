@@ -294,7 +294,52 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
 
-    // JRuby
+
+    // Python
+    //-------------------------------------------------------------------------
+
+    /**
+     * Creates a script builder for the Python script contents
+     *
+     * @param scriptText the script text to be evaluted
+     * @return the builder
+     */
+    public static ScriptBuilder python(String scriptText) {
+        return new ScriptBuilder("python", scriptText);
+    }
+
+    /**
+     * Creates a script builder for the Python script @{link Resource}
+     *
+     * @param scriptResource the resource used to load the script
+     * @return the builder
+     */
+    public static ScriptBuilder python(Resource scriptResource) {
+        return new ScriptBuilder("python", scriptResource);
+    }
+
+    /**
+     * Creates a script builder for the Python script @{link File}
+     *
+     * @param scriptFile the file used to load the script
+     * @return the builder
+     */
+    public static ScriptBuilder python(File scriptFile) {
+        return new ScriptBuilder("python", new FileSystemResource(scriptFile));
+    }
+
+    /**
+     * Creates a script builder for the Python script @{link URL}
+     *
+     * @param scriptURL the URL used to load the script
+     * @return the builder
+     */
+    public static ScriptBuilder python(URL scriptURL) {
+        return new ScriptBuilder("python", new UrlResource(scriptURL));
+    }
+
+
+    // Ruby/JRuby
     //-------------------------------------------------------------------------
 
     /**
