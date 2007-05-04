@@ -15,31 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.xml;
+package org.apache.camel.builder.script.example;
 
-import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
-import org.w3c.dom.Element;
+import org.apache.camel.processor.XPathFilterTest;
+import org.apache.camel.CamelContext;
+import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.impl.NoRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * A base class for a parser for a bean.
- *
  * @version $Revision: 1.1 $
  */
-public class BeanDefinitionParserSupport extends AbstractSimpleBeanDefinitionParser {
-    private Class type;
-
-    public BeanDefinitionParserSupport(Class type) {
-        this.type = type;
-    }
-
-    protected Class getBeanClass(Element element) {
-        return type;
+public class GroovyFilterTest extends XPathFilterTest {
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/builder/script/example/groovyFilter.xml"));
     }
 
     @Override
-    protected boolean isEligibleAttribute(String attributeName) {
-        return attributeName != null && super.isEligibleAttribute(attributeName) && !attributeName.equals("xmlns");
+    protected RouteBuilder createRouteBuilder() {
+        return NoRouteBuilder.getInstance();
     }
-
-    
 }

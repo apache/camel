@@ -33,7 +33,6 @@
   <description>Camel Script support</description>
 
   <repositories>
-    <!-- So we can download the jsr 233 stuff -->
     <repository>
       <id>logicblaze.all</id>
       <name>LogicBlaze Repository</name>
@@ -47,6 +46,13 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring</artifactId>
+    </dependency>
+
+    <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -54,34 +60,47 @@
       <optional>true</optional>
       <scope>test</scope>
     </dependency>
-
     <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging-api</artifactId>
-    </dependency>
-
-    <!-- TODO is there a jsr223 jar anywhere else? -->
-    <!-- TODO add this to a profile for Java 5 only  -->
-    <dependency>
-      <groupId>org.livetribe</groupId>
-      <artifactId>livetribe-jsr223</artifactId>
-      <version>2.0.1</version>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring</artifactId>
+      <groupId>javax.script</groupId>
+      <artifactId>groovy-engine</artifactId>
+      <version>1.0</version>
+      <classifier>jdk14</classifier>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.script</groupId>
+      <artifactId>js-engine</artifactId>
+      <version>1.0</version>
+      <classifier>jdk14</classifier>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.script</groupId>
+      <artifactId>jython-engine</artifactId>
+      <version>1.0</version>
+      <classifier>jdk14</classifier>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.script</groupId>
+      <artifactId>jruby-engine</artifactId>
+      <version>1.0</version>
+      <classifier>jdk14</classifier>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>groovy</groupId>
       <artifactId>groovy-all</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.script</groupId>
-      <artifactId>groovy-engine</artifactId>
-      <version>20070316</version>
       <scope>test</scope>
     </dependency>
 
@@ -91,6 +110,33 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+
+  <profiles>
+    <profile>
+      <id>jdk1.5</id>
+      <activation>
+        <jdk>1.5</jdk>
+      </activation>
+      <dependencies>
+        <!-- required for the retrotranslated JSR-223 api & engines -->
+        <dependency>
+          <groupId>net.sf.retrotranslator</groupId>
+          <artifactId>retrotranslator-runtime</artifactId>
+          <version>1.2.1</version>
+        </dependency>
+
+        <!-- these dependencies are only for Java 5, they are not required for Java 6 -->
+        <dependency>
+          <groupId>javax.script</groupId>
+          <artifactId>script-api</artifactId>
+          <version>1.0</version>
+          <classifier>jdk14</classifier>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+
 
   <build>
     <plugins>
@@ -103,9 +149,6 @@
             <include>**/*Test.*</include>
           </includes>
           <excludes>
-            <!-- TODO re-enable when we can find freely redistributable jars for Java 5! -->
-            <exclude>**/Jsr223Test.*</exclude>
-            <exclude>**/GroovyTest.*</exclude>
           </excludes>
         </configuration>
       </plugin>

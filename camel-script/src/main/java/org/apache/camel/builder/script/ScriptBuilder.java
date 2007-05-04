@@ -17,11 +17,15 @@
  */
 package org.apache.camel.builder.script;
 
+import static org.apache.camel.util.ObjectHelper.notNull;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.converter.ObjectConverter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -44,19 +48,25 @@ import java.net.URL;
  * @version $Revision$
  */
 public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predicate<E>, Processor {
+    private static final transient Log log = LogFactory.getLog(ScriptBuilder.class);
+
     private String scriptEngineName;
     private Resource scriptResource;
     private String scriptText;
     private ScriptEngine engine;
     private CompiledScript compiledScript;
 
-    public ScriptBuilder(String scriptEngineName, String scriptText) {
+    public ScriptBuilder(String scriptEngineName) {
         this.scriptEngineName = scriptEngineName;
+    }
+
+    public ScriptBuilder(String scriptEngineName, String scriptText) {
+        this(scriptEngineName);
         this.scriptText = scriptText;
     }
 
     public ScriptBuilder(String scriptEngineName, Resource scriptResource) {
-        this.scriptEngineName = scriptEngineName;
+        this(scriptEngineName);
         this.scriptResource = scriptResource;
     }
 
@@ -343,6 +353,10 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
         return scriptText;
     }
 
+    public void setScriptText(String scriptText) {
+        this.scriptText = scriptText;
+    }
+
     public String getScriptEngineName() {
         return scriptEngineName;
     }
@@ -356,8 +370,11 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
         if (scriptText != null) {
             return scriptEngineName + ": " + scriptText;
         }
-        else {
+        else if (scriptResource != null) {
             return scriptEngineName + ": " + scriptResource.getDescription();
+        }
+        else {
+            return scriptEngineName + ": null script";
         }
     }
 
@@ -375,10 +392,20 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
         getEngine().setContext(scriptContext);
     }
 
+    public Resource getScriptResource() {
+        return scriptResource;
+    }
+
+    public void setScriptResource(Resource scriptResource) {
+        this.scriptResource = scriptResource;
+    }
 
     // Implementation methods
     //-------------------------------------------------------------------------
     protected void checkInitialised() {
+        if (scriptText == null && scriptResource == null) {
+            throw new IllegalArgumentException("Neither scriptText or scriptResource are specified");
+        }
         if (engine == null) {
             engine = createScriptEngine();
         }
@@ -408,6 +435,9 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
             }
         }
         catch (ScriptException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Script compile failed: " + e, e);
+            }
             throw createScriptCompileException(e);
         }
         catch (IOException e) {
@@ -422,6 +452,9 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
             return runScript();
         }
         catch (ScriptException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Script evaluation failed: " + e, e);
+            }
             throw createScriptEvaluationException(e.getCause());
         }
         catch (IOException e) {
