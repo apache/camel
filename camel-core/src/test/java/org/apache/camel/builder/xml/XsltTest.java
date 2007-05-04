@@ -33,7 +33,7 @@ public class XsltTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
 
-        send("direct:start", "<hello>world!</hello>");
+        sendBody("direct:start", "<hello>world!</hello>");
 
         resultEndpoint.assertIsSatisfied();
     }

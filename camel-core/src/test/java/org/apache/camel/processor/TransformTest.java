@@ -33,7 +33,7 @@ public class TransformTest extends ContextTestSupport {
     public void testSendingAMessageUsingMulticastReceivesItsOwnExchange() throws Exception {
         resultEndpoint.expectedBodiesReceived("Hello World!");
 
-        send("direct:start", "Hello");
+        sendBody("direct:start", "Hello");
 
         resultEndpoint.assertIsSatisfied();
     }

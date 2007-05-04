@@ -42,7 +42,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
 
         deadEndpoint.expectedMessageCount(0);
 
-        send("direct:start", body);
+        sendBody("direct:start", body);
 
         assertIsSatisfied(deadEndpoint, successEndpoint);
     }
@@ -56,7 +56,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
         deadEndpoint.message(0).header(DeadLetterChannel.REDELIVERY_COUNTER).isEqualTo(2);
         successEndpoint.expectedMessageCount(0);
 
-        send("direct:start", body);
+        sendBody("direct:start", body);
 
         assertIsSatisfied(deadEndpoint, successEndpoint);
     }
