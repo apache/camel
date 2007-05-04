@@ -10,14 +10,20 @@
 
   <xs:import namespace="http://www.springframework.org/schema/beans"/>
 
-
   <xs:annotation>
-    <xs:documentation>
-      The Apache Camel Configuration Schema
-    </xs:documentation>
+    <xs:documentation><![CDATA[
+  The Apache Camel XML Configuration Schema
+
+  Configurations usually start from the <camelContext/> element
+		]]></xs:documentation>
   </xs:annotation>
 
   <xs:element name="camelContext">
+    <xs:annotation>
+      <xs:documentation><![CDATA[
+  The root element of a camel configuration
+      ]]></xs:documentation>
+    </xs:annotation>
     <xs:complexType>
       <xs:complexContent>
         <xs:extension base="s:identifiedType">
@@ -32,6 +38,12 @@
   </xs:element>
 
   <xs:element name="endpoint">
+    <xs:annotation>
+      <xs:documentation><![CDATA[
+  Defines an endpoint as a top level Spring bean that can then be injected into other beans
+  or shared across multiple routing expressions
+      ]]></xs:documentation>
+    </xs:annotation>
     <xs:complexType>
       <xs:complexContent>
         <xs:extension base="s:identifiedType">
@@ -64,6 +76,11 @@
   </xs:element>
 
   <xs:element name="route">
+    <xs:annotation>
+      <xs:documentation><![CDATA[
+  Defines a routing rule
+      ]]></xs:documentation>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="c:from"/>
@@ -82,6 +99,11 @@
     </xs:complexType>
   </xs:element>
   <xs:element name="from">
+    <xs:annotation>
+      <xs:documentation><![CDATA[
+  Defines the from endpoint(s) in a routing rules
+      ]]></xs:documentation>
+    </xs:annotation>
     <xs:complexType>
       <xs:attribute name="uri" type="xs:anyURI"/>
       <xs:attribute name="ref" type="xs:string"/>
