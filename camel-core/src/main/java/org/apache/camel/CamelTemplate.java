@@ -21,15 +21,17 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ProducerCache;
 
 /**
- * A Client object for working with Camel and invoking {@link Endpoint} instances with {@link Exchange} instances
+ * A client helper object (named like Spring's TransactionTemplate & JmsTemplate et al)
+ * for working with Camel and sending {@link Message} instances in an {@link Exchange}
+ * to an {@link Endpoint}.
  *
  * @version $Revision$
  */
-public class CamelClient<E extends Exchange> extends ServiceSupport {
+public class CamelTemplate<E extends Exchange> extends ServiceSupport {
     private CamelContext context;
     private ProducerCache<E> producerCache = new ProducerCache<E>();
 
-    public CamelClient(CamelContext context) {
+    public CamelTemplate(CamelContext context) {
         this.context = context;
     }
 

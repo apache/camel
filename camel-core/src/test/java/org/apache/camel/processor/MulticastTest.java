@@ -38,7 +38,7 @@ public class MulticastTest extends ContextTestSupport {
         y.expectedBodiesReceived("input+output");
         z.expectedBodiesReceived("input+output");
 
-        client.send("direct:a", new Processor() {
+        template.send("direct:a", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody("input");

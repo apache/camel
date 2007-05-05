@@ -34,7 +34,7 @@ public class ContentBasedRouteTest extends SpringTestSupport {
         matchedEndpoint.expectedMessageCount(1);
         notMatchedEndpoint.expectedMessageCount(0);
 
-        client.sendBody("direct:start", body, header, "firstChoice");
+        template.sendBody("direct:start", body, header, "firstChoice");
 
         assertIsSatisfied(matchedEndpoint, notMatchedEndpoint);
     }
@@ -43,7 +43,7 @@ public class ContentBasedRouteTest extends SpringTestSupport {
         matchedEndpoint.expectedMessageCount(0);
         notMatchedEndpoint.expectedMessageCount(1);
 
-        client.sendBody("direct:start", body, header, "notMatchedValue");
+        template.sendBody("direct:start", body, header, "notMatchedValue");
 
         assertIsSatisfied(matchedEndpoint, notMatchedEndpoint);
     }

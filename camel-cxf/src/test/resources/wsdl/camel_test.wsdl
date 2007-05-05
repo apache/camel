@@ -330,7 +330,7 @@
         <camel:JMSNamingProperty name="java.naming.provider.url" value="tcp://localhost:61500"/>
       </camel:address>
 
-      <camel:client messageType="binary"/>
+      <camel:template messageType="binary"/>
       <camel:server durableSubscriberName="CXF_subscriber"/>
     </port>
   </service>
@@ -360,7 +360,7 @@
         <camel:JMSNamingProperty name="java.naming.provider.url" value="tcp://localhost:61500"/>
       </camel:address>
 
-      <camel:client messageType="binary"/>
+      <camel:template messageType="binary"/>
       <camel:server durableSubscriberName="CXF_subscriber"/>
     </port>
   </service>
@@ -376,7 +376,7 @@
         <camel:JMSNamingProperty name="java.naming.provider.url" value="tcp://localhost:61500"/>
       </camel:address>
 
-      <camel:client messageType="binary"/>
+      <camel:template messageType="binary"/>
       <camel:server durableSubscriberName="CXF_subscriber"/>
     </port>
   </service>

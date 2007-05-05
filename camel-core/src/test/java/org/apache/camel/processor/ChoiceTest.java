@@ -62,7 +62,7 @@ public class ChoiceTest extends ContextTestSupport {
     }
 
     protected void sendMessage(final Object headerValue, final Object body) throws Exception {
-        client.send(startEndpoint, new Processor() {
+        template.send(startEndpoint, new Processor() {
             public void process(Exchange exchange) {
                 // now lets fire in a message
                 Message in = exchange.getIn();

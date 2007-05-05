@@ -19,7 +19,7 @@ package org.apache.camel.component.cxf.transport;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.CamelClient;
+import org.apache.camel.CamelTemplate;
 import org.apache.cxf.Bus;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
@@ -30,7 +30,7 @@ import org.apache.cxf.service.model.EndpointInfo;
  */
 public class CamelTransportBase {
     private String replyDestination;
-    CamelClient<Exchange> client;
+    CamelTemplate<Exchange> template;
     private final CamelContext camelContext;
     Bus bus;
     EndpointInfo endpointInfo;
@@ -39,7 +39,7 @@ public class CamelTransportBase {
         this.camelContext = camelContext;
         this.bus = bus;
         this.endpointInfo = endpointInfo;
-        this.client = new CamelClient<Exchange>(camelContext);
+        this.template = new CamelTemplate<Exchange>(camelContext);
     }
 
     public void populateIncomingContext(Exchange exchange, MessageImpl inMessage, String camelServerRequestHeaders) {
@@ -55,9 +55,9 @@ public class CamelTransportBase {
     }
 
     public void close() {
-        if (client != null) {
+        if (template != null) {
             try {
-                client.stop();
+                template.stop();
             }
             catch (Exception e) {
                 // do nothing?

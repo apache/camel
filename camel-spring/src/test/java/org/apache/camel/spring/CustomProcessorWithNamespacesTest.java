@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Message;
 import org.apache.camel.Route;
 import org.apache.camel.spring.example.MyProcessor;
-import org.apache.camel.CamelClient;
+import org.apache.camel.CamelTemplate;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -43,8 +43,8 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
         assertValidContext(context);
 
         // now lets send a message
-        CamelClient<Exchange> client = new CamelClient<Exchange>(context);
-        client.send("direct:start", new Processor() {
+        CamelTemplate<Exchange> template = new CamelTemplate<Exchange>(context);
+        template.send("direct:start", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setHeader("name", "James");

@@ -21,31 +21,14 @@ import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.CamelClient;
+import org.apache.camel.CamelTemplate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.cxf.Bus;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.bus.CXFBusFactory;
-import org.apache.cxf.message.Message;
-import org.apache.cxf.message.MessageImpl;
-import org.apache.cxf.service.model.EndpointInfo;
-import org.apache.cxf.transport.Conduit;
-import org.apache.cxf.transport.Destination;
-import org.apache.cxf.transport.DestinationFactory;
-import org.apache.cxf.transport.DestinationFactoryManager;
-import org.apache.cxf.transport.MessageObserver;
-import org.apache.cxf.transport.local.LocalConduit;
-import org.apache.cxf.transport.local.LocalTransportFactory;
-import org.xmlsoap.schemas.wsdl.http.AddressType;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Map;
 import java.util.*;
 
 /**
@@ -54,7 +37,7 @@ import java.util.*;
 public class CxfTest extends TestCase {
     private static final transient Log log = LogFactory.getLog(CxfTest.class);
     protected CamelContext camelContext = new DefaultCamelContext();
-    protected CamelClient<CxfExchange> client = new CamelClient<CxfExchange>(camelContext);
+    protected CamelTemplate<CxfExchange> template = new CamelTemplate<CxfExchange>(camelContext);
 
     final private String transportAddress = "http://localhost:28080/test";
     final private String testMessage = "Hello World!";
@@ -84,7 +67,7 @@ public class CxfTest extends TestCase {
     public void testInvokeOfServer() throws Exception {
 
         CxfExchange exchange = (CxfExchange) 
-            client.send(getUri(),
+            template.send(getUri(),
                         new Processor() {
                             public void process(final Exchange exchange) {
                                 final List<String> params = new ArrayList<String>();

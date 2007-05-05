@@ -23,7 +23,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.CamelClient;
+import org.apache.camel.CamelTemplate;
 import org.apache.camel.examples.MultiSteps;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ServiceHelper;
@@ -44,10 +44,10 @@ import java.util.concurrent.TimeUnit;
 public class JpaWithNamedQueryTest extends TestCase {
     private static final transient Log log = LogFactory.getLog(JpaWithNamedQueryTest.class);
     protected CamelContext camelContext = new DefaultCamelContext();
-    protected CamelClient client = new CamelClient(camelContext);
+    protected CamelTemplate template = new CamelTemplate(camelContext);
     protected JpaEndpoint endpoint;
     protected TransactionStrategy transactionStrategy;
-    protected JpaTemplate template;
+    protected JpaTemplate jpaTemplate;
     protected Consumer<Exchange> consumer;
     protected Exchange receivedExchange;
     protected CountDownLatch latch = new CountDownLatch(1);
@@ -68,18 +68,18 @@ public class JpaWithNamedQueryTest extends TestCase {
             }
         });
 
-        List results = template.find(queryText);
+        List results = jpaTemplate.find(queryText);
         assertEquals("Should have no results: " + results, 0, results.size());
 
         // lets produce some objects
-        client.send(endpoint, new Processor() {
+        template.send(endpoint, new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setBody(new MultiSteps("foo@bar.com"));
             }
         });
 
         // now lets assert that there is a result
-        results = template.find(queryText);
+        results = jpaTemplate.find(queryText);
         assertEquals("Should have results: " + results, 1, results.size());
         MultiSteps mail = (MultiSteps) results.get(0);
         assertEquals("address property", "foo@bar.com", mail.getAddress());
@@ -135,7 +135,7 @@ public class JpaWithNamedQueryTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        ServiceHelper.startServices(client, camelContext);
+        ServiceHelper.startServices(template, camelContext);
 
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
         assertNotNull("Could not find endpoint!", value);
@@ -143,7 +143,7 @@ public class JpaWithNamedQueryTest extends TestCase {
         endpoint = (JpaEndpoint) value;
 
         transactionStrategy = endpoint.createTransactionStrategy();
-        template = endpoint.getTemplate();
+        jpaTemplate = endpoint.getTemplate();
     }
 
     protected String getEndpointUri() {
@@ -153,7 +153,7 @@ public class JpaWithNamedQueryTest extends TestCase {
     @Override
     protected void tearDown() throws Exception {
 
-        ServiceHelper.stopServices(consumer, client, camelContext);
+        ServiceHelper.stopServices(consumer, template, camelContext);
 
         super.tearDown();
     }

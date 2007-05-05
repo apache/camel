@@ -18,10 +18,7 @@
 package org.apache.camel.component.mail;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
-import static org.apache.camel.builder.Builder.constant;
 import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.util.ObjectHelper.asString;
 import org.jvnet.mock_javamail.Mailbox;
@@ -41,7 +38,7 @@ public class MailRouteTest extends ContextTestSupport {
         resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("hello world!");
 
-        client.sendBody("smtp://james@localhost", "hello world!");
+        template.sendBody("smtp://james@localhost", "hello world!");
 
         // lets test the first sent worked
         assertMailboxReceivedMessages("james@localhost");

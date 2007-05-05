@@ -78,7 +78,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
                     throw new RuntimeException("Failed to process due to attempt: " + attempt + " being less than: " + failUntilAttempt);
                 }
                 else {
-                    client.send("mock:success", exchange);
+                    template.send("mock:success", exchange);
                 }
             }
         };

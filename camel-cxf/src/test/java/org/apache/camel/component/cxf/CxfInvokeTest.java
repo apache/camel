@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.CamelClient;
+import org.apache.camel.CamelTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.cxf.endpoint.ServerImpl;
@@ -38,7 +38,7 @@ import java.util.ArrayList;
 public class CxfInvokeTest extends TestCase {
     private static final transient Log log = LogFactory.getLog(CxfInvokeTest.class);
     protected CamelContext camelContext = new DefaultCamelContext();
-    protected CamelClient<CxfExchange> client = new CamelClient<CxfExchange>(camelContext);
+    protected CamelTemplate<CxfExchange> template = new CamelTemplate<CxfExchange>(camelContext);
 
     final private String transportAddress = "http://localhost:28080/test";
     final private String testMessage = "Hello World!";
@@ -68,7 +68,7 @@ public class CxfInvokeTest extends TestCase {
     public void testInvokeOfServer() throws Exception {
 
         CxfExchange exchange =
-            client.send(getUri(),
+            template.send(getUri(),
                         new Processor() {
                             public void process(final Exchange exchange) {
                                 final List<String> params = new ArrayList<String>();
