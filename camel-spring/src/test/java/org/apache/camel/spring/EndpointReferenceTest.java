@@ -17,7 +17,7 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.CamelClient;
+import org.apache.camel.CamelTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
@@ -50,8 +50,8 @@ public class EndpointReferenceTest extends SpringTestSupport {
         resultEndpoint.expectedBodiesReceived(body);
 
         // now lets send a message
-        CamelClient<Exchange> client = new CamelClient<Exchange>(camelContext);
-        client.sendBody("direct:start", body);
+        CamelTemplate<Exchange> template = new CamelTemplate<Exchange>(camelContext);
+        template.sendBody("direct:start", body);
 
         resultEndpoint.assertIsSatisfied();
     }

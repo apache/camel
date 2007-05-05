@@ -21,7 +21,7 @@ package org.apache.camel.samples.jmstofile;
 import org.apache.camel.component.jms.JmsComponent;
 import javax.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.camel.CamelClient;
+import org.apache.camel.CamelTemplate;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -66,9 +66,9 @@ public class CamelJmsToFileSample{
             }
         });
         // END SNIPPET: e3
-        // Camel client - a handy class for kicking off exchanges
+        // Camel template - a handy class for kicking off exchanges
         // START SNIPPET: e4
-        CamelClient client=new CamelClient(context);
+        CamelTemplate template =new CamelTemplate(context);
         // END SNIPPET: e4
         // Now everything is set up - lets start the context
         context.start();
@@ -80,7 +80,7 @@ public class CamelJmsToFileSample{
         // that's it!
         // START SNIPPET: e5
         for(int i=0;i<10;i++){
-            client.sendBody("test-jms:queue:test.queue","Test Message: "+i);
+            template.sendBody("test-jms:queue:test.queue","Test Message: "+i);
         }
         // END SNIPPET: e5
         Thread.sleep(1000);

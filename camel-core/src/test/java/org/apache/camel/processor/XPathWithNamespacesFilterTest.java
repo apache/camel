@@ -22,7 +22,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -35,7 +34,7 @@ public class XPathWithNamespacesFilterTest extends ContextTestSupport {
     public void testSendMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(1);
 
-        client.sendBody("direct:start", "<person xmlns='http://acme.com/cheese' name='James' city='London'/>");
+        template.sendBody("direct:start", "<person xmlns='http://acme.com/cheese' name='James' city='London'/>");
 
         resultEndpoint.assertIsSatisfied();
     }
@@ -43,7 +42,7 @@ public class XPathWithNamespacesFilterTest extends ContextTestSupport {
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 
-        client.sendBody("direct:start", "<person xmlns='http://acme.com/cheese'  name='Hiram' city='Tampa'/>");
+        template.sendBody("direct:start", "<person xmlns='http://acme.com/cheese'  name='Hiram' city='Tampa'/>");
 
 
         resultEndpoint.assertIsSatisfied();

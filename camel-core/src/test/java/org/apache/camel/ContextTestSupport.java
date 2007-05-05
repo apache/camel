@@ -18,24 +18,23 @@
 package org.apache.camel;
 
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.CamelClient;
+import org.apache.camel.CamelTemplate;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * A useful base class which creates a {@link CamelContext} with some routes along with a {@link CamelClient}
+ * A useful base class which creates a {@link CamelContext} with some routes along with a {@link CamelTemplate}
  * for use in the test case
  *
  * @version $Revision: 1.1 $
  */
 public abstract class ContextTestSupport extends TestSupport {
     protected CamelContext context;
-    protected CamelClient<Exchange> client;
+    protected CamelTemplate<Exchange> template;
 
     @Override
     protected void setUp() throws Exception {
         context = createCamelContext();
-        client = new CamelClient<Exchange>(context);
+        template = new CamelTemplate<Exchange>(context);
 
         context.addRoutes(createRouteBuilder());
 
@@ -46,7 +45,7 @@ public abstract class ContextTestSupport extends TestSupport {
 
     @Override
     protected void tearDown() throws Exception {
-        client.stop();
+        template.stop();
         context.stop();
     }
 
@@ -73,7 +72,7 @@ public abstract class ContextTestSupport extends TestSupport {
      * @param body the body for the message
      */
     protected void sendBody(String endpointUri, final Object body) {
-        client.send(endpointUri, new Processor() {
+        template.send(endpointUri, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody(body);

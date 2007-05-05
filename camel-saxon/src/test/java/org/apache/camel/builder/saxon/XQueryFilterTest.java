@@ -34,7 +34,7 @@ public class XQueryFilterTest extends ContextTestSupport {
     public void testSendMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(1);
 
-        client.sendBody("direct:start", "<person name='James' city='London'/>");
+        template.sendBody("direct:start", "<person name='James' city='London'/>");
 
         resultEndpoint.assertIsSatisfied();
     }
@@ -42,7 +42,7 @@ public class XQueryFilterTest extends ContextTestSupport {
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 
-        client.sendBody("direct:start", "<person name='Hiram' city='Tampa'/>");
+        template.sendBody("direct:start", "<person name='Hiram' city='Tampa'/>");
 
 
         resultEndpoint.assertIsSatisfied();

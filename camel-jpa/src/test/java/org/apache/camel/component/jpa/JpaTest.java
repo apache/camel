@@ -23,7 +23,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.CamelClient;
+import org.apache.camel.CamelTemplate;
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.impl.DefaultCamelContext;
 import static org.apache.camel.util.ServiceHelper.startServices;
@@ -45,10 +45,10 @@ import java.util.concurrent.TimeUnit;
 public class JpaTest extends TestCase {
     private static final transient Log log = LogFactory.getLog(JpaTest.class);
     protected CamelContext camelContext = new DefaultCamelContext();
-    protected CamelClient client = new CamelClient(camelContext);
+    protected CamelTemplate template = new CamelTemplate(camelContext);
     protected JpaEndpoint endpoint;
     protected TransactionStrategy transactionStrategy;
-    protected JpaTemplate template;
+    protected JpaTemplate jpaTemplate;
     protected Consumer<Exchange> consumer;
     protected Exchange receivedExchange;
     protected CountDownLatch latch = new CountDownLatch(1);
@@ -64,18 +64,18 @@ public class JpaTest extends TestCase {
             }
         });
 
-        List results = template.find(queryText);
+        List results = jpaTemplate.find(queryText);
         assertEquals("Should have no results: " + results, 0, results.size());
 
         // lets produce some objects
-        client.send(endpoint, new Processor() {
+        template.send(endpoint, new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setBody(new SendEmail("foo@bar.com"));
             }
         });
 
         // now lets assert that there is a result
-        results = template.find(queryText);
+        results = jpaTemplate.find(queryText);
         assertEquals("Should have results: " + results, 1, results.size());
         SendEmail mail = (SendEmail) results.get(0);
         assertEquals("address property", "foo@bar.com", mail.getAddress());
@@ -102,7 +102,7 @@ public class JpaTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        startServices(client, camelContext);
+        startServices(template, camelContext);
 
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
         assertNotNull("Could not find endpoint!", value);
@@ -110,7 +110,7 @@ public class JpaTest extends TestCase {
         endpoint = (JpaEndpoint) value;
 
         transactionStrategy = endpoint.createTransactionStrategy();
-        template = endpoint.getTemplate();
+        jpaTemplate = endpoint.getTemplate();
     }
 
     protected String getEndpointUri() {
@@ -120,7 +120,7 @@ public class JpaTest extends TestCase {
     @Override
     protected void tearDown() throws Exception {
 
-        stopServices(consumer, client, camelContext);
+        stopServices(consumer, template, camelContext);
 
         super.tearDown();
     }

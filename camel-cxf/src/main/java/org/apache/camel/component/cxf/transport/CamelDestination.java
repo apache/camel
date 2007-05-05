@@ -201,7 +201,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             //setup the reply message
             final String replyToUri = getReplyToDestination(inMessage);
 
-            base.client.send(replyToUri, new Processor() {
+            base.template.send(replyToUri, new Processor() {
                 public void process(Exchange reply) {
                     base.marshal(currentStream.toString(), replyToUri, reply);
 

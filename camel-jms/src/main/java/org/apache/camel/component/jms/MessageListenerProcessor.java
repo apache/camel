@@ -25,7 +25,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 
 /**
- * Represents a JMS {@link MessageListener} which can be used directly with any JMS client
+ * Represents a JMS {@link MessageListener} which can be used directly with any JMS template
  * or derived from to create an MDB for processing messages using a {@link Processor}
  *
  * @version $Revision:520964 $

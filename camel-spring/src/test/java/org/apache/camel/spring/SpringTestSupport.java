@@ -20,7 +20,7 @@ package org.apache.camel.spring;
 import org.apache.camel.TestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.Exchange;
-import org.apache.camel.CamelClient;
+import org.apache.camel.CamelTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -34,7 +34,7 @@ import java.util.List;
 public abstract class SpringTestSupport extends TestSupport {
     protected AbstractXmlApplicationContext applicationContext;
     protected SpringCamelContext camelContext;
-    protected CamelClient<Exchange> client;
+    protected CamelTemplate<Exchange> template;
 
     protected abstract ClassPathXmlApplicationContext createApplicationContext();
 
@@ -48,7 +48,7 @@ public abstract class SpringTestSupport extends TestSupport {
         camelContext = createCamelContext();
         assertValidContext(camelContext);
 
-        client = new CamelClient<Exchange>(camelContext);
+        template = new CamelTemplate<Exchange>(camelContext);
     }
 
     @Override

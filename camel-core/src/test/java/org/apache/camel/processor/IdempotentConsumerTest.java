@@ -48,7 +48,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
     }
 
     protected void sendMessage(final Object messageId, final Object body) {
-        client.send(startEndpoint, new Processor() {
+        template.send(startEndpoint, new Processor() {
             public void process(Exchange exchange) {
                 // now lets fire in a message
                 Message in = exchange.getIn();

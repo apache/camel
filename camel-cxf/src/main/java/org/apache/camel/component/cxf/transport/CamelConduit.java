@@ -142,7 +142,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         }
 
         private void commitOutputMessage() {
-            base.client.send(targetCamelEndpointUri, new Processor() {
+            base.template.send(targetCamelEndpointUri, new Processor() {
                 public void process(org.apache.camel.Exchange reply) {
                     Object request = null;
 
@@ -185,7 +185,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
                         // We assume that it will only happen in case of the temp. reply queue.
                     }
 
-                    getLogger().log(Level.FINE, "client sending request: ", reply.getIn());
+                    getLogger().log(Level.FINE, "template sending request: ", reply.getIn());
                 }
             });
         }
@@ -207,7 +207,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
             Object result = null;
 
             javax.camel.Message camelMessage1 = pooledSession.consumer().receive(timeout);
-            getLogger().log(Level.FINE, "client received reply: " , camelMessage1);
+            getLogger().log(Level.FINE, "template received reply: " , camelMessage1);
 
             if (camelMessage1 != null) {
 
