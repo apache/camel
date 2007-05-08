@@ -107,7 +107,7 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
         predicates.add(predicate);
     }
 
-    protected class PredicateValueBuilder extends ValueBuilder<E> {
+    public class PredicateValueBuilder extends ValueBuilder<E> {
 
         public PredicateValueBuilder(Expression<E> expression) {
             super(expression);
