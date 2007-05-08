@@ -83,8 +83,12 @@ public abstract class SpringTestSupport extends TestSupport {
 
         List<Route> routes = context.getRoutes();
         assertNotNull("Should have some routes defined", routes);
-        assertTrue("Should have at least one route", routes.size() > 0);
+        assertTrue("Should have at least one route", routes.size() >= getExpectedRouteCount());
         log.debug("Camel Routes: " + routes);
+    }
+
+    protected int getExpectedRouteCount() {
+        return 1;
     }
 
     protected SpringCamelContext createCamelContext() throws Exception {

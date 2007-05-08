@@ -28,6 +28,7 @@
       <xs:complexContent>
         <xs:extension base="s:identifiedType">
           <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element minOccurs="0" maxOccurs="1" ref="c:beanPostProcessor"/>
             <xs:element minOccurs="0" maxOccurs="1" ref="c:endpoint"/>
             <xs:element minOccurs="0" maxOccurs="1" ref="c:route"/>
           </xs:choice>
@@ -51,6 +52,16 @@
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
+  </xs:element>
+
+  <xs:element name="beanPostProcessor">
+    <xs:annotation>
+      <xs:documentation><![CDATA[
+  Enables the Camel bean post processor for auto-injecting Camel resources into
+  beans which have the Camel annotations on them as well as auto-activating
+  @MessageDriven POJOs
+      ]]></xs:documentation>
+    </xs:annotation>
   </xs:element>
 
   <!--

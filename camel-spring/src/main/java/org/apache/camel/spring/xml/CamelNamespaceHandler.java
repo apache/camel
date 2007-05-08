@@ -2,6 +2,7 @@ package org.apache.camel.spring.xml;
 
 import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.EndpointFactoryBean;
+import org.apache.camel.spring.CamelBeanPostProcessor;
 import static org.apache.camel.util.ObjectHelper.isNotNullOrBlank;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -21,6 +22,7 @@ import java.util.HashSet;
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected CamelBeanDefinitionParser routesParser = new CamelBeanDefinitionParser(this);
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(EndpointFactoryBean.class);
+    protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
     protected Set<String> parserElementNames = new HashSet<String>();
 
     public void init() {
@@ -41,8 +43,17 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 for (int size = list.getLength(), i = 0; i < size; i++) {
                     Node child = list.item(i);
                     if (child instanceof Element) {
-                        element.removeChild(child);
-                        routes.appendChild(child);
+                        Element childElement = (Element) child;
+                        if (child.getLocalName().equals("beanPostProcessor")) {
+                            String beanPostProcessorId = contextId + ":beanPostProcessor";
+                            childElement.setAttribute("id", beanPostProcessorId);
+                            BeanDefinition definition = beanPostProcessorParser.parse(childElement, parserContext);
+                            definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
+                        }
+                        else {
+                            element.removeChild(child);
+                            routes.appendChild(child);
+                        }
                     }
                 }
                 String routeId = contextId + ":routes";
