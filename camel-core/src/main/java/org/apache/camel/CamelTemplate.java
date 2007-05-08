@@ -18,7 +18,11 @@
 package org.apache.camel;
 
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ProducerCache;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A client helper object (named like Spring's TransactionTemplate & JmsTemplate et al)
@@ -30,9 +34,18 @@ import org.apache.camel.util.ProducerCache;
 public class CamelTemplate<E extends Exchange> extends ServiceSupport {
     private CamelContext context;
     private ProducerCache<E> producerCache = new ProducerCache<E>();
+    private boolean useEndpointCache = true;
+    private Map<String, Endpoint<E>> endpointCache = new HashMap<String, Endpoint<E>>();
+    private Endpoint<E> defaultEndpoint;
+
 
     public CamelTemplate(CamelContext context) {
         this.context = context;
+    }
+
+    public CamelTemplate(CamelContext context, Endpoint defaultEndpoint) {
+        this(context);
+        this.defaultEndpoint = defaultEndpoint;
     }
 
     /**
@@ -83,6 +96,23 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport {
     /**
      * Send the body to an endpoint
      *
+     * @param endpoint
+     * @param body     = the payload
+     * @return the result
+     */
+    public Object sendBody(Endpoint<E> endpoint, final Object body) {
+        E result = send(endpoint, new Processor() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                in.setBody(body);
+            }
+        });
+        return extractResultBody(result);
+    }
+
+    /**
+     * Send the body to an endpoint
+     *
      * @param endpointUri
      * @param body        = the payload
      * @return the result
@@ -117,6 +147,41 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport {
         return extractResultBody(result);
     }
 
+    // Methods using the default endpoint
+    //-----------------------------------------------------------------------
+
+    /**
+     * Sends the body to the default endpoint and returns the result content
+     *
+     * @param body the body to send
+     * @return the returned message body
+     */
+    public Object sendBody(Object body) {
+        return sendBody(getMandatoryDefaultEndpoint(), body);
+    }
+
+    /**
+     * Sends the exchange to the default endpoint
+     *
+     * @param exchange the exchange to send
+     */
+    public E send(E exchange) {
+        return send(getMandatoryDefaultEndpoint(), exchange);
+    }
+
+    /**
+     * Sends an exchange to the default endpoint
+     * using a supplied @{link Processor} to populate the exchange
+     *
+     * @param processor the transformer used to populate the new exchange
+     */
+    public E send(Processor processor) {
+        return send(getMandatoryDefaultEndpoint(), processor);
+    }
+
+
+    // Properties
+    //-----------------------------------------------------------------------
     public Producer<E> getProducer(Endpoint<E> endpoint) {
         return producerCache.getProducer(endpoint);
     }
@@ -125,12 +190,59 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport {
         return context;
     }
 
+    public Endpoint<E> getDefaultEndpoint() {
+        return defaultEndpoint;
+    }
+
+    public void setDefaultEndpoint(Endpoint<E> defaultEndpoint) {
+        this.defaultEndpoint = defaultEndpoint;
+    }
+
+    /**
+     * Sets the default endpoint to use if none is specified
+     */
+    public void setDefaultEndpointUri(String endpointUri) {
+        setDefaultEndpoint(getContext().getEndpoint(endpointUri));
+    }
+
+    public boolean isUseEndpointCache() {
+        return useEndpointCache;
+    }
+
+    public void setUseEndpointCache(boolean useEndpointCache) {
+        this.useEndpointCache = useEndpointCache;
+    }
+
+    // Implementation methods
+    //-----------------------------------------------------------------------
+
     protected Endpoint resolveMandatoryEndpoint(String endpointUri) {
-        Endpoint endpoint = context.getEndpoint(endpointUri);
+        Endpoint endpoint = null;
+
+        if (isUseEndpointCache()) {
+            synchronized (endpointCache) {
+                endpoint = endpointCache.get(endpointUri);
+                if (endpoint == null) {
+                    endpoint = context.getEndpoint(endpointUri);
+                    if (endpoint != null) {
+                        endpointCache.put(endpointUri, endpoint);
+                    }
+                }
+            }
+        }
+        else {
+            endpoint = context.getEndpoint(endpointUri);
+        }
         if (endpoint == null) {
             throw new NoSuchEndpointException(endpointUri);
         }
         return endpoint;
+    }
+
+    protected Endpoint<E> getMandatoryDefaultEndpoint() {
+        Endpoint<E> answer = getDefaultEndpoint();
+        ObjectHelper.notNull(answer, "defaultEndpoint");
+        return answer;
     }
 
     protected void doStart() throws Exception {
