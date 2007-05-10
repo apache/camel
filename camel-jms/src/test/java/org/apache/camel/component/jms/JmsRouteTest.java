@@ -30,7 +30,9 @@ import javax.jms.ConnectionFactory;
  * @version $Revision$
  */
 public class JmsRouteTest extends ContextTestSupport {
-    private MockEndpoint resultEndpoint;
+    protected MockEndpoint resultEndpoint;
+    protected String startEndpointUri = "activemq:queue:test.a";
+;
 
     public void testJmsRouteWithTextMessage() throws Exception {
         String expectedBody = "Hello there!";
@@ -55,7 +57,7 @@ public class JmsRouteTest extends ContextTestSupport {
     }
 
     protected void sendExchange(final Object expectedBody) {
-        template.sendBody("activemq:queue:test.a", expectedBody, "cheese", 123);
+        template.sendBody(startEndpointUri, expectedBody, "cheese", 123);
     }
 
 
@@ -78,7 +80,7 @@ public class JmsRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:queue:test.a").to("activemq:queue:test.b");
+                from(startEndpointUri).to("activemq:queue:test.b");
                 from("activemq:queue:test.b").to("mock:result");
 
                 JmsEndpoint endpoint1 = (JmsEndpoint) endpoint("activemq:topic:quote.IONA");
