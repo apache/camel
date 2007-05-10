@@ -17,118 +17,78 @@
  */
 package org.apache.camel.component.jms;
 
-import junit.framework.TestCase;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
-import org.apache.camel.Exchange;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.ProducerCache;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.component.mock.MockEndpoint;
 
 import javax.jms.ConnectionFactory;
-import javax.jms.Message;
-import javax.jms.ObjectMessage;
-import javax.jms.TextMessage;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Revision$
  */
-public class JmsRouteTest extends TestCase {
-    private static final transient Log log = LogFactory.getLog(JmsRouteTest.class);
-    protected JmsExchange receivedExchange;
-    protected CamelContext container = new DefaultCamelContext();
-    protected CountDownLatch latch = new CountDownLatch(1);
-    protected Endpoint<JmsExchange> endpoint;
-    protected ProducerCache<JmsExchange> client = new ProducerCache<JmsExchange>();
+public class JmsRouteTest extends ContextTestSupport {
+    private MockEndpoint resultEndpoint;
 
     public void testJmsRouteWithTextMessage() throws Exception {
         String expectedBody = "Hello there!";
+
+        resultEndpoint.expectedBodiesReceived(expectedBody);
+        resultEndpoint.message(0).header("cheese").isEqualTo(123);
+
         sendExchange(expectedBody);
 
-        Object body = assertReceivedValidExchange(TextMessage.class);
-        assertEquals("body", expectedBody, body);
+        resultEndpoint.assertIsSatisfied();
     }
 
     public void testJmsRouteWithObjectMessage() throws Exception {
         PurchaseOrder expectedBody = new PurchaseOrder("Beer", 10);
 
+        resultEndpoint.expectedBodiesReceived(expectedBody);
+        resultEndpoint.message(0).header("cheese").isEqualTo(123);
+
         sendExchange(expectedBody);
 
-        Object body = assertReceivedValidExchange(ObjectMessage.class);
-        assertEquals("body", expectedBody, body);
+        resultEndpoint.assertIsSatisfied();
     }
 
     protected void sendExchange(final Object expectedBody) {
-        client.send(endpoint, new Processor() {
-            public void process(Exchange exchange) {
-                // now lets fire in a message
-                exchange.getIn().setBody(expectedBody);
-                exchange.getIn().setHeader("cheese", 123);
-            }
-        });
+        template.sendBody("activemq:queue:test.a", expectedBody, "cheese", 123);
     }
 
-    protected Object assertReceivedValidExchange(Class type) throws Exception {
-        // lets wait on the message being received
-        boolean received = latch.await(20, TimeUnit.SECONDS);
-        assertTrue("Did not receive the message!", received);
-
-        assertNotNull(receivedExchange);
-        JmsMessage receivedMessage = receivedExchange.getIn();
-
-        assertEquals("cheese header", 123, receivedMessage.getHeader("cheese"));
-        Object body = receivedMessage.getBody();
-        log.debug("Received body: " + body);
-        Message jmsMessage = receivedMessage.getJmsMessage();
-        assertTrue("Expected an instance of " + type.getName() + " but was " + jmsMessage, type.isInstance(jmsMessage));
-
-        log.debug("Received JMS message: " + jmsMessage);
-        return body;
-    }
 
     @Override
     protected void setUp() throws Exception {
-        // lets configure some componnets
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
-        container.addComponent("activemq", jmsComponentClientAcknowledge(connectionFactory));
+        super.setUp();
 
-        // lets add some routes
-        container.addRoutes(new RouteBuilder() {
-            public void configure() {
+        resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+    }
+
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
+        camelContext.addComponent("activemq", jmsComponentClientAcknowledge(connectionFactory));
+
+        return camelContext;
+    }
+
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
                 from("activemq:queue:test.a").to("activemq:queue:test.b");
-                from("activemq:queue:test.b").process(new Processor() {
-                    public void process(Exchange e) {
-                        System.out.println("Received exchange: " + e.getIn());
-                        receivedExchange = (JmsExchange) e;
-                        latch.countDown();
-                    }
-                });
-                
+                from("activemq:queue:test.b").to("mock:result");
+
                 JmsEndpoint endpoint1 = (JmsEndpoint) endpoint("activemq:topic:quote.IONA");
                 endpoint1.getConfiguration().setTransacted(true);
                 from(endpoint1).to("mock:transactedClient");
-                
+
                 JmsEndpoint endpoint2 = (JmsEndpoint) endpoint("activemq:topic:quote.IONA");
                 endpoint1.getConfiguration().setTransacted(true);
                 from(endpoint2).to("mock:nonTrasnactedClient");
             }
-        });
-        endpoint = container.getEndpoint("activemq:queue:test.a");
-        assertNotNull("No endpoint found!", endpoint);
-
-        container.start();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        client.stop();
-        container.stop();
+        };
     }
 }
