@@ -23,7 +23,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <properties>
-    <cxf.version>2.0-incubator-RC-SNAPSHOT</cxf.version>
+    <cxf.version>2.0-incubator-RC</cxf.version>
   </properties>
 
   <parent>
@@ -51,6 +51,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-core</artifactId>
+      <version>${cxf.version}</version>
       <exclusions>
         <exclusion>
           <groupId>com.sun.xml.bind</groupId>
@@ -156,6 +157,8 @@
   </dependencies>
 
   <build>
+    <defaultGoal>install</defaultGoal>
+
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -174,4 +177,13 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>fastinstall</id>
+      <properties>
+        <maven.test.skip>true</maven.test.skip>
+      </properties>
+    </profile>
+  </profiles>
 </project>
