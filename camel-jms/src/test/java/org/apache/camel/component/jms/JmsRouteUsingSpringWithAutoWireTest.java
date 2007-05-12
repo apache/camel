@@ -16,28 +16,15 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision: $
  */
-public class JmsRouteUsingSpringTest extends JmsRouteTest {
-    private ClassPathXmlApplicationContext applicationContext;
-
-    protected CamelContext createCamelContext() throws Exception {
-        applicationContext = createApplicationContext();
-        return SpringCamelContext.springCamelContext(applicationContext);
-    }
+public class JmsRouteUsingSpringWithAutoWireTest extends JmsRouteUsingSpringAndJmsNameTest {
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/jmsRouteUsingSpringTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/jmsRouteUsingSpringWithAutoWireTest.xml");
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        applicationContext.close();
-    }
 }

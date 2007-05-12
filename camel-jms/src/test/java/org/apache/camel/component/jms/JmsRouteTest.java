@@ -31,8 +31,8 @@ import javax.jms.ConnectionFactory;
  */
 public class JmsRouteTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
-    protected String startEndpointUri = "activemq:queue:test.a";
-;
+    protected String componentName = "activemq";
+    protected String startEndpointUri;
 
     public void testJmsRouteWithTextMessage() throws Exception {
         String expectedBody = "Hello there!";
@@ -63,6 +63,8 @@ public class JmsRouteTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
+        startEndpointUri = componentName + ":queue:test.a";
+
         super.setUp();
 
         resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
@@ -72,7 +74,7 @@ public class JmsRouteTest extends ContextTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
-        camelContext.addComponent("activemq", jmsComponentClientAcknowledge(connectionFactory));
+        camelContext.addComponent(componentName, jmsComponentClientAcknowledge(connectionFactory));
 
         return camelContext;
     }
@@ -80,14 +82,14 @@ public class JmsRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(startEndpointUri).to("activemq:queue:test.b");
-                from("activemq:queue:test.b").to("mock:result");
+                from(startEndpointUri).to(componentName + ":queue:test.b");
+                from(componentName + ":queue:test.b").to("mock:result");
 
-                JmsEndpoint endpoint1 = (JmsEndpoint) endpoint("activemq:topic:quote.IONA");
+                JmsEndpoint endpoint1 = (JmsEndpoint) endpoint(componentName + ":topic:quote.IONA");
                 endpoint1.getConfiguration().setTransacted(true);
                 from(endpoint1).to("mock:transactedClient");
 
-                JmsEndpoint endpoint2 = (JmsEndpoint) endpoint("activemq:topic:quote.IONA");
+                JmsEndpoint endpoint2 = (JmsEndpoint) endpoint(componentName + ":topic:quote.IONA");
                 endpoint1.getConfiguration().setTransacted(true);
                 from(endpoint2).to("mock:nonTrasnactedClient");
             }
