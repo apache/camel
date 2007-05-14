@@ -67,6 +67,11 @@ public class BeanInfo {
         }
     }
 
+    public MethodInvocation createInvocation(Method method, Object pojo, Exchange messageExchange) throws RuntimeCamelException {
+        MethodInfo methodInfo = introspect(type, method);
+        return methodInfo.createMethodInvocation(pojo, messageExchange);
+    }
+
     public MethodInvocation createInvocation(Object pojo, Exchange messageExchange) throws RuntimeCamelException {
         MethodInfo methodInfo = null;
 
@@ -95,7 +100,7 @@ public class BeanInfo {
         }
     }
 
-    protected void introspect(Class clazz, Method method) {
+    protected MethodInfo introspect(Class clazz, Method method) {
         Class[] parameterTypes = method.getParameterTypes();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         final Expression[] parameterExpressions = new Expression[parameterTypes.length];
@@ -108,7 +113,13 @@ public class BeanInfo {
                     log.debug("No expression available for method: "
                             + method.toString() + " parameter: " + i + " so ignoring method");
                 }
-                return;
+                if (parameterTypes.length == 1) {
+                	// lets assume its the body
+                	expression = ExpressionBuilder.bodyExpression(parameterType);
+                }
+                else {
+                	return null;
+                }
             }
             parameterExpressions[i] = expression;
         }
@@ -128,7 +139,9 @@ public class BeanInfo {
         }
         */
         Expression parametersExpression = createMethodParametersExpression(parameterExpressions);
-        operations.put(opName, new MethodInfo(clazz, method, parametersExpression));
+        MethodInfo methodInfo = new MethodInfo(clazz, method, parametersExpression);
+        operations.put(opName, methodInfo);
+        return methodInfo;
     }
 
     protected Expression createMethodParametersExpression(final Expression[] parameterExpressions) {

@@ -44,6 +44,8 @@ import org.springframework.context.ApplicationContextAware;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A post processor to perform injection of {@link Endpoint} and {@link Producer} instances together with binding
@@ -57,6 +59,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     private CamelContext camelContext;
     private ApplicationContext applicationContext;
     private MethodInvocationStrategy invocationStrategy = new DefaultMethodInvocationStrategy();
+	//private List<Consumer> consumers = new ArrayList<Consumer>();
 
     public CamelBeanPostProcessor() {
     }
@@ -176,15 +179,20 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     protected void consumerInjection(Method method, Object bean) {
         MessageDriven annotation = method.getAnnotation(MessageDriven.class);
         if (annotation != null) {
+            log.info("Creating a consumer for: " + annotation);
+            
             // lets bind this method to a listener
             Endpoint endpoint = getEndpointInjection(annotation.uri(), annotation.name());
             if (endpoint != null) {
                 try {
                     Processor processor = createConsumerProcessor(bean, method, endpoint);
+                    log.info("Created processor: " + processor);
                     Consumer consumer = endpoint.createConsumer(processor);
+                    consumer.start();
                     addConsumer(consumer);
                 }
                 catch (Exception e) {
+                    log.warn(e);
                     throw new RuntimeCamelException(e);
                 }
             }
@@ -198,10 +206,21 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
         final BeanInfo beanInfo = new BeanInfo(pojo.getClass(), invocationStrategy);
 
         return new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                MethodInvocation invocation = beanInfo.createInvocation(pojo, exchange);
+            @Override
+			public String toString() {
+				return "Processor on " + endpoint;
+			}
+
+			public void process(Exchange exchange) throws Exception {
+				if (log.isDebugEnabled()) {
+					log.debug(">>>> invoking method for: " + exchange);
+				}
+                MethodInvocation invocation = beanInfo.createInvocation(method, pojo, exchange);
+            	if (invocation == null) {
+            		throw new IllegalStateException("No method invocation could be created");
+            	}
                 try {
-                    invocation.proceed();
+                	invocation.proceed();
                 }
                 catch (Exception e) {
                     throw e;
@@ -215,6 +234,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
 
     protected void addConsumer(Consumer consumer) {
         log.debug("Adding consumer: " + consumer);
+        //consumers.add(consumer);
     }
 
     /**

@@ -26,6 +26,9 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ProducerCache;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents a direct endpoint that synchronously invokes the consumers of the endpoint when a producer 
@@ -35,6 +38,7 @@ import org.apache.camel.impl.DefaultProducer;
  * @version $Revision: 519973 $
  */
 public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
+    private static final Log log = LogFactory.getLog(DirectEndpoint.class);
 
 	private final CopyOnWriteArrayList<DefaultConsumer<E>> consumers = new CopyOnWriteArrayList<DefaultConsumer<E>>();
 	
@@ -45,21 +49,26 @@ public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     }
 
     public Producer createProducer() throws Exception {
-        return startService(new DefaultProducer(this) {
+        return new DefaultProducer(this) {
             public void process(Exchange exchange) throws Exception {
             	DirectEndpoint.this.process(exchange);
             }
-        });    	
+        };    	
     }
 
     protected void process(Exchange exchange) throws Exception {
-    	for (DefaultConsumer<E> consumer : consumers) {
-			consumer.getProcessor().process(exchange);
-		}
-	}
+    	if (consumers.isEmpty()) {
+    		log.warn("No consumers available on " + this + " for " + exchange);
+    	}
+    	else {
+	    	for (DefaultConsumer<E> consumer : consumers) {
+				consumer.getProcessor().process(exchange);
+			}
+    	}
+    }
 
 	public Consumer<E> createConsumer(Processor processor) throws Exception {
-		DefaultConsumer<E> consumer = new DefaultConsumer<E>(this, processor) {
+		return new DefaultConsumer<E>(this, processor) {
 			@Override
 			public void start() throws Exception {
 				if( !allowMultipleConsumers && !consumers.isEmpty() )
@@ -75,8 +84,6 @@ public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
 				consumers.remove(this);
 			}
 		};
-		
-		return consumer;
     }
 
     public E createExchange() {

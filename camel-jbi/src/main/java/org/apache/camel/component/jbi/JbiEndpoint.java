@@ -42,15 +42,15 @@ public class JbiEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     public Producer<Exchange> createProducer() throws Exception {
-        return startService(new DefaultProducer<Exchange>(this) {
-            public void process(Exchange exchange) throws Exception {
-                toJbiProcessor.process(exchange);
-            }
-        });
+        return new DefaultProducer<Exchange>(this) {
+		    public void process(Exchange exchange) throws Exception {
+		        toJbiProcessor.process(exchange);
+		    }
+		};
     }
 
     public Consumer<Exchange> createConsumer(final Processor processor) throws Exception {
-        return startService(new DefaultConsumer<Exchange>(this, processor) {
+        return new DefaultConsumer<Exchange>(this, processor) {
             CamelJbiEndpoint jbiEndpoint;
 
             @Override
@@ -68,7 +68,7 @@ public class JbiEndpoint extends DefaultEndpoint<Exchange> {
 */
                 super.doStop();
             }
-        });
+        };
     }
 
 

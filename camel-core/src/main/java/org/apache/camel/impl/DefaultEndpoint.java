@@ -147,15 +147,7 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         return null;
     }
 
-    /**
-     * A helper method to reduce the clutter of implementors of {@link #createProducer()} and {@link #createConsumer(Processor)}
-     */
-    protected <T extends Service> T startService(T service) throws Exception {
-        service.start();
-        return service;
-    }
-
-    protected ScheduledThreadPoolExecutor createExecutorService() {
+  protected ScheduledThreadPoolExecutor createExecutorService() {
         return new ScheduledThreadPoolExecutor(10);
     }
 }

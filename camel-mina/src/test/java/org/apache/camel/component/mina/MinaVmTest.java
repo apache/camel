@@ -50,6 +50,7 @@ public class MinaVmTest extends TestCase {
         message.setHeader("cheese", 123);
 
         producer = endpoint.createProducer();
+        producer.start();
         producer.process(exchange);
 
         // now lets sleep for a while

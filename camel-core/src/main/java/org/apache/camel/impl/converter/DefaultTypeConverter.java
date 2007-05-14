@@ -164,16 +164,17 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         }
 
         // lets try classes derived from this toType
-
-        Set<Map.Entry<TypeMapping, TypeConverter>> entries = typeMappings.entrySet();
-        for (Map.Entry<TypeMapping, TypeConverter> entry : entries) {
-            TypeMapping key = entry.getKey();
-            Class aToType = key.getToType();
-            if (toType.isAssignableFrom(aToType)) {
-                if (fromType.isAssignableFrom(key.getFromType())) {
-                    return entry.getValue();
-                }
-            }
+        if (fromType != null) {
+	        Set<Map.Entry<TypeMapping, TypeConverter>> entries = typeMappings.entrySet();
+	        for (Map.Entry<TypeMapping, TypeConverter> entry : entries) {
+	            TypeMapping key = entry.getKey();
+	            Class aToType = key.getToType();
+	            if (toType.isAssignableFrom(aToType)) {
+	                if (fromType.isAssignableFrom(key.getFromType())) {
+	                    return entry.getValue();
+	                }
+	            }
+	        }
         }
 
         // TODO look at constructors of toType?

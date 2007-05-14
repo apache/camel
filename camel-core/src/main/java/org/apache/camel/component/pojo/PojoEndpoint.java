@@ -48,13 +48,13 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
         if( pojo == null )
         	throw new NoSuchEndpointException(getEndpointUri());
         
-        return startService(new DefaultProducer(this) {
+        return new DefaultProducer(this) {
             public void process(Exchange exchange) {
                 PojoExchange pojoExchange = toExchangeType(exchange);
                 invoke(pojo, pojoExchange);
                 exchange.copyFrom(pojoExchange);
             }
-        });
+        };
     }
 
     public Consumer<PojoExchange> createConsumer(Processor processor) throws Exception {

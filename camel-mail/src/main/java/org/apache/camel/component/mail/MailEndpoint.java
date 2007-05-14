@@ -48,7 +48,7 @@ public class MailEndpoint extends PollingEndpoint<MailExchange> {
      * Creates a producer using the given sender
      */
     public Producer<MailExchange> createProducer(JavaMailSender sender) throws Exception {
-        return startService(new MailProducer(this, sender));
+        return new MailProducer(this, sender);
     }
 
     public Consumer<MailExchange> createConsumer(Processor processor) throws Exception {
@@ -76,7 +76,7 @@ public class MailEndpoint extends PollingEndpoint<MailExchange> {
     public Consumer<MailExchange> createConsumer(Processor processor, Folder folder) throws Exception {
         MailConsumer answer = new MailConsumer(this, processor, folder);
         configureConsumer(answer);
-        return startService(answer);
+        return answer;
     }
 
     public MailExchange createExchange() {
