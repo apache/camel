@@ -17,16 +17,17 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.impl.DefaultEndpoint;
 
 /**
  * Represents a HTTP based Endpoint
@@ -36,22 +37,21 @@ import javax.servlet.http.HttpServletResponse;
 public class HttpEndpoint extends DefaultEndpoint<HttpExchange> {
 
     private HttpBinding binding;
-
-    protected HttpEndpoint(String uri, HttpComponent component) {
+	private HttpComponent component;
+	private URI httpUri;
+	
+    protected HttpEndpoint(String uri, HttpComponent component) throws URISyntaxException {
         super(uri, component);
+		this.component = component;
+		this.httpUri = new URI(uri);
     }
 
     public Producer<HttpExchange> createProducer() throws Exception {
-        return new DefaultProducer(this) {
-            public void process(Exchange exchange) {
-                /** TODO */
-            }
-        };
+    	throw new RuntimeCamelException("Not implemented.");
     }
 
     public Consumer<HttpExchange> createConsumer(Processor processor) throws Exception {
-        // TODO
-        return new DefaultConsumer<HttpExchange>(this, processor) {};
+        return new HttpConsumer(this, processor);
     }
 
     public HttpExchange createExchange() {
@@ -77,4 +77,30 @@ public class HttpEndpoint extends DefaultEndpoint<HttpExchange> {
 		return true;
 	}
 
+	public void connect(HttpConsumer consumer) throws Exception {
+		component.connect(consumer);
+	}
+
+	public void disconnect(HttpConsumer consumer) throws Exception {
+		component.disconnect(consumer);
+	}
+
+	public String getPath() {
+		return httpUri.getPath();
+	}
+
+	public int getPort() {
+		if( httpUri.getPort() == -1 ) {
+			if( "https".equals(getProtocol() ) ) {
+				return 443;
+			} else {
+				return 80;
+			}
+		}
+		return httpUri.getPort();
+	}
+
+	public String getProtocol() {
+		return httpUri.getScheme(); 
+	}
 }

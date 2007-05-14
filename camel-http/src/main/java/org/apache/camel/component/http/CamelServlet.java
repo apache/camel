@@ -18,52 +18,60 @@
 package org.apache.camel.component.http;
 
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.camel.util.ProducerCache;
-
 /**
  * @version $Revision$
  */
 public class CamelServlet extends HttpServlet {
-    private HttpEndpoint endpoint;
-    private ProducerCache<HttpExchange> producerCache = new ProducerCache<HttpExchange>();
 
-    public CamelServlet() {
-    }
+    private ConcurrentHashMap<String, HttpConsumer> consumers=new ConcurrentHashMap<String, HttpConsumer>();
 
-    public CamelServlet(HttpEndpoint endpoint) {
-        this.endpoint = endpoint;
+	public CamelServlet() {
     }
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpEndpoint endpoint = resolveEndpoint(request, response);
-        if (endpoint == null) {
-            throw new ServletException("No endpoint found for request: " + request.getRequestURI());
-        }
-
         try {
+        	        	
+        	// Is there a consumer registered for the request.
+        	HttpConsumer consumer = resolve(request);
+        	if( consumer == null ) {
+        		response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        		return;
+        	}
         	
-			HttpExchange exchange = endpoint.createExchange(request, response);
-			producerCache.send(endpoint, exchange);
+        	// Have the camel process the HTTP exchange.
+			HttpExchange exchange =  new HttpExchange(consumer.getEndpoint().getContext(), request, response);			
+			consumer.getProcessor().process(exchange);
 
-			// HC: The getBinding() interesting because it illustrates the impedance miss-match between
+			// HC: The getBinding() is interesting because it illustrates the impedance miss-match between
 			// HTTP's stream oriented protocol, and Camels more message oriented protocol exchanges.
 
 			// now lets output to the response
-			endpoint.getBinding().writeResponse(exchange);
+			consumer.getBinding().writeResponse(exchange);
 			
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
     }
 
-    protected HttpEndpoint resolveEndpoint(HttpServletRequest request, HttpServletResponse response) {
-        return endpoint;
-    }
+	protected HttpConsumer resolve(HttpServletRequest request) {
+		String path = request.getPathInfo();
+		return consumers.get(path);
+	}
+
+	public void connect(HttpConsumer consumer) {
+		consumers.put(consumer.getPath(), consumer);
+	}
+
+	public void disconnect(HttpConsumer consumer) {
+		consumers.remove(consumer.getPath());
+	}
+
 }
