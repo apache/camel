@@ -18,6 +18,7 @@
 package org.apache.camel.component.mail;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.util.ObjectHelper.asString;
@@ -27,6 +28,7 @@ import static javax.mail.Message.RecipientType;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * @version $Revision: 1.1 $
@@ -38,7 +40,9 @@ public class MailRouteTest extends ContextTestSupport {
         resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("hello world!");
 
-        template.sendBody("smtp://james@localhost", "hello world!");
+        HashMap<String, Object> headers = new HashMap<String, Object>();
+        headers.put("reply-to", "reply1@localhost");
+        template.sendBody("smtp://james@localhost", "hello world!", headers);
 
         // lets test the first sent worked
         assertMailboxReceivedMessages("james@localhost");
@@ -48,7 +52,12 @@ public class MailRouteTest extends ContextTestSupport {
 
         // lets test the receive worked
         resultEndpoint.assertIsSatisfied();
-
+        
+        // Validate that the headers were preserved.
+        Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
+        String replyTo = (String) exchange.getIn().getHeader("reply-to");
+        assertEquals( "reply1@localhost", replyTo);
+        
         assertMailboxReceivedMessages("copy@localhost");
     }
 

@@ -146,6 +146,26 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport {
         });
         return extractResultBody(result);
     }
+    
+    /**
+     * Sends the body to an endpoint with the specified headers and header values
+     *
+     * @param endpointUri the endpoint URI to send to
+     * @param body        the payload send
+     * @return the result
+     */
+    public Object sendBody(String endpointUri, final Object body, final Map<String, Object> headers) {
+        E result = send(endpointUri, new Processor() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                for (Map.Entry<String, Object> header : headers.entrySet()) {
+                    in.setHeader(header.getKey(), header.getValue());
+				}
+                in.setBody(body);
+            }
+        });
+        return extractResultBody(result);
+    }
 
     // Methods using the default endpoint
     //-----------------------------------------------------------------------

@@ -19,6 +19,7 @@ package org.apache.camel.component.mail;
 
 import org.apache.camel.impl.DefaultMessage;
 
+import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import java.util.Enumeration;
@@ -67,7 +68,7 @@ public class MailMessage extends DefaultMessage {
     }
 
     public Object getHeader(String name) {
-        Object answer = null;
+        String[] answer = null;
         if (mailMessage != null) {
             try {
                 answer = mailMessage.getHeader(name);
@@ -77,9 +78,12 @@ public class MailMessage extends DefaultMessage {
             }
         }
         if (answer == null) {
-            answer = super.getHeader(name);
+            return super.getHeader(name);
         }
-        return answer;
+        if( answer.length > 0 ) {
+        	return answer[0];
+        }
+        return null;
     }
 
     @Override
@@ -105,15 +109,16 @@ public class MailMessage extends DefaultMessage {
             catch (MessagingException e) {
                 throw new MessageHeaderNamesAccessException(e);
             }
-            while (names.hasMoreElements()) {
-                String name = names.nextElement().toString();
-                try {
-                    Object value = mailMessage.getHeader(name);
-                    map.put(name, value);
-                }
-                catch (MessagingException e) {
-                    throw new MessageHeaderAccessException(name, e);
-                }
+            
+            System.out.println("Copying....");
+            try {
+	            while (names.hasMoreElements()) {
+	                Header header = (Header) names.nextElement();
+	                map.put(header.getName(), header.getValue());
+	                System.out.println("Set: "+header.getName()+"="+header.getValue());
+	            }
+            }catch (Throwable e) {
+                throw new MessageHeaderNamesAccessException(e);                
             }
         }
     }
