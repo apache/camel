@@ -17,6 +17,7 @@
  */
 package org.apache.camel.spring.remoting;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.pojo.PojoComponent;
 import org.springframework.beans.factory.FactoryBean;
@@ -29,6 +30,7 @@ import org.springframework.remoting.support.UrlBasedRemoteAccessor;
  */
 public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements FactoryBean {
 
+	private CamelContext camelContext;
 	private Endpoint endpoint;
 	private Object serviceProxy;
 	
@@ -36,6 +38,17 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
 	public void afterPropertiesSet() {
 		super.afterPropertiesSet();
 		try {
+			if( endpoint == null ) {
+				if( getServiceUrl() == null || camelContext==null ) {
+					throw new IllegalArgumentException("If endpoint is not specified, the serviceUrl and camelContext must be specified.");
+				}
+				
+				endpoint = camelContext.getEndpoint(getServiceUrl());
+				if( endpoint == null ) {
+					throw new IllegalArgumentException("Could not resolve endpoint: "+getServiceUrl());
+				}
+			}
+			
 			this.serviceProxy = PojoComponent.createProxy(endpoint, getServiceInterface());
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
@@ -60,6 +73,14 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
 
 	public void setEndpoint(Endpoint endpoint) {
 		this.endpoint = endpoint;
+	}
+
+	public CamelContext getCamelContext() {
+		return camelContext;
+	}
+
+	public void setCamelContext(CamelContext camelContext) {
+		this.camelContext = camelContext;
 	}
 	
 }
