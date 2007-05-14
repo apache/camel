@@ -34,7 +34,7 @@ import java.util.concurrent.ThreadFactory;
 /**
  * @version $Revision$
  */
-public class DefaultComponent<E extends Exchange> extends ServiceSupport implements Component<E> {
+public abstract  class DefaultComponent<E extends Exchange> extends ServiceSupport implements Component<E> {
 
 	private int defaultThreadPoolSize = 5;
     private CamelContext camelContext;
@@ -124,7 +124,5 @@ public class DefaultComponent<E extends Exchange> extends ServiceSupport impleme
      * @param parameters the optional parameters passed in
      * @return a newly created endpoint or null if the endpoint cannot be created based on the inputs
      */
-    protected Endpoint<E> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return null;
-    }
+    abstract protected Endpoint<E> createEndpoint(String uri, String remaining, Map parameters) throws Exception;
 }

@@ -17,14 +17,15 @@
  */
 package org.apache.camel.impl;
 
-import junit.framework.TestCase;
-import org.apache.camel.TestSupport;
-import org.apache.camel.Endpoint;
+import java.util.Map;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.Exchange;
-import org.apache.camel.CamelContext;
+import org.apache.camel.TestSupport;
 
 /**
  * @version $Revision: 1.1 $
@@ -33,7 +34,13 @@ public class ProducerTest extends TestSupport {
     private CamelContext context = new DefaultCamelContext();
 
     public void testUsingADerivedExchange() throws Exception {
-        DefaultEndpoint<MyExchange> endpoint = new DefaultEndpoint<MyExchange>("foo", new DefaultComponent()) {
+        DefaultEndpoint<MyExchange> endpoint = new DefaultEndpoint<MyExchange>("foo", new DefaultComponent(){
+			@Override
+			protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+				return null;
+			}
+        	
+        } ) {
             public Consumer<MyExchange> createConsumer(Processor processor) throws Exception {
                 return null;
             }
@@ -41,7 +48,7 @@ public class ProducerTest extends TestSupport {
             public MyExchange createExchange() {
                 return new MyExchange(getContext());
             }
-
+ 
             public Producer<MyExchange> createProducer() throws Exception {
                 return null;
             }
@@ -49,6 +56,7 @@ public class ProducerTest extends TestSupport {
             public boolean isSingleton() {
                 return false;
             }
+            
         };
 
         DefaultProducer producer = new DefaultProducer(endpoint) {

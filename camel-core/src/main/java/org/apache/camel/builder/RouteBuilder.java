@@ -53,7 +53,14 @@ public abstract class RouteBuilder extends BuilderSupport {
 
     @Fluent
     public FromBuilder from( @FluentArg("uri") String uri) {
-        return from(endpoint(uri));
+    	if( uri == null ) {
+    		throw new IllegalArgumentException("uri parameter cannot be null");
+    	}
+    	Endpoint endpoint = endpoint(uri);
+    	if( endpoint == null ) {
+    		throw new IllegalArgumentException("uri '"+uri+"' could not be resolved.");
+    	}
+        return from(endpoint);
     }
 
     @Fluent
