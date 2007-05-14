@@ -57,7 +57,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
             jmsTemplate.setPubSubDomain(pubSubDomain);
             jmsTemplate.setDefaultDestinationName(destination);
         }
-        return startService(new JmsProducer(this, template));
+        return new JmsProducer(this, template);
     }
 
     public Consumer<JmsExchange> createConsumer(Processor processor) throws Exception {
@@ -79,7 +79,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
         if (selector != null) {
             listenerContainer.setMessageSelector(selector);
         }
-        return startService(new JmsConsumer(this, processor, listenerContainer));
+        return new JmsConsumer(this, processor, listenerContainer);
     }
 
     public JmsExchange createExchange() {

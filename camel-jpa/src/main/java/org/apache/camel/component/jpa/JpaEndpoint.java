@@ -57,13 +57,13 @@ public class JpaEndpoint extends PollingEndpoint<Exchange> {
     }
 
     public Producer<Exchange> createProducer() throws Exception {
-        return startService(new JpaProducer(this, getProducerExpression()));
+        return new JpaProducer(this, getProducerExpression());
     }
 
     public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
         JpaConsumer consumer = new JpaConsumer(this, processor);
         configureConsumer(consumer);
-        return startService(consumer);
+        return consumer;
     }
 
     @Override

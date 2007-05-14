@@ -45,7 +45,7 @@ public class FileEndpoint extends PollingEndpoint<FileExchange> {
      */
     public Producer<FileExchange> createProducer() throws Exception {
         Producer<FileExchange> result = new FileProducer(this);
-        return startService(result);
+        return result;
     }
 
     /**
@@ -57,7 +57,7 @@ public class FileEndpoint extends PollingEndpoint<FileExchange> {
     public Consumer<FileExchange> createConsumer(Processor file) throws Exception {
         Consumer<FileExchange> result = new FileConsumer(this, file);
         configureConsumer(result);
-        return startService(result);
+        return result;
     }
 
     /**

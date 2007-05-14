@@ -92,6 +92,7 @@ public class JpaWithNamedQueryTest extends TestCase {
                 latch.countDown();
             }
         });
+        consumer.start();
 
         boolean received = latch.await(50, TimeUnit.SECONDS);
         assertTrue("Did not receive the message!", received);

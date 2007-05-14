@@ -16,11 +16,7 @@
  */
 package org.apache.camel.spring.util;
 
-import org.aopalliance.intercept.MethodInvocation;
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Endpoint;
-import org.apache.camel.RuntimeCamelException;
 
 /**
  * A strategy for invoking a method on a pojo from a message exchange
@@ -32,10 +28,10 @@ public interface MethodInvocationStrategy {
      * Creates an invocation on the given POJO using annotations to decide which method to invoke
      * and to figure out which parameters to use
      */
-    MethodInvocation createInvocation(Object pojo, 
+/*    MethodInvocation createInvocation(Object pojo,
                                       BeanInfo beanInfo,
                                       Exchange messageExchange,
-                                      Endpoint pojoEndpoint) throws RuntimeCamelException;
+                                      Endpoint pojoEndpoint) throws RuntimeCamelException;*/
 
     Expression getDefaultParameterTypeExpression(Class parameterType);
 }

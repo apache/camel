@@ -55,12 +55,14 @@ public class DefaultMethodInvocationStrategy implements MethodInvocationStrategy
      * Creates an invocation on the given POJO using annotations to decide which method to invoke
      * and to figure out which parameters to use
      */
-    public MethodInvocation createInvocation(Object pojo, 
+/*
+    public MethodInvocation createInvocation(Object pojo,
                                              BeanInfo beanInfo, 
                                              Exchange messageExchange,
                                              Endpoint pojoEndpoint) throws RuntimeCamelException {
         return beanInfo.createInvocation(pojo, messageExchange);
     }
+*/
 
 
     public void loadDefaultRegistry() {

@@ -68,15 +68,15 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     }
 
     public Producer<XmppExchange> createGroupChatProducer(String room) throws Exception {
-        return startService(new XmppGroupChatProducer(this, room));
+        return new XmppGroupChatProducer(this, room);
     }
 
     public Producer<XmppExchange> createPrivateChatProducer(String participant) throws Exception {
-        return startService(new XmppPrivateChatProducer(this, participant));
+        return new XmppPrivateChatProducer(this, participant);
     }
 
     public Consumer<XmppExchange> createConsumer(Processor processor) throws Exception {
-        return startService(new XmppConsumer(this, processor));
+        return new XmppConsumer(this, processor);
     }
 
     public XmppExchange createExchange() {

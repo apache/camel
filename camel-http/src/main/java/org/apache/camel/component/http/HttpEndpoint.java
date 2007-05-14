@@ -42,16 +42,16 @@ public class HttpEndpoint extends DefaultEndpoint<HttpExchange> {
     }
 
     public Producer<HttpExchange> createProducer() throws Exception {
-        return startService(new DefaultProducer(this) {
+        return new DefaultProducer(this) {
             public void process(Exchange exchange) {
                 /** TODO */
             }
-        });
+        };
     }
 
     public Consumer<HttpExchange> createConsumer(Processor processor) throws Exception {
         // TODO
-        return startService(new DefaultConsumer<HttpExchange>(this, processor) {});
+        return new DefaultConsumer<HttpExchange>(this, processor) {};
     }
 
     public HttpExchange createExchange() {

@@ -44,11 +44,11 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     }
 
     public Producer<CxfExchange> createProducer() throws Exception {
-        return startService(new CxfProducer(this, getLocalTransportFactory()));
+        return new CxfProducer(this, getLocalTransportFactory());
     }
 
     public Consumer<CxfExchange> createConsumer(Processor processor) throws Exception {
-        return startService(new CxfConsumer(this, processor, getLocalTransportFactory()));
+        return new CxfConsumer(this, processor, getLocalTransportFactory());
     }
 
     public CxfExchange createExchange() {

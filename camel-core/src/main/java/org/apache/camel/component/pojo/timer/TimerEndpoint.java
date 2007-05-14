@@ -63,8 +63,7 @@ public class TimerEndpoint extends DefaultEndpoint<PojoExchange> {
     }
 
     public Consumer<PojoExchange> createConsumer(Processor processor) throws Exception {    	
-    	TimerConsumer consumer = new TimerConsumer(this, processor);
-        return startService(consumer);
+        return new TimerConsumer(this, processor);
     }
 
     public PojoExchange createExchange() {

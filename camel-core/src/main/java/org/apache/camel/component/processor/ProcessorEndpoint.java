@@ -48,15 +48,15 @@ public class ProcessorEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     public Producer<Exchange> createProducer() throws Exception {
-        return startService(new DefaultProducer<Exchange>(this) {
+        return new DefaultProducer<Exchange>(this) {
             public void process(Exchange exchange) throws Exception {
                 onExchange(exchange);
             }
-        });
+        };
     }
 
     public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
-        return startService(new ProcessorEndpointConsumer(this, processor));
+        return new ProcessorEndpointConsumer(this, processor);
     }
 
     public Processor getProcessor() {

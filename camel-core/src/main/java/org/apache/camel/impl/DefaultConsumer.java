@@ -37,7 +37,14 @@ public class DefaultConsumer<E extends Exchange> extends ServiceSupport implemen
         this.processor = processor;
     }
 
-    public Endpoint<E> getEndpoint() {
+    
+    @Override
+	public String toString() {
+		return "Consumer on " + endpoint;
+	}
+
+
+	public Endpoint<E> getEndpoint() {
         return endpoint;
     }
 
