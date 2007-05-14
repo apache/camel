@@ -17,15 +17,16 @@
  */
 package org.apache.camel.component.mail;
 
-import org.apache.camel.Exchange;
-
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Address;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.InternetAddress;
 import java.util.Map;
 import java.util.Set;
+
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
+import org.apache.camel.Exchange;
 
 /**
  * A Strategy used to convert between a Camel {@Exchange} and {@Message} to and from a
@@ -38,11 +39,11 @@ public class MailBinding {
         try {
             appendMailHeaders(mimeMessage, exchange.getIn());
 
-            if (empty(mimeMessage.getAllRecipients())) {
-                // lets default the address to the endpoint destination
-                String destination = endpoint.getConfiguration().getDestination();
+            String destination = endpoint.getConfiguration().getDestination();
+            if (destination != null ) {
                 mimeMessage.setRecipients(Message.RecipientType.TO, destination);
             }
+                        
             if (empty(mimeMessage.getFrom())) {
                 // lets default the address to the endpoint destination
                 String from = endpoint.getConfiguration().getFrom();
@@ -84,7 +85,23 @@ public class MailBinding {
             Object headerValue = entry.getValue();
             if (headerValue != null) {
                 if (shouldOutputHeader(camelMessage, headerName, headerValue)) {
-                    mimeMessage.setHeader(headerName, headerValue.toString());
+                	
+            		String[] values = new String[]{};
+            		Class stringArrayClazz = values.getClass();
+            		
+            		// Mail messages can repeat the same header...
+            		if( headerValue.getClass() == stringArrayClazz ) {
+            			mimeMessage.removeHeader(headerName);
+                		values = (String[]) headerValue;
+                		for (int i = 0; i < values.length; i++) {
+                            mimeMessage.addHeader(headerName, values[i]);
+						}
+            		} else if( headerValue.getClass() == String.class ) {
+                        mimeMessage.setHeader(headerName, (String) headerValue);
+            		} else {
+                		// Unknown type? then use toString()
+                        mimeMessage.setHeader(headerName, headerValue.toString());
+                	}
                 }
             }
         }
