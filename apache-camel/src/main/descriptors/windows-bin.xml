@@ -55,6 +55,7 @@
       <unpack>false</unpack>
       <scope>runtime</scope>
       <includes>
+        <include>org.apache.camel:camel-bam</include>
         <include>org.apache.camel:camel-core</include>
         <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-http</include>

@@ -119,6 +119,7 @@
 
   <modules>
     <module>apache-camel</module>
+    <module>camel-bam</module>
     <module>camel-core</module>
     <module>camel-cxf</module>
     <module>camel-http</module>
@@ -147,6 +148,11 @@
     <dependencies>
 
       <!-- Camel jars -->
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-bam</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-core</artifactId>
@@ -324,7 +330,7 @@
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring</artifactId>
-        <version>2.0.3</version>
+        <version>2.0.5</version>
         <exclusions>
           <exclusion>
             <groupId>javax.mail</groupId>
