@@ -20,7 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.bam.model.Activity;
+import org.apache.camel.bam.Activity;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.builder.ProcessorFactory;
 
@@ -36,7 +36,7 @@ public class ActivityBuilder implements ProcessorFactory {
     public ActivityBuilder(ProcessBuilder processBuilder, Endpoint endpoint) {
         this.processBuilder = processBuilder;
         this.endpoint = endpoint;
-        this.activity = new Activity(processBuilder.getProcess());
+        this.activity = new org.apache.camel.bam.Activity(processBuilder.getProcess());
         this.activity.setName(endpoint.getEndpointUri());
     }
 
@@ -89,7 +89,7 @@ public class ActivityBuilder implements ProcessorFactory {
         return correlationExpression;
     }
 
-    public Activity getActivity() {
+    public org.apache.camel.bam.Activity getActivity() {
         return activity;
     }
 

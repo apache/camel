@@ -16,9 +16,14 @@
  */
 package org.apache.camel.bam;
 
+import static org.apache.camel.util.ObjectHelper.notNull;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.bam.model.ProcessInstance;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.FromBuilder;
 import org.springframework.orm.jpa.JpaTemplate;
 
 import java.util.ArrayList;
@@ -30,10 +35,14 @@ import java.util.List;
  * @version $Revision: $
  */
 public abstract class ProcessBuilder extends RouteBuilder {
-    private List<ActivityBuilder> activityBuilders = new ArrayList<ActivityBuilder>();
-    private Class entityType = Process.class;
     private JpaTemplate jpaTemplate;
+    private List<ActivityBuilder> activityBuilders = new ArrayList<ActivityBuilder>();
+    private Class entityType = ProcessInstance.class;
     private ProcessDefinition process = new ProcessDefinition();
+
+    protected ProcessBuilder(JpaTemplate jpaTemplate) {
+        this.jpaTemplate = jpaTemplate;
+    }
 
     public ActivityBuilder activity(String endpointUri) {
         return activity(endpoint(endpointUri));
@@ -55,6 +64,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
 
 
     public Processor createActivityProcessor(ActivityBuilder activityBuilder) {
+        notNull(jpaTemplate, "jpaTemplate");
         return new JpaBamProcessor(getEntityType(), activityBuilder.getCorrelationExpression(), activityBuilder.getActivity(), getJpaTemplate());
     }
 
@@ -81,4 +91,16 @@ public abstract class ProcessBuilder extends RouteBuilder {
     public ProcessDefinition getProcess() {
         return process;
     }
-}
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+    protected void populateRoutes(List<Route> routes) throws Exception {
+        for (ActivityBuilder builder : activityBuilders) {
+            Endpoint from = builder.getEndpoint();
+            Processor processor = builder.createProcessor();
+            if (processor == null) {
+                throw new IllegalArgumentException("No processor created for ActivityBuilder: " + builder);
+            }
+            routes.add(new Route(from, processor));
+        }
+    }}

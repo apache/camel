@@ -17,7 +17,7 @@
 package org.apache.camel.bam;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.bam.model.Activity;
+import org.apache.camel.bam.Activity;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.model.ProcessInstance;
 

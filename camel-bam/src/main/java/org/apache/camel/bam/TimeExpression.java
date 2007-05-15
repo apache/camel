@@ -18,7 +18,6 @@ package org.apache.camel.bam;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.bam.model.Activity;
 
 /**
  * 
@@ -26,11 +25,11 @@ import org.apache.camel.bam.model.Activity;
  */
 public class TimeExpression implements Expression<Exchange> {
 
-    private Activity activity;
+    private org.apache.camel.bam.Activity activity;
     private Expression expression;
 
 
-    public TimeExpression(Activity activity, Expression expression) {
+    public TimeExpression(org.apache.camel.bam.Activity activity, Expression expression) {
         this.activity = activity;
         this.expression = expression;
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.bam.model;
 
+import org.apache.camel.bam.TimerEventHandler;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.FetchType;

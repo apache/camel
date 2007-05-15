@@ -17,14 +17,14 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.TestSupport;
-import org.apache.camel.Route;
-import org.apache.camel.Exchange;
 import org.apache.camel.CamelTemplate;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Route;
+import org.apache.camel.TestSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.List;
 
@@ -47,6 +47,9 @@ public abstract class SpringTestSupport extends TestSupport {
 
         camelContext = createCamelContext();
         assertValidContext(camelContext);
+        if (!camelContext.isStarted()) {
+            camelContext.start();
+        }
 
         template = new CamelTemplate<Exchange>(camelContext);
     }
@@ -82,8 +85,11 @@ public abstract class SpringTestSupport extends TestSupport {
         assertNotNull("No context found!", context);
 
         List<Route> routes = context.getRoutes();
-        assertNotNull("Should have some routes defined", routes);
-        assertTrue("Should have at least one route", routes.size() >= getExpectedRouteCount());
+        int routeCount = getExpectedRouteCount();
+        if (routeCount > 0) {
+            assertNotNull("Should have some routes defined", routes);
+            assertTrue("Should have at least one route", routes.size() >= routeCount);
+        }
         log.debug("Camel Routes: " + routes);
     }
 
@@ -94,5 +100,4 @@ public abstract class SpringTestSupport extends TestSupport {
     protected SpringCamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext);
     }
-
 }

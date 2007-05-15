@@ -20,12 +20,15 @@ import org.apache.camel.bam.model.*;
 import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.jpa.JpaTemplate;
 
 /**
  * @version $Revision: $
  */
 public class JpaBamProcessor extends JpaBamProcessorSupport<ProcessInstance> {
+    private static final transient Log log = LogFactory.getLog(JpaBamProcessor.class);
 
     public JpaBamProcessor(Class<ProcessInstance> entitytype, Expression<Exchange> correlationKeyExpression, Activity activity, JpaTemplate template) {
         super(entitytype, correlationKeyExpression, activity, template);
@@ -36,6 +39,8 @@ public class JpaBamProcessor extends JpaBamProcessorSupport<ProcessInstance> {
     }
 
     protected void processEntity(Exchange exchange, ProcessInstance process) throws Exception {
+        log.info("Processing entity! - attempting to get the current state for process: " + process);
+
         ActivityState state = process.getActivityState(getActivity());
         if (state == null) {
             state = createActivityState(exchange, process);

@@ -16,12 +16,15 @@
  */
 package org.apache.camel.bam.model;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * Represents a single business process
@@ -30,10 +33,15 @@ import java.util.Set;
  */
 @Entity
 public class ProcessInstance extends TemporalEntity {
-    @OneToMany(mappedBy = "process", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-    private Set<ActivityState> activityStates = new HashSet<ActivityState>();
-    private String key;
+    private static final transient Log log = LogFactory.getLog(ProcessInstance.class);
+    
+    private Collection<ActivityState> activityStates = new HashSet<ActivityState>();
+    private String correlationKey;
 
+
+    public String toString() {
+        return getClass().getName() + "[id: " + getId() + ", key: " + getCorrelationKey() + "]";
+    }
 
     /**
      * Returns the activity state for the given activity
@@ -42,8 +50,10 @@ public class ProcessInstance extends TemporalEntity {
      * @return the activity state or null if no state could be found for the
      *         given activity
      */
-    public ActivityState getActivityState(Activity activity) {
-        for (ActivityState activityState : activityStates) {
+    public ActivityState getActivityState(org.apache.camel.bam.Activity activity) {
+        log.info("About to iterate through the states: " + getActivityStates());
+
+        for (ActivityState activityState : getActivityStates()) {
             if (activityState.isActivity(activity)) {
                 return activityState;
             }
@@ -51,19 +61,20 @@ public class ProcessInstance extends TemporalEntity {
         return null;
     }
 
-    public Set<ActivityState> getActivityStates() {
+    @OneToMany(mappedBy = "process", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    public Collection<ActivityState> getActivityStates() {
         return activityStates;
     }
 
-    public void setActivityStates(Set<ActivityState> activityStates) {
+    public void setActivityStates(Collection<ActivityState> activityStates) {
         this.activityStates = activityStates;
     }
 
-    public String getKey() {
-        return key;
+    public String getCorrelationKey() {
+        return correlationKey;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setCorrelationKey(String correlationKey) {
+        this.correlationKey = correlationKey;
     }
 }
