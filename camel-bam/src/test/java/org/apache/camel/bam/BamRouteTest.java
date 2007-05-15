@@ -17,22 +17,44 @@
 package org.apache.camel.bam;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.CamelContext;
+import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
-import static org.apache.camel.util.Time.*;
+import static org.apache.camel.util.Time.seconds;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.orm.jpa.JpaTemplate;
 
 /**
  * @version $Revision: $
  */
-public class BamRouteTest extends ContextTestSupport {
+public class BamRouteTest extends SpringTestSupport {
     protected Object body = "<hello>world!</hello>";
+    protected JpaTemplate jpaTemplate;
 
     public void testRoute() throws Exception {
-        template.sendBody("direct:start", body);
+        template.sendBody("direct:a", body, "foo", "a");
+
+        //Thread.sleep(30000);
+    }
+
+    protected ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/bam/spring.xml");
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        camelContext.addRoutes(createRouteBuilder());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        return new ProcessBuilder() {
+        jpaTemplate = getMandatoryBean(JpaTemplate.class, "jpaTemplate");
+
+        return new ProcessBuilder(jpaTemplate) {
             public void configure() throws Exception {
 
                 ActivityBuilder a = activity("direct:a").name("a")
@@ -42,46 +64,47 @@ public class BamRouteTest extends ContextTestSupport {
                         .correlate(header("foo"));
 
                 ActivityBuilder c = activity("direct:c").name("c")
-                        .correlate(xpath("/foo/bar"));
-
+                        .correlate(header("foo"));
 
                 b.starts().after(a.completes())
                         .expectWithin(seconds(1))
                         .errorIfOver(seconds(5));
 
-                        // TODO .errorIfBefore(a.starts())
-
-
                 /*
-                expect(b.starts().after(10).minutes().from(a.starts());
+        expect(b.starts().after(10).minutes().from(a.starts());
 
 
-                
-
-                process.activity("direct:a").name("a")
-                        .correlate(header("foo"))
-                        .expect(seconds(10)).afterProcess().starts();
-                        .expectedAfter(10).minutes();
-                        .errorAfter(30).minutes();
 
 
-                process.activity("direct:b").name("b")
-                        .correlate(header("foo"))
-                        .expect(minutes(10)).after("a").completes();
+        process.activity("direct:a").name("a")
+                .correlate(header("foo"))
+                .expect(seconds(10)).afterProcess().starts();
+                .expectedAfter(10).minutes();
+                .errorAfter(30).minutes();
 
 
-                BamBuilder bam = BamBuilder.monitor(this, "direct:a", "direct:b", "direct:c");
+        process.activity("direct:b").name("b")
+                .correlate(header("foo"))
+                .expect(minutes(10)).after("a").completes();
 
-                bam.process("direct:b",).expectedMesageCount(1)
-                        .expectedAfter().minutes(10)
-                        .errorAfter().minutes(30);
 
-                bam.expects("direct:c").expectedMesageCount(1)
-                        .expectedAfter().minutes(10)
-                        .errorAfter().minutes(30);
+        BamBuilder bam = BamBuilder.monitor(this, "direct:a", "direct:b", "direct:c");
 
-                        */
+        bam.process("direct:b",).expectedMesageCount(1)
+                .expectedAfter().minutes(10)
+                .errorAfter().minutes(30);
+
+        bam.expects("direct:c").expectedMesageCount(1)
+                .expectedAfter().minutes(10)
+                .errorAfter().minutes(30);
+
+                */
             }
         };
+    }
+
+    @Override
+    protected int getExpectedRouteCount() {
+        return 0;
     }
 }

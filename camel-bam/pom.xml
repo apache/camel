@@ -42,13 +42,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-      <type>test-jar</type>
-      <optional>true</optional>
-      <scope>test</scope>
-    </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
@@ -69,11 +62,24 @@
     <dependency>
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa-persistence-jdbc</artifactId>
-      <!--<version>0.9.7-incubating-SNAPSHOT</version>-->
       <!-- mandatory dependency for the enhancer! -->
       <!--<scope>test</scope>-->
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <type>test-jar</type>
+      <optional>true</optional>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+      <type>test-jar</type>
+      <optional>true</optional>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
@@ -123,27 +129,28 @@
                 </taskdef>
 
                 <mkdir dir="${basedir}/target/jpa-classes"/>
-                <mkdir dir="${basedir}/target/jpa-test-classes"/>
-
                 <openjpac directory="${basedir}/target/jpa-classes">
                   <classpath refid="cp"/>
                   <fileset dir="${basedir}/target/classes">
-                    <include name="org/apache/camel/**/M*.class"/>
+                    <include name="org/apache/camel/bam/model/*.class"/>
                   </fileset>
                 </openjpac>
+                <copy overwrite="true" todir="${basedir}/target/classes">
+                  <fileset dir="${basedir}/target/jpa-classes"/>
+                </copy>
+
+<!--
+                <mkdir dir="${basedir}/target/jpa-test-classes"/>
                 <openjpac directory="${basedir}/target/jpa-test-classes">
                   <classpath refid="cp"/>
                   <fileset dir="${basedir}/target/test-classes">
                     <include name="org/apache/camel/examples/*.class"/>
                   </fileset>
                 </openjpac>
-
-                <copy overwrite="true" todir="${basedir}/target/classes">
-                  <fileset dir="${basedir}/target/jpa-classes"/>
-                </copy>
                 <copy overwrite="true" todir="${basedir}/target/test-classes">
                   <fileset dir="${basedir}/target/jpa-test-classes"/>
                 </copy>
+-->
               </tasks>
             </configuration>
             <goals>

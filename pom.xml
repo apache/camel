@@ -229,9 +229,18 @@
         <version>${camel-version}</version>
       </dependency>
 
+      <!-- testing jars -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-core</artifactId>
+        <type>test-jar</type>
+        <version>${camel-version}</version>
+        <optional>true</optional>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring</artifactId>
         <type>test-jar</type>
         <version>${camel-version}</version>
         <optional>true</optional>

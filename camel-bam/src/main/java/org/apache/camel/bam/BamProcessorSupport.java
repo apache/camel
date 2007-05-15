@@ -19,6 +19,8 @@ package org.apache.camel.bam;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.ParameterizedType;
@@ -30,6 +32,8 @@ import java.lang.reflect.ParameterizedType;
  * @version $Revision: $
  */
 public abstract class BamProcessorSupport<T> implements Processor {
+    private static final transient Log log = LogFactory.getLog(BamProcessorSupport.class);
+
     private Class<T> entityType;
     private Expression<Exchange> correlationKeyExpression;
 
@@ -63,6 +67,9 @@ public abstract class BamProcessorSupport<T> implements Processor {
 
 
         T entity = loadEntity(exchange, key);
+
+        log.info("Correlation key: " + key + " with entity: " + entity);
+        
         //storeProcessInExchange(exchange, entity);
         processEntity(exchange, entity);
     }

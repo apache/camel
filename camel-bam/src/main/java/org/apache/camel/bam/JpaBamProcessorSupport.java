@@ -19,9 +19,11 @@ package org.apache.camel.bam;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Expression;
-import org.apache.camel.bam.model.Activity;
+import org.apache.camel.bam.Activity;
 import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.orm.jpa.JpaTemplate;
+
+import java.util.List;
 
 /**
  * @version $Revision: $
@@ -30,7 +32,7 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     private Activity activity;
     private JpaTemplate template;
     private String findByKeyQuery;
-    private String keyPropertyName = "key";
+    private String keyPropertyName = "correlationKey";
 
     public JpaBamProcessorSupport(Class<T> entitytype, Expression<Exchange> correlationKeyExpression, Activity activity, JpaTemplate template) {
         super(entitytype, correlationKeyExpression);
@@ -83,10 +85,15 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     // Implementatiom methods
     //-----------------------------------------------------------------------
     protected T loadEntity(Exchange exchange, Object key) {
-        T entity = (T) template.find(getFindByKeyQuery(), key);
+        List<T> list = template.find(getFindByKeyQuery(), key);
+        T entity = null;
+        if (!list.isEmpty()) {
+            entity = list.get(0);
+        }
         if (entity == null) {
             entity = createEntity(exchange, key);
             setKeyProperty(entity, key);
+            template.persist(entity);
         }
         return entity;
     }
@@ -117,6 +124,6 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     }
 
     protected String createFindByKeyQuery() {
-        return "select x from " + getEntityType().getName() + " where x." + getKeyPropertyName() + " = ?1";
+        return "select x from " + getEntityType().getName() + " x where x." + getKeyPropertyName() + " = ?1";
     }
 }

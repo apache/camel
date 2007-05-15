@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.bam.model;
+package org.apache.camel.bam;
+
+import org.apache.camel.bam.model.TimerEvent;
 
 /**
  * @version $Revision: $

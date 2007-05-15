@@ -16,7 +16,7 @@
  */
 package org.apache.camel.bam;
 
-import org.apache.camel.bam.model.Activity;
+import org.apache.camel.bam.Activity;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -25,7 +25,7 @@ import java.util.HashMap;
  * @version $Revision: $
  */
 public class ProcessDefinition {
-    private Map<String, Activity> activitys = new HashMap<String, Activity>();
+    private Map<String, org.apache.camel.bam.Activity> activitys = new HashMap<String, Activity>();
 
 
     

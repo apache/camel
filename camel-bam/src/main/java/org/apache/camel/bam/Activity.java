@@ -14,23 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.bam.model;
+package org.apache.camel.bam;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.bam.ProcessDefinition;
-
-import javax.persistence.Entity;
-import javax.persistence.NamedQuery;
+import org.apache.camel.bam.model.ActivityState;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents a activity which is typically a system or could be an endpoint
  *
  * @version $Revision: $
  */
-@Entity
-@NamedQuery(name = "findByName",
-        query = "select x from org.apache.camel.bam.model.Activity where x.name = ?1")
 public class Activity {
+    private static final transient Log log = LogFactory.getLog(Activity.class);
+
     private int expectedMessages = 1;
     private String name;
     private ProcessDefinition process;
@@ -59,6 +57,10 @@ public class Activity {
      * Perform any assertions after the state has been updated
      */
     public void process(ActivityState activityState, Exchange exchange) {
-        // TODO
+
+        log.info("Received state: " + activityState
+                + " message count " + activityState.getReceivedMessageCount()
+                + " started: " + activityState.getTimeStarted()
+                + " completed: " + activityState.getTimeCompleted());
     }
 }

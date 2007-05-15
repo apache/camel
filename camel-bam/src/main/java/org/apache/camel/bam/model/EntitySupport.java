@@ -24,10 +24,10 @@ import javax.persistence.*;
  * @version $Revision: $
  */
 public class EntitySupport {
-    @Id
-    @GeneratedValue
     private Long id;
 
+    @Id
+    @GeneratedValue
     public Long getId() {
         return id;
     }

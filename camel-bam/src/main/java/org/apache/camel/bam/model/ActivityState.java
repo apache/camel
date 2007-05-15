@@ -17,6 +17,8 @@
 package org.apache.camel.bam.model;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.bam.*;
+import org.apache.camel.bam.Activity;
 import org.apache.camel.util.ObjectHelper;
 
 import javax.persistence.CascadeType;
@@ -31,13 +33,11 @@ import javax.persistence.ManyToOne;
  */
 @Entity
 public class ActivityState extends TemporalEntity implements TimerEventHandler {
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     private ProcessInstance process;
     private int receivedMessageCount;
     private String activityName;
 
-    public synchronized void process(Activity activity, Exchange exchange) throws Exception {
+    public synchronized void process(org.apache.camel.bam.Activity activity, Exchange exchange) throws Exception {
         int messageCount = getReceivedMessageCount() + 1;
         setReceivedMessageCount(messageCount);
 
@@ -72,6 +72,7 @@ public class ActivityState extends TemporalEntity implements TimerEventHandler {
 
     // Properties
     //-----------------------------------------------------------------------
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     public ProcessInstance getProcess() {
         return process;
     }
