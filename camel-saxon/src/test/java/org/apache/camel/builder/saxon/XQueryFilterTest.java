@@ -18,10 +18,10 @@
 package org.apache.camel.builder.saxon;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.xml.XPathBuilder;
+import static org.apache.camel.builder.saxon.XQueryBuilder.xquery;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -61,7 +61,7 @@ public class XQueryFilterTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 from("direct:start").filter(
-                        XPathBuilder.xpath("/person[@name='James']")
+                        xquery("/person[@name='James']")
                 ).to("mock:result");
                 // END SNIPPET: example
             }
