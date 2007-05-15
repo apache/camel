@@ -29,7 +29,7 @@
   </parent>
 
   <artifactId>camel-saxon</artifactId>
-  <name>Camel :: JMS</name>
+  <name>Camel :: SAXON</name>
   <description>Camel SAXON support</description>
 
   <dependencies>
