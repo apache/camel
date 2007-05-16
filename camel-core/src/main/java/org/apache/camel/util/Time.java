@@ -17,6 +17,7 @@
 package org.apache.camel.util;
 
 import java.util.concurrent.TimeUnit;
+import java.util.Date;
 
 /**
  * A helper class for working with times in various units
@@ -62,6 +63,10 @@ public class Time {
 
     public long toMillis() {
         return timeUnit.toMillis(number);
+    }
+
+    public Date toDate() {
+        return new Date(toMillis());
     }
 
     public long getNumber() {
