@@ -16,33 +16,38 @@
  */
 package org.apache.camel.bam;
 
-import org.apache.camel.Exchange;
+import org.apache.camel.bam.model.ActivityDefinition;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a activity which is typically a system or could be an endpoint
  *
  * @version $Revision: $
  */
-public class Activity {
-    private static final transient Log log = LogFactory.getLog(Activity.class);
-
+public class ActivityRules {
+    private static final transient Log log = LogFactory.getLog(ActivityRules.class);
     private int expectedMessages = 1;
-    private String name;
-    private ProcessDefinition process;
+    private ActivityDefinition activity;
+    private ProcessRules process;
+    private List<TemporalRule> rules = new ArrayList<TemporalRule>();
+    private String activityName;
 
-    public Activity(ProcessDefinition process) {
+    public ActivityRules(ProcessRules process) {
         this.process = process;
+        process.getActivities().add(this);
     }
 
-    public String getName() {
-        return name;
+    public ActivityDefinition getActivity() {
+        return activity;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setActivity(ActivityDefinition activity) {
+        this.activity = activity;
     }
 
     public int getExpectedMessages() {
@@ -53,14 +58,43 @@ public class Activity {
         this.expectedMessages = expectedMessages;
     }
 
+    public ProcessRules getProcess() {
+        return process;
+    }
+
     /**
      * Perform any assertions after the state has been updated
      */
-    public void process(ActivityState activityState, Exchange exchange) {
+    public void processExchange(ActivityState activityState, ProcessContext context) {
 
         log.info("Received state: " + activityState
                 + " message count " + activityState.getReceivedMessageCount()
                 + " started: " + activityState.getTimeStarted()
                 + " completed: " + activityState.getTimeCompleted());
+
+/*
+        process.fireRules(activityState, context);
+
+        for (TemporalRule rule : rules) {
+            rule.evaluate(context, activityState);
+        }
+*/
+    }
+
+    public void setActivityName(String activityName) {
+        this.activityName = activityName;
+    }
+
+    public void addRule(TemporalRule rule) {
+        rules.add(rule);
+    }
+
+    /**
+     * Handles overdue activities
+     */
+    public void processExpired(ActivityState activityState) throws Exception {
+        for (TemporalRule rule : rules) {
+            rule.processExpired(activityState);
+        }
     }
 }

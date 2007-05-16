@@ -16,15 +16,15 @@
  */
 package org.apache.camel.bam;
 
-import static org.apache.camel.util.ObjectHelper.notNull;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.bam.model.ProcessInstance;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.FromBuilder;
+import org.apache.camel.processor.LifecycleProcessor;
+import static org.apache.camel.util.ObjectHelper.notNull;
 import org.springframework.orm.jpa.JpaTemplate;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,13 +35,26 @@ import java.util.List;
  * @version $Revision: $
  */
 public abstract class ProcessBuilder extends RouteBuilder {
+    private static int processCounter;
     private JpaTemplate jpaTemplate;
+    private final TransactionTemplate transactionTemplate;
+    private final String processName;
     private List<ActivityBuilder> activityBuilders = new ArrayList<ActivityBuilder>();
     private Class entityType = ProcessInstance.class;
-    private ProcessDefinition process = new ProcessDefinition();
+    private ProcessRules processRules = new ProcessRules();
 
-    protected ProcessBuilder(JpaTemplate jpaTemplate) {
+    protected ProcessBuilder(JpaTemplate jpaTemplate, TransactionTemplate transactionTemplate) {
+        this(jpaTemplate, transactionTemplate, createProcessName());
+    }
+
+    protected static synchronized String createProcessName() {
+        return "Process-" + (++processCounter);
+    }
+
+    protected ProcessBuilder(JpaTemplate jpaTemplate, TransactionTemplate transactionTemplate, String processName) {
         this.jpaTemplate = jpaTemplate;
+        this.transactionTemplate = transactionTemplate;
+        this.processName = processName;
     }
 
     public ActivityBuilder activity(String endpointUri) {
@@ -62,10 +75,9 @@ public abstract class ProcessBuilder extends RouteBuilder {
         return this;
     }
 
-
     public Processor createActivityProcessor(ActivityBuilder activityBuilder) {
         notNull(jpaTemplate, "jpaTemplate");
-        return new JpaBamProcessor(getEntityType(), activityBuilder.getCorrelationExpression(), activityBuilder.getActivity(), getJpaTemplate());
+        return new JpaBamProcessor(getTransactionTemplate(), getJpaTemplate(), activityBuilder.getCorrelationExpression(), activityBuilder.getActivityRules(), getEntityType());
     }
 
     // Properties
@@ -78,7 +90,6 @@ public abstract class ProcessBuilder extends RouteBuilder {
         return entityType;
     }
 
-
     public JpaTemplate getJpaTemplate() {
         return jpaTemplate;
     }
@@ -87,20 +98,36 @@ public abstract class ProcessBuilder extends RouteBuilder {
         this.jpaTemplate = jpaTemplate;
     }
 
+    public TransactionTemplate getTransactionTemplate() {
+        return transactionTemplate;
+    }
 
-    public ProcessDefinition getProcess() {
-        return process;
+    public ProcessRules getProcessRules() {
+        return processRules;
+    }
+
+    public String getProcessName() {
+        return processName;
     }
 
     // Implementation methods
     //-------------------------------------------------------------------------
     protected void populateRoutes(List<Route> routes) throws Exception {
+        boolean first = true;
         for (ActivityBuilder builder : activityBuilders) {
             Endpoint from = builder.getEndpoint();
             Processor processor = builder.createProcessor();
             if (processor == null) {
                 throw new IllegalArgumentException("No processor created for ActivityBuilder: " + builder);
             }
+
+            // lets add extra services to the first processor lifecycle
+            // TODO this is a little bit of a hack; we might want to add an ability to add dependent services to routes etc
+            if (first) {
+                processor = new LifecycleProcessor(processor, new ActivityMonitorEngine(getJpaTemplate(), getTransactionTemplate(), getProcessRules()));
+                first = false;
+            }
             routes.add(new Route(from, processor));
         }
-    }}
+    }
+}

@@ -44,7 +44,6 @@ public class TimerEvent extends EntitySupport {
         this.time = time;
     }
 
-
     public TimerEventHandler getHandler() {
         return handler;
     }

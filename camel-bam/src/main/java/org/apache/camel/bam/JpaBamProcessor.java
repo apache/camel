@@ -23,6 +23,7 @@ import org.apache.camel.Expression;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.jpa.JpaTemplate;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @version $Revision: $
@@ -30,23 +31,30 @@ import org.springframework.orm.jpa.JpaTemplate;
 public class JpaBamProcessor extends JpaBamProcessorSupport<ProcessInstance> {
     private static final transient Log log = LogFactory.getLog(JpaBamProcessor.class);
 
-    public JpaBamProcessor(Class<ProcessInstance> entitytype, Expression<Exchange> correlationKeyExpression, Activity activity, JpaTemplate template) {
-        super(entitytype, correlationKeyExpression, activity, template);
+    public JpaBamProcessor(TransactionTemplate transactionTemplate, JpaTemplate template, Expression<Exchange> correlationKeyExpression, ActivityRules activityRules) {
+        super(transactionTemplate, template, correlationKeyExpression, activityRules);
     }
 
-    public JpaBamProcessor(Expression<Exchange> correlationKeyExpression, Activity activity, JpaTemplate template) {
-        super(correlationKeyExpression, activity, template);
+    public JpaBamProcessor(TransactionTemplate transactionTemplate, JpaTemplate template, Expression<Exchange> correlationKeyExpression, ActivityRules activityRules, Class<ProcessInstance> entitytype) {
+        super(transactionTemplate, template, correlationKeyExpression, activityRules, entitytype);
     }
 
     protected void processEntity(Exchange exchange, ProcessInstance process) throws Exception {
         log.info("Processing entity! - attempting to get the current state for process: " + process);
 
         ActivityState state = process.getActivityState(getActivity());
+        log.info("Found activity: "+ state);
+
         if (state == null) {
             state = createActivityState(exchange, process);
             state.setProcess(process);
+
+            log.info("Storing activity: "+ state + " with process: " + state.getProcess());
+            //getTemplate().persist(state);
         }
-        state.process(getActivity(), exchange);
+        ProcessContext context = new ProcessContext(exchange, getActivity(), state);
+
+        state.processExchange(getActivity(), context);
     }
 
     protected ActivityState createActivityState(Exchange exchange, ProcessInstance process) {

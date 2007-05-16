@@ -19,9 +19,10 @@ package org.apache.camel.bam;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Expression;
-import org.apache.camel.bam.Activity;
+import org.apache.camel.bam.ActivityRules;
 import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.orm.jpa.JpaTemplate;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 
@@ -29,20 +30,20 @@ import java.util.List;
  * @version $Revision: $
  */
 public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
-    private Activity activity;
+    private ActivityRules activityRules;
     private JpaTemplate template;
     private String findByKeyQuery;
     private String keyPropertyName = "correlationKey";
 
-    public JpaBamProcessorSupport(Class<T> entitytype, Expression<Exchange> correlationKeyExpression, Activity activity, JpaTemplate template) {
-        super(entitytype, correlationKeyExpression);
-        this.activity = activity;
+    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template, Expression<Exchange> correlationKeyExpression, ActivityRules activityRules, Class<T> entitytype) {
+        super(transactionTemplate, correlationKeyExpression, entitytype);
+        this.activityRules = activityRules;
         this.template = template;
     }
 
-    public JpaBamProcessorSupport(Expression<Exchange> correlationKeyExpression, Activity activity, JpaTemplate template) {
-        super(correlationKeyExpression);
-        this.activity = activity;
+    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template, Expression<Exchange> correlationKeyExpression, ActivityRules activityRules) {
+        super(transactionTemplate,  correlationKeyExpression);
+        this.activityRules = activityRules;
         this.template = template;
     }
 
@@ -58,12 +59,12 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
         this.findByKeyQuery = findByKeyQuery;
     }
 
-    public Activity getActivity() {
-        return activity;
+    public ActivityRules getActivity() {
+        return activityRules;
     }
 
-    public void setActivity(Activity activity) {
-        this.activity = activity;
+    public void setActivity(ActivityRules activityRules) {
+        this.activityRules = activityRules;
     }
 
     public String getKeyPropertyName() {

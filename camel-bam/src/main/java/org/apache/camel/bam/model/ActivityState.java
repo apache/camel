@@ -16,15 +16,16 @@
  */
 package org.apache.camel.bam.model;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.bam.*;
-import org.apache.camel.bam.Activity;
+import org.apache.camel.bam.ActivityRules;
+import org.apache.camel.bam.ProcessContext;
+import org.apache.camel.bam.TimerEventHandler;
 import org.apache.camel.util.ObjectHelper;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+import java.util.Date;
 
 /**
  * The default state for a specific activity within a process
@@ -34,33 +35,40 @@ import javax.persistence.ManyToOne;
 @Entity
 public class ActivityState extends TemporalEntity implements TimerEventHandler {
     private ProcessInstance process;
-    private int receivedMessageCount;
-    private String activityName;
+    private Integer receivedMessageCount;
+    private ActivityDefinition activityDefinition;
+    private Date timeExpected;
+    private Date timeOverdue;
+    private Integer escalationLevel;
 
-    public synchronized void process(org.apache.camel.bam.Activity activity, Exchange exchange) throws Exception {
-        int messageCount = getReceivedMessageCount() + 1;
-        setReceivedMessageCount(messageCount);
+    public synchronized void processExchange(ActivityRules activityRules, ProcessContext context) throws Exception {
+        int messageCount = 0;
+        Integer count = getReceivedMessageCount();
+        if (count != null) {
+            messageCount = count.intValue();
+        }
+        setReceivedMessageCount(++messageCount);
 
         if (messageCount == 1) {
-            onFirstMessage(exchange);
+            onFirstMessage(context);
         }
-        int expectedMessages = activity.getExpectedMessages();
+        int expectedMessages = activityRules.getExpectedMessages();
         if (messageCount == expectedMessages) {
-            onExpectedMessage(exchange);
+            onExpectedMessage(context);
         }
         else if (messageCount > expectedMessages) {
-            onExcessMessage(exchange);
+            onExcessMessage(context);
         }
 
         // now lets fire any assertions on the activity
-        activity.process(this, exchange);
+        activityRules.processExchange(this, context);
     }
 
     /**
      * Returns true if this state is for the given activity
      */
-    public boolean isActivity(Activity activity) {
-        return ObjectHelper.equals(getActivityName(), activity.getName());
+    public boolean isActivity(ActivityRules activityRules) {
+        return ObjectHelper.equals(getActivityDefinition(), activityRules.getActivity());
     }
 
     /**
@@ -82,51 +90,90 @@ public class ActivityState extends TemporalEntity implements TimerEventHandler {
         process.getActivityStates().add(this);
     }
 
-    public String getActivityName() {
-        return activityName;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    public ActivityDefinition getActivityDefinition() {
+        return activityDefinition;
     }
 
-    public void setActivityName(String activityName) {
-        this.activityName = activityName;
+    public void setActivityDefinition(ActivityDefinition activityDefinition) {
+        this.activityDefinition = activityDefinition;
     }
 
-    public int getReceivedMessageCount() {
+    public Integer getEscalationLevel() {
+        return escalationLevel;
+    }
+
+    public void setEscalationLevel(Integer escalationLevel) {
+        this.escalationLevel = escalationLevel;
+    }
+
+    public Integer getReceivedMessageCount() {
         return receivedMessageCount;
     }
 
-    public void setReceivedMessageCount(int receivedMessageCount) {
+    public void setReceivedMessageCount(Integer receivedMessageCount) {
         this.receivedMessageCount = receivedMessageCount;
     }
+
+    public Date getTimeExpected() {
+        return timeExpected;
+    }
+
+    public void setTimeExpected(Date timeExpected) {
+        this.timeExpected = timeExpected;
+    }
+
+    public Date getTimeOverdue() {
+        return timeOverdue;
+    }
+
+    public void setTimeOverdue(Date timeOverdue) {
+        this.timeOverdue = timeOverdue;
+    }
+
+
+
+    public void setTimeCompleted(Date timeCompleted) {
+        super.setTimeCompleted(timeCompleted);
+        if (timeCompleted != null) {
+            setEscalationLevel(-1);
+        }
+    }
+
+
 
     // Implementation methods
     //-----------------------------------------------------------------------
 
-
     /**
      * Called when the first message is reached
      */
-    protected void onFirstMessage(Exchange exchange) {
-        setTimeStarted(currentTime());
+    protected void onFirstMessage(ProcessContext context) {
+        if (!isStarted()) {
+            setTimeStarted(currentTime());
+            context.onStarted(this);
+        }
     }
 
     /**
      * Called when the expected number of messages are is reached
      */
-    protected void onExpectedMessage(Exchange exchange) {
-        setTimeCompleted(currentTime());
-        setCompleted(true);
+    protected void onExpectedMessage(ProcessContext context) {
+        if (!isCompleted()) {
+            setTimeCompleted(currentTime());
+            context.onCompleted(this);
+        }
     }
 
     /**
      * Called when an excess message (after the expected number of messages)
      * are received
      */
-    protected void onExcessMessage(Exchange exchange) {
+    protected void onExcessMessage(ProcessContext context) {
         // TODO
     }
 
-    protected long currentTime() {
-        return System.currentTimeMillis();
+    protected Date currentTime() {
+        return new Date();
     }
-
 }
