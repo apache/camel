@@ -17,6 +17,7 @@
 package org.apache.camel.bam;
 
 import java.util.concurrent.TimeUnit;
+import java.util.Date;
 
 /**
  * A fluent builder of times
@@ -42,6 +43,10 @@ public class TimeBuilder {
 
     public long toMillis() {
         return timeUnit.toMillis(number);
+    }
+    
+    public Date toDate() {
+        return new Date(toMillis());
     }
 
     public TimeBuilder millis() {
@@ -111,4 +116,5 @@ public class TimeBuilder {
     protected long daysAsSeconds(long value) {
         return hoursAsSeconds(value) * 24;
     }
+
 }

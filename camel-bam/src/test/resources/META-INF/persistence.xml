@@ -19,15 +19,16 @@
              version="1.0">
 
   <persistence-unit name="bam" transaction-type="RESOURCE_LOCAL">
+    <class>org.apache.camel.bam.model.ActivityDefinition</class>
     <class>org.apache.camel.bam.model.ActivityState</class>
+    <class>org.apache.camel.bam.model.ProcessDefinition</class>
     <class>org.apache.camel.bam.model.ProcessInstance</class>
-    <class>org.apache.camel.bam.model.TimerEvent</class>
 
     <properties>
-      <property name="openjpa.ConnectionURL" value="jdbc:derby:target/idempotentTest;create=true"/>
+      <property name="openjpa.ConnectionURL" value="jdbc:derby:target/bamTest;create=true"/>
       <property name="openjpa.ConnectionDriverName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
       <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
-      <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO"/>
+      <property name="openjpa.Log" value="DefaultLevel=INFO, Tool=INFO"/>
     </properties>
   </persistence-unit>
 </persistence>

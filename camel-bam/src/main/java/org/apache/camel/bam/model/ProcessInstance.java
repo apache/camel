@@ -18,13 +18,16 @@ package org.apache.camel.bam.model;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.camel.bam.ActivityRules;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import java.util.HashSet;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * Represents a single business process
@@ -34,10 +37,14 @@ import java.util.Collection;
 @Entity
 public class ProcessInstance extends TemporalEntity {
     private static final transient Log log = LogFactory.getLog(ProcessInstance.class);
-    
+
+    private ProcessDefinition processDefinition;
     private Collection<ActivityState> activityStates = new HashSet<ActivityState>();
     private String correlationKey;
 
+    public ProcessInstance() {
+        setTimeStarted(new Date());
+    }
 
     public String toString() {
         return getClass().getName() + "[id: " + getId() + ", key: " + getCorrelationKey() + "]";
@@ -46,19 +53,28 @@ public class ProcessInstance extends TemporalEntity {
     /**
      * Returns the activity state for the given activity
      *
-     * @param activity the activity to find the state for
+     * @param activityRules the activity to find the state for
      * @return the activity state or null if no state could be found for the
      *         given activity
      */
-    public ActivityState getActivityState(org.apache.camel.bam.Activity activity) {
+    public ActivityState getActivityState(ActivityRules activityRules) {
         log.info("About to iterate through the states: " + getActivityStates());
 
         for (ActivityState activityState : getActivityStates()) {
-            if (activityState.isActivity(activity)) {
+            if (activityState.isActivity(activityRules)) {
                 return activityState;
             }
         }
         return null;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    public ProcessDefinition getProcessDefinition() {
+        return processDefinition;
+    }
+
+    public void setProcessDefinition(ProcessDefinition processDefinition) {
+        this.processDefinition = processDefinition;
     }
 
     @OneToMany(mappedBy = "process", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})

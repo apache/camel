@@ -16,29 +16,26 @@
  */
 package org.apache.camel.bam;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.bam.Activity;
+import org.apache.camel.bam.ActivityRules;
 import org.apache.camel.bam.model.ActivityState;
-import org.apache.camel.bam.model.ProcessInstance;
+
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @version $Revision: $
  */
-public abstract class ActivityExpressionSupport extends ProcessExpressionSupport<ProcessInstance> {
-    private Activity activity;
+public class ProcessRules {
+    private List<ActivityRules> activities = new ArrayList<ActivityRules>();
 
-    protected ActivityExpressionSupport(Activity activity) {
-        super(ProcessInstance.class);
-        this.activity = activity;
+
+    public List<ActivityRules> getActivities() {
+        return activities;
     }
 
-    protected Object evaluate(Exchange exchange, ProcessInstance processEntity) {
-        ActivityState state = processEntity.getActivityState(activity);
-        if (state != null) {
-            return evaluateState(exchange, state);
+    public void processExpired(ActivityState activityState) throws Exception {
+        for (ActivityRules activityRules : activities) {
+            activityRules.processExpired(activityState);
         }
-        return null;
     }
-
-    protected abstract Object evaluateState(Exchange exchange, ActivityState state);
 }

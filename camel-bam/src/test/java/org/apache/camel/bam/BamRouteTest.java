@@ -18,6 +18,7 @@ package org.apache.camel.bam;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +27,7 @@ import static org.apache.camel.util.Time.seconds;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.jpa.JpaTemplate;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @version $Revision: $
@@ -33,11 +35,15 @@ import org.springframework.orm.jpa.JpaTemplate;
 public class BamRouteTest extends SpringTestSupport {
     protected Object body = "<hello>world!</hello>";
     protected JpaTemplate jpaTemplate;
+    protected MockEndpoint overdueEndpoint;
+    protected TransactionTemplate transactionTemplate;
 
     public void testRoute() throws Exception {
+        overdueEndpoint.expectedMessageCount(1);
+
         template.sendBody("direct:a", body, "foo", "a");
 
-        //Thread.sleep(30000);
+        overdueEndpoint.assertIsSatisfied(5000);
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
@@ -49,12 +55,16 @@ public class BamRouteTest extends SpringTestSupport {
         super.setUp();
 
         camelContext.addRoutes(createRouteBuilder());
+
+        overdueEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:overdue");
+
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         jpaTemplate = getMandatoryBean(JpaTemplate.class, "jpaTemplate");
+        transactionTemplate = getMandatoryBean(TransactionTemplate.class, "transactionTemplate");
 
-        return new ProcessBuilder(jpaTemplate) {
+        return new ProcessBuilder(jpaTemplate, transactionTemplate) {
             public void configure() throws Exception {
 
                 ActivityBuilder a = activity("direct:a").name("a")
@@ -68,7 +78,7 @@ public class BamRouteTest extends SpringTestSupport {
 
                 b.starts().after(a.completes())
                         .expectWithin(seconds(1))
-                        .errorIfOver(seconds(5));
+                        .errorIfOver(seconds(2)).to("mock:overdue");
 
                 /*
         expect(b.starts().after(10).minutes().from(a.starts());

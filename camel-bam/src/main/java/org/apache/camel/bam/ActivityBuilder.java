@@ -17,12 +17,13 @@
 package org.apache.camel.bam;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.bam.Activity;
 import org.apache.camel.bam.model.ActivityState;
+import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.builder.ProcessorFactory;
+
+import java.util.Date;
 
 /**
  * @version $Revision: $
@@ -30,14 +31,14 @@ import org.apache.camel.builder.ProcessorFactory;
 public class ActivityBuilder implements ProcessorFactory {
     private ProcessBuilder processBuilder;
     private Endpoint endpoint;
-    private Activity activity;
+    private ActivityRules activityRules;
     private Expression correlationExpression;
 
     public ActivityBuilder(ProcessBuilder processBuilder, Endpoint endpoint) {
         this.processBuilder = processBuilder;
         this.endpoint = endpoint;
-        this.activity = new org.apache.camel.bam.Activity(processBuilder.getProcess());
-        this.activity.setName(endpoint.getEndpointUri());
+        this.activityRules = new ActivityRules(processBuilder.getProcessRules());
+        this.activityRules.setActivityName(endpoint.getEndpointUri());
     }
 
     public Endpoint getEndpoint() {
@@ -56,7 +57,7 @@ public class ActivityBuilder implements ProcessorFactory {
     }
 
     public ActivityBuilder name(String name) {
-        activity.setName(name);
+        activityRules.setActivityName(name);
         return this;
     }
 
@@ -64,24 +65,23 @@ public class ActivityBuilder implements ProcessorFactory {
      * Create a temporal rule for when this step starts
      */
     public TimeExpression starts() {
-        return createTimeExpression(new ActivityExpressionSupport(activity) {
-            protected Object evaluateState(Exchange exchange, ActivityState state) {
-                return state.getStartTime();
+        return new TimeExpression(this, ActivityLifecycle.Started) {
+            public Date evaluateState(ProcessInstance instance, ActivityState state) {
+                return state.getTimeStarted();
             }
-        });
+        };
     }
 
     /**
      * Create a temporal rule for when this step completes
      */
     public TimeExpression completes() {
-        return createTimeExpression(new ActivityExpressionSupport(activity) {
-            protected Object evaluateState(Exchange exchange, ActivityState state) {
-                return state.getCompleteTime();
+        return new TimeExpression(this, ActivityLifecycle.Completed) {
+            public Date evaluateState(ProcessInstance instance, ActivityState state) {
+                return state.getTimeCompleted();
             }
-        });
+        };
     }
-
 
     // Properties
     //-----------------------------------------------------------------------
@@ -89,8 +89,8 @@ public class ActivityBuilder implements ProcessorFactory {
         return correlationExpression;
     }
 
-    public org.apache.camel.bam.Activity getActivity() {
-        return activity;
+    public ActivityRules getActivityRules() {
+        return activityRules;
     }
 
     public ProcessBuilder getProcessBuilder() {
@@ -99,9 +99,4 @@ public class ActivityBuilder implements ProcessorFactory {
 
     // Implementation methods
     //-----------------------------------------------------------------------
-    protected TimeExpression createTimeExpression(ActivityExpressionSupport expression) {
-        return new TimeExpression(activity, expression);
-    }
-
-
 }

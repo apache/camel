@@ -16,33 +16,65 @@
  */
 package org.apache.camel.bam;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
+import org.apache.camel.bam.model.ActivityState;
+import org.apache.camel.bam.model.ProcessInstance;
+import org.apache.camel.util.ObjectHelper;
+
+import java.util.Date;
 
 /**
- * 
  * @version $Revision: $
  */
-public class TimeExpression implements Expression<Exchange> {
+public abstract class TimeExpression {
+    private ActivityRules activityRules;
+    private ActivityBuilder builder;
+    private ActivityLifecycle lifecycle;
 
-    private org.apache.camel.bam.Activity activity;
-    private Expression expression;
-
-
-    public TimeExpression(org.apache.camel.bam.Activity activity, Expression expression) {
-        this.activity = activity;
-        this.expression = expression;
+    public TimeExpression(ActivityBuilder builder, ActivityLifecycle lifecycle) {
+        this.lifecycle = lifecycle;
+        this.builder = builder;
+        this.activityRules = builder.getActivityRules();
     }
 
-
-    public Object evaluate(Exchange exchange) {
-        return expression.evaluate(exchange);
+    public boolean isActivityLifecycle(ActivityRules activityRules, ActivityLifecycle lifecycle) {
+        return ObjectHelper.equals(activityRules, this.activityRules) && ObjectHelper.equals(lifecycle, this.lifecycle);
     }
 
     /**
      * Creates a new temporal rule on this expression and the other expression
      */
     public TemporalRule after(TimeExpression expression) {
-        return new TemporalRule(this, expression);
+        TemporalRule rule = new TemporalRule(this, expression);
+        rule.getSecond().getActivityRules().addRule(rule);
+        return rule;
+    }
+
+    public Date evaluateState(ProcessInstance processInstance) {
+        ActivityState state = processInstance.getActivityState(activityRules);
+        if (state != null) {
+            return evaluateState(processInstance, state);
+        }
+        return null;
+    }
+
+    public abstract Date evaluateState(ProcessInstance instance, ActivityState state);
+
+    // Properties
+    //-------------------------------------------------------------------------
+
+    public ActivityBuilder getBuilder() {
+        return builder;
+    }
+
+    public ActivityRules getActivityRules() {
+        return activityRules;
+    }
+
+    public ActivityLifecycle getLifecycle() {
+        return lifecycle;
+    }
+
+    public ActivityState getActivityState(ProcessInstance instance) {
+        return instance.getActivityState(activityRules);
     }
 }

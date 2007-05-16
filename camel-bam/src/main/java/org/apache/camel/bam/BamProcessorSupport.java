@@ -19,8 +19,14 @@ package org.apache.camel.bam;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.TransactionException;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.ParameterizedType;
@@ -36,9 +42,11 @@ public abstract class BamProcessorSupport<T> implements Processor {
 
     private Class<T> entityType;
     private Expression<Exchange> correlationKeyExpression;
+    private TransactionTemplate transactionTemplate;
 
 
-    protected BamProcessorSupport(Expression<Exchange> correlationKeyExpression) {
+    protected BamProcessorSupport(TransactionTemplate transactionTemplate, Expression<Exchange> correlationKeyExpression) {
+        this.transactionTemplate = transactionTemplate;
         this.correlationKeyExpression = correlationKeyExpression;
 
         Type type = getClass().getGenericSuperclass();
@@ -57,21 +65,38 @@ public abstract class BamProcessorSupport<T> implements Processor {
         }
     }
 
-    protected BamProcessorSupport(Class<T> entitytype, Expression<Exchange> correlationKeyExpression) {
+    protected BamProcessorSupport(TransactionTemplate transactionTemplate, Expression<Exchange> correlationKeyExpression, Class<T> entitytype) {
+        this.transactionTemplate = transactionTemplate;
         this.entityType = entitytype;
         this.correlationKeyExpression = correlationKeyExpression;
     }
 
-    public void process(Exchange exchange) throws Exception {
-        Object key = getCorrelationKey(exchange);
+    public void process(final Exchange exchange) {
+        try {
+            Object entity = transactionTemplate.execute(new TransactionCallback() {
+                public Object doInTransaction(TransactionStatus status) {
+                    try {
+                        Object key = getCorrelationKey(exchange);
 
+                        T entity = loadEntity(exchange, key);
 
-        T entity = loadEntity(exchange, key);
+                        log.info("Correlation key: " + key + " with entity: " + entity);
 
-        log.info("Correlation key: " + key + " with entity: " + entity);
-        
-        //storeProcessInExchange(exchange, entity);
-        processEntity(exchange, entity);
+                        //storeProcessInExchange(exchange, entity);
+                        processEntity(exchange, entity);
+
+                        return entity;
+                    }
+                    catch (Exception e) {
+                        throw new RuntimeCamelException(e);
+                    }
+            }});
+
+            log.info("After transaction process instance is: " + entity);
+        }
+        catch (Throwable e) {
+            log.error("Caught: " + e, e);            
+        }
     }
 
     // Properties
