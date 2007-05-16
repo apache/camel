@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
- * A {@link Exchange} for MINA
+ * A {@link Exchange} for  File
  * 
  * @version $Revision: 520985 $
  */
