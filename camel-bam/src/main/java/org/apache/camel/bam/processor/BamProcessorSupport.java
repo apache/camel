@@ -20,15 +20,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.bam.processor.NoCorrelationKeyException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
-import java.lang.reflect.Type;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * A base {@link Processor} for working on
@@ -39,11 +38,9 @@ import java.lang.reflect.ParameterizedType;
  */
 public abstract class BamProcessorSupport<T> implements Processor {
     private static final transient Log log = LogFactory.getLog(BamProcessorSupport.class);
-
     private Class<T> entityType;
     private Expression<Exchange> correlationKeyExpression;
     private TransactionTemplate transactionTemplate;
-
 
     protected BamProcessorSupport(TransactionTemplate transactionTemplate, Expression<Exchange> correlationKeyExpression) {
         this.transactionTemplate = transactionTemplate;
@@ -72,31 +69,25 @@ public abstract class BamProcessorSupport<T> implements Processor {
     }
 
     public void process(final Exchange exchange) {
-        try {
-            Object entity = transactionTemplate.execute(new TransactionCallback() {
-                public Object doInTransaction(TransactionStatus status) {
-                    try {
-                        Object key = getCorrelationKey(exchange);
+        transactionTemplate.execute(new TransactionCallback() {
+            public Object doInTransaction(TransactionStatus status) {
+                try {
+                    Object key = getCorrelationKey(exchange);
 
-                        T entity = loadEntity(exchange, key);
+                    T entity = loadEntity(exchange, key);
 
-                        log.info("Correlation key: " + key + " with entity: " + entity);
-
-                        //storeProcessInExchange(exchange, entity);
-                        processEntity(exchange, entity);
-
-                        return entity;
+                    if (log.isDebugEnabled()) {
+                        log.debug("Correlation key: " + key + " with entity: " + entity);
                     }
-                    catch (Exception e) {
-                        throw new RuntimeCamelException(e);
-                    }
-            }});
+                    processEntity(exchange, entity);
 
-            log.info("After transaction process instance is: " + entity);
-        }
-        catch (Throwable e) {
-            log.error("Caught: " + e, e);            
-        }
+                    return entity;
+                }
+                catch (Exception e) {
+                    throw new RuntimeCamelException(e);
+                }
+            }
+        });
     }
 
     // Properties
@@ -104,7 +95,6 @@ public abstract class BamProcessorSupport<T> implements Processor {
     public Expression<Exchange> getCorrelationKeyExpression() {
         return correlationKeyExpression;
     }
-
 
     public Class<T> getEntityType() {
         return entityType;
@@ -115,7 +105,6 @@ public abstract class BamProcessorSupport<T> implements Processor {
     protected abstract void processEntity(Exchange exchange, T entity) throws Exception;
 
     protected abstract T loadEntity(Exchange exchange, Object key);
-
 
     protected Object getCorrelationKey(Exchange exchange) throws NoCorrelationKeyException {
         Object value = correlationKeyExpression.evaluate(exchange);

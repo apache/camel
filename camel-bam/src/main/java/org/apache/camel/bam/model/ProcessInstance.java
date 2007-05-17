@@ -98,8 +98,6 @@ public class ProcessInstance extends TemporalEntity {
      *         given activity
      */
     public ActivityState getActivityState(ActivityRules activityRules) {
-        log.info("About to iterate through the states: " + getActivityStates());
-
         for (ActivityState activityState : getActivityStates()) {
             if (activityState.isActivity(activityRules)) {
                 return activityState;
@@ -110,14 +108,12 @@ public class ProcessInstance extends TemporalEntity {
 
     public ActivityState getOrCreateActivityState(ActivityRules activityRules) {
         ActivityState state = getActivityState(activityRules);
-        log.info("Found activity: "+ state);
 
         if (state == null) {
             state = createActivityState();
             state.setProcessInstance(this);
             state.setActivityDefinition(activityRules.getActivityDefinition());
-
-            // TODO not required: getTemplate().persist(state);
+            // we don't need to do: getTemplate().persist(state);
         }
 
         return state;
