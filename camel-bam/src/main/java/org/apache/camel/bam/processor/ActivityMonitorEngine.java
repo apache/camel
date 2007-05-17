@@ -36,7 +36,7 @@ import java.util.List;
 
 /**
  * A timer engine to monitor for expired activities and perform whatever actions are required.
- * 
+ *
  * @version $Revision: $
  */
 public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
@@ -64,7 +64,7 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
     }
 
     public void run() {
-        log.info("Starting to poll for timeout events");
+        log.debug("Starting to poll for timeout events");
 
         while (!isStopped()) {
             try {
@@ -83,7 +83,9 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
 
                 long timeToSleep = nextPoll - System.currentTimeMillis();
                 if (timeToSleep > 0) {
-                    log.debug("Sleeping for " + timeToSleep + " millis");
+                    if (log.isDebugEnabled()) {
+                        log.debug("Sleeping for " + timeToSleep + " millis");
+                    }
                     try {
                         Thread.sleep(timeToSleep);
                     }
@@ -99,7 +101,9 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
     }
 
     protected void fireExpiredEvent(final ActivityState activityState) {
-        log.info("Trying to fire expiration of: " + activityState);
+        if (log.isDebugEnabled()) {
+            log.debug("Trying to fire expiration of: " + activityState);
+        }
 
         template.execute(new JpaCallback() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
