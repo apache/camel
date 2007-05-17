@@ -28,9 +28,9 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-eg-jms-file</artifactId>
-  <name>Camel :: Eg-JMS-File</name>
-  <description>A sample that persists messages from JMS as files</description>
+  <artifactId>camel-example-jms-file</artifactId>
+  <name>Camel :: Example :: JMS-File</name>
+  <description>An example that persists messages from JMS as files</description>
 
   <dependencies>
 
