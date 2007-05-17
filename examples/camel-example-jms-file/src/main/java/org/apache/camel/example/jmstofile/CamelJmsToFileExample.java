@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.samples.jmstofile;
+package org.apache.camel.example.jmstofile;
 
 import org.apache.camel.component.jms.JmsComponent;
 import javax.jms.ConnectionFactory;
@@ -38,7 +38,7 @@ import org.apache.camel.impl.DefaultCamelContext;
  * @version $Revision: 529902 $
  * 
  */
-public class CamelJmsToFileSample{
+public class CamelJmsToFileExample {
 
     public static void main(String args[]) throws Exception{
         // START SNIPPET: e1
