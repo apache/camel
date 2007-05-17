@@ -31,8 +31,9 @@ import java.lang.reflect.Type;
 import java.lang.reflect.ParameterizedType;
 
 /**
- * A {@link Processor} for working on
- * <a href="http://activemq.apache.org/camel/bam.html">BAM</a>
+ * A base {@link Processor} for working on
+ * <a href="http://activemq.apache.org/camel/bam.html">BAM</a> which a derived class would do the actual
+ * persistence such as the {@link JpaBamProcessor}
  *
  * @version $Revision: $
  */

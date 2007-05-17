@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import java.util.Date;
 
 /**
- * A temporal rule
+ * A temporal rule for use within BAM
  *
  * @version $Revision: $
  */
@@ -89,7 +89,7 @@ public class TemporalRule extends ServiceSupport {
     }
 
     public void processExchange(Exchange exchange, ProcessInstance instance) {
-        Date firstTime = first.evaluateState(instance);
+        Date firstTime = first.evaluate(instance);
         if (firstTime == null) {
             // ignore as first event has not accurred yet
             return;

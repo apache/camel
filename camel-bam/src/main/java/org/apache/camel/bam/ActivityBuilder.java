@@ -67,7 +67,7 @@ public class ActivityBuilder implements ProcessorFactory {
      */
     public TimeExpression starts() {
         return new TimeExpression(this, ActivityLifecycle.Started) {
-            public Date evaluateState(ProcessInstance instance, ActivityState state) {
+            public Date evaluate(ProcessInstance instance, ActivityState state) {
                 return state.getTimeStarted();
             }
         };
@@ -78,7 +78,7 @@ public class ActivityBuilder implements ProcessorFactory {
      */
     public TimeExpression completes() {
         return new TimeExpression(this, ActivityLifecycle.Completed) {
-            public Date evaluateState(ProcessInstance instance, ActivityState state) {
+            public Date evaluate(ProcessInstance instance, ActivityState state) {
                 return state.getTimeCompleted();
             }
         };
@@ -98,6 +98,4 @@ public class ActivityBuilder implements ProcessorFactory {
         return processBuilder;
     }
 
-    // Implementation methods
-    //-----------------------------------------------------------------------
 }

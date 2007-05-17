@@ -21,12 +21,17 @@ import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Processor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
+ * A concrete {@link Processor} for working on
+ * <a href="http://activemq.apache.org/camel/bam.html">BAM</a> which uses JPA as the persistence and uses the
+ * {@link ProcessInstance} entity to store the process information.
+ *
  * @version $Revision: $
  */
 public class JpaBamProcessor extends JpaBamProcessorSupport<ProcessInstance> {
@@ -41,7 +46,9 @@ public class JpaBamProcessor extends JpaBamProcessorSupport<ProcessInstance> {
     }
 
     protected void processEntity(Exchange exchange, ProcessInstance process) throws Exception {
-        log.info("Processing entity! - attempting to get the current state for process: " + process);
+        if (log.isDebugEnabled()) {
+            log.info("Processing process instance: " + process);
+        }
 
         // lets force the lazy creation of this activity
         ActivityRules rules = getActivityRules();
