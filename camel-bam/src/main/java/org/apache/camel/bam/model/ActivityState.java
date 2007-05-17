@@ -16,17 +16,16 @@
  */
 package org.apache.camel.bam.model;
 
-import org.apache.camel.bam.ActivityRules;
-import org.apache.camel.bam.ProcessContext;
-import org.apache.camel.bam.TimerEventHandler;
+import org.apache.camel.bam.rules.ActivityRules;
+import org.apache.camel.bam.processor.ProcessContext;
 import org.apache.camel.util.ObjectHelper;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.util.Date;
 
 /**
@@ -35,7 +34,7 @@ import java.util.Date;
  * @version $Revision: $
  */
 @Entity
-public class ActivityState extends TemporalEntity implements TimerEventHandler {
+public class ActivityState extends TemporalEntity {
     private ProcessInstance processInstance;
     private Integer receivedMessageCount = 0;
     private ActivityDefinition activityDefinition;
@@ -81,13 +80,6 @@ public class ActivityState extends TemporalEntity implements TimerEventHandler {
      */
     public boolean isActivity(ActivityRules activityRules) {
         return ObjectHelper.equals(getActivityDefinition(), activityRules.getActivityDefinition());
-    }
-
-    /**
-     * Invoked by the timer firing
-     */
-    public void onTimerEvent(TimerEvent event) {
-        // TODO do check on this entity
     }
 
     // Properties
@@ -143,16 +135,12 @@ public class ActivityState extends TemporalEntity implements TimerEventHandler {
         this.timeOverdue = timeOverdue;
     }
 
-
-
     public void setTimeCompleted(Date timeCompleted) {
         super.setTimeCompleted(timeCompleted);
         if (timeCompleted != null) {
             setEscalationLevel(-1);
         }
     }
-
-
 
     // Implementation methods
     //-----------------------------------------------------------------------

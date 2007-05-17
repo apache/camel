@@ -14,19 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.bam;
+package org.apache.camel.bam.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.bam.processor.NoCorrelationKeyException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.TransactionException;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.ParameterizedType;

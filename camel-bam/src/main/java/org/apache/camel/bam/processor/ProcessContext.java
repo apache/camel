@@ -15,11 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.bam;
+package org.apache.camel.bam.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.bam.model.ActivityState;
+import org.apache.camel.bam.rules.ProcessRules;
+import org.apache.camel.bam.rules.ActivityRules;
 
 /**
  * @version $Revision: 1.1 $

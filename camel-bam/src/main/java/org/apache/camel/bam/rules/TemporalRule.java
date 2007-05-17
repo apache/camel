@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.bam;
+package org.apache.camel.bam.rules;
 
 import static org.apache.camel.util.ServiceHelper.startServices;
 import static org.apache.camel.util.ServiceHelper.stopServices;
@@ -22,12 +22,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.model.ProcessInstance;
+import org.apache.camel.bam.TimeExpression;
 import org.apache.camel.builder.FromBuilder;
 import org.apache.camel.builder.ProcessorFactory;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.Time;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -114,27 +114,8 @@ public class TemporalRule extends ServiceSupport {
                 secondState.setTimeOverdue(overdue);
             }
         }
-
-        Date secondTime = second.evaluateState(instance);
-        if (secondTime == null) {
-            // TODO add test that things have expired
-        }
-        else {
-
-/*
-            if (secondTime.delta(firstTime.plus(gap)) > 0) {
-                // TODO
-            }
-*/
-        }
     }
 
-    /*
-    public void evaluate(ProcessContext context, ActivityState activityState) {
-        ProcessInstance instance = context.getProcessInstance();
-
-    }
-    */
 
     public void processExpired(ActivityState activityState) throws Exception {
         Processor processor = getOverdueAction();
@@ -176,19 +157,6 @@ public class TemporalRule extends ServiceSupport {
     protected Date add(Date date, long millis) {
         return new Date(date.getTime() + millis);
     }
-
-    /*
-    public void onActivityLifecycle(ActivityState state, ActivityRules activityRules, ActivityLifecycle lifecycle) {
-        if (first.isActivityLifecycle(activityRules, lifecycle)) {
-            // lets create the expected and error timers
-
-            // TODO we could use a single timer event; then keep incrementing its type
-            // counter to escalate & use different times each time to reduce some DB work
-            createTimer(state, expectedMillis);
-            createTimer(state, overdueMillis);
-        }
-    }
-    */
 
     protected void doStart() throws Exception {
         startServices(getOverdueAction());

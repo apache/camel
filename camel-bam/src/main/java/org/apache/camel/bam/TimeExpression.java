@@ -18,6 +18,8 @@ package org.apache.camel.bam;
 
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.model.ProcessInstance;
+import org.apache.camel.bam.rules.TemporalRule;
+import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.camel.util.ObjectHelper;
 
 import java.util.Date;

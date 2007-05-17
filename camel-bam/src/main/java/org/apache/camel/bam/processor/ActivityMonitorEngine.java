@@ -15,9 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.bam;
+package org.apache.camel.bam.processor;
 
 import org.apache.camel.bam.model.ActivityState;
+import org.apache.camel.bam.rules.ProcessRules;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

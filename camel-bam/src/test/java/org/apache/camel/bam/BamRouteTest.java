@@ -16,15 +16,10 @@
  */
 package org.apache.camel.bam;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.CamelContext;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spring.SpringTestSupport;
 import static org.apache.camel.util.Time.seconds;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -79,36 +74,6 @@ public class BamRouteTest extends SpringTestSupport {
                 b.starts().after(a.completes())
                         .expectWithin(seconds(1))
                         .errorIfOver(seconds(2)).to("mock:overdue");
-
-                /*
-        expect(b.starts().after(10).minutes().from(a.starts());
-
-
-
-
-        process.activity("direct:a").name("a")
-                .correlate(header("foo"))
-                .expect(seconds(10)).afterProcess().starts();
-                .expectedAfter(10).minutes();
-                .errorAfter(30).minutes();
-
-
-        process.activity("direct:b").name("b")
-                .correlate(header("foo"))
-                .expect(minutes(10)).after("a").completes();
-
-
-        BamBuilder bam = BamBuilder.monitor(this, "direct:a", "direct:b", "direct:c");
-
-        bam.process("direct:b",).expectedMesageCount(1)
-                .expectedAfter().minutes(10)
-                .errorAfter().minutes(30);
-
-        bam.expects("direct:c").expectedMesageCount(1)
-                .expectedAfter().minutes(10)
-                .errorAfter().minutes(30);
-
-                */
             }
         };
     }

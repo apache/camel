@@ -21,6 +21,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.model.ProcessInstance;
+import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.camel.builder.ProcessorFactory;
 
 import java.util.Date;
