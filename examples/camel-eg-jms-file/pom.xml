@@ -70,7 +70,6 @@
 	    <dependency>
 	      <groupId>org.apache.activemq</groupId>
 	      <artifactId>apache-activemq</artifactId>
-	      <scope>test</scope>
 	    </dependency>
 	
 	
