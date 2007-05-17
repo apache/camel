@@ -51,15 +51,15 @@ public abstract class TimeExpression {
         return rule;
     }
 
-    public Date evaluateState(ProcessInstance processInstance) {
+    public Date evaluate(ProcessInstance processInstance) {
         ActivityState state = processInstance.getActivityState(activityRules);
         if (state != null) {
-            return evaluateState(processInstance, state);
+            return evaluate(processInstance, state);
         }
         return null;
     }
 
-    public abstract Date evaluateState(ProcessInstance instance, ActivityState state);
+    public abstract Date evaluate(ProcessInstance instance, ActivityState state);
 
     // Properties
     //-------------------------------------------------------------------------

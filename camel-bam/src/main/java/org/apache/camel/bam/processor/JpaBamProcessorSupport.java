@@ -28,6 +28,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.util.List;
 
 /**
+ * A base class for JPA based BAM which can use any entity to store the process instance information which
+ * allows derived classes to specialise the process instance entity.
+ *
  * @version $Revision: $
  */
 public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {

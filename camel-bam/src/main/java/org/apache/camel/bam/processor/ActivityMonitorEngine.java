@@ -35,6 +35,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * A timer engine to monitor for expired activities and perform whatever actions are required.
+ * 
  * @version $Revision: $
  */
 public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
