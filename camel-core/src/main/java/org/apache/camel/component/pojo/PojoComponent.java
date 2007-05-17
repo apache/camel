@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.Provider;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
@@ -49,8 +50,9 @@ public class PojoComponent extends DefaultComponent<PojoExchange> {
     }
 
     @Override
-    protected Endpoint<PojoExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return new PojoEndpoint(uri, this, remaining);
+    protected Endpoint<PojoExchange> createEndpoint(String uri, final String remaining, Map parameters) throws Exception {
+        Object pojo = getService(remaining);
+        return new PojoEndpoint(uri, this, pojo);
     }
     
     /**

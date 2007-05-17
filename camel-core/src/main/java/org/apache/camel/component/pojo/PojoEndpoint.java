@@ -16,16 +16,17 @@
  */
 package org.apache.camel.component.pojo;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.Exchange;
+import org.apache.camel.Component;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.spi.Provider;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Represents a pojo endpoint that uses reflection
@@ -34,20 +35,19 @@ import org.apache.camel.impl.DefaultExchange;
  * @version $Revision: 519973 $
  */
 public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
-    private final PojoComponent component;
-	private final String pojoId;
+    private Object pojo;
 
-    public PojoEndpoint(String uri, PojoComponent component, String pojoId) {
+    public PojoEndpoint(String uri, Component component, Object pojo) {
         super(uri, component);
-		this.pojoId = pojoId;
-        this.component = component;
+        this.pojo = pojo;
     }
 
     public Producer<PojoExchange> createProducer() throws Exception {
-        final Object pojo = component.getService(pojoId);
-        if( pojo == null )
-        	throw new NoSuchEndpointException(getEndpointUri());
-        
+        final Object pojo = getPojo();
+        if (pojo == null) {
+            throw new NoPojoAvailableException(this);
+        }
+
         return new DefaultProducer(this) {
             public void process(Exchange exchange) {
                 PojoExchange pojoExchange = toExchangeType(exchange);
@@ -63,9 +63,10 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
 
     /**
      * This causes us to invoke the endpoint Pojo using reflection.
-     * @param pojo 
+     *
+     * @param pojo
      */
-    static public void invoke(Object pojo, PojoExchange exchange) {
+    public static void invoke(Object pojo, PojoExchange exchange) {
         PojoInvocation invocation = exchange.getInvocation();
         try {
             Object response = invocation.getMethod().invoke(pojo, invocation.getArgs());
@@ -86,16 +87,15 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
         return new PojoExchange(getContext());
     }
 
-	public PojoComponent getComponent() {
-		return component;
-	}
+    public boolean isSingleton() {
+        return true;
+    }
 
-	public String getPojoId() {
-		return pojoId;
-	}
+    public Object getPojo() {
+        return pojo;
+    }
 
-	public boolean isSingleton() {
-		return true;
-	}
-
+    public void setPojo(Object pojo) {
+        this.pojo = pojo;
+    }
 }
