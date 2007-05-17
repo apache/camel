@@ -19,9 +19,10 @@ package org.apache.camel.component.mail;
 
 import org.apache.camel.Converter;
 
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.BodyPart;
+import javax.mail.Multipart;
 import javax.mail.internet.MimeMultipart;
 import java.io.IOException;
 
@@ -50,6 +51,17 @@ public class MailConverters {
         }
         if (content != null) {
             return content.toString();
+        }
+        return null;
+    }
+
+    @Converter
+    public static String toString(Multipart multipart) throws MessagingException, IOException {
+        for (int i = 0, size = multipart.getCount(); i < size; i++) {
+            BodyPart part = multipart.getBodyPart(i);
+            if (part.getContentType().startsWith("text")) {
+                return part.getContent().toString();
+            }
         }
         return null;
     }
