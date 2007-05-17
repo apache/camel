@@ -23,6 +23,7 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.spi.SpringComponentResolver;
 import org.apache.camel.spring.spi.SpringInjector;
+import org.apache.camel.spring.component.BeanComponent;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.BeansException;
@@ -46,7 +47,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     }
 
     public SpringCamelContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+        setApplicationContext(applicationContext);
     }
 
     public static SpringCamelContext springCamelContext(ApplicationContext applicationContext) throws Exception {
@@ -57,6 +58,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         }
         SpringCamelContext answer = new SpringCamelContext();
         answer.setApplicationContext(applicationContext);
+        answer.afterPropertiesSet();
         return answer;
     }
 
@@ -81,6 +83,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+        addComponent("bean", new BeanComponent(applicationContext));
     }
 
     @Override
