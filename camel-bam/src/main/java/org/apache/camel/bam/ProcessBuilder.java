@@ -20,11 +20,15 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.bam.model.ProcessInstance;
+import org.apache.camel.bam.model.ActivityDefinition;
+import org.apache.camel.bam.model.ProcessDefinition;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.LifecycleProcessor;
 import static org.apache.camel.util.ObjectHelper.notNull;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.TransactionStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +46,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
     private List<ActivityBuilder> activityBuilders = new ArrayList<ActivityBuilder>();
     private Class entityType = ProcessInstance.class;
     private ProcessRules processRules = new ProcessRules();
+    private ProcessDefinition processDefinition;
 
     protected ProcessBuilder(JpaTemplate jpaTemplate, TransactionTemplate transactionTemplate) {
         this(jpaTemplate, transactionTemplate, createProcessName());
@@ -77,6 +82,11 @@ public abstract class ProcessBuilder extends RouteBuilder {
 
     public Processor createActivityProcessor(ActivityBuilder activityBuilder) {
         notNull(jpaTemplate, "jpaTemplate");
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                processRules.setProcessDefinition(getProcessDefinition());
+            }
+        });
         return new JpaBamProcessor(getTransactionTemplate(), getJpaTemplate(), activityBuilder.getCorrelationExpression(), activityBuilder.getActivityRules(), getEntityType());
     }
 
@@ -110,6 +120,18 @@ public abstract class ProcessBuilder extends RouteBuilder {
         return processName;
     }
 
+
+    public ProcessDefinition getProcessDefinition() {
+        if (processDefinition == null) {
+            processDefinition = findOrCreateProcessDefinition();
+        }
+        return processDefinition;
+    }
+
+    public void setProcessDefinition(ProcessDefinition processDefinition) {
+        this.processDefinition = processDefinition;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
     protected void populateRoutes(List<Route> routes) throws Exception {
@@ -130,4 +152,38 @@ public abstract class ProcessBuilder extends RouteBuilder {
             routes.add(new Route(from, processor));
         }
     }
+
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+    public ActivityDefinition findOrCreateActivityDefinition(String activityName) {
+        ProcessDefinition definition = getProcessDefinition();
+        List<ActivityDefinition> list = jpaTemplate.find("select x from " + ActivityDefinition.class.getName() + " x where x.processDefinition = ?1 and x.name = ?2", definition, activityName);
+        if (!list.isEmpty()) {
+            return list.get(0);
+        }
+        else {
+            ActivityDefinition answer = new ActivityDefinition();
+            answer.setName(activityName);
+            answer.setProcessDefinition(ProcessDefinition.getRefreshedProcessDefinition(jpaTemplate, definition));
+            jpaTemplate.persist(answer);
+            return answer;
+        }
+    }
+
+    protected ProcessDefinition findOrCreateProcessDefinition() {
+        List<ProcessDefinition> list = jpaTemplate.find("select x from " + ProcessDefinition.class.getName() + " x where x.name = ?1", processName);
+        if (!list.isEmpty()) {
+            return list.get(0);
+        }
+        else {
+            ProcessDefinition answer = new ProcessDefinition();
+            answer.setName(processName);
+            jpaTemplate.persist(answer);
+            return answer;
+        }
+    }
+
+
+
 }

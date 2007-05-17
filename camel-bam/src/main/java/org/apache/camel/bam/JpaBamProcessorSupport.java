@@ -17,9 +17,9 @@
 package org.apache.camel.bam;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Expression;
-import org.apache.camel.bam.ActivityRules;
+import org.apache.camel.Processor;
+import org.apache.camel.bam.model.ProcessDefinition;
 import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -42,7 +42,7 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     }
 
     public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template, Expression<Exchange> correlationKeyExpression, ActivityRules activityRules) {
-        super(transactionTemplate,  correlationKeyExpression);
+        super(transactionTemplate, correlationKeyExpression);
         this.activityRules = activityRules;
         this.template = template;
     }
@@ -54,16 +54,15 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
         return findByKeyQuery;
     }
 
-
     public void setFindByKeyQuery(String findByKeyQuery) {
         this.findByKeyQuery = findByKeyQuery;
     }
 
-    public ActivityRules getActivity() {
+    public ActivityRules getActivityRules() {
         return activityRules;
     }
 
-    public void setActivity(ActivityRules activityRules) {
+    public void setActivityRules(ActivityRules activityRules) {
         this.activityRules = activityRules;
     }
 
@@ -94,6 +93,8 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
         if (entity == null) {
             entity = createEntity(exchange, key);
             setKeyProperty(entity, key);
+            ProcessDefinition definition = ProcessDefinition.getRefreshedProcessDefinition(template, getActivityRules().getProcessRules().getProcessDefinition());
+            setProcessDefinitionProperty(entity, definition);
             template.persist(entity);
         }
         return entity;
@@ -104,6 +105,10 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
      */
     protected void setKeyProperty(T entity, Object key) {
         IntrospectionSupport.setProperty(entity, getKeyPropertyName(), key);
+    }
+
+    protected void setProcessDefinitionProperty(T entity, ProcessDefinition processDefinition) {
+        IntrospectionSupport.setProperty(entity, "processDefinition", processDefinition);
     }
 
     /**

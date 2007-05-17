@@ -23,9 +23,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.JpaTemplate;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -38,18 +38,26 @@ import java.util.List;
  */
 public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
     private static final Log log = LogFactory.getLog(ActivityMonitorEngine.class);
-
     private JpaTemplate template;
     private TransactionTemplate transactionTemplate;
     private ProcessRules rules;
     private int escalateLevel = 0;
     private long windowMillis = 1000L;
     private Thread thread;
+    private boolean useLocking = false;
 
     public ActivityMonitorEngine(JpaTemplate template, TransactionTemplate transactionTemplate, ProcessRules rules) {
         this.template = template;
         this.transactionTemplate = transactionTemplate;
         this.rules = rules;
+    }
+
+    public boolean isUseLocking() {
+        return useLocking;
+    }
+
+    public void setUseLocking(boolean useLocking) {
+        this.useLocking = useLocking;
     }
 
     public void run() {
@@ -93,22 +101,26 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
         template.execute(new JpaCallback() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
                 // lets try lock the object first
-                entityManager.lock(activityState, LockModeType.WRITE);
-                if (activityState.getEscalationLevel() == escalateLevel) {
-                    try {
-                        rules.processExpired(activityState);
-                    }
-                    catch (Exception e) {
-                        log.error("Failed to process expiration of: " + activityState + ". Reason: " + e, e);
-                    }
-                    activityState.setEscalationLevel(escalateLevel + 1);
+                if (isUseLocking()) {
+                    log.info("Attempting to lock: " + activityState);
+                    entityManager.lock(activityState, LockModeType.WRITE);
+                    log.info("Grabbed lock: " + activityState);
                 }
+
+                try {
+                    rules.processExpired(activityState);
+                }
+                catch (Exception e) {
+                    log.error("Failed to process expiration of: " + activityState + ". Reason: " + e, e);
+                }
+                activityState.setEscalationLevel(escalateLevel + 1);
                 return null;
             }
         });
     }
 
     protected void doStart() throws Exception {
+        rules.start();
         thread = new Thread(this, "ActivityMonitorEngine");
         thread.start();
     }
@@ -117,5 +129,6 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
         if (thread != null) {
             thread = null;
         }
+        rules.stop();
     }
 }

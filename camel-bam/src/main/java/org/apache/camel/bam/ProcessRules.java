@@ -16,26 +16,59 @@
  */
 package org.apache.camel.bam;
 
-import org.apache.camel.bam.ActivityRules;
+import org.apache.camel.Exchange;
 import org.apache.camel.bam.model.ActivityState;
+import org.apache.camel.bam.model.ProcessInstance;
+import org.apache.camel.bam.model.ProcessDefinition;
+import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.ServiceHelper;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Revision: $
  */
-public class ProcessRules {
+public class ProcessRules extends ServiceSupport {
+    private ProcessDefinition processDefinition;
     private List<ActivityRules> activities = new ArrayList<ActivityRules>();
-
-
-    public List<ActivityRules> getActivities() {
-        return activities;
-    }
 
     public void processExpired(ActivityState activityState) throws Exception {
         for (ActivityRules activityRules : activities) {
             activityRules.processExpired(activityState);
         }
     }
+
+    public void processExchange(Exchange exchange, ProcessInstance process) {
+        for (ActivityRules activityRules : activities) {
+            activityRules.processExchange(exchange, process);
+        }
+    }
+
+    // Properties
+    //-------------------------------------------------------------------------
+    public List<ActivityRules> getActivities() {
+        return activities;
+    }
+
+    public ProcessDefinition getProcessDefinition() {
+        return processDefinition;
+    }
+
+    public void setProcessDefinition(ProcessDefinition processDefinition) {
+        this.processDefinition = processDefinition;
+    }
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+    protected void doStart() throws Exception {
+        ServiceHelper.startServices(activities);
+    }
+
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(activities);
+    }
 }
+
+
+

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.bam;
 
+import static org.apache.camel.util.ServiceHelper.startServices;
+import static org.apache.camel.util.ServiceHelper.stopServices;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.bam.model.ActivityState;
@@ -23,7 +25,9 @@ import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.builder.FromBuilder;
 import org.apache.camel.builder.ProcessorFactory;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.Time;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -34,7 +38,7 @@ import java.util.Date;
  *
  * @version $Revision: $
  */
-public class TemporalRule {
+public class TemporalRule extends ServiceSupport {
     private static final transient Log log = LogFactory.getLog(TemporalRule.class);
     private TimeExpression first;
     private TimeExpression second;
@@ -43,9 +47,9 @@ public class TemporalRule {
     private Processor overdueAction;
     private ProcessorFactory overdueProcessorFactory;
 
-    public TemporalRule(TimeExpression left, TimeExpression right) {
-        this.first = left;
-        this.second = right;
+    public TemporalRule(TimeExpression first, TimeExpression second) {
+        this.first = first;
+        this.second = second;
     }
 
     public TemporalRule expectWithin(Time builder) {
@@ -77,9 +81,14 @@ public class TemporalRule {
         return second;
     }
 
-    public void evaluate(ProcessContext context, ActivityState activityState) {
-        ProcessInstance instance = context.getProcessInstance();
+    public Processor getOverdueAction() throws Exception {
+        if (overdueAction == null && overdueProcessorFactory != null) {
+            overdueAction = overdueProcessorFactory.createProcessor();
+        }
+        return overdueAction;
+    }
 
+    public void processExchange(Exchange exchange, ProcessInstance instance) {
         Date firstTime = first.evaluateState(instance);
         if (firstTime == null) {
             // ignore as first event has not accurred yet
@@ -88,9 +97,9 @@ public class TemporalRule {
 
         // TODO now we might need to set the second activity state
         // to 'grey' to indicate it now could happen?
-        // if the second activity state is not created yet we might wanna create it
 
-        ActivityState secondState = second.getActivityState(instance);
+        // lets force the lazy creation of the second state
+        ActivityState secondState = second.getOrCreateActivityState(instance);
         if (expectedMillis > 0L) {
             Date expected = secondState.getTimeExpected();
             if (expected == null) {
@@ -120,19 +129,32 @@ public class TemporalRule {
         }
     }
 
+    /*
+    public void evaluate(ProcessContext context, ActivityState activityState) {
+        ProcessInstance instance = context.getProcessInstance();
+
+    }
+    */
+
     public void processExpired(ActivityState activityState) throws Exception {
-        if (overdueAction == null && overdueProcessorFactory != null) {
-            overdueAction = overdueProcessorFactory.createProcessor();
-        }
-        if (overdueAction != null) {
+        Processor processor = getOverdueAction();
+        if (processor != null) {
             Date now = new Date();
-            ProcessInstance instance = activityState.getProcess();
+/*
+            TODO this doesn't work and returns null for some strange reason
+            ProcessInstance instance = activityState.getProcessInstance();
             ActivityState secondState = second.getActivityState(instance);
+            if (secondState == null) {
+                log.error("Could not find the second state! Process is: " + instance + " with first state: " + first.getActivityState(instance) + " and the state I was called with was: " + activityState);
+            }
+*/
+
+            ActivityState secondState = activityState;
             Date overdue = secondState.getTimeOverdue();
             if (now.compareTo(overdue) >= 0) {
                 Exchange exchange = createExchange();
                 exchange.getIn().setBody(activityState);
-                overdueAction.process(exchange);
+                processor.process(exchange);
             }
             else {
                 log.warn("Process has not actually expired; the time is: " + now + " but the overdue time is: " + overdue);
@@ -167,4 +189,12 @@ public class TemporalRule {
         }
     }
     */
+
+    protected void doStart() throws Exception {
+        startServices(getOverdueAction());
+    }
+
+    protected void doStop() throws Exception {
+        stopServices(getOverdueAction());
+    }
 }

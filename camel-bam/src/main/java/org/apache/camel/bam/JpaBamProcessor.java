@@ -42,22 +42,13 @@ public class JpaBamProcessor extends JpaBamProcessorSupport<ProcessInstance> {
     protected void processEntity(Exchange exchange, ProcessInstance process) throws Exception {
         log.info("Processing entity! - attempting to get the current state for process: " + process);
 
-        ActivityState state = process.getActivityState(getActivity());
-        log.info("Found activity: "+ state);
+        // lets force the lazy creation of this activity
+        ActivityRules rules = getActivityRules();
+        ActivityState state = process.getOrCreateActivityState(rules);
 
-        if (state == null) {
-            state = createActivityState(exchange, process);
-            state.setProcess(process);
+        state.processExchange(rules, new ProcessContext(exchange, rules, state));
 
-            log.info("Storing activity: "+ state + " with process: " + state.getProcess());
-            //getTemplate().persist(state);
-        }
-        ProcessContext context = new ProcessContext(exchange, getActivity(), state);
-
-        state.processExchange(getActivity(), context);
+        rules.getProcessRules().processExchange(exchange, process);
     }
 
-    protected ActivityState createActivityState(Exchange exchange, ProcessInstance process) {
-        return new ActivityState();
-    }
 }

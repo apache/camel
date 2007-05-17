@@ -37,8 +37,8 @@ public class ProcessContext {
         this.exchange = exchange;
         this.activityRules = activityRules;
         this.activityState = activityState;
-        this.processRules = activityRules.getProcess();
-        this.processInstance = activityState.getProcess();
+        this.processRules = activityRules.getProcessRules();
+        this.processInstance = activityState.getProcessInstance();
     }
 
     public ActivityRules getActivity() {
