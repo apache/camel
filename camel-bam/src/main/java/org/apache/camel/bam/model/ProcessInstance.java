@@ -18,7 +18,7 @@ package org.apache.camel.bam.model;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.camel.bam.ActivityRules;
+import org.apache.camel.bam.rules.ActivityRules;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;

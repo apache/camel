@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.bam;
+package org.apache.camel.bam.rules;
 
 import org.apache.camel.bam.model.ActivityDefinition;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.model.ProcessInstance;
+import org.apache.camel.bam.ProcessBuilder;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.orm.jpa.JpaTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class ActivityRules extends ServiceSupport {
     private List<TemporalRule> rules = new ArrayList<TemporalRule>();
     private ActivityDefinition activityDefinition;
     private String activityName;
-    private final ProcessBuilder builder;
+    private final org.apache.camel.bam.ProcessBuilder builder;
 
     public ActivityRules(ProcessBuilder builder) {
         this.builder = builder;
