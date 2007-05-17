@@ -435,8 +435,31 @@
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-persistence-jdbc</artifactId>
         <version>0.9.6-incubating</version>
-        <scope>test</scope>
       </dependency>
+
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-entitymanager</artifactId>
+        <version>3.2.1.ga</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate</artifactId>
+        <version>3.2.1.ga</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      
+      <dependency>
+        <groupId>hsqldb</groupId>
+        <artifactId>hsqldb</artifactId>
+        <version>1.8.0.7</version>
+      </dependency>
+
 
       <!-- optional JavaMail -->
       <dependency>
