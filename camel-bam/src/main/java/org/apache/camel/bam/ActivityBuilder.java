@@ -37,7 +37,7 @@ public class ActivityBuilder implements ProcessorFactory {
     public ActivityBuilder(ProcessBuilder processBuilder, Endpoint endpoint) {
         this.processBuilder = processBuilder;
         this.endpoint = endpoint;
-        this.activityRules = new ActivityRules(processBuilder.getProcessRules());
+        this.activityRules = new ActivityRules(processBuilder);
         this.activityRules.setActivityName(endpoint.getEndpointUri());
     }
 

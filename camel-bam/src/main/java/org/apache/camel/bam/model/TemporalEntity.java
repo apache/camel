@@ -17,6 +17,7 @@
 package org.apache.camel.bam.model;
 
 import javax.persistence.Transient;
+import javax.persistence.Entity;
 import java.util.Date;
 
 /**

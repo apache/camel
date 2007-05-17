@@ -25,6 +25,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
 import java.util.HashSet;
 import java.util.Collection;
 import java.util.Date;
@@ -50,6 +52,44 @@ public class ProcessInstance extends TemporalEntity {
         return getClass().getName() + "[id: " + getId() + ", key: " + getCorrelationKey() + "]";
     }
 
+    // This crap is required to work around a bug in hibernate
+    @Override
+    @Id
+    @GeneratedValue
+    public Long getId() {
+        return super.getId();
+    }
+    
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    public ProcessDefinition getProcessDefinition() {
+        return processDefinition;
+    }
+
+    public void setProcessDefinition(ProcessDefinition processDefinition) {
+        this.processDefinition = processDefinition;
+    }
+
+    @OneToMany(mappedBy = "processInstance", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    public Collection<ActivityState> getActivityStates() {
+        return activityStates;
+    }
+
+    public void setActivityStates(Collection<ActivityState> activityStates) {
+        this.activityStates = activityStates;
+    }
+
+    public String getCorrelationKey() {
+        return correlationKey;
+    }
+
+    public void setCorrelationKey(String correlationKey) {
+        this.correlationKey = correlationKey;
+    }
+
+
+    // Helper methods
+    //-------------------------------------------------------------------------
+    
     /**
      * Returns the activity state for the given activity
      *
@@ -68,29 +108,23 @@ public class ProcessInstance extends TemporalEntity {
         return null;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
-    public ProcessDefinition getProcessDefinition() {
-        return processDefinition;
+    public ActivityState getOrCreateActivityState(ActivityRules activityRules) {
+        ActivityState state = getActivityState(activityRules);
+        log.info("Found activity: "+ state);
+
+        if (state == null) {
+            state = createActivityState();
+            state.setProcessInstance(this);
+            state.setActivityDefinition(activityRules.getActivityDefinition());
+
+            // TODO not required: getTemplate().persist(state);
+        }
+
+        return state;
     }
 
-    public void setProcessDefinition(ProcessDefinition processDefinition) {
-        this.processDefinition = processDefinition;
-    }
 
-    @OneToMany(mappedBy = "process", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-    public Collection<ActivityState> getActivityStates() {
-        return activityStates;
-    }
-
-    public void setActivityStates(Collection<ActivityState> activityStates) {
-        this.activityStates = activityStates;
-    }
-
-    public String getCorrelationKey() {
-        return correlationKey;
-    }
-
-    public void setCorrelationKey(String correlationKey) {
-        this.correlationKey = correlationKey;
+    protected ActivityState createActivityState() {
+        return new ActivityState();
     }
 }

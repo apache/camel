@@ -44,7 +44,7 @@ public abstract class TimeExpression {
      * Creates a new temporal rule on this expression and the other expression
      */
     public TemporalRule after(TimeExpression expression) {
-        TemporalRule rule = new TemporalRule(this, expression);
+        TemporalRule rule = new TemporalRule(expression, this);
         rule.getSecond().getActivityRules().addRule(rule);
         return rule;
     }
@@ -76,5 +76,9 @@ public abstract class TimeExpression {
 
     public ActivityState getActivityState(ProcessInstance instance) {
         return instance.getActivityState(activityRules);
+    }
+
+    public ActivityState getOrCreateActivityState(ProcessInstance instance) {
+        return instance.getOrCreateActivityState(activityRules);
     }
 }

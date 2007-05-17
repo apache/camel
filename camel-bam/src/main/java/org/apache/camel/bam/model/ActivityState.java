@@ -25,6 +25,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
 import java.util.Date;
 
 /**
@@ -34,12 +36,25 @@ import java.util.Date;
  */
 @Entity
 public class ActivityState extends TemporalEntity implements TimerEventHandler {
-    private ProcessInstance process;
-    private Integer receivedMessageCount;
+    private ProcessInstance processInstance;
+    private Integer receivedMessageCount = 0;
     private ActivityDefinition activityDefinition;
     private Date timeExpected;
     private Date timeOverdue;
-    private Integer escalationLevel;
+    private Integer escalationLevel = 0;
+
+    // This crap is required to work around a bug in hibernate
+    @Override
+    @Id
+    @GeneratedValue
+    public Long getId() {
+        return super.getId();
+    }
+
+    @Override
+    public String toString() {
+        return "ActivityState[" + getId() + " " + getActivityDefinition() + "]";
+    }
 
     public synchronized void processExchange(ActivityRules activityRules, ProcessContext context) throws Exception {
         int messageCount = 0;
@@ -59,16 +74,13 @@ public class ActivityState extends TemporalEntity implements TimerEventHandler {
         else if (messageCount > expectedMessages) {
             onExcessMessage(context);
         }
-
-        // now lets fire any assertions on the activity
-        activityRules.processExchange(this, context);
     }
 
     /**
      * Returns true if this state is for the given activity
      */
     public boolean isActivity(ActivityRules activityRules) {
-        return ObjectHelper.equals(getActivityDefinition(), activityRules.getActivity());
+        return ObjectHelper.equals(getActivityDefinition(), activityRules.getActivityDefinition());
     }
 
     /**
@@ -81,13 +93,13 @@ public class ActivityState extends TemporalEntity implements TimerEventHandler {
     // Properties
     //-----------------------------------------------------------------------
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
-    public ProcessInstance getProcess() {
-        return process;
+    public ProcessInstance getProcessInstance() {
+        return processInstance;
     }
 
-    public void setProcess(ProcessInstance process) {
-        this.process = process;
-        process.getActivityStates().add(this);
+    public void setProcessInstance(ProcessInstance processInstance) {
+        this.processInstance = processInstance;
+        processInstance.getActivityStates().add(this);
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
