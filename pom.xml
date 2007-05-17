@@ -122,7 +122,6 @@
     <module>camel-core</module>
     <module>components</module>
     <module>examples</module>
-    <module>camel-itest</module>
     <!-- <module>tooling</module> -->
   </modules>
 
