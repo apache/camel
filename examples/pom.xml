@@ -34,7 +34,7 @@
   <packaging>pom</packaging>
 
   <modules>
--jms-file</module>
+    <module>camel-example-jms-file</module>
   </modules>
 
 </project>
