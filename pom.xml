@@ -587,7 +587,7 @@
             <link>http://logging.apache.org/log4j/docs/api/</link>
             <link>http://mina.apache.org/report/trunk/apidocs/</link>
           </links>
-          <stylesheetfile>${basedir}/../etc/css/stylesheet.css</stylesheetfile>
+          <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
           <maxmemory>900m</maxmemory>
           <source>1.5</source>
