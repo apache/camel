@@ -105,6 +105,20 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
     }
 
     /**
+     * Create a predicate that the left hand expression contains the value of the right hand expression
+     *
+     * @param value the element which is compared to be contained within this expression
+     * @return a predicate which evaluates to true if the given value expression is contained within this
+     * expression value
+     */
+    @Fluent
+    public Predicate<E> contains(@FluentArg("value")Object value) {
+        Expression<E> right = asExpression(value);
+        return onNewPredicate(PredicateBuilder.contains(expression, right));
+    }
+
+
+    /**
      * Creates a predicate which is true if this expression matches the given regular expression
      *
      * @param regex the regular expression to match
