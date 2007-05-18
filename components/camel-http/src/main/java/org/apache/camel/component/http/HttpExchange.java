@@ -24,7 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Represents a HTTP exchange
+ * Represents a HTTP exchange which exposes the underlying HTTP abtractions via
+ * {@link #getRequest()} and {@link #getResponse()} 
  *
  * @version $Revision$
  */
