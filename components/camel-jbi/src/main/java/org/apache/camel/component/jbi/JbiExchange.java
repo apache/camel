@@ -26,7 +26,7 @@ import javax.jbi.messaging.NormalizedMessage;
 
 /**
  * An {@link Exchange} working with JBI which exposes the underlying JBI features such as the
- * JBI {@link #getMessageExchange()}
+ * JBI {@link #getMessageExchange()}, {@link #getInMessage()} and {@link #getOutMessage()} 
  *
  * @version $Revision$
  */
