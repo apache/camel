@@ -19,20 +19,24 @@ package org.apache.camel.converter;
 
 import org.apache.camel.Converter;
 
-import java.util.Iterator;
-import java.util.Collections;
-import java.util.Collection;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 
 /**
- * Some core java.lang based 
+ * Some core java.lang based
  * <a href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
  *
  * @version $Revision$
  */
 @Converter
 public class ObjectConverter {
+    public static boolean isCollection(Object value) {
+        // TODO we should handle primitive array types?
+        return value instanceof Collection || (value != null && value.getClass().isArray());
+    }
+
     /**
      * Creates an iterator over the value if the value is a collection, an Object[] or a primitive type array; otherwise
      * to simplify the caller's code, we just create a singleton collection iterator over a single value
@@ -47,6 +51,7 @@ public class ObjectConverter {
             return collection.iterator();
         }
         else if (value.getClass().isArray()) {
+            // TODO we should handle primitive array types?
             return Arrays.asList(value).iterator();
         }
         else {
@@ -67,5 +72,4 @@ public class ObjectConverter {
         }
         return false;
     }
- 
 }
