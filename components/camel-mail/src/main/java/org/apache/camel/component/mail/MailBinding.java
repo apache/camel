@@ -17,16 +17,17 @@
  */
 package org.apache.camel.component.mail;
 
-import java.util.Map;
-import java.util.Set;
+import org.apache.camel.Exchange;
+import org.apache.camel.converter.ObjectConverter;
 
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
-import org.apache.camel.Exchange;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A Strategy used to convert between a Camel {@Exchange} and {@Message} to and from a
@@ -37,13 +38,13 @@ import org.apache.camel.Exchange;
 public class MailBinding {
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange) {
         try {
-            appendMailHeaders(mimeMessage, exchange.getIn());
+            appendHeadersFromCamel(mimeMessage, exchange, exchange.getIn());
 
             String destination = endpoint.getConfiguration().getDestination();
-            if (destination != null ) {
+            if (destination != null) {
                 mimeMessage.setRecipients(Message.RecipientType.TO, destination);
             }
-                        
+
             if (empty(mimeMessage.getFrom())) {
                 // lets default the address to the endpoint destination
                 String from = endpoint.getConfiguration().getFrom();
@@ -78,33 +79,35 @@ public class MailBinding {
     /**
      * Appends the Mail headers from the Camel {@link MailMessage}
      */
-    protected void appendMailHeaders(MimeMessage mimeMessage, org.apache.camel.Message camelMessage) throws MessagingException {
+    protected void appendHeadersFromCamel(MimeMessage mimeMessage, Exchange exchange, org.apache.camel.Message camelMessage) throws MessagingException {
         Set<Map.Entry<String, Object>> entries = camelMessage.getHeaders().entrySet();
         for (Map.Entry<String, Object> entry : entries) {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
             if (headerValue != null) {
                 if (shouldOutputHeader(camelMessage, headerName, headerValue)) {
-                	
-            		String[] values = new String[]{};
-            		Class stringArrayClazz = values.getClass();
-            		
-            		// Mail messages can repeat the same header...
-            		if( headerValue.getClass() == stringArrayClazz ) {
-            			mimeMessage.removeHeader(headerName);
-                		values = (String[]) headerValue;
-                		for (int i = 0; i < values.length; i++) {
-                            mimeMessage.addHeader(headerName, values[i]);
-						}
-            		} else if( headerValue.getClass() == String.class ) {
-                        mimeMessage.setHeader(headerName, (String) headerValue);
-            		} else {
-                		// Unknown type? then use toString()
-                        mimeMessage.setHeader(headerName, headerValue.toString());
-                	}
+
+                    // Mail messages can repeat the same header...
+                    if (ObjectConverter.isCollection(headerValue)) {
+                        Iterator iter = ObjectConverter.iterator(headerValue);
+                        while (iter.hasNext()) {
+                            Object value = iter.next();
+                            mimeMessage.addHeader(headerName, asString(exchange, value));
+                        }
+                    }
+                    else {
+                        mimeMessage.setHeader(headerName, asString(exchange, headerValue));
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * Converts the given object value to a String
+     */
+    protected String asString(Exchange exchange, Object value) {
+        return exchange.getContext().getTypeConverter().convertTo(String.class, value);
     }
 
     /**

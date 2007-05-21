@@ -18,6 +18,7 @@
 package org.apache.camel.component.mail;
 
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.util.CollectionHelper;
 
 import javax.mail.Header;
 import javax.mail.Message;
@@ -46,7 +47,8 @@ public class MailMessage extends DefaultMessage {
             return "MailMessage: " + mailMessage;
         }
         else {
-            return "MailMessage: " + getBody();}
+            return "MailMessage: " + getBody();
+        }
     }
 
     @Override
@@ -80,10 +82,10 @@ public class MailMessage extends DefaultMessage {
         if (answer == null) {
             return super.getHeader(name);
         }
-        if( answer.length > 0 ) {
-        	return answer[0];
+        if (answer.length == 1) {
+            return answer[0];
         }
-        return null;
+        return answer;
     }
 
     @Override
@@ -109,16 +111,16 @@ public class MailMessage extends DefaultMessage {
             catch (MessagingException e) {
                 throw new MessageHeaderNamesAccessException(e);
             }
-            
-            System.out.println("Copying....");
             try {
-	            while (names.hasMoreElements()) {
-	                Header header = (Header) names.nextElement();
-	                map.put(header.getName(), header.getValue());
-	                System.out.println("Set: "+header.getName()+"="+header.getValue());
-	            }
-            }catch (Throwable e) {
-                throw new MessageHeaderNamesAccessException(e);                
+                while (names.hasMoreElements()) {
+                    Header header = (Header) names.nextElement();
+                    String value = header.getValue();
+                    String name = header.getName();
+                    CollectionHelper.appendValue(map, name, value);
+                }
+            }
+            catch (Throwable e) {
+                throw new MessageHeaderNamesAccessException(e);
             }
         }
     }
