@@ -37,6 +37,13 @@ public interface Message {
      * @param messageId
      */
     void setMessageId(String messageId);
+
+    /**
+     * Returns the exchange this message is related to
+     * 
+     * @return
+     */
+    Exchange getExchange();
     
     /**
      * Accesses a specific header
@@ -109,5 +116,4 @@ public interface Message {
      */
     Message copy();
 
-    
 }
