@@ -56,7 +56,9 @@ public class ActiveMQRouteTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
+        // START SNIPPET: example
         camelContext.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false"));
+        // END SNIPPET: example
 
         return camelContext;
     }
