@@ -44,12 +44,15 @@ public class MailMessageTest extends ContextTestSupport {
 
         MailExchange exchange = endpoint.createExchange(mimeMessage);
         MailMessage in = exchange.getIn();
-        Object header = in.getHeader("TO");
+        String value = in.getHeader("TO", String.class);
+        assertEquals("value", "james@localhost, bar@localhost", value);
+/*
         String[] values = assertIsInstanceOf(String[].class, header);
         log.debug("Found values: " + ObjectHelper.asString(values));
         assertEquals("Size", 2, values.length);
         assertEquals("values[0]", "james@localhost", values[0]);
         assertEquals("values[1]", "bar@localhost", values[1]);
+*/
 
         assertEquals("body", body, in.getBody());
     }
