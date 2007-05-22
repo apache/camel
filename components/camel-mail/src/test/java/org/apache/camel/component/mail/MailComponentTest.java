@@ -19,6 +19,14 @@ package org.apache.camel.component.mail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.util.ObjectHelper;
+
+import javax.mail.Session;
+import javax.mail.Message;
+import javax.mail.Address;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.InternetAddress;
+import java.util.Properties;
 
 /**
  * @version $Revision: 1.1 $
@@ -51,6 +59,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("getPort()", 30, config.getPort());
         assertEquals("getUsername()", "james", config.getUsername());
     }
+
 
     @Override
     protected MailEndpoint resolveMandatoryEndpoint(String uri) {
