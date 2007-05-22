@@ -137,6 +137,11 @@
       <!-- Camel jars -->
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-activemq</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-bam</artifactId>
         <version>${camel-version}</version>
       </dependency>

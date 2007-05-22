@@ -33,11 +33,14 @@ import javax.jms.ExceptionListener;
 import java.util.Map;
 
 /**
+ * A <a href="http://activemq.apache.org/jms.html">JMS Component</a>
+ *
  * @version $Revision:520964 $
  */
 public class JmsComponent extends DefaultComponent<JmsExchange> {
     public static final String QUEUE_PREFIX = "queue:";
     public static final String TOPIC_PREFIX = "topic:";
+
     private JmsConfiguration configuration;
 
     /**
@@ -93,7 +96,6 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
 	}
 
     public JmsComponent() {
-        this.configuration = new JmsConfiguration();
     }
 
     public JmsComponent(JmsConfiguration configuration) {
@@ -102,7 +104,6 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
 
     public JmsComponent(CamelContext context) {
         super(context);
-        this.configuration = new JmsConfiguration();
     }
 
     @Override
@@ -132,6 +133,9 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
     }
 
     public JmsConfiguration getConfiguration() {
+        if (configuration == null) {
+            configuration = createConfiguration();
+        }
         return configuration;
     }
 
@@ -288,4 +292,14 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
     protected String convertPathToActualDestination(String path) {
         return path;
     }
+
+    /**
+     * Factory method to create the default configuration instance
+     *
+     * @return a newly created configuration object which can then be further customized
+     */
+    protected JmsConfiguration createConfiguration() {
+        return new JmsConfiguration();
+    }
+
 }
