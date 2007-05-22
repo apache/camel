@@ -57,9 +57,15 @@
   <mailingLists>
     <mailingList>
       <name>Development List</name>
-      <subscribe>dev@activemq.apache.org</subscribe>
-      <unsubscribe>dev@activemq.apache.org</unsubscribe>
-      <post>dev@activemq.apache.org</post>
+      <subscribe>camel-dev@activemq.apache.org</subscribe>
+      <unsubscribe>camel-dev@activemq.apache.org</unsubscribe>
+      <post>camel-dev@activemq.apache.org</post>
+    </mailingList>
+    <mailingList>
+      <name>User List</name>
+      <subscribe>camel-user@activemq.apache.org</subscribe>
+      <unsubscribe>camel-user@activemq.apache.org</unsubscribe>
+      <post>camel-user@activemq.apache.org</post>
     </mailingList>
   </mailingLists>
 
