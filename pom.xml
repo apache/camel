@@ -67,6 +67,12 @@
       <unsubscribe>camel-user@activemq.apache.org</unsubscribe>
       <post>camel-user@activemq.apache.org</post>
     </mailingList>
+    <mailingList>
+      <name>Commits List</name>
+      <subscribe>camel-commits@activemq.apache.org</subscribe>
+      <unsubscribe>camel-commits@activemq.apache.org</unsubscribe>
+      <post>camel-commits@activemq.apache.org</post>
+    </mailingList>
   </mailingLists>
 
   <repositories>
