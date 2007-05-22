@@ -27,7 +27,9 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 
 /**
- * @version $Revision:520964 $
+ * A <a href="http://activemq.apache.org/jms.html">JMS Endpoint</a>
+ *
+  * @version $Revision:520964 $
  */
 public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     private JmsBinding binding;
@@ -43,7 +45,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
         this.pubSubDomain = pubSubDomain;
     }
 
-    public Producer<JmsExchange> createProducer() throws Exception {
+    public JmsProducer createProducer() throws Exception {
         JmsOperations template = configuration.createJmsOperations(pubSubDomain, destination);
         return createProducer(template);
     }
@@ -51,7 +53,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     /**
      * Creates a producer using the given template
      */
-    public Producer<JmsExchange> createProducer(JmsOperations template) throws Exception {
+    public JmsProducer createProducer(JmsOperations template) throws Exception {
         if (template instanceof JmsTemplate) {
             JmsTemplate jmsTemplate = (JmsTemplate) template;
             jmsTemplate.setPubSubDomain(pubSubDomain);
@@ -60,7 +62,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
         return new JmsProducer(this, template);
     }
 
-    public Consumer<JmsExchange> createConsumer(Processor processor) throws Exception {
+    public JmsConsumer createConsumer(Processor processor) throws Exception {
         AbstractMessageListenerContainer listenerContainer = configuration.createMessageListenerContainer();
         return createConsumer(processor, listenerContainer);
     }
@@ -73,7 +75,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
      * @return a newly created consumer
      * @throws Exception if the consumer cannot be created
      */
-    public Consumer<JmsExchange> createConsumer(Processor processor, AbstractMessageListenerContainer listenerContainer) throws Exception {
+    public JmsConsumer createConsumer(Processor processor, AbstractMessageListenerContainer listenerContainer) throws Exception {
         listenerContainer.setDestinationName(destination);
         listenerContainer.setPubSubDomain(pubSubDomain);
         if (selector != null) {

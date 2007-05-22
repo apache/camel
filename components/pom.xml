@@ -34,6 +34,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>camel-activemq</module>
     <module>camel-bam</module>
     <module>camel-cxf</module>
     <module>camel-http</module>

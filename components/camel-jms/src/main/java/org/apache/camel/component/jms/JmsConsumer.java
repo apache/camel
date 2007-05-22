@@ -40,6 +40,10 @@ public class JmsConsumer extends DefaultConsumer<JmsExchange> {
         this.listenerContainer.setMessageListener(messageListener);
     }
 
+    public AbstractMessageListenerContainer getListenerContainer() {
+        return listenerContainer;
+    }
+
     protected MessageListener createMessageListener(JmsEndpoint endpoint, Processor processor) {
         EndpointMessageListener<JmsExchange> messageListener = new EndpointMessageListener<JmsExchange>(endpoint, processor);
         messageListener.setBinding(endpoint.getBinding());

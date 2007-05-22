@@ -53,4 +53,8 @@ public class JmsProducer extends DefaultProducer {
             }
         });
     }
+
+    public JmsOperations getTemplate() {
+        return template;
+    }
 }

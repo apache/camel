@@ -18,6 +18,7 @@
 package org.apache.camel.component.jms;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
@@ -42,12 +43,11 @@ import javax.jms.ExceptionListener;
 public class JmsConfiguration implements Cloneable {
     protected static final String TRANSACTED = "TRANSACTED";
     protected static final String CLIENT_ACKNOWLEDGE = "CLIENT_ACKNOWLEDGE";
-
-    // General Setting used for both the JmsTemplate and JMS Container
     private ConnectionFactory connectionFactory;
-	private int acknowledgementMode=-1;
+    private ConnectionFactory templateConnectionFactory;
+    private ConnectionFactory listenerConnectionFactory;
+    private int acknowledgementMode = -1;
     private String acknowledgementModeName;
-    
     // Used to configure the spring Container
     private ExceptionListener exceptionListener;
     private ConsumerType consumerType = ConsumerType.Default;
@@ -68,7 +68,6 @@ public class JmsConfiguration implements Cloneable {
     private long receiveTimeout = -1;
     private int idleTaskExecutionLimit = -1;
     private int maxConcurrentConsumers = -1;
-    
     // JmsTemplate only
     private boolean useVersion102;
     private boolean explicitQosEnabled;
@@ -77,10 +76,9 @@ public class JmsConfiguration implements Cloneable {
     private MessageConverter messageConverter;
     private boolean messageIdEnabled = true;
     private boolean messageTimestampEnabled;
-    private int priority = -1;     
-	
-	// Transaction related configuration
-	private boolean transacted;
+    private int priority = -1;
+    // Transaction related configuration
+    private boolean transacted;
     private PlatformTransactionManager transactionManager;
     private String transactionName;
     private int transactionTimeout = -1;
@@ -105,9 +103,10 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public JmsOperations createJmsOperations(boolean pubSubDomain, String destination) {
+        ConnectionFactory factory = getTemplateConnectionFactory();
         JmsTemplate template = useVersion102
-                ? new JmsTemplate102(getConnectionFactory(), pubSubDomain)
-                : new JmsTemplate(getConnectionFactory());
+                ? new JmsTemplate102(factory, pubSubDomain)
+                : new JmsTemplate(factory);
         template.setPubSubDomain(pubSubDomain);
         template.setDefaultDestinationName(destination);
 
@@ -129,13 +128,14 @@ public class JmsConfiguration implements Cloneable {
             template.setTimeToLive(timeToLive);
         }
 
-        template.setSessionTransacted( transacted );
-        
+        template.setSessionTransacted(transacted);
+
         // This is here for completeness, but the template should not get used for receiving messages.
-        if( acknowledgementMode >= 0 ) {
-        	template.setSessionAcknowledgeMode(acknowledgementMode);
-        } else if( acknowledgementModeName!= null ) {
-        	template.setSessionAcknowledgeModeName(acknowledgementModeName);
+        if (acknowledgementMode >= 0) {
+            template.setSessionAcknowledgeMode(acknowledgementMode);
+        }
+        else if (acknowledgementModeName != null) {
+            template.setSessionAcknowledgeModeName(acknowledgementModeName);
         }
         return template;
     }
@@ -147,7 +147,7 @@ public class JmsConfiguration implements Cloneable {
     }
 
     protected void configureMessageListenerContainer(AbstractMessageListenerContainer container) {
-        container.setConnectionFactory(getConnectionFactory());
+        container.setConnectionFactory(getListenerConnectionFactory());
         if (autoStartup) {
             container.setAutoStartup(true);
         }
@@ -164,10 +164,11 @@ public class JmsConfiguration implements Cloneable {
         container.setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);
         container.setExposeListenerSession(exposeListenerSession);
         container.setSessionTransacted(transacted);
-        
-        if( acknowledgementMode >= 0 ) {
+
+        if (acknowledgementMode >= 0) {
             container.setSessionAcknowledgeMode(acknowledgementMode);
-        } else if( acknowledgementModeName!= null ) {
+        }
+        else if (acknowledgementModeName != null) {
             container.setSessionAcknowledgeModeName(acknowledgementModeName);
         }
 
@@ -179,16 +180,18 @@ public class JmsConfiguration implements Cloneable {
             if (concurrentConsumers >= 0) {
                 listenerContainer.setConcurrentConsumers(concurrentConsumers);
             }
-            
+
             if (cacheLevel >= 0) {
                 listenerContainer.setCacheLevel(cacheLevel);
-            } else if (cacheLevelName != null) {
-                listenerContainer.setCacheLevelName(cacheLevelName);
-            } else {
-            	// Default to CACHE_CONSUMER unless specified.  This works best with most JMS providers.
-            	listenerContainer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
             }
-            
+            else if (cacheLevelName != null) {
+                listenerContainer.setCacheLevelName(cacheLevelName);
+            }
+            else {
+                // Default to CACHE_CONSUMER unless specified.  This works best with most JMS providers.
+                listenerContainer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
+            }
+
             if (idleTaskExecutionLimit >= 0) {
                 listenerContainer.setIdleTaskExecutionLimit(idleTaskExecutionLimit);
             }
@@ -244,11 +247,54 @@ public class JmsConfiguration implements Cloneable {
     // Properties
     //-------------------------------------------------------------------------
     public ConnectionFactory getConnectionFactory() {
+        if (connectionFactory == null) {
+            connectionFactory = createConnectionFactory();
+        }
         return connectionFactory;
     }
 
+    /**
+     * Sets the default connection factory to be used if a connection factory is not specified
+     * for either {@link #setTemplateConnectionFactory(ConnectionFactory)} or
+     * {@link #setListenerConnectionFactory(ConnectionFactory)}
+     *
+     * @param connectionFactory the default connection factory to use
+     */
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
+    }
+
+    public ConnectionFactory getListenerConnectionFactory() {
+        if (listenerConnectionFactory == null) {
+            listenerConnectionFactory = createListenerConnectionFactory();
+        }
+        return listenerConnectionFactory;
+    }
+
+    /**
+     * Sets the connection factory to be used for consuming messages via the {@link #createMessageListenerContainer()}
+     *
+     * @param listenerConnectionFactory the connection factory to use for consuming messages
+     */
+    public void setListenerConnectionFactory(ConnectionFactory listenerConnectionFactory) {
+        this.listenerConnectionFactory = listenerConnectionFactory;
+    }
+
+    public ConnectionFactory getTemplateConnectionFactory() {
+        if (templateConnectionFactory == null) {
+            templateConnectionFactory = createTemplateConnectionFactory();
+        }
+        return templateConnectionFactory;
+    }
+
+    /**
+     * Sets the connection factory to be used for sending messages via the {@link JmsTemplate} via
+     * {@link #createJmsOperations(boolean, String)}
+     *
+     * @param templateConnectionFactory the connection factory for sending messages
+     */
+    public void setTemplateConnectionFactory(ConnectionFactory templateConnectionFactory) {
+        this.templateConnectionFactory = templateConnectionFactory;
     }
 
     public boolean isUseVersion102() {
@@ -308,12 +354,12 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public String getAcknowledgementModeName() {
-        return acknowledgementModeName;        
+        return acknowledgementModeName;
     }
 
     public void setAcknowledgementModeName(String consumerAcknowledgementMode) {
         this.acknowledgementModeName = consumerAcknowledgementMode;
-        this.acknowledgementMode=-1;
+        this.acknowledgementMode = -1;
     }
 
     public boolean isExposeListenerSession() {
@@ -500,6 +546,23 @@ public class JmsConfiguration implements Cloneable {
         this.consumerType = consumerType;
     }
 
+    public int getAcknowledgementMode() {
+        return acknowledgementMode;
+    }
+
+    public void setAcknowledgementMode(int consumerAcknowledgementMode) {
+        this.acknowledgementMode = consumerAcknowledgementMode;
+        this.acknowledgementModeName = null;
+    }
+
+    public boolean isTransacted() {
+        return transacted;
+    }
+
+    public void setTransacted(boolean consumerTransacted) {
+        this.transacted = consumerTransacted;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
     protected AbstractMessageListenerContainer chooseMessageListenerContainerImplementation() {
@@ -516,21 +579,25 @@ public class JmsConfiguration implements Cloneable {
         }
     }
 
-	public int getAcknowledgementMode() {
-		return acknowledgementMode;
-	}
+    /**
+     * Factory method which allows derived classes to customize the lazy creation
+     */
+    protected ConnectionFactory createConnectionFactory() {
+        ObjectHelper.notNull(connectionFactory, "connectionFactory");
+        return null;
+    }
 
-	public void setAcknowledgementMode(int consumerAcknowledgementMode) {
-		this.acknowledgementMode = consumerAcknowledgementMode;
-		this.acknowledgementModeName=null;
-	}
+    /**
+     * Factory method which allows derived classes to customize the lazy creation
+     */
+    protected ConnectionFactory createListenerConnectionFactory() {
+        return getConnectionFactory();
+    }
 
-	public boolean isTransacted() {
-		return transacted;
-	}
-
-	public void setTransacted(boolean consumerTransacted) {
-		this.transacted = consumerTransacted;
-	}
-
+    /**
+     * Factory method which allows derived classes to customize the lazy creation
+     */
+    protected ConnectionFactory createTemplateConnectionFactory() {
+        return getConnectionFactory();
+    }
 }
