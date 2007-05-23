@@ -15,31 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.loadbalancer;
+package org.apache.camel.component.quartz;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 
 /**
- * A default base class for a {@link LoadBalancer} implementation
- *
  * @version $Revision: 1.1 $
  */
-public abstract class LoadBalancerSupport implements LoadBalancer {
-    private List<Processor> processors = new CopyOnWriteArrayList<Processor>();
-
-    public void addProcessor(Processor processor) {
-        processors.add(processor);
-    }
-
-    public void removeProcessor(Processor processor) {
-        processors.remove(processor);
-    }
-
-    public List<Processor> getProcessors() {
-        return processors;
+public class CamelJob implements Job {
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        QuartzEndpoint component = (QuartzEndpoint) context.getJobDetail().getJobDataMap().get(QuartzEndpoint.ENDPOINT_KEY);
+        if (component == null) {
+            throw new JobExecutionException("No quartz endpoint available for key: " + QuartzEndpoint.ENDPOINT_KEY + ". Bad job data map");
+        }
+        component.onJobExecute(context);
     }
 }

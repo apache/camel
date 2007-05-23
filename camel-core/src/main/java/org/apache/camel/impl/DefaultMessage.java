@@ -36,10 +36,7 @@ public class DefaultMessage extends MessageSupport {
     }
 
     public Object getHeader(String name) {
-        if (headers != null) {
-            return headers.get(name);
-        }
-        return null;
+        return getHeaders().get(name);
     }
 
     public <T> T getHeader(String name, Class<T> type) {

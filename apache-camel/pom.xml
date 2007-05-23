@@ -84,6 +84,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-quartz</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-saxon</artifactId>
     </dependency>
     <dependency>
@@ -192,7 +196,9 @@
               <goal>createbundle</goal>
             </goals>
             <configuration>
-              <includes>camel-activemq,camel-bam,camel-core,camel-cxf,camel-file,camel-http,camel-jaxb,camel-jbi,camel-jms,camel-josql,camel-jpa,camel-mail,camel-mina,camel-rmi,camel-saxon,camel-script,camel-spring,camel-xmpp,commons-logging</includes>
+              <includes>camel-activemq,camel-bam,camel-core,camel-cxf,camel-file,camel-http,camel-jaxb,
+                camel-jbi,camel-jms,camel-josql,camel-jpa,camel-mail,camel-mina,camel-quartz,camel-rmi,
+                camel-saxon,camel-script,camel-spring,camel-xmpp,commons-logging</includes>
             </configuration>
           </execution>
         </executions>
