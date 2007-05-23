@@ -15,31 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.loadbalancer;
+package org.apache.camel.component.quartz;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultExchange;
+import org.quartz.JobExecutionContext;
 
 /**
- * A default base class for a {@link LoadBalancer} implementation
- *
  * @version $Revision: 1.1 $
  */
-public abstract class LoadBalancerSupport implements LoadBalancer {
-    private List<Processor> processors = new CopyOnWriteArrayList<Processor>();
-
-    public void addProcessor(Processor processor) {
-        processors.add(processor);
+public class QuartzExchange extends DefaultExchange {
+    public QuartzExchange(CamelContext context, JobExecutionContext jobExecutionContext) {
+        super(context);
+        setIn(new QuartzMessage(this, jobExecutionContext));
     }
 
-    public void removeProcessor(Processor processor) {
-        processors.remove(processor);
+    @Override
+    public QuartzMessage getIn() {
+        return (QuartzMessage) super.getIn();
     }
 
-    public List<Processor> getProcessors() {
-        return processors;
+    public JobExecutionContext getJobExecutionContext() {
+        return getIn().getJobExecutionContext();
     }
 }
