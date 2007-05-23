@@ -21,6 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.quartz.Trigger;
 import org.quartz.SimpleTrigger;
+import org.quartz.CronTrigger;
 
 /**
  * @version $Revision: 1.1 $
@@ -42,6 +43,14 @@ public class QuartzEndpointConfigureTest extends ContextTestSupport {
         Trigger trigger = endpoint.getTrigger();
         assertEquals("getName()", "myName", trigger.getName());
         assertEquals("getGroup()", "Camel", trigger.getGroup());
+    }
+
+    public void testConfigureCronExpression() throws Exception {
+        QuartzEndpoint endpoint = resolveMandatoryEndpoint("quartz://myGroup/myTimerName/0/0/12/*/*/$");
+        CronTrigger trigger = assertIsInstanceOf(CronTrigger.class, endpoint.getTrigger());
+        assertEquals("getName()", "myTimerName", trigger.getName());
+        assertEquals("getGroup()", "myGroup", trigger.getGroup());
+        assertEquals("cron expression", "0 0 12 * * ?", trigger.getCronExpression());
     }
 
     @Override

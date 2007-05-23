@@ -28,6 +28,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
+import org.quartz.CronTrigger;
 import org.quartz.impl.StdSchedulerFactory;
 
 import java.util.Map;
@@ -55,16 +56,33 @@ public class QuartzComponent extends DefaultComponent<QuartzExchange> {
 
     @Override
     protected QuartzEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        QuartzEndpoint answer = new QuartzEndpoint(uri, this, getScheduler());
+
         // lets split the remaining into a group/name
         URI u = new URI(uri);
         String name;
         String group = "Camel";
         String path = u.getPath();
+        CronTrigger cronTrigger = null;
         if (path != null && path.length() > 1) {
             if (path.startsWith("/")) {
                 path = path.substring(1);
             }
-            name = path;
+            int idx = path.indexOf('/');
+            if (idx > 0) {
+                cronTrigger = new CronTrigger();
+                name = path.substring(0, idx);
+                String cronExpression = path.substring(idx + 1);
+                // lets allow / instead of spaces and allow $ instead of ?
+                cronExpression = cronExpression.replace('/', ' ');
+                cronExpression = cronExpression.replace('$', '?');
+                log.debug("Creating cron trigger: " + cronExpression);
+                cronTrigger.setCronExpression(cronExpression);
+                answer.setTrigger(cronTrigger);
+            }
+            else {
+                name = path;
+            }
             group = u.getHost();
         }
         else {
@@ -80,8 +98,10 @@ public class QuartzComponent extends DefaultComponent<QuartzExchange> {
             name = names[0];
         }
 */
-        QuartzEndpoint answer = new QuartzEndpoint(uri, this, getScheduler());
-        Trigger trigger = answer.getTrigger();
+        Trigger trigger = cronTrigger;
+        if (trigger == null) {
+            trigger = answer.getTrigger();
+        }
         trigger.setName(name);
         trigger.setGroup(group);
 
