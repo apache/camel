@@ -21,6 +21,7 @@ import javax.jms.Message;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.PullConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
@@ -46,7 +47,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     }
 
     public JmsProducer createProducer() throws Exception {
-        JmsOperations template = configuration.createJmsOperations(pubSubDomain, destination);
+        JmsOperations template = createJmsOperations();
         return createProducer(template);
     }
 
@@ -82,6 +83,12 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
             listenerContainer.setMessageSelector(selector);
         }
         return new JmsConsumer(this, processor, listenerContainer);
+    }
+
+    @Override
+    public PullConsumer<JmsExchange> createPullConsumer() throws Exception {
+        JmsOperations template = createJmsOperations();
+        return new JmsPullConsumer(this, template);
     }
 
     public JmsExchange createExchange() {
@@ -132,5 +139,10 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
 	public boolean isSingleton() {
 		return false;
 	}
+
+
+    protected JmsOperations createJmsOperations() {
+        return configuration.createJmsOperations(pubSubDomain, destination);
+    }
 
 }
