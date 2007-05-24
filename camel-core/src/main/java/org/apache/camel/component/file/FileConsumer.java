@@ -18,7 +18,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.Processor;
-import org.apache.camel.impl.PollingConsumer;
+import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -30,7 +30,7 @@ import java.nio.channels.FileChannel;
 /**
  * @version $Revision: 523016 $
  */
-public class FileConsumer extends PollingConsumer<FileExchange> {
+public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private static final transient Log log = LogFactory.getLog(FileConsumer.class);
     private final FileEndpoint endpoint;
     private boolean recursive = true;

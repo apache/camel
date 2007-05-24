@@ -20,7 +20,7 @@ package org.apache.camel.component.file;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.PollingEndpoint;
+import org.apache.camel.impl.ScheduledPollEndpoint;
 
 import java.io.File;
 
@@ -29,7 +29,7 @@ import java.io.File;
  *
  * @version $Revision: 523016 $
  */
-public class FileEndpoint extends PollingEndpoint<FileExchange> {
+public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     private File file;
     private boolean autoCreate=true;
 

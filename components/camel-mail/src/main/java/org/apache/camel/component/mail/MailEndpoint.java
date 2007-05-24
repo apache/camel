@@ -20,8 +20,7 @@ package org.apache.camel.component.mail;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.PollingEndpoint;
+import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import javax.mail.Message;
@@ -30,7 +29,7 @@ import javax.mail.Folder;
 /**
  * @version $Revision:520964 $
  */
-public class MailEndpoint extends PollingEndpoint<MailExchange> {
+public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
     private MailBinding binding;
     private MailConfiguration configuration;
 

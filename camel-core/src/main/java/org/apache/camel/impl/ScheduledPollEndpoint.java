@@ -24,18 +24,16 @@ import org.apache.camel.Consumer;
 import org.apache.camel.util.IntrospectionSupport;
 
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
- * A base class for {@link Endpoint} which creates a {@link PollingConsumer}
+ * A base class for {@link Endpoint} which creates a {@link ScheduledPollConsumer}
  *
  * @version $Revision: 1.1 $
  */
-public abstract class PollingEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
+public abstract class ScheduledPollEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     private Map consumerProperties;
 
-    protected PollingEndpoint(String endpointUri, Component component) {
+    protected ScheduledPollEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }
 

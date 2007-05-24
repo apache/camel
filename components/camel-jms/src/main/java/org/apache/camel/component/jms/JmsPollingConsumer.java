@@ -17,7 +17,7 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.impl.PullConsumerSupport;
+import org.apache.camel.impl.PollingConsumerSupport;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.JmsTemplate102;
@@ -27,10 +27,10 @@ import javax.jms.Message;
 /**
  * @version $Revision: 1.1 $
  */
-public class JmsPullConsumer extends PullConsumerSupport<JmsExchange> {
+public class JmsPollingConsumer extends PollingConsumerSupport<JmsExchange> {
     private JmsOperations template;
 
-    public JmsPullConsumer(JmsEndpoint endpoint, JmsOperations template) {
+    public JmsPollingConsumer(JmsEndpoint endpoint, JmsOperations template) {
         super(endpoint);
         this.template = template;
     }

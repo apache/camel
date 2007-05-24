@@ -19,7 +19,7 @@ package org.apache.camel.component.mail;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.PollingConsumer;
+import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -37,7 +37,7 @@ import javax.mail.event.MessageCountListener;
  *
  * @version $Revision: 523430 $
  */
-public class MailConsumer extends PollingConsumer<MailExchange> implements MessageCountListener {
+public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements MessageCountListener {
     private static final transient Log log = LogFactory.getLog(MailConsumer.class);
     private final MailEndpoint endpoint;
     private final Folder folder;

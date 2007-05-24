@@ -62,9 +62,9 @@ public abstract  class DefaultComponent<E extends Exchange> extends ServiceSuppo
             return null;
         }
         if (parameters != null) {
-            if (endpoint instanceof PollingEndpoint) {
-                PollingEndpoint pollingEndpoint = (PollingEndpoint) endpoint;
-                pollingEndpoint.configureProperties(parameters);
+            if (endpoint instanceof ScheduledPollEndpoint) {
+                ScheduledPollEndpoint scheduledPollEndpoint = (ScheduledPollEndpoint) endpoint;
+                scheduledPollEndpoint.configureProperties(parameters);
             }
             IntrospectionSupport.setProperties(endpoint, parameters);
         }
