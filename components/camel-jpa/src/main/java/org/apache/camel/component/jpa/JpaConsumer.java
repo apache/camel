@@ -19,8 +19,6 @@ package org.apache.camel.component.jpa;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
-
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceException;
@@ -28,7 +26,7 @@ import javax.persistence.Query;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.PollingConsumer;
+import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,7 +35,7 @@ import org.springframework.orm.jpa.JpaCallback;
 /**
  * @version $Revision$
  */
-public class JpaConsumer extends PollingConsumer<Exchange> {
+public class JpaConsumer extends ScheduledPollConsumer<Exchange> {
     private static final transient Log log = LogFactory.getLog(JpaConsumer.class);
     private final JpaEndpoint endpoint;
     private final TransactionStrategy template;

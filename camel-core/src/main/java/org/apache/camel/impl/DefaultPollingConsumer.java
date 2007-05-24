@@ -21,7 +21,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.PullConsumer;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.commons.logging.Log;
@@ -32,22 +32,22 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A default implementation of the {@link PullConsumer} which uses the normal asynchronous consumer mechanism
+ * A default implementation of the {@link PollingConsumer} which uses the normal asynchronous consumer mechanism
  * along with a {@link BlockingQueue} to allow the caller to pull messages on demand.
  * 
  * @version $Revision: 1.1 $
  */
-public class DefaultPullConsumer<E extends Exchange> extends PullConsumerSupport<E> implements Processor {
-    private static final transient Log log = LogFactory.getLog(DefaultPullConsumer.class);
+public class DefaultPollingConsumer<E extends Exchange> extends PollingConsumerSupport<E> implements Processor {
+    private static final transient Log log = LogFactory.getLog(DefaultPollingConsumer.class);
     private BlockingQueue<E> queue;
     private ExceptionHandler interuptedExceptionHandler = new LoggingExceptionHandler(new Logger(log));
     private Consumer<E> consumer;
 
-    public DefaultPullConsumer(Endpoint<E> endpoint) {
+    public DefaultPollingConsumer(Endpoint<E> endpoint) {
         this(endpoint, new ArrayBlockingQueue<E>(1000));
     }
 
-    public DefaultPullConsumer(Endpoint<E> endpoint, BlockingQueue<E> queue) {
+    public DefaultPollingConsumer(Endpoint<E> endpoint, BlockingQueue<E> queue) {
         super(endpoint);
         this.queue = queue;
     }

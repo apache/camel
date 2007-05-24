@@ -19,19 +19,19 @@ package org.apache.camel.impl;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.PullConsumer;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.spi.ExceptionHandler;
 
 /**
- * A useful base class for implementations of {@link PullConsumer}
+ * A useful base class for implementations of {@link PollingConsumer}
  *
  * @version $Revision: 1.1 $
  */
-public abstract class PullConsumerSupport<E extends Exchange> extends ServiceSupport implements PullConsumer<E> {
+public abstract class PollingConsumerSupport<E extends Exchange> extends ServiceSupport implements PollingConsumer<E> {
     private final Endpoint<E> endpoint;
     private ExceptionHandler exceptionHandler;
 
-    public PullConsumerSupport(Endpoint<E> endpoint) {
+    public PollingConsumerSupport(Endpoint<E> endpoint) {
         this.endpoint = endpoint;
     }
 

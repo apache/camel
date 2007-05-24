@@ -24,9 +24,8 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.PollingEndpoint;
+import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.orm.jpa.JpaTemplate;
 
@@ -38,7 +37,7 @@ import java.util.Map;
 /**
  * @version $Revision$
  */
-public class JpaEndpoint extends PollingEndpoint<Exchange> {
+public class JpaEndpoint extends ScheduledPollEndpoint<Exchange> {
     private EntityManagerFactory entityManagerFactory;
     private String persistenceUnit = "camel";
     private JpaTemplate template;

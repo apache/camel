@@ -18,10 +18,8 @@ package org.apache.camel.component.jms;
 
 import javax.jms.Message;
 
-import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.PullConsumer;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
@@ -86,9 +84,9 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     }
 
     @Override
-    public PullConsumer<JmsExchange> createPullConsumer() throws Exception {
+    public PollingConsumer<JmsExchange> createPollingConsumer() throws Exception {
         JmsOperations template = createJmsOperations();
-        return new JmsPullConsumer(this, template);
+        return new JmsPollingConsumer(this, template);
     }
 
     public JmsExchange createExchange() {

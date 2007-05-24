@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.PullConsumer;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.util.ObjectHelper;
 
 import java.lang.reflect.ParameterizedType;
@@ -99,8 +99,8 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         this.executorService = executorService;
     }
 
-    public PullConsumer<E> createPullConsumer() throws Exception {
-        return new DefaultPullConsumer<E>(this);
+    public PollingConsumer<E> createPollingConsumer() throws Exception {
+        return new DefaultPollingConsumer<E>(this);
     }
 
     /**
