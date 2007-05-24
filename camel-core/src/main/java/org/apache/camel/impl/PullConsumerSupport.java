@@ -17,38 +17,31 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
+import org.apache.camel.Exchange;
+import org.apache.camel.PullConsumer;
 import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.util.ServiceHelper;
 
 /**
- * @version $Revision$
+ * A useful base class for implementations of {@link PullConsumer}
+ *
+ * @version $Revision: 1.1 $
  */
-public class DefaultConsumer<E extends Exchange> extends ServiceSupport implements Consumer<E> {
-    private Endpoint<E> endpoint;
-    private Processor processor;
+public abstract class PullConsumerSupport<E extends Exchange> extends ServiceSupport implements PullConsumer<E> {
+    private final Endpoint<E> endpoint;
     private ExceptionHandler exceptionHandler;
 
-    public DefaultConsumer(Endpoint<E> endpoint, Processor processor) {
+    public PullConsumerSupport(Endpoint<E> endpoint) {
         this.endpoint = endpoint;
-        this.processor = processor;
     }
 
     @Override
-	public String toString() {
-		return "Consumer on " + endpoint;
-	}
-
-
-	public Endpoint<E> getEndpoint() {
-        return endpoint;
+    public String toString() {
+        return "PullConsumer on " + endpoint;
     }
 
-    public Processor getProcessor() {
-        return processor;
+    public Endpoint<E> getEndpoint() {
+        return endpoint;
     }
 
     public ExceptionHandler getExceptionHandler() {
@@ -60,14 +53,6 @@ public class DefaultConsumer<E extends Exchange> extends ServiceSupport implemen
 
     public void setExceptionHandler(ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
-    }
-
-    protected void doStop() throws Exception {
-        ServiceHelper.stopServices(processor);
-    }
-
-    protected void doStart() throws Exception {
-        ServiceHelper.startServices(processor);
     }
 
     /**

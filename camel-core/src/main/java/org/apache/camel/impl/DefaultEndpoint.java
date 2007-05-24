@@ -20,13 +20,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Service;
+import org.apache.camel.PullConsumer;
 import org.apache.camel.util.ObjectHelper;
 
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.Type;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
@@ -101,6 +99,10 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         this.executorService = executorService;
     }
 
+    public PullConsumer<E> createPullConsumer() throws Exception {
+        return new DefaultPullConsumer<E>(this);
+    }
+
     /**
      * Converts the given exchange to the specified exchange type
      */
@@ -147,7 +149,7 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         return null;
     }
 
-  protected ScheduledThreadPoolExecutor createExecutorService() {
+    protected ScheduledThreadPoolExecutor createExecutorService() {
         return new ScheduledThreadPoolExecutor(10);
     }
 }
