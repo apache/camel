@@ -19,6 +19,7 @@ package org.apache.camel.bam;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.bam.model.ActivityDefinition;
 import org.apache.camel.bam.model.ProcessDefinition;
@@ -140,6 +141,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
     protected void populateRoutes(List<Route> routes) throws Exception {
         boolean first = true;
         for (ActivityBuilder builder : activityBuilders) {
+/*
             Endpoint from = builder.getEndpoint();
             Processor processor = builder.createProcessor();
             if (processor == null) {
@@ -152,7 +154,14 @@ public abstract class ProcessBuilder extends RouteBuilder {
                 processor = new LifecycleProcessor(processor, new ActivityMonitorEngine(getJpaTemplate(), getTransactionTemplate(), getProcessRules()));
                 first = false;
             }
-            routes.add(new Route(from, processor));
+*/
+
+            Route route = builder.createRoute();
+            if (first) {
+                route.getServices().add(new ActivityMonitorEngine(getJpaTemplate(), getTransactionTemplate(), getProcessRules()));
+                first = false;
+            }
+            routes.add(route);
         }
     }
 

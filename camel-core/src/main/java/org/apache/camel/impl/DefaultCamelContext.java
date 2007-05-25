@@ -310,18 +310,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     protected void startRoutes(Collection<Route> routeList) throws Exception {
         if (routeList != null) {
             for (Route<Exchange> route : routeList) {
-                Processor processor = route.getProcessor();
-                Endpoint<Exchange> endpoint = route.getEndpoint();
-                Consumer<Exchange> consumer = endpoint.createConsumer(processor);
-                if (consumer != null) {
-                    consumer.start();
-                    servicesToClose.add(consumer);
-                }
-                if (processor instanceof Service) {
-                    Service service = (Service) processor;
-                    service.start();
-                    servicesToClose.add(service);
-                }
+                List<Service> services = route.getServicesForRoute();
+                servicesToClose.addAll(services);
+                startServices(services);
             }
         }
     }

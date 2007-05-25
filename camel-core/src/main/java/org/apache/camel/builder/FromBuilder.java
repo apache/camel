@@ -21,6 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.CompositeProcessor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.MulticastProcessor;
@@ -45,6 +47,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
     private Endpoint from;
     private List<Processor> processors = new ArrayList<Processor>();
     private List<ProcessorFactory> processFactories = new ArrayList<ProcessorFactory>();
+    private FromBuilder routeBuilder;
 
     public FromBuilder(RouteBuilder builder, Endpoint from) {
         super(builder);
@@ -206,6 +209,21 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
     public SplitterBuilder splitter(@FluentArg(value = "recipients", element = true)Expression receipients) {
         SplitterBuilder answer = new SplitterBuilder(this, receipients);
         addProcessBuilder(answer);
+        return answer;
+    }
+
+    /**
+     * A builder for the <a href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a> pattern
+     * where an expression is evaluated to be able to compare the message exchanges to reorder them. e.g. you
+     * may wish to sort by some header
+     *
+     * @param expression the expression on which to compare messages in order
+     * @return the builder
+     */
+    @Fluent
+    public ResequencerBuilder resequencer(@FluentArg(value = "expression")Expression expression) {
+        ResequencerBuilder answer = new ResequencerBuilder(this, expression);
+        setRouteBuilder(answer);        
         return answer;
     }
 
@@ -378,6 +396,10 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
         return from;
     }
 
+    public List<Processor> getProcessors() {
+        return processors;
+    }
+
     public ProcessorFactory addProcessBuilder(ProcessorFactory processFactory) {
         processFactories.add(processFactory);
         return processFactory;
@@ -389,6 +411,17 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
 
     public void addProcessor(Processor processor) {
         processors.add(processor);
+    }
+
+    public Route createRoute() throws Exception {
+        if (routeBuilder != null) {
+            return routeBuilder.createRoute();
+        }
+        Processor processor = createProcessor();
+        if (processor == null) {
+            throw new IllegalArgumentException("No processor created for: " + this);
+        }
+        return new EventDrivenConsumerRoute(getFrom(), processor);
     }
 
     public Processor createProcessor() throws Exception {
@@ -443,7 +476,11 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
         return processor;
     }
 
-    public List<Processor> getProcessors() {
-        return processors;
+    protected FromBuilder getRouteBuilder() {
+        return routeBuilder;
+    }
+
+    protected void setRouteBuilder(FromBuilder routeBuilder) {
+        this.routeBuilder = routeBuilder;
     }
 }

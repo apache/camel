@@ -66,7 +66,7 @@ public abstract class RouteBuilder extends BuilderSupport {
     @Fluent
     public FromBuilder from( @FluentArg("ref") Endpoint endpoint) {
         FromBuilder answer = new FromBuilder(this, endpoint);
-        fromBuilders.add(answer);
+        addFromBuilder(answer);
         return answer;
     }
 
@@ -121,6 +121,10 @@ public abstract class RouteBuilder extends BuilderSupport {
 
     // Implementation methods
     //-----------------------------------------------------------------------
+    public void addFromBuilder(FromBuilder answer) {
+        fromBuilders.add(answer);
+    }
+
     protected void checkInitialized() throws Exception {
         if (initalized.compareAndSet(false, true)) {
             configure();
@@ -130,25 +134,9 @@ public abstract class RouteBuilder extends BuilderSupport {
 
     protected void populateRoutes(List<Route> routes) throws Exception {
         for (FromBuilder builder : fromBuilders) {
-            Endpoint from = builder.getFrom();
-            Processor processor = makeProcessor(from, builder);
-            if (processor == null) {
-                throw new IllegalArgumentException("No processor created for DestinationBuilder: " + builder);
-            }
-            routes.add(new Route(from, processor));
+            Route route = builder.createRoute();
+            routes.add(route);
         }
-    }
-
-    /**
-     * Factory method to create the underlying {@link Processor} for the given builder applying any
-     * necessary interceptors.
-     *
-     * @param from    the endpoint which starts the route
-     * @param builder the builder which is the factory of the processor
-     * @return
-     */
-    protected Processor makeProcessor(Endpoint from, FromBuilder builder) throws Exception {
-        return builder.createProcessor();
     }
 
     /**
@@ -157,5 +145,4 @@ public abstract class RouteBuilder extends BuilderSupport {
     protected CamelContext createContainer() {
         return new DefaultCamelContext();
     }
-
 }

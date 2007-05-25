@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
+import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.SendProcessor;
@@ -168,7 +169,8 @@ public class ErrorHandlerTest extends TestSupport {
         for (Route<Exchange> route : routes) {
             Endpoint<Exchange> key = route.getEndpoint();
             assertEquals("From endpoint", "queue:a", key.getEndpointUri());
-            Processor processor = route.getProcessor();
+            EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            Processor processor = consumerRoute.getProcessor();
 
             LoggingErrorHandler loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class, processor);
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, loggingProcessor.getOutput());

@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
+import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.DelegateProcessor;
@@ -407,7 +408,8 @@ public class RouteBuilderTest extends TestSupport {
      * By default routes should be wrapped in the {@link DeadLetterChannel} so lets unwrap that and return the actual processor
      */
     protected Processor getProcessorWithoutErrorHandler(Route route) {
-        Processor processor = route.getProcessor();
+        EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+        Processor processor = consumerRoute.getProcessor();
         return unwrapErrorHandler(processor);
     }
 

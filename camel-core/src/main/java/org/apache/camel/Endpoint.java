@@ -70,7 +70,7 @@ public interface Endpoint<E extends Exchange> {
     Producer<E> createProducer() throws Exception;
 
     /**
-     * Creates a new <a href="http://activemq.apache.org/camel/event-driven-consumer.html">Event Based Consumer</a>
+     * Creates a new <a href="http://activemq.apache.org/camel/event-driven-consumer.html">Event Driven Consumer</a>
      * which consumes messages from the endpoint using the given processor
      *
      * @return a newly created consumer
