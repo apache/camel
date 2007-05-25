@@ -80,7 +80,10 @@ public interface Endpoint<E extends Exchange> {
     /**
      * Creates a new <a href="http://activemq.apache.org/camel/polling-consumer.html">Polling Consumer</a>
      * so that the caller can poll message exchanges from the consumer
-     * when it wishes (rather than using the event driven consumer returned by {@link #createConsumer(Processor)}
+     * using {@link PollingConsumer#receive()}, {@link PollingConsumer#receiveNoWait()} or {@link PollingConsumer#receive(long)}
+     * whenever it is ready to do so rather than using the
+     * <a href="http://activemq.apache.org/camel/event-driven-consumer.html">Event Based Consumer</a>
+     * returned by {@link #createConsumer(Processor)}
      *
      * @return a newly created pull consumer
      * @throws Exception if the pull consumer could not be created
