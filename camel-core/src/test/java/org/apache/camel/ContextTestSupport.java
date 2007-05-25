@@ -17,9 +17,8 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
 
 /**
  * A useful base class which creates a {@link CamelContext} with some routes along with a {@link CamelTemplate}
@@ -69,7 +68,7 @@ public abstract class ContextTestSupport extends TestSupport {
      * Sends a message to the given endpoint URI with the body value
      *
      * @param endpointUri the URI of the endpoint to send to
-     * @param body the body for the message
+     * @param body        the body for the message
      */
     protected void sendBody(String endpointUri, final Object body) {
         template.send(endpointUri, new Processor() {
@@ -79,6 +78,18 @@ public abstract class ContextTestSupport extends TestSupport {
                 in.setHeader("testCase", getName());
             }
         });
+    }
+
+    /**
+     * Sends messages to the given endpoint for each of the specified bodies
+     *
+     * @param endpointUri the endpoint URI to send to
+     * @param bodies      the bodies to send, one per message
+     */
+    protected void sendBodies(String endpointUri, Object... bodies) {
+        for (Object body : bodies) {
+            sendBody(endpointUri, body);
+        }
     }
 
     /**

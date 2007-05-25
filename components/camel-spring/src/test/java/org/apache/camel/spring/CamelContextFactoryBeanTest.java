@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
+import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
@@ -59,7 +60,9 @@ public class CamelContextFactoryBeanTest extends TestSupport {
 
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            Processor processor = route.getProcessor();
+            EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            Processor processor = consumerRoute.getProcessor();
+            assertNotNull(processor);
 
             assertEndpointUri(key, "queue:test.a");
         }
@@ -79,7 +82,10 @@ public class CamelContextFactoryBeanTest extends TestSupport {
 
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            Processor processor = route.getProcessor();
+            EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            Processor processor = consumerRoute.getProcessor();
+            assertNotNull(processor);
+
             assertEndpointUri(key, "queue:test.c");
         }
     }
