@@ -99,6 +99,9 @@ public class IOConverter {
 
     @Converter
     public static String toString(BufferedReader reader) throws IOException {
+        if (reader == null) {
+            return null;
+        }
         try {
             StringBuilder builder = new StringBuilder();
             boolean first = true;

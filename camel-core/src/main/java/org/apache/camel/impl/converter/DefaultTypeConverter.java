@@ -104,7 +104,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     }
 
     protected <T> TypeConverter getOrFindTypeConverter(Class toType, Object value) {
-        Class fromType = null;
+        Class fromType = Object.class;
         if (value != null) {
             fromType = value.getClass();
         }

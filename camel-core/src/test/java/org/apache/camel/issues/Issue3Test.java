@@ -52,6 +52,9 @@ public class Issue3Test extends ContextTestSupport {
 
                         Boolean isDebug = in.getHeader("someproperty", Boolean.class);
                         assertNull(isDebug);
+
+                        boolean isDebug2 = in.getHeader("someproperty", boolean.class);
+                        assertFalse(isDebug2);
                     }
                 });
             }

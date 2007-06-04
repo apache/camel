@@ -133,4 +133,8 @@ public class ConverterTest extends TestCase {
 
     }
 
+    public void testPrimitiveBooleanConversion() throws Exception {
+        boolean value = converter.convertTo(boolean.class, null);
+        assertFalse(value);
+    }
 }
