@@ -60,16 +60,30 @@ public class ObjectConverter {
     }
 
     /**
-     * Converts the given value to a boolean, handling strings or Boolean objects; otherwise returning true if non-null
+     * Converts the given value to a boolean, handling strings or Boolean objects;
+     * otherwise returning false if the value could not be converted to a boolean
      */
     @Converter
-    public static boolean toBoolean(Object value) {
+    public static boolean toBool(Object value) {
+        Boolean answer = toBoolean(value);
+        if (answer != null) {
+            return answer.booleanValue();
+        }
+        return false;
+    }
+
+    /**
+     * Converts the given value to a Boolean, handling strings or Boolean objects;
+     * otherwise returning null if the value cannot be converted to a boolean
+     */
+    @Converter
+    public static Boolean toBoolean(Object value) {
         if (value instanceof Boolean) {
             return (Boolean) value;
         }
         if (value instanceof String) {
-            return "true".equalsIgnoreCase(value.toString());
+            return "true".equalsIgnoreCase(value.toString()) ? Boolean.TRUE : Boolean.FALSE;
         }
-        return false;
+        return null;
     }
 }
