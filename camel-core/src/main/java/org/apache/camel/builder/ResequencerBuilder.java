@@ -30,19 +30,19 @@ import java.util.List;
  * @version $Revision: 1.1 $
  */
 public class ResequencerBuilder extends FromBuilder {
-    private final Expression expression;
+    private final List<Expression<Exchange>> expressions;
     private long batchTimeout = 1000L;
     private int batchSize = 100;
 
-    public ResequencerBuilder(FromBuilder builder, Expression expression) {
+    public ResequencerBuilder(FromBuilder builder, List<Expression<Exchange>> expressions) {
         super(builder);
-        this.expression = expression;
+        this.expressions = expressions;
     }
 
     @Override
     public Route createRoute() throws Exception {
         final Processor processor = super.createProcessor();
-        final Resequencer resequencer = new Resequencer(getFrom(), processor, expression);
+        final Resequencer resequencer = new Resequencer(getFrom(), processor, expressions);
 
         return new Route<Exchange>(getFrom()) {
             protected void addServices(List<Service> list) throws Exception {

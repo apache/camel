@@ -36,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -220,11 +221,40 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * @param expression the expression on which to compare messages in order
      * @return the builder
      */
+    public ResequencerBuilder resequencer(Expression<Exchange> expression) {
+        return resequencer(Collections.<Expression<Exchange>>singletonList(expression));
+    }
+
+    /**
+     * A builder for the <a href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a> pattern
+     * where a list of expressions are evaluated to be able to compare the message exchanges to reorder them. e.g. you
+     * may wish to sort by some headers
+     *
+     * @param expressions the expressions on which to compare messages in order
+     * @return the builder
+     */
     @Fluent
-    public ResequencerBuilder resequencer(@FluentArg(value = "expression")Expression expression) {
-        ResequencerBuilder answer = new ResequencerBuilder(this, expression);
-        setRouteBuilder(answer);        
+    public ResequencerBuilder resequencer(@FluentArg(value = "expressions")List<Expression<Exchange>> expressions) {
+        ResequencerBuilder answer = new ResequencerBuilder(this, expressions);
+        setRouteBuilder(answer);
         return answer;
+    }
+
+    /**
+     * A builder for the <a href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a> pattern
+     * where a list of expressions are evaluated to be able to compare the message exchanges to reorder them. e.g. you
+     * may wish to sort by some headers
+     *
+     * @param expressions the expressions on which to compare messages in order
+     * @return the builder
+     */
+    @Fluent
+    public ResequencerBuilder resequencer(Expression<Exchange>... expressions) {
+        List<Expression<Exchange>> list = new ArrayList<Expression<Exchange>>();
+        for (Expression<Exchange> expression : expressions) {
+            list.add(expression);
+        }
+        return resequencer(list);
     }
 
     /**
