@@ -37,14 +37,19 @@ public interface CamelContext extends Service {
     //-----------------------------------------------------------------------
 
     /**
-     * Adds a component to the container.
+     * Adds a component to the context.
      */
     void addComponent(String componentName, Component component);
 
     /**
-     * Gets a component from the container by name.
+     * Gets a component from the context by name.
      */
     Component getComponent(String componentName);
+
+    /**
+     * Gets a component from the context by name and specifying the expected type of component.
+     */
+    <T extends Component> T getComponent(String name, Class<T> componentType);
 
     /**
      * Removes a previously added component.
@@ -58,7 +63,7 @@ public interface CamelContext extends Service {
      * Gets the a previously added component by name or lazily creates the component
      * using the factory Callback.
      *
-     * @param componentName
+     * @param componentName the name of the component
      * @param factory       used to create a new component instance if the component was not previously added.
      * @return
      */
@@ -73,6 +78,14 @@ public interface CamelContext extends Service {
      * and if the endpoint is a singleton it is registered as a singleton endpoint.
      */
     Endpoint getEndpoint(String uri);
+
+    /**
+     * Resolves the given URI to an {@see Endpoint} of the specified type.
+     * If the URI has a singleton endpoint registered, then the singleton is returned.
+     * Otherwise, a new {@see Endpoint} is created and if the endpoint is a
+     * singleton it is registered as a singleton endpoint.
+     */
+    <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType);
 
     /**
      * Returns the collection of all registered singleton endpoints.

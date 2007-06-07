@@ -100,6 +100,16 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
+    public <T extends Component> T getComponent(String name, Class<T> componentType) {
+        Component component = getComponent(name);
+        if (componentType.isInstance(component)) {
+            return componentType.cast(component);
+        }
+        else {
+            throw new IllegalArgumentException("The component is not of type: " + componentType + " but is: " + component);
+        }
+    }
+    
     /**
      * Removes a previously added component.
      *
@@ -212,6 +222,18 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return answer;
     }
 
+
+    public <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType) {
+        Endpoint endpoint = getEndpoint(name);
+        if (endpointType.isInstance(endpoint)) {
+            return endpointType.cast(endpoint);
+        }
+        else {
+            throw new IllegalArgumentException("The endpoint is not of type: " + endpointType + " but is: " + endpoint);
+        }
+    }
+
+    
     // Route Management Methods
     //-----------------------------------------------------------------------
     public List<Route> getRoutes() {
