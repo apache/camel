@@ -43,39 +43,42 @@ import javax.jms.ExceptionListener;
 public class JmsConfiguration implements Cloneable {
     protected static final String TRANSACTED = "TRANSACTED";
     protected static final String CLIENT_ACKNOWLEDGE = "CLIENT_ACKNOWLEDGE";
+    protected static final String AUTO_ACKNOWLEDGE = "AUTO_ACKNOWLEDGE";
+    protected static final String DUPS_OK_ACKNOWLEDGE = "DUPS_OK_ACKNOWLEDGE";
+
     private ConnectionFactory connectionFactory;
     private ConnectionFactory templateConnectionFactory;
     private ConnectionFactory listenerConnectionFactory;
     private int acknowledgementMode = -1;
-    private String acknowledgementModeName;
+    private String acknowledgementModeName = AUTO_ACKNOWLEDGE;
     // Used to configure the spring Container
     private ExceptionListener exceptionListener;
     private ConsumerType consumerType = ConsumerType.Default;
-    private boolean autoStartup;
+    private boolean autoStartup = true;
     private boolean acceptMessagesWhileStopping;
     private String clientId;
     private String durableSubscriptionName;
     private boolean subscriptionDurable;
-    private boolean exposeListenerSession;
+    private boolean exposeListenerSession = true;
     private TaskExecutor taskExecutor;
     private boolean pubSubNoLocal;
-    private int concurrentConsumers = -1;
-    private int maxMessagesPerTask = -1;
+    private int concurrentConsumers = 1;
+    private int maxMessagesPerTask = 1;
     private ServerSessionFactory serverSessionFactory;
     private int cacheLevel = -1;
-    private String cacheLevelName;
+    private String cacheLevelName = "CACHE_CONSUMER";
     private long recoveryInterval = -1;
     private long receiveTimeout = -1;
-    private int idleTaskExecutionLimit = -1;
-    private int maxConcurrentConsumers = -1;
+    private int idleTaskExecutionLimit = 1;
+    private int maxConcurrentConsumers = 1;
     // JmsTemplate only
-    private boolean useVersion102;
-    private boolean explicitQosEnabled;
+    private boolean useVersion102 = false;
+    private boolean explicitQosEnabled = false;
     private boolean deliveryPersistent = true;
     private long timeToLive = -1;
     private MessageConverter messageConverter;
     private boolean messageIdEnabled = true;
-    private boolean messageTimestampEnabled;
+    private boolean messageTimestampEnabled = true;
     private int priority = -1;
     // Transaction related configuration
     private boolean transacted;
