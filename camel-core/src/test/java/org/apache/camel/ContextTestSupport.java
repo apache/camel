@@ -64,6 +64,11 @@ public abstract class ContextTestSupport extends TestSupport {
         return resolveMandatoryEndpoint(context, uri);
     }
 
+    protected <T extends Endpoint> T resolveMandatoryEndpoint(String uri, Class<T> endpointType) {
+        return resolveMandatoryEndpoint(context, uri, endpointType);
+    }
+
+    
     /**
      * Sends a message to the given endpoint URI with the body value
      *

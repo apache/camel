@@ -122,6 +122,17 @@ public abstract class TestSupport extends TestCase {
     }
 
     /**
+     * Resolves an endpoint and asserts that it is found
+     */
+    protected <T extends Endpoint> T resolveMandatoryEndpoint(CamelContext context, String uri, Class<T> endpointType) {
+        T endpoint = context.getEndpoint(uri, endpointType);
+
+        assertNotNull("No endpoint found for URI: " + uri, endpoint);
+
+        return endpoint;
+    }
+
+    /**
      * Creates an exchange with the given body
      */
     protected Exchange createExchangeWithBody(CamelContext camelContext, Object body) {
