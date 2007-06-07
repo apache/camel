@@ -31,11 +31,21 @@ import javax.jms.ConnectionFactory;
  */
 public class JmsEndpointConfigurationTest extends ContextTestSupport {
 
-    public void testDurableSubscriber() throws Exception {
+    public void testDurableSubscriberConfiguredWithDoubleSlash() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms://topic:Foo.Bar?durableSubscriptionName=James&clientId=ABC");
+        assertDurableSubscriberEndpointIsValid(endpoint);
+    }
+
+    public void testDurableSubscriberConfiguredWithNoSlashes() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:topic:Foo.Bar?durableSubscriptionName=James&clientId=ABC");
+        assertDurableSubscriberEndpointIsValid(endpoint);
+    }
+
+    protected void assertDurableSubscriberEndpointIsValid(JmsEndpoint endpoint) throws Exception {
         JmsConfiguration configuration = endpoint.getConfiguration();
         assertEquals("getDurableSubscriptionName()", "James", configuration.getDurableSubscriptionName());
         assertEquals("getClientId()", "ABC", configuration.getClientId());
+        assertEquals("isDeliveryPersistent()", true, configuration.isDeliveryPersistent());
 
         JmsConsumer consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -45,6 +55,7 @@ public class JmsEndpointConfigurationTest extends ContextTestSupport {
         AbstractMessageListenerContainer listenerContainer = consumer.getListenerContainer();
         assertEquals("getDurableSubscriptionName()", "James", listenerContainer.getDurableSubscriptionName());
         assertEquals("getClientId()", "ABC", listenerContainer.getClientId());
+        assertEquals("isSubscriptionDurable()", true, listenerContainer.isSubscriptionDurable());
     }
 
     protected CamelContext createCamelContext() throws Exception {
