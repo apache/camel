@@ -26,12 +26,14 @@ import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ExpressionComparator;
+import org.apache.camel.util.ExpressionListComparator;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -52,6 +54,10 @@ public class Resequencer extends ServiceSupport implements Runnable {
 
     public Resequencer(Endpoint endpoint, Processor processor, Expression<Exchange> expression) {
         this(endpoint, processor, createSet(expression));
+    }
+
+    public Resequencer(Endpoint endpoint, Processor processor, List<Expression<Exchange>> expressions) {
+        this(endpoint, processor, createSet(expressions));
     }
 
     public Resequencer(Endpoint endpoint, Processor processor, Set<Exchange> set) {
@@ -155,7 +161,17 @@ public class Resequencer extends ServiceSupport implements Runnable {
     }
 
     protected static Set<Exchange> createSet(Expression<Exchange> expression) {
-        Comparator<? super Exchange> comparator = new ExpressionComparator<Exchange>(expression);
+        return createSet(new ExpressionComparator<Exchange>(expression));
+    }
+
+    protected static Set<Exchange> createSet(List<Expression<Exchange>> expressions) {
+        if (expressions.size() == 1) {
+            return createSet(expressions.get(0));
+        }
+        return createSet(new ExpressionListComparator<Exchange>(expressions));
+    }
+
+    protected static Set<Exchange> createSet(Comparator<? super Exchange> comparator) {
         return new TreeSet<Exchange>(comparator);
     }
 }
