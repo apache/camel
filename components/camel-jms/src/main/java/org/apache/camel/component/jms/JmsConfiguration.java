@@ -154,9 +154,17 @@ public class JmsConfiguration implements Cloneable {
         if (clientId != null) {
             container.setClientId(clientId);
         }
+        container.setSubscriptionDurable(subscriptionDurable);
         if (durableSubscriptionName != null) {
             container.setDurableSubscriptionName(durableSubscriptionName);
         }
+
+        // lets default to durable subscription if the subscriber name and client ID are specified (as there's
+        // no reason to specify them if not! :)
+        if (durableSubscriptionName != null && clientId != null) {
+            container.setSubscriptionDurable(true);
+        }
+
         if (exceptionListener != null) {
             container.setExceptionListener(exceptionListener);
         }
@@ -171,8 +179,6 @@ public class JmsConfiguration implements Cloneable {
         else if (acknowledgementModeName != null) {
             container.setSessionAcknowledgeModeName(acknowledgementModeName);
         }
-
-        container.setSubscriptionDurable(subscriptionDurable);
 
         if (container instanceof DefaultMessageListenerContainer) {
             // this includes DefaultMessageListenerContainer102
