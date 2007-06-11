@@ -16,20 +16,20 @@
  */
 package org.apache.camel.bam.model;
 
+import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.camel.bam.rules.ActivityRules;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
-import java.util.HashSet;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 
 /**
  * Represents a single business process
@@ -39,7 +39,6 @@ import java.util.Date;
 @Entity
 public class ProcessInstance extends TemporalEntity {
     private static final transient Log log = LogFactory.getLog(ProcessInstance.class);
-
     private ProcessDefinition processDefinition;
     private Collection<ActivityState> activityStates = new HashSet<ActivityState>();
     private String correlationKey;
@@ -59,7 +58,7 @@ public class ProcessInstance extends TemporalEntity {
     public Long getId() {
         return super.getId();
     }
-    
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     public ProcessDefinition getProcessDefinition() {
         return processDefinition;
@@ -86,10 +85,9 @@ public class ProcessInstance extends TemporalEntity {
         this.correlationKey = correlationKey;
     }
 
-
     // Helper methods
     //-------------------------------------------------------------------------
-    
+
     /**
      * Returns the activity state for the given activity
      *
@@ -118,7 +116,6 @@ public class ProcessInstance extends TemporalEntity {
 
         return state;
     }
-
 
     protected ActivityState createActivityState() {
         return new ActivityState();

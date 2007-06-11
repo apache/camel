@@ -16,8 +16,8 @@
  */
 package org.apache.camel.bam.model;
 
-import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.camel.bam.processor.ProcessContext;
+import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.camel.util.ObjectHelper;
 
 import javax.persistence.CascadeType;

@@ -18,7 +18,6 @@ package org.apache.camel.bam.processor;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
-import org.apache.camel.bam.processor.BamProcessorSupport;
 
 /**
  * An exception thrown if no correlation key could be found for a message
@@ -38,7 +37,6 @@ public class NoCorrelationKeyException extends CamelException {
         this.processor = processor;
         this.exchange = exchange;
     }
-
 
     public Exchange getExchange() {
         return exchange;

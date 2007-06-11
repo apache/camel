@@ -19,20 +19,18 @@ package org.apache.camel.bam;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.bam.model.ActivityDefinition;
 import org.apache.camel.bam.model.ProcessDefinition;
-import org.apache.camel.bam.processor.JpaBamProcessor;
+import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.bam.processor.ActivityMonitorEngine;
+import org.apache.camel.bam.processor.JpaBamProcessor;
 import org.apache.camel.bam.rules.ProcessRules;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.LifecycleProcessor;
 import static org.apache.camel.util.ObjectHelper.notNull;
 import org.springframework.orm.jpa.JpaTemplate;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,7 +122,6 @@ public abstract class ProcessBuilder extends RouteBuilder {
         return processName;
     }
 
-
     public ProcessDefinition getProcessDefinition() {
         if (processDefinition == null) {
             processDefinition = findOrCreateProcessDefinition();
@@ -141,21 +138,6 @@ public abstract class ProcessBuilder extends RouteBuilder {
     protected void populateRoutes(List<Route> routes) throws Exception {
         boolean first = true;
         for (ActivityBuilder builder : activityBuilders) {
-/*
-            Endpoint from = builder.getEndpoint();
-            Processor processor = builder.createProcessor();
-            if (processor == null) {
-                throw new IllegalArgumentException("No processor created for ActivityBuilder: " + builder);
-            }
-
-            // lets add extra services to the first processor lifecycle
-            // TODO this is a little bit of a hack; we might want to add an ability to add dependent services to routes etc
-            if (first) {
-                processor = new LifecycleProcessor(processor, new ActivityMonitorEngine(getJpaTemplate(), getTransactionTemplate(), getProcessRules()));
-                first = false;
-            }
-*/
-
             Route route = builder.createRoute();
             if (first) {
                 route.getServices().add(new ActivityMonitorEngine(getJpaTemplate(), getTransactionTemplate(), getProcessRules()));
@@ -164,7 +146,6 @@ public abstract class ProcessBuilder extends RouteBuilder {
             routes.add(route);
         }
     }
-
 
     // Implementation methods
     //-------------------------------------------------------------------------
@@ -195,7 +176,4 @@ public abstract class ProcessBuilder extends RouteBuilder {
             return answer;
         }
     }
-
-
-
 }

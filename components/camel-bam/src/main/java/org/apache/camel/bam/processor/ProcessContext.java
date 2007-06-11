@@ -18,20 +18,18 @@
 package org.apache.camel.bam.processor;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.bam.model.ActivityState;
-import org.apache.camel.bam.rules.ProcessRules;
+import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.bam.rules.ActivityRules;
+import org.apache.camel.bam.rules.ProcessRules;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class ProcessContext {
     private Exchange exchange;
-
     private ProcessRules processRules;
     private ActivityRules activityRules;
-
     private ProcessInstance processInstance;
     private ActivityState activityState;
 

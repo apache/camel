@@ -16,7 +16,8 @@
  */
 package org.apache.camel.bam.model;
 
-import javax.persistence.*;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 /**
  * A base class for persistent entities

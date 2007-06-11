@@ -16,12 +16,12 @@
  */
 package org.apache.camel.bam.processor;
 
-import org.apache.camel.bam.model.*;
-import org.apache.camel.bam.model.ProcessInstance;
-import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.bam.model.ActivityState;
+import org.apache.camel.bam.model.ProcessInstance;
+import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.jpa.JpaTemplate;
@@ -58,5 +58,4 @@ public class JpaBamProcessor extends JpaBamProcessorSupport<ProcessInstance> {
 
         rules.getProcessRules().processExchange(exchange, process);
     }
-
 }
