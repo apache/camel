@@ -20,13 +20,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.processor.LifecycleProcessor;
-import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.bam.rules.ActivityRules;
-import org.apache.camel.bam.processor.ActivityMonitorEngine;
 import org.apache.camel.builder.ProcessorFactory;
+import org.apache.camel.impl.EventDrivenConsumerRoute;
 
 import java.util.Date;
 
@@ -61,7 +59,6 @@ public class ActivityBuilder implements ProcessorFactory {
         }
         return new EventDrivenConsumerRoute(getEndpoint(), processor);
     }
-
 
     // Builder methods
     //-----------------------------------------------------------------------
@@ -110,5 +107,4 @@ public class ActivityBuilder implements ProcessorFactory {
     public ProcessBuilder getProcessBuilder() {
         return processBuilder;
     }
-
 }

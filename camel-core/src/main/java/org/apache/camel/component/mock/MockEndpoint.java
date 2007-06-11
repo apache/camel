@@ -29,6 +29,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
@@ -196,7 +197,10 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
                     Exchange exchange = getReceivedExchanges().get(counter++);
                     assertTrue("No exchange received for counter: " + counter, exchange != null);
 
-                    Object actualBody = exchange.getIn().getBody();
+                    Message in = exchange.getIn();
+
+                    Object actualBody = (expectedBody != null)
+                            ? in.getBody(expectedBody.getClass()) : in.getBody();
 
                     assertEquals("Body of message: " + counter, expectedBody, actualBody);
 

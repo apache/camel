@@ -40,12 +40,11 @@ public class ActivityDefinition extends EntitySupport {
         return super.getId();
     }
 
-
     @Override
     public String toString() {
         return "Activity[" + getId() + " name: " + getName() + "]";
     }
-    
+
     public String getName() {
         return name;
     }

@@ -16,17 +16,17 @@
  */
 package org.apache.camel.bam.rules;
 
-import static org.apache.camel.util.ServiceHelper.startServices;
-import static org.apache.camel.util.ServiceHelper.stopServices;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.bam.TimeExpression;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.model.ProcessInstance;
-import org.apache.camel.bam.TimeExpression;
 import org.apache.camel.builder.FromBuilder;
 import org.apache.camel.builder.ProcessorFactory;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ServiceSupport;
+import static org.apache.camel.util.ServiceHelper.startServices;
+import static org.apache.camel.util.ServiceHelper.stopServices;
 import org.apache.camel.util.Time;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -115,7 +115,6 @@ public class TemporalRule extends ServiceSupport {
             }
         }
     }
-
 
     public void processExpired(ActivityState activityState) throws Exception {
         Processor processor = getOverdueAction();

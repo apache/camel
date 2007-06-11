@@ -16,13 +16,13 @@
  */
 package org.apache.camel.bam.rules;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.bam.ProcessBuilder;
 import org.apache.camel.bam.model.ActivityDefinition;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.model.ProcessInstance;
-import org.apache.camel.bam.ProcessBuilder;
-import org.apache.camel.Exchange;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,7 +36,6 @@ import java.util.List;
  */
 public class ActivityRules extends ServiceSupport {
     private static final transient Log log = LogFactory.getLog(ActivityRules.class);
-
     private int expectedMessages = 1;
     private ProcessRules processRules;
     private List<TemporalRule> rules = new ArrayList<TemporalRule>();
@@ -49,7 +48,7 @@ public class ActivityRules extends ServiceSupport {
         this.processRules = builder.getProcessRules();
         processRules.getActivities().add(this);
     }
-    
+
     public void addRule(TemporalRule rule) {
         rules.add(rule);
     }
@@ -98,7 +97,6 @@ public class ActivityRules extends ServiceSupport {
     public void setActivityName(String activityName) {
         this.activityName = activityName;
     }
-
 
     // Implementation methods
     //-------------------------------------------------------------------------
