@@ -37,6 +37,7 @@
     <module>camel-activemq</module>
     <module>camel-bam</module>
     <module>camel-cxf</module>
+    <module>camel-ftp</module>
     <module>camel-http</module>
     <module>camel-jaxb</module>
     <module>camel-jbi</module>
