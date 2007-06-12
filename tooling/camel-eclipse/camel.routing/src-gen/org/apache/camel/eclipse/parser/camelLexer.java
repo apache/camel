@@ -1,6 +1,5 @@
 // $ANTLR 3.0b6 ..//camel.routing/src-gen//org/apache/camel/eclipse/parser/camel.g 2007-04-05 12:20:03
-
-package org.apache.camel.eclipse.parser; 
+package org.apache.camel.eclipse.parser;
 
 
 import org.antlr.runtime.*;
