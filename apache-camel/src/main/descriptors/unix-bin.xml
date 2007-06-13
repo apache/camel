@@ -32,6 +32,19 @@
       <lineEnding>unix</lineEnding>
     </fileSet>
 
+    <!-- copy the examples -->
+    <fileSet>
+      <directory>../examples</directory>
+      <outputDirectory>/examples</outputDirectory>
+      <excludes>
+        <!-- disable build and IDEA files -->
+        <exclude>**/*.i*</exclude>
+        <exclude>**/target/</exclude>
+        <exclude>**/target/*</exclude>
+      </excludes>
+      <lineEnding>unix</lineEnding>
+    </fileSet>
+
     <!-- Copy over jar files -->
     <fileSet>
       <directory>target</directory>
