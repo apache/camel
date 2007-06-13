@@ -1,9 +1,0 @@
-«IMPORT camel»
-
-«REM»
-   This is the 'main' template. 
-   You should replace the type 'Object' with your respective meta type.
-«ENDREM»
-«DEFINE main FOR Object»
-   
-«ENDDEFINE»
