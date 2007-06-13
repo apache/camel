@@ -36,7 +36,8 @@
   <properties>
     <camel-version>1.0-SNAPSHOT</camel-version>
     <compiler.fork>false</compiler.fork>
-    <release-repo-url>scpexe://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository</release-repo-url>
+    <release-repo-url>scpexe://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository
+    </release-repo-url>
     <snapshot-repo-url>scp://people.apache.org/www/people.apache.org/repo/m2-snapshot-repository</snapshot-repo-url>
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
     <site-repo-url>scpexe://people.apache.org/www/activemq.apache.org/camel/maven/</site-repo-url>
