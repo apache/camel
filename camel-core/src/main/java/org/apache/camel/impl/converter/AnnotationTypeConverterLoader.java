@@ -85,6 +85,10 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                         if (line == null) {
                             break;
                         }
+                        line = line.trim();
+                        if (line.startsWith("#") || line.length() == 0) {
+                            continue;
+                        }
                         tokenize(packages, line);
                     }
                 }
