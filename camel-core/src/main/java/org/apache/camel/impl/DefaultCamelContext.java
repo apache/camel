@@ -17,23 +17,10 @@
  */
 package org.apache.camel.impl;
 
-import static org.apache.camel.util.ServiceHelper.startServices;
-import static org.apache.camel.util.ServiceHelper.stopServices;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -47,6 +34,16 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ServiceHelper.startServices;
+import static org.apache.camel.util.ServiceHelper.stopServices;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -63,12 +60,15 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private ExchangeConverter exchangeConverter;
     private Injector injector;
     private ComponentResolver componentResolver;
-    private boolean autoCreateComponents=true;
-    
+    private boolean autoCreateComponents = true;
+
     /**
      * Adds a component to the container.
      */
     public void addComponent(String componentName, final Component component) {
+        if (component == null) {
+            throw new IllegalArgumentException("Component cannot be null");
+        }
         synchronized (components) {
             if (components.containsKey(componentName)) {
                 throw new IllegalArgumentException("Component previously added: " + componentName);
@@ -79,24 +79,27 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     public Component getComponent(String name) {
-    	// synchronize the look up and auto create so that 2 threads can't 
-    	// concurrently auto create the same component. 
+        // synchronize the look up and auto create so that 2 threads can't
+        // concurrently auto create the same component.
         synchronized (components) {
-        	Component component = components.get(name);
-        	if( component == null && autoCreateComponents ) {
+            Component component = components.get(name);
+            if (component == null && autoCreateComponents) {
                 try {
-					component = getComponentResolver().resolveComponent(name, this);
-					addComponent(name, component);
-					if( isStarted() ) {
-						// If the component is looked up after the context is started,
-						// lets start it up.
-						startServices(component);
-					}
-				} catch (Exception e) {
-					throw new RuntimeCamelException("Could not auto create component: "+name, e);
-				}
-        	}
-        	return component;
+                    component = getComponentResolver().resolveComponent(name, this);
+                    if (component != null) {
+                        addComponent(name, component);
+                        if (isStarted()) {
+                            // If the component is looked up after the context is started,
+                            // lets start it up.
+                            startServices(component);
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    throw new RuntimeCamelException("Could not auto create component: " + name, e);
+                }
+            }
+            return component;
         }
     }
 
@@ -109,7 +112,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             throw new IllegalArgumentException("The component is not of type: " + componentType + " but is: " + component);
         }
     }
-    
+
     /**
      * Removes a previously added component.
      *
@@ -188,31 +191,29 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             answer = endpoints.get(uri);
             if (answer == null) {
                 try {
-                	
-                	// Use the URI prefix to find the component.
+
+                    // Use the URI prefix to find the component.
                     String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
                     if (splitURI[1] == null) {
                         throw new IllegalArgumentException("Invalid URI, it did not contain a scheme: " + uri);
                     }
                     String scheme = splitURI[0];
                     Component component = getComponent(scheme);
-                    
-                    
-                	// Ask the component to resolve the endpoint.
+
+                    // Ask the component to resolve the endpoint.
                     if (component != null) {
-                    	
-                    	// Have the component create the endpoint if it can.
+
+                        // Have the component create the endpoint if it can.
                         answer = component.createEndpoint(uri);
-                        
+
                         // If it's a singleton then auto register it.
-                        if( answer!=null && answer.isSingleton() ) {
-    	                    if (answer != null) {
-    	                        startServices(answer);
-    	                        endpoints.put(uri, answer);
-    	                    }
+                        if (answer != null && answer.isSingleton()) {
+                            if (answer != null) {
+                                startServices(answer);
+                                endpoints.put(uri, answer);
+                            }
                         }
                     }
-                    
                 }
                 catch (Exception e) {
                     throw new ResolveEndpointFailedException(uri, e);
@@ -221,7 +222,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
         return answer;
     }
-
 
     public <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType) {
         Endpoint endpoint = getEndpoint(name);
@@ -233,7 +233,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
-    
     // Route Management Methods
     //-----------------------------------------------------------------------
     public List<Route> getRoutes() {
@@ -312,9 +311,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     //-----------------------------------------------------------------------
 
     protected void doStart() throws Exception {
-    	if (components != null) {
+        if (components != null) {
             for (Component component : components.values()) {
-            	startServices(component);
+                startServices(component);
             }
         }
         startRoutes(routes);
@@ -322,7 +321,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     protected void doStop() throws Exception {
         stopServices(servicesToClose);
-    	if (components != null) {
+        if (components != null) {
             for (Component component : components.values()) {
                 stopServices(component);
             }
@@ -386,12 +385,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return new DefaultComponentResolver();
     }
 
-	public boolean isAutoCreateComponents() {
-		return autoCreateComponents;
-	}
+    public boolean isAutoCreateComponents() {
+        return autoCreateComponents;
+    }
 
-	public void setAutoCreateComponents(boolean autoCreateComponents) {
-		this.autoCreateComponents = autoCreateComponents;
-	}
-
+    public void setAutoCreateComponents(boolean autoCreateComponents) {
+        this.autoCreateComponents = autoCreateComponents;
+    }
 }

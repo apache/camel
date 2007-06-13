@@ -71,6 +71,10 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
             }
         }
 
+        // lets avoid NullPointerException when converting to boolean for null values
+        if (boolean.class.isAssignableFrom(toType)) {
+            return (T) Boolean.FALSE;
+        }
         return null;
     }
 
@@ -104,7 +108,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     }
 
     protected <T> TypeConverter getOrFindTypeConverter(Class toType, Object value) {
-        Class fromType = Object.class;
+        Class fromType = null;
         if (value != null) {
             fromType = value.getClass();
         }

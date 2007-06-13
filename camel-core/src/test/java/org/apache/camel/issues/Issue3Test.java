@@ -42,7 +42,7 @@ public class Issue3Test extends ContextTestSupport {
                         final Message in = exchange.getIn();
                         assertNotNull("Message is Null", in);
                         String isDebugString = in.getHeader("someproperty", String.class);
-                        assertNull(isDebugString);
+                        assertNull("Header should be null but is: " + isDebugString, isDebugString);
                         assertNotNull("Message is Null", in);
 
 
