@@ -664,11 +664,18 @@
                 <!-- left around after creating the site -->
                 <exclude>**/cobertura.ser</exclude>
 
+                <!-- left around after some unit tests -->
+                <exclude>**/derby.log</exclude>
+                <exclude>**/camel-ftp/res/**/*</exclude>
+
                 <!-- IDEA files -->
                 <exclude>**/*.iml</exclude>
+                <exclude>**/*.ipr</exclude>
+                <exclude>**/*.iws</exclude>
 
                 <!-- Eclipse files -->
                 <exclude>**/.*</exclude>
+                <exclude>**/eclipse-classes/**/*</exclude>
               </excludes>
             </configuration>
           </plugin>
