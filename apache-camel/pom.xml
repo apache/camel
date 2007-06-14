@@ -153,32 +153,6 @@
   <build>
 
     <plugins>
-      <!--
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-antrun-plugin</artifactId>
-              <version>1.1</version>
-              <executions>
-                <execution>
-                  <id>run-jar</id>
-                  <phase>package</phase>
-                  <configuration>
-                    <tasks>
-                      <jar destfile="target/run.jar" basedir="target/classes">
-                            <include name="org/apache/camel/console/Main*.class"/>
-                            <manifest>
-                              <attribute name="Main-Class" value="org.apache.camel.console.Main"/>
-                            </manifest>
-                      </jar>
-                    </tasks>
-                  </configuration>
-                  <goals>
-                    <goal>run</goal>
-                  </goals>
-                </execution>
-              </executions>
-            </plugin>
-      -->
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
@@ -265,6 +239,46 @@
     </plugins>
   </build>
   <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.1</version>
+  
+            <executions>
+              <execution>
+                <id>download-website</id>
+                <phase>compile</phase> <!-- once maven 2.1 is out we can make this prepare-package -->
+                <configuration>
+                  <tasks>
+  
+                    <exec executable="rsync">
+                      <arg value="-ave"/>
+                      <arg value="ssh"/>
+                      <arg value="people.apache.org:/www/activemq.apache.org/camel/"/>
+                      <arg value="${basedir}/target/website/"/>
+                    </exec>
+  
+                    <echo message="Replaceing absolute links with relative ones"/>
+                    <replace dir="${basedir}/target/website">
+                      <replacefilter token="http://activemq.apache.org/camel/maven/" value="maven/"/>
+                      <replacefilter token="http://activemq.apache.org/camel/styles/" value="styles/"/>
+                    </replace>
+  
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>assembly-src</id>
       <build>
