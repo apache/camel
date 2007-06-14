@@ -45,6 +45,12 @@
       <lineEnding>unix</lineEnding>
     </fileSet>
 
+    <!-- copy the website docs -->
+    <fileSet>
+      <directory>${basedir}/target/website</directory>
+      <outputDirectory>/doc/website</outputDirectory>
+    </fileSet>
+
     <!-- Copy over jar files -->
     <fileSet>
       <directory>target</directory>
