@@ -139,7 +139,7 @@
     <module>camel-core</module>
     <module>components</module>
     <module>examples</module>
-    <!-- <module>tooling</module> -->
+    <module>tooling</module>
   </modules>
 
   <scm>
@@ -504,7 +504,7 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
-    
+
     <pluginManagement>
       <plugins>
         <plugin>
@@ -662,7 +662,7 @@
               <reportFile>${project.build.directory}/${project.build.finalName}.rat</reportFile>
               <excludes>
                 <exclude>**/target/**/*</exclude>
-                
+
                 <!-- left around after creating the site -->
                 <exclude>**/cobertura.ser</exclude>
 
@@ -683,19 +683,19 @@
           </plugin>
         </plugins>
       </build>
-<!--
-      TODO this barfs
-      
-      <reporting>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>rat-maven-plugin</artifactId>
-            <version>1.0-alpha-1-SNAPSHOT</version>
-          </plugin>
-        </plugins>
-      </reporting>
--->
+      <!--
+            TODO this barfs
+
+            <reporting>
+              <plugins>
+                <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>rat-maven-plugin</artifactId>
+                  <version>1.0-alpha-1-SNAPSHOT</version>
+                </plugin>
+              </plugins>
+            </reporting>
+      -->
       <repositories>
         <repository>
           <releases>
