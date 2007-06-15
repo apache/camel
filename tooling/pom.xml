@@ -24,15 +24,13 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>examples</artifactId>
-  <name>Camel :: Examples</name>
-  <description>Camel Examples</description>
+  <artifactId>tooling</artifactId>
+  <name>Camel :: Tooling</name>
+  <description>Camel Tooling</description>
   <packaging>pom</packaging>
 
   <modules>
-    <module>camel-example-jms-file</module>
-    <module>camel-example-spring</module>
-    <!--<module>camel-example-osgi</module>-->
+    <module>maven</module>
   </modules>
 
 </project>
