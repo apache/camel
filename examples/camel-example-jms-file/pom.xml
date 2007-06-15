@@ -56,4 +56,35 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <mainClass>org.apache.camel.example.jmstofile.CamelJmsToFileExample</mainClass>
+
+          <arguments>
+            <!--<argument>argument1</argument>-->
+          </arguments>
+
+          <systemProperties>
+<!--
+            <systemProperty>
+              <key>myproperty</key>
+              <value>myvalue</value>
+            </systemProperty>
+-->
+          </systemProperties>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
