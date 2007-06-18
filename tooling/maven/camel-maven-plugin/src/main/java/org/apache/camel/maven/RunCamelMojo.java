@@ -68,7 +68,15 @@ public class RunCamelMojo
     // TODO
     // if we could avoid the mega-cut-n-paste it would really really help!
     // ideally all I wanna do is auto-default 2 values!
-    
+
+    /**
+	 * The maven project.
+	 *
+	 * @parameter expression="${project}"
+	 * @required
+	 * @readonly
+	 */
+	protected MavenProject project;
 
     /**
      * @component
