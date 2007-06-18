@@ -59,15 +59,18 @@ import java.util.Set;
  *
  * @goal run
  * @requiresDependencyResolution runtime
- * @execute phase="validate"
+ * @execute phase="test-compile"
  */
 public class RunCamelMojo
     extends AbstractExecMojo
 {
 
     // TODO
-    // if we could avoid the mega-cut-n-paste it would really really help!
+    // this code is based on a copy-and-paste of maven-exec-plugin
+    //
+    // If we could avoid the mega-cut-n-paste it would really really help!
     // ideally all I wanna do is auto-default 2 values!
+    // namely the main and the command line arguments..
 
     /**
 	 * The maven project.
