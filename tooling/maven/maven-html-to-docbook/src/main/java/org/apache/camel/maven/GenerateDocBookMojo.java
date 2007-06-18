@@ -224,7 +224,7 @@ public class GenerateDocBookMojo extends AbstractMojo {
 
 			for (int i = 0; i < resources.length; ++i) {
 				out.println("<!ENTITY " +  removeExtension(resources[i]) + " SYSTEM \"" +  removeExtension(resources[i])
-						+ ".xml \">");
+						+ ".xml\">");
 			}
 
 			out.println("]>");
