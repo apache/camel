@@ -16,10 +16,11 @@
  */
 package org.apache.camel.spring;
 
-import org.springframework.context.support.FileSystemXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version $Revision: $
  */
 public class Main extends ServiceSupport {
+    private static final Log log = LogFactory.getLog(Main.class);
     private String applicationContextUri = "META-INF/spring/*.xml";
 
     private AbstractApplicationContext applicationContext;
@@ -74,8 +76,7 @@ public class Main extends ServiceSupport {
                 stop();
             }
             catch (Exception e) {
-                System.out.println("Failed: " + e);
-                e.printStackTrace();
+                log.error("Failed: " + e, e);
             }
         }
     }
@@ -213,6 +214,7 @@ public class Main extends ServiceSupport {
     // Implementation methods
     //-------------------------------------------------------------------------
     protected void doStart() throws Exception {
+        log.info("Apache Camel " + getVersion() + " starting");
         if (applicationContext == null) {
             applicationContext = createDefaultApplicationContext();
         }
@@ -224,6 +226,8 @@ public class Main extends ServiceSupport {
     }
 
     protected void doStop() throws Exception {
+        log.info("Apache Camel terminating");
+
         if (applicationContext != null) {
             applicationContext.close();
         }
@@ -239,4 +243,20 @@ public class Main extends ServiceSupport {
             }
         }
     }
+
+    protected String getVersion() {
+        Package aPackage = Package.getPackage("org.apache.camel");
+        if (aPackage != null) {
+            String version = aPackage.getImplementationVersion();
+            if (version == null) {
+                version = aPackage.getSpecificationVersion();
+                if (version == null) {
+                    version = "";
+                }
+            }
+            return version;
+        }
+        return "";
+    }
+
 }

@@ -57,5 +57,16 @@
       <artifactId>plexus-container-default</artifactId>
       <version>1.0-alpha-9</version>
     </dependency>
+
+
+    <!-- add some logging to the classpath -->
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </dependency>
   </dependencies>
 </project>

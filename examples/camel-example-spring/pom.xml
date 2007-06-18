@@ -39,13 +39,14 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>apache-activemq</artifactId>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-activemq</artifactId>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
+      <!-- allows the routes to be ran via 'mvn camel:run' -->
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
