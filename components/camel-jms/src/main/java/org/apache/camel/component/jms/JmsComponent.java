@@ -22,14 +22,14 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.jms.support.converter.MessageConverter;
-import org.springframework.jms.listener.serversession.ServerSessionFactory;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.jms.listener.serversession.ServerSessionFactory;
+import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.jms.ConnectionFactory;
-import javax.jms.Session;
 import javax.jms.ExceptionListener;
+import javax.jms.Session;
 import java.util.Map;
 
 /**
