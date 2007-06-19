@@ -65,6 +65,11 @@ public class ActiveMQComponent extends JmsComponent {
         return (ActiveMQConfiguration) super.getConfiguration();
     }
 
+    public void setBrokerURL(String brokerURL) {
+        getConfiguration().setBrokerURL(brokerURL);
+    }
+
+
     @Override
     protected JmsConfiguration createConfiguration() {
         return new ActiveMQConfiguration();
