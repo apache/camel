@@ -179,22 +179,8 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
     @Fluent
     public RecipientListBuilder recipientList(
             @FluentArg(value = "recipients", element = true)
-            ValueBuilder receipients) {
+            Expression receipients) {
         RecipientListBuilder answer = new RecipientListBuilder(this, receipients);
-        addProcessBuilder(answer);
-        return answer;
-    }
-
-    /**
-     * A builder for the <a href="http://activemq.apache.org/camel/splitter.html">Splitter</a> pattern
-     * where an expression is evaluated to iterate through each of the parts of a message and then each part is then send to some endpoint.
-     *
-     * @param receipients the builder for the value used as the expression on which to split
-     * @return the builder
-     */
-    @Fluent
-    public SplitterBuilder splitter(@FluentArg(value = "recipients", element = true)ValueBuilder receipients) {
-        SplitterBuilder answer = new SplitterBuilder(this, receipients.getExpression());
         addProcessBuilder(answer);
         return answer;
     }
