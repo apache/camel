@@ -19,8 +19,8 @@
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified"
         attributeFormDefault="unqualified"
-        targetNamespace="http://activemq.apache.org/camel/schema/camel-1.0.xsd"
-        xmlns:c="http://activemq.apache.org/camel/schema/camel-1.0.xsd"
+        targetNamespace="http://activemq.apache.org/camel/schema/spring"
+        xmlns:c="http://activemq.apache.org/camel/schema/spring"
         xmlns:s="http://www.springframework.org/schema/beans"
         >
 

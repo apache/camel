@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-http\://activemq.apache.org/camel/schema/camel-1.0.xsd=org.apache.camel.spring.xml.CamelNamespaceHandler
+http\://activemq.apache.org/camel/schema/spring=org.apache.camel.spring.xml.CamelNamespaceHandler

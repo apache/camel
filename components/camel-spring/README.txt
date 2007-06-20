@@ -29,8 +29,8 @@ Developers
  
  I've been using trang for that purpose.  Once installed, you can run:
  
-   trang -I xml -O xsd src/test/resources/org/apache/camel/spring/examples.xml src/main/resources/org/apache/camel/spring/generated-camel-1.0.xsd
+   trang -I xml -O xsd src/test/resources/org/apache/camel/spring/examples.xml src/main/resources/org/apache/camel/spring/generated-camel-spring.xsd
 
  To generate the XSD, there are some spring specifics mostly in the header
  that trang does not get right, so then what's left is a manual  cut and paste from 
- the generated-camel-1.0.xsd to the camel-1.0.xsd
+ the generated-camel-spring.xsd to the camel-spring.xsd
