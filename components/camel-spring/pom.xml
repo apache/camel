@@ -83,7 +83,7 @@
                 <echo>Running the XSDDoc task</echo>
                 <taskdef name="xsddoc" classname="net.sf.xframe.xsddoc.Task"/>
                 <mkdir dir="${basedir}/target/site/xsddoc"/>
-                <xsddoc file="${basedir}/src/main/resources/org/apache/camel/spring/camel-1.0.xsd"
+                <xsddoc file="${basedir}/src/main/resources/org/apache/camel/spring/camel-spring.xsd"
                         out="${basedir}/target/site/xsddoc"
                         doctitle="Apache Camel XML Schema Reference"
                         header="&lt;a href='http://activemq.apache.org/camel/'&gt;Apache Camel&lt;/a&gt;"
@@ -121,7 +121,7 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>${basedir}/src/main/resources/org/apache/camel/spring/camel-1.0.xsd</file>
+                  <file>${basedir}/src/main/resources/org/apache/camel/spring/camel-spring.xsd</file>
                   <type>xsd</type>
                 </artifact>
               </artifacts>

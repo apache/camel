@@ -69,8 +69,8 @@
         <executions>
           <execution>
             <configuration>
-              <namespace>http://activemq.apache.org/camel/camel-1.0.xsd</namespace>
-              <schema>target/xbean/camel-1.0.xsd</schema>
+              <namespace>http://activemq.apache.org/camel/camel-spring.xsd</namespace>
+              <schema>target/xbean/camel-spring.xsd</schema>
             </configuration>
             <goals>
               <goal>mapping</goal>

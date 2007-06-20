@@ -19,7 +19,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-       http://activemq.apache.org/camel/schema/camel-1.0.xsd http://activemq.apache.org/camel/schema/camel-1.0.xsd
+       http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
 
@@ -33,7 +33,7 @@
         from("queue:a").to("queue:b");
      -->
     <!-- START SNIPPET: e1 -->
-    <camelContext id="buildSimpleRoute" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+    <camelContext id="buildSimpleRoute" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
          <from uri="queue:a"/>
          <to uri="queue:b"/>
@@ -45,7 +45,7 @@
         from("queue:a").filter(header("foo").isEqualTo("bar")).to("queue:b");
      -->
     <!-- START SNIPPET: e2 -->
-    <camelContext id="buildSimpleRouteWithHeaderPredicate" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+    <camelContext id="buildSimpleRouteWithHeaderPredicate" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
          <from uri="queue:a"/>
          <filter>
@@ -67,7 +67,7 @@
                 .otherwise().to("queue:d");
      -->
     <!-- START SNIPPET: e3 -->
-    <camelContext id="buildSimpleRouteWithChoice" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+    <camelContext id="buildSimpleRouteWithChoice" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
          <from uri="queue:a"/>
          <choice>
@@ -99,7 +99,7 @@
      -->
     <!-- START SNIPPET: e4 -->
     <bean id="myProcessor" class="org.apache.camel.builder.MyProcessor"/>
-    <camelContext id="buildCustomProcessor" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+    <camelContext id="buildCustomProcessor" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
          <from uri="queue:a"/>
          <process ref="#myProcessor"/>
@@ -111,7 +111,7 @@
         from("queue:a").filter(header("foo").isEqualTo("bar")).process(myProcessor);
      -->
     <!-- START SNIPPET: e5 -->
-    <camelContext id="buildCustomProcessorWithFilter" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+    <camelContext id="buildCustomProcessorWithFilter" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
          <from uri="queue:a"/>
          <filter>
@@ -130,7 +130,7 @@
         from("queue:a").to("queue:tap", "queue:b");
      -->
     <!-- START SNIPPET: e6-->
-    <camelContext id="buildWireTap" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+    <camelContext id="buildWireTap" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
          <from uri="queue:a"/>
          <to>
@@ -152,7 +152,7 @@
     <!-- START SNIPPET: e7 -->
     <bean id="interceptor1" class="org.apache.camel.builder.MyInterceptorProcessor"/>
     <bean id="interceptor2" class="org.apache.camel.builder.MyInterceptorProcessor"/>     
-    <camelContext id="buildRouteWithInterceptor" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+    <camelContext id="buildRouteWithInterceptor" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
          <from uri="queue:a"/>
          <intercept>
@@ -168,7 +168,7 @@
         from("queue:a").to("queue:b", "queue:c", "queue:d");
      -->
     <!-- START SNIPPET: e8 -->
-    <camelContext id="buildStaticRecipientList" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+    <camelContext id="buildStaticRecipientList" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
          <from uri="queue:a"/>
          <to>
@@ -185,7 +185,7 @@
         from("queue:a").recipientList(header("foo"));
      -->
     <!-- START SNIPPET: e9 -->
-    <camelContext id="buildDynamicRecipientList" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+    <camelContext id="buildDynamicRecipientList" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
          <from uri="queue:a"/>
          <recipientList>
@@ -201,7 +201,7 @@
         from("queue:a").splitter(bodyAs(String.class).tokenize("\n")).to("queue:b");
      -->
     <!-- START SNIPPET: splitter -->
-    <camelContext id="buildSplitter" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+    <camelContext id="buildSplitter" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
          <from uri="queue:a"/>
          <splitter>
@@ -220,7 +220,7 @@
         from("queue:a").idempotentConsumer(header("myMessageId"), memoryMessageIdRepository()).to("queue:b");
      -->
     <!-- START SNIPPET: idempotent -->
-    <camelContext id="buildIdempotentConsumer" xmlns="http://activemq.apache.org/camel/schema/camel-1.0.xsd">
+    <camelContext id="buildIdempotentConsumer" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
          <from uri="queue:a"/>
 <!--
