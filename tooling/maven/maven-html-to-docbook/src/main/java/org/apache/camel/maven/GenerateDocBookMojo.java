@@ -21,19 +21,20 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.net.URL;
+import java.net.URLConnection;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -47,6 +48,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
 
+import org.w3c.tidy.DOMElementImpl;
 import org.w3c.tidy.Tidy;
 
 /**
@@ -121,8 +123,8 @@ public class GenerateDocBookMojo extends AbstractMojo {
 	/**
 	 * Location of image files.
 	 * 
-	 * @parameter expression="${imageLocation}"
-	 *            ${project.build.directory}/docbkx/source/images"
+	 * @parameter expression="${project.build.directory}/docbkx/images"
+	 *            
 	 */
 	private String imageLocation;
 
@@ -132,8 +134,10 @@ public class GenerateDocBookMojo extends AbstractMojo {
 
 	public void execute() throws MojoExecutionException {
 		File outputDir = new File(outputPath);
+		File imageDir = new File(imageLocation);
 		if (!outputDir.exists()) {
 			outputDir.mkdirs();
+			imageDir.mkdirs();
 		}
 		this.createMainXML();
 
@@ -176,13 +180,13 @@ public class GenerateDocBookMojo extends AbstractMojo {
 				if (attr != null
 						&& attr.getNodeValue().equalsIgnoreCase(
 								"wiki-content maincontent")) {
-
+					downloadImages(node);
 					// These attributes will be used by xsl to
 					Element element = (Element) node;
 					element.setAttribute("chapterId", chapterId);
 					element.setAttribute("chapterTitle", chapterTitle);
 					element.setAttribute("baseURL", baseURL);
-					element.setAttribute("imageLocation", imageLocation);
+					element.setAttribute("imageLocation", "..\\images\\");
 
 					DOMSource source = new DOMSource(node);
 
@@ -204,7 +208,6 @@ public class GenerateDocBookMojo extends AbstractMojo {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println(this.toString() + e.toString());
 		}
 	}
 	
@@ -299,6 +302,65 @@ public class GenerateDocBookMojo extends AbstractMojo {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	public void downloadImages(Node node) {
+        List imageList = getImageUrls(node);
+        Iterator iter = imageList.iterator();
+        while(iter.hasNext()) {
+        	String imageUrl = (String)iter.next();
+        	String imageFile = "imageFile";
+        	
+        	//check if url path is relative
+        	if (imageUrl.indexOf("http://") < 0) {
+        		imageUrl = baseURL +  imageUrl;
+        	}
+        	try {
+        		
+            	URL url = new URL(imageUrl);
+            	StringTokenizer st=new StringTokenizer(url.getFile(), "/");
+                while (st.hasMoreTokens()) {
+                	imageFile=st.nextToken();
+                }
+
+            	URLConnection connection = url.openConnection();
+            	InputStream stream = connection.getInputStream();
+            	BufferedInputStream in = new BufferedInputStream(stream);
+            	FileOutputStream file = new FileOutputStream(imageLocation + File.separator + imageFile);
+            	BufferedOutputStream out = new BufferedOutputStream(file);
+            	int i;
+            	while ((i = in.read()) != -1) {
+            	    out.write(i);
+            	}
+            	out.flush();         		
+        	}catch(Exception e) {
+        		e.printStackTrace();
+        	}
+      	
+        	
+        }
+	}
+	
+	
+	public List getImageUrls(Node node) {
+		ArrayList list = new ArrayList();
+		DOMElementImpl doc = (DOMElementImpl)node;
+		NodeList imageList = doc.getElementsByTagName("img");
+		
+		if (imageList != null) {
+			for (int i=0; i<imageList.getLength(); ++i) {
+				Node imageNode = imageList.item(i);
+				
+				NamedNodeMap nm = imageNode.getAttributes();
+				Node attr = nm.getNamedItem("src");
+				if(attr != null) {
+					list.add(attr.getNodeValue());
+				}
+
+			}	
+		}	
+		return list;
+	}	
 
 	public String getChapterId() {
 		return chapterId;
