@@ -24,7 +24,7 @@
 
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-parent</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>pom</packaging>
   <name>Camel</name>
   <description>Camel Parent POM</description>
@@ -34,7 +34,7 @@
   </prerequisites>
 
   <properties>
-    <camel-version>1.0-SNAPSHOT</camel-version>
+    <camel-version>1.0.0</camel-version>
     <compiler.fork>false</compiler.fork>
     <release-repo-url>scpexe://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository
     </release-repo-url>
