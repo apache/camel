@@ -47,7 +47,7 @@ public class CamelServlet extends HttpServlet {
         	}
         	
         	// Have the camel process the HTTP exchange.
-			HttpExchange exchange =  new HttpExchange(consumer.getEndpoint().getContext(), request, response);			
+			HttpExchange exchange =  new HttpExchange(consumer.getEndpoint(), request, response);			
 			consumer.getProcessor().process(exchange);
 
 			// HC: The getBinding() is interesting because it illustrates the impedance miss-match between

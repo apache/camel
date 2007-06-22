@@ -18,6 +18,7 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
@@ -31,8 +32,21 @@ public class HttpConsumer extends DefaultConsumer<HttpExchange> {
 		super(endpoint, processor);
 		this.endpoint = endpoint;
 	}
-	
-	@Override
+
+    @Override
+    public HttpEndpoint getEndpoint() {
+        return (HttpEndpoint) super.getEndpoint();
+    }
+
+    public HttpBinding getBinding() {
+        return endpoint.getBinding();
+    }
+
+    public String getPath() {
+        return endpoint.getPath();
+    }
+
+    @Override
 	protected void doStart() throws Exception {
 		super.doStart();
 		endpoint.connect(this);		
@@ -44,13 +58,4 @@ public class HttpConsumer extends DefaultConsumer<HttpExchange> {
 		super.doStop();
 	}
 
-	public HttpBinding getBinding() {
-		return endpoint.getBinding();
-	}
-
-	public String getPath() {
-		return endpoint.getPath();
-	}
-	
-	
 }
