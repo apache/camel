@@ -62,17 +62,17 @@
           </execution>
         </executions>        
         <configuration>
-          <baseURL>http://activemq.apache.org/camel/</baseURL>
+          <baseURL>http://cwiki.apache.org/CAMEL/</baseURL>
           <title>Camel</title>
           <subtitle>User Guide</subtitle>       
           <resources>
-              <resource>index.html</resource>
-              <resource>getting-started.html</resource>
-              <resource>architecture.html</resource>
-              <resource>user-guide.html</resource>
-              <resource>components.html</resource>
-              
-          </resources>  
+              <resource>book-introduction.html</resource>
+              <resource>book-architecture.html</resource>
+              <resource>book-enterprise-integration-patterns.html</resource>
+              <resource>book-getting-started.html</resource>
+              <resource>book-pattern-appendix.html</resource>
+              <resource>book-component-appendix.html</resource>
+          </resources>
           <authors>
               <author>James Strachan</author>
               <author>Hiram Chirino</author>
