@@ -55,11 +55,11 @@ public class HttpEndpoint extends DefaultEndpoint<HttpExchange> {
     }
 
     public HttpExchange createExchange() {
-        return new HttpExchange(getContext());
+        return new HttpExchange(this);
     }
 
     public HttpExchange createExchange(HttpServletRequest request, HttpServletResponse response) {
-        return new HttpExchange(getContext(), request, response);
+        return new HttpExchange(this, request, response);
     }
 
     public HttpBinding getBinding() {

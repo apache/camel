@@ -18,6 +18,7 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultExchange;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,19 +31,22 @@ import javax.servlet.http.HttpServletResponse;
  * @version $Revision$
  */
 public class HttpExchange extends DefaultExchange {
+    private final HttpEndpoint endpoint;
     private HttpServletRequest request;
     private HttpServletResponse response;
 
-    public HttpExchange(CamelContext context) {
-        super(context);
+    public HttpExchange(HttpEndpoint endpoint) {
+        super(endpoint.getContext());
+        this.endpoint = endpoint;
     }
 
-    public HttpExchange(CamelContext context, HttpServletRequest request, HttpServletResponse response) {
-        super(context);
+    public HttpExchange(HttpEndpoint endpoint, HttpServletRequest request, HttpServletResponse response) {
+        this(endpoint);
         this.request = request;
         this.response = response;
-        setIn(new HttpMessage(request));
+        setIn(new HttpMessage(this, request));
     }
+
 
     /**
      * Returns the underlying Servlet request for inbound HTTP requests
@@ -60,5 +64,9 @@ public class HttpExchange extends DefaultExchange {
      */
     public HttpServletResponse getResponse() {
         return response;
+    }
+
+    public HttpEndpoint getEndpoint() {
+        return endpoint;
     }
 }
