@@ -130,7 +130,6 @@ public class GenerateDocBookMojo extends AbstractMojo {
 
 	private String chapterId;
 
-	private String chapterTitle;
 
 	public void execute() throws MojoExecutionException {
 		File outputDir = new File(outputPath);
@@ -143,7 +142,6 @@ public class GenerateDocBookMojo extends AbstractMojo {
 
 		for (int i = 0; i < resources.length; ++i) {
 			this.setChapterId( removeExtension(resources[i]));
-			this.setChapterTitle( removeExtension(resources[i]));
 
 			process(resources[i]);
 		}
@@ -184,7 +182,6 @@ public class GenerateDocBookMojo extends AbstractMojo {
 					// These attributes will be used by xsl to
 					Element element = (Element) node;
 					element.setAttribute("chapterId", chapterId);
-					element.setAttribute("chapterTitle", chapterTitle);
 					element.setAttribute("baseURL", baseURL);
 					element.setAttribute("imageLocation", "..\\images\\");
 
@@ -370,14 +367,7 @@ public class GenerateDocBookMojo extends AbstractMojo {
 		this.chapterId = chapterId;
 	}
 
-	public String getChapterTitle() {
-		return chapterTitle;
-	}
 
-	public void setChapterTitle(String chapterTitle) {
-		this.chapterTitle = chapterTitle;
-	}
-	
 	public String removeExtension(String resource) {
 		int index = resource.indexOf('.');
 		return resource.substring(0, index);		

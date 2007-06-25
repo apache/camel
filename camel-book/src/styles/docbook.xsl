@@ -26,14 +26,17 @@
 	<xsl:param name="bridgeprefix">br_</xsl:param>
 	<xsl:param name="root_url" select="div/@baseURL"/>
 	<!-- This template converts each "wiki-content maincontent" DIV  into a DocBook 
-     section.  -->
+     section. For a title, it selects the first h1 element  -->
 	<xsl:template match="div[contains(@class,'wiki-content maincontent')]">
 		<chapter >
 			<xsl:attribute name="id">
 				<xsl:value-of select="@chapterId"/>
 			</xsl:attribute>
 			<title>
-				<xsl:value-of select="@chapterTitle"/>
+				<xsl:value-of 
+					select=".//h1[1]
+                         |.//h2[1]
+                         |.//h3[1]"/>
 			</title>
 			<section>
 				<xsl:if test="$filename != ''">
