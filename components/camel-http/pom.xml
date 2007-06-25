@@ -42,6 +42,16 @@
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-servlet_2.4_spec</artifactId>
     </dependency>
+
+    <!-- only required for consuming -->
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>3.1-rc1</version>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- only required for producing -->
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
       <artifactId>jetty</artifactId>
