@@ -183,7 +183,7 @@ public class GenerateDocBookMojo extends AbstractMojo {
 					Element element = (Element) node;
 					element.setAttribute("chapterId", chapterId);
 					element.setAttribute("baseURL", baseURL);
-					element.setAttribute("imageLocation", "..\\images\\");
+					element.setAttribute("imageLocation", "../images/");
 
 					DOMSource source = new DOMSource(node);
 
