@@ -67,7 +67,7 @@ public class RoutingUsingCamelContextFactoryTest extends TestSupport {
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/routingUsingCamelContextFactoryTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/routingUsingCamelContextFactory.xml");
     }
 
     @Override
