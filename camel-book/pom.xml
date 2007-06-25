@@ -58,7 +58,7 @@
             <goals>
               <goal>htmlToDocbook</goal>
             </goals>
-            <phase>generate-sources</phase>
+            <phase>site</phase>
           </execution>
         </executions>        
         <configuration>
@@ -91,7 +91,7 @@
               <goal>generate-html</goal>
               <goal>generate-manpages</goal>
             </goals>
-            <phase>generate-sources</phase>
+            <phase>site</phase>
           </execution>
         </executions>
         <dependencies>
