@@ -32,6 +32,7 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @version $Revision: 520220 $
@@ -53,12 +54,14 @@ public class HttpRouteTest extends ContextTestSupport {
         Message in = exchange.getIn();
         assertNotNull("in", in);
 
+        Map<String,Object> headers = in.getHeaders();
         String actualBody = in.getBody(String.class);
 
-        log.info("Headers: " + in.getHeaders());
+        log.info("Headers: " + headers);
         log.info("Received body: " + actualBody);
 
         assertEquals("Body", expectedBody, actualBody);
+        assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
     }
 
     protected void invokeHttpEndpoint() throws IOException {
@@ -94,7 +97,7 @@ public class HttpRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("http://localhost:8080/test").to("mock:a");
+                from("http://localhost:8080/test").convertBodyTo(String.class).to("mock:a");
             }
         };
     }
