@@ -7,9 +7,9 @@
   The ASF licenses this file to You under the Apache License, Version 2.0
   (the "License"); you may not use this file except in compliance with
   the License.  You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,31 +28,44 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>components</artifactId>
-  <name>Camel :: Components</name>
-  <description>Camel Components</description>
-  <packaging>pom</packaging>
+  <artifactId>camel-irc</artifactId>
+  <name>Camel :: IRC</name>
+  <description>Camel IRC support</description>
 
-  <modules>
-    <module>camel-activemq</module>
-    <module>camel-bam</module>
-    <module>camel-cxf</module>
-    <module>camel-ftp</module>
-    <module>camel-http</module>
-    <module>camel-irc</module>
-    <module>camel-jaxb</module>
-    <module>camel-jbi</module>
-    <module>camel-jms</module>
-    <module>camel-josql</module>
-    <module>camel-jpa</module> 
-    <module>camel-mail</module>
-    <module>camel-mina</module>
-    <module>camel-quartz</module>
-    <module>camel-rmi</module>
-    <module>camel-saxon</module>
-    <module>camel-script</module>
-    <module>camel-spring</module>
-    <module>camel-xmpp</module>
-  </modules>
+  <dependencies>
+
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.schwering</groupId>
+      <artifactId>irclib</artifactId>
+      <version>1.04-bsd</version>
+    </dependency>
+
+    <!-- testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
 </project>

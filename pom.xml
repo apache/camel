@@ -190,6 +190,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-irc</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbi</artifactId>
         <version>${camel-version}</version>
       </dependency>
