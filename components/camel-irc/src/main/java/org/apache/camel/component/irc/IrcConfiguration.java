@@ -20,10 +20,8 @@ package org.apache.camel.component.irc;
 import org.apache.camel.RuntimeCamelException;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 public class IrcConfiguration implements Cloneable {
-
     String target;
     String hostname;
     String password;
@@ -41,7 +39,7 @@ public class IrcConfiguration implements Cloneable {
     boolean onTopic = true;
     boolean onPrivmsg = true;
     int[] ports = {6667, 6668, 6669};
-    
+
     public IrcConfiguration() {
     }
 
@@ -74,14 +72,13 @@ public class IrcConfiguration implements Cloneable {
     public String getCacheKey() {
         return hostname + ":" + nickname;
     }
-    
+
     public void configure(URI uri) {
         setNickname(uri.getUserInfo());
         setUsername(uri.getUserInfo());
         setRealname(uri.getUserInfo());
         setHostname(uri.getHost());
         setTarget(uri.getPath().substring(1));
-
     }
 
     public String getHostname() {

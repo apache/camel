@@ -18,18 +18,25 @@
 package org.apache.camel.component.irc;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.schwering.irc.lib.IRCConnection;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
 public class IrcComponent extends DefaultComponent<IrcExchange> {
-
+    private static final transient Log log = LogFactory.getLog(IrcComponent.class);
     private IrcConfiguration configuration;
+    private final Map<String, IRCConnection> connectionCache = new HashMap<String, IRCConnection>();
+
+    public static IrcComponent ircComponent() {
+        return new IrcComponent();
+    }
 
     public IrcComponent() {
         configuration = new IrcConfiguration();
@@ -42,10 +49,6 @@ public class IrcComponent extends DefaultComponent<IrcExchange> {
     public IrcComponent(CamelContext context) {
         super(context);
         configuration = new IrcConfiguration();
-    }
-
-    public static IrcComponent ircComponent() {
-        return new IrcComponent();
     }
 
     protected IrcEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
@@ -67,14 +70,15 @@ public class IrcComponent extends DefaultComponent<IrcExchange> {
         this.configuration = configuration;
     }
 
-    final Map<String, IRCConnection> connectionCache = new HashMap<String, IRCConnection>();
-
     public synchronized IRCConnection getIRCConnection(IrcConfiguration configuration) {
         final IRCConnection connection;
         if (connectionCache.containsKey(configuration.getCacheKey())) {
-            System.out.println("Returning Cached Connection to " + configuration.getHostname() + " " + configuration.getTarget());
+            if (log.isDebugEnabled()) {
+                log.debug("Returning Cached Connection to " + configuration.getHostname() + " " + configuration.getTarget());
+            }
             connection = connectionCache.get(configuration.getCacheKey());
-        } else {
+        }
+        else {
             connection = createConnection(configuration);
             connectionCache.put(configuration.getCacheKey(), connection);
         }
@@ -82,7 +86,8 @@ public class IrcComponent extends DefaultComponent<IrcExchange> {
     }
 
     protected IRCConnection createConnection(IrcConfiguration configuration) {
-        System.out.println("Creating Connection to " + configuration.getHostname() + " " + configuration.getTarget());
+        log.debug("Creating Connection to " + configuration.getHostname() + " destination: " + configuration.getTarget()
+                + " nick: " + configuration.getNickname() + " user: " + configuration.getUsername());
 
         final IRCConnection conn = new IRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(), configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
         conn.setEncoding("UTF-8");
@@ -92,8 +97,12 @@ public class IrcComponent extends DefaultComponent<IrcExchange> {
 
         try {
             conn.connect();
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+        catch (Exception e) {
+            log.error("Failed to connect: " + e, e);
+
+            // TODO use checked exceptions?
+            throw new RuntimeCamelException(e);
         }
         return conn;
     }
@@ -102,16 +111,18 @@ public class IrcComponent extends DefaultComponent<IrcExchange> {
         try {
             connection.doQuit();
             connection.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            connectionCache.remove(key); // TODO this is probably bad in the for each
         }
     }
 
     @Override
-    protected void doStop() throws Exception {
-        for (Map.Entry<String, IRCConnection> entry : connectionCache.entrySet()) {
+    protected synchronized void doStop() throws Exception {
+        // lets use a copy so we can clear the connections eagerly in case of exceptions
+        Map<String, IRCConnection> map = new HashMap<String, IRCConnection>(connectionCache);
+        connectionCache.clear();
+        for (Map.Entry<String, IRCConnection> entry : map.entrySet()) {
             closeConnection(entry.getKey(), entry.getValue());
         }
         super.doStop();
