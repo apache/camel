@@ -21,7 +21,6 @@ import org.apache.camel.impl.DefaultMessage;
 import org.schwering.irc.lib.IRCUser;
 
 import java.util.Map;
-import java.util.HashMap;
 
 public class IrcMessage extends DefaultMessage {
     private String messageType;
@@ -109,7 +108,7 @@ public class IrcMessage extends DefaultMessage {
     protected Object createBody() {
         IrcExchange ircExchange = getExchange();
         IrcBinding binding = ircExchange.getBinding();
-        return binding.extractBodyFromIrc(ircExchange, message);
+        return binding.extractBodyFromIrc(ircExchange, this);
     }
 
     @Override
@@ -138,7 +137,8 @@ public class IrcMessage extends DefaultMessage {
     public String toString() {
         if (message != null) {
             return "IrcMessage: " + message;
-        } else {
+        }
+        else {
             return "IrcMessage: " + getBody();
         }
     }

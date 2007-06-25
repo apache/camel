@@ -17,11 +17,8 @@
  */
 package org.apache.camel.component.irc;
 
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Message;
-import org.apache.camel.Exchange;
-import org.schwering.irc.lib.IRCUser;
+import org.apache.camel.impl.DefaultExchange;
 
 public class IrcExchange extends DefaultExchange {
     private IrcBinding binding;
@@ -32,7 +29,7 @@ public class IrcExchange extends DefaultExchange {
     }
 
     public IrcExchange(CamelContext context, IrcBinding binding, IrcMessage inMessage) {
-        this(context,  binding);
+        this(context, binding);
         setIn(inMessage);
     }
 
