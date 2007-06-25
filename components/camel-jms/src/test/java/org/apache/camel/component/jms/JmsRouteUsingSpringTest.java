@@ -32,7 +32,7 @@ public class JmsRouteUsingSpringTest extends JmsRouteTest {
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/jmsRouteUsingSpringTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/jmsRouteUsingSpring.xml");
     }
 
     @Override
