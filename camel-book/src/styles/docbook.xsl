@@ -63,12 +63,14 @@
               |h6">
 		<bridgehead>
 			<xsl:choose>
+				<!--
 				<xsl:when test="count(a/@name)">
 					<xsl:attribute name="id">
 						<xsl:value-of select="$bridgeprefix"/>
 						<xsl:value-of select="a/@name"/>
 					</xsl:attribute>
 				</xsl:when>
+				-->
 				<xsl:when 
 					test="preceding-sibling::* = preceding-sibling::a[@name != '']">
 					<xsl:attribute name="id">
@@ -145,6 +147,12 @@
   </xsl:attribute>
  </xref>
 </xsl:template-->
+
+<!--
+    this currently breaks the generator if there are more than one definition of an anchor name
+	ie. http://activemq.apache.org/camel/book-pattern-appendix.html
+	 
+	
 	<xsl:template match="a[@name != '']" priority="0.6">
 		<anchor>
 			<xsl:attribute name="id">
@@ -155,6 +163,7 @@
 			<xsl:apply-templates/>
 		</anchor>
 	</xsl:template>
+-->	
 	<xsl:template match="a[@href != '']">
 		<xref>
 			<xsl:attribute name="linkend">
@@ -421,12 +430,20 @@
 				<xsl:call-template name="generate-colspecs">
 					<xsl:with-param name="count" select="$column_count"/>
 				</xsl:call-template>
+				
+				<!--
+					the "id already exists" problem is a known bug in dbdoclet when generating pdf report
+					as a workaround the thead for the first tr  has been replaced by a tbody
 				<thead>
 					<xsl:apply-templates select="tr[1]"/>
 				</thead>
 				<tbody>
 					<xsl:apply-templates select="tr[position() != 1]"/>
 				</tbody>
+				-->
+				<tbody>
+					<xsl:apply-templates select="tr"/>
+				</tbody>				
 			</tgroup>
 		</informaltable>
 	</xsl:template>
@@ -451,6 +468,9 @@
 							<xsl:with-param name="count" 
 								select="$column_count"/>
 						</xsl:call-template>
+						<!--
+				     	the "id already exists" problem is a known bug in dbdoclet when generating pdf report
+					    as a workaround the thead for the first tr  has been replaced by a tbody							
 						<thead>
 							<xsl:apply-templates select="./tbody/tr[1]"/>
 						</thead>
@@ -458,6 +478,11 @@
 							<xsl:apply-templates 
 								select="./tbody/tr[position() != 1]"/>
 						</tbody>
+						-->
+						<tbody>
+							<xsl:apply-templates 
+								select="./tbody/tr"/>
+						</tbody>						
 					</tgroup>
 				</informaltable>
 			</xsl:otherwise>
