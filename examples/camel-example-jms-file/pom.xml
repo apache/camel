@@ -24,7 +24,7 @@
 
   <parent>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-parent</artifactId>
+    <artifactId>examples</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
@@ -66,6 +66,7 @@
             <goals>
               <goal>java</goal>
             </goals>
+            <phase>install</phase>
           </execution>
         </executions>
         <configuration>
