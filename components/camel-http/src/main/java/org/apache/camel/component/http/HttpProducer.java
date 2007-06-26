@@ -24,7 +24,10 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
 
 import java.io.InputStream;
 
@@ -39,8 +42,7 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
     }
 
     public void process(Exchange exchange) throws Exception {
-        String uri = getEndpoint().getEndpointUri();
-        HttpMethod method = createMethod(uri);
+        HttpMethod method = createMethod(exchange);
         int responseCode = httpClient.executeMethod(method);
 
         // lets store the result in the output message.
@@ -59,7 +61,31 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         out.setHeader("http.responseCode", responseCode);
     }
 
-    protected PostMethod createMethod(String uri) {
-        return new PostMethod(uri);
+    protected HttpMethod createMethod(Exchange exchange) {
+        String uri = getEndpoint().getEndpointUri();
+        RequestEntity requestEntity = createRequestEntity(exchange);
+        if (requestEntity == null) {
+            return new GetMethod(uri);
+        }
+        // TODO we might be PUT? - have some better way to explicitly choose method
+        PostMethod method = new PostMethod(uri);
+        method.setRequestEntity(requestEntity);
+        return method;
+    }
+
+    protected RequestEntity createRequestEntity(Exchange exchange) {
+        Message in = exchange.getIn();
+        RequestEntity entity = in.getBody(RequestEntity.class);
+        if (entity == null) {
+            byte[] data = in.getBody(byte[].class);
+            String contentType = in.getHeader("Content-Type", String.class);
+            if (contentType != null) {
+                return new ByteArrayRequestEntity(data, contentType);
+            }
+            else {
+                return new ByteArrayRequestEntity(data);
+            }
+        }
+        return entity;
     }
 }
