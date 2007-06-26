@@ -37,43 +37,35 @@ import java.util.Map;
 /**
  * @version $Revision: 520220 $
  */
-public class HttpRouteTest extends ContextTestSupport {
-    protected String expectedBody = "<hello>world!</hello>";
-
-    public void testPojoRoutes() throws Exception {
-        MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
-        mockEndpoint.expectedMessageCount(1);
-
-        invokeHttpEndpoint();
-
-        mockEndpoint.assertIsSatisfied();
-        List<Exchange> list = mockEndpoint.getReceivedExchanges();
-        Exchange exchange = list.get(0);
-        assertNotNull("exchange", exchange);
-
-        Message in = exchange.getIn();
-        assertNotNull("in", in);
-
-        Map<String,Object> headers = in.getHeaders();
-        String actualBody = in.getBody(String.class);
-
-        log.info("Headers: " + headers);
-        log.info("Received body: " + actualBody);
-
-        assertEquals("Body", expectedBody, actualBody);
-        assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
-    }
+public class HttpRouteUsingUrlPostTest extends HttpRouteTest {
 
     protected void invokeHttpEndpoint() throws IOException {
-        template.sendBody("http://localhost:8080/test", expectedBody, "Content-Type", "application/xml");
+        URL url = new URL("http://localhost:8080/test");
+        URLConnection urlConnection = url.openConnection();
+        urlConnection.setDoInput(true);
+        urlConnection.setDoOutput(true);
+        urlConnection.setUseCaches(false);
+        urlConnection.setRequestProperty("Content-Type", "application/xml");
+
+        // Send POST data
+        OutputStream out = urlConnection.getOutputStream();
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
+        writer.write(expectedBody);
+        writer.close();
+
+        // read the response data
+        BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+        while (true) {
+            String line = reader.readLine();
+            if (line == null) {
+                break;
+            }
+            log.info("Read: " + line);
+        }
+        reader.close();
+
+//        InputStream is = url.openConnection().getInputStream();
+//        System.out.println("Content: "+is);
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() {
-                from("http://localhost:8080/test").convertBodyTo(String.class).to("mock:a");
-            }
-        };
-    }
 }
