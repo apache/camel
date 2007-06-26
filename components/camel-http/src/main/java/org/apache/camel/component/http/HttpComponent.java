@@ -23,6 +23,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
+ * Defines the <a href="http://activemq.apache.org/camel/http.html">HTTP Component</a>
+ *
  * @version $Revision$
  */
 public class HttpComponent extends DefaultComponent<HttpExchange> {

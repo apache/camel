@@ -30,7 +30,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
 
 /**
- * Represents a HTTP based Endpoint
+ * Represents a <a href="http://activemq.apache.org/camel/http.html">HTTP endpoint</a>
  *
  * @version $Revision$
  */

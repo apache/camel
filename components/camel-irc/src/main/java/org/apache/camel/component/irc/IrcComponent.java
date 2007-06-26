@@ -29,6 +29,11 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Defines the <a href="http://activemq.apache.org/camel/irc.html">IRC Component</a>
+ *
+ * @version $Revision:$
+ */
 public class IrcComponent extends DefaultComponent<IrcExchange> {
     private static final transient Log log = LogFactory.getLog(IrcComponent.class);
     private IrcConfiguration configuration;
