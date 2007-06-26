@@ -118,18 +118,27 @@
 			<xsl:attribute name="url">
 				<xsl:value-of select="normalize-space(@href)"/>
 			</xsl:attribute>
-			<xsl:apply-templates/>
+			<xsl:apply-templates />
 		</ulink>
 	</xsl:template>
 	<xsl:template match="a[contains(@href,'.htm')]" priority="1.5">
 		<ulink>
 			<xsl:attribute name="url">
-				<xsl:value-of select="$root_url"/>
-				<xsl:value-of select="normalize-space(@href)"/>
+				<xsl:choose>
+					<xsl:when test="contains(@href,'www.')">
+						<xsl:value-of select="normalize-space(@href)"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$root_url"/>
+						<xsl:value-of select="normalize-space(@href)"/>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:attribute>
 			<xsl:apply-templates/>
 		</ulink>
+		
 	</xsl:template>
+	
 	<xsl:template match="a[contains(@href,'ftp://')]" priority="1.5">
 		<ulink>
 			<xsl:attribute name="url">
@@ -218,21 +227,24 @@
 	<!-- Images -->
 	<!-- Images and image maps -->
 	<xsl:template match="img">
-		<xsl:variable name="tag_name">
-			<xsl:choose>
-				<xsl:when 
-					test="boolean(parent::p) and 
+		<!-- let's not include confluence generated images -->
+		<xsl:if test="@class != 'rendericon'">
+			<xsl:variable name="tag_name">
+				<xsl:choose>
+					<xsl:when 
+						test="boolean(parent::p) and 
         boolean(normalize-space(parent::p/text()))">
-					<xsl:text>inlinemediaobject</xsl:text>
-				</xsl:when>
-				<xsl:otherwise>mediaobject</xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-		<xsl:element name="{$tag_name}">
-			<imageobject>
-				<xsl:call-template name="process.image"/>
-			</imageobject>
-		</xsl:element>
+						<xsl:text>inlinemediaobject</xsl:text>
+					</xsl:when>
+					<xsl:otherwise>mediaobject</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:element name="{$tag_name}">
+				<imageobject>
+					<xsl:call-template name="process.image"/>
+				</imageobject>
+			</xsl:element>
+		</xsl:if>
 	</xsl:template>
 	<xsl:template name="process.image">
 		<imagedata>
