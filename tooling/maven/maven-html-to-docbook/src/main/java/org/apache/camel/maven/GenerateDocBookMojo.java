@@ -95,9 +95,16 @@ public class GenerateDocBookMojo extends AbstractMojo {
 	/**
 	 * Location of the output directory.
 	 * 
-	 * @parameter expression="${project.build.directory}/docbkx/source"
+	 * @parameter expression="${project.build.directory}/docbkx/docbkx-source"
 	 */
 	private String outputPath;
+	
+	/**
+	 * Location of the output directory for wiki source.
+	 * 
+	 * @parameter expression="${project.build.directory}/docbkx/wiki-source"
+	 */
+	private String wikiOutputPath;	
 
 	/**
 	 * @parameter expression="${title}"
@@ -133,10 +140,12 @@ public class GenerateDocBookMojo extends AbstractMojo {
 
 	public void execute() throws MojoExecutionException {
 		File outputDir = new File(outputPath);
+		File wikiOutputDir = new File(wikiOutputPath);
 		File imageDir = new File(imageLocation);
 		if (!outputDir.exists()) {
 			outputDir.mkdirs();
 			imageDir.mkdirs();
+			wikiOutputDir.mkdirs();
 		}
 		this.createMainXML();
 
@@ -157,7 +166,9 @@ public class GenerateDocBookMojo extends AbstractMojo {
 	public void process(String resource) {
 
 		Tidy tidy = new Tidy();
-		ByteArrayOutputStream out;
+		ByteArrayOutputStream out = null;
+		BufferedOutputStream output = null;
+		BufferedOutputStream wikiOutput = null;
 
 		tidy.setXmlOut(true);
 		try {
@@ -188,7 +199,7 @@ public class GenerateDocBookMojo extends AbstractMojo {
 					DOMSource source = new DOMSource(node);
 
 					 
-					BufferedOutputStream output = new BufferedOutputStream(
+					output = new BufferedOutputStream(
 							new FileOutputStream(outputPath + File.separator
 									+ removeExtension(resource) + ".xml"));
 					StreamResult result = new StreamResult(output);
@@ -198,6 +209,14 @@ public class GenerateDocBookMojo extends AbstractMojo {
 							.newTransformer(new StreamSource(xslFile));
 					transformer.transform(source, result);
 
+					// generate the wiki source for debugging
+					wikiOutput = new BufferedOutputStream(
+							new FileOutputStream(wikiOutputPath + File.separator
+									+ removeExtension(resource) + ".html"));
+					result = new StreamResult(wikiOutput);
+					transformer = tFactory.newTransformer();
+			        transformer.transform(source, result);					
+
 					break;
 				}
 
@@ -205,6 +224,14 @@ public class GenerateDocBookMojo extends AbstractMojo {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			try {
+				if(output != null)
+					output.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
