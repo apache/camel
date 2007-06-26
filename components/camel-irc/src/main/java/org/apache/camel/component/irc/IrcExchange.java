@@ -52,6 +52,11 @@ public class IrcExchange extends DefaultExchange {
     }
 
     @Override
+    public IrcMessage getOut(boolean lazyCreate) {
+        return (IrcMessage) super.getOut(lazyCreate);
+    }
+
+    @Override
     public IrcMessage getFault() {
         return (IrcMessage) super.getFault();
     }
