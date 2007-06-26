@@ -130,7 +130,7 @@ public class GenerateDocBookMojo extends AbstractMojo {
 	/**
 	 * Location of image files.
 	 * 
-	 * @parameter expression="${project.build.directory}/docbkx/images"
+	 * @parameter expression="${project.build.directory}/site/book/images"
 	 *            
 	 */
 	private String imageLocation;
