@@ -86,13 +86,36 @@
         <version>2.0.3-SNAPSHOT</version>
         <executions>
           <execution>
+			<id>execution1</id>
+            <goals>
+              <goal>generate-html</goal>
+            </goals>
+            <phase>site</phase>
+            <configuration>
+               <targetDirectory>${basedir}/target/site/book/html</targetDirectory>
+            </configuration>			
+          </execution>
+          <execution>
+			<id>execution2</id>
             <goals>
               <goal>generate-pdf</goal>
-              <goal>generate-html</goal>
+              <!--goal>generate-manpages</goal-->
+            </goals>
+            <phase>site</phase>
+            <configuration>
+               <targetDirectory>${basedir}/target/site/book/pdf</targetDirectory>
+            </configuration>				
+          </execution>		
+          <execution>
+			<id>execution3</id>
+            <goals>
               <goal>generate-manpages</goal>
             </goals>
             <phase>site</phase>
-          </execution>
+            <configuration>
+               <targetDirectory>${basedir}/target/site/book/manpage</targetDirectory>
+            </configuration>				
+          </execution>			    
         </executions>
         <dependencies>
           <dependency>
@@ -121,13 +144,8 @@
 
           
           <sourceDirectory>${basedir}/target/docbkx/docbkx-source</sourceDirectory>
-          <!--
           
-          <preProcess>
-            <ant target="generate-manual" inheritAll="true"/>
-          </preProcess>
-          -->
-          <!--<htmlStylesheet>http://agilejava.com/downloads/kubrick-docbkx.css</htmlStylesheet>-->
+
           <headerRule>0</headerRule>
           <footerRule>0</footerRule>
           <draftMode>0</draftMode>
