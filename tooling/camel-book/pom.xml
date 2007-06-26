@@ -120,7 +120,7 @@
           <!--<xincludeSupport>true</xincludeSupport>-->
 
           
-          <sourceDirectory>${basedir}/target/docbkx/source</sourceDirectory>
+          <sourceDirectory>${basedir}/target/docbkx/docbkx-source</sourceDirectory>
           <!--
           
           <preProcess>
