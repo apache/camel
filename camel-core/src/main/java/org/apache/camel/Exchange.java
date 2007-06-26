@@ -82,10 +82,19 @@ public interface Exchange  {
     Message getIn();
 
     /**
-     * Returns the aresponse message
+     * Returns the outbound message, lazily creating one if one has not already been associated with this exchange.
+     * If you want to inspect this property but not force lazy creation then invoke the {@link #getOut(boolean)} method
+     * passing in null
+     * 
      * @return the response
      */
     Message getOut();
+
+    /**
+     * Returns the outbound message; optionally lazily creating one if one has not been associated with this exchange
+     * @return the response
+     */
+    Message getOut(boolean lazyCreate);
 
     /**
      * Returns the fault message

@@ -17,8 +17,49 @@
  */
 package org.apache.camel.component.http;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultProducer;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+
+import java.io.InputStream;
+
 /**
  * @version $Revision: 1.1 $
  */
-public class HttpProducer {
+public class HttpProducer extends DefaultProducer<HttpExchange> implements Producer<HttpExchange> {
+    private HttpClient httpClient = new HttpClient();
+
+    public HttpProducer(HttpEndpoint endpoint) {
+        super(endpoint);
+    }
+
+    public void process(Exchange exchange) throws Exception {
+        String uri = getEndpoint().getEndpointUri();
+        HttpMethod method = createMethod(uri);
+        int responseCode = httpClient.executeMethod(method);
+
+        // lets store the result in the output message.
+        InputStream in = method.getResponseBodyAsStream();
+        Message out = exchange.getOut(true);
+        out.setBody(in);
+
+        // lets set the headers
+        Header[] headers = method.getResponseHeaders();
+        for (Header header : headers) {
+            String name = header.getName();
+            String value = header.getValue();
+            out.setHeader(name, value);
+        }
+
+        out.setHeader("http.responseCode", responseCode);
+    }
+
+    protected PostMethod createMethod(String uri) {
+        return new PostMethod(uri);
+    }
 }

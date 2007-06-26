@@ -51,6 +51,11 @@ public class XmppExchange extends DefaultExchange {
     }
 
     @Override
+    public XmppMessage getOut(boolean lazyCreate) {
+        return (XmppMessage) super.getOut(lazyCreate);
+    }
+
+    @Override
     public XmppMessage getFault() {
         return (XmppMessage) super.getFault();
     }

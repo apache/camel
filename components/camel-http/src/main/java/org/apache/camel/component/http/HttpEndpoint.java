@@ -46,8 +46,8 @@ public class HttpEndpoint extends DefaultEndpoint<HttpExchange> {
 		this.httpUri = new URI(uri);
     }
 
-    public Producer<HttpExchange> createProducer() throws Exception {
-    	throw new RuntimeCamelException("Not implemented.");
+    public HttpProducer createProducer() throws Exception {
+    	return new HttpProducer(this);
     }
 
     public Consumer<HttpExchange> createConsumer(Processor processor) throws Exception {
