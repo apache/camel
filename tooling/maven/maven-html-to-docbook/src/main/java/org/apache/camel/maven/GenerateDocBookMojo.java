@@ -116,6 +116,12 @@ public class GenerateDocBookMojo extends AbstractMojo {
 	 * @parameter expression="${subtitle}"
 	 */
 	private String subtitle;
+	
+	/**
+	 * @parameter expression="${mainFilename}" default-value="manual"
+	 * @required
+	 */
+	private String mainFilename;	
 
 	/**
 	 * @parameter expression="${version}" default-value="${project.version}"
@@ -243,7 +249,7 @@ public class GenerateDocBookMojo extends AbstractMojo {
 		try {
 
 			PrintWriter out = new PrintWriter(new FileWriter(outputPath
-					+ File.separator + title + ".xml"));
+					+ File.separator + mainFilename + ".xml"));
 
 			out
 					.println("<!DOCTYPE book PUBLIC \"-//OASIS//DTD DocBook XML V4.4//EN\" \"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd\" ");
