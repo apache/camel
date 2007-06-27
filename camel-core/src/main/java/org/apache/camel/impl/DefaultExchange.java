@@ -126,7 +126,11 @@ public class DefaultExchange implements Exchange {
     }
 
     public Message getOut() {
-        if (out == null) {
+        return getOut(true);
+    }
+
+    public Message getOut(boolean lazyCreate) {
+        if (out == null && lazyCreate) {
             out = createOutMessage();
             configureMessage(out);
         }

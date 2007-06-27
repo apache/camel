@@ -24,7 +24,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class JmsRouteUsingSpringAndJmsNameTest extends JmsRouteUsingSpringTest {
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/jmsRouteUsingSpringAndJmsNameTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/jmsRouteUsingSpringAndJmsName.xml");
     }
 
 

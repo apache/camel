@@ -23,18 +23,18 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
+ * Defines the <a href="http://activemq.apache.org/camel/http.html">HTTP Component</a>
+ *
  * @version $Revision$
  */
 public class HttpComponent extends DefaultComponent<HttpExchange> {
 	
-	CamelServlet camelServlet;
+	private CamelServlet camelServlet;
 	
 	/** 
 	 * Connects the URL specified on the endpoint to the specified processor.
 	 *  
-	 * @param endpoint
-	 * @param processor
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void connect(HttpConsumer consumer) throws Exception {
 		camelServlet.connect(consumer);
@@ -43,9 +43,7 @@ public class HttpComponent extends DefaultComponent<HttpExchange> {
 	/**
 	 * Disconnects the URL specified on the endpoint from the specified processor.
 	 * 
-	 * @param endpoint
-	 * @param processor
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void disconnect(HttpConsumer consumer) throws Exception {
 		camelServlet.disconnect(consumer);

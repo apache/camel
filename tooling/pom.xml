@@ -33,6 +33,7 @@
 
   <modules>
     <module>archetypes</module>
+    <module>camel-book</module>
     <module>maven</module>
   </modules>
 

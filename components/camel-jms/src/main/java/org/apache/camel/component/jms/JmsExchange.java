@@ -52,6 +52,11 @@ public class JmsExchange extends DefaultExchange {
     }
 
     @Override
+    public JmsMessage getOut(boolean lazyCreate) {
+        return (JmsMessage) super.getOut(lazyCreate);
+    }
+
+    @Override
     public JmsMessage getFault() {
         return (JmsMessage) super.getFault();
     }

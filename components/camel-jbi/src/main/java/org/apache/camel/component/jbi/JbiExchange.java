@@ -61,6 +61,11 @@ public class JbiExchange extends DefaultExchange {
     }
 
     @Override
+    public JbiMessage getOut(boolean lazyCreate) {
+        return (JbiMessage) super.getOut(lazyCreate);
+    }
+
+    @Override
     public JbiMessage getFault() {
         return (JbiMessage) super.getFault();
     }

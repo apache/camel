@@ -91,23 +91,6 @@
           </execution>
         </executions>
       </plugin>
-
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <childDelegation>false</childDelegation>
-          <useFile>true</useFile>
-          <includes>
-            <include>**/*Test.*</include>
-          </includes>
-          <excludes>
-            <exclude>**/PojoRouteTest.*</exclude>
-            <!-- TODO fixme ASAP -->
-            <exclude>**/ResequencerTest.*</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-
     </plugins>
   </build>
 

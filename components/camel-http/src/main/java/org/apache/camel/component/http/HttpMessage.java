@@ -18,9 +18,13 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.Enumeration;
+import java.io.IOException;
 
 /**
  * @version $Revision$
@@ -28,20 +32,42 @@ import java.util.Map;
 public class HttpMessage extends DefaultMessage {
     private HttpServletRequest request;
 
-    public HttpMessage() {
+
+    public HttpMessage(HttpExchange exchange, HttpServletRequest request) {
+        setExchange(exchange);
+        this.request = request;
+
+        // lets force a parse of the body and headers
+        getBody();
+        getHeaders();
     }
 
-    public HttpMessage(HttpServletRequest request) {
-        this.request = request;
+    @Override
+    public HttpExchange getExchange() {
+        return (HttpExchange) super.getExchange();
+    }
+
+    public HttpServletRequest getRequest() {
+        return request;
     }
 
     @Override
     protected Object createBody() {
-        return super.createBody();    /** TODO */
+        try {
+            return getExchange().getEndpoint().getBinding().parseBody(this);
+        }
+        catch (IOException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     @Override
-    protected Map<String, Object> createHeaders() {
-        return super.createHeaders();    /** TODO */
+    protected void populateInitialHeaders(Map<String, Object> map) {
+        Enumeration names = request.getHeaderNames();
+        while (names.hasMoreElements()) {
+            String name = (String) names.nextElement();
+            Object value = request.getHeader(name);
+            map.put(name, value);
+        }
     }
 }

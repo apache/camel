@@ -52,6 +52,11 @@ public class MailExchange extends DefaultExchange {
     }
 
     @Override
+    public MailMessage getOut(boolean lazyCreate) {
+        return (MailMessage) super.getOut(lazyCreate);
+    }
+
+    @Override
     public MailMessage getFault() {
         return (MailMessage) super.getFault();
     }

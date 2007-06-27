@@ -32,6 +32,8 @@ import org.apache.cxf.transport.local.LocalTransportFactory;
 import org.xmlsoap.schemas.wsdl.http.AddressType;
 
 /**
+ * Defines the <a href="http://activemq.apache.org/camel/cxf.html">CXF Component</a>
+
  * @version $Revision$
  */
 public class CxfComponent extends DefaultComponent<CxfExchange> {

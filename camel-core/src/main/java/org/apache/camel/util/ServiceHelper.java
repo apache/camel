@@ -37,10 +37,7 @@ public class ServiceHelper {
      */
     public static void startServices(Object... services) throws Exception {
         for (Object value : services) {
-            if (value instanceof Service) {
-                Service service = (Service) value;
-                service.start();
-            }
+            startService(value);
         }
     }
 
@@ -56,6 +53,15 @@ public class ServiceHelper {
         }
     }
 
+    public static void startService(Object value) throws Exception {
+        if (value instanceof Service) {
+            Service service = (Service) value;
+            service.start();
+        }
+        else if (value instanceof Collection) {
+            startServices((Collection) value);
+        }
+    }
 
     /**
      * Stops all of the given services, throwing the first exception caught

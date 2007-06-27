@@ -30,7 +30,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
 
 /**
- * Represents a HTTP based Endpoint
+ * Represents a <a href="http://activemq.apache.org/camel/http.html">HTTP endpoint</a>
  *
  * @version $Revision$
  */
@@ -46,8 +46,8 @@ public class HttpEndpoint extends DefaultEndpoint<HttpExchange> {
 		this.httpUri = new URI(uri);
     }
 
-    public Producer<HttpExchange> createProducer() throws Exception {
-    	throw new RuntimeCamelException("Not implemented.");
+    public HttpProducer createProducer() throws Exception {
+    	return new HttpProducer(this);
     }
 
     public Consumer<HttpExchange> createConsumer(Processor processor) throws Exception {
@@ -55,11 +55,11 @@ public class HttpEndpoint extends DefaultEndpoint<HttpExchange> {
     }
 
     public HttpExchange createExchange() {
-        return new HttpExchange(getContext());
+        return new HttpExchange(this);
     }
 
     public HttpExchange createExchange(HttpServletRequest request, HttpServletResponse response) {
-        return new HttpExchange(getContext(), request, response);
+        return new HttpExchange(this, request, response);
     }
 
     public HttpBinding getBinding() {

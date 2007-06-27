@@ -95,9 +95,16 @@ public class GenerateDocBookMojo extends AbstractMojo {
 	/**
 	 * Location of the output directory.
 	 * 
-	 * @parameter expression="${project.build.directory}/docbkx/source"
+	 * @parameter expression="${project.build.directory}/docbkx/docbkx-source"
 	 */
 	private String outputPath;
+	
+	/**
+	 * Location of the output directory for wiki source.
+	 * 
+	 * @parameter expression="${project.build.directory}/docbkx/wiki-source"
+	 */
+	private String wikiOutputPath;	
 
 	/**
 	 * @parameter expression="${title}"
@@ -109,6 +116,12 @@ public class GenerateDocBookMojo extends AbstractMojo {
 	 * @parameter expression="${subtitle}"
 	 */
 	private String subtitle;
+	
+	/**
+	 * @parameter expression="${mainFilename}" default-value="manual"
+	 * @required
+	 */
+	private String mainFilename;	
 
 	/**
 	 * @parameter expression="${version}" default-value="${project.version}"
@@ -123,27 +136,27 @@ public class GenerateDocBookMojo extends AbstractMojo {
 	/**
 	 * Location of image files.
 	 * 
-	 * @parameter expression="${project.build.directory}/docbkx/images"
+	 * @parameter expression="${project.build.directory}/site/book/images"
 	 *            
 	 */
 	private String imageLocation;
 
 	private String chapterId;
 
-	private String chapterTitle;
 
 	public void execute() throws MojoExecutionException {
 		File outputDir = new File(outputPath);
+		File wikiOutputDir = new File(wikiOutputPath);
 		File imageDir = new File(imageLocation);
 		if (!outputDir.exists()) {
 			outputDir.mkdirs();
 			imageDir.mkdirs();
+			wikiOutputDir.mkdirs();
 		}
 		this.createMainXML();
 
 		for (int i = 0; i < resources.length; ++i) {
 			this.setChapterId( removeExtension(resources[i]));
-			this.setChapterTitle( removeExtension(resources[i]));
 
 			process(resources[i]);
 		}
@@ -159,7 +172,9 @@ public class GenerateDocBookMojo extends AbstractMojo {
 	public void process(String resource) {
 
 		Tidy tidy = new Tidy();
-		ByteArrayOutputStream out;
+		ByteArrayOutputStream out = null;
+		BufferedOutputStream output = null;
+		BufferedOutputStream wikiOutput = null;
 
 		tidy.setXmlOut(true);
 		try {
@@ -184,14 +199,13 @@ public class GenerateDocBookMojo extends AbstractMojo {
 					// These attributes will be used by xsl to
 					Element element = (Element) node;
 					element.setAttribute("chapterId", chapterId);
-					element.setAttribute("chapterTitle", chapterTitle);
 					element.setAttribute("baseURL", baseURL);
-					element.setAttribute("imageLocation", "..\\images\\");
+					element.setAttribute("imageLocation", "../images/");
 
 					DOMSource source = new DOMSource(node);
 
 					 
-					BufferedOutputStream output = new BufferedOutputStream(
+					output = new BufferedOutputStream(
 							new FileOutputStream(outputPath + File.separator
 									+ removeExtension(resource) + ".xml"));
 					StreamResult result = new StreamResult(output);
@@ -201,6 +215,14 @@ public class GenerateDocBookMojo extends AbstractMojo {
 							.newTransformer(new StreamSource(xslFile));
 					transformer.transform(source, result);
 
+					// generate the wiki source for debugging
+					wikiOutput = new BufferedOutputStream(
+							new FileOutputStream(wikiOutputPath + File.separator
+									+ removeExtension(resource) + ".html"));
+					result = new StreamResult(wikiOutput);
+					transformer = tFactory.newTransformer();
+			        transformer.transform(source, result);					
+
 					break;
 				}
 
@@ -208,6 +230,14 @@ public class GenerateDocBookMojo extends AbstractMojo {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			try {
+				if(output != null)
+					output.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -219,7 +249,7 @@ public class GenerateDocBookMojo extends AbstractMojo {
 		try {
 
 			PrintWriter out = new PrintWriter(new FileWriter(outputPath
-					+ File.separator + title + ".xml"));
+					+ File.separator + mainFilename + ".xml"));
 
 			out
 					.println("<!DOCTYPE book PUBLIC \"-//OASIS//DTD DocBook XML V4.4//EN\" \"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd\" ");
@@ -370,14 +400,7 @@ public class GenerateDocBookMojo extends AbstractMojo {
 		this.chapterId = chapterId;
 	}
 
-	public String getChapterTitle() {
-		return chapterTitle;
-	}
 
-	public void setChapterTitle(String chapterTitle) {
-		this.chapterTitle = chapterTitle;
-	}
-	
 	public String removeExtension(String resource) {
 		int index = resource.indexOf('.');
 		return resource.substring(0, index);		

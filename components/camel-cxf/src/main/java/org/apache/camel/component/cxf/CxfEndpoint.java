@@ -27,7 +27,7 @@ import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.local.LocalTransportFactory;
 
 /**
- * The endpoint in the service engine
+ * Defines the <a href="http://activemq.apache.org/camel/cxf.html">CXF Endpoint</a>
  *
  * @version $Revision$
  */

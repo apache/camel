@@ -17,6 +17,9 @@
  */
 package org.apache.camel.component.http;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+
 /**
  * @version $Revision$
  */
@@ -27,5 +30,14 @@ public class HttpBinding {
      */
     public void writeResponse(HttpExchange exchange) {
         /** TODO */
+    }
+
+    /**
+     * Parses the body from a HTTP message
+     */
+    public Object parseBody(HttpMessage httpMessage) throws IOException {
+        // lets assume the body is a reader
+        HttpServletRequest request = httpMessage.getRequest();
+        return request.getReader();
     }
 }

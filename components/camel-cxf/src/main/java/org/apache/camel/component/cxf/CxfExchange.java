@@ -73,6 +73,11 @@ public class CxfExchange extends DefaultExchange {
     }
 
     @Override
+    public CxfMessage getOut(boolean lazyCreate) {
+        return (CxfMessage) super.getOut(lazyCreate);
+    }
+
+    @Override
     public CxfMessage getFault() {
         return (CxfMessage) super.getFault();
     }

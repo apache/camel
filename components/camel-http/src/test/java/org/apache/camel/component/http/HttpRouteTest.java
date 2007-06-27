@@ -17,51 +17,63 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.InputStream;
-import java.net.URL;
-
-import junit.framework.TestCase;
-
-import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @version $Revision: 520220 $
  */
-public class HttpRouteTest extends TestCase {
-	
-    public void testPojoRoutes() throws Exception {    	
-        CamelContext camelContext = new DefaultCamelContext();
-        
-        // START SNIPPET: register
-        JettyHttpComponent component = new JettyHttpComponent();
-        camelContext.addComponent("http", component);
-        // END SNIPPET: register
-        
-        // START SNIPPET: route
-        // lets add simple route
-        camelContext.addRoutes(new RouteBuilder() {
-            public void configure() {
-                from("http://0.0.0.0:8080/test").to("mock:a");
-            }
-        });
-        // END SNIPPET: route
+public class HttpRouteTest extends ContextTestSupport {
+    protected String expectedBody = "<hello>world!</hello>";
 
-        MockEndpoint mockA = (MockEndpoint) camelContext.getEndpoint("mock:a");
-        mockA.expectedMessageCount(1);
-        
-        camelContext.start();
-        
-        // START SNIPPET: invoke
-        URL url = new URL("http://localhost:8080/test");
-        InputStream is = url.openConnection().getInputStream();
-        System.out.println("Content: "+is);
-        // END SNIPPET: invoke
-        
-        mockA.assertIsSatisfied();
-        
-        camelContext.stop();
+    public void testPojoRoutes() throws Exception {
+        MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
+        mockEndpoint.expectedMessageCount(1);
+
+        invokeHttpEndpoint();
+
+        mockEndpoint.assertIsSatisfied();
+        List<Exchange> list = mockEndpoint.getReceivedExchanges();
+        Exchange exchange = list.get(0);
+        assertNotNull("exchange", exchange);
+
+        Message in = exchange.getIn();
+        assertNotNull("in", in);
+
+        Map<String,Object> headers = in.getHeaders();
+        String actualBody = in.getBody(String.class);
+
+        log.info("Headers: " + headers);
+        log.info("Received body: " + actualBody);
+
+        assertEquals("Body", expectedBody, actualBody);
+        assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
+    }
+
+    protected void invokeHttpEndpoint() throws IOException {
+        template.sendBody("http://localhost:8080/test", expectedBody, "Content-Type", "application/xml");
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() {
+                from("http://localhost:8080/test").convertBodyTo(String.class).to("mock:a");
+            }
+        };
     }
 }
