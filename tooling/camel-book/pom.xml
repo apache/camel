@@ -128,7 +128,7 @@
 
         <configuration>
           <foCustomization>${basedir}/src/styles/docbook-fo.xsl</foCustomization>
-          <includes>Camel.xml</includes>
+          <includes>manual.xml</includes>
 
           <!-- lets use separate pages per chapter for HTML -->
           <chunkedOutput>true</chunkedOutput>
