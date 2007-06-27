@@ -15,13 +15,15 @@ package org.apache.camel.component.jbi;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateProducerException;
+import org.apache.camel.Processor;
+import org.apache.servicemix.common.BaseServiceUnitManager;
 import org.apache.servicemix.common.DefaultComponent;
+import org.apache.servicemix.common.Deployer;
+import org.apache.servicemix.jbi.resolver.URIResolver;
 import org.apache.servicemix.jbi.util.IntrospectionSupport;
 import org.apache.servicemix.jbi.util.URISupport;
-import org.apache.servicemix.jbi.resolver.URIResolver;
 
 import javax.jbi.servicedesc.ServiceEndpoint;
 import javax.xml.namespace.QName;
@@ -42,6 +44,14 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Exc
     private JbiBinding binding;
     private CamelContext camelContext;
     private ScheduledExecutorService executorService;
+
+    /* (non-Javadoc)
+     * @see org.servicemix.common.BaseComponent#createServiceUnitManager()
+     */
+    public BaseServiceUnitManager createServiceUnitManager() {
+        Deployer[] deployers = new Deployer[]{new CamelSpringDeployer(this)};
+        return new BaseServiceUnitManager(this, deployers);
+    }
 
     /**
      * @return List of endpoints
@@ -66,7 +76,6 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Exc
     protected Class[] getEndpointClasses() {
         return new Class[]{CamelJbiEndpoint.class};
     }
-
 
     /**
      * @return the binding
@@ -101,13 +110,7 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Exc
         Map map = URISupport.parseQuery(uri.getQuery());
         String camelUri = uri.getSchemeSpecificPart();
         Endpoint camelEndpoint = getCamelContext().getEndpoint(camelUri);
-        Processor processor = null;
-        try {
-            processor = camelEndpoint.createProducer();
-        }
-        catch (Exception e) {
-            throw new FailedToCreateProducerException(camelEndpoint, e);
-        }
+        Processor processor = createCamelProcessor(camelEndpoint);
         CamelJbiEndpoint endpoint = new CamelJbiEndpoint(getServiceUnit(), camelEndpoint, getBinding(), processor);
 
         IntrospectionSupport.setProperties(endpoint, map);
@@ -147,7 +150,15 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Exc
     /**
      * Returns a JBI endpoint created for the given Camel endpoint
      */
-    public CamelJbiEndpoint activateJbiEndpoint(JbiEndpoint camelEndpoint, Processor processor) throws Exception {
+    public CamelJbiEndpoint activateJbiEndpoint(Endpoint camelEndpoint, Processor processor) throws Exception {
+        CamelJbiEndpoint jbiEndpoint = createJbiEndpointFromCamel(camelEndpoint, processor);
+
+        // the following method will activate the new dynamic JBI endpoint
+        addEndpoint(jbiEndpoint);
+        return jbiEndpoint;
+    }
+
+    protected CamelJbiEndpoint createJbiEndpointFromCamel(Endpoint camelEndpoint, Processor processor) {
         CamelJbiEndpoint jbiEndpoint;
         String endpointUri = camelEndpoint.getEndpointUri();
         if (endpointUri.startsWith("endpoint:")) {
@@ -167,9 +178,25 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Exc
         else {
             jbiEndpoint = new CamelJbiEndpoint(getServiceUnit(), camelEndpoint, getBinding(), processor);
         }
-
-        // the following method will activate the new dynamic JBI endpoint
-        addEndpoint(jbiEndpoint);
         return jbiEndpoint;
+    }
+
+    /**
+     * Returns a JBI endpoint created for the given Camel endpoint
+     */
+    public CamelJbiEndpoint createJbiEndpointFromCamel(Endpoint camelEndpoint) {
+        Processor processor = createCamelProcessor(camelEndpoint);
+        return createJbiEndpointFromCamel(camelEndpoint, processor);
+    }
+
+    protected Processor createCamelProcessor(Endpoint camelEndpoint) {
+        Processor processor = null;
+        try {
+            processor = camelEndpoint.createProducer();
+        }
+        catch (Exception e) {
+            throw new FailedToCreateProducerException(camelEndpoint, e);
+        }
+        return processor;
     }
 }

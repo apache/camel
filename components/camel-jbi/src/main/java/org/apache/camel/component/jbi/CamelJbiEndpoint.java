@@ -14,7 +14,7 @@ package org.apache.camel.component.jbi;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.Exchange;
+import org.apache.camel.FailedToCreateProducerException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.servicemix.common.ServiceUnit;
@@ -30,21 +30,22 @@ import javax.xml.namespace.QName;
  * @version $Revision: 426415 $
  */
 public class CamelJbiEndpoint extends ProviderEndpoint {
+    public static final QName SERVICE_NAME = new QName("http://camel.apache.org/service", "CamelEndpointComponent");
+
     private static final transient Log log = LogFactory.getLog(CamelJbiEndpoint.class);
-    private static final QName SERVICE_NAME = new QName("http://camel.apache.org/service", "CamelEndpointComponent");
     private Endpoint camelEndpoint;
     private JbiBinding binding;
-    private Processor processor;
+    private Processor camelProcessor;
 
-    public CamelJbiEndpoint(ServiceUnit serviceUnit, QName service, String endpoint, Endpoint camelEndpoint, JbiBinding binding, Processor processor) {
+    public CamelJbiEndpoint(ServiceUnit serviceUnit, QName service, String endpoint, Endpoint camelEndpoint, JbiBinding binding, Processor camelProcessor) {
         super(serviceUnit, service, endpoint);
-        this.processor = processor;
+        this.camelProcessor = camelProcessor;
         this.camelEndpoint = camelEndpoint;
         this.binding = binding;
     }
 
-    public CamelJbiEndpoint(ServiceUnit serviceUnit, Endpoint camelEndpoint, JbiBinding binding, Processor processor) {
-        this(serviceUnit, SERVICE_NAME, camelEndpoint.getEndpointUri(), camelEndpoint, binding, processor);
+    public CamelJbiEndpoint(ServiceUnit serviceUnit, Endpoint camelEndpoint, JbiBinding binding, Processor camelProcesso) {
+        this(serviceUnit, SERVICE_NAME, camelEndpoint.getEndpointUri(), camelEndpoint, binding, camelProcesso);
     }
 
     protected void processInOnly(MessageExchange exchange, NormalizedMessage in) throws Exception {
@@ -52,7 +53,7 @@ public class CamelJbiEndpoint extends ProviderEndpoint {
             log.debug("Received exchange: " + exchange);
         }
         JbiExchange camelExchange = new JbiExchange(camelEndpoint.getContext(), binding, exchange);
-        processor.process(camelExchange);
+        camelProcessor.process(camelExchange);
     }
 
     protected void processInOut(MessageExchange exchange, NormalizedMessage in, NormalizedMessage out) throws Exception {
