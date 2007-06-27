@@ -57,11 +57,17 @@
       <artifactId>servicemix-common</artifactId>
       <version>${servicemix-version}</version>
     </dependency>
+
+    <!-- lets upgrade the versions -->
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-server</artifactId>
       <version>3.1-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring</artifactId>
+    </dependency>    
 
     <!-- testing -->
     <dependency>
