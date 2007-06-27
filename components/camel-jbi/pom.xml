@@ -29,48 +29,47 @@
   </parent>
 
   <artifactId>camel-jbi</artifactId>
+  <packaging>jbi-component</packaging>
   <name>Camel :: JBI</name>
   <description>Camel JBI support</description>
 
+  <properties>
+    <servicemix-version>3.2-incubating-SNAPSHOT</servicemix-version>
+  </properties>
   <dependencies>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-spring</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.servicemix</groupId>
+      <artifactId>servicemix-jbi</artifactId>
+      <version>${servicemix-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.servicemix</groupId>
+      <artifactId>servicemix-core</artifactId>
+      <version>${servicemix-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.servicemix</groupId>
+      <artifactId>servicemix-common</artifactId>
+      <version>${servicemix-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-server</artifactId>
+      <version>3.1-SNAPSHOT</version>
+    </dependency>
+
+    <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
       <type>test-jar</type>
-      <optional>true</optional>
       <scope>test</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.apache.servicemix</groupId>
-      <artifactId>servicemix-jbi</artifactId>
-      <version>3.2-incubating-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.servicemix</groupId>
-      <artifactId>servicemix-core</artifactId>
-      <version>3.2-incubating-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.servicemix</groupId>
-      <artifactId>servicemix-common</artifactId>
-      <version>3.2-incubating-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging-api</artifactId>
-      <optional>false</optional>
-    </dependency>
-
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -80,6 +79,17 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.servicemix.tooling</groupId>
+        <artifactId>jbi-maven-plugin</artifactId>
+        <version>${servicemix-version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <type>service-engine</type>
+          <component>org.apache.camel.component.jbi.CamelJbiComponent</component>
+        </configuration>
+      </plugin>
+
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
