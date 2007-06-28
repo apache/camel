@@ -338,6 +338,7 @@
       <xsl:value-of select="$body.font.small * 1.0"/>
       <xsl:text>pt</xsl:text>
     </xsl:attribute>
+	<xsl:attribute name="wrap-option">wrap</xsl:attribute>
   </xsl:attribute-set>
 
   <xsl:attribute-set name="verbatim.properties">
@@ -353,7 +354,7 @@
     <xsl:attribute name="padding-bottom">0.5em</xsl:attribute>
     <xsl:attribute name="margin-left">0.5em</xsl:attribute>
     <xsl:attribute name="margin-right">0.5em</xsl:attribute>
-  </xsl:attribute-set>
+   </xsl:attribute-set>
 
   <!-- Shade (background) programlistings -->
   <xsl:param name="shade.verbatim">1</xsl:param>
