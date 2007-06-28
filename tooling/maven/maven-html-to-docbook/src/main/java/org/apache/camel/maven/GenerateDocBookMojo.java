@@ -87,8 +87,7 @@ public class GenerateDocBookMojo extends AbstractMojo {
 	 * Location of the xsl file.
 	 * 
 	 * @parameter expression="${configDirectory}"
-	 *            default-value="${basedir}/src/styles/docbook.xsl"
-	 * @required
+	 *           
 	 */
 	private String xslFile;
 
@@ -175,6 +174,7 @@ public class GenerateDocBookMojo extends AbstractMojo {
 		ByteArrayOutputStream out = null;
 		BufferedOutputStream output = null;
 		BufferedOutputStream wikiOutput = null;
+		StreamSource streamSource = null;
 
 		tidy.setXmlOut(true);
 		try {
@@ -211,9 +211,17 @@ public class GenerateDocBookMojo extends AbstractMojo {
 					StreamResult result = new StreamResult(output);
 					TransformerFactory tFactory = TransformerFactory
 							.newInstance();
+					if(xslFile != null && !xslFile.trim().equals("")) {
+						streamSource = new StreamSource(xslFile);
+					}else {
+						InputStream xslStream = getClass().getResourceAsStream("/docbook.xsl");
+						streamSource = new StreamSource(xslStream);
+					}
+					
 					Transformer transformer = tFactory
-							.newTransformer(new StreamSource(xslFile));
+							.newTransformer(streamSource);
 					transformer.transform(source, result);
+
 
 					// generate the wiki source for debugging
 					wikiOutput = new BufferedOutputStream(
