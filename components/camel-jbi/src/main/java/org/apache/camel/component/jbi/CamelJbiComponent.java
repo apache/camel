@@ -199,4 +199,17 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Exc
         }
         return processor;
     }
+
+    /**
+     * Should we expose the Camel JBI onto the NMR.
+     *
+     * We may wish to add some policy stuff etc.
+     *
+     * @param endpoint the camel endpoint
+     * @return true if the endpoint should be exposed in the NMR
+     */
+    public boolean isEndpointExposedOnNmr(Endpoint endpoint) {
+        // by default lets not expose JBI endpoints since we already auto-expose them
+        return !(endpoint instanceof JbiEndpoint);
+    }
 }

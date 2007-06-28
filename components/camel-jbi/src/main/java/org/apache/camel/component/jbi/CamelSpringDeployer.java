@@ -17,17 +17,17 @@
  */
 package org.apache.camel.component.jbi;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.spring.SpringCamelContext;
 import org.apache.servicemix.common.xbean.AbstractXBeanDeployer;
 import org.apache.xbean.kernel.Kernel;
 import org.apache.xbean.server.spring.loader.PureSpringLoader;
 import org.apache.xbean.server.spring.loader.SpringLoader;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.Endpoint;
 import org.springframework.context.ApplicationContext;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * A deployer of the spring XML file
@@ -57,10 +57,13 @@ public class CamelSpringDeployer extends AbstractXBeanDeployer {
             // now lets iterate through all the endpoints
             Collection<Endpoint> endpoints = camelContext.getSingletonEndpoints();
             for (Endpoint endpoint : endpoints) {
-                services.add(component.createJbiEndpointFromCamel(endpoint));
+                if (component.isEndpointExposedOnNmr(endpoint)) {
+                    services.add(component.createJbiEndpointFromCamel(endpoint));
+                }
             }
             return services;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
