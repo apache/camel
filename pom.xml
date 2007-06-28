@@ -564,6 +564,7 @@
       </plugins>
     </pluginManagement>
     <plugins>
+<!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-one-plugin</artifactId>
@@ -581,6 +582,7 @@
           </execution>
         </executions>
       </plugin>
+-->
 
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
