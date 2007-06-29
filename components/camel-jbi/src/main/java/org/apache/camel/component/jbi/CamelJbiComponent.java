@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.servicemix.common.BaseServiceUnitManager;
 import org.apache.servicemix.common.DefaultComponent;
 import org.apache.servicemix.common.Deployer;
+import org.apache.servicemix.id.IdGenerator;
 import org.apache.servicemix.jbi.resolver.URIResolver;
 import org.apache.servicemix.jbi.util.IntrospectionSupport;
 import org.apache.servicemix.jbi.util.URISupport;
@@ -44,10 +45,12 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Exc
     private JbiBinding binding;
     private CamelContext camelContext;
     private ScheduledExecutorService executorService;
+    private IdGenerator idGenerator;
+    protected CamelSpringDeployer deployer;
 
     /* (non-Javadoc)
-     * @see org.servicemix.common.BaseComponent#createServiceUnitManager()
-     */
+    * @see org.servicemix.common.BaseComponent#createServiceUnitManager()
+    */
     public BaseServiceUnitManager createServiceUnitManager() {
         Deployer[] deployers = new Deployer[]{new CamelSpringDeployer(this)};
         return new BaseServiceUnitManager(this, deployers);
@@ -59,12 +62,7 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Exc
      */
     @Override
     protected List<CamelJbiEndpoint> getConfiguredEndpoints() {
-        // TODO need to register to the context for new endpoints...
         List<CamelJbiEndpoint> answer = new ArrayList<CamelJbiEndpoint>();
-//        Collection<Endpoint> endpoints = camelContext.getEndpoints();
-//        for (Endpoint endpoint : endpoints) {
-//          answer.add(createJbiEndpoint(endpoint));
-//        }
         return answer;
     }
 
@@ -126,7 +124,6 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Exc
     public Endpoint<Exchange> createEndpoint(String uri) {
         if (uri.startsWith("jbi:")) {
             uri = uri.substring("jbi:".length());
-
             return new JbiEndpoint(this, uri);
         }
         return null;
@@ -148,37 +145,81 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Exc
     }
 
     /**
-     * Returns a JBI endpoint created for the given Camel endpoint
+     * Activating a JBI endpoint created by a camel consumer.
+     *
+     * @returns a JBI endpoint created for the given Camel endpoint
      */
     public CamelJbiEndpoint activateJbiEndpoint(Endpoint camelEndpoint, Processor processor) throws Exception {
         CamelJbiEndpoint jbiEndpoint = createJbiEndpointFromCamel(camelEndpoint, processor);
 
         // the following method will activate the new dynamic JBI endpoint
-        addEndpoint(jbiEndpoint);
+        if (deployer != null) {
+            // lets add this to the current service unit being deployed
+            deployer.addService(jbiEndpoint);
+        }
+        else {
+            addEndpoint(jbiEndpoint);
+        }
         return jbiEndpoint;
+    }
+
+    public void deactivateJbiEndpoint(CamelJbiEndpoint jbiEndpoint) throws Exception {
+        // this will be done by the ServiceUnit
+        //jbiEndpoint.deactivate();
     }
 
     protected CamelJbiEndpoint createJbiEndpointFromCamel(Endpoint camelEndpoint, Processor processor) {
         CamelJbiEndpoint jbiEndpoint;
         String endpointUri = camelEndpoint.getEndpointUri();
-        if (endpointUri.startsWith("endpoint:")) {
-            // lets decode "service:serviceNamespace:serviceName:endpointName
-            String uri = endpointUri.substring("endpoint:".length());
-            String[] parts = new String[0];
-            try {
-                parts = URIResolver.split3(uri);
+        if (camelEndpoint instanceof JbiEndpoint) {
+            QName service = null;
+            String endpoint = null;
+            if (endpointUri.startsWith("name:")) {
+                endpoint = endpointUri.substring("endpoint:".length());
+                service = CamelJbiEndpoint.SERVICE_NAME;
             }
-            catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Expected syntax endpoint:[serviceNamespace]:[serviceName]:[endpointName] but was given: " + endpointUri + ". Cause: " + e, e);
+            else if (endpointUri.startsWith("endpoint:")) {
+                String uri = endpointUri.substring("endpoint:".length());
+                // lets decode "serviceNamespace sep serviceName sep endpointName
+                String[] parts;
+                try {
+                    parts = URIResolver.split3(uri);
+                }
+                catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("Expected syntax jbi:endpoint:[serviceNamespace][sep][serviceName][sep][endpointName] where sep = '/' or ':' depending on the serviceNamespace, but was given: " + endpointUri + ". Cause: " + e, e);
+                }
+                service = new QName(parts[0], parts[1]);
+                endpoint = parts[2];
             }
-            QName service = new QName(parts[0], parts[1]);
-            String endpoint = parts[2];
+            else if (endpointUri.startsWith("service:")) {
+                String uri = endpointUri.substring("service:".length());
+                // lets decode "serviceNamespace sep serviceName
+                String[] parts;
+                try {
+                    parts = URIResolver.split2(uri);
+                }
+                catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("Expected syntax jbi:endpoint:[serviceNamespace][sep][serviceName] where sep = '/' or ':' depending on the serviceNamespace, but was given: " + endpointUri + ". Cause: " + e, e);
+                }
+                service = new QName(parts[0], parts[1]);
+                endpoint = createEndpointName();
+            }
+            else {
+                throw new IllegalArgumentException("Expected syntax jbi:endpoint:[serviceNamespace][sep][serviceName][sep][endpointName] or  jbi:service:[serviceNamespace][sep][serviceName or jbi:name:[endpointName] but was given: " + endpointUri);
+            }
             jbiEndpoint = new CamelJbiEndpoint(getServiceUnit(), service, endpoint, camelEndpoint, getBinding(), processor);
         }
         else {
             jbiEndpoint = new CamelJbiEndpoint(getServiceUnit(), camelEndpoint, getBinding(), processor);
         }
         return jbiEndpoint;
+    }
+
+    protected String createEndpointName() {
+        if (idGenerator == null) {
+            idGenerator = new IdGenerator("camel");
+        }
+        return idGenerator.generateSanitizedId();
     }
 
     /**
@@ -202,14 +243,14 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Exc
 
     /**
      * Should we expose the Camel JBI onto the NMR.
-     *
+     * <p/>
      * We may wish to add some policy stuff etc.
      *
      * @param endpoint the camel endpoint
      * @return true if the endpoint should be exposed in the NMR
      */
     public boolean isEndpointExposedOnNmr(Endpoint endpoint) {
-        // by default lets not expose JBI endpoints since we already auto-expose them
+        // TODO we should only expose consuming endpoints
         return !(endpoint instanceof JbiEndpoint);
     }
 }
