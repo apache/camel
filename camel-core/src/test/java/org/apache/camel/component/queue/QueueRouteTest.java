@@ -40,10 +40,10 @@ public class QueueRouteTest extends TestSupport {
     public void testSedaQueue() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
-        CamelContext container = new DefaultCamelContext();
+        CamelContext context = new DefaultCamelContext();
 
         // lets add some routes
-        container.addRoutes(new RouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("queue:test.a").to("queue:test.b");
                 from("queue:test.b").process(new Processor() {
@@ -56,10 +56,10 @@ public class QueueRouteTest extends TestSupport {
         });
 
         
-        container.start();
+        context.start();
         
         // now lets fire in a message
-        Endpoint<Exchange> endpoint = container.getEndpoint("queue:test.a");
+        Endpoint<Exchange> endpoint = context.getEndpoint("queue:test.a");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader("cheese", 123);
 
@@ -70,17 +70,17 @@ public class QueueRouteTest extends TestSupport {
         boolean received = latch.await(5, TimeUnit.SECONDS);
         assertTrue("Did not receive the message!", received);
 
-        container.stop();
+        context.stop();
     }
     
     
-    public void xtestThatShowsEndpointResolutionIsNotConsistent() throws Exception {
+    public void testThatShowsEndpointResolutionIsNotConsistent() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
-        CamelContext container = new DefaultCamelContext();
+        CamelContext context = new DefaultCamelContext();
         
         // lets add some routes
-        container.addRoutes(new RouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("queue:test.a").to("queue:test.b");
                 from("queue:test.b").process(new Processor() {
@@ -93,10 +93,10 @@ public class QueueRouteTest extends TestSupport {
         });
 
         
-        container.start();
+        context.start();
         
         // now lets fire in a message
-        Endpoint<Exchange> endpoint = container.getComponent("queue").createEndpoint("queue:test.a");
+        Endpoint<Exchange> endpoint = context.getEndpoint("queue:test.a");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader("cheese", 123);
 
@@ -107,7 +107,7 @@ public class QueueRouteTest extends TestSupport {
         boolean received = latch.await(5, TimeUnit.SECONDS);
         assertTrue("Did not receive the message!", received);
 
-        container.stop();
+        context.stop();
     }
     
 }

@@ -28,8 +28,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Represents the component that manages {@link QueueEndpoint}.  It holds the 
- * list of named queues that queue endpoints reference.
+ * An implementation of the <a href="http://activemq.apache.org/camel/queue.html">Queue components</a>
+ * for asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
  *
  * @org.apache.xbean.XBean
  * @version $Revision: 519973 $

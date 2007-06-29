@@ -22,7 +22,10 @@
 The <a href="http://activemq.apache.org/camel/queue.html">Queue Component</a> for asynchronous
 <a href="http://www.eecs.harvard.edu/~mdw/proj/seda/">SEDA</a> exchanges on a
 <a href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/BlockingQueue.html">BlockingQueue</a>
-within a single CamelContext
+within the current JVM; so across CamelContext instances. Note that this communication can only take place
+between ClassLoaders which share the same camel-core.jar. So to communicate across web applications you
+need to put camel-core.jar on the system/boot classpath.
+
 
 </body>
 </html>

@@ -22,13 +22,14 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Component;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 
 /**
- * Represents a queue endpoint that uses a {@link BlockingQueue}
- * object to process inbound exchanges.
+ * An implementation of the <a href="http://activemq.apache.org/camel/queue.html">Queue components</a>
+ * for asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
  *
  * @org.apache.xbean.XBean
  * @version $Revision: 519973 $
@@ -36,9 +37,13 @@ import org.apache.camel.impl.DefaultProducer;
 public class QueueEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     private BlockingQueue<E> queue;
 
+    public QueueEndpoint(String endpointUri, Component component, BlockingQueue<E> queue) {
+        super(endpointUri, component);
+        this.queue = queue;
+    }
+
     public QueueEndpoint(String uri, QueueComponent<E> component) {
-        super(uri, component);
-        this.queue = component.createQueue();
+        this(uri, component, component.createQueue());
     }
 
     public Producer<E> createProducer() throws Exception {
