@@ -30,7 +30,7 @@
   -->
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
-      <from uri="jbi:service:http://foo.bar.org/myService"/>
+      <from uri="jbi:name:cheese"/>
       <to uri="queue:b"/>
     </route>
   </camelContext>

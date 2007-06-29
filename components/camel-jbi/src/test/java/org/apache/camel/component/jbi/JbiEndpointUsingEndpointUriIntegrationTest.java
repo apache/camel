@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
 /**
  * @version $Revision: 1.1 $
  */
-public class CamelJbiEndpointIntegrationTest extends IntegrationTest {
+public class JbiEndpointUsingEndpointUriIntegrationTest extends NonJbiCamelEndpointsIntegrationTest {
     /*
     * @see TestCase#setUp()
     */

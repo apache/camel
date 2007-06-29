@@ -175,7 +175,7 @@ public class CamelJbiComponent extends DefaultComponent implements Component<Exc
             QName service = null;
             String endpoint = null;
             if (endpointUri.startsWith("name:")) {
-                endpoint = endpointUri.substring("endpoint:".length());
+                endpoint = endpointUri.substring("name:".length());
                 service = CamelJbiEndpoint.SERVICE_NAME;
             }
             else if (endpointUri.startsWith("endpoint:")) {

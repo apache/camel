@@ -30,7 +30,7 @@ import javax.xml.namespace.QName;
  * @version $Revision: 426415 $
  */
 public class CamelJbiEndpoint extends ProviderEndpoint {
-    public static final QName SERVICE_NAME = new QName("http://camel.apache.org/service", "CamelEndpointComponent");
+    public static final QName SERVICE_NAME = new QName("http://activemq.apache.org/camel/schema/jbi", "endpoint");
 
     private static final transient Log log = LogFactory.getLog(CamelJbiEndpoint.class);
     private Endpoint camelEndpoint;
