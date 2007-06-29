@@ -43,10 +43,10 @@ public class JbiEndpoint extends DefaultEndpoint<Exchange> {
 
     public Producer<Exchange> createProducer() throws Exception {
         return new DefaultProducer<Exchange>(this) {
-		    public void process(Exchange exchange) throws Exception {
-		        toJbiProcessor.process(exchange);
-		    }
-		};
+            public void process(Exchange exchange) throws Exception {
+                toJbiProcessor.process(exchange);
+            }
+        };
     }
 
     public Consumer<Exchange> createConsumer(final Processor processor) throws Exception {
@@ -61,11 +61,9 @@ public class JbiEndpoint extends DefaultEndpoint<Exchange> {
 
             @Override
             protected void doStop() throws Exception {
-/*
                 if (jbiEndpoint != null) {
-                    jbiEndpoint.deactivate();
+                    jbiComponent.deactivateJbiEndpoint(jbiEndpoint);
                 }
-*/
                 super.doStop();
             }
         };
@@ -79,9 +77,8 @@ public class JbiEndpoint extends DefaultEndpoint<Exchange> {
     public JbiBinding getBinding() {
         return jbiComponent.getBinding();
     }
-    
-	public boolean isSingleton() {
-		return true;
-	}
 
+    public boolean isSingleton() {
+        return true;
+    }
 }

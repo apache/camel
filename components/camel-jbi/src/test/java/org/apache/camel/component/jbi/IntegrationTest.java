@@ -18,25 +18,75 @@
 package org.apache.camel.component.jbi;
 
 import junit.framework.TestCase;
-import org.apache.servicemix.jbi.container.JBIContainer;
-import org.apache.servicemix.client.ServiceMixClient;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.servicemix.client.DefaultServiceMixClient;
+import org.apache.servicemix.client.ServiceMixClient;
+import org.apache.servicemix.jbi.container.JBIContainer;
 
 import javax.jbi.messaging.InOut;
+import javax.jbi.messaging.MessageExchange;
 import javax.jbi.messaging.MessagingException;
 import javax.jbi.servicedesc.ServiceEndpoint;
-import javax.xml.namespace.QName;
 import java.io.File;
-import java.net.URL;
 import java.net.URI;
+import java.net.URL;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class IntegrationTest extends TestCase {
+    private static final transient Log log = LogFactory.getLog(IntegrationTest.class);
+    protected String suName = "su1";
     protected JBIContainer container = new JBIContainer();
-
     private File tempRootDir;
+
+    public void testComponentInstallation() throws Exception {
+        String serviceUnitConfiguration = suName + "-src/camel-context.xml";
+
+        CamelJbiComponent component = new CamelJbiComponent();
+        container.activateComponent(component, "#ServiceMixComponent#");
+        URL url = getClass().getResource(serviceUnitConfiguration);
+        File path = new File(new URI(url.toString()));
+        path = path.getParentFile();
+        ServiceMixClient client = new DefaultServiceMixClient(container);
+
+        try {
+            for (int i = 0; i < 2; i++) {
+                log.info("Loop counter: " + i);
+
+                // Deploy and start su
+                component.getServiceUnitManager().deploy(suName, path.getAbsolutePath());
+                component.getServiceUnitManager().init(suName, path.getAbsolutePath());
+                component.getServiceUnitManager().start(suName);
+
+                // Send message
+                MessageExchange exchange = createExchange(client);
+                configureExchange(client, exchange);
+                client.send(exchange);
+
+                // Stop and undeploy
+                component.getServiceUnitManager().stop(suName);
+                component.getServiceUnitManager().shutDown(suName);
+                component.getServiceUnitManager().undeploy(suName, path.getAbsolutePath());
+
+                // Send message
+                exchange = createExchange(client);
+                try {
+                    configureExchange(client, exchange);
+                    client.send(exchange);
+                    fail("Should have failed to send to a no longer deployed component");
+                }
+                catch (Throwable e) {
+                    log.debug("Caught expected exception as the component is undeployed: " + e, e);
+                }
+            }
+        }
+        catch (Exception e) {
+            log.error("Caught: " + e, e);
+            throw e;
+        }
+    }
 
     /*
      * @see TestCase#setUp()
@@ -62,57 +112,25 @@ public class IntegrationTest extends TestCase {
         container.start();
     }
 
-    public void testComponentInstallation() throws Exception {
-        CamelJbiComponent component = new CamelJbiComponent();
-        container.activateComponent(component, "#ServiceMixComponent#");
-        URL url = getClass().getResource("su1-src/camel-context.xml");
-        File path = new File(new URI(url.toString()));
-        path = path.getParentFile();
-        ServiceMixClient client = new DefaultServiceMixClient(container);
-
-        for (int i = 0; i < 2; i++) {
-            // Deploy and start su
-            component.getServiceUnitManager().deploy("su1", path.getAbsolutePath());
-            component.getServiceUnitManager().init("su1", path.getAbsolutePath());
-            component.getServiceUnitManager().start("su1");
-
-            // Send message
-            InOut inout = client.createInOutExchange();
-            ServiceEndpoint endpoint = client.getContext().getEndpoint(CamelJbiEndpoint.SERVICE_NAME, "queue:a");
-
-            //QName serviceQName = new QName("http://servicemix.apache.org/demo/", "chained");
-            //QName serviceQName = new QName("queue:a", "endpoint");
-            //inout.setService(serviceQName);
-            inout.setEndpoint(endpoint);
-            client.send(inout);
-
-            // Stop and undeploy
-            component.getServiceUnitManager().stop("su1");
-            component.getServiceUnitManager().shutDown("su1");
-            component.getServiceUnitManager().undeploy("su1", path.getAbsolutePath());
-
-            // Send message
-            inout = client.createInOutExchange();
-            //inout.setService(serviceQName);
-            inout.setEndpoint(endpoint);
-            try {
-                client.send(inout);
-            } catch (MessagingException e) {
-                // Ok, the lw component is undeployed
-            }
-
-        }
-    }
-
     /*
-     * @see TestCase#tearDown()
-     */
-
+    * @see TestCase#tearDown()
+    */
     protected void tearDown() throws Exception {
         super.tearDown();
         container.stop();
         container.shutDown();
         deleteDir(tempRootDir);
+    }
+
+    protected InOut createExchange(ServiceMixClient client) throws MessagingException {
+        InOut exchange = client.createInOutExchange();
+        return exchange;
+    }
+
+    protected void configureExchange(ServiceMixClient client, MessageExchange exchange) {
+        ServiceEndpoint endpoint = client.getContext().getEndpoint(CamelJbiEndpoint.SERVICE_NAME, "queue:a");
+        assertNotNull("Should have a Camel endpoint exposed in JBI!", endpoint);
+        exchange.setEndpoint(endpoint);
     }
 
     public static boolean deleteDir(File dir) {
