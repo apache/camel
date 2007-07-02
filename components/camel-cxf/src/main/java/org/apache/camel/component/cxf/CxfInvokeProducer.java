@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientFactoryBean;
@@ -69,7 +70,9 @@ public class CxfInvokeProducer extends DefaultProducer {
             ClientFactoryBean cfBean = new ClientFactoryBean();
             cfBean.setAddress(getEndpoint().getEndpointUri());
             cfBean.setBus(endpoint.getBus());
-            cfBean.setServiceClass(Class.forName(endpoint.getProperty(CxfConstants.SEI)));
+            String className = endpoint.getProperty(CxfConstants.SEI);
+            Class type = ObjectHelper.loadClass(className);
+            cfBean.setServiceClass(type);
             client = cfBean.create();
         }
     }

@@ -40,7 +40,7 @@ public class ResequencerTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
-            log.info("Received: " + exchange);
+            log.debug("Received: " + exchange);
         }
     }
 

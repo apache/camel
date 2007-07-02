@@ -20,6 +20,10 @@ package org.apache.camel.component.file;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.file.strategy.DeleteFileStrategy;
+import org.apache.camel.component.file.strategy.FileStrategy;
+import org.apache.camel.component.file.strategy.RenameFileStrategy;
+import org.apache.camel.component.file.strategy.NoOpFileStrategy;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 
 import java.io.File;
@@ -31,7 +35,14 @@ import java.io.File;
  */
 public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     private File file;
-    private boolean autoCreate=true;
+    private FileStrategy fileStrategy;
+    private boolean autoCreate = true;
+    private boolean lock = true;
+    private boolean delete = false;
+    private boolean noop = false;
+    private String moveNamePrefix = null;
+    private String moveNamePostfix = null;
+    private String[] excludedNamePrefixes = { "." };
 
     protected FileEndpoint(File file, String endpointUri, FileComponent component) {
         super(endpointUri, component);
@@ -88,19 +99,129 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
         return true;
     }
 
-    
     /**
      * @return the autoCreate
      */
-    public boolean isAutoCreate(){
+    public boolean isAutoCreate() {
         return this.autoCreate;
     }
 
-    
     /**
      * @param autoCreate the autoCreate to set
      */
-    public void setAutoCreate(boolean autoCreate){
-        this.autoCreate=autoCreate;
+    public void setAutoCreate(boolean autoCreate) {
+        this.autoCreate = autoCreate;
     }
+
+    public FileStrategy getFileStrategy() {
+        if (fileStrategy == null) {
+            fileStrategy = createFileStrategy();
+        }
+        return fileStrategy;
+    }
+
+    /**
+     * Sets the strategy to be used when the file has been processed
+     * such as deleting or renaming it etc.
+     *
+     * @param fileStrategy the new stategy to use
+     */
+    public void setFileStrategy(FileStrategy fileStrategy) {
+        this.fileStrategy = fileStrategy;
+    }
+
+    public boolean isDelete() {
+        return delete;
+    }
+
+    public void setDelete(boolean delete) {
+        this.delete = delete;
+    }
+
+    public boolean isLock() {
+        return lock;
+    }
+
+    public void setLock(boolean lock) {
+        this.lock = lock;
+    }
+
+    public String getMoveNamePostfix() {
+        return moveNamePostfix;
+    }
+
+    /**
+     * Sets the name postfix appended to moved files. For example
+     * to rename all the files from * to *.done set this value to ".done"
+     *
+     * @see RenameFileStrategy#setNamePostfix(String)
+
+     * @param moveNamePostfix
+     */
+    public void setMoveNamePostfix(String moveNamePostfix) {
+        this.moveNamePostfix = moveNamePostfix;
+    }
+
+    public String getMoveNamePrefix() {
+        return moveNamePrefix;
+    }
+
+    /**
+     * Sets the name prefix appended to moved files. For example
+     * to move processed files into a hidden directory called ".camel"
+     * set this value to ".camel/"
+     *
+     * @see RenameFileStrategy#setNamePrefix(String)
+     */
+    public void setMoveNamePrefix(String moveNamePrefix) {
+        this.moveNamePrefix = moveNamePrefix;
+    }
+
+    public String[] getExcludedNamePrefixes() {
+        return excludedNamePrefixes;
+    }
+
+    /**
+     * Sets the excluded file name prefixes, such as "." for hidden files
+     * which are excluded by default
+     */
+    public void setExcludedNamePrefixes(String[] excludedNamePrefixes) {
+        this.excludedNamePrefixes = excludedNamePrefixes;
+    }
+
+    public boolean isNoop() {
+        return noop;
+    }
+
+    /**
+     * If set to true then the default {@link FileStrategy} will be to use
+     * the {@link NoOpFileStrategy} to not move or copy processed files
+     *
+     * @param noop
+     */
+    public void setNoop(boolean noop) {
+        this.noop = noop;
+    }
+
+    /**
+     * A strategy method to lazily create the file strategy
+     */
+    protected FileStrategy createFileStrategy() {
+        if (moveNamePostfix != null || moveNamePrefix != null) {
+            if (isDelete()) {
+                throw new IllegalArgumentException("You cannot set the deleteFiles property and a moveFilenamePostfix or moveFilenamePrefix");
+            }
+            return new RenameFileStrategy(isLock(), moveNamePrefix, moveNamePostfix);
+        }
+        else if (isDelete()) {
+            return new DeleteFileStrategy(isLock());
+        }
+        else if (isNoop()) {
+            return new NoOpFileStrategy(isLock());
+        }
+        else {
+            return new RenameFileStrategy(isLock());
+        }
+    }
+
 }

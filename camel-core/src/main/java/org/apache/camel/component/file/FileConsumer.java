@@ -18,14 +18,12 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.strategy.FileStrategy;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
 
 /**
  * @version $Revision: 523016 $
@@ -34,7 +32,6 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private static final transient Log log = LogFactory.getLog(FileConsumer.class);
     private final FileEndpoint endpoint;
     private boolean recursive = true;
-    private boolean attemptFileLock = false;
     private String regexPattern = "";
     private long lastPollTime = 0l;
 
@@ -53,10 +50,12 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
             pollFile(fileOrDirectory); // process the file
         }
         else if (processDir) {
-            log.debug("Polling directory " + fileOrDirectory);
-            File[] files = fileOrDirectory.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                pollFileOrDirectory(files[i], isRecursive()); // self-recursion
+            if (isValidFile(fileOrDirectory)) {
+                log.debug("Polling directory " + fileOrDirectory);
+                File[] files = fileOrDirectory.listFiles();
+                for (int i = 0; i < files.length; i++) {
+                    pollFileOrDirectory(files[i], isRecursive()); // self-recursion
+                }
             }
         }
         else {
@@ -67,62 +66,51 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     protected void pollFile(final File file) {
         if (file.exists() && file.lastModified() > lastPollTime) {
             if (isValidFile(file)) {
-                processFile(file);
-                deleteOrMoveFile(file);
+                FileStrategy strategy = endpoint.getFileStrategy();
+                FileExchange exchange = endpoint.createExchange(file);
+
+                try {
+                    if (strategy.begin(endpoint, exchange, file)) {
+                        getProcessor().process(exchange);
+                        strategy.commit(endpoint, exchange, file);
+                    }
+                    else {
+                        if (log.isDebugEnabled()) {
+                            log.debug(endpoint + " cannot process file: " + file);
+                        }
+                    }
+                }
+                catch (Throwable e) {
+                    handleException(e);
+                }
             }
         }
-    }
-
-    protected void deleteOrMoveFile(File file) {
-        file.delete();
-    }
-
-    protected void processFile(File file) {
-        try {
-			getProcessor().process(endpoint.createExchange(file));
-		} catch (Throwable e) {
-			handleException(e);
-		}
     }
 
     protected boolean isValidFile(File file) {
         boolean result = false;
         if (file != null && file.exists()) {
             if (isMatched(file)) {
-                if (isAttemptFileLock()) {
-                    FileChannel fc = null;
-                    try {
-                        fc = new RandomAccessFile(file, "rw").getChannel();
-                        fc.lock();
-                        result = true;
-                    }
-                    catch (Throwable e) {
-                        log.debug("Failed to get the lock on file: " + file, e);
-                    }
-                    finally {
-                        if (fc != null) {
-                            try {
-                                fc.close();
-                            }
-                            catch (IOException e) {
-                            }
-                        }
-                    }
-                }
-                else {
-                    result = true;
-                }
+                result = true;
             }
         }
         return result;
     }
 
     protected boolean isMatched(File file) {
-        boolean result = true;
+        String name = file.getName();
         if (regexPattern != null && regexPattern.length() > 0) {
-            result = file.getName().matches(getRegexPattern());
+            if (!name.matches(getRegexPattern())) {
+                return false;
+            }
         }
-        return result;
+        String[] prefixes = endpoint.getExcludedNamePrefixes();
+        for (String prefix : prefixes) {
+            if (name.startsWith(prefix)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -137,20 +125,6 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
      */
     public void setRecursive(boolean recursive) {
         this.recursive = recursive;
-    }
-
-    /**
-     * @return the attemptFileLock
-     */
-    public boolean isAttemptFileLock() {
-        return this.attemptFileLock;
-    }
-
-    /**
-     * @param attemptFileLock the attemptFileLock to set
-     */
-    public void setAttemptFileLock(boolean attemptFileLock) {
-        this.attemptFileLock = attemptFileLock;
     }
 
     /**
