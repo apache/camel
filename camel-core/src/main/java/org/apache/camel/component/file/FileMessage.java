@@ -17,16 +17,20 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 /**
  * A {@link Exchange} for  File
- * 
+ *
  * @version $Revision: 520985 $
  */
-public class FileMessage extends DefaultMessage{
+public class FileMessage extends DefaultMessage {
     private File file;
 
     public FileMessage() {
@@ -34,7 +38,7 @@ public class FileMessage extends DefaultMessage{
     }
 
     public FileMessage(File file) {
-        this.file=file;
+        this.file = file;
     }
 
     @Override
@@ -47,20 +51,30 @@ public class FileMessage extends DefaultMessage{
         return (FileExchange) super.getExchange();
     }
 
-   
     public File getFile() {
         return file;
     }
 
     public void setFile(File file) {
-        this.file=file;
+        this.file = file;
     }
 
-    
-   
     @Override
     public FileMessage newInstance() {
         return new FileMessage();
     }
-   
+
+    @Override
+    protected Object createBody() {
+        if (file != null) {
+            // lets extract the body
+            try {
+                return new FileInputStream(file);
+            }
+            catch (FileNotFoundException e) {
+                throw new RuntimeCamelException("File has been deleted: " + file + ". Reason: " + e, e);
+            }
+        }
+        return super.createBody();
+    }
 }

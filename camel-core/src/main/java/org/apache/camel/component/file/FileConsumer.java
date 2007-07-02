@@ -68,8 +68,13 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         if (file.exists() && file.lastModified() > lastPollTime) {
             if (isValidFile(file)) {
                 processFile(file);
+                deleteOrMoveFile(file);
             }
         }
+    }
+
+    protected void deleteOrMoveFile(File file) {
+        file.delete();
     }
 
     protected void processFile(File file) {

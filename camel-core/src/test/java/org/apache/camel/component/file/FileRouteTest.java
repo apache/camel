@@ -17,74 +17,31 @@
  */
 package org.apache.camel.component.file;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import junit.framework.TestCase;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.Exchange;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision: 529902 $
  */
-public class FileRouteTest extends TestCase {
-    private static final transient Log log = LogFactory.getLog(FileRouteTest.class);
-    protected CamelContext container = new DefaultCamelContext();
-    protected CountDownLatch latch = new CountDownLatch(1);
-    protected Exchange receivedExchange;
-    protected String uri = "file://target/foo.txt";
-    protected Producer<FileExchange> producer;
+public class FileRouteTest extends ContextTestSupport {
+    protected Object expectedBody = "Hello there!";
+    protected String uri = "file:target/test-inbox";
 
-    
     public void testFileRoute() throws Exception {
+        MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        result.expectedBodiesReceived(expectedBody);
 
-        // now lets fire in a message
-        Endpoint<FileExchange> endpoint = container.getEndpoint(uri);
-        FileExchange exchange = endpoint.createExchange();
-        Message message = exchange.getIn();
-        message.setBody("Hello there!");
-        message.setHeader("cheese", 123);
+        template.sendBody(uri, expectedBody, "cheese", 123);
 
-        producer = endpoint.createProducer();
-        producer.process(exchange);
-
-        // now lets sleep for a while
-        boolean received = latch.await(5000, TimeUnit.SECONDS);
-        assertTrue("Did not receive the message!", received);
+        result.assertIsSatisfied();
     }
 
     @Override
-    protected void setUp() throws Exception {
-        container.addRoutes(createRouteBuilder());
-        container.start();
-    }
-
-
-    @Override
-    protected void tearDown() throws Exception {
-        if (producer != null) {
-            producer.stop();
-        }
-        container.stop();
-    }
-
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(uri).process(new Processor() {
-                    public void process(Exchange e) {
-                        log.debug("Received exchange: " + e.getIn());
-                        receivedExchange = e;
-                        latch.countDown();
-                    }
-                });
+                from(uri).convertBodyTo(String.class).to("mock:result");
             }
         };
     }
