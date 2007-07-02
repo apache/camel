@@ -17,11 +17,12 @@
  */
 package org.apache.camel.spring.xml;
 
+import org.apache.camel.builder.xml.XPathBuilder;
+import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.EndpointFactoryBean;
-import org.apache.camel.spring.CamelBeanPostProcessor;
-import static org.apache.camel.util.ObjectHelper.isNotNullOrBlank;
-import org.apache.camel.builder.xml.XPathBuilder;
+import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.parsing.BeanComponentDefinition;
@@ -33,8 +34,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected CamelBeanDefinitionParser routesParser = new CamelBeanDefinitionParser(this);
@@ -53,6 +54,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 super.doParse(element, parserContext, builder);
 
                 String contextId = element.getAttribute("id");
+
+                // lets avoid folks having to explicitly give an ID to a camel context
+                if (ObjectHelper.isNullOrBlank(contextId)) {
+                    contextId = "camelContext";
+                    element.setAttribute("id", contextId);
+                }
 
                 Element routes = element.getOwnerDocument().createElement("routes");
                 // now lets move all the content there...
@@ -85,7 +92,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                     Element node = (Element) list.item(i);
                     definition = endpointParser.parse(node, parserContext);
                     String id = node.getAttribute("id");
-                    if (isNotNullOrBlank(id)) {
+                    if (isNotNullAndNonEmpty(id)) {
                         definition.getPropertyValues().addPropertyValue("context", new RuntimeBeanReference(contextId));
                         //definition.getPropertyValues().addPropertyValue("context", builder.getBeanDefinition());
                         parserContext.registerComponent(new BeanComponentDefinition(definition, id));
@@ -104,7 +111,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("namespacesFromDom", element);
             }
         });
-
 
         // scripting expressions
         registerScriptParser("script", null);

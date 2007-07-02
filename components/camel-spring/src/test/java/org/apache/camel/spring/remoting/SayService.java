@@ -17,24 +17,24 @@
 package org.apache.camel.spring.remoting;
 
 public class SayService implements ISay {
-	String message = "Hello";
-	
-	public SayService() {
-	}
-	public SayService(String message) {
-		this.message = message;
-	}
+    String message = "Hello";
 
-	public String say() {
-		return message;
-	}
+    public SayService() {
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public SayService(String message) {
+        this.message = message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public String say() {
+        return message;
+    }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

@@ -31,8 +31,8 @@
       <from uri="queue:a"/>
       <splitter>
         <recipients>
-           <bodyAs class="java.lang.String"/>
-           <tokenize token="
+          <bodyAs class="java.lang.String"/>
+          <tokenize token="
  "/>
         </recipients>
       </splitter>

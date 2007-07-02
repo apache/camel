@@ -18,7 +18,6 @@
 package org.apache.camel.spring.xml;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.BeanFactory;
 
 import java.util.ArrayList;
@@ -29,8 +28,8 @@ import java.util.ArrayList;
  * the {@link RouteBuilderFactoryBean}
  *
  * @version $Revision: 1.1 $
-*/
-public class StatementRouteBuilder extends RouteBuilder  {
+ */
+public class StatementRouteBuilder extends RouteBuilder {
     private ArrayList<BuilderStatement> routes;
     private BeanFactory beanFactory;
 
@@ -44,6 +43,7 @@ public class StatementRouteBuilder extends RouteBuilder  {
     public ArrayList<BuilderStatement> getRoutes() {
         return routes;
     }
+
     public void setRoutes(ArrayList<BuilderStatement> routes) {
         this.routes = routes;
     }

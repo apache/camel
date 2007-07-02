@@ -16,16 +16,13 @@
  */
 package org.apache.camel.spring.util;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.aopalliance.intercept.MethodInvocation;
-import org.apache.camel.Expression;
 import org.apache.camel.Exchange;
-import org.apache.camel.Endpoint;
-import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.builder.ExpressionBuilder;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Represents the strategy used to figure out how to map a message exchange to a POJO method invocation
@@ -33,7 +30,6 @@ import org.apache.camel.builder.ExpressionBuilder;
  * @version $Revision:$
  */
 public class DefaultMethodInvocationStrategy implements MethodInvocationStrategy {
-
     private Map<Class, Expression> parameterTypeToExpressionMap = new ConcurrentHashMap<Class, Expression>();
 
     public DefaultMethodInvocationStrategy() {
@@ -50,7 +46,6 @@ public class DefaultMethodInvocationStrategy implements MethodInvocationStrategy
         parameterTypeToExpressionMap.put(parameterType, expression);
     }
 
-
     /**
      * Creates an invocation on the given POJO using annotations to decide which method to invoke
      * and to figure out which parameters to use
@@ -63,12 +58,8 @@ public class DefaultMethodInvocationStrategy implements MethodInvocationStrategy
         return beanInfo.createInvocation(pojo, messageExchange);
     }
 */
-
-
     public void loadDefaultRegistry() {
         addParameterMapping(Exchange.class, ExpressionBuilder.exchangeExpression());
         addParameterMapping(Message.class, ExpressionBuilder.inMessageExpression());
     }
-
-
 }

@@ -17,13 +17,14 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +36,8 @@ import java.util.List;
  *
  * @version $Revision$
  */
-public class CamelContextFactoryBean implements FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware {
-    private CamelContext context;
+public class CamelContextFactoryBean implements FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
+    private SpringCamelContext context;
     private RouteBuilder routeBuilder;
     private List<RouteBuilder> additionalBuilders = new ArrayList<RouteBuilder>();
     private String[] packages = {};
@@ -70,16 +71,23 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
         getContext().stop();
     }
 
+    public void onApplicationEvent(ApplicationEvent event) {
+        if (context != null) {
+            context.onApplicationEvent(event);
+        }
+    }
+
     // Properties
     //-------------------------------------------------------------------------
-    public CamelContext getContext() throws Exception {
+    public SpringCamelContext getContext() throws Exception {
         if (context == null) {
             context = new SpringCamelContext(getApplicationContext());
+            context.afterPropertiesSet();
         }
         return context;
     }
 
-    public void setContext(CamelContext context) {
+    public void setContext(SpringCamelContext context) {
         this.context = context;
     }
 

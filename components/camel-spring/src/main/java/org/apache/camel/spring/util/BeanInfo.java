@@ -42,7 +42,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BeanInfo {
     private static final transient Log log = LogFactory.getLog(BeanInfo.class);
-
     private Class type;
     private MethodInvocationStrategy strategy;
     private Map<String, MethodInfo> operations = new ConcurrentHashMap<String, MethodInfo>();
@@ -114,11 +113,11 @@ public class BeanInfo {
                             + method.toString() + " parameter: " + i + " so ignoring method");
                 }
                 if (parameterTypes.length == 1) {
-                	// lets assume its the body
-                	expression = ExpressionBuilder.bodyExpression(parameterType);
+                    // lets assume its the body
+                    expression = ExpressionBuilder.bodyExpression(parameterType);
                 }
                 else {
-                	return null;
+                    return null;
                 }
             }
             parameterExpressions[i] = expression;

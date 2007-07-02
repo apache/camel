@@ -37,8 +37,8 @@
     <route>
       <from uri="queue:a"/>
       <intercept>
-          <interceptor ref="interceptor1"/>
-          <interceptor ref="interceptor2"/>
+        <interceptor ref="interceptor1"/>
+        <interceptor ref="interceptor2"/>
       </intercept>
       <to uri="queue:d"/>
     </route>

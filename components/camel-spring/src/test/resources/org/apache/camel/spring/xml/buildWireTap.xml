@@ -30,8 +30,8 @@
     <route>
       <from uri="queue:a"/>
       <to>
-         <endpoint uri="queue:tap"/>
-         <endpoint uri="queue:b"/>
+        <endpoint uri="queue:tap"/>
+        <endpoint uri="queue:b"/>
       </to>
     </route>
   </camelContext>

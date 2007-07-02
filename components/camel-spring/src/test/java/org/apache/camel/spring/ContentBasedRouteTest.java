@@ -17,9 +17,9 @@
  */
 package org.apache.camel.spring;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision: 1.1 $

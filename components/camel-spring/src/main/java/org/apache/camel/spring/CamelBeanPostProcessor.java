@@ -18,22 +18,13 @@
 package org.apache.camel.spring;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.MessageDriven;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.CamelTemplate;
+import org.apache.camel.*;
 import org.apache.camel.spring.util.BeanInfo;
 import org.apache.camel.spring.util.DefaultMethodInvocationStrategy;
 import org.apache.camel.spring.util.MethodInvocationStrategy;
 import org.apache.camel.spring.util.ReflectionUtils;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.util.ObjectHelper.isNotNullOrBlank;
+import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -44,8 +35,6 @@ import org.springframework.context.ApplicationContextAware;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A post processor to perform injection of {@link Endpoint} and {@link Producer} instances together with binding
@@ -55,11 +44,10 @@ import java.util.List;
  */
 public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
     private static final transient Log log = LogFactory.getLog(CamelBeanPostProcessor.class);
-
     private CamelContext camelContext;
     private ApplicationContext applicationContext;
     private MethodInvocationStrategy invocationStrategy = new DefaultMethodInvocationStrategy();
-	//private List<Consumer> consumers = new ArrayList<Consumer>();
+    //private List<Consumer> consumers = new ArrayList<Consumer>();
 
     public CamelBeanPostProcessor() {
     }
@@ -180,7 +168,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
         MessageDriven annotation = method.getAnnotation(MessageDriven.class);
         if (annotation != null) {
             log.info("Creating a consumer for: " + annotation);
-            
+
             // lets bind this method to a listener
             Endpoint endpoint = getEndpointInjection(annotation.uri(), annotation.name());
             if (endpoint != null) {
@@ -207,20 +195,20 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
 
         return new Processor() {
             @Override
-			public String toString() {
-				return "Processor on " + endpoint;
-			}
+            public String toString() {
+                return "Processor on " + endpoint;
+            }
 
-			public void process(Exchange exchange) throws Exception {
-				if (log.isDebugEnabled()) {
-					log.debug(">>>> invoking method for: " + exchange);
-				}
+            public void process(Exchange exchange) throws Exception {
+                if (log.isDebugEnabled()) {
+                    log.debug(">>>> invoking method for: " + exchange);
+                }
                 MethodInvocation invocation = beanInfo.createInvocation(method, pojo, exchange);
-            	if (invocation == null) {
-            		throw new IllegalStateException("No method invocation could be created");
-            	}
+                if (invocation == null) {
+                    throw new IllegalStateException("No method invocation could be created");
+                }
                 try {
-                	invocation.proceed();
+                    invocation.proceed();
                 }
                 catch (Exception e) {
                     throw e;
@@ -263,11 +251,11 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
 
     protected Endpoint getEndpointInjection(String uri, String name) {
         Endpoint endpoint = null;
-        if (isNotNullOrBlank(uri)) {
+        if (isNotNullAndNonEmpty(uri)) {
             endpoint = camelContext.getEndpoint(uri);
         }
         else {
-            if (isNotNullOrBlank(name)) {
+            if (isNotNullAndNonEmpty(name)) {
                 endpoint = (Endpoint) applicationContext.getBean(name);
                 if (endpoint == null) {
                     throw new NoSuchBeanDefinitionException(name);

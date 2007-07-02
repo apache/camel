@@ -17,13 +17,13 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.TestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Message;
-import org.apache.camel.Route;
-import org.apache.camel.spring.example.MyProcessor;
 import org.apache.camel.CamelTemplate;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.TestSupport;
+import org.apache.camel.spring.example.MyProcessor;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

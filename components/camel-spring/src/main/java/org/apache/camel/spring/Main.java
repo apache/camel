@@ -38,7 +38,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Main extends ServiceSupport {
     private static final Log log = LogFactory.getLog(Main.class);
     private String applicationContextUri = "META-INF/spring/*.xml";
-
     private AbstractApplicationContext applicationContext;
     private List<Option> options = new ArrayList<Option>();
     private CountDownLatch latch = new CountDownLatch(1);
@@ -258,5 +257,4 @@ public class Main extends ServiceSupport {
         }
         return "";
     }
-
 }

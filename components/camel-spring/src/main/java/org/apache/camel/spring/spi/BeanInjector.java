@@ -17,8 +17,8 @@
  */
 package org.apache.camel.spring.spi;
 
-import org.springframework.context.ApplicationContext;
 import org.springframework.beans.factory.wiring.BeanConfigurerSupport;
+import org.springframework.context.ApplicationContext;
 
 /**
  * @version $Revision: 1.1 $

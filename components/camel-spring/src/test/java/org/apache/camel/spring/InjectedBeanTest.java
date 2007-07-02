@@ -44,7 +44,6 @@ public class InjectedBeanTest extends SpringTestSupport {
         assertNotNull("No CamelTemplate injected for getPropertyInjectedCamelTemplate()", bean.getPropertyInjectedCamelTemplate());
     }
 
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();

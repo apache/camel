@@ -16,16 +16,15 @@
  */
 package org.apache.camel.spring;
 
+import org.apache.camel.CamelTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Producer;
-import org.apache.camel.CamelTemplate;
 
 /**
  * @version $Revision: $
  */
 public class InjectedBean {
-
     // Endpoint
     //-----------------------------------------------------------------------
     @EndpointInject(uri = "direct:fieldInjectedEndpoint")
@@ -45,13 +44,11 @@ public class InjectedBean {
         this.propertyInjectedEndpoint = propertyInjectedEndpoint;
     }
 
-
     // Producer
     //-----------------------------------------------------------------------
     @EndpointInject(uri = "direct:fieldInjectedProducer")
     private Producer fieldInjectedProducer;
     private Producer propertyInjectedProducer;
-
 
     public Producer getFieldInjectedProducer() {
         return fieldInjectedProducer;
@@ -65,7 +62,6 @@ public class InjectedBean {
     public void setPropertyInjectedProducer(Producer propertyInjectedProducer) {
         this.propertyInjectedProducer = propertyInjectedProducer;
     }
-
 
     // CamelTemplate
     //-----------------------------------------------------------------------

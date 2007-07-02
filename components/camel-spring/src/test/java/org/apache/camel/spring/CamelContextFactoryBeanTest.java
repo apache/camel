@@ -17,8 +17,6 @@
  */
 package org.apache.camel.spring;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
@@ -30,12 +28,14 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.List;
+
 /**
  * @version $Revision$
  */
 public class CamelContextFactoryBeanTest extends TestSupport {
     private static final transient Log log = LogFactory.getLog(CamelContextFactoryBeanTest.class);
-    
+
     public void testClassPathRouteLoading() throws Exception {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
 
@@ -76,7 +76,7 @@ public class CamelContextFactoryBeanTest extends TestSupport {
 
         List<Route> routes = context.getRoutes();
         log.debug("Found routes: " + routes);
-        
+
         assertNotNull("Should have found some routes", routes);
         assertEquals("One Route should be found", 1, routes.size());
 
@@ -89,5 +89,4 @@ public class CamelContextFactoryBeanTest extends TestSupport {
             assertEndpointUri(key, "queue:test.c");
         }
     }
-
 }

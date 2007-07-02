@@ -28,7 +28,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class MyProcessor implements Processor {
     private static List exchanges = new CopyOnWriteArrayList();
-
     private String name = "James";
 
     public static List getExchanges() {

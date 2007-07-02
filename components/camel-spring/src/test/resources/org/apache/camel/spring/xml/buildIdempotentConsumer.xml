@@ -29,10 +29,10 @@
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="queue:a"/>
- <!--
-      <idempotentConsumer>
-      </idempotentConsumer>
- -->
+      <!--
+           <idempotentConsumer>
+           </idempotentConsumer>
+      -->
       <to uri="queue:b"/>
     </route>
   </camelContext>

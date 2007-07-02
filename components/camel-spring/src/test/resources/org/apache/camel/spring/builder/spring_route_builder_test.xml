@@ -16,221 +16,221 @@
     limitations under the License.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
 
-    <!--
-      TODO: DELETE ME once we are sure there are no more snippet macros on the wiki pointing to this file!
-      TODO: This file has been replaced by the individual files in org/apache/camel/spring/xml/*.xml
-    -->
+  <!--
+    TODO: DELETE ME once we are sure there are no more snippet macros on the wiki pointing to this file!
+    TODO: This file has been replaced by the individual files in org/apache/camel/spring/xml/*.xml
+  -->
 
 
-    <!--
-        from("queue:a").to("queue:b");
-     -->
-    <!-- START SNIPPET: e1 -->
-    <camelContext id="buildSimpleRoute" xmlns="http://activemq.apache.org/camel/schema/spring">
-       <route>
-         <from uri="queue:a"/>
-         <to uri="queue:b"/>
-       </route>
-    </camelContext>
-    <!-- END SNIPPET: e1 -->
-    
-    <!-- 
-        from("queue:a").filter(header("foo").isEqualTo("bar")).to("queue:b");
-     -->
-    <!-- START SNIPPET: e2 -->
-    <camelContext id="buildSimpleRouteWithHeaderPredicate" xmlns="http://activemq.apache.org/camel/schema/spring">
-       <route>
-         <from uri="queue:a"/>
-         <filter>
-             <predicate>
-                <header name="foo"/>
-                <isEqualTo value="bar"/>
-             </predicate>
-         </filter>
-         <to uri="queue:b"/>
-       </route>
-    </camelContext>
-    <!-- END SNIPPET: e2 -->
-    
-    
-        <!-- 
-        from("queue:a").choice()
-                .when(header("foo").isEqualTo("bar")).to("queue:b")
-                .when(header("foo").isEqualTo("cheese")).to("queue:c")
-                .otherwise().to("queue:d");
-     -->
-    <!-- START SNIPPET: e3 -->
-    <camelContext id="buildSimpleRouteWithChoice" xmlns="http://activemq.apache.org/camel/schema/spring">
-       <route>
-         <from uri="queue:a"/>
-         <choice>
-             <when>
-                 <predicate>
-                    <header name="foo"/>
-                    <isEqualTo value="bar"/>
-                 </predicate>
-                 <to uri="queue:b"/>
-             </when>
-             <when>
-                 <predicate>
-                    <header name="foo"/>
-                    <isEqualTo value="cheese"/>
-                 </predicate>
-                 <to uri="queue:c"/>
-             </when>
-             <otherwise>
-                 <to uri="queue:d"/>
-             </otherwise>
-         </choice>
-       </route>
-    </camelContext>
-    <!-- END SNIPPET: e3 -->
+  <!--
+     from("queue:a").to("queue:b");
+  -->
+  <!-- START SNIPPET: e1 -->
+  <camelContext id="buildSimpleRoute" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+      <from uri="queue:a"/>
+      <to uri="queue:b"/>
+    </route>
+  </camelContext>
+  <!-- END SNIPPET: e1 -->
 
-    
-    <!-- 
-        from("queue:a").process(myProcessor);
-     -->
-    <!-- START SNIPPET: e4 -->
-    <bean id="myProcessor" class="org.apache.camel.builder.MyProcessor"/>
-    <camelContext id="buildCustomProcessor" xmlns="http://activemq.apache.org/camel/schema/spring">
-       <route>
-         <from uri="queue:a"/>
-         <process ref="#myProcessor"/>
-       </route>
-    </camelContext>
-    <!-- END SNIPPET: e4 -->
-
-    <!-- 
-        from("queue:a").filter(header("foo").isEqualTo("bar")).process(myProcessor);
-     -->
-    <!-- START SNIPPET: e5 -->
-    <camelContext id="buildCustomProcessorWithFilter" xmlns="http://activemq.apache.org/camel/schema/spring">
-       <route>
-         <from uri="queue:a"/>
-         <filter>
-           <predicate>
-             <header name="foo"/>
-             <isEqualTo value="bar"/>
-           </predicate>
-         </filter>
-         <process ref="#myProcessor"/>
-       </route>
-    </camelContext>
-    <!-- END SNIPPET: e5 -->
+  <!--
+     from("queue:a").filter(header("foo").isEqualTo("bar")).to("queue:b");
+  -->
+  <!-- START SNIPPET: e2 -->
+  <camelContext id="buildSimpleRouteWithHeaderPredicate" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+      <from uri="queue:a"/>
+      <filter>
+        <predicate>
+          <header name="foo"/>
+          <isEqualTo value="bar"/>
+        </predicate>
+      </filter>
+      <to uri="queue:b"/>
+    </route>
+  </camelContext>
+  <!-- END SNIPPET: e2 -->
 
 
-    <!-- 
-        from("queue:a").to("queue:tap", "queue:b");
-     -->
-    <!-- START SNIPPET: e6-->
-    <camelContext id="buildWireTap" xmlns="http://activemq.apache.org/camel/schema/spring">
-       <route>
-         <from uri="queue:a"/>
-         <to>
-            <uri>queue:tap</uri>
-            <uri>queue:b</uri>
-         </to>
-       </route>
-    </camelContext>
-    <!-- END SNIPPET: e6 -->
-    
+  <!--
+     from("queue:a").choice()
+             .when(header("foo").isEqualTo("bar")).to("queue:b")
+             .when(header("foo").isEqualTo("cheese")).to("queue:c")
+             .otherwise().to("queue:d");
+  -->
+  <!-- START SNIPPET: e3 -->
+  <camelContext id="buildSimpleRouteWithChoice" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+      <from uri="queue:a"/>
+      <choice>
+        <when>
+          <predicate>
+            <header name="foo"/>
+            <isEqualTo value="bar"/>
+          </predicate>
+          <to uri="queue:b"/>
+        </when>
+        <when>
+          <predicate>
+            <header name="foo"/>
+            <isEqualTo value="cheese"/>
+          </predicate>
+          <to uri="queue:c"/>
+        </when>
+        <otherwise>
+          <to uri="queue:d"/>
+        </otherwise>
+      </choice>
+    </route>
+  </camelContext>
+  <!-- END SNIPPET: e3 -->
 
-    <!-- 
-        from("queue:a")
-           .intercept()
-              .add(interceptor1)
-              .add(interceptor2)
-           .target().to("queue:d");
-     -->
-    <!-- START SNIPPET: e7 -->
-    <bean id="interceptor1" class="org.apache.camel.builder.MyInterceptorProcessor"/>
-    <bean id="interceptor2" class="org.apache.camel.builder.MyInterceptorProcessor"/>     
-    <camelContext id="buildRouteWithInterceptor" xmlns="http://activemq.apache.org/camel/schema/spring">
-       <route>
-         <from uri="queue:a"/>
-         <intercept>
-             <interceptor ref="#interceptor1"/>
-             <interceptor ref="#interceptor2"/>
-         </intercept>
-         <to uri="queue:d"/>
-       </route>
-    </camelContext>
-    <!-- END SNIPPET: e7 -->
 
-    <!-- 
-        from("queue:a").to("queue:b", "queue:c", "queue:d");
-     -->
-    <!-- START SNIPPET: e8 -->
-    <camelContext id="buildStaticRecipientList" xmlns="http://activemq.apache.org/camel/schema/spring">
-       <route>
-         <from uri="queue:a"/>
-         <to>
-            <uri>queue:b</uri>
-            <uri>queue:c</uri>
-            <uri>queue:d</uri>
-         </to>
-       </route>
-    </camelContext>
-    <!-- END SNIPPET: e8 -->
-    
+  <!--
+     from("queue:a").process(myProcessor);
+  -->
+  <!-- START SNIPPET: e4 -->
+  <bean id="myProcessor" class="org.apache.camel.builder.MyProcessor"/>
+  <camelContext id="buildCustomProcessor" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+      <from uri="queue:a"/>
+      <process ref="#myProcessor"/>
+    </route>
+  </camelContext>
+  <!-- END SNIPPET: e4 -->
 
-    <!-- 
-        from("queue:a").recipientList(header("foo"));
-     -->
-    <!-- START SNIPPET: e9 -->
-    <camelContext id="buildDynamicRecipientList" xmlns="http://activemq.apache.org/camel/schema/spring">
-       <route>
-         <from uri="queue:a"/>
-         <recipientList>
-         	<recipients>
-              <header name="foo"/>
-            </recipients>
-         </recipientList>
-       </route>
-    </camelContext>
-    <!-- END SNIPPET: e9 -->
-                    
-    <!-- 
-        from("queue:a").splitter(bodyAs(String.class).tokenize("\n")).to("queue:b");
-     -->
-    <!-- START SNIPPET: splitter -->
-    <camelContext id="buildSplitter" xmlns="http://activemq.apache.org/camel/schema/spring">
-       <route>
-         <from uri="queue:a"/>
-         <splitter>
-         	<recipients>
-	            <bodyAs class="java.lang.String"/>
-	            <tokenize token="
+  <!--
+     from("queue:a").filter(header("foo").isEqualTo("bar")).process(myProcessor);
+  -->
+  <!-- START SNIPPET: e5 -->
+  <camelContext id="buildCustomProcessorWithFilter" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+      <from uri="queue:a"/>
+      <filter>
+        <predicate>
+          <header name="foo"/>
+          <isEqualTo value="bar"/>
+        </predicate>
+      </filter>
+      <process ref="#myProcessor"/>
+    </route>
+  </camelContext>
+  <!-- END SNIPPET: e5 -->
+
+
+  <!--
+     from("queue:a").to("queue:tap", "queue:b");
+  -->
+  <!-- START SNIPPET: e6-->
+  <camelContext id="buildWireTap" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+      <from uri="queue:a"/>
+      <to>
+        <uri>queue:tap</uri>
+        <uri>queue:b</uri>
+      </to>
+    </route>
+  </camelContext>
+  <!-- END SNIPPET: e6 -->
+
+
+  <!--
+     from("queue:a")
+        .intercept()
+           .add(interceptor1)
+           .add(interceptor2)
+        .target().to("queue:d");
+  -->
+  <!-- START SNIPPET: e7 -->
+  <bean id="interceptor1" class="org.apache.camel.builder.MyInterceptorProcessor"/>
+  <bean id="interceptor2" class="org.apache.camel.builder.MyInterceptorProcessor"/>
+  <camelContext id="buildRouteWithInterceptor" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+      <from uri="queue:a"/>
+      <intercept>
+        <interceptor ref="#interceptor1"/>
+        <interceptor ref="#interceptor2"/>
+      </intercept>
+      <to uri="queue:d"/>
+    </route>
+  </camelContext>
+  <!-- END SNIPPET: e7 -->
+
+  <!--
+     from("queue:a").to("queue:b", "queue:c", "queue:d");
+  -->
+  <!-- START SNIPPET: e8 -->
+  <camelContext id="buildStaticRecipientList" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+      <from uri="queue:a"/>
+      <to>
+        <uri>queue:b</uri>
+        <uri>queue:c</uri>
+        <uri>queue:d</uri>
+      </to>
+    </route>
+  </camelContext>
+  <!-- END SNIPPET: e8 -->
+
+
+  <!--
+     from("queue:a").recipientList(header("foo"));
+  -->
+  <!-- START SNIPPET: e9 -->
+  <camelContext id="buildDynamicRecipientList" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+      <from uri="queue:a"/>
+      <recipientList>
+        <recipients>
+          <header name="foo"/>
+        </recipients>
+      </recipientList>
+    </route>
+  </camelContext>
+  <!-- END SNIPPET: e9 -->
+
+  <!--
+     from("queue:a").splitter(bodyAs(String.class).tokenize("\n")).to("queue:b");
+  -->
+  <!-- START SNIPPET: splitter -->
+  <camelContext id="buildSplitter" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+      <from uri="queue:a"/>
+      <splitter>
+        <recipients>
+          <bodyAs class="java.lang.String"/>
+          <tokenize token="
 "/>
-         	</recipients>
-         </splitter>
-         <to uri="queue:b"/>
-       </route>
-    </camelContext>
-    <!-- END SNIPPET: splitter -->
+        </recipients>
+      </splitter>
+      <to uri="queue:b"/>
+    </route>
+  </camelContext>
+  <!-- END SNIPPET: splitter -->
 
-    <!--
-        from("queue:a").idempotentConsumer(header("myMessageId"), memoryMessageIdRepository()).to("queue:b");
-     -->
-    <!-- START SNIPPET: idempotent -->
-    <camelContext id="buildIdempotentConsumer" xmlns="http://activemq.apache.org/camel/schema/spring">
-       <route>
-         <from uri="queue:a"/>
-<!--
-         <idempotentConsumer>
-         </idempotentConsumer>
--->
-         <to uri="queue:b"/>
-       </route>
-    </camelContext>
-    <!-- END SNIPPET: idempotent -->
+  <!--
+     from("queue:a").idempotentConsumer(header("myMessageId"), memoryMessageIdRepository()).to("queue:b");
+  -->
+  <!-- START SNIPPET: idempotent -->
+  <camelContext id="buildIdempotentConsumer" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+      <from uri="queue:a"/>
+      <!--
+               <idempotentConsumer>
+               </idempotentConsumer>
+      -->
+      <to uri="queue:b"/>
+    </route>
+  </camelContext>
+  <!-- END SNIPPET: idempotent -->
 
 </beans>
-<!-- END SNIPPET: example -->
+        <!-- END SNIPPET: example -->
