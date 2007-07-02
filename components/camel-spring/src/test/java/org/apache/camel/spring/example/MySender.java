@@ -26,10 +26,9 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version $Revision: $
  */
 public class MySender {
-    @EndpointInject(uri="mock:a")
+    @EndpointInject(uri = "mock:a")
     private CamelTemplate successDesetination;
-
-    @EndpointInject(uri="mock:b")
+    @EndpointInject(uri = "mock:b")
     private CamelTemplate failureDesetination;
 
     public void doSomething(String name) {

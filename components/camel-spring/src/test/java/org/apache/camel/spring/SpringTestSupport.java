@@ -81,6 +81,10 @@ public abstract class SpringTestSupport extends TestSupport {
         return resolveMandatoryEndpoint(camelContext, uri);
     }
 
+    protected <T extends Endpoint> T resolveMandatoryEndpoint(String uri, Class<T> endpointType) {
+        return resolveMandatoryEndpoint(camelContext, uri, endpointType);
+    }
+
     protected void assertValidContext(SpringCamelContext context) {
         assertNotNull("No context found!", context);
 

@@ -15,26 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.example;
+package org.apache.camel.component.event;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.NoRouteBuilder;
-import org.apache.camel.processor.XPathFilterTest;
-import org.apache.camel.spring.SpringCamelContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.ApplicationEvent;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class SpringXPathFilterTest extends XPathFilterTest {
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/spring/example/xpathFilter.xml"));
+public class DummyEvent extends ApplicationEvent {
+    private final String text;
+
+    public DummyEvent(Object source, String text) {
+        super(source);
+        this.text = text;
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return NoRouteBuilder.getInstance();
+    public String getText() {
+        return text;
     }
 }

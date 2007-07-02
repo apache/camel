@@ -17,13 +17,13 @@
  */
 package org.apache.camel.spring.xml;
 
-import org.apache.camel.builder.RouteBuilderTest;
-import org.apache.camel.Route;
 import org.apache.camel.Processor;
-import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.Route;
+import org.apache.camel.builder.RouteBuilderTest;
 import org.apache.camel.processor.DelegateProcessor;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.List;
 

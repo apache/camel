@@ -31,8 +31,8 @@
       <from uri="queue:a"/>
       <recipientList>
         <recipients>
-           <header name="foo"/>
-         </recipients>
+          <header name="foo"/>
+        </recipients>
       </recipientList>
     </route>
   </camelContext>

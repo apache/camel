@@ -17,11 +17,10 @@
  */
 package org.apache.camel.spring.spi;
 
-import static org.apache.camel.util.ObjectHelper.notNull;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.spi.ComponentResolver;
+import static org.apache.camel.util.ObjectHelper.notNull;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 

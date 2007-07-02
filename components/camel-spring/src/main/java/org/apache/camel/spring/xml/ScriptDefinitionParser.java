@@ -24,6 +24,7 @@ import org.w3c.dom.Element;
 
 /**
  * A parser of the various scripting language expressions
+ *
  * @version $Revision: 1.1 $
  */
 public class ScriptDefinitionParser extends LazyLoadingBeanDefinitionParser {
@@ -48,5 +49,4 @@ public class ScriptDefinitionParser extends LazyLoadingBeanDefinitionParser {
             builder.addPropertyValue("scriptText", scriptText);
         }
     }
-
 }

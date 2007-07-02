@@ -15,39 +15,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.xml;
+package org.apache.camel.component.event;
 
-import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
-import org.w3c.dom.Element;
+import org.apache.camel.Exchange;
+import org.springframework.context.ApplicationEvent;
 
 /**
- * A base class for a parser for a bean.
+ * Represents a Spring {@link ApplicationEvent} which contains a Camel {@link Exchange}
  *
  * @version $Revision: 1.1 $
  */
-public class BeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
-    private Class type;
+public class CamelEvent extends ApplicationEvent {
+    private final Exchange exchange;
 
-    protected BeanDefinitionParser() {
-    }
-
-    public BeanDefinitionParser(Class type) {
-        this.type = type;
-    }
-
-    protected Class getBeanClass(Element element) {
-        if (type == null) {
-            type = loadType();
-        }
-        return type;
-    }
-
-    protected Class loadType() {
-        throw new IllegalArgumentException("No type specified!");
+    public CamelEvent(EventEndpoint source, Exchange exchange) {
+        super(source);
+        this.exchange = exchange;
     }
 
     @Override
-    protected boolean isEligibleAttribute(String attributeName) {
-        return attributeName != null && super.isEligibleAttribute(attributeName) && !attributeName.equals("xmlns");
+    public EventEndpoint getSource() {
+        return (EventEndpoint) super.getSource();
+    }
+
+    /**
+     * Returns the message exchange
+     *
+     * @return the camel message exchange
+     */
+    public Exchange getExchange() {
+        return exchange;
     }
 }

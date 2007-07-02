@@ -18,7 +18,6 @@
 package org.apache.camel.spring.remoting;
 
 import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -27,21 +26,19 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version $Revision: 520220 $
  */
 public class SpringRemotingRouteTest extends TestCase {
-	
-    public void testPojoRoutes() throws Exception {    	
-    	
-    	ClassPathXmlApplicationContext spring = new ClassPathXmlApplicationContext("org/apache/camel/spring/remoting/spring.xml");
+    public void testPojoRoutes() throws Exception {
+
+        ClassPathXmlApplicationContext spring = new ClassPathXmlApplicationContext("org/apache/camel/spring/remoting/spring.xml");
         CamelContext camelContext = SpringCamelContext.springCamelContext(spring);
         camelContext.start();
-        
+
         // START SNIPPET: invoke
         ISay proxy = (ISay) spring.getBean("sayProxy");
         String rc = proxy.say();
         assertEquals("Hello", rc);
         // END SNIPPET: invoke
-        
+
         camelContext.stop();
         spring.destroy();
     }
-
 }

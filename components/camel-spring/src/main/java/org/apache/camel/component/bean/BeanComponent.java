@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.component;
+package org.apache.camel.component.bean;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.pojo.PojoEndpoint;
@@ -31,7 +31,7 @@ import java.util.Map;
  * An alternative to the <a href="http://activemq.apache.org/pojo.html">POJO Component</a>
  * which implements the <a href="http://activemq.apache.org/bean.html">Bean Component</a>
  * which will look up the URI in the Spring ApplicationContext and use that to handle message dispatching.
- * 
+ *
  * @version $Revision: 1.1 $
  */
 public class BeanComponent extends DefaultComponent implements ApplicationContextAware {
@@ -60,5 +60,4 @@ public class BeanComponent extends DefaultComponent implements ApplicationContex
         }
         return null;
     }
-
 }

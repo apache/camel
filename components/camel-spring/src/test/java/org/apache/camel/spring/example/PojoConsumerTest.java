@@ -16,8 +16,8 @@
  */
 package org.apache.camel.spring.example;
 
-import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**

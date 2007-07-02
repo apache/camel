@@ -91,5 +91,4 @@ public class EndpointFactoryBean implements FactoryBean {
         notNull(uri, "uri");
         return context.getEndpoint(uri);
     }
-
 }

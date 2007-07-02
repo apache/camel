@@ -30,10 +30,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class MyConsumer {
     private static final Log log = LogFactory.getLog(MyConsumer.class);
-
     @EndpointInject(uri = "mock:result")
     private CamelTemplate destination;
-
 
     @MessageDriven(uri = "direct:start")
     public void doSomething(String body) {

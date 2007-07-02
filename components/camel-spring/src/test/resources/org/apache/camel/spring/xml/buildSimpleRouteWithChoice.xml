@@ -33,23 +33,23 @@
     <route>
       <from uri="queue:a"/>
       <choice>
-          <when>
-              <predicate>
-                 <header name="foo"/>
-                 <isEqualTo value="bar"/>
-              </predicate>
-              <to uri="queue:b"/>
-          </when>
-          <when>
-              <predicate>
-                 <header name="foo"/>
-                 <isEqualTo value="cheese"/>
-              </predicate>
-              <to uri="queue:c"/>
-          </when>
-          <otherwise>
-              <to uri="queue:d"/>
-          </otherwise>
+        <when>
+          <predicate>
+            <header name="foo"/>
+            <isEqualTo value="bar"/>
+          </predicate>
+          <to uri="queue:b"/>
+        </when>
+        <when>
+          <predicate>
+            <header name="foo"/>
+            <isEqualTo value="cheese"/>
+          </predicate>
+          <to uri="queue:c"/>
+        </when>
+        <otherwise>
+          <to uri="queue:d"/>
+        </otherwise>
       </choice>
     </route>
   </camelContext>

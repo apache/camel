@@ -30,10 +30,10 @@
     <route>
       <from uri="queue:a"/>
       <filter>
-          <predicate>
-             <header name="foo"/>
-             <isEqualTo value="bar"/>
-          </predicate>
+        <predicate>
+          <header name="foo"/>
+          <isEqualTo value="bar"/>
+        </predicate>
       </filter>
       <to uri="queue:b"/>
     </route>

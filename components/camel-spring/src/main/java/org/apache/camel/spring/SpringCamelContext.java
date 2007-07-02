@@ -17,20 +17,27 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.spi.Injector;
-import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.bean.BeanComponent;
+import org.apache.camel.component.event.EventComponent;
+import org.apache.camel.component.event.EventEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.Injector;
 import org.apache.camel.spring.spi.SpringComponentResolver;
 import org.apache.camel.spring.spi.SpringInjector;
-import org.apache.camel.spring.component.BeanComponent;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.DisposableBean;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * A Spring aware implementation of {@link CamelContext} which will automatically register itself with Springs lifecycle
@@ -40,8 +47,10 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
  *
  * @version $Revision$
  */
-public class SpringCamelContext extends DefaultCamelContext implements InitializingBean, DisposableBean, ApplicationContextAware {
+public class SpringCamelContext extends DefaultCamelContext implements InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
+    private static final transient Log log = LogFactory.getLog(SpringCamelContext.class);
     private ApplicationContext applicationContext;
+    private EventEndpoint eventEndpoint;
 
     public SpringCamelContext() {
     }
@@ -67,6 +76,9 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     }
 
     public void afterPropertiesSet() throws Exception {
+        if (eventEndpoint == null) {
+            eventEndpoint = createEventEndpoint();
+        }
         // lets force lazy initialisation
         getInjector();
 
@@ -77,6 +89,15 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         stop();
     }
 
+    public void onApplicationEvent(ApplicationEvent event) {
+        if (eventEndpoint != null) {
+            eventEndpoint.onApplicationEvent(event);
+        }
+        else {
+            log.warn("No eventEndpoint enabled for event: " + event);
+        }
+    }
+
     public ApplicationContext getApplicationContext() {
         return applicationContext;
     }
@@ -84,6 +105,18 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
         addComponent("bean", new BeanComponent(applicationContext));
+
+        if (applicationContext instanceof ConfigurableApplicationContext) {
+            addComponent("event", new EventComponent(applicationContext));
+        }
+    }
+
+    public EventEndpoint getEventEndpoint() {
+        return eventEndpoint;
+    }
+
+    public void setEventEndpoint(EventEndpoint eventEndpoint) {
+        this.eventEndpoint = eventEndpoint;
     }
 
     @Override
@@ -95,5 +128,10 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     protected ComponentResolver createComponentResolver() {
         ComponentResolver defaultResolver = super.createComponentResolver();
         return new SpringComponentResolver(getApplicationContext(), defaultResolver);
+    }
+
+    protected EventEndpoint createEventEndpoint() {
+        EventEndpoint endpoint = getEndpoint("event:default", EventEndpoint.class);
+        return endpoint;
     }
 }

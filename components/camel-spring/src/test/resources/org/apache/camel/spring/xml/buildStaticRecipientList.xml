@@ -30,9 +30,9 @@
     <route>
       <from uri="queue:a"/>
       <to>
-         <uri>queue:b</uri>
-         <uri>queue:c</uri>
-         <uri>queue:d</uri>
+        <uri>queue:b</uri>
+        <uri>queue:c</uri>
+        <uri>queue:d</uri>
       </to>
     </route>
   </camelContext>

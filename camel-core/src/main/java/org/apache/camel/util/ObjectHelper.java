@@ -153,8 +153,12 @@ public class ObjectHelper {
         return false;
     }
 
-    public static boolean isNotNullOrBlank(String text) {
+    public static boolean isNotNullAndNonEmpty(String text) {
         return text != null && text.trim().length() > 0;
+    }
+
+    public static boolean isNullOrBlank(String text) {
+        return text == null || text.trim().length() <= 0;
     }
 
     /**
