@@ -42,7 +42,7 @@ public class HttpRouteTest extends ContextTestSupport {
 
     public void testPojoRoutes() throws Exception {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
-        mockEndpoint.expectedMessageCount(1);
+        mockEndpoint.expectedBodiesReceived(expectedBody);
 
         invokeHttpEndpoint();
 
@@ -55,12 +55,9 @@ public class HttpRouteTest extends ContextTestSupport {
         assertNotNull("in", in);
 
         Map<String,Object> headers = in.getHeaders();
-        String actualBody = in.getBody(String.class);
 
         log.info("Headers: " + headers);
-        log.info("Received body: " + actualBody);
 
-        assertEquals("Body", expectedBody, actualBody);
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
     }
 
