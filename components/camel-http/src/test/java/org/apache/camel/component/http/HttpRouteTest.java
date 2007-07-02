@@ -72,7 +72,7 @@ public class HttpRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("http://localhost:8080/test").convertBodyTo(String.class).to("mock:a");
+                from("http://localhost:8080/test").to("mock:a");
             }
         };
     }
