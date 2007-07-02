@@ -32,7 +32,7 @@ import java.util.Map;
 public class DefaultExchange implements Exchange {
     private static final UuidGenerator defaultIdGenerator = new UuidGenerator();
     protected final CamelContext context;
-    private Map<String, Object> headers;
+    private Map<String, Object> properties;
     private Message in;
     private Message out;
     private Message fault;
@@ -58,7 +58,7 @@ public class DefaultExchange implements Exchange {
         if (exchange == this) {
             return;
         }
-        setHeaders(safeCopy(exchange.getProperties()));
+        setProperties(safeCopy(exchange.getProperties()));
         setIn(safeCopy(exchange.getIn()));
         setOut(safeCopy(exchange.getOut()));
        	setFault(safeCopy(exchange.getFault()));        
@@ -86,8 +86,8 @@ public class DefaultExchange implements Exchange {
     }
 
     public Object getProperty(String name) {
-        if (headers != null) {
-            return headers.get(name);
+        if (properties != null) {
+            return properties.get(name);
         }
         return null;
     }
@@ -102,14 +102,14 @@ public class DefaultExchange implements Exchange {
     }
 
     public Map<String, Object> getProperties() {
-        if (headers == null) {
-            headers = new HashMap<String, Object>();
+        if (properties == null) {
+            properties = new HashMap<String, Object>();
         }
-        return headers;
+        return properties;
     }
 
-    public void setHeaders(Map<String, Object> headers) {
-        this.headers = headers;
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
     }
 
     public Message getIn() {
