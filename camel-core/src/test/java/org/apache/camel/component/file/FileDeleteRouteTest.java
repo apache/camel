@@ -17,32 +17,13 @@
  */
 package org.apache.camel.component.file;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-
 /**
- * @version $Revision: 529902 $
+ * @version $Revision: 1.1 $
  */
-public class FileRouteTest extends ContextTestSupport {
-    protected Object expectedBody = "Hello there!";
-    protected String uri = "file:target/test-default-inbox";
-
-    public void testFileRoute() throws Exception {
-        MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        result.expectedBodiesReceived(expectedBody);
-
-        template.sendBody(uri, expectedBody, "cheese", 123);
-
-        result.assertIsSatisfied();
-    }
-
+public class FileDeleteRouteTest extends FileRouteTest {
     @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                from(uri).to("mock:result");
-            }
-        };
+    protected void setUp() throws Exception {
+        uri = "file:target/test-rename-inbox?delete=true";
+        super.setUp();
     }
 }

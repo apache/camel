@@ -17,32 +17,26 @@
  */
 package org.apache.camel.component.file;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.IntrospectionSupport;
-
 import java.io.File;
-import java.util.Map;
-import java.net.URI;
 
 /**
- * The <a href="http://activemq.apache.org/camel/file.html">File Component</a> for working with file systems
- *
- * @version $Revision: 523772 $
+ * @version $Revision: 1.1 $
  */
-public class FileComponent extends DefaultComponent<FileExchange> {
-    public FileComponent() {
-    }
+public class FileNoOpRouteTest extends FileRouteTest {
+    @Override
+    protected void setUp() throws Exception {
+        uri = "file:target/test-noop-inbox?noop=true";
 
-    public FileComponent(CamelContext context) {
-        super(context);
-    }
+        // lets delete all the files
+        File oldDir = new File("target/test-noop-inbox");
+        if (oldDir.exists()) {
+            File parentDir = oldDir.getParentFile();
+            File[] files = parentDir.listFiles();
+            File newName = new File(parentDir, oldDir.getName() + "-" + (files.length + 1));
+            log.debug("renaming old output: " + oldDir + " to: " + newName);
+            oldDir.renameTo(newName);
+        }
 
-    protected Endpoint<FileExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        File file = new File(remaining);
-        FileEndpoint result = new FileEndpoint(file, uri, this);
-        IntrospectionSupport.setProperties(result, parameters);
-        return result;
+        super.setUp();
     }
 }

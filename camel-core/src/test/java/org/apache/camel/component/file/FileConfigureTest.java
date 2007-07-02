@@ -18,31 +18,27 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
+
+import java.io.File;
 
 /**
- * @version $Revision: 529902 $
+ * @version $Revision: 1.1 $
  */
-public class FileRouteTest extends ContextTestSupport {
-    protected Object expectedBody = "Hello there!";
-    protected String uri = "file:target/test-default-inbox";
+public class FileConfigureTest extends ContextTestSupport {
 
-    public void testFileRoute() throws Exception {
-        MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        result.expectedBodiesReceived(expectedBody);
-
-        template.sendBody(uri, expectedBody, "cheese", 123);
-
-        result.assertIsSatisfied();
+    public void testUriConfigurations() throws Exception {
+        assertFileEndpoint("file://target/foo/bar", "target/foo/bar");
+        assertFileEndpoint("file://target/foo/bar?delete=true", "target/foo/bar");
+        assertFileEndpoint("file:target/foo/bar?delete=true", "target/foo/bar");
+        assertFileEndpoint("file:target/foo/bar", "target/foo/bar");
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                from(uri).to("mock:result");
-            }
-        };
+    private void assertFileEndpoint(String endpointUri, String expectedPath) {
+        FileEndpoint endpoint = resolveMandatoryEndpoint(endpointUri, FileEndpoint.class);
+        assertNotNull("Could not find endpoint: " + endpointUri, endpoint);
+
+        File file = endpoint.getFile();
+        String path = file.getPath();
+        assertEquals("For uri: " + endpointUri + " the file is not equal", expectedPath, path);
     }
 }

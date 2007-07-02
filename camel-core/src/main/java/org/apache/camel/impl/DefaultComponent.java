@@ -51,9 +51,15 @@ public abstract  class DefaultComponent<E extends Exchange> extends ServiceSuppo
     public Endpoint<E> createEndpoint(String uri) throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");        
         URI u = new URI(uri);
-        String path = u.getHost();
-        if (path == null) {
-            path = u.getSchemeSpecificPart();
+        String path = u.getSchemeSpecificPart();
+        
+        // lets trim off any query arguments
+        if (path.startsWith("//")) {
+            path = path.substring(2);
+        }
+        int idx = path.indexOf('?');
+        if (idx > 0) {
+            path = path.substring(0, idx);
         }
         Map parameters = URISupport.parseParamters(u);
 

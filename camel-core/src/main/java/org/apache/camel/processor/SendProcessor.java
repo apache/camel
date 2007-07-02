@@ -23,11 +23,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
 public class SendProcessor extends ServiceSupport implements Processor, Service {
+    private static final transient Log log = LogFactory.getLog(SendProcessor.class);
     private Endpoint destination;
     private Producer producer;
 
@@ -52,9 +55,16 @@ public class SendProcessor extends ServiceSupport implements Processor, Service 
 
     public void process(Exchange exchange) throws Exception {
         if (producer == null) {
-            throw new IllegalStateException("No producer, this processor has not been started!");
+            if (isStopped()) {
+                log.warn("Ignoring exchange sent after processor is stopped: " + exchange);
+            }
+            else {
+                throw new IllegalStateException("No producer, this processor has not been started!");
+            }
         }
-        producer.process(exchange);
+        else {
+            producer.process(exchange);
+        }
     }
 
     public Endpoint getDestination() {
