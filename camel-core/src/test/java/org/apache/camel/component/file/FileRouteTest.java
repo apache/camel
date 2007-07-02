@@ -41,7 +41,7 @@ public class FileRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(uri).convertBodyTo(String.class).to("mock:result");
+                from(uri).to("mock:result");
             }
         };
     }

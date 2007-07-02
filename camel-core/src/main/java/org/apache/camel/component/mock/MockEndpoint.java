@@ -17,25 +17,25 @@
  */
 package org.apache.camel.component.mock;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A Mock endpoint which provides a literate, fluent API for testing routes using
@@ -46,29 +46,34 @@ import org.apache.commons.logging.LogFactory;
 public class MockEndpoint extends DefaultEndpoint<Exchange> {
     private static final transient Log log = LogFactory.getLog(MockEndpoint.class);
     private int expectedCount = -1;
+    private int counter = 0;
     private Map<Integer, Processor> processors = new HashMap<Integer, Processor>();
     private List<Exchange> receivedExchanges = new ArrayList<Exchange>();
     private List<Throwable> failures = new ArrayList<Throwable>();
     private List<Runnable> tests = new ArrayList<Runnable>();
     private CountDownLatch latch;
     private long sleepForEmptyTest = 0L;
-	private int expectedMinimumCount=-1;
+    private int expectedMinimumCount = -1;
+    private List expectedBodyValues;
+    private List actualBodyValues = new ArrayList();
 
     public static void assertWait(long timeout, TimeUnit unit, MockEndpoint... endpoints) throws InterruptedException {
-    	long start = System.currentTimeMillis();
-    	long left = unit.toMillis(timeout);
-    	long end = start + left;
+        long start = System.currentTimeMillis();
+        long left = unit.toMillis(timeout);
+        long end = start + left;
         for (MockEndpoint endpoint : endpoints) {
-			if( !endpoint.await(left, TimeUnit.MILLISECONDS) )
-	    		throw new AssertionError("Timeout waiting for endpoints to receive enough messages. "+endpoint.getEndpointUri()+" timed out.");
-			left = end - System.currentTimeMillis();
-			if( left <= 0 )
-				left = 0;
+            if (!endpoint.await(left, TimeUnit.MILLISECONDS)) {
+                throw new AssertionError("Timeout waiting for endpoints to receive enough messages. " + endpoint.getEndpointUri() + " timed out.");
+            }
+            left = end - System.currentTimeMillis();
+            if (left <= 0) {
+                left = 0;
+            }
         }
     }
 
     public static void assertIsSatisfied(long timeout, TimeUnit unit, MockEndpoint... endpoints) throws InterruptedException {
-    	assertWait(timeout, unit, endpoints);
+        assertWait(timeout, unit, endpoints);
         for (MockEndpoint endpoint : endpoints) {
             endpoint.assertIsSatisfied();
         }
@@ -115,7 +120,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     public void assertIsSatisfied() throws InterruptedException {
         assertIsSatisfied(sleepForEmptyTest);
     }
-    
+
     /**
      * Validates that all the available expectations on this endpoint are satisfied; or throw an exception
      */
@@ -133,13 +138,12 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
 
         if (expectedCount >= 0) {
             int receivedCounter = getReceivedCounter();
-            assertEquals("Received message count" , expectedCount, receivedCounter);
+            assertEquals("Received message count", expectedCount, receivedCounter);
         }
-        
-        if( expectedMinimumCount >= 0 ) {
+
+        if (expectedMinimumCount >= 0) {
             int receivedCounter = getReceivedCounter();
-            assertTrue("Received message count "+receivedCounter+", expected at least "+expectedCount, expectedCount <= receivedCounter);
-        	
+            assertTrue("Received message count " + receivedCounter + ", expected at least " + expectedCount, expectedCount <= receivedCounter);
         }
 
         for (Runnable test : tests) {
@@ -147,10 +151,10 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         }
 
         for (Throwable failure : failures) {
-           if (failure != null) {
-               log.error("Caught on " + getEndpointUri() + " Exception: " + failure, failure);
-               fail("Failed due to caught exception: " + failure);
-           }
+            if (failure != null) {
+                log.error("Caught on " + getEndpointUri() + " Exception: " + failure, failure);
+                fail("Failed due to caught exception: " + failure);
+            }
         }
     }
 
@@ -189,22 +193,19 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
      */
     public void expectedBodiesReceived(final List bodies) {
         expectedMessageCount(bodies.size());
+        this.expectedBodyValues = bodies;
+        this.actualBodyValues = new ArrayList();
 
         expects(new Runnable() {
             public void run() {
-                int counter = 0;
-                for (Object expectedBody : bodies) {
-                    Exchange exchange = getReceivedExchanges().get(counter++);
-                    assertTrue("No exchange received for counter: " + counter, exchange != null);
+                for (int i = 0; i < expectedBodyValues.size(); i++) {
+                    Exchange exchange = getReceivedExchanges().get(i);
+                    assertTrue("No exchange received for counter: " + i, exchange != null);
 
-                    Message in = exchange.getIn();
+                    Object expectedBody = expectedBodyValues.get(i);
+                    Object actualBody = actualBodyValues.get(i);
 
-                    Object actualBody = (expectedBody != null)
-                            ? in.getBody(expectedBody.getClass()) : in.getBody();
-
-                    assertEquals("Body of message: " + counter, expectedBody, actualBody);
-
-                    log.debug(getEndpointUri() + " >>>> message: " + counter + " with body: " + actualBody);
+                    assertEquals("Body of message: " + i, expectedBody, actualBody);
                 }
             }
         });
@@ -220,7 +221,6 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         }
         expectedBodiesReceived(bodyList);
     }
-
 
     /**
      * Adds the expection which will be invoked when enough messages are received
@@ -309,7 +309,21 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     //-------------------------------------------------------------------------
     protected synchronized void onExchange(Exchange exchange) {
         try {
-            log.debug(getEndpointUri() + " >>>> " + exchange);
+            Message in = exchange.getIn();
+            Object actualBody = in.getBody();
+
+            if (expectedBodyValues != null) {
+                int index = actualBodyValues.size();
+                if (expectedBodyValues.size() > index) {
+                    Object expectedBody = expectedBodyValues.get(index);
+                    if (expectedBody != null) {
+                        actualBody = in.getBody(expectedBody.getClass());
+                    }
+                    actualBodyValues.add(actualBody);
+                }
+            }
+
+            log.debug(getEndpointUri() + " >>>> " + (++counter) + " : " + exchange + " with body: " + actualBody);
 
             receivedExchanges.add(exchange);
 
@@ -343,25 +357,24 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         throw new AssertionError(getEndpointUri() + " " + message);
     }
 
-	public int getExpectedMinimumCount() {
-		return expectedMinimumCount;
-	}
+    public int getExpectedMinimumCount() {
+        return expectedMinimumCount;
+    }
 
-	public void await() throws InterruptedException {
-		if( latch!=null ) {
-			latch.await();
-		}
-	}
+    public void await() throws InterruptedException {
+        if (latch != null) {
+            latch.await();
+        }
+    }
 
-	public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
-		if( latch!=null ) {
-			return latch.await(timeout, unit);
-		}
-		return true;
-	}
-	
-	public boolean isSingleton() {
-		return true;
-	}
-	
+    public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
+        if (latch != null) {
+            return latch.await(timeout, unit);
+        }
+        return true;
+    }
+
+    public boolean isSingleton() {
+        return true;
+    }
 }
