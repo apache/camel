@@ -52,7 +52,8 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     private List<Throwable> failures = new ArrayList<Throwable>();
     private List<Runnable> tests = new ArrayList<Runnable>();
     private CountDownLatch latch;
-    private long sleepForEmptyTest = 0L;
+    private long sleepForEmptyTest = 2000L;
+    private long defaulResultWaitMillis = 10000L;
     private int expectedMinimumCount = -1;
     private List expectedBodyValues;
     private List actualBodyValues = new ArrayList();
@@ -123,15 +124,18 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
 
     /**
      * Validates that all the available expectations on this endpoint are satisfied; or throw an exception
+     *
+     * @param timeoutForEmptyEndpoints the timeout in milliseconds that we should wait for the test to be true
      */
     public void assertIsSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {
         if (latch != null) {
             // now lets wait for the results
-            latch.await(10, TimeUnit.SECONDS);
+            latch.await(defaulResultWaitMillis, TimeUnit.MILLISECONDS);
         }
         else if (expectedCount == 0) {
             // lets wait a little bit just in case
             if (timeoutForEmptyEndpoints > 0) {
+                log.debug("Sleeping for: " + timeoutForEmptyEndpoints + " millis to check there really are no messages received");
                 Thread.sleep(timeoutForEmptyEndpoints);
             }
         }

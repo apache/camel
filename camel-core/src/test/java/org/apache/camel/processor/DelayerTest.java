@@ -24,20 +24,17 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision: 1.1 $
  */
-public class AggregatorTest extends ContextTestSupport {
-    protected int messageCount = 100;
+public class DelayerTest extends ContextTestSupport {
 
-    public void testSendingLotsOfMessagesGetAggregatedToTheLatestMessage() throws Exception {
+    public void testSendingMessageGetsDelayed() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(0);
 
-        resultEndpoint.expectedBodiesReceived("message:" + messageCount);
+        template.sendBody("queue:a", "<hello>world!</hello>", "JMSTimestamp", System.currentTimeMillis());
+        resultEndpoint.assertIsSatisfied(1000);
 
-        // lets send a large batch of messages
-        for (int i = 1; i <= messageCount; i++) {
-            String body = "message:" + i;
-            template.sendBody("direct:a", body, "cheese", 123);
-        }
-
+        // now if we wait a bit longer we should receive the message!
+        resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -51,7 +48,7 @@ public class AggregatorTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: ex
-                from("direct:a").aggregator(header("cheese")).to("mock:result");
+                from("queue:a").delayer(header("JMSTimestamp"), 3000).to("mock:result");
                 // END SNIPPET: ex
             }
         };
