@@ -50,7 +50,9 @@ public class AggregatorTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                // START SNIPPET: example
                 from("direct:a").aggregator(header("cheese")).to("mock:result");
+                // END SNIPPET: example
             }
         };
     }
