@@ -28,6 +28,7 @@ import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MessageIdRepository;
 import org.apache.camel.spi.Policy;
@@ -241,6 +242,79 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
             list.add(expression);
         }
         return resequencer(list);
+    }
+
+    /**
+     * A builder for the <a href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a> pattern
+     * where a batch of messages are processed (up to a maximum amount or until some timeout is reached)
+     * and messages for the same correlation key are combined together using some kind of
+     * {@link AggregationStrategy ) (by default the latest message is used) to compress many message exchanges
+     * into a smaller number of exchanges.
+     * <p/>
+     * A good example of this is stock market data; you may be receiving 30,000 messages/second and you may want to
+     * throttle it right down so that multiple messages for the same stock are combined (or just the latest
+     * message is used and older prices are discarded). Another idea is to combine line item messages together
+     * into a single invoice message.
+     *
+     * @param correlationExpression the expression used to calculate the correlation key. For a JMS message this could
+     * be the expression <code>header("JMSDestination")</code> or  <code>header("JMSCorrelationID")</code>
+     */
+    @Fluent
+    public AggregatorBuilder aggregator(Expression correlationExpression) {
+        AggregatorBuilder answer = new AggregatorBuilder(this, correlationExpression);
+        setRouteBuilder(answer);
+        return answer;
+    }
+
+    /**
+     * A builder for the <a href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a> pattern
+     * where a batch of messages are processed (up to a maximum amount or until some timeout is reached)
+     * and messages for the same correlation key are combined together using some kind of
+     * {@link AggregationStrategy ) (by default the latest message is used) to compress many message exchanges
+     * into a smaller number of exchanges.
+     * <p/>
+     * A good example of this is stock market data; you may be receiving 30,000 messages/second and you may want to
+     * throttle it right down so that multiple messages for the same stock are combined (or just the latest
+     * message is used and older prices are discarded). Another idea is to combine line item messages together
+     * into a single invoice message.
+     *
+     * @param correlationExpression the expression used to calculate the correlation key. For a JMS message this could
+     * be the expression <code>header("JMSDestination")</code> or  <code>header("JMSCorrelationID")</code>
+     */
+    @Fluent
+    public AggregatorBuilder aggregator(Expression correlationExpression, AggregationStrategy strategy) {
+        AggregatorBuilder answer = new AggregatorBuilder(this, correlationExpression);
+        answer.aggregationStrategy(strategy);
+        setRouteBuilder(answer);
+        return answer;
+    }
+
+    /**
+     * A builder for the <a href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
+     * where an expression is used to calculate the time which the message will be dispatched on
+     *
+     * @param processAtExpression an expression to calculate the time at which the messages should be processed
+     * @return the builder
+     */
+    @Fluent
+    public DelayerBuilder delayer(Expression<Exchange> processAtExpression) {
+        DelayerBuilder answer = new DelayerBuilder(this, processAtExpression, 0L);
+        setRouteBuilder(answer);
+        return answer;
+    }
+
+    /**
+     * A builder for the <a href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
+     * where a fixed amount of milliseconds are used to delay processing of a message exchange
+     *
+     * @param delay the default delay in milliseconds
+     * @return the builder
+     */
+    @Fluent
+    public DelayerBuilder delayer(long delay) {
+        DelayerBuilder answer = new DelayerBuilder(this, null, delay);
+        setRouteBuilder(answer);
+        return answer;
     }
 
     /**
