@@ -227,24 +227,28 @@
 	<!-- Images -->
 	<!-- Images and image maps -->
 	<xsl:template match="img">
-		<!-- let's not include confluence generated images -->
-		<xsl:if test="@class != 'rendericon'">
-			<xsl:variable name="tag_name">
-				<xsl:choose>
-					<xsl:when 
-						test="boolean(parent::p) and 
+		<xsl:choose>
+			<xsl:when test="contains(@class,'rendericon')">
+				<!--do nothing;  let's not include confluence generated images -->
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:variable name="tag_name">
+					<xsl:choose>
+						<xsl:when 
+							test="boolean(parent::p) and 
         boolean(normalize-space(parent::p/text()))">
-						<xsl:text>inlinemediaobject</xsl:text>
-					</xsl:when>
-					<xsl:otherwise>mediaobject</xsl:otherwise>
-				</xsl:choose>
-			</xsl:variable>
-			<xsl:element name="{$tag_name}">
-				<imageobject>
-					<xsl:call-template name="process.image"/>
-				</imageobject>
-			</xsl:element>
-		</xsl:if>
+							<xsl:text>inlinemediaobject</xsl:text>
+						</xsl:when>
+						<xsl:otherwise>mediaobject</xsl:otherwise>
+					</xsl:choose>
+				</xsl:variable>
+				<xsl:element name="{$tag_name}">
+					<imageobject>
+						<xsl:call-template name="process.image"/>
+					</imageobject>
+				</xsl:element>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	<xsl:template name="process.image">
 		<imagedata>
