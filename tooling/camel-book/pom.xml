@@ -64,7 +64,8 @@
         <configuration>
           <baseURL>http://cwiki.apache.org/CAMEL/</baseURL>
           <title>Camel</title>
-          <subtitle>User Guide</subtitle>       
+          <subtitle>User Guide</subtitle>     
+  		  <!--xslFile>${basedir}/src/styles/docbook1.xsl</xslFile-->   
           <resources>
               <resource>book-introduction.html</resource>
               <resource>book-architecture.html</resource>
