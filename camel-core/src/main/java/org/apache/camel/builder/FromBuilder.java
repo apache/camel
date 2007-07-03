@@ -40,6 +40,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import sun.net.smtp.SmtpClient;
+
 /**
  * @version $Revision$
  */
@@ -298,7 +300,21 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      */
     @Fluent
     public DelayerBuilder delayer(Expression<Exchange> processAtExpression) {
-        DelayerBuilder answer = new DelayerBuilder(this, processAtExpression, 0L);
+        return delayer(processAtExpression, 0L);
+    }
+
+    /**
+     * A builder for the <a href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
+     * where an expression is used to calculate the time which the message will be dispatched on
+     *
+     * @param processAtExpression an expression to calculate the time at which the messages should be processed
+     * @param delay the delay in milliseconds which is added to the processAtExpression to determine the time the
+     * message should be processed
+     * @return the builder
+     */
+    @Fluent
+    public DelayerBuilder delayer(Expression<Exchange> processAtExpression, long delay) {
+        DelayerBuilder answer = new DelayerBuilder(this, processAtExpression, delay);
         setRouteBuilder(answer);
         return answer;
     }
@@ -312,9 +328,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      */
     @Fluent
     public DelayerBuilder delayer(long delay) {
-        DelayerBuilder answer = new DelayerBuilder(this, null, delay);
-        setRouteBuilder(answer);
-        return answer;
+        return delayer(null, delay);
     }
 
     /**
@@ -573,4 +587,5 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
     protected void setRouteBuilder(FromBuilder routeBuilder) {
         this.routeBuilder = routeBuilder;
     }
+
 }

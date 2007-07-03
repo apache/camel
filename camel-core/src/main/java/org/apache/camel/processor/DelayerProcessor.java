@@ -105,6 +105,9 @@ public class DelayerProcessor extends ServiceSupport implements Processor {
             }
             else {
                 try {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Sleeping for: " + delay + " millis");
+                    }
                     Thread.sleep(delay);
                 }
                 catch (InterruptedException e) {
