@@ -32,6 +32,16 @@ public class ServiceHelper {
     private static final transient Log log = LogFactory.getLog(ServiceHelper.class);
 
 
+    public static void startService(Object value) throws Exception {
+        if (value instanceof Service) {
+            Service service = (Service) value;
+            service.start();
+        }
+        else if (value instanceof Collection) {
+            startServices((Collection) value);
+        }
+    }
+
     /**
      * Starts all of the given services
      */
@@ -50,16 +60,6 @@ public class ServiceHelper {
                 Service service = (Service) value;
                 service.start();
             }
-        }
-    }
-
-    public static void startService(Object value) throws Exception {
-        if (value instanceof Service) {
-            Service service = (Service) value;
-            service.start();
-        }
-        else if (value instanceof Collection) {
-            startServices((Collection) value);
         }
     }
 
@@ -86,6 +86,18 @@ public class ServiceHelper {
             throw firstException;
         }
     }
+
+    public static void stopService(Object value) throws Exception {
+        if (value instanceof Service) {
+            Service service = (Service) value;
+            service.stop();
+        }
+        else if (value instanceof Collection) {
+            stopServices((Collection) value);
+        }
+    }
+
+
     /**
      * Stops all of the given services, throwing the first exception caught
      */
