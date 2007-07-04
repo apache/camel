@@ -74,7 +74,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 				        	
 				        	@Override
 				        	public String toString() {
-				                return "rollback(" + this.processor + ")";
+				                return "rollback(" + getProcessor() + ")";
 				        	}
 				        };
 					}
