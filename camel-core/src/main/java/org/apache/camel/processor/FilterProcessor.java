@@ -17,48 +17,33 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.Exchange;
-import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.util.ServiceHelper;
 
 /**
  * @version $Revision$
  */
-public class FilterProcessor extends ServiceSupport implements Processor {
+public class FilterProcessor extends DelegateProcessor {
     private Predicate<Exchange> predicate;
-    private Processor processor;
 
     public FilterProcessor(Predicate<Exchange> predicate, Processor processor) {
+        super(processor);
         this.predicate = predicate;
-        this.processor = processor;
     }
 
     public void process(Exchange exchange) throws Exception {
         if (predicate.matches(exchange)) {
-            processor.process(exchange);
+            super.process(exchange);
         }
     }
 
     @Override
     public String toString() {
-        return "filter (" + predicate + ") " + processor;
+        return "Filter[if: " + predicate + " do: " + getProcessor() + "]";
     }
 
     public Predicate<Exchange> getPredicate() {
         return predicate;
-    }
-
-    public Processor getProcessor() {
-        return processor;
-    }
-
-    protected void doStart() throws Exception {
-        ServiceHelper.startServices(processor);
-    }
-
-    protected void doStop() throws Exception {
-        ServiceHelper.stopServices(processor);
     }
 }

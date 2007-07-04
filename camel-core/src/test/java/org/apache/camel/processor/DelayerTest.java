@@ -31,7 +31,7 @@ public class DelayerTest extends ContextTestSupport {
         resultEndpoint.expectedMessageCount(0);
 
         template.sendBody("queue:a", "<hello>world!</hello>", "JMSTimestamp", System.currentTimeMillis());
-        resultEndpoint.assertIsSatisfied(1000);
+        resultEndpoint.assertIsSatisfied();
 
         // now if we wait a bit longer we should receive the message!
         resultEndpoint.expectedMessageCount(1);

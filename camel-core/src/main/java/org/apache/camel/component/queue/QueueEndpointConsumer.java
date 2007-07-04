@@ -17,10 +17,13 @@
  */
 package org.apache.camel.component.queue;
 
+import org.apache.camel.AlreadyStoppedException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +31,9 @@ import java.util.concurrent.TimeUnit;
  * @version $Revision$
  */
 public class QueueEndpointConsumer<E extends Exchange> extends ServiceSupport implements Consumer<E>, Runnable {
+    private static final Log log = LogFactory.getLog(QueueEndpointConsumer.class);
+    private static int counter;
+
     private QueueEndpoint<E> endpoint;
     private Processor processor;
     private Thread thread;
@@ -55,20 +61,28 @@ public class QueueEndpointConsumer<E extends Exchange> extends ServiceSupport im
                 try {
                     processor.process(exchange);
                 }
+                catch (AlreadyStoppedException e) {
+                    log.debug("Ignoring failed message due to shutdown: " + e, e);
+                    break;
+                }
                 catch (Throwable e) {
-                    e.printStackTrace();
+                    log.error(e);
                 }
             }
         }
     }
 
     protected void doStart() throws Exception {
-        thread = new Thread(this, endpoint.getEndpointUri());
+        thread = new Thread(this, endpoint.getEndpointUri() + " thread:" + nextCounter());
         thread.setDaemon(true);
         thread.start();
     }
 
     protected void doStop() throws Exception {
         thread.join();
+    }
+
+    protected static synchronized int nextCounter() {
+        return ++counter;
     }
 }

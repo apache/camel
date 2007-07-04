@@ -20,12 +20,14 @@ package org.apache.camel.component.mock;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ExpressionComparator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -128,21 +130,26 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
      * @param timeoutForEmptyEndpoints the timeout in milliseconds that we should wait for the test to be true
      */
     public void assertIsSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {
-        if (latch != null) {
-            // now lets wait for the results
-            latch.await(defaulResultWaitMillis, TimeUnit.MILLISECONDS);
-        }
-        else if (expectedCount == 0) {
-            // lets wait a little bit just in case
-            if (timeoutForEmptyEndpoints > 0) {
-                log.debug("Sleeping for: " + timeoutForEmptyEndpoints + " millis to check there really are no messages received");
-                Thread.sleep(timeoutForEmptyEndpoints);
-            }
-        }
-
         if (expectedCount >= 0) {
-            int receivedCounter = getReceivedCounter();
-            assertEquals("Received message count", expectedCount, receivedCounter);
+            if (expectedCount != getReceivedCounter()) {
+                if (expectedCount == 0) {
+                    // lets wait a little bit just in case
+                    if (timeoutForEmptyEndpoints > 0) {
+                        log.debug("Sleeping for: " + timeoutForEmptyEndpoints + " millis to check there really are no messages received");
+                        Thread.sleep(timeoutForEmptyEndpoints);
+                    }
+                }
+                else {
+                    if (latch == null) {
+                        fail("Should have a latch!");
+                    }
+
+                    // now lets wait for the results
+                    log.debug("Waiting on the latch for: " + defaulResultWaitMillis + " millis");
+                    latch.await(defaulResultWaitMillis, TimeUnit.MILLISECONDS);
+                }
+            }
+            assertEquals("Received message count", expectedCount, getReceivedCounter());
         }
 
         if (expectedMinimumCount >= 0) {
@@ -227,6 +234,45 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     /**
+     * Adds an expectation that messages received should have ascending values of the given expression
+     * such as a user generated counter value
+     *
+     * @param expression
+     */
+    public void expectsAscending(final Expression<Exchange> expression) {
+        expects(new Runnable() {
+            public void run() {
+                assertMessagesAscending(expression);
+            }
+        });
+    }
+
+    /**
+     * Asserts that the messages have ascending values of the given expression
+     */
+    public void assertMessagesAscending(Expression<Exchange> expression) {
+        ExpressionComparator comparator = new ExpressionComparator(expression);
+        List<Exchange> list = getReceivedExchanges();
+        for (int i = 1; i < expectedBodyValues.size(); i++) {
+            int j = i - 1;
+            Exchange e1 = list.get(j);
+            Exchange e2 = list.get(i);
+            int result = comparator.compare(e1, e2);
+            if (result == 0) {
+                Object value = expression.evaluate(e1);
+                fail("Messages not ascending. Messages" + j + " and " + i + " are equal with value: " + value
+                        + " for expression: " + expression + " when they were expected to be ascending. Exchanges: " + e1 + " and " + e2);
+            }
+            else if (result > 0) {
+                Object value = expression.evaluate(e1);
+                fail("Messages not ascending. Message " + j + " has value: " + expression.evaluate(e1)
+                        + " and message" + i + " has value: " + expression.evaluate(e2)
+                        + " for expression: " + expression + " when they were expected to be ascending. Exchanges: " + e1 + " and " + e2);
+            }
+        }
+    }
+
+    /**
      * Adds the expection which will be invoked when enough messages are received
      */
     public void expects(Runnable runnable) {
@@ -307,6 +353,18 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
      */
     public void setSleepForEmptyTest(long sleepForEmptyTest) {
         this.sleepForEmptyTest = sleepForEmptyTest;
+    }
+
+    public long getDefaulResultWaitMillis() {
+        return defaulResultWaitMillis;
+    }
+
+    /**
+     * Sets the maximum amount of time the {@link #assertIsSatisfied()}
+     * will wait on a latch until it is satisfied
+     */
+    public void setDefaulResultWaitMillis(long defaulResultWaitMillis) {
+        this.defaulResultWaitMillis = defaulResultWaitMillis;
     }
 
     // Implementation methods

@@ -76,7 +76,6 @@ public class IdempotentConsumer extends ServiceSupport implements Processor {
         return nextProcessor;
     }
 
-
     // Implementation methods
     //-------------------------------------------------------------------------
 
@@ -91,7 +90,7 @@ public class IdempotentConsumer extends ServiceSupport implements Processor {
     /**
      * A strategy method to allow derived classes to overload the behaviour of processing a duplicate message
      *
-     * @param exchange the exchange
+     * @param exchange  the exchange
      * @param messageId the message ID of this exchange
      */
     protected void onDuplicateMessage(Exchange exchange, String messageId) {

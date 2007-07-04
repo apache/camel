@@ -68,7 +68,7 @@ public class SpringTransactionPolicy<E> implements Policy<E> {
 
             @Override
             public String toString() {
-                return "SpringTransactionPolicy:" + propagationBehaviorToString(transactionTemplate.getPropagationBehavior()) + "[" + getNext() + "]";
+                return "SpringTransactionPolicy:" + propagationBehaviorToString(transactionTemplate.getPropagationBehavior()) + "[" + getProcessor() + "]";
             }
 
             private String propagationBehaviorToString(int propagationBehavior) {

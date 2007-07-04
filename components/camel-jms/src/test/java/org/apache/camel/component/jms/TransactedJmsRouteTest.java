@@ -74,7 +74,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 				        	
 				        	@Override
 				        	public String toString() {
-				                return "rollback(" + next + ")";
+				                return "rollback(" + this.processor + ")";
 				        	}
 				        };
 					}
@@ -92,7 +92,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 				        	}
 				        	@Override
 				        	public String toString() {
-				                return "catchRollback(" + next + ")";
+				                return "catchRollback(" + this.processor + ")";
 				        	}
 				        };
 					}

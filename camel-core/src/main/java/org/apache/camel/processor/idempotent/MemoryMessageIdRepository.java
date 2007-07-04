@@ -19,11 +19,8 @@ package org.apache.camel.processor.idempotent;
 
 import org.apache.camel.util.LRUCache;
 
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * A memory based implementation of {@link MessageIdRepository}.

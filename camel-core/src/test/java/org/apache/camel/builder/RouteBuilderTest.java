@@ -259,11 +259,11 @@ public class RouteBuilderTest extends TestSupport {
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             DelegateProcessor p1 = assertIsInstanceOf(DelegateProcessor.class, processor);
-            processor = p1.getNext();
+            processor = p1.getProcessor();
 
             DelegateProcessor p2 = assertIsInstanceOf(DelegateProcessor.class, processor);
 
-            assertSendTo(p2.getNext(), "queue:d");
+            assertSendTo(p2.getProcessor(), "queue:d");
         }
     }
 

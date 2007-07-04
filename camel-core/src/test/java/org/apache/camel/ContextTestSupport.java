@@ -44,6 +44,7 @@ public abstract class ContextTestSupport extends TestSupport {
 
     @Override
     protected void tearDown() throws Exception {
+        log.debug("tearDown test: " + getName());
         template.stop();
         context.stop();
     }

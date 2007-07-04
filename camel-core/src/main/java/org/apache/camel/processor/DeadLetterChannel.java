@@ -18,8 +18,8 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -141,7 +141,7 @@ public class DeadLetterChannel extends ServiceSupport implements ErrorHandler {
             next = counter + 1;
         }
         in.setHeader(REDELIVERY_COUNTER, next);
-            in.setHeader(REDELIVERED, true);
+        in.setHeader(REDELIVERED, true);
         return next;
     }
 

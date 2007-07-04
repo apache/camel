@@ -22,10 +22,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Iterator;
 
 /**
  * Implements a sticky load balancer using an {@link Expression} to calculate
@@ -67,7 +66,7 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
     @Override
     public void removeProcessor(Processor processor) {
         synchronized (stickyMap) {
-            Iterator<Map.Entry<Object,Processor>> iter = stickyMap.entrySet().iterator();
+            Iterator<Map.Entry<Object, Processor>> iter = stickyMap.entrySet().iterator();
             while (iter.hasNext()) {
                 Map.Entry<Object, Processor> entry = iter.next();
                 if (processor.equals(entry.getValue())) {
