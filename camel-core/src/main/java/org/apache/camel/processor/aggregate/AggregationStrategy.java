@@ -28,7 +28,7 @@ import org.apache.camel.Exchange;
  * @version $Revision: 1.1 $
  */
 public interface AggregationStrategy {
-    
+
     /**
      * Aggregates an old and new exchange together to create a single combined
      * exchange

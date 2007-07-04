@@ -26,7 +26,7 @@ import org.apache.camel.Exchange;
  *
  * @version $Revision: 1.1 $
  */
-public class UseLatestAggregationStrategy implements AggregationStrategy{
+public class UseLatestAggregationStrategy implements AggregationStrategy {
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         return newExchange;

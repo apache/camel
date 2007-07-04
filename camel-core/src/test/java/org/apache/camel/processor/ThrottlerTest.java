@@ -24,33 +24,30 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision: 1.1 $
  */
-public class FilterTest extends ContextTestSupport {
+public class ThrottlerTest extends ContextTestSupport {
+    protected int messageCount = 6;
 
-    public void testSendMatchingMessage() throws Exception {
+    public void testSendLotsOfMessagesButOnly3GetThrough() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.expectedMessageCount(3);
+        resultEndpoint.setDefaulResultWaitMillis(1000);
 
-        template.sendBody("direct:a", "matched", "foo", "bar");
+        for (int i = 0; i < messageCount; i++) {
+            template.sendBody("queue:a", "<message>" + i + "</message>");
+        }
 
+        // lets pause to give the requests time to be processed
+        // to check that the throttle really does kick in
         resultEndpoint.assertIsSatisfied();
     }
-
-    public void testSendNotMatchingMessage() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(0);
-
-        template.sendBody("direct:a", "notMatched", "foo", "notMatchedHeaderValue");
-
-        resultEndpoint.assertIsSatisfied();
-    }
-
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").filter(header("foo").isEqualTo("bar")).to("mock:result");
+                // START SNIPPET: ex
+                from("queue:a").throttler(3).timePeriodMillis(30000).to("mock:result");
+                // END SNIPPET: ex
             }
         };
     }
-
 }

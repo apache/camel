@@ -20,7 +20,7 @@ package org.apache.camel.builder;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.DelayerProcessor;
+import org.apache.camel.processor.Delayer;
 
 /**
  * 
@@ -41,6 +41,6 @@ public class DelayerBuilder extends FromBuilder {
     @Override
     public Processor createProcessor() throws Exception {
         final Processor processor = super.createProcessor();
-        return new DelayerProcessor(processor, processAtExpression, delay);
+        return new Delayer(processor, processAtExpression, delay);
     }
 }

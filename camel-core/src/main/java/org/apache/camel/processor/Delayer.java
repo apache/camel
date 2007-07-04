@@ -20,50 +20,31 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ExpressionHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * A <a href="http://activemq.apache.org/camel/delayer.html">Delayer</a> which delays
  * processing the exchange until the correct amount of time has elapsed
  * using an expression to determine the delivery time.
- *
+ * <p/>
  * For example if you wish to delay JMS messages by 25 seconds from their publish time you could create
  * an instance of this class with the expression <code>header("JMSTimestamp")</code> and a delay value of 25000L.
  *
  * @version $Revision: 1.1 $
  */
-public class DelayerProcessor extends ServiceSupport implements Processor {
-    private static final transient Log log = LogFactory.getLog(DelayerProcessor.class);
+public class Delayer extends DelayProcessorSupport {
     private Expression<Exchange> timeExpression;
-    private Processor processor;
     private long delay = 0L;
 
-    public DelayerProcessor(Processor processor, Expression<Exchange> timeExpression, long delay) {
-        this.processor = processor;
+    public Delayer(Processor processor, Expression<Exchange> timeExpression, long delay) {
+        super(processor);
         this.timeExpression = timeExpression;
         this.delay = delay;
     }
 
-    public void process(Exchange exchange) throws Exception {
-        long time = 0;
-        if (timeExpression != null) {
-            Long longValue = ExpressionHelper.evaluateAsType(timeExpression, exchange, Long.class);
-            if (longValue != null) {
-                time = longValue.longValue();
-            }
-        }
-        if (time <= 0) {
-            time = defaultProcessTime(exchange);
-        }
-
-        time += delay;
-
-        waitUntil(time, exchange);
-        processor.process(exchange);
+    @Override
+    public String toString() {
+        return "Delayer[on: " + timeExpression + " delay: " + delay + " to: " + getProcessor() + "]";
     }
 
     // Properties
@@ -83,45 +64,24 @@ public class DelayerProcessor extends ServiceSupport implements Processor {
     // Implementation methods
     //-------------------------------------------------------------------------
 
-    protected void doStart() throws Exception {
-        ServiceHelper.startService(processor);
-    }
-
-    protected void doStop() throws Exception {
-        ServiceHelper.stopService(processor);
-    }
-
     /**
-     * Wait until the given system time before continuing
-     *
-     * @param time     the system time to wait for
-     * @param exchange the exchange being processed
+     * Waits for an optional time period before continuing to process the exchange
      */
-    protected void waitUntil(long time, Exchange exchange) {
-        while (true) {
-            long delay = time - currentSystemTime();
-            if (delay < 0) {
-                return;
-            }
-            else {
-                try {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Sleeping for: " + delay + " millis");
-                    }
-                    Thread.sleep(delay);
-                }
-                catch (InterruptedException e) {
-                    handleSleepInteruptedException(e);
-                }
+    protected void delay(Exchange exchange) throws Exception {
+        long time = 0;
+        if (timeExpression != null) {
+            Long longValue = ExpressionHelper.evaluateAsType(timeExpression, exchange, Long.class);
+            if (longValue != null) {
+                time = longValue.longValue();
             }
         }
-    }
+        if (time <= 0) {
+            time = defaultProcessTime(exchange);
+        }
 
-    /**
-     * Called when a sleep is interupted; allows derived classes to handle this case differently
-     */
-    protected void handleSleepInteruptedException(InterruptedException e) {
-        log.debug("Sleep interupted: " + e, e);
+        time += delay;
+
+        waitUntil(time, exchange);
     }
 
     /**
@@ -134,7 +94,4 @@ public class DelayerProcessor extends ServiceSupport implements Processor {
         return currentSystemTime();
     }
 
-    protected long currentSystemTime() {
-        return System.currentTimeMillis();
-    }
 }

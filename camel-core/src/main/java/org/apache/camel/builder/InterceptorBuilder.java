@@ -20,7 +20,6 @@ package org.apache.camel.builder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -63,14 +62,14 @@ public class InterceptorBuilder implements ProcessorFactory {
             	first = p;
             }
             if( last != null ) {
-            	last.setNext(p);
+            	last.setProcessor(p);
             }
             last = p;
         }
         
         Processor p = target.createProcessor();
         if( last != null ) {
-        	last.setNext(p);
+        	last.setProcessor(p);
         }
         return first == null ? p : first;
     }

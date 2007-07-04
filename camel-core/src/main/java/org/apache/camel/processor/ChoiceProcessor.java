@@ -17,11 +17,11 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.Exchange;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.ServiceHelper;
 
 import java.util.ArrayList;
 import java.util.List;

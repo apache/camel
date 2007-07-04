@@ -42,7 +42,7 @@ public class TopicLoadBalancer extends LoadBalancerSupport {
      * {@link Pipeline} will not clone the exchange
      *
      * @param processor the processor that will send the exchange
-     * @param exchange @return the current exchange if no copying is required such as for a pipeline otherwise a new copy of the exchange is returned.
+     * @param exchange  @return the current exchange if no copying is required such as for a pipeline otherwise a new copy of the exchange is returned.
      */
     protected Exchange copyExchangeStrategy(Processor processor, Exchange exchange) {
         return exchange.copy();

@@ -17,10 +17,10 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
-import org.apache.camel.spi.Policy;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.spi.Policy;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -30,13 +30,13 @@ import org.apache.camel.util.ServiceHelper;
  * @version $Revision: 519941 $
  */
 public class DelegateProcessor extends ServiceSupport implements Processor {
-    protected Processor next;
+    private Processor processor;
 
     public DelegateProcessor() {
     }
 
-    public DelegateProcessor(Processor next) {
-        this.next = next;
+    public DelegateProcessor(Processor processor) {
+        this.processor = processor;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -44,29 +44,29 @@ public class DelegateProcessor extends ServiceSupport implements Processor {
     }
 
     protected void processNext(Exchange exchange) throws Exception {
-        if (next != null) {
-            next.process(exchange);
+        if (processor != null) {
+            processor.process(exchange);
         }
     }
 
     @Override
     public String toString() {
-        return "delegate(" + next + ")";
+        return "Delegate(" + processor + ")";
     }
 
-    public Processor getNext() {
-        return next;
+    public Processor getProcessor() {
+        return processor;
     }
 
-    public void setNext(Processor next) {
-        this.next = next;
+    public void setProcessor(Processor processor) {
+        this.processor = processor;
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(next);
+        ServiceHelper.startServices(processor);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(next);
+        ServiceHelper.stopServices(processor);
     }
 }

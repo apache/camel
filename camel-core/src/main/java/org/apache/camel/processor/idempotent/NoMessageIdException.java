@@ -17,8 +17,8 @@
  */
 package org.apache.camel.processor.idempotent;
 
-import org.apache.camel.Expression;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
 
 /**

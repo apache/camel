@@ -15,30 +15,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.loadbalancer;
+package org.apache.camel.builder;
 
 import org.apache.camel.Processor;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import org.apache.camel.processor.Throttler;
 
 /**
- * A default base class for a {@link LoadBalancer} implementation
- *
+ * 
  * @version $Revision: 1.1 $
  */
-public abstract class LoadBalancerSupport implements LoadBalancer {
-    private List<Processor> processors = new CopyOnWriteArrayList<Processor>();
+public class ThrottlerBuilder extends FromBuilder {
+    private long maximumRequestsPerPeriod;
+    private long timePeriodMillis = 1000;
 
-    public void addProcessor(Processor processor) {
-        processors.add(processor);
+    public ThrottlerBuilder(FromBuilder parent, long maximumRequestsPerPeriod) {
+        super(parent);
+        this.maximumRequestsPerPeriod = maximumRequestsPerPeriod;
     }
 
-    public void removeProcessor(Processor processor) {
-        processors.remove(processor);
+    /**
+     * Sets the time period during which the maximum request count is valid for
+     */
+    public ThrottlerBuilder timePeriodMillis(long timePeriodMillis) {
+        this.timePeriodMillis = timePeriodMillis;
+        return this;
     }
 
-    public List<Processor> getProcessors() {
-        return processors;
+    @Override
+    public Processor createProcessor() throws Exception {
+        final Processor processor = super.createProcessor();
+        return new Throttler(processor, maximumRequestsPerPeriod, timePeriodMillis);
     }
 }
