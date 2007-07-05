@@ -187,7 +187,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "convertTo(" + expression + ", " + type + ")";
+                return "" + expression + ".convertTo(" + type.getName() + ".class)";
             }
         };
     }

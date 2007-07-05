@@ -30,22 +30,21 @@ import java.util.concurrent.TimeUnit;
 /**
  * @version $Revision$
  */
-public class QueueEndpointConsumer<E extends Exchange> extends ServiceSupport implements Consumer<E>, Runnable {
-    private static final Log log = LogFactory.getLog(QueueEndpointConsumer.class);
-    private static int counter;
+public class QueueConsumer<E extends Exchange> extends ServiceSupport implements Consumer<E>, Runnable {
+    private static final Log log = LogFactory.getLog(QueueConsumer.class);
 
     private QueueEndpoint<E> endpoint;
     private Processor processor;
     private Thread thread;
 
-    public QueueEndpointConsumer(QueueEndpoint<E> endpoint, Processor processor) {
+    public QueueConsumer(QueueEndpoint<E> endpoint, Processor processor) {
         this.endpoint = endpoint;
         this.processor = processor;
     }
 
     @Override
     public String toString() {
-        return "QueueEndpointConsumer: " + endpoint.getEndpointUri();
+        return "QueueConsumer: " + endpoint.getEndpointUri();
     }
 
     public void run() {
@@ -73,7 +72,7 @@ public class QueueEndpointConsumer<E extends Exchange> extends ServiceSupport im
     }
 
     protected void doStart() throws Exception {
-        thread = new Thread(this, endpoint.getEndpointUri() + " thread:" + nextCounter());
+        thread = new Thread(this, getThreadName(endpoint.getEndpointUri()));
         thread.setDaemon(true);
         thread.start();
     }
@@ -82,7 +81,4 @@ public class QueueEndpointConsumer<E extends Exchange> extends ServiceSupport im
         thread.join();
     }
 
-    protected static synchronized int nextCounter() {
-        return ++counter;
-    }
 }

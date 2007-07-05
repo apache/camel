@@ -18,18 +18,82 @@
 package org.apache.camel;
 
 import junit.framework.TestCase;
+import org.apache.camel.builder.Builder;
+import org.apache.camel.builder.ValueBuilder;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.camel.impl.DefaultExchange;
 
 /**
  * A bunch of useful testing methods
- * 
+ *
  * @version $Revision$
  */
 public abstract class TestSupport extends TestCase {
 
     protected transient Log log = LogFactory.getLog(getClass());
+
+    // Builder methods for expressions used when testing
+    //-------------------------------------------------------------------------
+
+    /**
+     * Returns a value builder for the given header
+     */
+
+    public ValueBuilder header(String name) {
+        return Builder.header(name);
+    }
+
+    /**
+     * Returns a predicate and value builder for the inbound body on an exchange
+     */
+
+    public ValueBuilder body() {
+        return Builder.body();
+    }
+
+    /**
+     * Returns a predicate and value builder for the inbound message body as a specific type
+     */
+
+    public <T> ValueBuilder bodyAs(Class<T> type) {
+        return Builder.bodyAs(type);
+    }
+
+    /**
+     * Returns a predicate and value builder for the outbound body on an exchange
+     */
+
+    public ValueBuilder outBody() {
+        return Builder.outBody();
+    }
+
+    /**
+     * Returns a predicate and value builder for the outbound message body as a specific type
+     */
+
+    public <T> ValueBuilder outBody(Class<T> type) {
+        return Builder.outBody(type);
+    }
+
+    /**
+     * Returns a value builder for the given system property
+     */
+
+    public ValueBuilder systemProperty(String name) {
+        return Builder.systemProperty(name);
+    }
+
+    /**
+     * Returns a value builder for the given system property
+     */
+
+    public ValueBuilder systemProperty(String name, String defaultValue) {
+        return Builder.systemProperty(name, defaultValue);
+    }
+
+    // Assertions
+    //-----------------------------------------------------------------------
 
     protected <T> T assertIsInstanceOf(Class<T> expectedType, Object value) {
         assertNotNull("Expected an instance of type: " + expectedType.getName() + " but was null", value);
@@ -143,4 +207,5 @@ public abstract class TestSupport extends TestCase {
         message.setBody(body);
         return exchange;
     }
+
 }

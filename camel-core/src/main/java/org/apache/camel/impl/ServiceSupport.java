@@ -31,6 +31,7 @@ public abstract class ServiceSupport implements Service {
     private AtomicBoolean started = new AtomicBoolean(false);
     private AtomicBoolean stopping = new AtomicBoolean(false);
     private AtomicBoolean stopped = new AtomicBoolean(false);
+    private static int threadCounter;
 
     public void start() throws Exception {
         if (started.compareAndSet(false, true)) {
@@ -78,4 +79,14 @@ public abstract class ServiceSupport implements Service {
     
     protected abstract void doStop() throws Exception;
 
+    /**
+     * Creates a new thread name with the given prefix
+     */
+    protected String getThreadName(String prefix) {
+        return prefix + " thread:" + nextThreadCounter();
+    }
+
+    protected static synchronized int nextThreadCounter() {
+        return ++threadCounter;
+    }
 }

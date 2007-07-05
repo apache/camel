@@ -47,6 +47,10 @@ public class RemoteFileConfiguration implements Cloneable {
         }
     }
 
+    public String toString() {
+        return protocol + ":\\" + username + "@" +  host + ":" + port + "/" + directory;
+    }
+    
     public void configure(URI uri) {
         setProtocol(uri.getScheme());
         setDefaultPort();
@@ -131,7 +135,7 @@ public class RemoteFileConfiguration implements Cloneable {
         this.directory = directory;
     }
 
-    public String toString() {
+    public String dump() {
         return "RemoteFileConfiguration{" +
                 "protocol='" + protocol + '\'' +
                 ", username='" + username + '\'' +

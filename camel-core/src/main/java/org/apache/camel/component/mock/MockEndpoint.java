@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -50,9 +51,9 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     private int expectedCount = -1;
     private int counter = 0;
     private Map<Integer, Processor> processors = new HashMap<Integer, Processor>();
-    private List<Exchange> receivedExchanges = new ArrayList<Exchange>();
-    private List<Throwable> failures = new ArrayList<Throwable>();
-    private List<Runnable> tests = new ArrayList<Runnable>();
+    private List<Exchange> receivedExchanges = new CopyOnWriteArrayList<Exchange>();
+    private List<Throwable> failures = new CopyOnWriteArrayList<Throwable>();
+    private List<Runnable> tests = new CopyOnWriteArrayList<Runnable>();
     private CountDownLatch latch;
     private long sleepForEmptyTest = 2000L;
     private long defaulResultWaitMillis = 10000L;
@@ -140,16 +141,13 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
                     }
                 }
                 else {
-                    if (latch == null) {
-                        fail("Should have a latch!");
-                    }
-
-                    // now lets wait for the results
-                    log.debug("Waiting on the latch for: " + defaulResultWaitMillis + " millis");
-                    latch.await(defaulResultWaitMillis, TimeUnit.MILLISECONDS);
+                    waitForCompleteLatch();
                 }
             }
             assertEquals("Received message count", expectedCount, getReceivedCounter());
+        }
+        else if (expectedMinimumCount > 0 && getReceivedCounter() < expectedMinimumCount) {
+            waitForCompleteLatch();
         }
 
         if (expectedMinimumCount >= 0) {
@@ -166,6 +164,20 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
                 log.error("Caught on " + getEndpointUri() + " Exception: " + failure, failure);
                 fail("Failed due to caught exception: " + failure);
             }
+        }
+    }
+
+
+    /**
+     * Validates that the assertions fail on this endpoint
+     */
+    public void assertIsNotSatisfied() throws InterruptedException {
+        try {
+            assertIsSatisfied();
+            fail("Expected assertion failure!");
+        }
+        catch (AssertionError e) {
+            log.info("Caught expected failure: " + e);
         }
     }
 
@@ -247,27 +259,95 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         });
     }
 
+
+    /**
+     * Adds an expectation that messages received should have descending values of the given expression
+     * such as a user generated counter value
+     *
+     * @param expression
+     */
+    public void expectsDescending(final Expression<Exchange> expression) {
+        expects(new Runnable() {
+            public void run() {
+                assertMessagesDescending(expression);
+            }
+        });
+    }
+
+    /**
+     * Adds an expectation that no duplicate messages should be received using the
+     * expression to determine the message ID
+     *
+     * @param expression the expression used to create a unique message ID for
+     * message comparison (which could just be the message payload if the payload
+     * can be tested for uniqueness using {@link Object#equals(Object)}
+     * and {@link Object#hashCode()}
+     */
+    public void expectsNoDuplicates(final Expression<Exchange> expression) {
+        expects(new Runnable() {
+            public void run() {
+                assertNoDuplicates(expression);
+            }
+        });
+    }
+
     /**
      * Asserts that the messages have ascending values of the given expression
      */
     public void assertMessagesAscending(Expression<Exchange> expression) {
+        assertMessagesSorted(expression, true);
+    }
+
+
+    /**
+     * Asserts that the messages have descending values of the given expression
+     */
+    public void assertMessagesDescending(Expression<Exchange> expression) {
+        assertMessagesSorted(expression, false);
+    }
+
+    protected void assertMessagesSorted(Expression<Exchange> expression, boolean ascending) {
+        String type = (ascending) ? "ascending" : "descending";
         ExpressionComparator comparator = new ExpressionComparator(expression);
         List<Exchange> list = getReceivedExchanges();
-        for (int i = 1; i < expectedBodyValues.size(); i++) {
+        for (int i = 1; i < list.size(); i++) {
             int j = i - 1;
             Exchange e1 = list.get(j);
             Exchange e2 = list.get(i);
             int result = comparator.compare(e1, e2);
             if (result == 0) {
-                Object value = expression.evaluate(e1);
-                fail("Messages not ascending. Messages" + j + " and " + i + " are equal with value: " + value
-                        + " for expression: " + expression + " when they were expected to be ascending. Exchanges: " + e1 + " and " + e2);
+                fail("Messages not " + type + ". Messages" + j + " and " + i
+                        + " are equal with value: " + expression.evaluate(e1)
+                        + " for expression: " + expression + ". Exchanges: " + e1 + " and " + e2);
             }
-            else if (result > 0) {
-                Object value = expression.evaluate(e1);
-                fail("Messages not ascending. Message " + j + " has value: " + expression.evaluate(e1)
-                        + " and message" + i + " has value: " + expression.evaluate(e2)
-                        + " for expression: " + expression + " when they were expected to be ascending. Exchanges: " + e1 + " and " + e2);
+            else {
+                if (!ascending) {
+                    result = result * -1;
+                }
+                if (result > 0) {
+                    fail("Messages not " + type + ". Message " + j
+                            + " has value: " + expression.evaluate(e1)
+                            + " and message " + i + " has value: " + expression.evaluate(e2)
+                            + " for expression: " + expression + ". Exchanges: " + e1 + " and " + e2);
+                }
+            }
+        }
+    }
+
+    public void assertNoDuplicates(Expression<Exchange> expression) {
+        Map<Object,Exchange> map = new HashMap<Object, Exchange>();
+        List<Exchange> list = getReceivedExchanges();
+        for (int i = 0; i < list.size(); i++) {
+            Exchange e2 = list.get(i);
+            Object key = expression.evaluate(e2);
+            Exchange e1 = map.get(key);
+            if (e1 != null) {
+                fail("Duplicate message found on message " + i
+                        + " has value: " + key
+                        + " for expression: " + expression + ". Exchanges: " + e1 + " and " + e2);
+            }
+            else {
+                map.put(key, e2);
             }
         }
     }
@@ -403,6 +483,16 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         }
     }
 
+    protected void waitForCompleteLatch() throws InterruptedException {
+        if (latch == null) {
+            fail("Should have a latch!");
+        }
+
+        // now lets wait for the results
+        log.debug("Waiting on the latch for: " + defaulResultWaitMillis + " millis");
+        latch.await(defaulResultWaitMillis, TimeUnit.MILLISECONDS);
+    }
+
     protected void assertEquals(String message, Object expectedValue, Object actualValue) {
         if (!ObjectHelper.equals(expectedValue, actualValue)) {
             fail(message + ". Expected: <" + expectedValue + "> but was: <" + actualValue + ">");
@@ -439,4 +529,5 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     public boolean isSingleton() {
         return true;
     }
+
 }
