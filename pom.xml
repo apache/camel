@@ -42,7 +42,7 @@
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
     <site-repo-url>scpexe://people.apache.org/www/activemq.apache.org/camel/maven/</site-repo-url>
     <slf4j-version>1.3.0</slf4j-version>
-    <cxf-version>2.0-incubator-RC</cxf-version>
+    <cxf-version>2.0-incubator</cxf-version>
   </properties>
 
   <url>http://apache.apache.org/camel/</url>

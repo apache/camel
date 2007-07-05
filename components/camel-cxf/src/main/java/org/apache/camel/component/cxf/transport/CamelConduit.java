@@ -23,7 +23,7 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.configuration.Configurable;
 import org.apache.cxf.configuration.Configurer;
-import org.apache.cxf.io.AbstractCachedOutputStream;
+import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.service.model.EndpointInfo;
@@ -117,7 +117,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         }
     }
 
-    private class CamelOutputStream extends AbstractCachedOutputStream {
+    private class CamelOutputStream extends CachedOutputStream {
         private Message outMessage;
         private boolean isOneWay;
 
