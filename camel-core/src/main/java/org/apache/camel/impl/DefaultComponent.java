@@ -47,7 +47,6 @@ public abstract  class DefaultComponent<E extends Exchange> extends ServiceSuppo
         this.camelContext = context;
     }
 
-
     public Endpoint<E> createEndpoint(String uri) throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");        
         URI u = new URI(uri);
@@ -105,7 +104,7 @@ public abstract  class DefaultComponent<E extends Exchange> extends ServiceSuppo
 
             public synchronized Thread newThread(Runnable runnable) {
                 Thread thread = new Thread(runnable);
-                thread.setName("Thread" + (++counter) + " " + DefaultComponent.this.toString());
+                thread.setName("Thread: " + (++counter) + " " + DefaultComponent.this.toString());
                 return thread;
             }
         });

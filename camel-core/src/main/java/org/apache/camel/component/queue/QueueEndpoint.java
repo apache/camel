@@ -55,7 +55,7 @@ public class QueueEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     }
 
     public Consumer<E> createConsumer(Processor processor) throws Exception {
-        return new QueueEndpointConsumer<E>(this, processor);
+        return new QueueConsumer<E>(this, processor);
     }
 
     public E createExchange() {

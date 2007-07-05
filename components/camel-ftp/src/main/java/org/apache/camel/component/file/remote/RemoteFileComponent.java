@@ -41,6 +41,10 @@ public class RemoteFileComponent extends DefaultComponent<RemoteFileExchange> {
         this.configuration = new RemoteFileConfiguration();
     }
 
+    public String toString() {
+        return "RemoteFileComponent";
+    }
+
     public static RemoteFileComponent remoteFileComponent() {
         return new RemoteFileComponent();
     }
