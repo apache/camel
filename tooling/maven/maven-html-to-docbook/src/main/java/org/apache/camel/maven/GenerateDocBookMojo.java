@@ -51,6 +51,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.tidy.DOMElementImpl;
 import org.w3c.tidy.Tidy;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Goal which extracts the content of a wiki page and converts it to docbook
  * format
@@ -141,7 +144,7 @@ public class GenerateDocBookMojo extends AbstractMojo {
 	private String imageLocation;
 
 	private String chapterId;
-
+	private static final transient Log log = LogFactory.getLog(GenerateDocBookMojo.class);
 
 	public void execute() throws MojoExecutionException {
 		File outputDir = new File(outputPath);
@@ -237,14 +240,14 @@ public class GenerateDocBookMojo extends AbstractMojo {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.debug("Exception processing wiki content", e);
 		}finally {
 			try {
 				if(output != null)
 					output.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.debug("Exception closing output stream", e);
 			}
 		}
 	}
@@ -337,7 +340,7 @@ public class GenerateDocBookMojo extends AbstractMojo {
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.debug("Exception in creating manual.xml file", e);
 		}
 	}
 	
@@ -372,7 +375,7 @@ public class GenerateDocBookMojo extends AbstractMojo {
             	}
             	out.flush();         		
         	}catch(Exception e) {
-        		e.printStackTrace();
+        		log.debug("Exception in downloading image " + imageFile, e);
         	}
       	
         	

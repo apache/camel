@@ -35,5 +35,14 @@
       <artifactId>jtidy</artifactId>
       <version>4aug2000r7-dev</version>
     </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>test</scope>
+    </dependency>    
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging-api</artifactId>
+    </dependency>    
   </dependencies>
 </project>
