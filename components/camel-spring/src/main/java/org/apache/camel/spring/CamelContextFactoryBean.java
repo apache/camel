@@ -17,7 +17,11 @@
  */
 package org.apache.camel.spring;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -37,6 +41,8 @@ import java.util.List;
  * @version $Revision$
  */
 public class CamelContextFactoryBean implements FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
+    private static final Log log = LogFactory.getLog(CamelContextFactoryBean.class);
+
     private SpringCamelContext context;
     private RouteBuilder routeBuilder;
     private List<RouteBuilder> additionalBuilders = new ArrayList<RouteBuilder>();
@@ -76,7 +82,7 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
             context.onApplicationEvent(event);
         }
     }
-
+    
     // Properties
     //-------------------------------------------------------------------------
     public SpringCamelContext getContext() throws Exception {
