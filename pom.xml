@@ -266,16 +266,12 @@
         <artifactId>camel-core</artifactId>
         <type>test-jar</type>
         <version>${camel-version}</version>
-        <optional>true</optional>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring</artifactId>
         <type>test-jar</type>
         <version>${camel-version}</version>
-        <optional>true</optional>
-        <scope>test</scope>
       </dependency>
 
 
@@ -288,9 +284,42 @@
 
       <!-- optional dependencies  -->
       <dependency>
+        <groupId>javax.xml</groupId>
+        <artifactId>jaxb-api</artifactId>
+        <version>2.0</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.xml</groupId>
+            <artifactId>jsr173</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
         <version>1.0.4</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>3.1</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-pool</groupId>
+        <artifactId>commons-pool</artifactId>
+        <version>1.2</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-dbcp</groupId>
+        <artifactId>commons-dbcp</artifactId>
+        <version>1.2.1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -305,7 +334,17 @@
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>apache-activemq</artifactId>
-        <version>4.1.0-incubator</version>
+        <version>5.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-core</artifactId>
+        <version>5.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.xbean</groupId>
+        <artifactId>xbean-spring</artifactId>
+        <version>3.0</version>
       </dependency>
 
       <dependency>
@@ -570,25 +609,25 @@
       </plugins>
     </pluginManagement>
     <plugins>
-<!--
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-one-plugin</artifactId>
-        <extensions>true</extensions>
-        <executions>
-          <execution>
-            <goals>
-              <goal>install-maven-one-repository</goal>
-              <goal>deploy-maven-one-repository</goal>
-            </goals>
-            <configuration>
-              <remoteRepositoryId>apache.m1.releases</remoteRepositoryId>
-              <remoteRepositoryUrl>${m1-repo-url}</remoteRepositoryUrl>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
--->
+      <!--
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-one-plugin</artifactId>
+              <extensions>true</extensions>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>install-maven-one-repository</goal>
+                    <goal>deploy-maven-one-repository</goal>
+                  </goals>
+                  <configuration>
+                    <remoteRepositoryId>apache.m1.releases</remoteRepositoryId>
+                    <remoteRepositoryUrl>${m1-repo-url}</remoteRepositoryUrl>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+      -->
 
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
