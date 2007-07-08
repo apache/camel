@@ -18,7 +18,17 @@
 package org.apache.camel.spring;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.camel.*;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.CamelTemplate;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.MessageDriven;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.util.BeanInfo;
 import org.apache.camel.spring.util.DefaultMethodInvocationStrategy;
 import org.apache.camel.spring.util.MethodInvocationStrategy;
@@ -55,6 +65,15 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         injectFields(bean);
         injectMethods(bean);
+        if (bean instanceof CamelContextAware) {
+            CamelContextAware contextAware = (CamelContextAware) bean;
+            if (camelContext == null) {
+                log.warn("No CamelContext defined yet so cannot inject into: " + bean);
+            }
+            else {
+                contextAware.setCamelContext(camelContext);
+            }
+        }
         return bean;
     }
 
