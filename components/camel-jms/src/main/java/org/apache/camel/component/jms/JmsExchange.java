@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultExchange;
 
 import javax.jms.Message;
