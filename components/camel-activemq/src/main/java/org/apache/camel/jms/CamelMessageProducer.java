@@ -80,7 +80,8 @@ public class CamelMessageProducer extends ActiveMQMessageProducerSupport {
     }
 
     public void send(Destination destination, Message message, int deliveryMode, int priority, long timeToLive) throws JMSException {
-        CamelDestination camelDestination = null;
+    	message.setJMSDestination(destination);
+    	CamelDestination camelDestination = null;
         if (ObjectHelper.equals(destination, this.destination)) {
             camelDestination = this.destination;
         }
@@ -89,7 +90,7 @@ public class CamelMessageProducer extends ActiveMQMessageProducerSupport {
             throw new IllegalArgumentException("Invalid destination setting: " + destination + " when expected: " + this.destination);
         }
         try {
-            JmsExchange exchange = new JmsExchange(endpoint.getContext(), camelDestination.getBinding());
+            JmsExchange exchange = new JmsExchange(endpoint.getContext(), camelDestination.getBinding(), message);
             producer.process(exchange);
         }
         catch (JMSException e) {

@@ -133,7 +133,9 @@ public class JmsMessage extends DefaultMessage {
     
     private String getDestinationAsString(Destination destination) throws JMSException {
         String result = "";
-        if (destination instanceof Topic) {
+        if (destination == null) {
+        	result = "null destination!";
+        } else if (destination instanceof Topic) {
             result += "topic" + File.separator + getSanitizedString(((Topic)destination).getTopicName());
         }else {
             result += "queue" + File.separator + getSanitizedString(((Queue)destination).getQueueName());

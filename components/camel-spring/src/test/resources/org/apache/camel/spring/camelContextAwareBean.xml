@@ -22,15 +22,10 @@
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: example -->
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <beanPostProcessor/>
-    
+    <endpoint id="namedEndpoint1" uri="direct:namedEndpoint1"/>
   </camelContext>
 
-  <bean id="connectionFactory" class="org.apache.camel.jms.CamelConnectionFactory">
-    <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
-  </bean>
-  <!-- END SNIPPET: example -->
-
+  <bean id="bean" class="org.apache.camel.spring.CamelContextAwareBean"/>
 </beans>
