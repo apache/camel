@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.queue;
+package org.apache.camel.component.seda;
 
 import java.util.concurrent.BlockingQueue;
 
@@ -34,15 +34,15 @@ import org.apache.camel.impl.DefaultProducer;
  * @org.apache.xbean.XBean
  * @version $Revision: 519973 $
  */
-public class QueueEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
+public class SedaEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     private BlockingQueue<E> queue;
 
-    public QueueEndpoint(String endpointUri, Component component, BlockingQueue<E> queue) {
+    public SedaEndpoint(String endpointUri, Component component, BlockingQueue<E> queue) {
         super(endpointUri, component);
         this.queue = queue;
     }
 
-    public QueueEndpoint(String uri, QueueComponent<E> component) {
+    public SedaEndpoint(String uri, SedaComponent<E> component) {
         this(uri, component, component.createQueue());
     }
 
@@ -55,7 +55,7 @@ public class QueueEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     }
 
     public Consumer<E> createConsumer(Processor processor) throws Exception {
-        return new QueueConsumer<E>(this, processor);
+        return new SedaConsumer<E>(this, processor);
     }
 
     public E createExchange() {

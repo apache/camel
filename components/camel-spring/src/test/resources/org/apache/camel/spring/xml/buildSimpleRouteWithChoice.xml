@@ -23,32 +23,32 @@
     ">
 
   <!--
-        from("queue:a").choice()
-                .when(header("foo").isEqualTo("bar")).to("queue:b")
-                .when(header("foo").isEqualTo("cheese")).to("queue:c")
-                .otherwise().to("queue:d");
+        from("seda:a").choice()
+                .when(header("foo").isEqualTo("bar")).to("seda:b")
+                .when(header("foo").isEqualTo("cheese")).to("seda:c")
+                .otherwise().to("seda:d");
   -->
   <!-- START SNIPPET: example -->
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
-      <from uri="queue:a"/>
+      <from uri="seda:a"/>
       <choice>
         <when>
           <predicate>
             <header name="foo"/>
             <isEqualTo value="bar"/>
           </predicate>
-          <to uri="queue:b"/>
+          <to uri="seda:b"/>
         </when>
         <when>
           <predicate>
             <header name="foo"/>
             <isEqualTo value="cheese"/>
           </predicate>
-          <to uri="queue:c"/>
+          <to uri="seda:c"/>
         </when>
         <otherwise>
-          <to uri="queue:d"/>
+          <to uri="seda:d"/>
         </otherwise>
       </choice>
     </route>

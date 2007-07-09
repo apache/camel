@@ -23,15 +23,15 @@
     ">
 
   <!--
-        from("queue:a").to("queue:tap", "queue:b");
+        from("seda:a").to("seda:tap", "seda:b");
   -->
   <!-- START SNIPPET: example -->
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
-      <from uri="queue:a"/>
+      <from uri="seda:a"/>
       <to>
-        <endpoint uri="queue:tap"/>
-        <endpoint uri="queue:b"/>
+        <endpoint uri="seda:tap"/>
+        <endpoint uri="seda:b"/>
       </to>
     </route>
   </camelContext>

@@ -23,16 +23,16 @@
     ">
 
   <!--
-        from("queue:a").to("queue:b", "queue:c", "queue:d");
+        from("seda:a").to("seda:b", "seda:c", "seda:d");
   -->
   <!-- START SNIPPET: example -->
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
-      <from uri="queue:a"/>
+      <from uri="seda:a"/>
       <to>
-        <uri>queue:b</uri>
-        <uri>queue:c</uri>
-        <uri>queue:d</uri>
+        <uri>seda:b</uri>
+        <uri>seda:c</uri>
+        <uri>seda:d</uri>
       </to>
     </route>
   </camelContext>

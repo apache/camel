@@ -30,8 +30,6 @@ import java.net.URL;
  * @version $Revision:520964 $
  */
 public class MailComponent extends DefaultComponent<MailExchange> {
-    public static final String QUEUE_PREFIX = "queue:";
-    public static final String TOPIC_PREFIX = "topic:";
     private MailConfiguration configuration;
 
     /**

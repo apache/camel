@@ -23,19 +23,19 @@
     ">
 
   <!--
-        from("queue:a").filter(header("foo").isEqualTo("bar")).to("queue:b");
+        from("seda:a").filter(header("foo").isEqualTo("bar")).to("seda:b");
   -->
   <!-- START SNIPPET: example -->
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
-      <from uri="queue:a"/>
+      <from uri="seda:a"/>
       <filter>
         <predicate>
           <header name="foo"/>
           <isEqualTo value="bar"/>
         </predicate>
       </filter>
-      <to uri="queue:b"/>
+      <to uri="seda:b"/>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->

@@ -29,12 +29,12 @@
 
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
-      <from uri="queue:a"/>
-      <to uri="queue:b"/>
+      <from uri="seda:a"/>
+      <to uri="seda:b"/>
     </route>
     <route>
-      <from uri="queue:a"/>
-      <to uri="queue:b"/>
+      <from uri="seda:a"/>
+      <to uri="seda:b"/>
     </route>
     <route>
       <from ref="a"/>
@@ -42,12 +42,12 @@
     </route>
 
     <route>
-      <from uri="queue:a"/>
+      <from uri="seda:a"/>
       <process ref="myProcessor"/>
     </route>
 
     <route>
-      <from uri="queue:a"/>
+      <from uri="seda:a"/>
       <filter>
         <predicate>
           <header name="foo"/>
@@ -64,7 +64,7 @@
     </route>
 
     <route>
-      <from uri="queue:a"/>
+      <from uri="seda:a"/>
       <intercept>
         <interceptor ref="interceptor1"/>
         <interceptor ref="#interceptor2"/>
@@ -73,53 +73,53 @@
         <interceptor ref="#interceptor1"/>
         <interceptor ref="interceptor2"/>
       </intercept>
-      <to uri="queue:b"/>
+      <to uri="seda:b"/>
     </route>
 
     <route>
-      <from uri="queue:a"/>
+      <from uri="seda:a"/>
       <choice>
         <when>
           <predicate>
             <header name="foo"/>
             <isEqualTo value="bar"/>
           </predicate>
-          <to uri="queue:b"/>
+          <to uri="seda:b"/>
         </when>
         <when>
           <predicate>
             <header name="foo"/>
             <isNotEqualTo value="cheese"/>
           </predicate>
-          <to uri="queue:c"/>
+          <to uri="seda:c"/>
         </when>
         <otherwise>
-          <to uri="queue:d"/>
+          <to uri="seda:d"/>
         </otherwise>
       </choice>
     </route>
 
     <route>
-      <from uri="queue:a"/>
+      <from uri="seda:a"/>
       <filter>
         <predicate>
           <header name="foo"/>
           <isEqualTo value="bar"/>
         </predicate>
       </filter>
-      <to uri="queue:b"/>
+      <to uri="seda:b"/>
     </route>
 
     <route>
-      <from uri="queue:a"/>
+      <from uri="seda:a"/>
       <to>
-        <uri>queue:tap</uri>
-        <uri>queue:a</uri>
+        <uri>seda:tap</uri>
+        <uri>seda:a</uri>
       </to>
     </route>
 
     <route>
-      <from uri="queue:a"/>
+      <from uri="seda:a"/>
       <recipientList>
         <recipients>
           <header name=""/>
@@ -128,7 +128,7 @@
     </route>
 
     <route>
-      <from uri="queue:a"/>
+      <from uri="seda:a"/>
       <recipientList>
         <recipients>
           <header name=""/>
@@ -138,7 +138,7 @@
     </route>
 
     <route>
-      <from uri="queue:a"/>
+      <from uri="seda:a"/>
       <filter>
         <predicate>
           <body/>
@@ -154,7 +154,7 @@
 
 
     <route>
-      <from uri="queue:a"/>
+      <from uri="seda:a"/>
       <splitter>
         <recipients>
           <bodyAs class="java.lang.String"/>
@@ -162,7 +162,7 @@
 "/>
         </recipients>
       </splitter>
-      <to uri="queue:b"/>
+      <to uri="seda:b"/>
     </route>
 
   </camelContext>

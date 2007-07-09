@@ -19,7 +19,7 @@ package org.apache.camel.component.jbi;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.queue.QueueEndpoint;
+import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.servicemix.jbi.container.ActivationSpec;
 import org.apache.servicemix.jbi.resolver.URIResolver;
 import org.apache.servicemix.tck.SenderComponent;
@@ -38,7 +38,7 @@ public class SendFromCamelToJbiAndBackToCamelTest extends JbiTestSupport {
     public void testCamelInvokingJbi() throws Exception {
         senderComponent.sendMessages(1);
 
-        QueueEndpoint receiverEndpoint = (QueueEndpoint) camelContext.getEndpoint("queue:receiver");
+        SedaEndpoint receiverEndpoint = (SedaEndpoint) camelContext.getEndpoint("seda:receiver");
 
         BlockingQueue<Exchange> queue = receiverEndpoint.getQueue();
         Exchange exchange = queue.poll(5, TimeUnit.SECONDS);
@@ -57,7 +57,7 @@ public class SendFromCamelToJbiAndBackToCamelTest extends JbiTestSupport {
     }
 
     protected void appendJbiActivationSpecs(List<ActivationSpec> activationSpecList) {
-        this.startEndpointUri = "queue:receiver";
+        this.startEndpointUri = "seda:receiver";
 
         ActivationSpec activationSpec = new ActivationSpec();
         activationSpec.setId("jbiSender");
@@ -65,7 +65,7 @@ public class SendFromCamelToJbiAndBackToCamelTest extends JbiTestSupport {
         activationSpec.setEndpoint("endpointA");
 
         // lets setup the sender to talk directly to camel
-        senderComponent.setResolver(new URIResolver("camel:queue:receiver"));
+        senderComponent.setResolver(new URIResolver("camel:seda:receiver"));
         activationSpec.setComponent(senderComponent);
 
         activationSpecList.add(activationSpec);

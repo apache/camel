@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.queue;
+package org.apache.camel.component.seda;
 
 import org.apache.camel.AlreadyStoppedException;
 import org.apache.camel.Consumer;
@@ -30,14 +30,14 @@ import java.util.concurrent.TimeUnit;
 /**
  * @version $Revision$
  */
-public class QueueConsumer<E extends Exchange> extends ServiceSupport implements Consumer<E>, Runnable {
-    private static final Log log = LogFactory.getLog(QueueConsumer.class);
+public class SedaConsumer<E extends Exchange> extends ServiceSupport implements Consumer<E>, Runnable {
+    private static final Log log = LogFactory.getLog(SedaConsumer.class);
 
-    private QueueEndpoint<E> endpoint;
+    private SedaEndpoint<E> endpoint;
     private Processor processor;
     private Thread thread;
 
-    public QueueConsumer(QueueEndpoint<E> endpoint, Processor processor) {
+    public SedaConsumer(SedaEndpoint<E> endpoint, Processor processor) {
         this.endpoint = endpoint;
         this.processor = processor;
     }

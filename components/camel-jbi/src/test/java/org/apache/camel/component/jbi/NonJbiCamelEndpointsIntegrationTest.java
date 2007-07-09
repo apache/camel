@@ -128,7 +128,7 @@ public class NonJbiCamelEndpointsIntegrationTest extends TestCase {
     }
 
     protected void configureExchange(ServiceMixClient client, MessageExchange exchange) {
-        ServiceEndpoint endpoint = client.getContext().getEndpoint(CamelJbiEndpoint.SERVICE_NAME, "queue:a");
+        ServiceEndpoint endpoint = client.getContext().getEndpoint(CamelJbiEndpoint.SERVICE_NAME, "seda:a");
         assertNotNull("Should have a Camel endpoint exposed in JBI!", endpoint);
         exchange.setEndpoint(endpoint);
     }

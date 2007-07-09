@@ -19,8 +19,8 @@ package org.apache.camel.component.vm;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.queue.QueueComponent;
-import org.apache.camel.component.queue.QueueEndpoint;
+import org.apache.camel.component.seda.QueueComponent;
+import org.apache.camel.component.seda.SedaEndpoint;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -40,7 +40,7 @@ public class VmComponent<E extends Exchange> extends QueueComponent<E> {
     @Override
     protected Endpoint<E> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         BlockingQueue<E> blockingQueue = (BlockingQueue<E>) getBlockingQueue(uri);
-        return new QueueEndpoint<E>(uri, this, blockingQueue);
+        return new SedaEndpoint<E>(uri, this, blockingQueue);
     }
 
     protected BlockingQueue<Exchange> getBlockingQueue(String uri) {

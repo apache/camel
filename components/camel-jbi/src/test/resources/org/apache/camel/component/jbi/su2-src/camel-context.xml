@@ -26,12 +26,12 @@
     ">
 
   <!--
-     from("queue:a").to("queue:b");
+     from("seda:a").to("seda:b");
   -->
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="jbi:endpoint:http://foo.bar.org/myService/myEndpointName"/>
-      <to uri="queue:b"/>
+      <to uri="seda:b"/>
     </route>
   </camelContext>
 
