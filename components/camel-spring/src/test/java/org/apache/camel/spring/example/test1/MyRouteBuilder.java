@@ -24,6 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class MyRouteBuilder extends RouteBuilder {
     public void configure() {
-        from("queue:test.a").to("queue:test.b");
+        from("seda:test.a").to("seda:test.b");
     }
 }

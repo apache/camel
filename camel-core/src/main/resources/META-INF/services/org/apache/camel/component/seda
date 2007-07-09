@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.component.seda.QueueComponent
+class=org.apache.camel.component.seda.SedaComponent

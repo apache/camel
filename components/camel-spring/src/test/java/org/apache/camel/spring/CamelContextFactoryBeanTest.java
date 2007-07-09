@@ -64,7 +64,7 @@ public class CamelContextFactoryBeanTest extends TestSupport {
             Processor processor = consumerRoute.getProcessor();
             assertNotNull(processor);
 
-            assertEndpointUri(key, "queue:test.a");
+            assertEndpointUri(key, "seda:test.a");
         }
     }
 
@@ -86,7 +86,7 @@ public class CamelContextFactoryBeanTest extends TestSupport {
             Processor processor = consumerRoute.getProcessor();
             assertNotNull(processor);
 
-            assertEndpointUri(key, "queue:test.c");
+            assertEndpointUri(key, "seda:test.c");
         }
     }
 }

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.queue;
+package org.apache.camel.component.seda;
 
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
@@ -34,9 +34,9 @@ import java.util.concurrent.TimeUnit;
 /**
  * @version $Revision: 520220 $
  */
-public class QueueRouteTest extends TestSupport {
+public class SedaRouteTest extends TestSupport {
 
-	
+
     public void testSedaQueue() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
@@ -45,8 +45,8 @@ public class QueueRouteTest extends TestSupport {
         // lets add some routes
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("queue:test.a").to("queue:test.b");
-                from("queue:test.b").process(new Processor() {
+                from("seda:test.a").to("seda:test.b");
+                from("seda:test.b").process(new Processor() {
                     public void process(Exchange e) {
                         log.debug("Received exchange: " + e.getIn());
                         latch.countDown();
@@ -57,9 +57,9 @@ public class QueueRouteTest extends TestSupport {
 
         
         context.start();
-        
+
         // now lets fire in a message
-        Endpoint<Exchange> endpoint = context.getEndpoint("queue:test.a");
+        Endpoint<Exchange> endpoint = context.getEndpoint("seda:test.a");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader("cheese", 123);
 
@@ -72,18 +72,18 @@ public class QueueRouteTest extends TestSupport {
 
         context.stop();
     }
-    
-    
+
+
     public void testThatShowsEndpointResolutionIsNotConsistent() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
         CamelContext context = new DefaultCamelContext();
-        
+
         // lets add some routes
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("queue:test.a").to("queue:test.b");
-                from("queue:test.b").process(new Processor() {
+                from("seda:test.a").to("seda:test.b");
+                from("seda:test.b").process(new Processor() {
                     public void process(Exchange e) {
                         log.debug("Received exchange: " + e.getIn());
                         latch.countDown();
@@ -92,11 +92,11 @@ public class QueueRouteTest extends TestSupport {
             }
         });
 
-        
+
         context.start();
-        
+
         // now lets fire in a message
-        Endpoint<Exchange> endpoint = context.getEndpoint("queue:test.a");
+        Endpoint<Exchange> endpoint = context.getEndpoint("seda:test.a");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader("cheese", 123);
 
@@ -109,5 +109,5 @@ public class QueueRouteTest extends TestSupport {
 
         context.stop();
     }
-    
+
 }

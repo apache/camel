@@ -41,7 +41,7 @@ public class ErrorHandlerTest extends TestSupport {
             public void configure() {
                 errorHandler(loggingErrorHandler("FOO.BAR"));
 
-                from("queue:a").to("queue:b");
+                from("seda:a").to("seda:b");
             }
         };
         // END SNIPPET: e1
@@ -51,7 +51,7 @@ public class ErrorHandlerTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Map.Entry<Endpoint<Exchange>, Processor> route : routes) {
             Endpoint<Exchange> key = route.getKey();
-            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = route.getValue();
 
             LoggingErrorHandler loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class, processor);
@@ -63,10 +63,10 @@ public class ErrorHandlerTest extends TestSupport {
         // START SNIPPET: e2
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
-                from("queue:a").errorHandler(loggingErrorHandler("FOO.BAR")).to("queue:b");
+                from("seda:a").errorHandler(loggingErrorHandler("FOO.BAR")).to("seda:b");
 
                 // this route will use the default error handler, DeadLetterChannel
-                from("queue:b").to("queue:c");
+                from("seda:b").to("seda:c");
             }
         };
         // END SNIPPET: e2
@@ -81,14 +81,14 @@ public class ErrorHandlerTest extends TestSupport {
             String endpointUri = key.getEndpointUri();
             Processor processor = route.getValue();
 
-            if (endpointUri.equals("queue:a")) {
+            if (endpointUri.equals("seda:a")) {
                 LoggingErrorHandler loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class, processor);
 
                 Processor outputProcessor = loggingProcessor.getOutput();
                 SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, outputProcessor);
             }
             else {
-                assertEquals("From endpoint", "queue:b", endpointUri);
+                assertEquals("From endpoint", "seda:b", endpointUri);
 
                 DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, processor);
                 Processor outputProcessor = deadLetterChannel.getOutput();
@@ -102,9 +102,9 @@ public class ErrorHandlerTest extends TestSupport {
         // START SNIPPET: e3
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
-                errorHandler(deadLetterChannel("queue:errors"));
+                errorHandler(deadLetterChannel("seda:errors"));
 
-                from("queue:a").to("queue:b");
+                from("seda:a").to("seda:b");
             }
         };
         // END SNIPPET: e3
@@ -114,12 +114,12 @@ public class ErrorHandlerTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Map.Entry<Endpoint<Exchange>, Processor> route : routes) {
             Endpoint<Exchange> key = route.getKey();
-            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = route.getValue();
 
             DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, processor);
             Endpoint deadLetterEndpoint = assertIsInstanceOf(Endpoint.class, deadLetterChannel.getDeadLetter());
-            assertEndpointUri(deadLetterEndpoint, "queue:errors");
+            assertEndpointUri(deadLetterEndpoint, "seda:errors");
         }
     }
 
@@ -128,9 +128,9 @@ public class ErrorHandlerTest extends TestSupport {
         // START SNIPPET: e4
         RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
             public void configure() {
-                errorHandler(deadLetterChannel("queue:errors").maximumRedeliveries(2).useExponentialBackOff());
+                errorHandler(deadLetterChannel("seda:errors").maximumRedeliveries(2).useExponentialBackOff());
 
-                from("queue:a").to("queue:b");
+                from("seda:a").to("seda:b");
             }
         };
         // END SNIPPET: e4
@@ -140,12 +140,12 @@ public class ErrorHandlerTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Map.Entry<Endpoint<Exchange>, Processor> route : routes) {
             Endpoint<Exchange> key = route.getKey();
-            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = route.getValue();
 
             DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, processor);
             Endpoint deadLetterEndpoint = assertIsInstanceOf(Endpoint.class, deadLetterChannel.getDeadLetter());
-            assertEndpointUri(deadLetterEndpoint, "queue:errors");
+            assertEndpointUri(deadLetterEndpoint, "seda:errors");
             RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();
             assertEquals("getMaximumRedeliveries()", 2, redeliveryPolicy.getMaximumRedeliveries());
             assertEquals("isUseExponentialBackOff()", true, redeliveryPolicy.isUseExponentialBackOff());
@@ -159,7 +159,7 @@ public class ErrorHandlerTest extends TestSupport {
             public void configure() {
                 inheritErrorHandler(false);
 
-                from("queue:a").errorHandler(loggingErrorHandler("FOO.BAR")).filter(body().isInstanceOf(String.class)).to("queue:b");
+                from("seda:a").errorHandler(loggingErrorHandler("FOO.BAR")).filter(body().isInstanceOf(String.class)).to("seda:b");
             }
         };
         // END SNIPPET: e5
@@ -168,7 +168,7 @@ public class ErrorHandlerTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route<Exchange> route : routes) {
             Endpoint<Exchange> key = route.getEndpoint();
-            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Processor processor = consumerRoute.getProcessor();
 

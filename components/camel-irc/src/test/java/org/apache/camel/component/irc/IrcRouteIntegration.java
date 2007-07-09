@@ -53,12 +53,12 @@ public class IrcRouteIntegration extends ContextTestSupport {
                 from("irc://camel-con@irc.codehaus.org:6667/%23camel-test").
                         choice().
                         when(header("irc.messageType").isEqualTo("PRIVMSG")).to("mock:result").
-                        when(header("irc.messageType").isEqualTo("JOIN")).to("queue:consumerJoined");
+                        when(header("irc.messageType").isEqualTo("JOIN")).to("seda:consumerJoined");
 
                 // TODO this causes errors on shutdown...
                 //otherwise().to("mock:otherIrcCommands");
 
-                from("queue:consumerJoined").process(new Processor() {
+                from("seda:consumerJoined").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         sendMessages();
                     }

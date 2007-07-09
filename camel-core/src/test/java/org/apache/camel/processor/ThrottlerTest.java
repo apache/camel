@@ -33,7 +33,7 @@ public class ThrottlerTest extends ContextTestSupport {
         resultEndpoint.setDefaulResultWaitMillis(1000);
 
         for (int i = 0; i < messageCount; i++) {
-            template.sendBody("queue:a", "<message>" + i + "</message>");
+            template.sendBody("seda:a", "<message>" + i + "</message>");
         }
 
         // lets pause to give the requests time to be processed
@@ -45,7 +45,7 @@ public class ThrottlerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: ex
-                from("queue:a").throttler(3).timePeriodMillis(30000).to("mock:result");
+                from("seda:a").throttler(3).timePeriodMillis(30000).to("mock:result");
                 // END SNIPPET: ex
             }
         };

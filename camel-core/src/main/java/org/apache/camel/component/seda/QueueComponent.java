@@ -14,11 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.queue;
+package org.apache.camel.component.seda;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -31,14 +34,10 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @org.apache.xbean.XBean
  * @version $Revision: 519973 $
  */
-public class QueueComponent<E extends Exchange> extends DefaultComponent<E> {
-	
-	public BlockingQueue<E> createQueue() {
-		return new LinkedBlockingQueue<E>(1000);
-	}
+public class QueueComponent<E extends Exchange> extends SedaComponent<E> {
+    private static final transient Log log = LogFactory.getLog(QueueComponent.class);
 
-    @Override
-    protected Endpoint<E> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return new QueueEndpoint<E>(uri, this);
+    public QueueComponent() {
+        log.warn("This component has been deprecated; please use the seda: URI format instead of queue:");
     }
 }

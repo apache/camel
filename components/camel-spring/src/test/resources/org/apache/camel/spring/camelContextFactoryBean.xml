@@ -31,8 +31,8 @@
   <!-- START SNIPPET: example2 -->
   <camelContext id="camel2" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
-      <from uri="queue:test.c"/>
-      <to uri="queue:test.d"/>
+      <from uri="seda:test.c"/>
+      <to uri="seda:test.d"/>
     </route>
   </camelContext>
   <!-- END SNIPPET: example2 -->

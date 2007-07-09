@@ -11,13 +11,13 @@ Overview
 
  Where in Java you would do a:
 
-   from("queue:a").to("queue:b")
+   from("seda:a").to("seda:b")
 
  The spring configuration equivalent would be as follows:
 
    <route>
-     <from uri="queue:a"/>
-     <to uri="queue:b"/>
+     <from uri="seda:a"/>
+     <to uri="seda:b"/>
    </route>
 
 Developers

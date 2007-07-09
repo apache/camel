@@ -50,7 +50,7 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e1
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("queue:a").to("queue:b");
+                from("seda:a").to("seda:b");
             }
         };
         // END SNIPPET: e1
@@ -63,11 +63,11 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route<Exchange> route : routes) {
             Endpoint<Exchange> key = route.getEndpoint();
-            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, processor);
-            assertEquals("Endpoint URI", "queue:b", sendProcessor.getDestination().getEndpointUri());
+            assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
         }
     }
 
@@ -75,7 +75,7 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e2
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("queue:a").filter(header("foo").isEqualTo("bar")).to("queue:b");
+                from("seda:a").filter(header("foo").isEqualTo("bar")).to("seda:b");
             }
         };
         // END SNIPPET: e2
@@ -90,12 +90,12 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapErrorHandler(filterProcessor.getProcessor()));
-            assertEquals("Endpoint URI", "queue:b", sendProcessor.getDestination().getEndpointUri());
+            assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
         }
     }
 
@@ -103,10 +103,10 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e3
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("queue:a").choice()
-                        .when(header("foo").isEqualTo("bar")).to("queue:b")
-                        .when(header("foo").isEqualTo("cheese")).to("queue:c")
-                        .otherwise().to("queue:d");
+                from("seda:a").choice()
+                        .when(header("foo").isEqualTo("bar")).to("seda:b")
+                        .when(header("foo").isEqualTo("cheese")).to("seda:c")
+                        .otherwise().to("seda:d");
             }
         };
         // END SNIPPET: e3
@@ -121,7 +121,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             ChoiceProcessor choiceProcessor = assertIsInstanceOf(ChoiceProcessor.class, processor);
@@ -129,12 +129,12 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("Should be two when clauses", 2, filters.size());
 
             FilterProcessor filter1 = filters.get(0);
-            assertSendTo(filter1.getProcessor(), "queue:b");
+            assertSendTo(filter1.getProcessor(), "seda:b");
 
             FilterProcessor filter2 = filters.get(1);
-            assertSendTo(filter2.getProcessor(), "queue:c");
+            assertSendTo(filter2.getProcessor(), "seda:c");
 
-            assertSendTo(choiceProcessor.getOtherwise(), "queue:d");
+            assertSendTo(choiceProcessor.getOtherwise(), "seda:d");
         }
     }
 
@@ -148,7 +148,7 @@ public class RouteBuilderTest extends TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("queue:a").process(myProcessor);
+                from("seda:a").process(myProcessor);
             }
         };
         // END SNIPPET: e4
@@ -161,7 +161,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             assertEquals("Should be called with my processor", myProcessor, processor);
@@ -172,7 +172,7 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e5
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("queue:a").filter(header("foo").isEqualTo("bar")).process(myProcessor);
+                from("seda:a").filter(header("foo").isEqualTo("bar")).process(myProcessor);
             }
         };
         // END SNIPPET: e5
@@ -187,7 +187,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
@@ -199,7 +199,7 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e6
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("queue:a").to("queue:tap", "queue:b");
+                from("seda:a").to("seda:tap", "seda:b");
             }
         };
         // END SNIPPET: e6
@@ -214,15 +214,15 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             MulticastProcessor multicastProcessor = assertIsInstanceOf(MulticastProcessor.class, processor);
             List<Endpoint> endpoints = new ArrayList<Endpoint>(multicastProcessor.getEndpoints());
             assertEquals("Should have 2 endpoints", 2, endpoints.size());
 
-            assertEndpointUri(endpoints.get(0), "queue:tap");
-            assertEndpointUri(endpoints.get(1), "queue:b");
+            assertEndpointUri(endpoints.get(0), "seda:tap");
+            assertEndpointUri(endpoints.get(1), "seda:b");
         }
     }
 
@@ -235,11 +235,11 @@ public class RouteBuilderTest extends TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("queue:a")
+                from("seda:a")
                         .intercept()
                         .add(interceptor1)
                         .add(interceptor2)
-                        .target().to("queue:d");
+                        .target().to("seda:d");
             }
         };
         // END SNIPPET: e7
@@ -255,7 +255,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             DelegateProcessor p1 = assertIsInstanceOf(DelegateProcessor.class, processor);
@@ -263,7 +263,7 @@ public class RouteBuilderTest extends TestSupport {
 
             DelegateProcessor p2 = assertIsInstanceOf(DelegateProcessor.class, processor);
 
-            assertSendTo(p2.getProcessor(), "queue:d");
+            assertSendTo(p2.getProcessor(), "seda:d");
         }
     }
 
@@ -271,8 +271,8 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e7
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("queue:a").filter(header("foo").isEqualTo(123)).to("queue:b");
-                from("queue:a").filter(header("bar").isGreaterThan(45)).to("queue:b");
+                from("seda:a").filter(header("foo").isEqualTo(123)).to("seda:b");
+                from("seda:a").filter(header("bar").isGreaterThan(45)).to("seda:b");
             }
         };
         // END SNIPPET: e7
@@ -283,7 +283,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 2, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             log.debug("processor: " + processor);
@@ -291,7 +291,7 @@ public class RouteBuilderTest extends TestSupport {
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
 
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, filterProcessor.getProcessor());
-            assertEquals("Endpoint URI", "queue:b", sendProcessor.getDestination().getEndpointUri());
+            assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
             */
         }
     }
@@ -300,7 +300,7 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e8
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("queue:a").to("queue:b", "queue:c", "queue:d");
+                from("seda:a").to("seda:b", "seda:c", "seda:d");
             }
         };
         // END SNIPPET: e8
@@ -311,7 +311,7 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e9
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("queue:a").recipientList(header("foo"));
+                from("seda:a").recipientList(header("foo"));
             }
         };
         // END SNIPPET: e9
@@ -327,7 +327,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             RecipientList p1 = assertIsInstanceOf(RecipientList.class, processor);
@@ -338,7 +338,7 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: splitter
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("queue:a").splitter(bodyAs(String.class).tokenize("\n")).to("queue:b");
+                from("seda:a").splitter(bodyAs(String.class).tokenize("\n")).to("seda:b");
             }
         };
         // END SNIPPET: splitter
@@ -354,7 +354,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             Splitter p1 = assertIsInstanceOf(Splitter.class, processor);
@@ -365,9 +365,9 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: idempotent
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("queue:a").idempotentConsumer(
+                from("seda:a").idempotentConsumer(
                         header("myMessageId"), memoryMessageIdRepository(200)
-                ).to("queue:b");
+                ).to("seda:b");
             }
         };
         // END SNIPPET: idempotent
@@ -383,7 +383,7 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "queue:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             IdempotentConsumer idempotentConsumer = assertIsInstanceOf(IdempotentConsumer.class, processor);
@@ -393,7 +393,7 @@ public class RouteBuilderTest extends TestSupport {
             assertIsInstanceOf(MemoryMessageIdRepository.class, idempotentConsumer.getMessageIdRepository());
 
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, idempotentConsumer.getNextProcessor());
-            assertEquals("Endpoint URI", "queue:b", sendProcessor.getDestination().getEndpointUri());
+            assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
         }
     }
 

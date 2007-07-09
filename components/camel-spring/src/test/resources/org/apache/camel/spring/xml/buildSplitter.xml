@@ -23,12 +23,12 @@
     ">
 
   <!--
-        from("queue:a").splitter(bodyAs(String.class).tokenize("\n")).to("queue:b");
+        from("seda:a").splitter(bodyAs(String.class).tokenize("\n")).to("seda:b");
   -->
   <!-- START SNIPPET: example -->
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
-      <from uri="queue:a"/>
+      <from uri="seda:a"/>
       <splitter>
         <recipients>
           <bodyAs class="java.lang.String"/>
@@ -36,7 +36,7 @@
  "/>
         </recipients>
       </splitter>
-      <to uri="queue:b"/>
+      <to uri="seda:b"/>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->
