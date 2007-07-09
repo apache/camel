@@ -23,6 +23,7 @@ import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.FileExchange;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * A strategy to rename a file
@@ -62,7 +63,10 @@ public class RenameFileStrategy extends FileStategySupport {
         if (log.isDebugEnabled()) {
             log.debug("Renaming file: " + file + " to: " + newName);
         }
-        file.renameTo(newName);
+        boolean renamed = file.renameTo(newName);
+        if (!renamed) {
+            throw new IOException("Could not rename file from: " + file + " to " + newName);
+        }
         super.commit(endpoint, exchange, file);
     }
 
