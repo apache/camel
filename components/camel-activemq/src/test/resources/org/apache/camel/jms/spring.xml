@@ -28,9 +28,25 @@
     
   </camelContext>
 
+  <bean id="connectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+    <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+  </bean>
+
+  <bean id="sendTo" class="org.apache.camel.jms.CamelDestination">
+    <property name="uri" value="mock:result"/>
+  </bean>
+
+  <bean id="consumeFrom" class="org.apache.camel.jms.CamelDestination">
+    <property name="uri" value="seda:consumer"/>
+  </bean>
+
+  <bean id="camelTemplate" class="org.apache.camel.spring.CamelTemplateFactoryBean"/>
+  <!-- END SNIPPET: example -->
+
+<!--
   <bean id="connectionFactory" class="org.apache.camel.jms.CamelConnectionFactory">
     <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
   </bean>
-  <!-- END SNIPPET: example -->
+-->
 
 </beans>

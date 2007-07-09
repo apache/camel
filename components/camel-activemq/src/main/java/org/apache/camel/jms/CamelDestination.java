@@ -20,6 +20,7 @@ import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQSession;
 import org.apache.activemq.CustomDestination;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.jms.JmsBinding;
 
@@ -34,19 +35,17 @@ import javax.jms.TopicSubscriber;
 /**
  * @version $Revision: $
  */
-public class CamelDestination implements CustomDestination {
-
-    private final String uri;
+public class CamelDestination implements CustomDestination, CamelContextAware {
+    private String uri;
     private Endpoint endpoint;
     private CamelContext camelContext;
     private JmsBinding binding = new JmsBinding();
 
-    public CamelDestination(String uri) {
-        this.uri = uri;
+    public CamelDestination() {
     }
 
-    public String getUri() {
-        return uri;
+    public CamelDestination(String uri) {
+        this.uri = uri;
     }
 
     public String toString() {
@@ -91,6 +90,14 @@ public class CamelDestination implements CustomDestination {
 
     // Properties
     //-----------------------------------------------------------------------
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
 
     public Endpoint getEndpoint() {
         return endpoint;

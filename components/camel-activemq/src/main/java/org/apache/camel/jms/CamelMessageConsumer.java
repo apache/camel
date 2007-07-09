@@ -128,6 +128,7 @@ public class CamelMessageConsumer implements MessageConsumer {
         try {
             if (pollingConsumer == null) {
                 pollingConsumer = endpoint.createPollingConsumer();
+                pollingConsumer.start();
             }
             return pollingConsumer;
         }
@@ -151,12 +152,14 @@ public class CamelMessageConsumer implements MessageConsumer {
 
     protected Consumer createConsumer() throws JMSException {
         try {
-            return endpoint.createConsumer(new Processor() {
+            Consumer answer = endpoint.createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     Message message = createMessage(exchange);
                     getMessageListener().onMessage(message);
                 }
             });
+            answer.start();
+            return answer;
         }
         catch (JMSException e) {
             throw e;
