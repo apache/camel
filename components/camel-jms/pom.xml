@@ -85,15 +85,6 @@
     </dependency>
   </dependencies>
 
-  <pluginRepositories>
-    <pluginRepository>
-      <id>maven2-repository.dev.java.net</id>
-      <name>Java.net Repository for Maven</name>
-      <url>http://download.java.net/maven/2/</url>
-      <layout>default</layout>
-    </pluginRepository>
-  </pluginRepositories>
-
 
   <build>
     <plugins>
@@ -113,9 +104,7 @@
       <plugin>
         <groupId>com.sun.tools.jxc.maven2</groupId>
         <artifactId>maven-jaxb-schemagen-plugin</artifactId>
-        <version>1.1</version>
       </plugin>
-
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
