@@ -18,6 +18,7 @@ package org.apache.camel.jms;
 
 import org.apache.activemq.ActiveMQMessageProducerSupport;
 import org.apache.activemq.ActiveMQSession;
+import org.apache.activemq.command.ActiveMQMessage;
 import org.apache.activemq.util.JMSExceptionSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
@@ -80,7 +81,6 @@ public class CamelMessageProducer extends ActiveMQMessageProducerSupport {
     }
 
     public void send(Destination destination, Message message, int deliveryMode, int priority, long timeToLive) throws JMSException {
-    	message.setJMSDestination(destination);
     	CamelDestination camelDestination = null;
         if (ObjectHelper.equals(destination, this.destination)) {
             camelDestination = this.destination;
