@@ -25,12 +25,13 @@ import java.io.File;
  * @version $Revision: 1.1 $
  */
 public class FileConfigureTest extends ContextTestSupport {
+	private static final String EXPECT_PATH = "target" + File.separator + "foo" + File.separator + "bar";
 
     public void testUriConfigurations() throws Exception {
-        assertFileEndpoint("file://target/foo/bar", "target/foo/bar");
-        assertFileEndpoint("file://target/foo/bar?delete=true", "target/foo/bar");
-        assertFileEndpoint("file:target/foo/bar?delete=true", "target/foo/bar");
-        assertFileEndpoint("file:target/foo/bar", "target/foo/bar");
+        assertFileEndpoint("file://target/foo/bar", EXPECT_PATH);
+        assertFileEndpoint("file://target/foo/bar?delete=true", EXPECT_PATH);
+        assertFileEndpoint("file:target/foo/bar?delete=true", EXPECT_PATH);
+        assertFileEndpoint("file:target/foo/bar", EXPECT_PATH);
     }
 
     private void assertFileEndpoint(String endpointUri, String expectedPath) {
@@ -38,7 +39,7 @@ public class FileConfigureTest extends ContextTestSupport {
         assertNotNull("Could not find endpoint: " + endpointUri, endpoint);
 
         File file = endpoint.getFile();
-        String path = file.getPath();
+        String path = file.getPath();        
         assertEquals("For uri: " + endpointUri + " the file is not equal", expectedPath, path);
     }
 }
