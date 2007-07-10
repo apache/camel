@@ -17,7 +17,6 @@
  */
 package org.apache.camel.spring.model;
 
-import org.apache.camel.Route;
 import org.apache.camel.spring.model.language.ExpressionType;
 
 import javax.xml.bind.JAXBException;
@@ -91,29 +90,29 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     protected void assertProcessor(RouteType route, String processorRef) {
-        ProcessorType processor = assertOneElement(route.getProcessor());
+        ProcessorType processor = assertOneElement(route.getOutputs());
         ProcessorRef to = assertIsInstanceOf(ProcessorRef.class, processor);
         assertEquals("Processor ref", processorRef, to.getRef());
     }
 
     protected void assertTo(RouteType route, String uri) {
-        ProcessorType processor = assertOneElement(route.getProcessor());
+        ProcessorType processor = assertOneElement(route.getOutputs());
         ToType value = assertIsInstanceOf(ToType.class, processor);
         assertEquals("To URI", uri, value.getUri());
     }
 
     protected void assertFrom(RouteType route, String uri) {
-        FromType from = assertOneElement(route.getFrom());
+        FromType from = assertOneElement(route.getInputs());
         assertEquals("From URI", uri, from.getUri());
     }
 
     protected FilterType assertFilter(RouteType route) {
-        ProcessorType processor = assertOneElement(route.getProcessor());
+        ProcessorType processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(FilterType.class, processor);
     }
 
     protected RecipientListType assertRecipientList(RouteType route) {
-        ProcessorType processor = assertOneElement(route.getProcessor());
+        ProcessorType processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(RecipientListType.class, processor);
     }
 
