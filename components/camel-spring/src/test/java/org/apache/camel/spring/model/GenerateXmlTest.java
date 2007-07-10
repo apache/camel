@@ -41,6 +41,7 @@ public class GenerateXmlTest extends XmlTestSupport {
         CamelContextType context = new CamelContextType();
         RouteType route = context.route();
         route.from("seda:a");
+        route.interceptors("interceptor1", "interceptor2");
         route.filter(new GroovyExpression("in.headers.any { h -> h.startsWith('foo') }")).
                 to("seda:b");
 

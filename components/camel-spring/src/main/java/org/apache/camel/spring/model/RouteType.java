@@ -25,6 +25,7 @@ import org.apache.camel.builder.ProcessorFactory;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlElementRef;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,7 @@ import java.util.List;
 public class RouteType extends OutputType implements CamelContextAware, ProcessorFactory {
     private CamelContext camelContext;
     private List<FromType> from = new ArrayList<FromType>();
+    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
 
 /*
     public Route createRoute() throws Exception {
@@ -59,6 +61,15 @@ public class RouteType extends OutputType implements CamelContextAware, Processo
 
     public void setFrom(List<FromType> from) {
         this.from = from;
+    }
+
+    @XmlElementRef
+    public List<InterceptorRef> getInterceptors() {
+        return interceptors;
+    }
+
+    public void setInterceptors(List<InterceptorRef> interceptors) {
+        this.interceptors = interceptors;
     }
 
     @XmlTransient
@@ -89,9 +100,19 @@ public class RouteType extends OutputType implements CamelContextAware, Processo
     // Fluent API
     //-----------------------------------------------------------------------
     public RouteType from(String uri) {
-        FromType from = new FromType();
-        from.setUri(uri);
-        getFrom().add(from);
+        getFrom().add(new FromType(uri));
+        return this;
+    }
+
+    public RouteType interceptor(String ref) {
+        getInterceptors().add(new InterceptorRef(ref));
+        return this;
+    }
+
+    public RouteType interceptors(String... refs) {
+        for (String ref : refs) {
+            interceptor(ref);
+        }
         return this;
     }
 }

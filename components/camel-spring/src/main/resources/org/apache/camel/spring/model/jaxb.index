@@ -2,5 +2,6 @@ CamelContextType
 FilterType
 FromType
 ProcessorRef
+RecipientListType
 RouteType
 ToType
