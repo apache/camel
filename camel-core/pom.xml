@@ -59,15 +59,12 @@
       <artifactId>log4j</artifactId>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>com.sun.tools.jxc.maven2</groupId>
-        <artifactId>maven-jaxb-schemagen-plugin</artifactId>
-      </plugin>
 
       <!-- generate the attached tests jar -->
       <plugin>
