@@ -23,26 +23,38 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "filter")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class FilterType extends OutputType {
-    @XmlElementRef
-    private ExpressionType expression;
+@XmlRootElement(name = "choice")
+public class ChoiceType extends ProcessorType {
+    private List<WhenType> whenClauses = new ArrayList<WhenType>();
+    private OtherwiseType otherwise;
 
     @Override
     public String toString() {
-        return "Filter[ " + getExpression() + " -> " + getOutputs() + "]";
+        return "Choice[ " + getWhenClauses() + " " + getOtherwise() + "]";
     }
 
-    public ExpressionType getExpression() {
-        return expression;
+    @XmlElementRef
+    public List<WhenType> getWhenClauses() {
+        return whenClauses;
     }
 
-    public void setExpression(ExpressionType expression) {
-        this.expression = expression;
+    public void setWhenClauses(List<WhenType> whenClauses) {
+        this.whenClauses = whenClauses;
+    }
+
+    @XmlElementRef
+    public OtherwiseType getOtherwise() {
+        return otherwise;
+    }
+
+    public void setOtherwise(OtherwiseType otherwise) {
+        this.otherwise = otherwise;
     }
 }
+

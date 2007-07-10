@@ -27,15 +27,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "filter")
+@XmlRootElement(name = "splitter")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FilterType extends OutputType {
+public class SplitterType extends OutputType {
     @XmlElementRef
     private ExpressionType expression;
 
     @Override
     public String toString() {
-        return "Filter[ " + getExpression() + " -> " + getOutputs() + "]";
+        return "Splitter[ " + getExpression() + " -> " + getOutputs() + "]";
     }
 
     public ExpressionType getExpression() {

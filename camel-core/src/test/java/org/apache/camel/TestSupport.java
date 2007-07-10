@@ -214,4 +214,12 @@ public abstract class TestSupport extends TestCase {
         assertEquals("Size of list should be 1: " + list, 1, list.size());
         return list.get(0);
     }
+
+    /**
+     * Asserts that a list is of the given size
+     */
+    protected <T> List<T> assertListSize(List<T> list, int size) {
+        assertEquals("List should be of size: " + size + " but is: " + list, size, list.size());
+        return list;
+    }
 }
