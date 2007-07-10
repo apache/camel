@@ -15,35 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.model;
+package org.apache.camel.spring.model.language;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlValue;
 
 /**
- * Represents a parameterised language expression
- *
+ * For Groovy expresions and predicates
+ * 
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "expression")
-public class LanguageExpression extends LanguageExpressionSupport{
-    private String language;
+@XmlRootElement(name = "groovy")
+public class GroovyExpression extends ExpressionType {
 
-    public LanguageExpression() {
+    public GroovyExpression() {
     }
 
-    public LanguageExpression(String language, String expression) {
-        setLanguage(language);
-        setExpression(expression);
+    public GroovyExpression(String expression) {
+        super(expression);
     }
 
-    @XmlAttribute
     public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
+        return "groovy";
     }
 }

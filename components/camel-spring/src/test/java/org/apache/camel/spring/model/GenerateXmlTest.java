@@ -17,6 +17,8 @@
  */
 package org.apache.camel.spring.model;
 
+import org.apache.camel.spring.model.language.GroovyExpression;
+
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.util.List;
