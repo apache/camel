@@ -30,21 +30,21 @@ import java.util.List;
  * @version $Revision: 1.1 $
  */
 public abstract class OutputType extends ProcessorType {
-    protected List<ProcessorType> processor = new ArrayList<ProcessorType>();
+    protected List<ProcessorType> outputs = new ArrayList<ProcessorType>();
 
     @XmlElementRef
-    public List<ProcessorType> getProcessor() {
-        return processor;
+    public List<ProcessorType> getOutputs() {
+        return outputs;
     }
 
-    public void setProcessor(List<ProcessorType> processor) {
-        this.processor = processor;
+    public void setOutputs(List<ProcessorType> outputs) {
+        this.outputs = outputs;
     }
 
     public FilterType filter(ExpressionType expression) {
         FilterType filter = new FilterType();
         filter.setExpression(expression);
-        getProcessor().add(filter);
+        getOutputs().add(filter);
         return filter;
     }
 
@@ -55,7 +55,7 @@ public abstract class OutputType extends ProcessorType {
     public OutputType to(String uri) {
         ToType to = new ToType();
         to.setUri(uri);
-        getProcessor().add(to);
+        getOutputs().add(to);
         return this;
     }
 }

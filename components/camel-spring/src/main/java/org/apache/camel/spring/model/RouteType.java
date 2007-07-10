@@ -22,7 +22,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ProcessorFactory;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -37,7 +36,7 @@ import java.util.List;
 @XmlRootElement(name = "root")
 public class RouteType extends OutputType implements CamelContextAware, ProcessorFactory {
     private CamelContext camelContext;
-    private List<FromType> from = new ArrayList<FromType>();
+    private List<FromType> inputs = new ArrayList<FromType>();
     private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
 
 /*
@@ -48,19 +47,19 @@ public class RouteType extends OutputType implements CamelContextAware, Processo
 
     @Override
     public String toString() {
-        return "Route[from: " + from + " processor: " + processor + "]";
+        return "Route[from: " + inputs + " processor: " + outputs + "]";
     }
 
     // Properties
     //-----------------------------------------------------------------------
 
-    @XmlElement(required = true)
-    public List<FromType> getFrom() {
-        return from;
+    @XmlElementRef
+    public List<FromType> getInputs() {
+        return inputs;
     }
 
-    public void setFrom(List<FromType> from) {
-        this.from = from;
+    public void setInputs(List<FromType> inputs) {
+        this.inputs = inputs;
     }
 
     @XmlElementRef
@@ -100,7 +99,7 @@ public class RouteType extends OutputType implements CamelContextAware, Processo
     // Fluent API
     //-----------------------------------------------------------------------
     public RouteType from(String uri) {
-        getFrom().add(new FromType(uri));
+        getInputs().add(new FromType(uri));
         return this;
     }
 

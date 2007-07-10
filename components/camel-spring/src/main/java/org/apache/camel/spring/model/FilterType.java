@@ -35,7 +35,7 @@ public class FilterType extends OutputType {
 
     @Override
     public String toString() {
-        return "Filter[if: " + getExpression() + " process: " + getProcessor() + "]";
+        return "Filter[if: " + getExpression() + " process: " + getOutputs() + "]";
     }
 
     public ExpressionType getExpression() {
