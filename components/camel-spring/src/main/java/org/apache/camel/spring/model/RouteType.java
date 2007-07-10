@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlElementRef;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,11 +39,8 @@ import sun.net.smtp.SmtpClient;
  * @version $Revision: $
  */
 @XmlRootElement(name = "root")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class RouteType extends OutputType implements CamelContextAware, ProcessorFactory {
-    @XmlTransient
     private CamelContext camelContext;
-    @XmlElement(required = true)
     private List<FromType> from = new ArrayList<FromType>();
 
 /*
@@ -60,6 +58,7 @@ public class RouteType extends OutputType implements CamelContextAware, Processo
     // Properties
     //-----------------------------------------------------------------------
 
+    @XmlElement(required = true)
     public List<FromType> getFrom() {
         return from;
     }
@@ -68,6 +67,7 @@ public class RouteType extends OutputType implements CamelContextAware, Processo
         this.from = from;
     }
 
+    @XmlTransient
     public CamelContext getCamelContext() {
         return camelContext;
     }

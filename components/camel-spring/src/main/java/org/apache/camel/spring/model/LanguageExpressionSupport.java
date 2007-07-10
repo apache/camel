@@ -27,9 +27,29 @@ import javax.xml.bind.annotation.XmlValue;
  * 
  * @version $Revision: 1.1 $
  */
-public interface LanguageExpressionSupport  {
-
-    public abstract String getExpression();
+public abstract class LanguageExpressionSupport  {
+    private String expression;
 
     public abstract String getLanguage();
+
+    protected LanguageExpressionSupport() {
+    }
+
+    protected LanguageExpressionSupport(String expression) {
+        this.expression = expression;
+    }
+
+    @Override
+    public String toString() {
+        return getLanguage() + "Expression[" + getExpression() + "]";
+    }
+
+    @XmlValue
+    public String getExpression() {
+        return expression;
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
+    }
 }

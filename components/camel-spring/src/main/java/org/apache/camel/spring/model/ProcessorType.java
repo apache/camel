@@ -20,5 +20,5 @@ package org.apache.camel.spring.model;
 /**
  * @version $Revision: 1.1 $
  */
-public interface ProcessorType {
+public abstract class ProcessorType {
 }

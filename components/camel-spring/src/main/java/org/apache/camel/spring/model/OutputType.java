@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlElementRef;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -29,14 +30,10 @@ import java.util.ArrayList;
  * 
  * @version $Revision: 1.1 $
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-public abstract class OutputType {
-    @XmlElements({
-    @XmlElement(name = "filter", type = FilterType.class),
-    @XmlElement(name = "process", type = ProcessorRef.class),
-    @XmlElement(name = "to", type = ToType.class)})
+public abstract class OutputType extends ProcessorType {
     protected List<ProcessorType> processor = new ArrayList<ProcessorType>();
 
+    @XmlElementRef
     public List<ProcessorType> getProcessor() {
         return processor;
     }

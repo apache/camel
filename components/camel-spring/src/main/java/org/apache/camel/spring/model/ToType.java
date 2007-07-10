@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlAttribute;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "to")
-public class ToType implements ProcessorType {
+public class ToType extends OutputType {
     @XmlAttribute
     private String uri;
 

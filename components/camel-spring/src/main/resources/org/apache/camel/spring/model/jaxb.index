@@ -1,6 +1,7 @@
 CamelContextType
 FilterType
 FromType
+GroovyExpression
 LanguageExpression
 ProcessorRef
 RouteType

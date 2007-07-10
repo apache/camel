@@ -27,9 +27,8 @@ import javax.xml.bind.annotation.XmlValue;
  * @version $Revision: 1.1 $
  */
 @XmlRootElement(name = "expression")
-public class LanguageExpression implements LanguageExpressionSupport{
+public class LanguageExpression extends LanguageExpressionSupport{
     private String language;
-    private String expression;
 
     public LanguageExpression() {
     }
@@ -39,11 +38,6 @@ public class LanguageExpression implements LanguageExpressionSupport{
         setExpression(expression);
     }
 
-    @Override
-    public String toString() {
-        return getLanguage() + "Expression[" + getExpression() + "]";
-    }
-
     @XmlAttribute
     public String getLanguage() {
         return language;
@@ -51,14 +45,5 @@ public class LanguageExpression implements LanguageExpressionSupport{
 
     public void setLanguage(String language) {
         this.language = language;
-    }
-
-    @XmlValue
-    public String getExpression() {
-        return expression;
-    }
-
-    public void setExpression(String expression) {
-        this.expression = expression;
     }
 }

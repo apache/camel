@@ -19,17 +19,31 @@ package org.apache.camel.spring.model;
 
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
+import java.util.List;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class GenerateXmlTest extends XmlTestSupport {
-    
-    public void testCreateXml() throws Exception {
+    public void testCreateSimpleXml() throws Exception {
         CamelContextType context = new CamelContextType();
         RouteType route = context.route();
         route.from("seda:a");
-        route.filter("juel", "in.header.foo == 'bar'").to("seda:b");
+        route.filter("juel", "in.header.foo == 'bar'").
+                to("seda:b");
+
+        dump(context);
+    }
+
+    public void testGroovyFilterXml() throws Exception {
+        CamelContextType context = new CamelContextType();
+        RouteType route = context.route();
+        route.from("seda:a");
+        route.filter(new GroovyExpression("in.headers.any { h -> h.startsWith('foo') }")).
+                to("seda:b");
+
+        List<ProcessorType> list = route.getProcessor();
+        assertEquals("Size of list: "+ list, 1, list.size());
 
         dump(context);
     }

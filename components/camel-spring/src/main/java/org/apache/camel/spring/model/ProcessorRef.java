@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "process")
-public class ProcessorRef implements ProcessorType {
+public class ProcessorRef extends OutputType {
     @XmlAttribute(required = true)
     private String ref;
 
