@@ -22,16 +22,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ProcessorFactory;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlElementRef;
 import java.util.ArrayList;
 import java.util.List;
-
-import sun.net.smtp.SmtpClient;
 
 /**
  * Represents an XML &lt;route/&gt; element
@@ -53,7 +48,6 @@ public class RouteType extends OutputType implements CamelContextAware, Processo
     public String toString() {
         return "Route[from: " + from + " processor: " + processor + "]";
     }
-
 
     // Properties
     //-----------------------------------------------------------------------

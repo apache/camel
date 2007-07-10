@@ -17,14 +17,11 @@
  */
 package org.apache.camel.spring.model.language;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlValue;
 
 /**
  * A useful base class for an expression
- * 
+ *
  * @version $Revision: 1.1 $
  */
 public abstract class ExpressionType {

@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "xpath")
 public class XPathExpression extends ExpressionType {
-
     public XPathExpression() {
     }
 

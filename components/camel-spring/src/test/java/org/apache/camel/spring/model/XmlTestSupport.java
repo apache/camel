@@ -21,9 +21,9 @@ import org.apache.camel.TestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.JAXBContext;
 import java.net.URL;
 
 /**

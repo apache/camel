@@ -16,20 +16,10 @@
  */
 package org.apache.camel.spring.model;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
-import org.apache.camel.Route;
-import org.apache.camel.builder.ProcessorFactory;
-import org.apache.camel.impl.EventDrivenConsumerRoute;
-
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Represents an XML &lt;to/&gt; element
@@ -56,5 +46,4 @@ public class FromType {
     public void setUri(String uri) {
         this.uri = uri;
     }
-
 }

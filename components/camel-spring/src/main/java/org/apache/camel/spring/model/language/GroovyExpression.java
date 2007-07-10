@@ -21,12 +21,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * For Groovy expresions and predicates
- * 
+ *
  * @version $Revision: 1.1 $
  */
 @XmlRootElement(name = "groovy")
 public class GroovyExpression extends ExpressionType {
-
     public GroovyExpression() {
     }
 
