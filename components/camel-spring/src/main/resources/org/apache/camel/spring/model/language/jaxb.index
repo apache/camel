@@ -6,5 +6,6 @@ OgnlExpression
 PhpExpression
 PythonExpression
 RubyExpression
+SqlExpression
 XPathExpression
 XQueryExpression

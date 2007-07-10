@@ -20,20 +20,20 @@ package org.apache.camel.spring.model.language;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * For JavaScript expresions and predicates
+ * For SQ: expresions and predicates
  *
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "javaScript")
-public class JavaScriptExpression extends ExpressionType {
-    public JavaScriptExpression() {
+@XmlRootElement(name = "sql")
+public class SqlExpression extends ExpressionType {
+    public SqlExpression() {
     }
 
-    public JavaScriptExpression(String expression) {
+    public SqlExpression(String expression) {
         super(expression);
     }
 
     public String getLanguage() {
-        return "js";
+        return "sql";
     }
 }

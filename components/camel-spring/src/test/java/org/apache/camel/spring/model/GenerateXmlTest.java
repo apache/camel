@@ -45,7 +45,7 @@ public class GenerateXmlTest extends XmlTestSupport {
                 to("seda:b");
 
         List<ProcessorType> list = route.getProcessor();
-        assertEquals("Size of list: "+ list, 1, list.size());
+        assertEquals("Size of list: " + list, 1, list.size());
 
         dump(context);
     }

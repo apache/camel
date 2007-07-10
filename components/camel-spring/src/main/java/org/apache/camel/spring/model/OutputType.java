@@ -17,16 +17,16 @@
  */
 package org.apache.camel.spring.model;
 
-import org.apache.camel.spring.model.language.LanguageExpression;
 import org.apache.camel.spring.model.language.ExpressionType;
+import org.apache.camel.spring.model.language.LanguageExpression;
 
 import javax.xml.bind.annotation.XmlElementRef;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A useful base class for output types
- * 
+ *
  * @version $Revision: 1.1 $
  */
 public abstract class OutputType extends ProcessorType {

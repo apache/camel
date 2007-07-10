@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "ruby")
 public class RubyExpression extends ExpressionType {
-
     public RubyExpression() {
     }
 

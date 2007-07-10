@@ -17,15 +17,6 @@
  */
 package org.apache.camel.spring.model;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.JAXBException;
-
-import org.apache.camel.TestSupport;
-import org.apache.camel.spring.model.CamelContextType;
-
-import java.net.URL;
-
 /**
  * @version $Revision: 1.1 $
  */

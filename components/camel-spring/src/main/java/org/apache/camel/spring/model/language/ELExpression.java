@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "el")
 public class ELExpression extends ExpressionType {
-
     public ELExpression() {
     }
 

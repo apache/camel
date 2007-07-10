@@ -17,8 +17,8 @@
  */
 package org.apache.camel.spring.model.language;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Represents a parameterised language expression which can support any language
