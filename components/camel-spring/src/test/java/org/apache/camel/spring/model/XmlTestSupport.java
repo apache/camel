@@ -51,6 +51,6 @@ public class XmlTestSupport extends TestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        jaxbContext = JAXBContext.newInstance("org.apache.camel.spring.model");
+        jaxbContext = JAXBContext.newInstance("org.apache.camel.spring.model:org.apache.camel.spring.model.language");
     }
 }

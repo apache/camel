@@ -15,26 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.model;
-
-import org.apache.camel.spring.model.LanguageExpression;
+package org.apache.camel.spring.model.language;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * For PHP expresions and predicates
+ *
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "groovy")
-public class GroovyExpression extends LanguageExpressionSupport {
+@XmlRootElement(name = "php")
+public class PhpExpression extends ExpressionType {
 
-    public GroovyExpression() {
+    public PhpExpression() {
     }
 
-    public GroovyExpression(String expression) {
+    public PhpExpression(String expression) {
         super(expression);
     }
 
     public String getLanguage() {
-        return "groovy";
+        return "php";
     }
 }

@@ -15,41 +15,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.model;
+package org.apache.camel.spring.model.language;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.XmlAttribute;
 
 /**
- * A useful base class for an expression
- * 
+ * Represents a parameterised language expression which can support any language
+ * at runtime using the language attribute.
+ *
  * @version $Revision: 1.1 $
  */
-public abstract class LanguageExpressionSupport  {
-    private String expression;
+@XmlRootElement(name = "expression")
+public class LanguageExpression extends ExpressionType {
+    private String language;
 
-    public abstract String getLanguage();
-
-    protected LanguageExpressionSupport() {
+    public LanguageExpression() {
     }
 
-    protected LanguageExpressionSupport(String expression) {
-        this.expression = expression;
+    public LanguageExpression(String language, String expression) {
+        setLanguage(language);
+        setExpression(expression);
     }
 
-    @Override
-    public String toString() {
-        return getLanguage() + "Expression[" + getExpression() + "]";
+    @XmlAttribute
+    public String getLanguage() {
+        return language;
     }
 
-    @XmlValue
-    public String getExpression() {
-        return expression;
-    }
-
-    public void setExpression(String expression) {
-        this.expression = expression;
+    public void setLanguage(String language) {
+        this.language = language;
     }
 }

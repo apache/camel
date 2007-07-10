@@ -17,10 +17,9 @@
  */
 package org.apache.camel.spring.model;
 
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
+import org.apache.camel.spring.model.language.LanguageExpression;
+import org.apache.camel.spring.model.language.ExpressionType;
+
 import javax.xml.bind.annotation.XmlElementRef;
 import java.util.List;
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ public abstract class OutputType extends ProcessorType {
         this.processor = processor;
     }
 
-    public FilterType filter(LanguageExpressionSupport expression) {
+    public FilterType filter(ExpressionType expression) {
         FilterType filter = new FilterType();
         filter.setExpression(expression);
         getProcessor().add(filter);

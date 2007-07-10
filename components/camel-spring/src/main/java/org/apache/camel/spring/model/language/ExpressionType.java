@@ -15,34 +15,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.model;
+package org.apache.camel.spring.model.language;
 
-import org.apache.camel.spring.model.language.ExpressionType;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlValue;
 
 /**
+ * A useful base class for an expression
+ * 
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "filter")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class FilterType extends OutputType {
-    @XmlElementRef
-    private ExpressionType expression;
+public abstract class ExpressionType {
+    private String expression;
+
+    public abstract String getLanguage();
+
+    protected ExpressionType() {
+    }
+
+    protected ExpressionType(String expression) {
+        this.expression = expression;
+    }
 
     @Override
     public String toString() {
-        return "Filter[if: " + getExpression() + " process: " + getProcessor() + "]";
+        return getLanguage() + "Expression[" + getExpression() + "]";
     }
 
-    public ExpressionType getExpression() {
+    @XmlValue
+    public String getExpression() {
         return expression;
     }
 
-    public void setExpression(ExpressionType expression) {
+    public void setExpression(String expression) {
         this.expression = expression;
     }
 }
