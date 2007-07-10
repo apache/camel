@@ -17,32 +17,24 @@
  */
 package org.apache.camel.spring.model;
 
-import junit.framework.TestCase;
+import org.apache.camel.spring.model.LanguageExpression;
 
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBContext;
-import java.io.StringWriter;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class GenerateXmlTestTest extends XmlTestSupport {
-    
-    public void testCreateXml() throws Exception {
-        CamelContextType context = new CamelContextType();
-        RouteType route = context.route();
-        route.from("seda:a");
-        route.filter("juel", "in.header.foo == 'bar'").to("seda:b");
+@XmlRootElement(name = "groovy")
+public class GroovyExpression extends LanguageExpressionSupport {
 
-        dump(context);
+    public GroovyExpression() {
     }
 
-    protected void dump(CamelContextType context) throws Exception {
-        Marshaller marshaller = jaxbContext.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        StringWriter buffer = new StringWriter();
-        marshaller.marshal(context, buffer);
-        log.info("Created: " + buffer);
+    public GroovyExpression(String expression) {
+        super(expression);
+    }
+
+    public String getLanguage() {
+        return "groovy";
     }
 }

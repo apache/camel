@@ -24,14 +24,15 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlElementRef;
 
 /**
  * @version $Revision: 1.1 $
  */
 @XmlRootElement(name = "filter")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FilterType extends OutputType implements ProcessorType {
-    @XmlElements({@XmlElement(name = "expression", type = LanguageExpression.class)})
+public class FilterType extends OutputType {
+    @XmlElementRef
     private LanguageExpressionSupport expression;
 
     @Override
