@@ -15,31 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.model;
+package org.apache.camel.spring.model.language;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * An expression which extracts the named header
+ *
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "process")
-public class ProcessorRef extends OutputType {
-    private String ref;
-
-    @Override
-    public String toString() {
-        return "Processor[ref:  " + ref + "]";
+@XmlRootElement(name = "header")
+public class HeaderExpression extends ExpressionType {
+    public HeaderExpression() {
     }
 
-    @XmlAttribute(required = true)
-    public String getRef() {
-        return ref;
+    public HeaderExpression(String expression) {
+        super(expression);
     }
 
-    public void setRef(String ref) {
-        this.ref = ref;
+    public String getLanguage() {
+        return "header";
     }
 }

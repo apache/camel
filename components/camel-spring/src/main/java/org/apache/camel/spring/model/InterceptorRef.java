@@ -25,13 +25,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "process")
-public class ProcessorRef extends OutputType {
+@XmlRootElement(name = "interceptor")
+public class InterceptorRef {
     private String ref;
+
+    public InterceptorRef() {
+    }
+
+    public InterceptorRef(String ref) {
+        setRef(ref);
+    }
 
     @Override
     public String toString() {
-        return "Processor[ref:  " + ref + "]";
+        return "Interceptor[ref:  " + ref + "]";
     }
 
     @XmlAttribute(required = true)

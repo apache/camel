@@ -32,6 +32,13 @@ public class FromType {
     @XmlAttribute
     private String uri;
 
+    public FromType() {
+    }
+
+    public FromType(String uri) {
+        setUri(uri);
+    }
+
     @Override
     public String toString() {
         return "From[" + uri + "]";

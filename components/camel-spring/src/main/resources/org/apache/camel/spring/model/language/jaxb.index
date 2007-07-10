@@ -1,5 +1,6 @@
 ELExpression
 GroovyExpression
+HeaderExpression
 JavaScriptExpression
 LanguageExpression
 OgnlExpression

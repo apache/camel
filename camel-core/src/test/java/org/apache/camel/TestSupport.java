@@ -24,6 +24,8 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.List;
+
 /**
  * A bunch of useful testing methods
  *
@@ -208,4 +210,8 @@ public abstract class TestSupport extends TestCase {
         return exchange;
     }
 
+    protected <T> T assertOneElement(List<T> list) {
+        assertEquals("Size of list should be 1: " + list, 1, list.size());
+        return list.get(0);
+    }
 }

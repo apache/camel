@@ -17,29 +17,32 @@
  */
 package org.apache.camel.spring.model;
 
+import org.apache.camel.spring.model.language.ExpressionType;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "process")
-public class ProcessorRef extends OutputType {
-    private String ref;
+@XmlRootElement(name = "recipientList")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class RecipientListType extends OutputType {
+    @XmlElementRef
+    private ExpressionType expression;
 
     @Override
     public String toString() {
-        return "Processor[ref:  " + ref + "]";
+        return "RecipientList[ " + getExpression()  + "]";
     }
 
-    @XmlAttribute(required = true)
-    public String getRef() {
-        return ref;
+    public ExpressionType getExpression() {
+        return expression;
     }
 
-    public void setRef(String ref) {
-        this.ref = ref;
+    public void setExpression(ExpressionType expression) {
+        this.expression = expression;
     }
 }
