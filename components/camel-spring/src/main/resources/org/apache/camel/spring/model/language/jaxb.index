@@ -1,3 +1,10 @@
+ELExpression
 GroovyExpression
+JavaScriptExpression
 LanguageExpression
+OgnlExpression
 PhpExpression
+PythonExpression
+RubyExpression
+XPathExpression
+XQueryExpression
