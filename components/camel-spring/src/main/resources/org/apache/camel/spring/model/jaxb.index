@@ -1,5 +1,7 @@
 CamelContextType
+FilterType
 FromType
+LanguageExpression
 ProcessorRef
 RouteType
 ToType

@@ -17,30 +17,33 @@
  */
 package org.apache.camel.spring.model;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessOrder;
 import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorOrder;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @version $Revision: 1.1 $
  */
+@XmlRootElement(name = "filter")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "process")
-public class ProcessorRef implements ProcessorType {
-    @XmlAttribute(required = true)
-    private String ref;
+public class FilterType extends OutputType implements ProcessorType {
+    @XmlElements({@XmlElement(name = "expression", type = LanguageExpression.class)})
+    private LanguageExpressionSupport expression;
 
     @Override
     public String toString() {
-        return "Processor[ref:  " + ref + "]";
+        return "Filter[if: " + getExpression() + " process: " + getProcessor() + "]";
     }
 
-    public String getRef() {
-        return ref;
+    public LanguageExpressionSupport getExpression() {
+        return expression;
     }
 
-    public void setRef(String ref) {
-        this.ref = ref;
+    public void setExpression(LanguageExpressionSupport expression) {
+        this.expression = expression;
     }
 }

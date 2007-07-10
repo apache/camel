@@ -32,6 +32,7 @@ import java.util.ArrayList;
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class OutputType {
     @XmlElements({
+    @XmlElement(name = "filter", type = FilterType.class),
     @XmlElement(name = "process", type = ProcessorRef.class),
     @XmlElement(name = "to", type = ToType.class)})
     protected List<ProcessorType> processor = new ArrayList<ProcessorType>();
@@ -42,5 +43,23 @@ public abstract class OutputType {
 
     public void setProcessor(List<ProcessorType> processor) {
         this.processor = processor;
+    }
+
+    public FilterType filter(LanguageExpressionSupport expression) {
+        FilterType filter = new FilterType();
+        filter.setExpression(expression);
+        getProcessor().add(filter);
+        return filter;
+    }
+
+    public FilterType filter(String language, String expression) {
+        return filter(new LanguageExpression(language, expression));
+    }
+
+    public OutputType to(String uri) {
+        ToType to = new ToType();
+        to.setUri(uri);
+        getProcessor().add(to);
+        return this;
     }
 }

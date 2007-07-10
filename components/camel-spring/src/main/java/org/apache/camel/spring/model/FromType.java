@@ -36,8 +36,8 @@ import javax.xml.bind.annotation.XmlAccessType;
  *
  * @version $Revision: $
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "from")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class FromType {
     @XmlAttribute
     private String uri;
