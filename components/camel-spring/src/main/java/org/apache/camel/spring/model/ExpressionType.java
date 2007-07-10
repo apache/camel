@@ -17,30 +17,13 @@
  */
 package org.apache.camel.spring.model;
 
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlElements;
 
 /**
  * @version $Revision: 1.1 $
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "process")
-public class ProcessorRef implements ProcessorType {
-    @XmlAttribute(required = true)
-    private String ref;
-
-    @Override
-    public String toString() {
-        return "Processor[ref:  " + ref + "]";
-    }
-
-    public String getRef() {
-        return ref;
-    }
-
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
+public class ExpressionType {
 }

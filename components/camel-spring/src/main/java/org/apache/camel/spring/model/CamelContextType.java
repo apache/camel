@@ -61,4 +61,12 @@ public class CamelContextType {
     public void setRoutes(List<RouteType> routes) {
         this.routes = routes;
     }
+
+    // Fluent API
+    //-------------------------------------------------------------------------
+    public RouteType route() {
+        RouteType route = new RouteType();
+        getRoutes().add(route);
+        return route;
+    }
 }

@@ -29,28 +29,16 @@ import java.net.URL;
 /**
  * @version $Revision: 1.1 $
  */
-public class XmlParseTest extends TestSupport {
-    protected JAXBContext context;
-
-    public void testParseXml() throws Exception {
-        Object value = parseUri("example1.xml");
-        CamelContextType context = assertIsInstanceOf(CamelContextType.class, value);
-
-        log.info("Found: " + context);
+public class XmlParseTest extends XmlTestSupport {
+    public void testParseExample1Xml() throws Exception {
+        assertParseAsJaxb("example1.xml");
     }
 
-    protected Object parseUri(String uri) throws JAXBException {
-        Unmarshaller unmarshaller = context.createUnmarshaller();
-        URL resource = getClass().getResource(uri);
-        assertNotNull("Cannot find resource on the classpath: " + uri, resource);
-        Object value = unmarshaller.unmarshal(resource);
-        return value;
+    public void testParseProcessorXml() throws Exception {
+        assertParseAsJaxb("processor.xml");
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        context = JAXBContext.newInstance("org.apache.camel.spring.model");
+    public void testParseProcessorWithFilterXml() throws Exception {
+        assertParseAsJaxb("processorWithFilter.xml");
     }
 }

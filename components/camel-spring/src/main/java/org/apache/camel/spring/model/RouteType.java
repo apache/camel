@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
 
+import sun.net.smtp.SmtpClient;
+
 /**
  * Represents an XML &lt;route/&gt; element
  *
@@ -88,5 +90,14 @@ public class RouteType extends OutputType implements CamelContextAware, Processo
             throw new IllegalArgumentException("No Endpoint found for uri: " + uri);
         }
         return answer;
+    }
+
+    // Fluent API
+    //-----------------------------------------------------------------------
+    public RouteType from(String uri) {
+        FromType from = new FromType();
+        from.setUri(uri);
+        getFrom().add(from);
+        return this;
     }
 }

@@ -17,30 +17,32 @@
  */
 package org.apache.camel.spring.model;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlRootElement;
+import junit.framework.TestCase;
+
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.JAXBContext;
+import java.io.StringWriter;
 
 /**
  * @version $Revision: 1.1 $
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "process")
-public class ProcessorRef implements ProcessorType {
-    @XmlAttribute(required = true)
-    private String ref;
+public class GenerateXmlTestTest extends XmlTestSupport {
+    
+    public void testCreateXml() throws Exception {
+        CamelContextType context = new CamelContextType();
+        RouteType route = context.route();
+        route.from("seda:a");
+        route.filter("juel", "in.header.foo == 'bar'").to("seda:b");
 
-    @Override
-    public String toString() {
-        return "Processor[ref:  " + ref + "]";
+        dump(context);
     }
 
-    public String getRef() {
-        return ref;
-    }
-
-    public void setRef(String ref) {
-        this.ref = ref;
+    protected void dump(CamelContextType context) throws Exception {
+        Marshaller marshaller = jaxbContext.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        StringWriter buffer = new StringWriter();
+        marshaller.marshal(context, buffer);
+        log.info("Created: " + buffer);
     }
 }
