@@ -27,22 +27,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "filter")
+@XmlRootElement(name = "otherwise")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FilterType extends OutputType {
-    @XmlElementRef
-    private ExpressionType expression;
+public class OtherwiseType extends OutputType {
 
     @Override
     public String toString() {
-        return "Filter[ " + getExpression() + " -> " + getOutputs() + "]";
-    }
-
-    public ExpressionType getExpression() {
-        return expression;
-    }
-
-    public void setExpression(ExpressionType expression) {
-        this.expression = expression;
+        return "Otherwise[" + getOutputs() + "]";
     }
 }

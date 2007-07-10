@@ -31,6 +31,7 @@ import java.util.List;
  */
 public abstract class OutputType extends ProcessorType {
     protected List<ProcessorType> outputs = new ArrayList<ProcessorType>();
+    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
 
     @XmlElementRef
     public List<ProcessorType> getOutputs() {
@@ -41,6 +42,18 @@ public abstract class OutputType extends ProcessorType {
         this.outputs = outputs;
     }
 
+    @XmlElementRef
+    public List<InterceptorRef> getInterceptors() {
+        return interceptors;
+    }
+
+    public void setInterceptors(List<InterceptorRef> interceptors) {
+        this.interceptors = interceptors;
+    }
+
+
+    // Fluent API
+    //-------------------------------------------------------------------------
     public FilterType filter(ExpressionType expression) {
         FilterType filter = new FilterType();
         filter.setExpression(expression);

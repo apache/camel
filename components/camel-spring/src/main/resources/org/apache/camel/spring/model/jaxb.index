@@ -1,7 +1,11 @@
 CamelContextType
+ChoiceType
 FilterType
 FromType
+OtherwiseType
 ProcessorRef
 RecipientListType
 RouteType
+SplitterType
 ToType
+WhenType

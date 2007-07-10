@@ -37,7 +37,6 @@ import java.util.List;
 public class RouteType extends OutputType implements CamelContextAware, ProcessorFactory {
     private CamelContext camelContext;
     private List<FromType> inputs = new ArrayList<FromType>();
-    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
 
 /*
     public Route createRoute() throws Exception {
@@ -47,7 +46,7 @@ public class RouteType extends OutputType implements CamelContextAware, Processo
 
     @Override
     public String toString() {
-        return "Route[from: " + inputs + " processor: " + outputs + "]";
+        return "Route[ " + inputs + " -> " + outputs + "]";
     }
 
     // Properties
@@ -60,15 +59,6 @@ public class RouteType extends OutputType implements CamelContextAware, Processo
 
     public void setInputs(List<FromType> inputs) {
         this.inputs = inputs;
-    }
-
-    @XmlElementRef
-    public List<InterceptorRef> getInterceptors() {
-        return interceptors;
-    }
-
-    public void setInterceptors(List<InterceptorRef> interceptors) {
-        this.interceptors = interceptors;
     }
 
     @XmlTransient

@@ -26,8 +26,8 @@ import java.util.List;
  * @version $Revision: 1.1 $
  */
 public class XmlParseTest extends XmlTestSupport {
-    public void testParseExample1Xml() throws Exception {
-        RouteType route = assertOneRoute("example1.xml");
+    public void testParseSimpleRouteXml() throws Exception {
+        RouteType route = assertOneRoute("simpleRoute.xml");
         assertFrom(route, "seda:a");
         assertTo(route, "seda:b");
     }
@@ -73,11 +73,40 @@ public class XmlParseTest extends XmlTestSupport {
         assertExpression(node.getExpression(), "header", "foo");
     }
 
+    public void testParseStaticRecipientListXml() throws Exception {
+        RouteType route = assertOneRoute("staticRecipientList.xml");
+        assertFrom(route, "seda:a");
+        assertTo(route, "seda:b", "seda:c", "seda:d");
+    }
+
     public void testParseRouteWithInterceptorXml() throws Exception {
         RouteType route = assertOneRoute("routeWithInterceptor.xml");
         assertFrom(route, "seda:a");
         assertTo(route, "seda:d");
         assertInterceptorRefs(route, "interceptor1", "interceptor2");
+    }
+
+    public void testParseRouteWithChoiceXml() throws Exception {
+        RouteType route = assertOneRoute("routeWithChoice.xml");
+        assertFrom(route, "seda:a");
+
+        ChoiceType choice = assertChoice(route);
+        List<WhenType> whens = assertListSize(choice.getWhenClauses(), 2);
+        assertTo(whens.get(0), "seda:b");
+        assertTo(whens.get(1), "seda:c");
+
+        OtherwiseType otherwise = choice.getOtherwise();
+        assertNotNull("Otherwise is null", otherwise);
+        assertTo(otherwise, "seda:d");
+    }
+
+    public void testParseSplitterXml() throws Exception {
+        RouteType route = assertOneRoute("splitter.xml");
+        assertFrom(route, "seda:a");
+
+        SplitterType splitter = assertSplitter(route);
+        assertExpression(splitter.getExpression(), "xpath", "/foo/bar");
+        assertTo(splitter, "seda:b");
     }
 
     // Implementation methods
@@ -89,31 +118,59 @@ public class XmlParseTest extends XmlTestSupport {
         return route;
     }
 
-    protected void assertProcessor(RouteType route, String processorRef) {
-        ProcessorType processor = assertOneElement(route.getOutputs());
-        ProcessorRef to = assertIsInstanceOf(ProcessorRef.class, processor);
-        assertEquals("Processor ref", processorRef, to.getRef());
-    }
-
-    protected void assertTo(RouteType route, String uri) {
-        ProcessorType processor = assertOneElement(route.getOutputs());
-        ToType value = assertIsInstanceOf(ToType.class, processor);
-        assertEquals("To URI", uri, value.getUri());
-    }
-
     protected void assertFrom(RouteType route, String uri) {
         FromType from = assertOneElement(route.getInputs());
         assertEquals("From URI", uri, from.getUri());
     }
 
-    protected FilterType assertFilter(RouteType route) {
+    protected void assertTo(OutputType route, String uri) {
+        ProcessorType processor = assertOneElement(route.getOutputs());
+        assertTo(processor, uri);
+    }
+
+    protected void assertTo(ProcessorType processor, String uri) {
+        assertTo("", processor, uri);
+    }
+
+    protected void assertTo(String message, ProcessorType processor, String uri) {
+        ToType value = assertIsInstanceOf(ToType.class, processor);
+        String text = message + "To URI";
+        log.info("Testing: " + text + " is equal to: " + uri + " for processor: " + processor);
+        assertEquals(text, uri, value.getUri());
+    }
+
+    protected void assertTo(OutputType route, String... uris) {
+        List<ProcessorType> list = assertListSize(route.getOutputs(), uris.length);
+        int idx = 0;
+        for (String uri : uris) {
+            assertTo("output[" + idx + "] ", list.get(idx++), uri);
+        }
+    }
+
+    protected void assertProcessor(OutputType route, String processorRef) {
+        ProcessorType processor = assertOneElement(route.getOutputs());
+        ProcessorRef to = assertIsInstanceOf(ProcessorRef.class, processor);
+        assertEquals("Processor ref", processorRef, to.getRef());
+    }
+
+    protected FilterType assertFilter(OutputType route) {
         ProcessorType processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(FilterType.class, processor);
     }
 
-    protected RecipientListType assertRecipientList(RouteType route) {
+    protected RecipientListType assertRecipientList(OutputType route) {
         ProcessorType processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(RecipientListType.class, processor);
+    }
+
+    protected ChoiceType assertChoice(OutputType route) {
+        ProcessorType processor = assertOneElement(route.getOutputs());
+        return assertIsInstanceOf(ChoiceType.class, processor);
+    }
+
+    protected SplitterType assertSplitter(OutputType route) {
+        ProcessorType processor = assertOneElement(route.getOutputs());
+        return assertIsInstanceOf(SplitterType.class, processor);
     }
 
     protected void assertExpression(ExpressionType expression, String language, String languageExpression) {
@@ -122,13 +179,13 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("Expression", languageExpression, expression.getExpression());
     }
 
-    protected void assertInterceptorRefs(RouteType route, String... names) {
+    protected void assertInterceptorRefs(OutputType route, String... names) {
         int idx = 0;
         List<InterceptorRef> interceptors = route.getInterceptors();
         for (String name : names) {
             int nextIdx = idx + 1;
             assertTrue("Not enough interceptors! Expected: " + nextIdx + " but have: " + interceptors, nextIdx <= interceptors.size());
-            
+
             InterceptorRef interceptor = interceptors.get(idx++);
             assertEquals("Interceptor: " + idx, name, interceptor.getRef());
         }

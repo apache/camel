@@ -27,17 +27,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "filter")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class FilterType extends OutputType {
-    @XmlElementRef
+@XmlRootElement(name = "when")
+public class WhenType extends OutputType {
     private ExpressionType expression;
 
     @Override
     public String toString() {
-        return "Filter[ " + getExpression() + " -> " + getOutputs() + "]";
+        return "When[ " + getExpression() + " -> " + getOutputs() + "]";
     }
 
+    @XmlElementRef
     public ExpressionType getExpression() {
         return expression;
     }
