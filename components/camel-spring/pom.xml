@@ -52,7 +52,6 @@
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
-      <optional>true</optional>
     </dependency>
 
     <!-- for testing -->
@@ -148,6 +147,30 @@
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
+          <id>process-sources</id>
+          <phase>process-sources</phase>
+            <configuration>
+              <tasks>
+                <echo>Copying to code together for the XSD generation</echo>
+
+                <mkdir dir="${project.build.directory}/schema-src"/>
+                <copy todir="${project.build.directory}/schema-src">
+                  <fileset dir="${basedir}/src/main/java">
+                    <include name="org/apache/camel/spring/Camel*.java"/>
+                    <include name="org/apache/camel/spring/package-info.java"/>
+                  </fileset>
+                  <fileset dir="${basedir}/../../camel-core/src/main/java">
+                    <include name="org/apache/camel/model/**/*.java"/>
+                  </fileset>
+                </copy>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+
+          <execution>
             <id>site</id>
             <phase>site</phase>
             <configuration>
@@ -181,6 +204,46 @@
       </plugin>
 
       <plugin>
+        <groupId>com.sun.tools.jxc.maven2</groupId>
+        <artifactId>maven-jaxb-schemagen-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>process-sources</phase>
+            <configuration>
+              <destdir>${project.build.directory}/schema</destdir>
+              <srcdir>${project.build.directory}/schema-src</srcdir>
+<!--
+              <includes>
+                <include>org/apache/camel/spring/package-info*</include>
+                <include>org/apache/camel/spring/Camel*</include>
+                <include>${project.build.sourceDirectory}/../../../../../camel-core/src/main/java/org/apache/camel/model/**</include>
+              </includes>
+-->
+<!--
+              <destdir>${project.build.directory}/schema</destdir>
+              <srcdir>${project.build.sourceDirectory}</srcdir>
+              <includes>
+                <include>org/apache/camel/spring/package-info*</include>
+                <include>org/apache/camel/spring/Camel*</include>
+                <include>${project.build.sourceDirectory}/../../../../../camel-core/src/main/java/org/apache/camel/model/**</include>
+              </includes>
+-->
+              <schemas>
+                <schema>
+                  <namespace>http://activemq.apache.org/camel/schema/spring</namespace>
+                  <file>camel-spring.xsd</file>
+                </schema>
+              </schemas>
+              <!--<verbose>false</verbose>-->
+            </configuration>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
@@ -202,35 +265,6 @@
         </executions>
       </plugin>
 
-
-      <plugin>
-        <groupId>com.sun.tools.jxc.maven2</groupId>
-        <artifactId>maven-jaxb-schemagen-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>process-sources</phase>
-            <configuration>
-              <destdir>${project.build.directory}/schema</destdir>
-              <includes>
-                <include>org/apache/camel/spring/package-info*</include>
-                <include>org/apache/camel/spring/Camel*</include>
-                <include>org/apache/camel/spring/model/**</include>
-              </includes>
-              <schemas>
-                <schema>
-                  <namespace>http://activemq.apache.org/camel/schema/spring</namespace>
-                  <file>camel-spring.xsd</file>
-                </schema>
-              </schemas>
-              <srcdir>${project.build.sourceDirectory}</srcdir>
-              <!--<verbose>false</verbose>-->
-            </configuration>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

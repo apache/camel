@@ -21,21 +21,14 @@ import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.EndpointFactoryBean;
-import org.apache.camel.spring.model.RouteType;
-import org.apache.camel.spring.xml.CamelBeanDefinitionParser;
 import org.apache.camel.spring.xml.BeanDefinitionParser;
 import org.apache.camel.spring.xml.ScriptDefinitionParser;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
-import org.springframework.beans.factory.config.BeanDefinitionHolder;
-import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.beans.factory.xml.NamespaceHandler;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
@@ -49,7 +42,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
-    public static final String JAXB_PACKAGES = "org.apache.camel.spring:org.apache.camel.spring.model:org.apache.camel.spring.model.language";
+    public static final String JAXB_PACKAGES = "org.apache.camel.spring:org.apache.camel.model:org.apache.camel.model.language";
 
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(EndpointFactoryBean.class);
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
