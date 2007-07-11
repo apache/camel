@@ -22,15 +22,13 @@
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
+  <!-- START SNIPPET: example -->
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
-<!--
     <route>
-      <from uri="seda:a"/>
-      <to uri="seda:b"/>
-     </route>
--->
-    <beanPostProcessor/>
+      <from uri="direct:start"/>
+      <to uri="mock:result"/>
+    </route>
   </camelContext>
+  <!-- END SNIPPET: example -->
 
-  <bean id="bean" class="org.apache.camel.spring.CamelContextAwareBean"/>
 </beans>

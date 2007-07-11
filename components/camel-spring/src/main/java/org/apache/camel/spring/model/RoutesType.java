@@ -21,43 +21,32 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents an XML &lt;camelContext/&gt; element
+ * Represents a collection of routes
  *
  * @version $Revision: $
  */
-@XmlRootElement(name = "camelContext")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class CamelContextType {
-    @XmlElements({
-    @XmlElement(name = "route", type = RouteType.class)})
+@XmlRootElement(name = "routes")
+public class RoutesType implements RouteContainer {
     private List<RouteType> routes = new ArrayList<RouteType>();
 
     @Override
     public String toString() {
-        return "Context[routes: " + routes + "]";
+        return "Routes: " + routes;
     }
 
     // Properties
     //-----------------------------------------------------------------------
 
-    /**
-     * A list of routes
-     *
-     * @return
-     */
+    @XmlElementRef
     public List<RouteType> getRoutes() {
         return routes;
     }
 
-    /**
-     * Sets the routes to use
-     *
-     * @param routes
-     */
     public void setRoutes(List<RouteType> routes) {
         this.routes = routes;
     }

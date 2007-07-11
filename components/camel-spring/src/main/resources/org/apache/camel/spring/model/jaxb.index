@@ -1,4 +1,3 @@
-CamelContextType
 ChoiceType
 FilterType
 FromType
@@ -6,6 +5,7 @@ OtherwiseType
 ProcessorRef
 RecipientListType
 RouteType
+RoutesType
 SplitterType
 ToType
 WhenType

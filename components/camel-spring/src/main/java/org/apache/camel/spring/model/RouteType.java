@@ -20,12 +20,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ProcessorFactory;
+import org.apache.camel.Route;
+import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.apache.camel.processor.CompositeProcessor;
+import org.apache.camel.spring.SpringCamelContext;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -33,48 +39,32 @@ import java.util.List;
  *
  * @version $Revision: $
  */
-@XmlRootElement(name = "root")
-public class RouteType extends OutputType implements CamelContextAware, ProcessorFactory {
+@XmlRootElement(name = "route")
+@XmlType(propOrder = {"interceptors", "inputs", "outputs"})
+public class RouteType extends ProcessorType implements CamelContextAware {
     private CamelContext camelContext;
+    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
     private List<FromType> inputs = new ArrayList<FromType>();
-
-/*
-    public Route createRoute() throws Exception {
-        return new EventDrivenConsumerRoute(getEndpoint(), createProcessor());
-    }
-*/
+    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
 
     @Override
     public String toString() {
         return "Route[ " + inputs + " -> " + outputs + "]";
     }
 
-    // Properties
-    //-----------------------------------------------------------------------
+    public void addRoutes(SpringCamelContext context) throws Exception {
+        setCamelContext(context);
 
-    @XmlElementRef
-    public List<FromType> getInputs() {
-        return inputs;
+        Collection<Route> routes = new ArrayList<Route>();
+
+        for (FromType fromType : inputs) {
+            routes.add(createRoute(fromType));
+        }
+
+        context.addRoutes(routes);
     }
 
-    public void setInputs(List<FromType> inputs) {
-        this.inputs = inputs;
-    }
-
-    @XmlTransient
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
-    public Processor createProcessor() throws Exception {
-        return null;  // TODO
-    }
-
-    protected Endpoint resolveEndpoint(String uri) {
+    public Endpoint resolveEndpoint(String uri) {
         CamelContext context = getCamelContext();
         if (context == null) {
             throw new IllegalArgumentException("No CamelContext has been injected!");
@@ -86,6 +76,45 @@ public class RouteType extends OutputType implements CamelContextAware, Processo
         return answer;
     }
 
+    // Properties
+    //-----------------------------------------------------------------------
+
+    @XmlElement(required = false, name = "interceptor")
+    public List<InterceptorRef> getInterceptors() {
+        return interceptors;
+    }
+
+    public void setInterceptors(List<InterceptorRef> interceptors) {
+        this.interceptors = interceptors;
+    }
+
+    @XmlElementRef
+    public List<FromType> getInputs() {
+        return inputs;
+    }
+
+    public void setInputs(List<FromType> inputs) {
+        this.inputs = inputs;
+    }
+
+    @XmlElementRef
+    public List<ProcessorType> getOutputs() {
+        return outputs;
+    }
+
+    public void setOutputs(List<ProcessorType> outputs) {
+        this.outputs = outputs;
+    }
+
+    @XmlTransient
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     // Fluent API
     //-----------------------------------------------------------------------
     public RouteType from(String uri) {
@@ -93,15 +122,28 @@ public class RouteType extends OutputType implements CamelContextAware, Processo
         return this;
     }
 
-    public RouteType interceptor(String ref) {
-        getInterceptors().add(new InterceptorRef(ref));
-        return this;
+    // Implementation methods
+    //-----------------------------------------------------------------------
+    protected Processor createProcessor() throws Exception {
+        List<Processor> list = new ArrayList<Processor>();
+        for (ProcessorType output : outputs) {
+            Processor processor = output.createProcessor(this);
+            list.add(processor);
+        }
+        if (list.size() == 0) {
+            return null;
+        }
+        Processor processor;
+        if (list.size() == 1) {
+            processor = list.get(0);
+        }
+        else {
+            processor = new CompositeProcessor(list);
+        }
+        return processor;
     }
 
-    public RouteType interceptors(String... refs) {
-        for (String ref : refs) {
-            interceptor(ref);
-        }
-        return this;
+    protected Route createRoute(FromType fromType) throws Exception {
+        return new EventDrivenConsumerRoute(resolveEndpoint(fromType.getUri()), createProcessor());
     }
 }

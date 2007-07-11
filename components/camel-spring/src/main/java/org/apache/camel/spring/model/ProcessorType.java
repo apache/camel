@@ -17,8 +17,52 @@
  */
 package org.apache.camel.spring.model;
 
+import org.apache.camel.spring.model.language.ExpressionType;
+import org.apache.camel.spring.model.language.LanguageExpression;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Processor;
+
+import java.util.List;
+
 /**
  * @version $Revision: 1.1 $
  */
 public abstract class ProcessorType {
+
+    public abstract List<ProcessorType> getOutputs();
+    public abstract List<InterceptorRef> getInterceptors();
+
+    public ProcessorType interceptor(String ref) {
+        getInterceptors().add(new InterceptorRef(ref));
+        return this;
+    }
+
+    public ProcessorType interceptors(String... refs) {
+        for (String ref : refs) {
+            interceptor(ref);
+        }
+        return this;
+    }
+
+    public FilterType filter(ExpressionType expression) {
+        FilterType filter = new FilterType();
+        filter.setExpression(expression);
+        getOutputs().add(filter);
+        return filter;
+    }
+
+    public FilterType filter(String language, String expression) {
+        return filter(new LanguageExpression(language, expression));
+    }
+
+    public ProcessorType to(String uri) {
+        ToType to = new ToType();
+        to.setUri(uri);
+        getOutputs().add(to);
+        return this;
+    }
+
+    public Processor createProcessor(RouteType route) {
+        throw new UnsupportedOperationException("Not implemented yet!");
+    }
 }

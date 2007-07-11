@@ -44,7 +44,7 @@ public class DefaultComponentResolver<E extends Exchange> implements ComponentRe
             return null;
         }
         catch (Throwable e) {
-            throw new IllegalArgumentException("Invalid URI, no EndpointResolver registered for scheme : " + name, e);
+            throw new IllegalArgumentException("Invalid URI, no Component registered for scheme : " + name, e);
         }
         if (type == null) {
             return null;

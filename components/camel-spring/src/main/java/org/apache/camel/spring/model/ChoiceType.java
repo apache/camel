@@ -18,13 +18,19 @@
 package org.apache.camel.spring.model;
 
 import org.apache.camel.spring.model.language.ExpressionType;
+import org.apache.camel.Processor;
+import org.apache.camel.builder.WhenBuilder;
+import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.processor.ChoiceProcessor;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * @version $Revision: 1.1 $
@@ -33,10 +39,24 @@ import java.util.ArrayList;
 public class ChoiceType extends ProcessorType {
     private List<WhenType> whenClauses = new ArrayList<WhenType>();
     private OtherwiseType otherwise;
+    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
 
     @Override
     public String toString() {
         return "Choice[ " + getWhenClauses() + " " + getOtherwise() + "]";
+    }
+
+    @Override
+    public Processor createProcessor(RouteType route) {
+        List<FilterProcessor> filters = new ArrayList<FilterProcessor>();
+        for (WhenType whenClaus : whenClauses) {
+            filters.add(whenClaus.createProcessor(route));
+        }
+        Processor otherwiseProcessor = null;
+        if (otherwise != null) {
+            otherwiseProcessor = otherwise.createProcessor(route);
+        }
+        return new ChoiceProcessor(filters, otherwiseProcessor);
     }
 
     @XmlElementRef
@@ -48,6 +68,10 @@ public class ChoiceType extends ProcessorType {
         this.whenClauses = whenClauses;
     }
 
+    public List<ProcessorType> getOutputs() {
+        return Collections.EMPTY_LIST;
+    }
+
     @XmlElementRef
     public OtherwiseType getOtherwise() {
         return otherwise;
@@ -56,5 +80,16 @@ public class ChoiceType extends ProcessorType {
     public void setOtherwise(OtherwiseType otherwise) {
         this.otherwise = otherwise;
     }
+
+    @XmlElement(required = false)
+    public List<InterceptorRef> getInterceptors() {
+        return interceptors;
+    }
+
+    public void setInterceptors(List<InterceptorRef> interceptors) {
+        this.interceptors = interceptors;
+    }
+
+
 }
 

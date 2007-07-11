@@ -17,11 +17,12 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spring.model.IdentifiedType;
+import org.apache.camel.spring.model.RouteContainer;
+import org.apache.camel.spring.model.RouteType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -30,6 +31,12 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,13 +47,23 @@ import java.util.List;
  *
  * @version $Revision$
  */
-public class CamelContextFactoryBean implements FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
+@XmlRootElement(name = "camelContext")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class CamelContextFactoryBean extends IdentifiedType implements RouteContainer, FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
     private static final Log log = LogFactory.getLog(CamelContextFactoryBean.class);
-
-    private SpringCamelContext context;
-    private RouteBuilder routeBuilder;
-    private List<RouteBuilder> additionalBuilders = new ArrayList<RouteBuilder>();
+    @XmlElement(name="route", required = false)
+    private List<RouteType> routes = new ArrayList<RouteType>();
+    @XmlElement(name="package", required = false)
     private String[] packages = {};
+    @XmlElement(name="beanPostProcessor", required = false)
+    private CamelBeanPostProcessor beanPostProcessor;
+    @XmlTransient
+    private SpringCamelContext context;
+    @XmlTransient
+    private RouteBuilder routeBuilder;
+    @XmlTransient
+    private List<RouteBuilder> additionalBuilders = new ArrayList<RouteBuilder>();
+    @XmlTransient
     private ApplicationContext applicationContext;
 
     public Object getObject() throws Exception {
@@ -66,6 +83,8 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
         // lets force any lazy creation
         getContext();
 
+        log.info("Found JAXB created routes: " + getRoutes());
+
         findRouteBuiders();
         installRoutes();
 
@@ -82,7 +101,7 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
             context.onApplicationEvent(event);
         }
     }
-    
+
     // Properties
     //-------------------------------------------------------------------------
     public SpringCamelContext getContext() throws Exception {
@@ -95,6 +114,14 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
 
     public void setContext(SpringCamelContext context) {
         this.context = context;
+    }
+
+    public List<RouteType> getRoutes() {
+        return routes;
+    }
+
+    public void setRoutes(List<RouteType> routes) {
+        this.routes = routes;
     }
 
     public RouteBuilder getRouteBuilder() {
@@ -151,6 +178,9 @@ public class CamelContextFactoryBean implements FactoryBean, InitializingBean, D
         }
         if (routeBuilder != null) {
             getContext().addRoutes(routeBuilder);
+        }
+        for (RouteType route : routes) {
+            route.addRoutes(getContext());
         }
     }
 

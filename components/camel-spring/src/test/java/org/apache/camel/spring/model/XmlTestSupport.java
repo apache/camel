@@ -33,9 +33,9 @@ public class XmlTestSupport extends TestSupport {
     protected final transient Log log = LogFactory.getLog(getClass());
     protected JAXBContext jaxbContext;
 
-    protected CamelContextType assertParseAsJaxb(String uri) throws JAXBException {
+    protected RouteContainer assertParseAsJaxb(String uri) throws JAXBException {
         Object value = parseUri(uri);
-        CamelContextType context = assertIsInstanceOf(CamelContextType.class, value);
+        RouteContainer context = assertIsInstanceOf(RouteContainer.class, value);
         log.info("Found: " + context);
         return context;
     }
@@ -51,6 +51,6 @@ public class XmlTestSupport extends TestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        jaxbContext = JAXBContext.newInstance("org.apache.camel.spring.model:org.apache.camel.spring.model.language");
+        jaxbContext = JAXBContext.newInstance(org.apache.camel.spring.handler.CamelNamespaceHandler.JAXB_PACKAGES);
     }
 }

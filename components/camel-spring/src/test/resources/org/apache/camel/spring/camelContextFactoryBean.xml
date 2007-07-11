@@ -38,8 +38,9 @@
   <!-- END SNIPPET: example2 -->
 
   <!-- START SNIPPET: example3 -->
-  <camelContext id="camel3" xmlns="http://activemq.apache.org/camel/schema/spring"
-                packages="org.apache.camel.spring.example"/>
+  <camelContext id="camel3" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <package>org.apache.camel.spring.example</package>
+  </camelContext>
   <!-- END SNIPPET: example3 -->
 
 </beans>
