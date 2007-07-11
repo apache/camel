@@ -15,62 +15,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.model.language;
+package org.apache.camel.spring.model;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
-import org.apache.camel.spring.model.RouteType;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
- * A useful base class for an expression
+ *
+ * 	The unique identifier for a bean. The scope of the identifier
+ * 	is the enclosing bean factory.
+ *
+ *
+ * <p>Java class for identifiedType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="identifiedType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
  *
  * @version $Revision: 1.1 $
  */
-@XmlType(name = "expressionType")
-public abstract class ExpressionType {
-    private String expression;
-    private String id;
+@XmlType(name = "identifiedType")
+public abstract class IdentifiedType {
 
-    public abstract String getLanguage();
-
-    protected ExpressionType() {
-    }
-
-    protected ExpressionType(String expression) {
-        this.expression = expression;
-    }
-
-    @Override
-    public String toString() {
-        return getLanguage() + "Expression[" + getExpression() + "]";
-    }
-
-
-    public Predicate<Exchange> createPredicate(RouteType route) {
-        return null; /** TODO */
-    }
-
-    @XmlValue
-    public String getExpression() {
-        return expression;
-    }
-
-    public void setExpression(String expression) {
-        this.expression = expression;
-    }
+    protected String id;
 
     /**
      * Gets the value of the id property.
      *
-     * @return possible object is
-     *         {@link String }
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -82,10 +70,13 @@ public abstract class ExpressionType {
     /**
      * Sets the value of the id property.
      *
-     * @param value allowed object is
-     *              {@link String }
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
      */
     public void setId(String value) {
         this.id = value;
     }
+
 }

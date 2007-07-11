@@ -16,34 +16,59 @@
  */
 package org.apache.camel.spring.model;
 
+import org.apache.camel.Processor;
+import org.apache.camel.processor.SendProcessor;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElement;
+import java.util.List;
+import java.util.Collections;
 
 /**
  * Represents an XML &lt;to/&gt; element
  *
  * @version $Revision: $
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "to")
-public class ToType extends OutputType {
-    @XmlAttribute
+public class ToType extends ProcessorType {
     private String uri;
+    private List<InterceptorRef> interceptors;
 
     @Override
     public String toString() {
         return "To[" + uri + "]";
     }
 
+    @Override
+    public Processor createProcessor(RouteType route) {
+        return new SendProcessor(route.resolveEndpoint(getUri()));
+    }
+
     // Properties
     //-----------------------------------------------------------------------
+    @XmlAttribute
     public String getUri() {
         return uri;
     }
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+    
+    public List<ProcessorType> getOutputs() {
+        return Collections.EMPTY_LIST;
+    }
+
+    @XmlElement(required = false)
+    public List<InterceptorRef> getInterceptors() {
+        return interceptors;
+    }
+
+    public void setInterceptors(List<InterceptorRef> interceptors) {
+        this.interceptors = interceptors;
     }
 }

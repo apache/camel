@@ -29,7 +29,7 @@ public class XmlParseTest extends XmlTestSupport {
     public void testParseSimpleRouteXml() throws Exception {
         RouteType route = assertOneRoute("simpleRoute.xml");
         assertFrom(route, "seda:a");
-        assertTo(route, "seda:b");
+        assertChildTo("to", route, "seda:b");
     }
 
     public void testParseProcessorXml() throws Exception {
@@ -76,13 +76,13 @@ public class XmlParseTest extends XmlTestSupport {
     public void testParseStaticRecipientListXml() throws Exception {
         RouteType route = assertOneRoute("staticRecipientList.xml");
         assertFrom(route, "seda:a");
-        assertTo(route, "seda:b", "seda:c", "seda:d");
+        assertChildTo(route, "seda:b", "seda:c", "seda:d");
     }
 
     public void testParseRouteWithInterceptorXml() throws Exception {
         RouteType route = assertOneRoute("routeWithInterceptor.xml");
         assertFrom(route, "seda:a");
-        assertTo(route, "seda:d");
+        assertChildTo("to", route, "seda:d");
         assertInterceptorRefs(route, "interceptor1", "interceptor2");
     }
 
@@ -92,12 +92,12 @@ public class XmlParseTest extends XmlTestSupport {
 
         ChoiceType choice = assertChoice(route);
         List<WhenType> whens = assertListSize(choice.getWhenClauses(), 2);
-        assertTo(whens.get(0), "seda:b");
-        assertTo(whens.get(1), "seda:c");
+        assertChildTo("when(0)", whens.get(0), "seda:b");
+        assertChildTo("when(1)", whens.get(1), "seda:c");
 
         OtherwiseType otherwise = choice.getOtherwise();
         assertNotNull("Otherwise is null", otherwise);
-        assertTo(otherwise, "seda:d");
+        assertChildTo("otherwise", otherwise, "seda:d");
     }
 
     public void testParseSplitterXml() throws Exception {
@@ -106,14 +106,14 @@ public class XmlParseTest extends XmlTestSupport {
 
         SplitterType splitter = assertSplitter(route);
         assertExpression(splitter.getExpression(), "xpath", "/foo/bar");
-        assertTo(splitter, "seda:b");
+        assertChildTo("to", splitter, "seda:b");
     }
 
     // Implementation methods
     //-------------------------------------------------------------------------
 
     protected RouteType assertOneRoute(String uri) throws JAXBException {
-        CamelContextType context = assertParseAsJaxb(uri);
+        RouteContainer context = assertParseAsJaxb(uri);
         RouteType route = assertOneElement(context.getRoutes());
         return route;
     }
@@ -123,13 +123,12 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("From URI", uri, from.getUri());
     }
 
-    protected void assertTo(OutputType route, String uri) {
+    protected void assertChildTo(String message, ProcessorType route, String uri) {
         ProcessorType processor = assertOneElement(route.getOutputs());
-        assertTo(processor, uri);
-    }
-
-    protected void assertTo(ProcessorType processor, String uri) {
-        assertTo("", processor, uri);
+        ToType value = assertIsInstanceOf(ToType.class, processor);
+        String text = message + "To URI";
+        log.info("Testing: " + text + " is equal to: " + uri + " for processor: " + processor);
+        assertEquals(text, uri, value.getUri());
     }
 
     protected void assertTo(String message, ProcessorType processor, String uri) {
@@ -139,7 +138,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals(text, uri, value.getUri());
     }
 
-    protected void assertTo(OutputType route, String... uris) {
+    protected void assertChildTo(ProcessorType route, String... uris) {
         List<ProcessorType> list = assertListSize(route.getOutputs(), uris.length);
         int idx = 0;
         for (String uri : uris) {
@@ -147,28 +146,28 @@ public class XmlParseTest extends XmlTestSupport {
         }
     }
 
-    protected void assertProcessor(OutputType route, String processorRef) {
+    protected void assertProcessor(ProcessorType route, String processorRef) {
         ProcessorType processor = assertOneElement(route.getOutputs());
         ProcessorRef to = assertIsInstanceOf(ProcessorRef.class, processor);
         assertEquals("Processor ref", processorRef, to.getRef());
     }
 
-    protected FilterType assertFilter(OutputType route) {
+    protected FilterType assertFilter(ProcessorType route) {
         ProcessorType processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(FilterType.class, processor);
     }
 
-    protected RecipientListType assertRecipientList(OutputType route) {
+    protected RecipientListType assertRecipientList(ProcessorType route) {
         ProcessorType processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(RecipientListType.class, processor);
     }
 
-    protected ChoiceType assertChoice(OutputType route) {
+    protected ChoiceType assertChoice(ProcessorType route) {
         ProcessorType processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(ChoiceType.class, processor);
     }
 
-    protected SplitterType assertSplitter(OutputType route) {
+    protected SplitterType assertSplitter(ProcessorType route) {
         ProcessorType processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(SplitterType.class, processor);
     }
@@ -179,7 +178,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("Expression", languageExpression, expression.getExpression());
     }
 
-    protected void assertInterceptorRefs(OutputType route, String... names) {
+    protected void assertInterceptorRefs(ProcessorType route, String... names) {
         int idx = 0;
         List<InterceptorRef> interceptors = route.getInterceptors();
         for (String name : names) {

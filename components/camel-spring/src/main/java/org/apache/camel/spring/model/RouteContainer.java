@@ -17,37 +17,25 @@
  */
 package org.apache.camel.spring.model;
 
-import org.apache.camel.spring.model.language.ExpressionType;
-import org.apache.camel.Processor;
-import org.apache.camel.processor.FilterProcessor;
-
 import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
 /**
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "when")
-public class WhenType extends OutputType {
-    private ExpressionType expression;
-
-    @Override
-    public String toString() {
-        return "When[ " + getExpression() + " -> " + getOutputs() + "]";
-    }
-
-    @Override
-    public FilterProcessor createProcessor(RouteType route) {
-        Processor childProcessor = super.createProcessor(route);
-        return new FilterProcessor(getExpression().createPredicate(route), childProcessor);
-    }
-
+public interface RouteContainer {
+    /**
+     * A list of routes
+     *
+     * @return
+     */
     @XmlElementRef
-    public ExpressionType getExpression() {
-        return expression;
-    }
+    List<RouteType> getRoutes();
 
-    public void setExpression(ExpressionType expression) {
-        this.expression = expression;
-    }
+    /**
+     * Sets the routes to use
+     *
+     * @param routes
+     */
+    void setRoutes(List<RouteType> routes);
 }

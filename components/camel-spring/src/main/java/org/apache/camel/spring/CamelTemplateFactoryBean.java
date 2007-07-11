@@ -23,14 +23,24 @@ import org.apache.camel.Endpoint;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAttribute;
+
 /**
  * A Spring {@link FactoryBean} for creating a new {@link CamelTemplate} instance
  * with a minimum of XML
  *
  * @version $Revision: $
  */
+@XmlRootElement(name = "camelTemplate")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class CamelTemplateFactoryBean implements FactoryBean, InitializingBean, CamelContextAware {
+    @XmlAttribute(required = false)
     private String defaultEndpoint;
+    @XmlTransient
     private CamelContext camelContext;
 
     public void afterPropertiesSet() throws Exception {

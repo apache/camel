@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class GenerateXmlTest extends XmlTestSupport {
     public void testCreateSimpleXml() throws Exception {
-        CamelContextType context = new CamelContextType();
+        RoutesType context = new RoutesType();
         RouteType route = context.route();
         route.from("seda:a");
         route.filter("juel", "in.header.foo == 'bar'").
@@ -38,7 +38,7 @@ public class GenerateXmlTest extends XmlTestSupport {
     }
 
     public void testGroovyFilterXml() throws Exception {
-        CamelContextType context = new CamelContextType();
+        RoutesType context = new RoutesType();
         RouteType route = context.route();
         route.from("seda:a");
         route.interceptors("interceptor1", "interceptor2");
@@ -51,7 +51,7 @@ public class GenerateXmlTest extends XmlTestSupport {
         dump(context);
     }
 
-    protected void dump(CamelContextType context) throws Exception {
+    protected void dump(RouteContainer context) throws Exception {
         Marshaller marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         StringWriter buffer = new StringWriter();

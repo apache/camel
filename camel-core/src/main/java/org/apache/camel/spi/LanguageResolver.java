@@ -1,4 +1,5 @@
-/*
+/**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -6,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,24 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring;
+package org.apache.camel.spi;
 
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelContext;
 
 /**
- * @version $Revision: $
+ * A pluggable strategy for resolving different languages in a loosely coupled manner
+ * 
+ * @version $Revision: 1.1 $
  */
-public class CamelContextAwareBean implements CamelContextAware {
-    private CamelContext camelContext;
-
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
-
+public interface LanguageResolver {
+    Language resolveLanguage(String name, CamelContext context);
 }

@@ -18,6 +18,8 @@
 package org.apache.camel.spring.model;
 
 import org.apache.camel.spring.model.language.ExpressionType;
+import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.Processor;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -36,6 +38,12 @@ public class FilterType extends OutputType {
     @Override
     public String toString() {
         return "Filter[ " + getExpression() + " -> " + getOutputs() + "]";
+    }
+
+    @Override
+    public FilterProcessor createProcessor(RouteType route) {
+        Processor childProcessor = super.createProcessor(route);
+        return new FilterProcessor(getExpression().createPredicate(route), childProcessor);
     }
 
     public ExpressionType getExpression() {

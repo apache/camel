@@ -21,6 +21,8 @@ import org.apache.camel.spring.model.language.ExpressionType;
 import org.apache.camel.spring.model.language.LanguageExpression;
 
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,7 @@ import java.util.List;
  *
  * @version $Revision: 1.1 $
  */
+@XmlType(name="outputType")
 public abstract class OutputType extends ProcessorType {
     protected List<ProcessorType> outputs = new ArrayList<ProcessorType>();
     private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
@@ -42,7 +45,7 @@ public abstract class OutputType extends ProcessorType {
         this.outputs = outputs;
     }
 
-    @XmlElementRef
+    @XmlElement(required = false)
     public List<InterceptorRef> getInterceptors() {
         return interceptors;
     }
@@ -54,7 +57,7 @@ public abstract class OutputType extends ProcessorType {
 
     // Fluent API
     //-------------------------------------------------------------------------
-    public FilterType filter(ExpressionType expression) {
+/*    public FilterType filter(ExpressionType expression) {
         FilterType filter = new FilterType();
         filter.setExpression(expression);
         getOutputs().add(filter);
@@ -70,5 +73,5 @@ public abstract class OutputType extends ProcessorType {
         to.setUri(uri);
         getOutputs().add(to);
         return this;
-    }
+    }*/
 }
