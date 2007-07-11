@@ -19,6 +19,8 @@ package org.apache.camel.spring.model.language;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
+import org.apache.camel.CamelContext;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spring.model.RouteType;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -52,9 +54,10 @@ public abstract class ExpressionType {
         return getLanguage() + "Expression[" + getExpression() + "]";
     }
 
-
     public Predicate<Exchange> createPredicate(RouteType route) {
-        return null; /** TODO */
+        CamelContext camelContext = route.getCamelContext();
+        Language language = camelContext.getLanguageResolver().resolveLanguage(getLanguage(), camelContext);
+        return language.createPredicate(getExpression());
     }
 
     @XmlValue

@@ -76,6 +76,25 @@ public class RouteType extends ProcessorType implements CamelContextAware {
         return answer;
     }
 
+    public Processor createProcessor(List<ProcessorType> processors) {
+        List<Processor> list = new ArrayList<Processor>();
+        for (ProcessorType output : processors) {
+            Processor processor = output.createProcessor(this);
+            list.add(processor);
+        }
+        if (list.size() == 0) {
+            return null;
+        }
+        Processor processor;
+        if (list.size() == 1) {
+            processor = list.get(0);
+        }
+        else {
+            processor = new CompositeProcessor(list);
+        }
+        return processor;
+    }
+
     // Properties
     //-----------------------------------------------------------------------
 
@@ -122,28 +141,7 @@ public class RouteType extends ProcessorType implements CamelContextAware {
         return this;
     }
 
-    // Implementation methods
-    //-----------------------------------------------------------------------
-    protected Processor createProcessor() throws Exception {
-        List<Processor> list = new ArrayList<Processor>();
-        for (ProcessorType output : outputs) {
-            Processor processor = output.createProcessor(this);
-            list.add(processor);
-        }
-        if (list.size() == 0) {
-            return null;
-        }
-        Processor processor;
-        if (list.size() == 1) {
-            processor = list.get(0);
-        }
-        else {
-            processor = new CompositeProcessor(list);
-        }
-        return processor;
-    }
-
     protected Route createRoute(FromType fromType) throws Exception {
-        return new EventDrivenConsumerRoute(resolveEndpoint(fromType.getUri()), createProcessor());
+        return new EventDrivenConsumerRoute(resolveEndpoint(fromType.getUri()), createProcessor(outputs));
     }
 }

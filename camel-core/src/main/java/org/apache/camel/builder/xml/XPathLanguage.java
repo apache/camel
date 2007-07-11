@@ -15,23 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.model;
+package org.apache.camel.builder.xml;
 
-import org.apache.camel.spring.model.language.ExpressionType;
-import org.apache.camel.Processor;
-import org.apache.camel.processor.FilterProcessor;
-
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
+import org.apache.camel.spi.Language;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 
 /**
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "when")
-public class WhenType extends FilterType {
+public class XPathLanguage implements Language {
 
-    @Override
-    public String toString() {
-        return "When[ " + getExpression() + " -> " + getOutputs() + "]";
+    public Predicate<Exchange> createPredicate(String expression) {
+        return XPathBuilder.xpath(expression);
+    }
+
+    public Expression<Exchange> createExpression(String expression) {
+        return XPathBuilder.xpath(expression);
     }
 }
