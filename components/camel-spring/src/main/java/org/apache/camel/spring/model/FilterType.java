@@ -25,15 +25,32 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlElements;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @version $Revision: 1.1 $
  */
 @XmlRootElement(name = "filter")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FilterType extends OutputType {
+//@XmlType(propOrder = {"interceptors", "expression", "outputs"})
+public class FilterType extends ProcessorType {
+
+    @XmlElement(required = false)
+    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+
+    // TODO can we zap this hack to get schemagen to generate the correct schema?
     @XmlElementRef
+    private List<ExpressionType> expressions;
+    @XmlTransient
     private ExpressionType expression;
+
+    @XmlElementRef
+    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
 
     @Override
     public String toString() {
@@ -42,15 +59,35 @@ public class FilterType extends OutputType {
 
     @Override
     public FilterProcessor createProcessor(RouteType route) {
-        Processor childProcessor = super.createProcessor(route);
+        Processor childProcessor = route.createProcessor(getOutputs());
         return new FilterProcessor(getExpression().createPredicate(route), childProcessor);
     }
 
+    public List<InterceptorRef> getInterceptors() {
+        return interceptors;
+    }
+
+    public void setInterceptors(List<InterceptorRef> interceptors) {
+        this.interceptors = interceptors;
+    }
+
     public ExpressionType getExpression() {
+        if (expression == null && expressions != null && !expressions.isEmpty()) {
+            expression = expressions.get(0);
+        }
         return expression;
     }
 
     public void setExpression(ExpressionType expression) {
         this.expression = expression;
     }
+
+    public List<ProcessorType> getOutputs() {
+        return outputs;
+    }
+
+    public void setOutputs(List<ProcessorType> outputs) {
+        this.outputs = outputs;
+    }
+
 }

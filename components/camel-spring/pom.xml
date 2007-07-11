@@ -118,7 +118,6 @@
           <excludes>
             <!-- TODO - FIXME ASAP -->
             <exclude>**/ContentBasedRouteTest.*</exclude>
-            <exclude>**/SpringXPathFilterTest.*</exclude>
             <exclude>**/SpringXmlRouteBuilderTest.*</exclude>
             <exclude>**/InjectedBeanTest.*</exclude>
             <exclude>**/PojoConsumerTest.*</exclude>

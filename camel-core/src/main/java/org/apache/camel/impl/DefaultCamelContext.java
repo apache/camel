@@ -31,6 +31,7 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
@@ -61,6 +62,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private Injector injector;
     private ComponentResolver componentResolver;
     private boolean autoCreateComponents = true;
+    private LanguageResolver languageResolver = new DefaultLanguageResolver();
 
     /**
      * Adds a component to the container.
@@ -305,6 +307,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public void setComponentResolver(ComponentResolver componentResolver) {
         this.componentResolver = componentResolver;
+    }
+
+    public LanguageResolver getLanguageResolver() {
+        return languageResolver;
+    }
+
+    public void setLanguageResolver(LanguageResolver languageResolver) {
+        this.languageResolver = languageResolver;
     }
 
     // Implementation methods

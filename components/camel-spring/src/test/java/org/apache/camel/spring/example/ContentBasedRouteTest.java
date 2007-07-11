@@ -15,10 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring;
+package org.apache.camel.spring.example;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
+import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -57,6 +58,6 @@ public class ContentBasedRouteTest extends SpringTestSupport {
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/contentBasedRoute.xml");
+        return new ClassPathXmlApplicationContext("../../../../../../resources/org/apache/camel/spring/example/contentBasedRoute.xml");
     }
 }
