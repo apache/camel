@@ -1,4 +1,5 @@
-/*
+/**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -6,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,27 +17,34 @@
  */
 package org.apache.camel.model;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Represents an XML &lt;camelContext/&gt; element
- *
- * @version $Revision: $
+ * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "camelContext")
-public class CamelContextElement {
-    private List<RouteElement> routes = new ArrayList<RouteElement>();
+@XmlRootElement(name = "interceptor")
+public class InterceptorRef {
+    private String ref;
 
-    // Properties
-    //-----------------------------------------------------------------------
-
-    public List<RouteElement> getRoutes() {
-        return routes;
+    public InterceptorRef() {
     }
 
-    public void setRoutes(List<RouteElement> routes) {
-        this.routes = routes;
+    public InterceptorRef(String ref) {
+        setRef(ref);
+    }
+
+    @Override
+    public String toString() {
+        return "Interceptor[ref:  " + ref + "]";
+    }
+
+    @XmlAttribute(required = true)
+    public String getRef() {
+        return ref;
+    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
     }
 }
