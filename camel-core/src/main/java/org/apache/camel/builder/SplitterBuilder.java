@@ -17,7 +17,6 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.Splitter;
@@ -39,6 +38,6 @@ public class SplitterBuilder extends FromBuilder {
     public Processor createProcessor() throws Exception {
         // lets create a single processor for all child predicates
         Processor destination = super.createProcessor();
-        return new Splitter(destination, expression);
+        return new Splitter(expression, destination);
     }
 }

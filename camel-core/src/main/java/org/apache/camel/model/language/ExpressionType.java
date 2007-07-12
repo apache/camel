@@ -17,11 +17,12 @@
  */
 package org.apache.camel.model.language;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
+import org.apache.camel.impl.RouteContext;
 import org.apache.camel.spi.Language;
-import org.apache.camel.model.RouteType;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
@@ -54,11 +55,18 @@ public abstract class ExpressionType {
         return getLanguage() + "Expression[" + getExpression() + "]";
     }
 
-    public Predicate<Exchange> createPredicate(RouteType route) {
+    public Predicate<Exchange> createPredicate(RouteContext route) {
         CamelContext camelContext = route.getCamelContext();
-        Language language = camelContext.getLanguageResolver().resolveLanguage(getLanguage(), camelContext);
+        Language language = camelContext.resolveLanguage(getLanguage());
         return language.createPredicate(getExpression());
     }
+
+    public Expression createExpression(RouteContext routeContext) {
+        CamelContext camelContext = routeContext.getCamelContext();
+        Language language = camelContext.resolveLanguage(getLanguage());
+        return language.createExpression(getExpression());
+    }
+
 
     @XmlValue
     public String getExpression() {
@@ -91,4 +99,5 @@ public abstract class ExpressionType {
     public void setId(String value) {
         this.id = value;
     }
+
 }

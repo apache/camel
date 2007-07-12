@@ -4,6 +4,7 @@ FromType
 OtherwiseType
 ProcessorRef
 RecipientListType
+ResequencerType
 RouteType
 RoutesType
 SplitterType

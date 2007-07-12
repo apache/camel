@@ -51,24 +51,4 @@ public abstract class OutputType extends ProcessorType {
         this.interceptors = interceptors;
     }
 
-
-    // Fluent API
-    //-------------------------------------------------------------------------
-/*    public FilterType filter(ExpressionType expression) {
-        FilterType filter = new FilterType();
-        filter.setExpression(expression);
-        getOutputs().add(filter);
-        return filter;
-    }
-
-    public FilterType filter(String language, String expression) {
-        return filter(new LanguageExpression(language, expression));
-    }
-
-    public OutputType to(String uri) {
-        ToType to = new ToType();
-        to.setUri(uri);
-        getOutputs().add(to);
-        return this;
-    }*/
 }

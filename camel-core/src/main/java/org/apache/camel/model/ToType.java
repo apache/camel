@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import org.apache.camel.Processor;
+import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.SendProcessor;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -41,8 +42,8 @@ public class ToType extends ProcessorType {
     }
 
     @Override
-    public Processor createProcessor(RouteType route) {
-        return new SendProcessor(route.resolveEndpoint(getUri()));
+    public Processor createProcessor(RouteContext routeContext) {
+        return new SendProcessor(routeContext.resolveEndpoint(getUri()));
     }
 
     // Properties

@@ -55,8 +55,8 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     private List<Throwable> failures = new CopyOnWriteArrayList<Throwable>();
     private List<Runnable> tests = new CopyOnWriteArrayList<Runnable>();
     private CountDownLatch latch;
-    private long sleepForEmptyTest = 2000L;
-    private long defaulResultWaitMillis = 10000L;
+    private long sleepForEmptyTest = 1000L;
+    private long defaulResultWaitMillis = 20000L;
     private int expectedMinimumCount = -1;
     private List expectedBodyValues;
     private List actualBodyValues = new ArrayList();

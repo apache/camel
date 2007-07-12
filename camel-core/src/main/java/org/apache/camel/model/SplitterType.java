@@ -17,7 +17,10 @@
  */
 package org.apache.camel.model;
 
+import org.apache.camel.Processor;
+import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.language.ExpressionType;
+import org.apache.camel.processor.Splitter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -36,6 +39,12 @@ public class SplitterType extends OutputType {
     @Override
     public String toString() {
         return "Splitter[ " + getExpression() + " -> " + getOutputs() + "]";
+    }
+
+    @Override
+    public Processor createProcessor(RouteContext routeContext) {
+        Processor childProcessor = routeContext.createProcessor(getOutputs());
+        return new Splitter(getExpression().createExpression(routeContext), childProcessor);
     }
 
     public ExpressionType getExpression() {

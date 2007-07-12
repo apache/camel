@@ -37,7 +37,7 @@ public class Splitter extends ServiceSupport implements Processor {
     private final Processor processor;
     private final Expression expression;
 
-    public Splitter(Processor destination, Expression expression) {
+    public Splitter(Expression expression, Processor destination) {
         this.processor = destination;
         this.expression = expression;
         notNull(destination, "destination");

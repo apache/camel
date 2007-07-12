@@ -20,7 +20,7 @@ package org.apache.camel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
-import org.apache.camel.spi.LanguageResolver;
+import org.apache.camel.spi.Language;
 
 import java.util.Collection;
 import java.util.List;
@@ -167,7 +167,7 @@ public interface CamelContext extends Service {
     Injector getInjector();
 
     /**
-     * Returns the resolver of language expressions
+     * Resolves a language for creating expressions
      */
-    LanguageResolver getLanguageResolver();
+    Language resolveLanguage(String language);
 }

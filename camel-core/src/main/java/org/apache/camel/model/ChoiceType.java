@@ -18,6 +18,7 @@
 package org.apache.camel.model;
 
 import org.apache.camel.Processor;
+import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.ChoiceProcessor;
 
@@ -43,14 +44,14 @@ public class ChoiceType extends ProcessorType {
     }
 
     @Override
-    public Processor createProcessor(RouteType route) {
+    public Processor createProcessor(RouteContext routeContext) {
         List<FilterProcessor> filters = new ArrayList<FilterProcessor>();
         for (WhenType whenClaus : whenClauses) {
-            filters.add(whenClaus.createProcessor(route));
+            filters.add(whenClaus.createProcessor(routeContext));
         }
         Processor otherwiseProcessor = null;
         if (otherwise != null) {
-            otherwiseProcessor = otherwise.createProcessor(route);
+            otherwiseProcessor = otherwise.createProcessor(routeContext);
         }
         return new ChoiceProcessor(filters, otherwiseProcessor);
     }

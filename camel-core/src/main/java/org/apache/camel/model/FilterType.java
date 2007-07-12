@@ -20,6 +20,7 @@ package org.apache.camel.model;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.RouteContext;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -56,9 +57,9 @@ public class FilterType extends ProcessorType {
     }
 
     @Override
-    public FilterProcessor createProcessor(RouteType route) {
-        Processor childProcessor = route.createProcessor(getOutputs());
-        return new FilterProcessor(getExpression().createPredicate(route), childProcessor);
+    public FilterProcessor createProcessor(RouteContext routeContext) {
+        Processor childProcessor = routeContext.createProcessor(getOutputs());
+        return new FilterProcessor(getExpression().createPredicate(routeContext), childProcessor);
     }
 
     public List<InterceptorRef> getInterceptors() {

@@ -57,6 +57,31 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression for the out header value with the given name
+     *
+     * @param headerName the name of the header the expression will return
+     * @return an expression object which will return the header value
+     */
+    public static <E extends Exchange> Expression<E> outHeaderExpression(final String headerName) {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                Object header = exchange.getOut().getHeader(headerName);
+                if (header == null) {
+                    // lets try the exchange header
+                    header = exchange.getProperty(headerName);
+                }
+                return header;
+            }
+
+
+            @Override
+            public String toString() {
+                return "outHeader(" + headerName + ")";
+            }
+        };
+    }
+
+    /**
      * Returns an expression for the property value with the given name
      *
      * @param propertyName the name of the property the expression will return
@@ -71,6 +96,35 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "property(" + propertyName + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns an expression for a system property value with the given name
+     *
+     * @param propertyName the name of the system property the expression will return
+     * @return an expression object which will return the system property value
+     */
+    public static <E extends Exchange> Expression<E> systemPropertyExpression(final String propertyName) {
+        return systemPropertyExpression(propertyName, null);
+    }
+
+    /**
+     * Returns an expression for a system property value with the given name
+     *
+     * @param propertyName the name of the system property the expression will return
+     * @return an expression object which will return the system property value
+     */
+    public static <E extends Exchange> Expression<E> systemPropertyExpression(final String propertyName, final String defaultValue) {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+               return System.getProperty(propertyName, defaultValue);
+            }
+
+            @Override
+            public String toString() {
+                return "systemProperty(" + propertyName + ")";
             }
         };
     }

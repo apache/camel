@@ -29,11 +29,11 @@ public abstract class PredicateSupport<E extends Exchange> implements Predicate<
 
     public void assertMatches(String text, E exchange) {
         if (! matches(exchange)) {
-            throw new AssertionError(assertionFailureMessage(exchange));
+            throw new AssertionError(assertionFailureMessage(exchange)  + " on " + exchange);
         }
     }
 
     protected String assertionFailureMessage(E exchange) {
-        return this + " failed on " + exchange;
+        return toString();
     }
 }

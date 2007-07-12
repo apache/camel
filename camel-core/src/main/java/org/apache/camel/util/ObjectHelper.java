@@ -30,6 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
+ * A number of useful helper methods for working with Objects
+ *
  * @version $Revision$
  */
 public class ObjectHelper {
@@ -45,6 +47,22 @@ public class ObjectHelper {
         return a != null && b != null && a.equals(b);
     }
 
+    /**
+     * Returns true if the given object is equal to any of the expected value
+     * @param expression
+     * @param s
+     * @param s1
+     * @return
+     */
+    public static boolean isEqualToAny(Object object, Object... values) {
+        for (Object value : values) {
+            if (equals(object, value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /**
      * A helper method for performing an ordered comparsion on the objects
      * handling nulls and objects which do not
@@ -297,4 +315,5 @@ public class ObjectHelper {
             return buffer.toString();
         }
     }
+
 }

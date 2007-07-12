@@ -20,8 +20,12 @@ package org.apache.camel.model;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.impl.EventDrivenConsumerRoute;
 
 import java.util.List;
+import java.util.Collection;
 
 /**
  * @version $Revision: 1.1 $
@@ -61,7 +65,11 @@ public abstract class ProcessorType {
         return this;
     }
 
-    public Processor createProcessor(RouteType route) {
-        throw new UnsupportedOperationException("Not implemented yet!");
+    public Processor createProcessor(RouteContext routeContext) {
+        throw new UnsupportedOperationException("Not implemented yet for class: " + getClass().getName());
+    }
+
+    public void addRoutes(RouteContext routeContext, Collection<Route> routes) {
+        routes.add(new EventDrivenConsumerRoute(routeContext.getEndpoint(), createProcessor(routeContext)));
     }
 }

@@ -35,7 +35,7 @@ public class ResequencerTest extends ContextTestSupport {
     public void testSendMessagesInWrongOrderButReceiveThemInCorrectOrder() throws Exception {
         resultEndpoint.expectedBodiesReceived("Guillaume", "Hiram", "James", "Rob");
 
-        sendBodies("direct:a", "Rob", "Hiram", "Guillaume", "James");
+        sendBodies("direct:start", "Rob", "Hiram", "Guillaume", "James");
 
         resultEndpoint.assertIsSatisfied();
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
@@ -55,7 +55,7 @@ public class ResequencerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").resequencer(body()).to("mock:result");
+                from("direct:start").resequencer(body()).to("mock:result");
                 // END SNIPPET: example
             }
         };
