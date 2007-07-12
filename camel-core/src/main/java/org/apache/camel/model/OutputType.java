@@ -17,8 +17,8 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ import java.util.List;
  *
  * @version $Revision: 1.1 $
  */
-@XmlType(name="outputType")
+@XmlType(name = "outputType")
 public abstract class OutputType extends ProcessorType {
     protected List<ProcessorType> outputs = new ArrayList<ProcessorType>();
     private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();

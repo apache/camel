@@ -17,39 +17,17 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.model.language.ExpressionType;
-import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
+import org.apache.camel.processor.FilterProcessor;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * @version $Revision: 1.1 $
  */
 @XmlRootElement(name = "filter")
-@XmlAccessorType(XmlAccessType.FIELD)
-//@XmlType(propOrder = {"interceptors", "expression", "outputs"})
-public class FilterType extends ProcessorType {
-
-    @XmlElement(required = false)
-    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
-
-    // TODO can we zap this hack to get schemagen to generate the correct schema?
-    @XmlElementRef
-    private List<ExpressionType> expressions;
-    @XmlTransient
-    private ExpressionType expression;
-
-    @XmlElementRef
-    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
+public class FilterType extends ExpressionNode {
 
     @Override
     public String toString() {
@@ -60,33 +38,6 @@ public class FilterType extends ProcessorType {
     public FilterProcessor createProcessor(RouteContext routeContext) {
         Processor childProcessor = routeContext.createProcessor(getOutputs());
         return new FilterProcessor(getExpression().createPredicate(routeContext), childProcessor);
-    }
-
-    public List<InterceptorRef> getInterceptors() {
-        return interceptors;
-    }
-
-    public void setInterceptors(List<InterceptorRef> interceptors) {
-        this.interceptors = interceptors;
-    }
-
-    public ExpressionType getExpression() {
-        if (expression == null && expressions != null && !expressions.isEmpty()) {
-            expression = expressions.get(0);
-        }
-        return expression;
-    }
-
-    public void setExpression(ExpressionType expression) {
-        this.expression = expression;
-    }
-
-    public List<ProcessorType> getOutputs() {
-        return outputs;
-    }
-
-    public void setOutputs(List<ProcessorType> outputs) {
-        this.outputs = outputs;
     }
 
 }
