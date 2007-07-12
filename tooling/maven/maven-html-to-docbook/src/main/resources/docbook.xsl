@@ -35,20 +35,15 @@
 			<title>
 				<xsl:value-of 
 					select=".//h1[1]
-                         |.//h2[1]
                          |.//h3[1]"/>
 			</title>
-			<section>
-				<xsl:if test="$filename != ''">
-					<xsl:attribute name="id">
-						<xsl:value-of select="$prefix"/>
-						<xsl:text>_</xsl:text>
-						<xsl:value-of select="translate($filename,' ()','__')"/>
-					</xsl:attribute>
-				</xsl:if>
-				<xsl:apply-templates select="*"/>
-			</section>
+			<xsl:call-template name="subcontents"/>
 		</chapter>
+	</xsl:template>
+	<xsl:template match="h2" name="subcontents">
+		<section> <xsl:if test="name() = 'h2'"> <title> <xsl:value-of 
+			select="text()"/> </title> </xsl:if>a <xsl:apply-templates 
+			select="*"/> </section>
 	</xsl:template>
 	<!-- This template matches on all HTML header items and makes them into 
      bridgeheads. It attempts to assign an ID to each bridgehead by looking 
@@ -56,8 +51,7 @@
      or following sibling -->
 	<xsl:template 
 		match="h1
-              |h2
-              |h3
+		      |h3 
               |h4
               |h5
               |h6">
@@ -136,9 +130,7 @@
 			</xsl:attribute>
 			<xsl:apply-templates/>
 		</ulink>
-		
 	</xsl:template>
-	
 	<xsl:template match="a[contains(@href,'ftp://')]" priority="1.5">
 		<ulink>
 			<xsl:attribute name="url">
@@ -156,8 +148,7 @@
   </xsl:attribute>
  </xref>
 </xsl:template-->
-
-<!--
+	<!--
     this currently breaks the generator if there are more than one definition of an anchor name
 	ie. http://activemq.apache.org/camel/book-pattern-appendix.html
 	 
@@ -172,7 +163,7 @@
 			<xsl:apply-templates/>
 		</anchor>
 	</xsl:template>
--->	
+-->
 	<xsl:template match="a[@href != '']">
 		<xref>
 			<xsl:attribute name="linkend">
@@ -253,6 +244,11 @@
 	<xsl:template name="process.image">
 		<imagedata>
 			<xsl:attribute name="fileref">
+				<xsl:call-template name="make_absolute">
+					<xsl:with-param name="filename" select="@src"/>
+				</xsl:call-template>
+			</xsl:attribute>
+			<xsl:attribute name="imagePath">
 				<xsl:call-template name="make_absolute">
 					<xsl:with-param name="filename" select="@src"/>
 				</xsl:call-template>
@@ -447,7 +443,6 @@
 				<xsl:call-template name="generate-colspecs">
 					<xsl:with-param name="count" select="$column_count"/>
 				</xsl:call-template>
-				
 				<!--
 					the "id already exists" problem is a known bug in dbdoclet when generating pdf report
 					as a workaround the thead for the first tr  has been replaced by a tbody
@@ -460,7 +455,7 @@
 				-->
 				<tbody>
 					<xsl:apply-templates select="tr"/>
-				</tbody>				
+				</tbody>
 			</tgroup>
 		</informaltable>
 	</xsl:template>
@@ -497,9 +492,8 @@
 						</tbody>
 						-->
 						<tbody>
-							<xsl:apply-templates 
-								select="./tbody/tr"/>
-						</tbody>						
+							<xsl:apply-templates select="./tbody/tr"/>
+						</tbody>
 					</tgroup>
 				</informaltable>
 			</xsl:otherwise>
