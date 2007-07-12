@@ -19,10 +19,9 @@ package org.apache.camel.model;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.camel.processor.CompositeProcessor;
+import org.apache.camel.impl.RouteContext;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -57,7 +56,7 @@ public class RouteType extends ProcessorType implements CamelContextAware {
         Collection<Route> routes = new ArrayList<Route>();
 
         for (FromType fromType : inputs) {
-            routes.add(createRoute(fromType));
+            addRoutes(routes, fromType);
         }
 
         context.addRoutes(routes);
@@ -75,24 +74,6 @@ public class RouteType extends ProcessorType implements CamelContextAware {
         return answer;
     }
 
-    public Processor createProcessor(List<ProcessorType> processors) {
-        List<Processor> list = new ArrayList<Processor>();
-        for (ProcessorType output : processors) {
-            Processor processor = output.createProcessor(this);
-            list.add(processor);
-        }
-        if (list.size() == 0) {
-            return null;
-        }
-        Processor processor;
-        if (list.size() == 1) {
-            processor = list.get(0);
-        }
-        else {
-            processor = new CompositeProcessor(list);
-        }
-        return processor;
-    }
 
     // Properties
     //-----------------------------------------------------------------------
@@ -140,7 +121,11 @@ public class RouteType extends ProcessorType implements CamelContextAware {
         return this;
     }
 
-    protected Route createRoute(FromType fromType) throws Exception {
-        return new EventDrivenConsumerRoute(resolveEndpoint(fromType.getUri()), createProcessor(outputs));
+    protected void addRoutes(Collection<Route> routes, FromType fromType) throws Exception {
+        Endpoint endpoint = resolveEndpoint(fromType.getUri());
+        RouteContext routeContext = new RouteContext(this, fromType, endpoint);
+        for (ProcessorType output : outputs) {
+            output.addRoutes(routeContext, routes);
+        }
     }
 }

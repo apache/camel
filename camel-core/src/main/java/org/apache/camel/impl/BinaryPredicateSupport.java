@@ -17,10 +17,9 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.Predicate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.Predicate;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -56,7 +55,7 @@ public abstract class BinaryPredicateSupport<E extends Exchange> implements Pred
         Object leftValue = left.evaluate(exchange);
         Object rightValue = right.evaluate(exchange);
         if (!matches(exchange, leftValue, rightValue)) {
-            throw new AssertionError(assertionFailureMessage(exchange, leftValue, rightValue));
+            throw new AssertionError(text + assertionFailureMessage(exchange, leftValue, rightValue));
         }
     }
 

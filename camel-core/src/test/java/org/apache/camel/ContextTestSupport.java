@@ -19,6 +19,7 @@ package org.apache.camel;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.Language;
 
 /**
  * A useful base class which creates a {@link CamelContext} with some routes along with a {@link CamelTemplate}
@@ -29,15 +30,45 @@ import org.apache.camel.impl.DefaultCamelContext;
 public abstract class ContextTestSupport extends TestSupport {
     protected CamelContext context;
     protected CamelTemplate<Exchange> template;
+    private boolean useRouteBuilder = true;
+    private Service camelContextService;
+
+    public boolean isUseRouteBuilder() {
+        return useRouteBuilder;
+    }
+
+    public void setUseRouteBuilder(boolean useRouteBuilder) {
+        this.useRouteBuilder = useRouteBuilder;
+    }
+
+    public Service getCamelContextService() {
+        return camelContextService;
+    }
+
+    /**
+     * Allows a service to be registered a separate lifecycle service to start and stop
+     * the context; such as for Spring
+     * when the ApplicationContext is started and stopped, rather than directly stopping the
+     * CamelContext
+     */
+    public void setCamelContextService(Service camelContextService) {
+        this.camelContextService = camelContextService;
+    }
 
     @Override
     protected void setUp() throws Exception {
         context = createCamelContext();
         template = new CamelTemplate<Exchange>(context);
 
-        context.addRoutes(createRouteBuilder());
-
-        context.start();
+        if (useRouteBuilder) {
+            context.addRoutes(createRouteBuilder());
+        }
+        if (camelContextService != null) {
+            camelContextService.start();
+        }
+        else {
+            context.start();
+        }
 
         log.debug("Routing Rules are: " + context.getRoutes());
     }
@@ -46,7 +77,12 @@ public abstract class ContextTestSupport extends TestSupport {
     protected void tearDown() throws Exception {
         log.debug("tearDown test: " + getName());
         template.stop();
-        context.stop();
+        if (camelContextService != null) {
+            camelContextService.stop();
+        }
+        else {
+            context.stop();
+        }
     }
 
     protected CamelContext createCamelContext() throws Exception {
@@ -69,7 +105,7 @@ public abstract class ContextTestSupport extends TestSupport {
         return resolveMandatoryEndpoint(context, uri, endpointType);
     }
 
-    
+
     /**
      * Sends a message to the given endpoint URI with the body value
      *
@@ -103,5 +139,41 @@ public abstract class ContextTestSupport extends TestSupport {
      */
     protected Exchange createExchangeWithBody(Object body) {
         return createExchangeWithBody(context, body);
+    }
+
+    /**
+     * Asserts that the given language name and expression evaluates to the given value on a specific exchange
+     */
+    protected void assertExpression(Exchange exchange, String languageName, String expressionText, Object expectedValue) {
+        Language language = assertResolveLanguage(languageName);
+
+        Expression<Exchange> expression = language.createExpression(expressionText);
+        assertNotNull("No Expression could be created for text: " + expressionText
+                + " language: " + language, expression);
+
+        assertExpression(expression, exchange, expectedValue);
+    }
+
+
+    /**
+     * Asserts that the given language name and predicate expression evaluates to the expected value on the message exchange
+     */
+    protected void assertPredicate(String languageName, String expressionText, Exchange exchange, boolean expected) {
+        Language language = assertResolveLanguage(languageName);
+
+        Predicate<Exchange> predicate = language.createPredicate(expressionText);
+        assertNotNull("No Predicate could be created for text: " + expressionText
+                + " language: " + language, predicate);
+
+        assertPredicate(predicate, exchange, expected);
+    }
+
+    /**
+     * Asserts that the language name can be resolved
+     */
+    protected Language assertResolveLanguage(String languageName) {
+        Language language = context.resolveLanguage(languageName);
+        assertNotNull("No language found for name: " + languageName, language);
+        return language;
     }
 }

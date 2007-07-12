@@ -38,6 +38,7 @@
     <module>camel-bam</module>
     <module>camel-cxf</module>
     <module>camel-ftp</module>
+    <module>camel-juel</module>
     <module>camel-http</module>
     <module>camel-irc</module>
     <module>camel-jaxb</module>

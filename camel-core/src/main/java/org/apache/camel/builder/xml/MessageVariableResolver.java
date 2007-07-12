@@ -19,6 +19,7 @@ package org.apache.camel.builder.xml;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import static org.apache.camel.builder.xml.Namespaces.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -34,11 +35,6 @@ import java.util.Map;
  * @version $Revision: 521692 $
  */
 public class MessageVariableResolver implements XPathVariableResolver {
-    public static final String SYSTEM_PROPERTIES_NAMESPACE = "http://camel.apache.org/xml/variables/system-properties";
-    public static final String ENVIRONMENT_VARIABLES = "http://camel.apache.org/xml/variables/environment-variables";
-    public static final String EXCHANGE_PROPERTY = "http://camel.apache.org/xml/variables/exchange-property";
-    public static final String IN_HEADER = "http://camel.apache.org/xml/variables/in-header";
-    public static final String OUT_HEADER = "http://camel.apache.org/xml/variables/out-header";
 
     private static final transient Log log = LogFactory.getLog(MessageVariableResolver.class);
 
@@ -58,10 +54,11 @@ public class MessageVariableResolver implements XPathVariableResolver {
         String localPart = name.getLocalPart();
         Object answer = null;
 
+        Message in = exchange.getIn();
         if (uri == null || uri.length() == 0) {
             answer = variables.get(localPart);
             if (answer == null) {
-                Message message = exchange.getIn();
+                Message message = in;
                 if (message != null) {
                     answer = message.getHeader(localPart);
                 }
@@ -84,11 +81,18 @@ public class MessageVariableResolver implements XPathVariableResolver {
         else if (uri.equals(EXCHANGE_PROPERTY)) {
             answer = exchange.getProperty(localPart);
         }
-        else if (uri.equals(IN_HEADER)) {
-            answer = exchange.getIn().getHeader(localPart);
+        else if (uri.equals(IN_NAMESPACE)) {
+            answer = in.getHeader(localPart);
+            if (answer == null && localPart.equals("body")) {
+                answer = in.getBody();
+            }
         }
-        else if (uri.equals(OUT_HEADER)) {
-            answer = exchange.getOut().getHeader(localPart);
+        else if (uri.equals(OUT_NAMESPACE)) {
+            Message out = exchange.getOut();
+            answer = out.getHeader(localPart);
+            if (answer == null && localPart.equals("body")) {
+                answer = out.getBody();
+            }
         }
 
         // TODO support exposing CamelContext properties/resources via XPath?

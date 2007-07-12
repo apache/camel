@@ -32,6 +32,7 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.LanguageResolver;
+import org.apache.camel.spi.Language;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
@@ -263,6 +264,16 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         addRoutes(builder.getRouteList());
     }
 
+    // Helper methods
+    //-----------------------------------------------------------------------
+
+    /**
+     * Resolves a language for creating expressions
+     */
+    public Language resolveLanguage(String language) {
+        return getLanguageResolver().resolveLanguage(language, this);
+    }
+
     // Properties
     //-----------------------------------------------------------------------
     public ExchangeConverter getExchangeConverter() {
@@ -315,6 +326,15 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public void setLanguageResolver(LanguageResolver languageResolver) {
         this.languageResolver = languageResolver;
+    }
+
+
+    public boolean isAutoCreateComponents() {
+        return autoCreateComponents;
+    }
+
+    public void setAutoCreateComponents(boolean autoCreateComponents) {
+        this.autoCreateComponents = autoCreateComponents;
     }
 
     // Implementation methods
@@ -393,13 +413,5 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      */
     protected ComponentResolver createComponentResolver() {
         return new DefaultComponentResolver();
-    }
-
-    public boolean isAutoCreateComponents() {
-        return autoCreateComponents;
-    }
-
-    public void setAutoCreateComponents(boolean autoCreateComponents) {
-        this.autoCreateComponents = autoCreateComponents;
     }
 }

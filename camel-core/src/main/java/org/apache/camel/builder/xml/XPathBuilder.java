@@ -17,12 +17,13 @@
  */
 package org.apache.camel.builder.xml;
 
-import static org.apache.camel.converter.ObjectConverter.toBoolean;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
-import org.apache.camel.Message;
+import static org.apache.camel.builder.xml.Namespaces.*;
+import static org.apache.camel.converter.ObjectConverter.toBoolean;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -34,8 +35,11 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import javax.xml.xpath.XPathFactoryConfigurationException;
+import javax.xml.xpath.XPathFunction;
+import javax.xml.xpath.XPathFunctionException;
 import javax.xml.xpath.XPathFunctionResolver;
 import java.io.StringReader;
+import java.util.List;
 
 /**
  * Creates an XPath expression builder
@@ -52,6 +56,12 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     private XPathFunctionResolver functionResolver;
     private XPathExpression expression;
     private MessageVariableResolver variableResolver = new MessageVariableResolver();
+    private E exchange;
+    private XPathFunction bodyFunction;
+    private XPathFunction headerFunction;
+    private XPathFunction outBodyFunction;
+    private XPathFunction outHeaderFunction;
+
 
     public static XPathBuilder xpath(String text) {
         return new XPathBuilder(text);
@@ -81,7 +91,6 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     public Object evaluate(E exchange) {
         return evaluateAs(exchange, resultType);
     }
-
 
     // Builder methods
     //-------------------------------------------------------------------------
@@ -160,7 +169,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      * Registers the namespace prefix and URI with the builder so that the prefix can be used in XPath expressions
      *
      * @param prefix is the namespace prefix that can be used in the XPath expressions
-     * @param uri is the namespace URI to which the prefix refers
+     * @param uri    is the namespace URI to which the prefix refers
      * @return the current builder
      */
     public XPathBuilder<E> namespace(String prefix, String uri) {
@@ -212,7 +221,9 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     public DefaultNamespaceContext getNamespaceContext() {
         if (namespaceContext == null) {
             try {
-                namespaceContext = new DefaultNamespaceContext(getXPathFactory());
+                DefaultNamespaceContext defaultNamespaceContext = new DefaultNamespaceContext(getXPathFactory());
+                populateDefaultNamespaces(defaultNamespaceContext);
+                namespaceContext = defaultNamespaceContext;
             }
             catch (XPathFactoryConfigurationException e) {
                 throw new RuntimeExpressionException(e);
@@ -241,17 +252,95 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     }
 
     public void setNamespacesFromDom(Element node) {
-        getNamespaceContext().setNamespacesFromDom(node);        
+        getNamespaceContext().setNamespacesFromDom(node);
+    }
+
+    public XPathFunction getBodyFunction() {
+        if (bodyFunction == null) {
+            bodyFunction = new XPathFunction() {
+                public Object evaluate(List list) throws XPathFunctionException {
+                    if (exchange == null) {
+                        return null;
+                    }
+                    return exchange.getIn().getBody();
+                }
+            };
+        }
+        return bodyFunction;
+    }
+
+    public void setBodyFunction(XPathFunction bodyFunction) {
+        this.bodyFunction = bodyFunction;
+    }
+
+    public XPathFunction getHeaderFunction() {
+        if (headerFunction == null) {
+            headerFunction = new XPathFunction() {
+                public Object evaluate(List list) throws XPathFunctionException {
+                    if (exchange != null && !list.isEmpty()) {
+                        Object value = list.get(0);
+                        if (value != null) {
+                            return exchange.getIn().getHeader(value.toString());
+                        }
+                    }
+                    return null;
+                }
+            };
+        }
+        return headerFunction;
+    }
+
+    public void setHeaderFunction(XPathFunction headerFunction) {
+        this.headerFunction = headerFunction;
+    }
+
+    public XPathFunction getOutBodyFunction() {
+        if (outBodyFunction == null) {
+            outBodyFunction = new XPathFunction() {
+                public Object evaluate(List list) throws XPathFunctionException {
+                    if (exchange == null) {
+                        return null;
+                    }
+                    return exchange.getOut().getBody();
+                }
+            };
+        }
+        return outBodyFunction;
+    }
+
+    public void setOutBodyFunction(XPathFunction outBodyFunction) {
+        this.outBodyFunction = outBodyFunction;
+    }
+
+    public XPathFunction getOutHeaderFunction() {
+        if (outHeaderFunction == null) {
+            outHeaderFunction = new XPathFunction() {
+                public Object evaluate(List list) throws XPathFunctionException {
+                    if (exchange != null && !list.isEmpty()) {
+                        Object value = list.get(0);
+                        if (value != null) {
+                            return exchange.getOut().getHeader(value.toString());
+                        }
+                    }
+                    return null;
+                }
+            };
+        }
+        return outHeaderFunction;
+    }
+
+    public void setOutHeaderFunction(XPathFunction outHeaderFunction) {
+        this.outHeaderFunction = outHeaderFunction;
     }
 
     // Implementation methods
     //-------------------------------------------------------------------------
 
-
     /**
      * Evaluates the expression as the given result type
      */
     protected synchronized Object evaluateAs(E exchange, QName resultType) {
+        this.exchange = exchange;
         variableResolver.setExchange(exchange);
         try {
             Object document = getDocument(exchange);
@@ -289,11 +378,76 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
         xpathFactory = null;
 
         xPath.setNamespaceContext(getNamespaceContext());
+
         xPath.setXPathVariableResolver(variableResolver);
-        if (functionResolver != null) {
-            xPath.setXPathFunctionResolver(functionResolver);
+
+        XPathFunctionResolver parentResolver = getFunctionResolver();
+        if (parentResolver == null) {
+            parentResolver = xPath.getXPathFunctionResolver();
         }
+        xPath.setXPathFunctionResolver(createDefaultFunctionResolver(parentResolver));
         return xPath.compile(text);
+    }
+
+    /**
+     * Lets populate a number of standard prefixes if they are not already there
+     */
+    protected void populateDefaultNamespaces(DefaultNamespaceContext context) {
+        setNamespaceIfNotPresent(context, "in", IN_NAMESPACE);
+        setNamespaceIfNotPresent(context, "out", OUT_NAMESPACE);
+        setNamespaceIfNotPresent(context, "env", Namespaces.ENVIRONMENT_VARIABLES);
+        setNamespaceIfNotPresent(context, "system", Namespaces.SYSTEM_PROPERTIES_NAMESPACE);
+    }
+
+    protected void setNamespaceIfNotPresent(DefaultNamespaceContext context, String prefix, String uri) {
+        if (context != null) {
+            String current = context.getNamespaceURI(prefix);
+            if (current == null) {
+                context.add(prefix, uri);
+            }
+        }
+    }
+
+    protected XPathFunctionResolver createDefaultFunctionResolver(final XPathFunctionResolver parent) {
+        return new XPathFunctionResolver() {
+            public XPathFunction resolveFunction(QName qName, int argumentCount) {
+                XPathFunction answer = null;
+                if (parent != null) {
+                    answer = parent.resolveFunction(qName, argumentCount);
+                }
+                if (answer == null) {
+                    if (isMatchingNamespaceOrEmptyNamespace(qName.getNamespaceURI(), IN_NAMESPACE)
+                            || isMatchingNamespaceOrEmptyNamespace(qName.getNamespaceURI(), DEFAULT_NAMESPACE)) {
+                        String localPart = qName.getLocalPart();
+                        if (localPart.equals("body") && argumentCount == 0) {
+                            return getBodyFunction();
+                        }
+                        if (localPart.equals("header") && argumentCount == 1) {
+                            return getHeaderFunction();
+                        }
+                    }
+                    if (isMatchingNamespaceOrEmptyNamespace(qName.getNamespaceURI(), OUT_NAMESPACE)) {
+                        String localPart = qName.getLocalPart();
+                        if (localPart.equals("body") && argumentCount == 0) {
+                            return getOutBodyFunction();
+                        }
+                        if (localPart.equals("header") && argumentCount == 1) {
+                            return getOutHeaderFunction();
+                        }
+                    }
+                    if (isMatchingNamespaceOrEmptyNamespace(qName.getNamespaceURI(), DEFAULT_NAMESPACE)) {
+                        String localPart = qName.getLocalPart();
+                        if (localPart.equals("out-body") && argumentCount == 0) {
+                            return getOutBodyFunction();
+                        }
+                        if (localPart.equals("out-header") && argumentCount == 1) {
+                            return getOutHeaderFunction();
+                        }
+                    }
+                }
+                return answer;
+            }
+        };
     }
 
     /**
@@ -316,6 +470,5 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
         }
         return answer;
     }
-
 
 }

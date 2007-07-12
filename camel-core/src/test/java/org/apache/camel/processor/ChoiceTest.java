@@ -16,67 +16,55 @@
  */
 package org.apache.camel.processor;
 
-import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
-import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
-
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
+import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class ChoiceTest extends ContextTestSupport {
-    protected Endpoint<Exchange> startEndpoint;
     protected MockEndpoint x, y, z;
 
     public void testSendToFirstWhen() throws Exception {
-        x.expectedBodiesReceived("one");
+        String body = "<one/>";
+        x.expectedBodiesReceived(body);
         expectsMessageCount(0, y, z);
 
-        sendMessage("bar", "one");
+        sendMessage("bar", body);
 
         assertIsSatisfied(x, y, z);
     }
 
     public void testSendToSecondWhen() throws Exception {
-        y.expectedBodiesReceived("two");
+        String body = "<two/>";
+        y.expectedBodiesReceived(body);
         expectsMessageCount(0, x, z);
 
-        sendMessage("cheese", "two");
+        sendMessage("cheese", body);
 
         assertIsSatisfied(x, y, z);
     }
 
     public void testSendToOtherwiseClause() throws Exception {
-        z.expectedBodiesReceived("three");
+        String body = "<three/>";
+        z.expectedBodiesReceived(body);
         expectsMessageCount(0, x, y);
 
-        sendMessage("somethingUndefined", "three");
+        sendMessage("somethingUndefined", body);
 
         assertIsSatisfied(x, y, z);
     }
 
     protected void sendMessage(final Object headerValue, final Object body) throws Exception {
-        template.send(startEndpoint, new Processor() {
-            public void process(Exchange exchange) {
-                // now lets fire in a message
-                Message in = exchange.getIn();
-                in.setBody(body);
-                in.setHeader("foo", headerValue);
-            }
-        });
+        template.sendBody("direct:start", body, "foo", headerValue);
     }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
-        startEndpoint = resolveMandatoryEndpoint("direct:a");
 
         x = (MockEndpoint) resolveMandatoryEndpoint("mock:x");
         y = (MockEndpoint) resolveMandatoryEndpoint("mock:y");
@@ -86,7 +74,7 @@ public class ChoiceTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").choice()
+                from("direct:start").choice()
                         .when(header("foo").isEqualTo("bar")).to("mock:x")
                         .when(header("foo").isEqualTo("cheese")).to("mock:y")
                         .otherwise().to("mock:z");

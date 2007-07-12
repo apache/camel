@@ -79,6 +79,7 @@
         <include>org.apache.camel:camel-core</include>
         <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-ftp</include>
+        <include>org.apache.camel:camel-juel</include>
         <include>org.apache.camel:camel-http</include>
         <include>org.apache.camel:camel-irc</include>
         <include>org.apache.camel:camel-jaxb</include>

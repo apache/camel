@@ -56,6 +56,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-juel</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-http</artifactId>
     </dependency>
     <dependency>
@@ -178,8 +182,8 @@
               <goal>createbundle</goal>
             </goals>
             <configuration>
-              <includes>camel-activemq,camel-bam,camel-core,camel-cxf,camel-ftp,camel-http,
-                camel-irc,camel-jaxb,camel-jbi,camel-jms,camel-josql,
+              <includes>camel-activemq,camel-bam,camel-core,camel-cxf,camel-ftp,camel-juel,
+                camel-http,camel-irc,camel-jaxb,camel-jbi,camel-jms,camel-josql,
                 camel-jpa,camel-mail,camel-mina,camel-quartz,camel-rmi,
                 camel-saxon,camel-script,camel-spring,camel-xmpp,commons-logging</includes>
             </configuration>
