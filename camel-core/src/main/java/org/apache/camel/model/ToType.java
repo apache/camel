@@ -21,10 +21,10 @@ import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.SendProcessor;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlElement;
-import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Represents an XML &lt;to/&gt; element
@@ -56,7 +56,7 @@ public class ToType extends ProcessorType {
     public void setUri(String uri) {
         this.uri = uri;
     }
-    
+
     public List<ProcessorType> getOutputs() {
         return Collections.EMPTY_LIST;
     }

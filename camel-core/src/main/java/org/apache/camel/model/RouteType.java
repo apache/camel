@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
-import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.impl.RouteContext;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -73,7 +72,6 @@ public class RouteType extends ProcessorType implements CamelContextAware {
         }
         return answer;
     }
-
 
     // Properties
     //-----------------------------------------------------------------------

@@ -19,12 +19,10 @@ package org.apache.camel.model;
 
 import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
-import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.Splitter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -32,9 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "splitter")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SplitterType extends OutputType {
-    @XmlElementRef
-    private ExpressionType expression;
+public class SplitterType extends ExpressionNode {
 
     @Override
     public String toString() {
@@ -45,13 +41,5 @@ public class SplitterType extends OutputType {
     public Processor createProcessor(RouteContext routeContext) {
         Processor childProcessor = routeContext.createProcessor(getOutputs());
         return new Splitter(getExpression().createExpression(routeContext), childProcessor);
-    }
-
-    public ExpressionType getExpression() {
-        return expression;
-    }
-
-    public void setExpression(ExpressionType expression) {
-        this.expression = expression;
     }
 }

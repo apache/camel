@@ -19,15 +19,15 @@ package org.apache.camel.model;
 
 import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
-import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.ChoiceProcessor;
+import org.apache.camel.processor.FilterProcessor;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlElement;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @version $Revision: 1.1 $

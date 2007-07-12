@@ -17,11 +17,8 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.model.language.ExpressionType;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -29,20 +26,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "recipientList")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RecipientListType extends OutputType {
-    @XmlElementRef
-    private ExpressionType expression;
+public class RecipientListType extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "RecipientList[ " + getExpression()  + "]";
+        return "RecipientList[ " + getExpression() + "]";
     }
 
-    public ExpressionType getExpression() {
-        return expression;
-    }
-
-    public void setExpression(ExpressionType expression) {
-        this.expression = expression;
-    }
 }

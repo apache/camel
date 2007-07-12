@@ -23,13 +23,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.impl.RouteContext;
-import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.Resequencer;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,11 +33,7 @@ import java.util.List;
  * @version $Revision: 1.1 $
  */
 @XmlRootElement(name = "resequencer")
-public class ResequencerType extends ProcessorType {
-    private ExpressionType expression;
-
-    protected List<ProcessorType> outputs = new ArrayList<ProcessorType>();
-    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+public class ResequencerType extends ExpressionNode {
 
     @Override
     public String toString() {
@@ -64,33 +56,6 @@ public class ResequencerType extends ProcessorType {
             }
         };
         routes.add(route);
-    }
-
-    @XmlElementRef
-    public ExpressionType getExpression() {
-        return expression;
-    }
-
-    public void setExpression(ExpressionType expression) {
-        this.expression = expression;
-    }
-
-    @XmlElementRef
-    public List<ProcessorType> getOutputs() {
-        return outputs;
-    }
-
-    public void setOutputs(List<ProcessorType> outputs) {
-        this.outputs = outputs;
-    }
-
-    @XmlElement(required = false)
-    public List<InterceptorRef> getInterceptors() {
-        return interceptors;
-    }
-
-    public void setInterceptors(List<InterceptorRef> interceptors) {
-        this.interceptors = interceptors;
     }
 
 }

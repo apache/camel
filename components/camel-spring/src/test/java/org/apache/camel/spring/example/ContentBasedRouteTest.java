@@ -58,6 +58,6 @@ public class ContentBasedRouteTest extends SpringTestSupport {
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("../../../../../../resources/org/apache/camel/spring/example/contentBasedRoute.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/example/contentBasedRoute.xml");
     }
 }

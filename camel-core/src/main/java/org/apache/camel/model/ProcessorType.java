@@ -17,15 +17,15 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.model.language.ExpressionType;
-import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.model.language.ExpressionType;
+import org.apache.camel.model.language.LanguageExpression;
 
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @version $Revision: 1.1 $
@@ -33,6 +33,7 @@ import java.util.Collection;
 public abstract class ProcessorType {
 
     public abstract List<ProcessorType> getOutputs();
+
     public abstract List<InterceptorRef> getInterceptors();
 
     public ProcessorType interceptor(String ref) {

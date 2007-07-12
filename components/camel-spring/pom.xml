@@ -116,7 +116,6 @@
           <useFile>true</useFile>
           <excludes>
             <!-- TODO - FIXME ASAP -->
-            <exclude>**/SpringResequencerTest.*</exclude>
             <exclude>**/ContentBasedRouteTest.*</exclude>
             <exclude>**/SpringXmlRouteBuilderTest.*</exclude>
             <exclude>**/InjectedBeanTest.*</exclude>
