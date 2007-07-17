@@ -100,13 +100,13 @@ public class GenerateDocBookMojo extends AbstractMojo {
 	 * @parameter expression="${project.build.directory}/docbkx/docbkx-source"
 	 */
 	private String outputPath;
-	
+
 	/**
 	 * Location of the output directory for wiki source.
 	 * 
 	 * @parameter expression="${project.build.directory}/docbkx/wiki-source"
 	 */
-	private String wikiOutputPath;	
+	private String wikiOutputPath;
 
 	/**
 	 * @parameter expression="${title}"
@@ -118,12 +118,12 @@ public class GenerateDocBookMojo extends AbstractMojo {
 	 * @parameter expression="${subtitle}"
 	 */
 	private String subtitle;
-	
+
 	/**
 	 * @parameter expression="${mainFilename}" default-value="manual"
 	 * @required
 	 */
-	private String mainFilename;	
+	private String mainFilename;
 
 	/**
 	 * @parameter expression="${version}" default-value="${project.version}"
@@ -144,7 +144,9 @@ public class GenerateDocBookMojo extends AbstractMojo {
 	private String imageLocation;
 
 	private String chapterId;
-	private static final transient Log log = LogFactory.getLog(GenerateDocBookMojo.class);
+
+	private static final transient Log log = LogFactory
+			.getLog(GenerateDocBookMojo.class);
 
 	public void execute() throws MojoExecutionException {
 		File outputDir = new File(outputPath);
@@ -158,14 +160,13 @@ public class GenerateDocBookMojo extends AbstractMojo {
 		this.createMainXML();
 
 		for (int i = 0; i < resources.length; ++i) {
-			this.setChapterId( removeExtension(resources[i]));
+			this.setChapterId(removeExtension(resources[i]));
 
 			process(resources[i]);
 		}
 
 	}
 
-	
 	/**
 	 * Extract the wiki content and tranform it into docbook format
 	 * 
@@ -205,34 +206,34 @@ public class GenerateDocBookMojo extends AbstractMojo {
 					element.setAttribute("baseURL", baseURL);
 					element.setAttribute("imageLocation", "../images/");
 
-					DOMSource source = new DOMSource(node);
+					DOMSource source = new DOMSource(
+							processH2Section(doc, node));
 
-					 
-					output = new BufferedOutputStream(
-							new FileOutputStream(outputPath + File.separator
+					output = new BufferedOutputStream(new FileOutputStream(
+							outputPath + File.separator
 									+ removeExtension(resource) + ".xml"));
 					StreamResult result = new StreamResult(output);
 					TransformerFactory tFactory = TransformerFactory
 							.newInstance();
-					if(xslFile != null && !xslFile.trim().equals("")) {
+					if (xslFile != null && !xslFile.trim().equals("")) {
 						streamSource = new StreamSource(xslFile);
-					}else {
-						InputStream xslStream = getClass().getResourceAsStream("/docbook.xsl");
+					} else {
+						InputStream xslStream = getClass().getResourceAsStream(
+								"/docbook.xsl");
 						streamSource = new StreamSource(xslStream);
 					}
-					
+
 					Transformer transformer = tFactory
 							.newTransformer(streamSource);
 					transformer.transform(source, result);
 
-
 					// generate the wiki source for debugging
-					wikiOutput = new BufferedOutputStream(
-							new FileOutputStream(wikiOutputPath + File.separator
+					wikiOutput = new BufferedOutputStream(new FileOutputStream(
+							wikiOutputPath + File.separator
 									+ removeExtension(resource) + ".html"));
 					result = new StreamResult(wikiOutput);
 					transformer = tFactory.newTransformer();
-			        transformer.transform(source, result);					
+					transformer.transform(source, result);
 
 					break;
 				}
@@ -241,9 +242,9 @@ public class GenerateDocBookMojo extends AbstractMojo {
 
 		} catch (Exception e) {
 			log.debug("Exception processing wiki content", e);
-		}finally {
+		} finally {
 			try {
-				if(output != null)
+				if (output != null)
 					output.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -251,8 +252,7 @@ public class GenerateDocBookMojo extends AbstractMojo {
 			}
 		}
 	}
-	
-	
+
 	/*
 	 *  create the main docbook xml file 
 	 */
@@ -267,7 +267,8 @@ public class GenerateDocBookMojo extends AbstractMojo {
 			out.println("[");
 
 			for (int i = 0; i < resources.length; ++i) {
-				out.println("<!ENTITY " +  removeExtension(resources[i]) + " SYSTEM \"" +  removeExtension(resources[i])
+				out.println("<!ENTITY " + removeExtension(resources[i])
+						+ " SYSTEM \"" + removeExtension(resources[i])
 						+ ".xml\">");
 			}
 
@@ -343,65 +344,63 @@ public class GenerateDocBookMojo extends AbstractMojo {
 			log.debug("Exception in creating manual.xml file", e);
 		}
 	}
-	
-	
-	public void downloadImages(Node node) {
-        List imageList = getImageUrls(node);
-        Iterator iter = imageList.iterator();
-        while(iter.hasNext()) {
-        	String imageUrl = (String)iter.next();
-        	String imageFile = "imageFile";
-        	
-        	//check if url path is relative
-        	if (imageUrl.indexOf("http://") < 0) {
-        		imageUrl = baseURL +  imageUrl;
-        	}
-        	try {
-        		
-            	URL url = new URL(imageUrl);
-            	StringTokenizer st=new StringTokenizer(url.getFile(), "/");
-                while (st.hasMoreTokens()) {
-                	imageFile=st.nextToken();
-                }
 
-            	URLConnection connection = url.openConnection();
-            	InputStream stream = connection.getInputStream();
-            	BufferedInputStream in = new BufferedInputStream(stream);
-            	FileOutputStream file = new FileOutputStream(imageLocation + File.separator + imageFile);
-            	BufferedOutputStream out = new BufferedOutputStream(file);
-            	int i;
-            	while ((i = in.read()) != -1) {
-            	    out.write(i);
-            	}
-            	out.flush();         		
-        	}catch(Exception e) {
-        		log.debug("Exception in downloading image " + imageFile, e);
-        	}
-      	
-        	
-        }
+	public void downloadImages(Node node) {
+		List imageList = getImageUrls(node);
+		Iterator iter = imageList.iterator();
+		while (iter.hasNext()) {
+			String imageUrl = (String) iter.next();
+			String imageFile = "imageFile";
+
+			//check if url path is relative
+			if (imageUrl.indexOf("http://") < 0) {
+				imageUrl = baseURL + imageUrl;
+			}
+			try {
+
+				URL url = new URL(imageUrl);
+				StringTokenizer st = new StringTokenizer(url.getFile(), "/");
+				while (st.hasMoreTokens()) {
+					imageFile = st.nextToken();
+				}
+
+				URLConnection connection = url.openConnection();
+				InputStream stream = connection.getInputStream();
+				BufferedInputStream in = new BufferedInputStream(stream);
+				FileOutputStream file = new FileOutputStream(imageLocation
+						+ File.separator + imageFile);
+				BufferedOutputStream out = new BufferedOutputStream(file);
+				int i;
+				while ((i = in.read()) != -1) {
+					out.write(i);
+				}
+				out.flush();
+			} catch (Exception e) {
+				log.debug("Exception in downloading image " + imageFile, e);
+			}
+
+		}
 	}
-	
-	
+
 	public List getImageUrls(Node node) {
 		ArrayList list = new ArrayList();
-		DOMElementImpl doc = (DOMElementImpl)node;
+		DOMElementImpl doc = (DOMElementImpl) node;
 		NodeList imageList = doc.getElementsByTagName("img");
-		
+
 		if (imageList != null) {
-			for (int i=0; i<imageList.getLength(); ++i) {
+			for (int i = 0; i < imageList.getLength(); ++i) {
 				Node imageNode = imageList.item(i);
-				
+
 				NamedNodeMap nm = imageNode.getAttributes();
 				Node attr = nm.getNamedItem("src");
-				if(attr != null) {
+				if (attr != null) {
 					list.add(attr.getNodeValue());
 				}
 
-			}	
-		}	
+			}
+		}
 		return list;
-	}	
+	}
 
 	public String getChapterId() {
 		return chapterId;
@@ -411,9 +410,78 @@ public class GenerateDocBookMojo extends AbstractMojo {
 		this.chapterId = chapterId;
 	}
 
-
 	public String removeExtension(String resource) {
 		int index = resource.indexOf('.');
-		return resource.substring(0, index);		
+		return resource.substring(0, index);
+	}
+
+	/*
+	 * creates a <h2_section> node  and place all nodes  after a <h2> node until another <h2> node is found. 
+	 * This is so that we can divide chapter contents into section delimited by a <h2> node
+	 */
+
+	public Node processH2Section(Document doc, Node node) {
+		NodeList nodeList = node.getChildNodes();
+		Node h2Node = null;
+		Node pNode = null;
+		boolean firstInstanceOfH2 = false;
+
+		for (int x = 0; x < nodeList.getLength(); ++x) {
+			Node node2 = nodeList.item(x);
+
+			if (node2 != null) {
+				String nodes = node2.getNodeName();
+
+				if (nodes.equalsIgnoreCase("h2")) {
+					h2Node = node2.appendChild(doc.createElement("h2_section"));
+				} else {
+					//if first node is not a <p> or a h2 node, create a <p> node and place all succeeding nodes 
+					//inside this node until a <p> or <h2> node is found
+					if (x == 0 && !nodes.equalsIgnoreCase("p")
+							&& !nodes.equalsIgnoreCase("h2")) {
+						pNode = node
+								.insertBefore(doc.createElement("p"), node2);
+						x++;
+						firstInstanceOfH2 = true;
+					}
+					if (firstInstanceOfH2) {
+						if (node2 == node.getLastChild()) {
+							pNode.appendChild(node2.cloneNode(true));
+						} else {
+							Node nextNode = node2.getNextSibling();
+							pNode.appendChild(node2.cloneNode(true));
+							if (nextNode.getNodeName().equalsIgnoreCase("h2")
+									|| nextNode.getNodeName().equalsIgnoreCase(
+											"p")) {
+								firstInstanceOfH2 = false;
+							}
+						}
+
+					}
+
+					if (h2Node != null) {
+						h2Node.appendChild(node2.cloneNode(true));
+					}
+				}
+
+			}
+		}
+
+		//let's remove all  nodes that are not <h2> or <p> - they should already have been copied inside an <h2> or <p> node
+		NodeList nodeList3 = node.getChildNodes();
+		boolean afterH2 = false;
+		for (int x = 0; x < nodeList3.getLength(); ++x) {
+			Node node2 = nodeList3.item(x);
+			if (node2.getNodeName().equalsIgnoreCase("h2") && !afterH2) {
+				afterH2 = true;
+			}
+
+			if (node2 != null && !node2.getNodeName().equalsIgnoreCase("p")
+					&& !node2.getNodeName().equalsIgnoreCase("h2")) {
+				node.removeChild(node2);
+				x--;
+			}
+		}
+		return node;
 	}
 }
