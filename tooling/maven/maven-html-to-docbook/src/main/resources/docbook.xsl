@@ -37,13 +37,18 @@
 					select=".//h1[1]
                          |.//h3[1]"/>
 			</title>
-			<xsl:call-template name="subcontents"/>
+			<xsl:apply-templates name="*"/>
 		</chapter>
 	</xsl:template>
-	<xsl:template match="h2" name="subcontents">
-		<section> <xsl:if test="name() = 'h2'"> <title> <xsl:value-of 
-			select="text()"/> </title> </xsl:if>a <xsl:apply-templates 
-			select="*"/> </section>
+	<xsl:template match="h2" name="subsection">
+		<section>
+			<xsl:if test="name() = 'h2'">
+				<title>
+					<xsl:value-of select="text()"/>
+				</title>
+			</xsl:if>
+			<xsl:apply-templates select="*"/>
+		</section>
 	</xsl:template>
 	<!-- This template matches on all HTML header items and makes them into 
      bridgeheads. It attempts to assign an ID to each bridgehead by looking 
