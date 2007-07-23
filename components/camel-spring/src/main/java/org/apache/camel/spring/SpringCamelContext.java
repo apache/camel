@@ -79,9 +79,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         if (eventEndpoint == null) {
             eventEndpoint = createEventEndpoint();
         }
-        // lets force lazy initialisation
-        getInjector();
-
         start();
     }
 

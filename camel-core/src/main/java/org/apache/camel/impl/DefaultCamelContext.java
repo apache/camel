@@ -31,8 +31,8 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
-import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
@@ -328,7 +328,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.languageResolver = languageResolver;
     }
 
-
     public boolean isAutoCreateComponents() {
         return autoCreateComponents;
     }
@@ -341,6 +340,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     //-----------------------------------------------------------------------
 
     protected void doStart() throws Exception {
+        forceLazyInitialization();
         if (components != null) {
             for (Component component : components.values()) {
                 startServices(component);
@@ -366,6 +366,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 startServices(services);
             }
         }
+    }
+
+    /**
+     * Lets force some lazy initialization to occur upfront
+     * before we start any components and create routes
+     */
+    protected void forceLazyInitialization() {
+        getExchangeConverter();
+        getInjector();
+        getLanguageResolver();
+        getTypeConverter();
     }
 
     /**
