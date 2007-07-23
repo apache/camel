@@ -26,13 +26,13 @@ import org.apache.camel.util.ExchangeHelper;
  *
  * @version $Revision$
  */
-public class NoSuchPropertyException extends CamelException {
+public class NoSuchPropertyException extends CamelExchangeException {
 	private static final long serialVersionUID = -8721487431101572630L;
-	private final String propertyName;
+    private final String propertyName;
     private final Class<?> type;
 
     public NoSuchPropertyException(Exchange exchange, String propertyName, Class<?> type) {
-        super("No '"+ propertyName + "' property available of type: " + type.getName() + reason(exchange, propertyName) + " on the exchange: " +  exchange);
+        super("No '"+ propertyName + "' property available of type: " + type.getName() + reason(exchange, propertyName), exchange);
         this.propertyName = propertyName;
         this.type = type;
     }
