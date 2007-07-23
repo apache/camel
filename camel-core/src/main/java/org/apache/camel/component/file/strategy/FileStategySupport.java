@@ -19,21 +19,21 @@ package org.apache.camel.component.file.strategy;
 
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.FileExchange;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.nio.channels.Channel;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
-import java.nio.channels.Channel;
 
 /**
  * @version $Revision: 1.1 $
  */
 public abstract class FileStategySupport implements FileStrategy {
     private static final transient Log log = LogFactory.getLog(FileStategySupport.class);
-
     private boolean lockFile;
 
     protected FileStategySupport() {
@@ -45,16 +45,18 @@ public abstract class FileStategySupport implements FileStrategy {
     }
 
     public boolean begin(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception {
-        if (isLockFile() ) {
+        if (isLockFile()) {
+            String lockFileName = file.getAbsoluteFile() + ".lock";
             if (log.isDebugEnabled()) {
-                log.debug("Locking file: " + file);
+                log.debug("Locking the file: " + file + " using the lock file name: " + lockFileName);
             }
 
-            FileChannel channel = new RandomAccessFile(file, "rw").getChannel();
+            FileChannel channel = new RandomAccessFile(lockFileName, "rw").getChannel();
             FileLock lock = channel.lock();
             if (lock != null) {
                 exchange.setProperty("org.apache.camel.fileChannel", channel);
                 exchange.setProperty("org.apache.camel.file.lock", lock);
+                exchange.setProperty("org.apache.camel.file.lock.name", lockFileName);
                 return true;
             }
             return false;
@@ -64,17 +66,14 @@ public abstract class FileStategySupport implements FileStrategy {
 
     public void commit(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception {
         if (isLockFile()) {
-            Channel channel = exchange.getProperty("org.apache.camel.fileChannel", Channel.class);
-            if (channel != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Unlocking file: " + file);
-                }
-
-                channel.close();
+            Channel channel = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.fileChannel", Channel.class);
+            String lockfile = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.file.lock.name", String.class);
+            if (log.isDebugEnabled()) {
+                log.debug("Unlocking file: " + file);
             }
-            else {
-                throw new Exception("No Channel available to close on exchange: " + exchange);
-            }
+            channel.close();
+            File lock = new File(lockfile);
+            lock.delete();
         }
     }
 

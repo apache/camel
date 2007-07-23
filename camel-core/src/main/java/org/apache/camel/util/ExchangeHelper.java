@@ -20,6 +20,10 @@ package org.apache.camel.util;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.NoSuchPropertyException;
+import org.apache.camel.component.file.FileExchange;
+
+import java.nio.channels.Channel;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
@@ -52,5 +56,13 @@ public class ExchangeHelper {
             }
         }
         return endpoint;
+    }
+
+    public static <T> T getMandatoryProperty(Exchange exchange, String propertyName, Class<T> type) throws NoSuchPropertyException {
+        T  answer = exchange.getProperty(propertyName, type);
+        if (answer == null) {
+            throw new NoSuchPropertyException(exchange, propertyName, type);
+        }
+        return answer;
     }
 }
