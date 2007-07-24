@@ -26,17 +26,19 @@
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <when>
-        <xpath>$foo = 'bar'</xpath>
-        <to uri="mock:x"/>
-      </when>
-      <when>
-        <xpath>$foo = 'cheese'</xpath>
-        <to uri="mock:y"/>
-      </when>
-      <otherwise>
-        <to uri="mock:z"/>
-      </otherwise>
+      <choice>
+        <when>
+          <xpath>$foo = 'bar'</xpath>
+          <to uri="mock:x"/>
+        </when>
+        <when>
+          <xpath>$foo = 'cheese'</xpath>
+          <to uri="mock:y"/>
+        </when>
+        <otherwise>
+          <to uri="mock:z"/>
+        </otherwise>
+      </choice>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->

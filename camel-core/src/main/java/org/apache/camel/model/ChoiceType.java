@@ -25,6 +25,11 @@ import org.apache.camel.processor.FilterProcessor;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessorOrder;
+import javax.xml.bind.annotation.XmlAccessOrder;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,10 +38,14 @@ import java.util.List;
  * @version $Revision: 1.1 $
  */
 @XmlRootElement(name = "choice")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceType extends ProcessorType {
-    private List<WhenType> whenClauses = new ArrayList<WhenType>();
-    private OtherwiseType otherwise;
+    @XmlElement(required = false)
     private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+    @XmlElementRef
+    private List<WhenType> whenClauses = new ArrayList<WhenType>();
+    @XmlElement(required = false)
+    private OtherwiseType otherwise;
 
     @Override
     public String toString() {
@@ -56,7 +65,6 @@ public class ChoiceType extends ProcessorType {
         return new ChoiceProcessor(filters, otherwiseProcessor);
     }
 
-    @XmlElementRef
     public List<WhenType> getWhenClauses() {
         return whenClauses;
     }
@@ -69,7 +77,6 @@ public class ChoiceType extends ProcessorType {
         return Collections.EMPTY_LIST;
     }
 
-    @XmlElementRef
     public OtherwiseType getOtherwise() {
         return otherwise;
     }
@@ -78,7 +85,6 @@ public class ChoiceType extends ProcessorType {
         this.otherwise = otherwise;
     }
 
-    @XmlElement(required = false)
     public List<InterceptorRef> getInterceptors() {
         return interceptors;
     }

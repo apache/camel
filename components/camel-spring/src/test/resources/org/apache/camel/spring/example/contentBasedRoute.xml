@@ -28,10 +28,7 @@
       <from uri="direct:start"/>
       <choice>
         <when>
-          <predicate>
-            <header name="destination"/>
-            <isEqualTo value="firstChoice"/>
-          </predicate>
+          <xpath>$destination = 'firstChoice'</xpath>
           <to uri="mock:matched"/>
         </when>
         <otherwise>

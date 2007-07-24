@@ -61,8 +61,14 @@ public abstract class ContextTestSupport extends TestSupport {
         template = new CamelTemplate<Exchange>(context);
 
         if (useRouteBuilder) {
-            context.addRoutes(createRouteBuilder());
+            RouteBuilder builder = createRouteBuilder();
+            log.debug("Using created route builder: " + builder);
+            context.addRoutes(builder);
         }
+        else {
+            log.debug("Using route builder from the created context: " + context);
+        }
+
         if (camelContextService != null) {
             camelContextService.start();
         }

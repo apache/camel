@@ -64,7 +64,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
       <type>test-jar</type>
-      <optional>true</optional>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -116,7 +115,6 @@
           <useFile>true</useFile>
           <excludes>
             <!-- TODO - FIXME ASAP -->
-            <exclude>**/ContentBasedRouteTest.*</exclude>
             <exclude>**/SpringXmlRouteBuilderTest.*</exclude>
             <exclude>**/InjectedBeanTest.*</exclude>
             <exclude>**/PojoConsumerTest.*</exclude>
