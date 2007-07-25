@@ -116,13 +116,7 @@
           <excludes>
             <!-- TODO - FIXME ASAP -->
             <exclude>**/SpringXmlRouteBuilderTest.*</exclude>
-            <exclude>**/InjectedBeanTest.*</exclude>
-            <exclude>**/PojoConsumerTest.*</exclude>
-            <exclude>**/InjectedBeanTest.*</exclude>
-            <exclude>**/EventRouteTest.*</exclude>
             <exclude>**/EndpointReferenceTest.*</exclude>
-            <exclude>**/PojoSenderTest.*</exclude>
-            <exclude>**/SpringRemotingRouteTest.*</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -154,6 +148,7 @@
                 <copy todir="${project.build.directory}/schema-src">
                   <fileset dir="${basedir}/src/main/java">
                     <include name="org/apache/camel/spring/Camel*.java"/>
+                    <include name="org/apache/camel/spring/Endpoint*.java"/>
                     <include name="org/apache/camel/spring/package-info.java"/>
                   </fileset>
                   <fileset dir="${basedir}/../../camel-core/src/main/java">

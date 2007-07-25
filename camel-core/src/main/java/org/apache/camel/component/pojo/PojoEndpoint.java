@@ -18,13 +18,11 @@ package org.apache.camel.component.pojo;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Component;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.spi.Provider;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -35,11 +33,16 @@ import java.lang.reflect.InvocationTargetException;
  * @version $Revision: 519973 $
  */
 public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
+    private final String pojoName;
     private Object pojo;
 
-    public PojoEndpoint(String uri, Component component, Object pojo) {
+    public PojoEndpoint(String uri, Component component, String pojoName) {
         super(uri, component);
-        this.pojo = pojo;
+        this.pojoName = pojoName;
+    }
+
+    public PojoComponent getPojoComponent() {
+        return (PojoComponent) super.getComponent();
     }
 
     public Producer<PojoExchange> createProducer() throws Exception {
@@ -92,10 +95,21 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
     }
 
     public Object getPojo() {
+        if (pojo == null) {
+            pojo = lookupService();
+        }
         return pojo;
     }
 
     public void setPojo(Object pojo) {
         this.pojo = pojo;
+    }
+
+    public String getPojoName() {
+        return pojoName;
+    }
+
+    protected Object lookupService() {
+        return getPojoComponent().getService(getPojoName());
     }
 }

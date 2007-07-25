@@ -1,3 +1,4 @@
 CamelBeanPostProcessor
 CamelContextFactoryBean
 CamelTemplateFactoryBean
+EndpointFactoryBean

@@ -26,7 +26,7 @@
   <bean id="sayService" class="org.apache.camel.spring.remoting.SayService"/>
 
   <!--  Exposes the above bean as via the pojo:say endpoint -->
-  <bean class="org.apache.camel.spring.remoting.CamelServiceExporter">
+  <bean id="serviceExporter" class="org.apache.camel.spring.remoting.CamelServiceExporter">
     <property name="camelContext" ref="camel"/>
     <property name="serviceName" value="say"/>
     <property name="service" ref="sayService"/>
@@ -52,6 +52,4 @@
   </camelContext>
   <!-- END SNIPPET: example -->
 
-
 </beans>
-        <!-- END SNIPPET: example -->
