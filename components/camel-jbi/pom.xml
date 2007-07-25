@@ -107,12 +107,6 @@
           <excludes>
             <!-- TODO FIXME! -->
             <exclude>**/JbiTest.*</exclude>
-
-            <!-- TODO - The new JAXB parsing has broken these!!  -->
-            <exclude>**/JbiEndpointUsingEndpointUriIntegrationTest.*</exclude>
-            <exclude>**/JbiEndpointUsingServiceUriIntegrationTest.*</exclude>
-            <exclude>**/JbiEndpointUsingNameUriIntegrationTest.*</exclude>
-            <exclude>**/NonJbiCamelEndpointsIntegrationTest.*</exclude>
           </excludes>
         </configuration>
       </plugin>
