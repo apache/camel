@@ -15,37 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
+package org.apache.camel.spring.spi;
 
-import org.apache.camel.Processor;
-import org.apache.camel.impl.RouteContext;
+import org.apache.camel.spi.Registry;
+import org.springframework.context.ApplicationContext;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.InitialContext;
+import java.util.Hashtable;
 
 /**
+ * A {@link Registry} implementation which looks up the objects in the Spring
+ * {@link ApplicationContext}
+ *
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "process")
-public class ProcessorRef extends OutputType {
-    private String ref;
+public class ApplicationContextRegistry implements Registry {
+    private ApplicationContext applicationContext;
 
-    @Override
-    public String toString() {
-        return "Processor[ref:  " + ref + "]";
+    public ApplicationContextRegistry(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
-    @XmlAttribute(required = true)
-    public String getRef() {
-        return ref;
+    public <T> T lookup(String name, Class<T> type) {
+        Object value = applicationContext.getBean(name, type);
+        return type.cast(value);
     }
 
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) {
-        return routeContext.lookup(getRef(), Processor.class);
-    }
 }

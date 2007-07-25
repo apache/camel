@@ -21,6 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Registry;
 
 import java.util.Collection;
 import java.util.List;
@@ -162,6 +163,12 @@ public interface CamelContext extends Service {
     TypeConverter getTypeConverter();
 
     /**
+     * Returns the registry used to lookup components by name and type such as the Spring ApplicationContext,
+     * JNDI or the OSGi Service Registry
+     */
+    Registry getRegistry();
+
+    /**
      * Returns the injector used to instantiate objects by type
      */
     Injector getInjector();
@@ -170,4 +177,5 @@ public interface CamelContext extends Service {
      * Resolves a language for creating expressions
      */
     Language resolveLanguage(String language);
+
 }
