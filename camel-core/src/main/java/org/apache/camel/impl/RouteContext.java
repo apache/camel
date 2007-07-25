@@ -27,6 +27,7 @@ import org.apache.camel.processor.CompositeProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collection;
 
 /**
  * The context used to activate new routing rules
@@ -62,9 +63,15 @@ public class RouteContext {
         return getRoute().getCamelContext();
     }
 
-    public Processor createProcessor(List<ProcessorType> processors) {
+    public Processor createProcessor(ProcessorType node) throws Exception {
+        Processor processor = createProcessor(node.getOutputs());
+        return node.wrapProcessor(this, processor);
+    }
+
+
+    public Processor createProcessor(Collection<ProcessorType> outputs) throws Exception {
         List<Processor> list = new ArrayList<Processor>();
-        for (ProcessorType output : processors) {
+        for (ProcessorType output : outputs) {
             Processor processor = output.createProcessor(this);
             list.add(processor);
         }

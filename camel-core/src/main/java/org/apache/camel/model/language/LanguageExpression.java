@@ -17,11 +17,10 @@
  */
 package org.apache.camel.model.language;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
 
 /**
  * Represents a parameterised language expression which can support any language
@@ -50,5 +49,4 @@ public class LanguageExpression extends ExpressionType {
     public void setLanguage(String language) {
         this.language = language;
     }
-
 }

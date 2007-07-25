@@ -17,6 +17,9 @@
  */
 package org.apache.camel.model;
 
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.processor.DelegateProcessor;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -37,6 +40,14 @@ public class InterceptorRef {
     @Override
     public String toString() {
         return "Interceptor[ref:  " + ref + "]";
+    }
+
+    public DelegateProcessor createInterceptor(RouteContext routeContext) {
+        DelegateProcessor answer = routeContext.lookup(getRef(), DelegateProcessor.class);
+        if (answer == null) {
+            throw new IllegalArgumentException("No DelegateProcessor bean available for reference: " + getRef());
+        }
+        return answer;
     }
 
     @XmlAttribute(required = true)

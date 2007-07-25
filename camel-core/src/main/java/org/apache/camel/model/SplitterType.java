@@ -31,15 +31,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "splitter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SplitterType extends ExpressionNode {
-
     @Override
     public String toString() {
         return "Splitter[ " + getExpression() + " -> " + getOutputs() + "]";
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) {
-        Processor childProcessor = routeContext.createProcessor(getOutputs());
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
+        Processor childProcessor = routeContext.createProcessor(this);
         return new Splitter(getExpression().createExpression(routeContext), childProcessor);
     }
 }

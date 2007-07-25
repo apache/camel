@@ -40,6 +40,11 @@ public abstract class OutputType extends ProcessorType {
 
     public void setOutputs(List<ProcessorType> outputs) {
         this.outputs = outputs;
+        if (outputs != null) {
+            for (ProcessorType output : outputs) {
+                configureChild(output);
+            }
+        }
     }
 
     @XmlElement(required = false)
@@ -51,4 +56,9 @@ public abstract class OutputType extends ProcessorType {
         this.interceptors = interceptors;
     }
 
+    protected void configureChild(ProcessorType output) {
+        if (output.isInheritErrorHandler()) {
+            output.setErrorHandlerBuilder(getErrorHandlerBuilder());
+        }
+    }
 }

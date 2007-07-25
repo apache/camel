@@ -87,4 +87,15 @@ public class ObjectConverter {
         return null;
     }
 
+    /**
+     * Returns the boolean value, or null if the value is null
+     */
+    @Converter
+    public static Boolean toBoolean(Boolean value) {
+        if (value != null) {
+            return value.booleanValue();
+        }
+        return false;
+    }
+
 }

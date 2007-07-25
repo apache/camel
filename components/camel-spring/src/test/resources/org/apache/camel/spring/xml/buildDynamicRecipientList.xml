@@ -30,9 +30,7 @@
     <route>
       <from uri="seda:a"/>
       <recipientList>
-        <recipients>
-          <header name="foo"/>
-        </recipients>
+        <xpath>$foo</xpath>
       </recipientList>
     </route>
   </camelContext>

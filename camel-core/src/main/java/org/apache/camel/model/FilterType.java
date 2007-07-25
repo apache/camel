@@ -17,7 +17,6 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.FilterProcessor;
 
@@ -28,15 +27,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "filter")
 public class FilterType extends ExpressionNode {
-
     @Override
     public String toString() {
         return "Filter[ " + getExpression() + " -> " + getOutputs() + "]";
     }
 
     @Override
-    public FilterProcessor createProcessor(RouteContext routeContext) {
+    public FilterProcessor createProcessor(RouteContext routeContext) throws Exception {
         return createFilterProcessor(routeContext);
     }
-
 }

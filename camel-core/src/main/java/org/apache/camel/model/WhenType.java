@@ -17,9 +17,8 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.impl.RouteContext;
-import org.apache.camel.Processor;
+import org.apache.camel.processor.FilterProcessor;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -28,14 +27,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "when")
 public class WhenType extends ExpressionNode {
-
     @Override
     public String toString() {
         return "When[ " + getExpression() + " -> " + getOutputs() + "]";
     }
 
     @Override
-    public FilterProcessor createProcessor(RouteContext routeContext) {
+    public FilterProcessor createProcessor(RouteContext routeContext) throws Exception {
         return createFilterProcessor(routeContext);
     }
 }

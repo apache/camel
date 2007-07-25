@@ -398,7 +398,9 @@ public class RouteBuilderTest extends TestSupport {
     }
 
     protected void assertSendTo(Processor processor, String uri) {
-        processor = unwrapErrorHandler(processor);
+    	if (!(processor instanceof SendProcessor)) {
+    		processor = unwrapErrorHandler(processor);
+    	}
 
         SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, processor);
         assertEquals("Endpoint URI", uri, sendProcessor.getDestination().getEndpointUri());

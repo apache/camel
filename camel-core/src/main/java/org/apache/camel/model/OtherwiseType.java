@@ -30,14 +30,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "otherwise")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OtherwiseType extends OutputType {
-
     @Override
     public String toString() {
         return "Otherwise[" + getOutputs() + "]";
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) {
-        return routeContext.createProcessor(getOutputs());
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
+        return routeContext.createProcessor(this);
     }
 }

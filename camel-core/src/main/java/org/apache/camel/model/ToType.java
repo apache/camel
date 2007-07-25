@@ -16,8 +16,8 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.Processor;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.SendProcessor;
 
@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,7 +44,7 @@ public class ToType extends ProcessorType {
     @XmlAttribute
     private String ref;
     @XmlElement(required = false)
-    private List<InterceptorRef> interceptors;
+    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
 
     @Override
     public String toString() {
@@ -50,7 +52,7 @@ public class ToType extends ProcessorType {
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) {
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
         Endpoint endpoint = resolveEndpoint(routeContext);
         return new SendProcessor(endpoint);
     }

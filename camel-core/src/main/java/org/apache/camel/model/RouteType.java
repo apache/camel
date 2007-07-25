@@ -20,8 +20,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
-import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.impl.RouteContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -40,6 +41,8 @@ import java.util.List;
 @XmlRootElement(name = "route")
 @XmlType(propOrder = {"interceptors", "inputs", "outputs"})
 public class RouteType extends ProcessorType implements CamelContextAware {
+    private static final transient Log log = LogFactory.getLog(RouteType.class);
+    
     private CamelContext camelContext;
     private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
     private List<FromType> inputs = new ArrayList<FromType>();
@@ -102,6 +105,12 @@ public class RouteType extends ProcessorType implements CamelContextAware {
 
     public void setOutputs(List<ProcessorType> outputs) {
         this.outputs = outputs;
+
+        if (outputs != null) {
+            for (ProcessorType output : outputs) {
+                configureChild(output);
+            }
+        }
     }
 
     @XmlTransient
@@ -123,9 +132,19 @@ public class RouteType extends ProcessorType implements CamelContextAware {
     protected void addRoutes(Collection<Route> routes, FromType fromType) throws Exception {
         RouteContext routeContext = new RouteContext(this, fromType);
         Endpoint endpoint = routeContext.getEndpoint();
-        
+
         for (ProcessorType output : outputs) {
             output.addRoutes(routeContext, routes);
+        }
+    }
+
+    protected void configureChild(ProcessorType output) {
+        List<InterceptorRef> list = output.getInterceptors();
+        if (list == null) {
+            log.warn("No interceptor collection: " + output);
+        }
+        else {
+            list.addAll(getInterceptors());
         }
     }
 }

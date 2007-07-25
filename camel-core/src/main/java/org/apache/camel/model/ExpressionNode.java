@@ -16,18 +16,16 @@
  */
 package org.apache.camel.model;
 
+import org.apache.camel.Processor;
+import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.impl.RouteContext;
-import org.apache.camel.Processor;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -68,8 +66,8 @@ public class ExpressionNode extends ProcessorType {
         this.outputs = outputs;
     }
 
-    protected FilterProcessor createFilterProcessor(RouteContext routeContext) {
-        Processor childProcessor = routeContext.createProcessor(getOutputs());
+    protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
+        Processor childProcessor = routeContext.createProcessor(this);
         return new FilterProcessor(getExpression().createPredicate(routeContext), childProcessor);
     }
 }
