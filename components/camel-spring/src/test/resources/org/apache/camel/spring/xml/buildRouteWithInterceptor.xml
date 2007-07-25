@@ -35,11 +35,10 @@
 
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
+      <interceptor ref="interceptor1"/>
+      <interceptor ref="interceptor2"/>
+      
       <from uri="seda:a"/>
-      <intercept>
-        <interceptor ref="interceptor1"/>
-        <interceptor ref="interceptor2"/>
-      </intercept>
       <to uri="seda:d"/>
     </route>
   </camelContext>

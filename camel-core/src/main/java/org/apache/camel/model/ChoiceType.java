@@ -22,14 +22,11 @@ import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAccessorOrder;
-import javax.xml.bind.annotation.XmlAccessOrder;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +50,7 @@ public class ChoiceType extends ProcessorType {
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) {
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
         List<FilterProcessor> filters = new ArrayList<FilterProcessor>();
         for (WhenType whenClaus : whenClauses) {
             filters.add(whenClaus.createProcessor(routeContext));
@@ -92,7 +89,5 @@ public class ChoiceType extends ProcessorType {
     public void setInterceptors(List<InterceptorRef> interceptors) {
         this.interceptors = interceptors;
     }
-
-
 }
 

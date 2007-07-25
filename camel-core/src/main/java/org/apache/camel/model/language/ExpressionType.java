@@ -24,12 +24,12 @@ import org.apache.camel.Predicate;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.spi.Language;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -74,7 +74,6 @@ public abstract class ExpressionType {
         return language.createExpression(getExpression());
     }
 
-
     public String getExpression() {
         return expression;
     }
@@ -102,5 +101,4 @@ public abstract class ExpressionType {
     public void setId(String value) {
         this.id = value;
     }
-
 }

@@ -30,12 +30,9 @@
     <route>
       <from uri="seda:a"/>
       <filter>
-        <predicate>
-          <header name="foo"/>
-          <isEqualTo value="bar"/>
-        </predicate>
+        <xpath>$foo = 'bar'</xpath>
+        <to uri="seda:b"/>
       </filter>
-      <to uri="seda:b"/>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->

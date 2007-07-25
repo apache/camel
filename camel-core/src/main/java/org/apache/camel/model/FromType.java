@@ -17,7 +17,6 @@
 package org.apache.camel.model;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.impl.RouteContext;
 
 import javax.xml.bind.annotation.XmlAccessType;

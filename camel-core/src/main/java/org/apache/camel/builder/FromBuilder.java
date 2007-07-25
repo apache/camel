@@ -380,6 +380,14 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
         return answer;
     }
 
+    @Fluent
+    public FromBuilder intercept(@FluentArg("interceptor")DelegateProcessor interceptor) {
+        InterceptorBuilder answer = new InterceptorBuilder(this);
+        answer.add(interceptor);
+        addProcessBuilder(answer);
+        return answer.target();
+    }
+
     /**
      * Trace logs the exchange before it goes to the next processing step using the {@link #DEFAULT_TRACE_CATEGORY} logging
      * category.
@@ -408,14 +416,6 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
                 processNext(exchange);
             }
         });
-    }
-
-    @Fluent
-    public FromBuilder intercept(@FluentArg("interceptor")DelegateProcessor interceptor) {
-        InterceptorBuilder answer = new InterceptorBuilder(this);
-        answer.add(interceptor);
-        addProcessBuilder(answer);
-        return answer.target();
     }
 
     @Fluent(nestedActions = true)

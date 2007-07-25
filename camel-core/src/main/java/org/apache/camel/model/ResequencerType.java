@@ -34,15 +34,14 @@ import java.util.List;
  */
 @XmlRootElement(name = "resequencer")
 public class ResequencerType extends ExpressionNode {
-
     @Override
     public String toString() {
         return "Resequencer[ " + getExpression() + " -> " + getOutputs() + "]";
     }
 
-    public void addRoutes(RouteContext routeContext, Collection<Route> routes) {
+    public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         Endpoint from = routeContext.getEndpoint();
-        final Processor processor = routeContext.createProcessor(getOutputs());
+        final Processor processor = routeContext.createProcessor(this);
         final Resequencer resequencer = new Resequencer(from, processor, getExpression().createExpression(routeContext));
 
         Route<Exchange> route = new Route<Exchange>(from) {
@@ -57,5 +56,4 @@ public class ResequencerType extends ExpressionNode {
         };
         routes.add(route);
     }
-
 }

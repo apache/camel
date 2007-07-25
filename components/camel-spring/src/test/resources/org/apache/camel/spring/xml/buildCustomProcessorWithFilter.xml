@@ -32,12 +32,9 @@
     <route>
       <from uri="seda:a"/>
       <filter>
-        <predicate>
-          <header name="foo"/>
-          <isEqualTo value="bar"/>
-        </predicate>
+        <xpath>$foo = 'bar'</xpath>
+        <process ref="myProcessor"/>
       </filter>
-      <process ref="myProcessor"/>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->

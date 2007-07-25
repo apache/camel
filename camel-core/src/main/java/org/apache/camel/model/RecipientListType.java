@@ -17,6 +17,11 @@
  */
 package org.apache.camel.model;
 
+import org.apache.camel.Processor;
+import org.apache.camel.processor.Splitter;
+import org.apache.camel.processor.RecipientList;
+import org.apache.camel.impl.RouteContext;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -33,4 +38,8 @@ public class RecipientListType extends ExpressionNode {
         return "RecipientList[ " + getExpression() + "]";
     }
 
+    @Override
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
+        return new RecipientList(getExpression().createExpression(routeContext));
+    }
 }
