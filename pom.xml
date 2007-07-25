@@ -118,11 +118,18 @@
     </pluginRepository>
 
     <!-- mostly just for: maven-jaxb-schemagen-plugin -->
+<!--
     <pluginRepository>
       <id>maven2-repository.dev.java.net</id>
       <name>Java.net Repository for Maven</name>
       <url>http://download.java.net/maven/2/</url>
       <layout>default</layout>
+    </pluginRepository>
+-->
+    <pluginRepository>
+      <id>logicblaze.repo</id>
+      <name>LogicBlaze Repository</name>
+      <url>http://repo.logicblaze.com/maven2-all</url>
     </pluginRepository>
   </pluginRepositories>
 
@@ -658,7 +665,7 @@
         <plugin>
           <groupId>com.sun.tools.jxc.maven2</groupId>
           <artifactId>maven-jaxb-schemagen-plugin</artifactId>
-          <version>1.2</version>
+          <version>1.3-dev</version>
         </plugin>
       </plugins>
     </pluginManagement>

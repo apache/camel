@@ -24,6 +24,7 @@ import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.model.language.LanguageExpression;
 
+import javax.xml.bind.annotation.XmlElementRef;
 import java.util.Collection;
 import java.util.List;
 

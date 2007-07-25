@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -37,9 +39,14 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * @version $Revision: 1.1 $
  */
 @XmlType(name = "expressionType")
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class ExpressionType {
-    private String expression;
+    @XmlAttribute
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    @XmlID
     private String id;
+    @XmlValue
+    private String expression;
 
     public abstract String getLanguage();
 
@@ -68,7 +75,6 @@ public abstract class ExpressionType {
     }
 
 
-    @XmlValue
     public String getExpression() {
         return expression;
     }
@@ -83,9 +89,6 @@ public abstract class ExpressionType {
      * @return possible object is
      *         {@link String }
      */
-    @XmlAttribute
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlID
     public String getId() {
         return id;
     }

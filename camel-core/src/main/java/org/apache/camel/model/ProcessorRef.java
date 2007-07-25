@@ -17,6 +17,9 @@
  */
 package org.apache.camel.model;
 
+import org.apache.camel.Processor;
+import org.apache.camel.impl.RouteContext;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -39,5 +42,11 @@ public class ProcessorRef extends OutputType {
 
     public void setRef(String ref) {
         this.ref = ref;
+    }
+
+    @Override
+    public Processor createProcessor(RouteContext routeContext) {
+        // TODO need to lookup the referenced processor...
+        return super.createProcessor(routeContext);
     }
 }

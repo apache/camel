@@ -38,8 +38,6 @@ public class ExpressionNode extends ProcessorType {
     @XmlElement(required = false)
     private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();// TODO can we zap this hack to get schemagen to generate the correct schema?
     @XmlElementRef
-    private List<ExpressionType> expressions;
-    @XmlTransient
     private ExpressionType expression;
     @XmlElementRef
     private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
@@ -53,15 +51,11 @@ public class ExpressionNode extends ProcessorType {
     }
 
     public ExpressionType getExpression() {
-        if (expression == null && expressions != null && !expressions.isEmpty()) {
-            expression = expressions.get(0);
-        }
         return expression;
     }
 
     public void setExpression(ExpressionType expression) {
         this.expression = expression;
-        this.expressions = Collections.singletonList(expression);
     }
 
     public List<ProcessorType> getOutputs() {
