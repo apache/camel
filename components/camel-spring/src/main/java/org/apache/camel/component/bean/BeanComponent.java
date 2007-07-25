@@ -18,7 +18,6 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.pojo.PojoEndpoint;
 import org.apache.camel.impl.DefaultComponent;
 import static org.apache.camel.util.ObjectHelper.notNull;
 import org.springframework.beans.BeansException;
@@ -54,10 +53,6 @@ public class BeanComponent extends DefaultComponent implements ApplicationContex
 
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         notNull(applicationContext, "applicationContext");
-        Object object = applicationContext.getBean(remaining);
-        if (object != null) {
-            return new PojoEndpoint(uri, this, object);
-        }
-        return null;
+        return new BeanEndpoint(uri, this, remaining);
     }
 }

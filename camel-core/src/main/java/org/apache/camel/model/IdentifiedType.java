@@ -20,6 +20,8 @@ package org.apache.camel.model;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -45,9 +47,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * @version $Revision: 1.1 $
  */
 @XmlType(name = "identifiedType")
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class IdentifiedType {
-
-    protected String id;
+    @XmlAttribute
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    @XmlID
+    private String id;
 
     /**
      * Gets the value of the id property.
@@ -55,9 +60,6 @@ public abstract class IdentifiedType {
      * @return possible object is
      *         {@link String }
      */
-    @XmlAttribute
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlID
     public String getId() {
         return id;
     }

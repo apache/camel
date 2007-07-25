@@ -19,18 +19,31 @@ package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.model.IdentifiedType;
 import static org.apache.camel.util.ObjectHelper.notNull;
 import org.springframework.beans.factory.FactoryBean;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * A {@link FactoryBean} which instantiates {@link Endpoint} objects
  *
  * @version $Revision: 1.1 $
  */
-public class EndpointFactoryBean implements FactoryBean {
-    private CamelContext context;
+@XmlRootElement(name = "endpoint")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class EndpointFactoryBean extends IdentifiedType implements FactoryBean {
+    @XmlAttribute
     private String uri;
+    @XmlTransient
+    private CamelContext context;
+    @XmlTransient
     private Endpoint endpoint;
+    @XmlTransient
     private boolean singleton;
 
     public Object getObject() throws Exception {

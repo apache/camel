@@ -22,7 +22,9 @@
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
-  <camelContext xmlns="http://activemq.apache.org/camel/schema/spring" packages="org.apache.camel.component.event">
+  <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
+    <package>org.apache.camel.component.event</package>
+
     <route>
       <from uri="event:default"/>
       <to uri="mock:result"/>

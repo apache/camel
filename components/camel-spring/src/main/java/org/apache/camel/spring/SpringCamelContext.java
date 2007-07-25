@@ -78,9 +78,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (eventEndpoint == null) {
-            eventEndpoint = createEventEndpoint();
-        }
         start();
     }
 
@@ -116,6 +113,14 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     public void setEventEndpoint(EventEndpoint eventEndpoint) {
         this.eventEndpoint = eventEndpoint;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (eventEndpoint == null) {
+            eventEndpoint = createEventEndpoint();
+        }
     }
 
     @Override

@@ -21,6 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -30,12 +31,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,12 +52,14 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelContextFactoryBean extends IdentifiedType implements RouteContainer, FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
     private static final Log log = LogFactory.getLog(CamelContextFactoryBean.class);
-    @XmlElement(name="route", required = false)
-    private List<RouteType> routes = new ArrayList<RouteType>();
-    @XmlElement(name="package", required = false)
+    @XmlElement(name = "package", required = false)
     private String[] packages = {};
-    @XmlElement(name="beanPostProcessor", required = false)
+    @XmlElement(name = "beanPostProcessor", required = false)
     private CamelBeanPostProcessor beanPostProcessor;
+    @XmlElement(name = "endpoint", required = false)
+    private List<EndpointFactoryBean> endpoints;
+    @XmlElement(name = "route", required = false)
+    private List<RouteType> routes = new ArrayList<RouteType>();
     @XmlTransient
     private SpringCamelContext context;
     @XmlTransient
@@ -86,9 +90,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
         findRouteBuiders();
         installRoutes();
-
-        // now lets activate the routes
-        getContext().start();
     }
 
     public void destroy() throws Exception {
@@ -96,6 +97,15 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     public void onApplicationEvent(ApplicationEvent event) {
+        if (event instanceof ContextRefreshedEvent) {
+            // now lets start the CamelContext so that all its possible dependencies are initailized
+            try {
+                getContext().start();
+            }
+            catch (Exception e) {
+                throw new RuntimeCamelException(e);
+            }
+        }
         if (context != null) {
             context.onApplicationEvent(event);
         }
@@ -106,7 +116,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     public SpringCamelContext getContext() throws Exception {
         if (context == null) {
             context = new SpringCamelContext(getApplicationContext());
-            context.afterPropertiesSet();
         }
         return context;
     }

@@ -29,8 +29,8 @@ public class SpringRemotingRouteTest extends TestCase {
     public void testPojoRoutes() throws Exception {
 
         ClassPathXmlApplicationContext spring = new ClassPathXmlApplicationContext("org/apache/camel/spring/remoting/spring.xml");
+        spring.getBean("serviceExporter");
         CamelContext camelContext = SpringCamelContext.springCamelContext(spring);
-        camelContext.start();
 
         // START SNIPPET: invoke
         ISay proxy = (ISay) spring.getBean("sayProxy");

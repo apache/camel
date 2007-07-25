@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlIDREF;
 
 /**
  * Represents an XML &lt;to/&gt; element
@@ -31,6 +32,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class FromType {
     @XmlAttribute
     private String uri;
+    @XmlAttribute
+    private String ref;
 
     public FromType() {
     }
@@ -52,5 +55,13 @@ public class FromType {
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
     }
 }

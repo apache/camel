@@ -24,12 +24,14 @@ import org.apache.camel.spring.EndpointFactoryBean;
 import org.apache.camel.spring.xml.BeanDefinitionParser;
 import org.apache.camel.spring.xml.ScriptDefinitionParser;
 import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -81,14 +83,25 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                     Node child = list.item(i);
                     if (child instanceof Element) {
                         Element childElement = (Element) child;
-                        if (child.getLocalName().equals("beanPostProcessor")) {
+                        String localName = child.getLocalName();
+                        if (localName.equals("beanPostProcessor")) {
                             String beanPostProcessorId = contextId + ":beanPostProcessor";
                             childElement.setAttribute("id", beanPostProcessorId);
                             BeanDefinition definition = beanPostProcessorParser.parse(childElement, parserContext);
                             definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
                         }
+                        else if (localName.equals("endpoint")) {
+                            BeanDefinition definition = endpointParser.parse(childElement, parserContext);
+                            String id = childElement.getAttribute("id");
+                            if (isNotNullAndNonEmpty(id)) {
+                                definition.getPropertyValues().addPropertyValue("context", new RuntimeBeanReference(contextId));
+                                //definition.getPropertyValues().addPropertyValue("context", builder.getBeanDefinition());
+                                parserContext.registerComponent(new BeanComponentDefinition(definition, id));
+                            }
+                        }
                     }
                 }
+
             }
         });
 

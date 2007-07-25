@@ -51,8 +51,7 @@ public class PojoComponent extends DefaultComponent<PojoExchange> {
 
     @Override
     protected Endpoint<PojoExchange> createEndpoint(String uri, final String remaining, Map parameters) throws Exception {
-        Object pojo = getService(remaining);
-        return new PojoEndpoint(uri, this, pojo);
+        return new PojoEndpoint(uri, this, remaining);
     }
     
     /**
