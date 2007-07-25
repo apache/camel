@@ -65,9 +65,6 @@ public class EndpointReferenceTest extends SpringTestSupport {
             log.debug("Found bean name: " + name);
         }
 
-        // internally used by the Spring 2 XML
-        getMandatoryBean(StatementRouteBuilder.class, "camel:routes");
-
         testEndpointConfiguration();
     }
 

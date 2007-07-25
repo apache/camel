@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.impl.RouteContext;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -120,8 +121,9 @@ public class RouteType extends ProcessorType implements CamelContextAware {
     }
 
     protected void addRoutes(Collection<Route> routes, FromType fromType) throws Exception {
-        Endpoint endpoint = resolveEndpoint(fromType.getUri());
-        RouteContext routeContext = new RouteContext(this, fromType, endpoint);
+        RouteContext routeContext = new RouteContext(this, fromType);
+        Endpoint endpoint = routeContext.getEndpoint();
+        
         for (ProcessorType output : outputs) {
             output.addRoutes(routeContext, routes);
         }
