@@ -82,4 +82,11 @@ public class RouteContext {
     public Endpoint resolveEndpoint(String uri) {
         return route.resolveEndpoint(uri);
     }
+
+    /**
+     * lookup an object by name and type
+     */
+    public <T> T lookup(String name, Class<T> type) {
+        return getCamelContext().getRegistry().lookup(name, type);
+    }
 }

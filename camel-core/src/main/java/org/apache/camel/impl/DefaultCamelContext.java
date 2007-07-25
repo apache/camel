@@ -33,6 +33,7 @@ import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
@@ -64,6 +65,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private ComponentResolver componentResolver;
     private boolean autoCreateComponents = true;
     private LanguageResolver languageResolver = new DefaultLanguageResolver();
+    private Registry registry;
 
     /**
      * Adds a component to the container.
@@ -336,6 +338,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.autoCreateComponents = autoCreateComponents;
     }
 
+    public Registry getRegistry() {
+        if (registry == null) {
+            registry = createRegistry();
+        }
+        return registry;
+    }
+
+    public void setRegistry(Registry registry) {
+        this.registry = registry;
+    }
+
     // Implementation methods
     //-----------------------------------------------------------------------
 
@@ -424,5 +437,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      */
     protected ComponentResolver createComponentResolver() {
         return new DefaultComponentResolver();
+    }
+
+    /**
+     * Lazily create a default implementation
+     */
+    protected Registry createRegistry() {
+        return new JndiRegistry();
     }
 }

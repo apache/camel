@@ -24,8 +24,10 @@ import org.apache.camel.component.event.EventEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.SpringComponentResolver;
 import org.apache.camel.spring.spi.SpringInjector;
+import org.apache.camel.spring.spi.ApplicationContextRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -130,5 +132,10 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     protected EventEndpoint createEventEndpoint() {
         EventEndpoint endpoint = getEndpoint("event:default", EventEndpoint.class);
         return endpoint;
+    }
+
+    @Override
+    protected Registry createRegistry() {
+        return new ApplicationContextRegistry(getApplicationContext());
     }
 }

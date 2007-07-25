@@ -15,37 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
-
-import org.apache.camel.Processor;
-import org.apache.camel.impl.RouteContext;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+package org.apache.camel.spi;
 
 /**
+ * Represents a service registry which may be implemented via a Spring ApplicationContext,
+ * via JNDI, a simple Map or the OSGI Service Registry
+ *
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "process")
-public class ProcessorRef extends OutputType {
-    private String ref;
+public interface Registry {
 
-    @Override
-    public String toString() {
-        return "Processor[ref:  " + ref + "]";
-    }
-
-    @XmlAttribute(required = true)
-    public String getRef() {
-        return ref;
-    }
-
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) {
-        return routeContext.lookup(getRef(), Processor.class);
-    }
+    /**
+     * Looks up a service in the registry, returning the service or null if it could not be found.
+     *
+     * @param name the name of the service
+     * @param type the type of the required service
+     * @return the service from the registry or null if it could not be found
+     */
+    <T> T lookup(String name, Class<T> type);
 }

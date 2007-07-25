@@ -120,7 +120,6 @@
             <exclude>**/PojoConsumerTest.*</exclude>
             <exclude>**/InjectedBeanTest.*</exclude>
             <exclude>**/EventRouteTest.*</exclude>
-            <exclude>**/CustomProcessorWithNamespacesTest.*</exclude>
             <exclude>**/EndpointReferenceTest.*</exclude>
             <exclude>**/PojoSenderTest.*</exclude>
             <exclude>**/SpringRemotingRouteTest.*</exclude>
