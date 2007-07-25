@@ -16,11 +16,14 @@
  */
 package org.apache.camel.model;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.impl.RouteContext;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlIDREF;
 
 /**
  * Represents an XML &lt;to/&gt; element
@@ -44,7 +47,11 @@ public class FromType {
 
     @Override
     public String toString() {
-        return "From[" + uri + "]";
+        return "From[" + description(getUri(), getRef()) + "]";
+    }
+
+    public Endpoint resolveEndpoint(RouteContext context) {
+        return context.resolveEndpoint(getUri(), getRef());
     }
 
     // Properties
@@ -53,6 +60,11 @@ public class FromType {
         return uri;
     }
 
+    /**
+     * Sets the URI of the endpoint to use
+     *
+     * @param uri the endpoint URI to use
+     */
     public void setUri(String uri) {
         this.uri = uri;
     }
@@ -61,7 +73,26 @@ public class FromType {
         return ref;
     }
 
+    /**
+     * Sets the name of the endpoint within the registry (such as the Spring ApplicationContext or JNDI) to use
+     *
+     * @param ref the reference name to use
+     */
     public void setRef(String ref) {
         this.ref = ref;
+    }
+
+    // Implementation methods
+    //-----------------------------------------------------------------------
+    protected static String description(String uri, String ref) {
+        if (uri != null) {
+            return uri;
+        }
+        else if (ref != null) {
+            return "ref:" + ref;
+        }
+        else {
+            return "no uri or ref supplied!";
+        }
     }
 }

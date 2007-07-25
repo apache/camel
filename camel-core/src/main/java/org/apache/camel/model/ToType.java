@@ -17,9 +17,12 @@
 package org.apache.camel.model;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Endpoint;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.SendProcessor;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,36 +35,62 @@ import java.util.List;
  * @version $Revision: $
  */
 @XmlRootElement(name = "to")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ToType extends ProcessorType {
+    @XmlAttribute
     private String uri;
+    @XmlAttribute
+    private String ref;
+    @XmlElement(required = false)
     private List<InterceptorRef> interceptors;
 
     @Override
     public String toString() {
-        return "To[" + uri + "]";
+        return "To[" + FromType.description(getUri(), getRef()) + "]";
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) {
-        return new SendProcessor(routeContext.resolveEndpoint(getUri()));
+        Endpoint endpoint = resolveEndpoint(routeContext);
+        return new SendProcessor(endpoint);
+    }
+
+    public Endpoint resolveEndpoint(RouteContext context) {
+        return context.resolveEndpoint(getUri(), getRef());
     }
 
     // Properties
     //-----------------------------------------------------------------------
-    @XmlAttribute
     public String getUri() {
         return uri;
     }
 
+    /**
+     * Sets the URI of the endpoint to use
+     *
+     * @param uri the endpoint URI to use
+     */
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    /**
+     * Sets the name of the endpoint within the registry (such as the Spring ApplicationContext or JNDI) to use
+     *
+     * @param ref the reference name to use
+     */
+    public void setRef(String ref) {
+        this.ref = ref;
     }
 
     public List<ProcessorType> getOutputs() {
         return Collections.EMPTY_LIST;
     }
 
-    @XmlElement(required = false)
     public List<InterceptorRef> getInterceptors() {
         return interceptors;
     }

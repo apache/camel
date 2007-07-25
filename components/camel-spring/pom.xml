@@ -116,7 +116,6 @@
           <excludes>
             <!-- TODO - FIXME ASAP -->
             <exclude>**/SpringXmlRouteBuilderTest.*</exclude>
-            <exclude>**/EndpointReferenceTest.*</exclude>
           </excludes>
         </configuration>
       </plugin>

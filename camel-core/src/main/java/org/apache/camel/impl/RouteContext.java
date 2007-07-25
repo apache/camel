@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.model.FromType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
@@ -35,15 +36,17 @@ import java.util.List;
 public class RouteContext {
     private final RouteType route;
     private final FromType from;
-    private final Endpoint endpoint;
+    private Endpoint endpoint;
 
-    public RouteContext(RouteType route, FromType from, Endpoint endpoint) {
+    public RouteContext(RouteType route, FromType from) {
         this.route = route;
         this.from = from;
-        this.endpoint = endpoint;
     }
 
     public Endpoint getEndpoint() {
+        if (endpoint == null) {
+            endpoint = from.resolveEndpoint(this);
+        }
         return endpoint;
     }
 
@@ -81,6 +84,31 @@ public class RouteContext {
 
     public Endpoint resolveEndpoint(String uri) {
         return route.resolveEndpoint(uri);
+    }
+
+    /**
+     * Resolves an endpoint from either a URI or a named reference
+     */
+    public Endpoint resolveEndpoint(String uri, String ref) {
+        Endpoint endpoint = null;
+        if (uri != null) {
+            endpoint = resolveEndpoint(uri);
+            if (endpoint == null) {
+               throw new NoSuchEndpointException(uri);
+            }
+        }
+        if (ref != null) {
+            endpoint = lookup(ref, Endpoint.class);
+            if (endpoint == null) {
+               throw new NoSuchEndpointException("ref:" + ref);
+            }
+        }
+        if (endpoint == null) {
+            throw new IllegalArgumentException("Either 'uri' or 'ref' must be specified on: " + this);
+        }
+        else {
+            return endpoint;
+        }
     }
 
     /**
