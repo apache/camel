@@ -36,8 +36,7 @@ public class FilterType extends ExpressionNode {
 
     @Override
     public FilterProcessor createProcessor(RouteContext routeContext) {
-        Processor childProcessor = routeContext.createProcessor(getOutputs());
-        return new FilterProcessor(getExpression().createPredicate(routeContext), childProcessor);
+        return createFilterProcessor(routeContext);
     }
 
 }

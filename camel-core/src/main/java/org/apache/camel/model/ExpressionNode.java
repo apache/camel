@@ -17,6 +17,9 @@
 package org.apache.camel.model;
 
 import org.apache.camel.model.language.ExpressionType;
+import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.Processor;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -33,10 +36,9 @@ import java.util.List;
  * @version $Revision: $
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-//@XmlType(propOrder = {"interceptors", "expression", "outputs"})
 public class ExpressionNode extends ProcessorType {
     @XmlElement(required = false)
-    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();// TODO can we zap this hack to get schemagen to generate the correct schema?
+    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
     @XmlElementRef
     private ExpressionType expression;
     @XmlElementRef
@@ -64,5 +66,10 @@ public class ExpressionNode extends ProcessorType {
 
     public void setOutputs(List<ProcessorType> outputs) {
         this.outputs = outputs;
+    }
+
+    protected FilterProcessor createFilterProcessor(RouteContext routeContext) {
+        Processor childProcessor = routeContext.createProcessor(getOutputs());
+        return new FilterProcessor(getExpression().createPredicate(routeContext), childProcessor);
     }
 }
