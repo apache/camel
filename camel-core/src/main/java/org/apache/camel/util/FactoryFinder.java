@@ -22,6 +22,9 @@ import org.apache.camel.spi.Injector;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -56,12 +59,34 @@ public class FactoryFinder {
     }
 
     public Object newInstance(String key, Injector injector) throws IOException, ClassNotFoundException {
-        return newInstance(key, injector, null);
+        return newInstance(key, injector, (String) null);
     }
 
     public Object newInstance(String key, Injector injector, String propertyPrefix) throws IOException, ClassNotFoundException {
         Class type = findClass(key, propertyPrefix);
         return injector.newInstance(type);
+    }
+
+    public <T> T newInstance(String key, Injector injector, Class<T> expectedType) throws IOException, ClassNotFoundException {
+        return newInstance(key, injector, null, expectedType);
+    }
+
+    public <T> T newInstance(String key, Injector injector, String propertyPrefix, Class<T> expectedType) throws IOException, ClassNotFoundException {
+        Class type = findClass(key, propertyPrefix);
+        Object value = injector.newInstance(type);
+        if (expectedType.isInstance(value)) {
+            return expectedType.cast(value);
+        }
+        else {
+            throw new ClassCastException("Not instanceof " + expectedType.getName() + " value: " + value);
+        }
+    }
+
+    public <T> List<T> newInstances(String key, Injector injector, Class<T> type) throws IOException, ClassNotFoundException {
+        List<Class> list = findClasses(key);
+        List<T> answer = new ArrayList<T>(list.size());
+        answer.add(newInstance(key, injector, type));
+        return answer;
     }
 
     public Class findClass(String key) throws ClassNotFoundException, IOException {
@@ -79,6 +104,16 @@ public class FactoryFinder {
             classMap.put(propertyPrefix + key, clazz);
         }
         return clazz;
+    }
+
+    public List<Class> findClasses(String key) throws ClassNotFoundException, IOException {
+        return findClasses(key, null);
+    }
+
+    public List<Class> findClasses(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
+        // TODO change to support finding multiple classes on the classpath!
+        Class type = findClass(key, propertyPrefix);
+        return Collections.singletonList(type);
     }
 
     private Class newInstance(Properties properties, String propertyPrefix) throws ClassNotFoundException, IOException {

@@ -21,10 +21,13 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.ReflectionInjector;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.util.FactoryFinder;
+import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -169,16 +172,16 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
         // lets try classes derived from this toType
         if (fromType != null) {
-	        Set<Map.Entry<TypeMapping, TypeConverter>> entries = typeMappings.entrySet();
-	        for (Map.Entry<TypeMapping, TypeConverter> entry : entries) {
-	            TypeMapping key = entry.getKey();
-	            Class aToType = key.getToType();
-	            if (toType.isAssignableFrom(aToType)) {
-	                if (fromType.isAssignableFrom(key.getFromType())) {
-	                    return entry.getValue();
-	                }
-	            }
-	        }
+            Set<Map.Entry<TypeMapping, TypeConverter>> entries = typeMappings.entrySet();
+            for (Map.Entry<TypeMapping, TypeConverter> entry : entries) {
+                TypeMapping key = entry.getKey();
+                Class aToType = key.getToType();
+                if (toType.isAssignableFrom(aToType)) {
+                    if (fromType.isAssignableFrom(key.getFromType())) {
+                        return entry.getValue();
+                    }
+                }
+            }
         }
 
         // TODO look at constructors of toType?
@@ -191,15 +194,29 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     protected synchronized void checkLoaded() {
         if (!loaded) {
             loaded = true;
-            for (TypeConverterLoader typeConverterLoader : typeConverterLoaders) {
-                try {
+            try {
+                for (TypeConverterLoader typeConverterLoader : typeConverterLoaders) {
                     typeConverterLoader.load(this);
                 }
-                catch (Exception e) {
-                    throw new RuntimeCamelException(e);
+
+                // lets try load any other failback converters
+                try {
+                    loadFallbackTypeConverters();
+                }
+                catch (NoFactoryAvailableException e) {
+                    // ignore its fine to have none
                 }
             }
+            catch (Exception e) {
+                throw new RuntimeCamelException(e);
+            }
         }
+    }
+
+    protected void loadFallbackTypeConverters() throws IOException, ClassNotFoundException {
+        FactoryFinder finder = new FactoryFinder();
+        List<TypeConverter> converters = finder.newInstances("FallbackTypeConverter", getInjector(), TypeConverter.class);
+        fallbackConverters.addAll(converters);
     }
 
     /**
