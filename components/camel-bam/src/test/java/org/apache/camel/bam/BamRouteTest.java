@@ -59,7 +59,7 @@ public class BamRouteTest extends SpringTestSupport {
         return new ProcessBuilder(jpaTemplate, transactionTemplate) {
             public void configure() throws Exception {
 
-                // lets define some activities
+                // lets define some activities, correlating on an XPath on the message bodies
                 ActivityBuilder a = activity("direct:a").name("a")
                         .correlate(xpath("/hello/@id"));
 
