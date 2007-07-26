@@ -16,10 +16,13 @@
  */
 package org.apache.camel.bam;
 
+import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import static org.apache.camel.util.Time.seconds;
+import org.apache.camel.model.language.XPathExpression;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -28,15 +31,12 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @version $Revision: $
  */
 public class BamRouteTest extends SpringTestSupport {
-    protected Object body = "<hello>world!</hello>";
-    protected JpaTemplate jpaTemplate;
-    protected MockEndpoint overdueEndpoint;
-    protected TransactionTemplate transactionTemplate;
 
-    public void testRoute() throws Exception {
+    public void testSendingToFirstActivityOnlyResultsInOverdueMessage() throws Exception {
+        MockEndpoint overdueEndpoint = resolveMandatoryEndpoint("mock:overdue", MockEndpoint.class);
         overdueEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:a", body, "foo", "a");
+        template.sendBody("direct:a", "<hello id='123'>world!</hello>");
 
         overdueEndpoint.assertIsSatisfied(5000);
     }
@@ -48,15 +48,12 @@ public class BamRouteTest extends SpringTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
         camelContext.addRoutes(createRouteBuilder());
-
-        overdueEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:overdue");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        jpaTemplate = getMandatoryBean(JpaTemplate.class, "jpaTemplate");
-        transactionTemplate = getMandatoryBean(TransactionTemplate.class, "transactionTemplate");
+        JpaTemplate jpaTemplate = getMandatoryBean(JpaTemplate.class, "jpaTemplate");
+        TransactionTemplate transactionTemplate = getMandatoryBean(TransactionTemplate.class, "transactionTemplate");
 
         // START SNIPPET: example
         return new ProcessBuilder(jpaTemplate, transactionTemplate) {
@@ -64,10 +61,10 @@ public class BamRouteTest extends SpringTestSupport {
 
                 // lets define some activities
                 ActivityBuilder a = activity("direct:a").name("a")
-                        .correlate(header("foo"));
+                        .correlate(xpath("/hello/@id"));
 
                 ActivityBuilder b = activity("direct:b").name("b")
-                        .correlate(header("foo"));
+                        .correlate(xpath("/hello/@id"));
 
                 // now lets add some rules
                 b.starts().after(a.completes())
