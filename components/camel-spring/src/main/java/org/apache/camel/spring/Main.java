@@ -45,8 +45,7 @@ public class Main extends ServiceSupport {
 
     public static void main(String[] args) {
         Main main = new Main();
-        main.parseArguments(args);
-        main.run();
+        main.run(args);
     }
 
     public Main() {
@@ -62,6 +61,14 @@ public class Main extends ServiceSupport {
                 setApplicationContextUri(parameter);
             }
         });
+    }
+
+    /**
+     * Parses the command line arguments then runs the program
+     */
+    public void run(String[] args) {
+        parseArguments(args);
+        run();
     }
 
     /**
