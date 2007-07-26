@@ -18,6 +18,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
 	xmlns:fo="http://www.w3.org/1999/XSL/Format" 
 	xmlns:saxon="http://icl.com/saxon" 
+	xmlns:xalan="http://xml.apache.org/xslt" 
 	exclude-result-prefixes="xsl fo html saxon">
 	<xsl:output method="xml" indent="no"/>
 	<xsl:param name="filename"></xsl:param>
@@ -25,6 +26,16 @@
 	<xsl:param name="imageLocation" select="div/@imageLocation"/>
 	<xsl:param name="bridgeprefix">br_</xsl:param>
 	<xsl:param name="root_url" select="div/@baseURL"/>
+	
+	
+    <xsl:output method="xml" indent="yes" xalan:indent-amount="2"/> 
+      
+    <!-- copy out the xml -->
+    <xsl:template match="* | @*">
+        <xsl:copy><xsl:copy-of select="@*"/><xsl:apply-templates/></xsl:copy>
+    </xsl:template>	
+		
+	
 	<!-- This template converts each "wiki-content maincontent" DIV  into a DocBook 
      section. For a title, it selects the first h1 element  -->
 	<xsl:template match="div[contains(@class,'wiki-content maincontent')]">
@@ -108,7 +119,9 @@
 	</xsl:template>
 	<xsl:template match="pre">
 		<programlisting>
+		    <xsl:text>&#xa;</xsl:text>
 			<xsl:apply-templates/>
+			<xsl:text>&#xa;</xsl:text>
 		</programlisting>
 	</xsl:template>
 	<!-- Hyperlinks -->

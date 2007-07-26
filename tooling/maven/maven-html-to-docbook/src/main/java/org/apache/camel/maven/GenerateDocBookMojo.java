@@ -346,8 +346,8 @@ public class GenerateDocBookMojo extends AbstractMojo {
 	}
 
 	public void downloadImages(Node node) {
-		List imageList = getImageUrls(node);
-		Iterator iter = imageList.iterator();
+		List<String> imageList = getImageUrls(node);
+		Iterator<String> iter = imageList.iterator();
 		while (iter.hasNext()) {
 			String imageUrl = (String) iter.next();
 			String imageFile = "imageFile";
@@ -382,8 +382,8 @@ public class GenerateDocBookMojo extends AbstractMojo {
 		}
 	}
 
-	public List getImageUrls(Node node) {
-		ArrayList list = new ArrayList();
+	public List<String> getImageUrls(Node node) {
+		List<String> list = new ArrayList<String>();
 		DOMElementImpl doc = (DOMElementImpl) node;
 		NodeList imageList = doc.getElementsByTagName("img");
 
