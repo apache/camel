@@ -30,13 +30,9 @@
     <route>
       <from uri="seda:a"/>
       <splitter>
-        <recipients>
-          <bodyAs class="java.lang.String"/>
-          <tokenize token="
- "/>
-        </recipients>
+        <xpath>/invoice/lineItems</xpath>
+        <to uri="seda:b"/>
       </splitter>
-      <to uri="seda:b"/>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->

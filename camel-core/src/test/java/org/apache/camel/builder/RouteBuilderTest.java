@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.DeadLetterChannel;
@@ -218,11 +219,11 @@ public class RouteBuilderTest extends TestSupport {
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             MulticastProcessor multicastProcessor = assertIsInstanceOf(MulticastProcessor.class, processor);
-            List<Endpoint> endpoints = new ArrayList<Endpoint>(multicastProcessor.getEndpoints());
+            List<Processor> endpoints = new ArrayList<Processor>(multicastProcessor.getProcessors());
             assertEquals("Should have 2 endpoints", 2, endpoints.size());
 
-            assertEndpointUri(endpoints.get(0), "seda:tap");
-            assertEndpointUri(endpoints.get(1), "seda:b");
+            assertSendToProcessor(endpoints.get(0), "seda:tap");
+            assertSendToProcessor(endpoints.get(1), "seda:b");
         }
     }
 
@@ -406,6 +407,19 @@ public class RouteBuilderTest extends TestSupport {
         assertEquals("Endpoint URI", uri, sendProcessor.getDestination().getEndpointUri());
     }
 
+    protected void assertSendToProcessor(Processor processor, String uri) {
+    	if (!(processor instanceof Producer)) {
+    		processor = unwrapErrorHandler(processor);
+    	}
+    	if (processor instanceof SendProcessor) {
+    		assertSendTo(processor, uri);
+    	}
+    	else {
+	        Producer producer = assertIsInstanceOf(Producer.class, processor);
+	        assertEquals("Endpoint URI", uri, producer.getEndpoint().getEndpointUri());
+    	}
+    }
+
     /**
      * By default routes should be wrapped in the {@link DeadLetterChannel} so lets unwrap that and return the actual processor
      */
@@ -416,8 +430,14 @@ public class RouteBuilderTest extends TestSupport {
     }
 
     protected Processor unwrapErrorHandler(Processor processor) {
-        assertTrue("Processor should be a DeadLetterChannel but was: " + processor + " with type: " + processor.getClass().getName(), processor instanceof DeadLetterChannel);
-        DeadLetterChannel deadLetter = (DeadLetterChannel) processor;
-        return deadLetter.getOutput();
+    	if (processor instanceof DeadLetterChannel) {
+    		DeadLetterChannel deadLetter = (DeadLetterChannel) processor;
+    		return deadLetter.getOutput();
+    	}
+    	else {
+    		return processor;
+    	}
     }
 }
+
+    

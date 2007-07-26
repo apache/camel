@@ -20,7 +20,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
+import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -130,12 +132,14 @@ public class RouteType extends ProcessorType implements CamelContextAware {
     }
 
     protected void addRoutes(Collection<Route> routes, FromType fromType) throws Exception {
-        RouteContext routeContext = new RouteContext(this, fromType);
+        RouteContext routeContext = new RouteContext(this, fromType, routes);
         Endpoint endpoint = routeContext.getEndpoint();
 
         for (ProcessorType output : outputs) {
             output.addRoutes(routeContext, routes);
         }
+
+        routeContext.commit();
     }
 
     protected void configureChild(ProcessorType output) {

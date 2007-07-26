@@ -25,20 +25,20 @@ import org.apache.camel.Producer;
 import java.util.Collection;
 
 /**
- * Creates a Pipeline pattern where the output of the previous step is sent as input to the next step when working
- * with request/response message exchanges.
+ * Creates a Pipeline pattern where the output of the previous step is sent as input to the next step, reusing the same
+ * message exchanges
  *
  * @version $Revision$
  */
 public class Pipeline extends MulticastProcessor implements Processor {
-    public Pipeline(Collection<Endpoint> endpoints) throws Exception {
-        super(endpoints);
+    public Pipeline(Collection<Processor> processors) {
+        super(processors);
     }
 
     public void process(Exchange exchange) throws Exception {
         Exchange nextExchange = exchange;
         boolean first = true;
-        for (Producer producer : getProducers()) {
+        for (Processor producer : getProcessors()) {
             if (first) {
                 first = false;
             }
@@ -56,8 +56,8 @@ public class Pipeline extends MulticastProcessor implements Processor {
      * @param previousExchange the previous exchange
      * @return a new exchange
      */
-    protected Exchange createNextExchange(Producer producer, Exchange previousExchange) {
-        Exchange answer = producer.createExchange(previousExchange);
+    protected Exchange createNextExchange(Processor producer, Exchange previousExchange) {
+        Exchange answer = copyExchangeStrategy(previousExchange);
 
         // now lets set the input of the next exchange to the output of the previous message if it is not null
         Object output = previousExchange.getOut().getBody();
@@ -80,6 +80,6 @@ public class Pipeline extends MulticastProcessor implements Processor {
 
     @Override
     public String toString() {
-        return "Pipeline" + getEndpoints();
+        return "Pipeline" + getProcessors();
     }
 }

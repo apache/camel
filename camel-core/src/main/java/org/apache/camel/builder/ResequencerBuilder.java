@@ -43,11 +43,7 @@ public class ResequencerBuilder extends FromBuilder {
     public Route createRoute() throws Exception {
         final Processor processor = super.createProcessor();
         final Resequencer resequencer = new Resequencer(getFrom(), processor, expressions);
-
-        return new Route<Exchange>(getFrom()) {
-            protected void addServices(List<Service> list) throws Exception {
-                list.add(resequencer);
-            }
+        return new Route<Exchange>(getFrom(), resequencer) {
 
             @Override
             public String toString() {

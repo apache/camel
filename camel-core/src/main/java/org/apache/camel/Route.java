@@ -29,13 +29,25 @@ import java.util.Map;
  *
  * @version $Revision$
  */
-public abstract class Route<E extends Exchange> {
+public class Route<E extends Exchange> {
     private final Map<String, Object> properties = new HashMap<String, Object>(16);
     private Endpoint<E> endpoint;
     private List<Service> services = new ArrayList<Service>();
 
     public Route(Endpoint<E> endpoint) {
         this.endpoint = endpoint;
+    }
+
+    public Route(Endpoint<E> endpoint, Service... services) {
+        this(endpoint);
+        for (Service service : services) {
+            addService(service);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Route";
     }
 
     public Endpoint<E> getEndpoint() {
@@ -65,7 +77,7 @@ public abstract class Route<E extends Exchange> {
     /**
      * Returns the additional services required for this particular route
      */
-    public List<Service> getServices() throws Exception {
+    public List<Service> getServices() {
         return services;
     }
 
@@ -73,8 +85,13 @@ public abstract class Route<E extends Exchange> {
         this.services = services;
     }
 
+    public void addService(Service service) {
+        getServices().add(service);
+    }
+
     /**
      * Strategy method to allow derived classes to lazily load services for the route
      */
-    protected abstract void addServices(List<Service> services) throws Exception;
+    protected void addServices(List<Service> services) throws Exception {
+    }
 }
