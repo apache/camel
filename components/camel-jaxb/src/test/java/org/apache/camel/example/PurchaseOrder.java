@@ -18,15 +18,27 @@
 package org.apache.camel.example;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
 
 /**
  * @version $Revision$
  */
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class PurchaseOrder {
+    @XmlAttribute
     private String name;
+    @XmlAttribute
     private double price;
+    @XmlAttribute
     private double amount;
+
+    @Override
+    public String toString() {
+        return "PurchaseOrder[name: " + name + " amount: " + amount + " price: " + price + "]";
+    }
 
     public double getAmount() {
         return amount;
@@ -51,4 +63,5 @@ public class PurchaseOrder {
     public void setPrice(double price) {
         this.price = price;
     }
+
 }
