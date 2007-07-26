@@ -58,23 +58,24 @@ public class BamRouteTest extends SpringTestSupport {
         jpaTemplate = getMandatoryBean(JpaTemplate.class, "jpaTemplate");
         transactionTemplate = getMandatoryBean(TransactionTemplate.class, "transactionTemplate");
 
+        // START SNIPPET: example
         return new ProcessBuilder(jpaTemplate, transactionTemplate) {
             public void configure() throws Exception {
 
+                // lets define some activities
                 ActivityBuilder a = activity("direct:a").name("a")
                         .correlate(header("foo"));
 
                 ActivityBuilder b = activity("direct:b").name("b")
                         .correlate(header("foo"));
 
-                ActivityBuilder c = activity("direct:c").name("c")
-                        .correlate(header("foo"));
-
+                // now lets add some rules
                 b.starts().after(a.completes())
                         .expectWithin(seconds(1))
                         .errorIfOver(seconds(2)).to("mock:overdue");
             }
         };
+        // END SNIPPET: example
     }
 
     @Override
