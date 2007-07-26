@@ -58,10 +58,7 @@ public class AggregatorBuilder extends FromBuilder {
         final Processor processor = super.createProcessor();
         final Aggregator service = new Aggregator(getFrom(), processor, correlationExpression, aggregationStrategy);
 
-        return new Route<Exchange>(getFrom()) {
-            protected void addServices(List<Service> list) throws Exception {
-                list.add(service);
-            }
+        return new Route<Exchange>(getFrom(), service) {
 
             @Override
             public String toString() {

@@ -103,21 +103,6 @@ public class SpringXmlRouteBuilderTest extends RouteBuilderTest {
         // TODO
     }
 
-    @Override
-    public void testWireTap() throws Exception {
-        // TODO
-    }
-
-    @Override
-    public void testRouteDynamicReceipentList() throws Exception {
-        // TODO
-    }
-
-    @Override
-    public void testSplitter() throws Exception {
-        // TODO
-    }
-
     protected List<Route> getRoutesFromContext(String classpathConfigFile) {
         applicationContext = new ClassPathXmlApplicationContext(classpathConfigFile);
         String name = "camel";

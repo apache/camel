@@ -84,7 +84,7 @@ public abstract class ProcessorType {
 
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         Processor processor = makeProcessor(routeContext);
-        routes.add(new EventDrivenConsumerRoute(routeContext.getEndpoint(), processor));
+        routeContext.addEventDrivenProcessor(processor);
     }
 
     /**

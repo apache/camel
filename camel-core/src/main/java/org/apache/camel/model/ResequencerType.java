@@ -44,16 +44,14 @@ public class ResequencerType extends ExpressionNode {
         final Processor processor = routeContext.createProcessor(this);
         final Resequencer resequencer = new Resequencer(from, processor, getExpression().createExpression(routeContext));
 
-        Route<Exchange> route = new Route<Exchange>(from) {
-            protected void addServices(List<Service> list) throws Exception {
-                list.add(resequencer);
-            }
+        Route route = new Route<Exchange>(from, resequencer) {
 
             @Override
             public String toString() {
                 return "ResequencerRoute[" + getEndpoint() + " -> " + processor + "]";
             }
         };
+
         routes.add(route);
     }
 }

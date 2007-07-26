@@ -57,6 +57,7 @@ public class EventDrivenConsumerRoute<E extends Exchange> extends Route<E> {
      * Factory method to lazily create the complete list of services required for this route
      * such as adding the processor or consumer
      */
+    @Override
     protected void addServices(List<Service> services) throws Exception {
         Processor processor = getProcessor();
         if (processor instanceof Service) {

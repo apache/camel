@@ -18,16 +18,17 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.FromType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
-import org.apache.camel.processor.CompositeProcessor;
+import org.apache.camel.processor.MulticastProcessor;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * The context used to activate new routing rules
@@ -37,11 +38,14 @@ import java.util.Collection;
 public class RouteContext {
     private final RouteType route;
     private final FromType from;
+    private final Collection<Route> routes;
     private Endpoint endpoint;
+    private List<Processor> eventDrivenProcessors = new ArrayList<Processor>();
 
-    public RouteContext(RouteType route, FromType from) {
+    public RouteContext(RouteType route, FromType from, Collection<Route> routes) {
         this.route = route;
         this.from = from;
+        this.routes = routes;
     }
 
     public Endpoint getEndpoint() {
@@ -68,13 +72,16 @@ public class RouteContext {
         return node.wrapProcessor(this, processor);
     }
 
-
     public Processor createProcessor(Collection<ProcessorType> outputs) throws Exception {
         List<Processor> list = new ArrayList<Processor>();
         for (ProcessorType output : outputs) {
             Processor processor = output.createProcessor(this);
             list.add(processor);
         }
+        return createCompositeProcessor(list);
+    }
+
+    protected Processor createCompositeProcessor(List<Processor> list) {
         if (list.size() == 0) {
             return null;
         }
@@ -83,11 +90,12 @@ public class RouteContext {
             processor = list.get(0);
         }
         else {
-            processor = new CompositeProcessor(list);
+            //processor = new CompositeProcessor(list);
+            // TODO move into the node itself
+            processor = new MulticastProcessor(list);
         }
         return processor;
     }
-
 
     public Endpoint resolveEndpoint(String uri) {
         return route.resolveEndpoint(uri);
@@ -101,13 +109,13 @@ public class RouteContext {
         if (uri != null) {
             endpoint = resolveEndpoint(uri);
             if (endpoint == null) {
-               throw new NoSuchEndpointException(uri);
+                throw new NoSuchEndpointException(uri);
             }
         }
         if (ref != null) {
             endpoint = lookup(ref, Endpoint.class);
             if (endpoint == null) {
-               throw new NoSuchEndpointException("ref:" + ref);
+                throw new NoSuchEndpointException("ref:" + ref);
             }
         }
         if (endpoint == null) {
@@ -123,5 +131,21 @@ public class RouteContext {
      */
     public <T> T lookup(String name, Class<T> type) {
         return getCamelContext().getRegistry().lookup(name, type);
+    }
+
+    /**
+     * Lets complete the route creation, creating a single event driven route for the current from endpoint
+     * with any processors required
+     */
+    public void commit() {
+        // now lets turn all of the event driven consumer processors into a single route
+        if (!eventDrivenProcessors.isEmpty()) {
+            Processor processor = createCompositeProcessor(eventDrivenProcessors);
+            routes.add(new EventDrivenConsumerRoute(getEndpoint(), processor));
+        }
+    }
+
+    public void addEventDrivenProcessor(Processor processor) {
+        eventDrivenProcessors.add(processor);
     }
 }

@@ -31,7 +31,6 @@
       <from uri="seda:a"/>
       <to uri="seda:tap"/>
       <to uri="seda:b"/>
-      </to>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->

@@ -21,6 +21,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.processor.MulticastProcessor;
 
 import java.util.Collection;
 
@@ -39,6 +40,6 @@ public class PipelineBuilder extends FromBuilder {
 
     @Override
     public Processor createProcessor() throws Exception {
-        return new Pipeline(endpoints);
+        return new Pipeline(MulticastProcessor.toProducers(endpoints));
     }
 }
