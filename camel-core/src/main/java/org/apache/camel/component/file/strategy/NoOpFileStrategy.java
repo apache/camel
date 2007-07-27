@@ -24,10 +24,8 @@ package org.apache.camel.component.file.strategy;
  */
 public class NoOpFileStrategy extends FileStategySupport {
     public NoOpFileStrategy() {
+        super(false);
     }
 
-    public NoOpFileStrategy(boolean lockFile) {
-        super(lockFile);
-    }
 }
 

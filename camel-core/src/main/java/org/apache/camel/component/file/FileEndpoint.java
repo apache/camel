@@ -22,9 +22,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.file.strategy.DeleteFileStrategy;
 import org.apache.camel.component.file.strategy.FileStrategy;
-import org.apache.camel.component.file.strategy.RenameFileStrategy;
 import org.apache.camel.component.file.strategy.NoOpFileStrategy;
+import org.apache.camel.component.file.strategy.RenameFileStrategy;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 
@@ -34,6 +36,7 @@ import java.io.File;
  * @version $Revision: 523016 $
  */
 public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
+    private static final transient Log log = LogFactory.getLog(FileEndpoint.class);
     private File file;
     private FileStrategy fileStrategy;
     private boolean autoCreate = true;
@@ -42,7 +45,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     private boolean noop = false;
     private String moveNamePrefix = null;
     private String moveNamePostfix = null;
-    private String[] excludedNamePrefixes = { "." };
+    private String[] excludedNamePrefixes = {"."};
 
     protected FileEndpoint(File file, String endpointUri, FileComponent component) {
         super(endpointUri, component);
@@ -116,6 +119,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     public FileStrategy getFileStrategy() {
         if (fileStrategy == null) {
             fileStrategy = createFileStrategy();
+            log.debug("" + this + " using strategy: " + fileStrategy);
         }
         return fileStrategy;
     }
@@ -154,9 +158,8 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      * Sets the name postfix appended to moved files. For example
      * to rename all the files from * to *.done set this value to ".done"
      *
-     * @see RenameFileStrategy#setNamePostfix(String)
-
      * @param moveNamePostfix
+     * @see RenameFileStrategy#setNamePostfix(String)
      */
     public void setMoveNamePostfix(String moveNamePostfix) {
         this.moveNamePostfix = moveNamePostfix;
@@ -207,7 +210,10 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      * A strategy method to lazily create the file strategy
      */
     protected FileStrategy createFileStrategy() {
-        if (moveNamePostfix != null || moveNamePrefix != null) {
+        if (isNoop()) {
+            return new NoOpFileStrategy();
+        }
+        else if (moveNamePostfix != null || moveNamePrefix != null) {
             if (isDelete()) {
                 throw new IllegalArgumentException("You cannot set the deleteFiles property and a moveFilenamePostfix or moveFilenamePrefix");
             }
@@ -216,12 +222,8 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
         else if (isDelete()) {
             return new DeleteFileStrategy(isLock());
         }
-        else if (isNoop()) {
-            return new NoOpFileStrategy(isLock());
-        }
         else {
             return new RenameFileStrategy(isLock());
         }
     }
-
 }
