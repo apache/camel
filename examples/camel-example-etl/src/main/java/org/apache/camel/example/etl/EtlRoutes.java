@@ -17,17 +17,22 @@
  */
 package org.apache.camel.example.etl;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spring.SpringRouteBuilder;
 
 /**
  * @version $Revision: 1.1 $
  */
 // START SNIPPET: example
-public class EtlRoutes extends RouteBuilder {
+public class EtlRoutes extends SpringRouteBuilder {
     public void configure() throws Exception {
         from("file:src/data?noop=true").
                 convertBodyTo(PersonDocument.class).
+                //intercept(transactionInterceptor()).
                 to("jpa:org.apache.camel.example.etl.CustomerEntity");
+
+
+        // the following will dump the database to files
+        //from("jpa:org.apache.camel.example.etl.CustomerEntity?consumeDelete=false").to("file:target/customers");
     }
 }
 // END SNIPPET: example
