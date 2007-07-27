@@ -38,7 +38,7 @@ public class CustomerEntity {
     private String phone;
 
     public String toString() {
-        return "Customer[userName: "+ userName + " firstName: " + firstName + " surname: " + surname + "]";
+        return "Customer[userName: " + userName + " firstName: " + firstName + " surname: " + surname + "]";
     }
 
     @Id

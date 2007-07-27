@@ -18,27 +18,16 @@
 package org.apache.camel.example.etl;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.Processor;
-import org.apache.camel.Exchange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision: 1.1 $
  */
+// START SNIPPET: example
 public class EtlRoutes extends RouteBuilder {
-    private static final transient Log log = LogFactory.getLog(EtlRoutes.class);
-
     public void configure() throws Exception {
-        from("file:src/data?noop=true").convertBodyTo(PersonDocument.class).to("jpa:org.apache.camel.example.etl.CustomerEntity");
-
-/*
-        from("file:src/data?noop=true").convertBodyTo(PersonDocument.class).process(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                System.out.println("Body is: " + exchange.getIn().getBody());
-                log.info("Body is: " + exchange.getIn().getBody());
-            }
-        });
-*/
+        from("file:src/data?noop=true").
+                convertBodyTo(PersonDocument.class).
+                to("jpa:org.apache.camel.example.etl.CustomerEntity");
     }
 }
+// END SNIPPET: example

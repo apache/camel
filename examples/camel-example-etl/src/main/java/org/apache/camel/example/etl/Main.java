@@ -23,7 +23,6 @@ package org.apache.camel.example.etl;
  * @version $Revision: 1.1 $
  */
 public class Main extends org.apache.camel.spring.Main {
-
     public static void main(String[] args) {
         new Main().run(args);
     }
