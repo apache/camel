@@ -46,15 +46,6 @@
       <artifactId>camel-jaxb</artifactId>
     </dependency>
 
-<!--
-    <dependency>
-      <groupId>javax.persistence</groupId>
-      <artifactId>persistence-api</artifactId>
-      <version>1.0</version>
-    </dependency>
--->
-
-
     <!-- lets use log4j -->
     <dependency>
       <groupId>commons-logging</groupId>

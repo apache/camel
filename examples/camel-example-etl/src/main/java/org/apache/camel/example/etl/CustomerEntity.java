@@ -20,14 +20,21 @@ package org.apache.camel.example.etl;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * An example entity bean
+ * An example entity bean which can be marshalled to/from XML
  *
  * @version $Revision: 1.1 $
  */
 @Entity(name = "Customer")
+@XmlRootElement(name="customer")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerEntity {
+    @XmlAttribute
     private Long id;
     private String userName;
     private String firstName;
