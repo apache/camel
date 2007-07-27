@@ -14,7 +14,6 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
@@ -50,22 +49,17 @@ public class FileProducer extends DefaultProducer {
     }
 
     public void process(FileExchange exchange) throws Exception {
-        String fileName = exchange.getIn().getMessageId();
         ByteBuffer payload = exchange.getIn().getBody(ByteBuffer.class);
         if (payload == null) {
             InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
             payload = ExchangeHelper.convertToMandatoryType(exchange, ByteBuffer.class, in);
         }
         payload.flip();
-        File file = null;
-        File endpointFile = endpoint.getFile();
-        if (endpointFile != null && endpointFile.isDirectory()) {
-            file = new File(endpointFile, fileName);
-        }
-        else {
-            file = new File(fileName);
-        }
+        File file = createFileName(exchange);
         buildDirectory(file);
+        if (log.isDebugEnabled()) {
+            log.debug("Creating file: " + file);
+        }
         try {
             FileChannel fc = new RandomAccessFile(file, "rw").getChannel();
             fc.position(fc.size());
@@ -74,6 +68,28 @@ public class FileProducer extends DefaultProducer {
         }
         catch (Throwable e) {
             log.error("Failed to write to File: " + file, e);
+        }
+    }
+
+    protected File createFileName(FileExchange exchange) {
+        String fileName = exchange.getIn().getMessageId();
+
+        File endpointFile = endpoint.getFile();
+        String name = exchange.getIn().getHeader(FileComponent.HEADER_FILE_NAME, String.class);
+        if (name != null) {
+            File answer = new File(endpointFile, name);
+            if (answer.isDirectory()) {
+                return new File(answer, fileName);
+            }
+            else {
+                return answer;
+            }
+        }
+        if (endpointFile != null && endpointFile.isDirectory()) {
+            return new File(endpointFile, fileName);
+        }
+        else {
+            return new File(fileName);
         }
     }
 

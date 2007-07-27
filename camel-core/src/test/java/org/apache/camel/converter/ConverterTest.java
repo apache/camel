@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.beans.PropertyEditorManager;
 import java.beans.PropertyEditorSupport;
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -131,7 +132,12 @@ public class ConverterTest extends TestCase {
         List resultList = converter.convertTo(List.class, intArray);
         assertEquals("List size", 2, resultList.size());
         log.debug("From primitive type array we've created the list: " + resultList);
+    }
 
+    public void testStringToFile() throws Exception {
+        File file = converter.convertTo(File.class, "foo.txt");
+        assertNotNull("Should have converted to a file!");
+        assertEquals("file name", "foo.txt", file.getName());
     }
 
     public void testPrimitiveBooleanConversion() throws Exception {

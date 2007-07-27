@@ -17,6 +17,9 @@
  */
 package org.apache.camel.example.etl;
 
+import static org.apache.camel.language.juel.JuelExpression.el;
+import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.language.juel.JuelExpression;
 import org.apache.camel.spring.SpringRouteBuilder;
 
 /**
@@ -32,7 +35,9 @@ public class EtlRoutes extends SpringRouteBuilder {
 
 
         // the following will dump the database to files
-        //from("jpa:org.apache.camel.example.etl.CustomerEntity?consumeDelete=false").to("file:target/customers");
+        from("jpa:org.apache.camel.example.etl.CustomerEntity?consumeDelete=false").
+        		setHeader(FileComponent.HEADER_FILE_NAME, el("${in.body.userName}.xml")).
+        		to("file:target/customers");
     }
 }
 // END SNIPPET: example
