@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
@@ -25,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
@@ -37,6 +39,7 @@ public abstract class RouteBuilder extends BuilderSupport {
     private List<FromBuilder> fromBuilders = new ArrayList<FromBuilder>();
     private AtomicBoolean initalized = new AtomicBoolean(false);
     private List<Route> routes = new ArrayList<Route>();
+    private List<DelegateProcessor> interceptors = new ArrayList<DelegateProcessor>();
 
     protected RouteBuilder() {
         this(null);
@@ -92,6 +95,13 @@ public abstract class RouteBuilder extends BuilderSupport {
         return this;
     }
 
+    
+    @Fluent
+    public RouteBuilder intercept(@FluentArg("interceptor")DelegateProcessor interceptor) {
+        interceptors.add(interceptor);
+        return this;
+    }
+    
     // Properties
     //-----------------------------------------------------------------------
     public CamelContext getContext() {
@@ -117,6 +127,10 @@ public abstract class RouteBuilder extends BuilderSupport {
     public List<FromBuilder> getFromBuilders() throws Exception {
         checkInitialized();
         return fromBuilders;
+    }
+
+    public List<DelegateProcessor> getInterceptors() {
+        return interceptors;
     }
 
     // Implementation methods

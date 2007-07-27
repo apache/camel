@@ -14,12 +14,15 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -42,13 +45,17 @@ public class FileProducer extends DefaultProducer {
      * @param exchange
      * @see org.apache.camel.Processor#process(Exchange)
      */
-    public void process(Exchange exchange) {
+    public void process(Exchange exchange) throws Exception {
         process(endpoint.toExchangeType(exchange));
     }
 
-    public void process(FileExchange exchange) {
+    public void process(FileExchange exchange) throws Exception {
         String fileName = exchange.getIn().getMessageId();
         ByteBuffer payload = exchange.getIn().getBody(ByteBuffer.class);
+        if (payload == null) {
+            InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
+            payload = ExchangeHelper.convertToMandatoryType(exchange, ByteBuffer.class, in);
+        }
         payload.flip();
         File file = null;
         File endpointFile = endpoint.getFile();

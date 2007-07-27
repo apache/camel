@@ -19,11 +19,10 @@ package org.apache.camel.util;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.InvalidTypeException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchPropertyException;
-import org.apache.camel.component.file.FileExchange;
-
-import java.nio.channels.Channel;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
@@ -64,5 +63,34 @@ public class ExchangeHelper {
             throw new NoSuchPropertyException(exchange, propertyName, type);
         }
         return answer;
+    }
+
+    /**
+     * Returns the mandatory inbound message body of the correct type or throws an exception if it is not present
+     */
+    public static <T> T getMandatoryInBody(Exchange exchange, Class<T> type) throws InvalidPayloadException {
+        T answer = exchange.getIn().getBody(type);
+        if (answer == null) {
+            throw new InvalidPayloadException(exchange, type);
+        }
+        return answer;
+    }
+    
+    /**
+     * Converts the value to the given expected type or throws an exception
+     */
+    public static <T> T convertToMandatoryType(Exchange exchange, Class<T> type, Object value) throws InvalidTypeException {
+        T answer = convertToType(exchange, type, value);
+        if (answer == null) {
+            throw new InvalidTypeException(exchange, value, type);
+        }
+        return answer;
+    }
+
+    /**
+     * Converts the value to the given expected type returning null if it could not be converted
+     */
+    public static <T> T convertToType(Exchange exchange, Class<T> type, Object value) {
+        return exchange.getContext().getTypeConverter().convertTo(type, value);
     }
 }
