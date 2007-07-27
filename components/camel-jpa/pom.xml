@@ -66,14 +66,13 @@
       <version>1.0</version>
     </dependency>
 
+
+    <!-- testing -->
     <dependency>
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa-persistence-jdbc</artifactId>
-      <!--<version>0.9.7-incubating-SNAPSHOT</version>-->
-      <!-- mandatory dependency for the enhancer! -->
-      <!--<scope>test</scope>-->
+      <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
@@ -91,8 +90,6 @@
       <version>3.2</version>
       <scope>test</scope>
     </dependency>
-
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -107,6 +104,13 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-persistence-jdbc</artifactId>
+            <version>${openjpa-version}</version>
+          </dependency>
+        </dependencies>
 
         <executions>
           <execution>
