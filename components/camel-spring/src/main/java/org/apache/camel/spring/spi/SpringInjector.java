@@ -29,7 +29,7 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
  *
  * @version $Revision$
  */
-public class SpringInjector extends ReflectionInjector {
+public class SpringInjector implements Injector {
     private static final transient Log log = LogFactory.getLog(SpringInjector.class);
     private final AbstractRefreshableApplicationContext applicationContext;
     private int autowireMode = AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR;
@@ -39,9 +39,10 @@ public class SpringInjector extends ReflectionInjector {
         this.applicationContext = applicationContext;
     }
 
-    public Object newInstance(Class type) {
+    public <T> T newInstance(Class<T> type) {
         // TODO support annotations for mandatory injection points?
-        return applicationContext.getBeanFactory().createBean(type, autowireMode, dependencyCheck);
+        Object value = applicationContext.getBeanFactory().createBean(type, autowireMode, dependencyCheck);
+        return type.cast(value);
     }
 
     public int getAutowireMode() {

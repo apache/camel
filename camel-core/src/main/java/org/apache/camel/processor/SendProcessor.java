@@ -35,6 +35,9 @@ public class SendProcessor extends ServiceSupport implements Processor, Service 
     private Producer producer;
 
     public SendProcessor(Endpoint destination) {
+        if (destination == null) {
+            throw new IllegalArgumentException("Endpoint cannot be null!");
+        }
         this.destination = destination;
     }
 

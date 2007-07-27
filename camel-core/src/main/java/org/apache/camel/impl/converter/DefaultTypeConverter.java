@@ -45,15 +45,11 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     private List<TypeConverter> fallbackConverters = new ArrayList<TypeConverter>();
     private boolean loaded;
 
-    public DefaultTypeConverter() {
+    public DefaultTypeConverter(Injector injector) {
         typeConverterLoaders.add(new AnnotationTypeConverterLoader());
         fallbackConverters.add(new PropertyEditorTypeConverter());
         fallbackConverters.add(new ToStringTypeConverter());
         fallbackConverters.add(new ArrayTypeConverter());
-    }
-
-    public DefaultTypeConverter(Injector injector) {
-        this();
         this.injector = injector;
     }
 
@@ -100,9 +96,6 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     }
 
     public Injector getInjector() {
-        if (injector == null) {
-            injector = new ReflectionInjector();
-        }
         return injector;
     }
 
