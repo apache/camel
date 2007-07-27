@@ -29,6 +29,7 @@ import java.util.List;
  *
  * @version $Revision: 1.1 $
  */
+// START SNIPPET: example
 @Converter
 public class CustomerTransformer {
     private static final transient Log log = LogFactory.getLog(CustomerTransformer.class);
@@ -72,3 +73,4 @@ public class CustomerTransformer {
         }
     }
 }
+// END SNIPPET: example
