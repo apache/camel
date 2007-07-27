@@ -17,13 +17,6 @@
  */
 package org.apache.camel.component.jpa;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
@@ -31,6 +24,13 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.jpa.JpaCallback;
+
+import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.PersistenceException;
+import javax.persistence.Query;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * @version $Revision$
@@ -66,10 +66,11 @@ public class JpaConsumer extends ScheduledPollConsumer<Exchange> {
                         // lets turn the result into an exchange and fire it into the processor
                         Exchange exchange = createExchange(result);
                         try {
-							getProcessor().process(exchange);
-						} catch (Exception e) {
-							throw new PersistenceException(e);
-						}
+                            getProcessor().process(exchange);
+                        }
+                        catch (Exception e) {
+                            throw new PersistenceException(e);
+                        }
                         getDeleteHandler().deleteObject(entityManager, result);
                     }
                 }
@@ -145,6 +146,9 @@ public class JpaConsumer extends ScheduledPollConsumer<Exchange> {
      * @return true if the entity was locked
      */
     protected boolean lockEntity(Object entity, EntityManager entityManager) {
+        if (!getEndpoint().isConsumeDelete() || !getEndpoint().isConsumeLockEntity()) {
+            return true;
+        }
         try {
             if (log.isDebugEnabled()) {
                 log.debug("Acquiring exclusive lock on entity: " + entity);
@@ -199,11 +203,20 @@ public class JpaConsumer extends ScheduledPollConsumer<Exchange> {
                 };
             }
         }
-        return new DeleteHandler<Object>() {
-            public void deleteObject(EntityManager entityManager, Object entityBean) {
-                entityManager.remove(entityBean);
-            }
-        };
+        if (getEndpoint().isConsumeDelete()) {
+            return new DeleteHandler<Object>() {
+                public void deleteObject(EntityManager entityManager, Object entityBean) {
+                    entityManager.remove(entityBean);
+                }
+            };
+        }
+        else {
+            return new DeleteHandler<Object>() {
+                public void deleteObject(EntityManager entityManager, Object entityBean) {
+                    // do nothing
+                }
+            };
+        }
     }
 
     protected void configureParameters(Query query) {

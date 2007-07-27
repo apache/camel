@@ -45,6 +45,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint<Exchange> {
     private int maximumResults = -1;
     private Class<?> entityType;
     private Map entityManagerProperties;
+    private boolean consumeDelete = true;
+    private boolean consumeLockEntity = true;
 
     public JpaEndpoint(String uri, JpaComponent component) {
         super(uri, component);
@@ -146,6 +148,22 @@ public class JpaEndpoint extends ScheduledPollEndpoint<Exchange> {
 
     public void setPersistenceUnit(String persistenceUnit) {
         this.persistenceUnit = persistenceUnit;
+    }
+
+    public boolean isConsumeDelete() {
+        return consumeDelete;
+    }
+
+    public void setConsumeDelete(boolean consumeDelete) {
+        this.consumeDelete = consumeDelete;
+    }
+
+    public boolean isConsumeLockEntity() {
+        return consumeLockEntity;
+    }
+
+    public void setConsumeLockEntity(boolean consumeLockEntity) {
+        this.consumeLockEntity = consumeLockEntity;
     }
 
     // Implementation methods
