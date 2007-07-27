@@ -19,6 +19,7 @@ package org.apache.camel.converter.jaxb;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.TypeConverterAware;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -26,23 +27,35 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.util.JAXBSource;
+import javax.xml.transform.Source;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class FallbackTypeConverter implements TypeConverter {
+public class FallbackTypeConverter implements TypeConverter, TypeConverterAware {
     private static final transient Log log = LogFactory.getLog(FallbackTypeConverter.class);
+    private TypeConverter parentTypeConverter;
+
+    public void setTypeConverter(TypeConverter parentTypeConverter) {
+        this.parentTypeConverter = parentTypeConverter;
+    }
 
     public <T> T convertTo(Class<T> type, Object value) {
         log.debug("Investigating JAXB type conversions");
 
         try {
-            XmlRootElement element = type.getAnnotation(XmlRootElement.class);
-            if (element != null) {
+            if (isJaxbType(type)) {
                 return unmarshall(type, value);
+            }
+            if (value != null) {
+                if (isJaxbType(value.getClass())) {
+                    return marshall(type, value);
+                }
             }
             return null;
         }
@@ -51,12 +64,36 @@ public class FallbackTypeConverter implements TypeConverter {
         }
     }
 
+    protected <T> boolean isJaxbType(Class<T> type) {
+        XmlRootElement element = type.getAnnotation(XmlRootElement.class);
+        boolean jaxbType = element != null;
+        return jaxbType;
+    }
+
+    /**
+     * Lets try parse via JAXB
+     */
     protected <T> T unmarshall(Class<T> type, Object value) throws JAXBException {
-        // lets try parse via JAXB2
-        JAXBContext context = JAXBContext.newInstance(type);
+        JAXBContext context = createContext(type);
         Unmarshaller unmarshaller = context.createUnmarshaller();
 
-        // TODO use the type converters here
+        if (parentTypeConverter != null) {
+            InputStream inputStream = parentTypeConverter.convertTo(InputStream.class, value);
+            if (inputStream != null) {
+                Object unmarshalled = unmarshaller.unmarshal(inputStream);
+                return type.cast(unmarshalled);
+            }
+            Reader reader = parentTypeConverter.convertTo(Reader.class, value);
+            if (reader != null) {
+                Object unmarshalled = unmarshaller.unmarshal(reader);
+                return type.cast(unmarshalled);
+            }
+            Source source = parentTypeConverter.convertTo(Source.class, value);
+            if (source != null) {
+                Object unmarshalled = unmarshaller.unmarshal(source);
+                return type.cast(unmarshalled);
+            }
+        }
         if (value instanceof String) {
             value = new StringReader((String) value);
         }
@@ -69,5 +106,29 @@ public class FallbackTypeConverter implements TypeConverter {
             return type.cast(unmarshalled);
         }
         return null;
+    }
+
+    protected <T> T marshall(Class<T> type, Object value) throws JAXBException {
+        if (parentTypeConverter != null) {
+            // lets convert the object to a JAXB source and try convert that to the required source
+            JAXBContext context = createContext(value.getClass());
+            JAXBSource source = new JAXBSource(context, value);
+            T answer = parentTypeConverter.convertTo(type, source);
+            if (answer == null) {
+                // lets try a stream
+                StringWriter buffer = new StringWriter();
+                context.createMarshaller().marshal(value, buffer);
+                return parentTypeConverter.convertTo(type, buffer.toString());
+            }
+            return answer;
+        }
+
+        // lets try convert to the type from JAXB        
+        return null;
+    }
+
+    protected <T> JAXBContext createContext(Class<T> type) throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(type);
+        return context;
     }
 }
