@@ -19,7 +19,9 @@ package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spring.spi.TransactionInterceptor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * An extension of the {@link RouteBuilder} to provide some additional helper methods
@@ -28,6 +30,10 @@ import org.springframework.context.ApplicationContext;
  */
 public abstract class SpringRouteBuilder extends RouteBuilder {
     private ApplicationContext applicationContext;
+
+    public TransactionInterceptor transactionInterceptor() {
+        return new TransactionInterceptor(bean(TransactionTemplate.class));
+    }
 
     /**
      * Looks up the bean with the given name in the application context and returns it, or throws an exception if the
