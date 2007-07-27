@@ -45,6 +45,10 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jaxb</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-juel</artifactId>
+    </dependency>
 
     <!-- lets use log4j -->
     <dependency>
@@ -117,6 +121,7 @@
         </executions>
         <configuration>
           <mainClass>org.apache.camel.example.etl.Main</mainClass>
+          <includePluginDependencies>false</includePluginDependencies>
         </configuration>
       </plugin>
 

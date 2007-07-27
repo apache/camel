@@ -45,6 +45,11 @@ public class IOConverter {
     }
 
     @Converter
+    public static File toFile(String name) throws FileNotFoundException {
+        return new File(name);
+    }
+
+    @Converter
     public static OutputStream toOutputStream(File file) throws FileNotFoundException {
         return new BufferedOutputStream(new FileOutputStream(file));
     }

@@ -46,8 +46,6 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
     }
 
     public <T> T convertTo(Class<T> type, Object value) {
-        log.debug("Investigating JAXB type conversions");
-
         try {
             if (isJaxbType(type)) {
                 return unmarshall(type, value);

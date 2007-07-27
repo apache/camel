@@ -32,7 +32,9 @@ import java.net.URI;
  * @version $Revision: 523772 $
  */
 public class FileComponent extends DefaultComponent<FileExchange> {
-    public FileComponent() {
+    public static final String HEADER_FILE_NAME = "org.apache.camel.file.name";
+
+	public FileComponent() {
     }
 
     public FileComponent(CamelContext context) {
