@@ -19,8 +19,8 @@ package org.apache.camel.impl.converter;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.ReflectionInjector;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
@@ -47,10 +47,10 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
     public DefaultTypeConverter(Injector injector) {
         typeConverterLoaders.add(new AnnotationTypeConverterLoader());
-        fallbackConverters.add(new PropertyEditorTypeConverter());
-        fallbackConverters.add(new ToStringTypeConverter());
-        fallbackConverters.add(new ArrayTypeConverter());
         this.injector = injector;
+        addFallbackConverter(new PropertyEditorTypeConverter());
+        addFallbackConverter(new ToStringTypeConverter());
+        addFallbackConverter(new ArrayTypeConverter());
     }
 
     public <T> T convertTo(Class<T> toType, Object value) {
@@ -85,6 +85,14 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
                 log.warn("Overriding type converter from: " + converter + " to: " + typeConverter);
             }
             typeMappings.put(key, typeConverter);
+        }
+    }
+
+    public void addFallbackConverter(TypeConverter converter) {
+        fallbackConverters.add(converter);
+        if (converter instanceof TypeConverterAware) {
+            TypeConverterAware typeConverterAware = (TypeConverterAware) converter;
+            typeConverterAware.setTypeConverter(this);
         }
     }
 
@@ -209,7 +217,9 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     protected void loadFallbackTypeConverters() throws IOException, ClassNotFoundException {
         FactoryFinder finder = new FactoryFinder();
         List<TypeConverter> converters = finder.newInstances("FallbackTypeConverter", getInjector(), TypeConverter.class);
-        fallbackConverters.addAll(converters);
+        for (TypeConverter converter : converters) {
+          addFallbackConverter(converter);
+        }
     }
 
     /**

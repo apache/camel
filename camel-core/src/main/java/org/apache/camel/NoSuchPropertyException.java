@@ -47,6 +47,10 @@ public class NoSuchPropertyException extends CamelExchangeException {
 
     protected static String reason(Exchange exchange, String propertyName) {
         Object value = exchange.getProperty(propertyName);
+        return valueDescription(value);
+    }
+
+    static String valueDescription(Object value) {
         if (value == null) {
             return "";
         }
