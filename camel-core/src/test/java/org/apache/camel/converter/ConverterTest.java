@@ -19,6 +19,7 @@ package org.apache.camel.converter;
 
 import junit.framework.TestCase;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.impl.ReflectionInjector;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,7 +38,7 @@ import java.util.Set;
 public class ConverterTest extends TestCase {
     private static final transient Log log = LogFactory.getLog(ConverterTest.class);
 
-    protected TypeConverter converter = new DefaultTypeConverter();
+    protected TypeConverter converter = new DefaultTypeConverter(new ReflectionInjector());
 
     public static class IntegerPropertyEditor extends PropertyEditorSupport {
         public void setAsText(String text) throws IllegalArgumentException {

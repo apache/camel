@@ -403,7 +403,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * Lazily create a default implementation
      */
     protected TypeConverter createTypeConverter() {
-        return new DefaultTypeConverter();
+        return new DefaultTypeConverter(getInjector());
     }
 
     /**

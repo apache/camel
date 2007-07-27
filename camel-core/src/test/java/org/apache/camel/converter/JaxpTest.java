@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.impl.ReflectionInjector;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.w3c.dom.Document;
 
@@ -32,7 +33,7 @@ import javax.xml.transform.Source;
 public class JaxpTest extends TestCase {
     private static final transient Log log = LogFactory.getLog(JaxpTest.class);
 
-    protected TypeConverter converter = new DefaultTypeConverter();
+    protected TypeConverter converter = new DefaultTypeConverter(new ReflectionInjector());
 
     public void testConvertToDocument() throws Exception {
         Document document = converter.convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");

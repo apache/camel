@@ -26,9 +26,9 @@ import org.apache.camel.spi.Injector;
  *
  * @version $Revision$
  */
-public class ReflectionInjector<T> implements Injector<T> {
+public class ReflectionInjector implements Injector {
     
-    public T newInstance(Class<T> type) {
+    public <T> T newInstance(Class<T> type) {
         try {
             return type.newInstance();
         }

@@ -23,12 +23,12 @@ package org.apache.camel.spi;
  *
  * @version $Revision$
  */
-public interface Injector<T> {
+public interface Injector {
     /**
      * Instantiates a new instance of the given type possibly injecting values into the object in the process
      *
      * @param type the type of object to create
      * @return a newly created instance
      */
-    T newInstance(Class<T> type);
+    <T> T newInstance(Class<T> type);
 }
