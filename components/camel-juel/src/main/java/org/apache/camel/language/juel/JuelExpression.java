@@ -34,6 +34,10 @@ public class JuelExpression extends ExpressionSupport<Exchange> {
     private final Class<?> type;
     private ExpressionFactory expressionFactory;
 
+    public static JuelExpression el(String expression) {
+        return new JuelExpression(expression, Object.class);
+    }
+
     public JuelExpression(String expression, Class<?> type) {
         this.expression = expression;
         this.type = type;
