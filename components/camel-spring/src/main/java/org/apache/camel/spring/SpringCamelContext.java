@@ -125,7 +125,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     @Override
     protected Injector createInjector() {
-        log.info("Creating a spring injector!");
         return new SpringInjector((AbstractRefreshableApplicationContext) getApplicationContext());
     }
 
