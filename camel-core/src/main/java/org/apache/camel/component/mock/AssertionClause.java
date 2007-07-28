@@ -22,8 +22,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
 import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
-import org.apache.camel.builder.Fluent;
-import org.apache.camel.builder.FluentArg;
 import org.apache.camel.builder.ValueBuilder;
 
 import java.util.ArrayList;
@@ -52,8 +50,8 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
     /**
      * Returns a predicate and value builder for headers on an exchange
      */
-    @Fluent
-    public ValueBuilder<E> header(@FluentArg("name")String name) {
+
+    public ValueBuilder<E> header(String name) {
         Expression<E> expression = headerExpression(name);
         return new PredicateValueBuilder(expression);
     }
@@ -61,7 +59,7 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
     /**
      * Returns a predicate and value builder for the inbound body on an exchange
      */
-    @Fluent
+
     public PredicateValueBuilder body() {
         Expression<E> expression = bodyExpression();
         return new PredicateValueBuilder(expression);
@@ -70,8 +68,8 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
     /**
      * Returns a predicate and value builder for the inbound message body as a specific type
      */
-    @Fluent
-    public <T> PredicateValueBuilder bodyAs(@FluentArg("class")Class<T> type) {
+
+    public <T> PredicateValueBuilder bodyAs(Class<T> type) {
         Expression<E> expression = bodyExpression(type);
         return new PredicateValueBuilder(expression);
     }
@@ -79,7 +77,7 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
     /**
      * Returns a predicate and value builder for the outbound body on an exchange
      */
-    @Fluent
+
     public PredicateValueBuilder outBody() {
         Expression<E> expression = bodyExpression();
         return new PredicateValueBuilder(expression);
@@ -88,8 +86,8 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
     /**
      * Returns a predicate and value builder for the outbound message body as a specific type
      */
-    @Fluent
-    public <T> PredicateValueBuilder outBody(@FluentArg("class")Class<T> type) {
+
+    public <T> PredicateValueBuilder outBody(Class<T> type) {
         Expression<E> expression = bodyExpression(type);
         return new PredicateValueBuilder(expression);
     }

@@ -23,7 +23,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.Delayer;
 
 /**
- * 
  * @version $Revision: 1.1 $
  */
 public class DelayerBuilder extends FromBuilder {

@@ -17,14 +17,13 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DeadLetterChannel;
-import org.apache.camel.processor.RecipientList;
-import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.LoggingLevel;
+import org.apache.camel.processor.RecipientList;
+import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

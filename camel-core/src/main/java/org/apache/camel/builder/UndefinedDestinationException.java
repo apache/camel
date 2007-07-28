@@ -23,9 +23,9 @@ import org.apache.camel.RuntimeCamelException;
  * @version $Revision$
  */
 public class UndefinedDestinationException extends RuntimeCamelException {
-	private static final long serialVersionUID = -5980888207885995222L;
+    private static final long serialVersionUID = -5980888207885995222L;
 
-	public UndefinedDestinationException() {
+    public UndefinedDestinationException() {
         super("No destination defined for this routing rule");
     }
 }

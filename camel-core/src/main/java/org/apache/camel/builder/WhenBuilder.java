@@ -33,23 +33,23 @@ public class WhenBuilder extends FilterBuilder {
     }
 
     @Override
-    @Fluent
-    public ChoiceBuilder to(@FluentArg("ref")Endpoint endpoint) {
+
+    public ChoiceBuilder to(Endpoint endpoint) {
         super.to(endpoint);
         return parent;
     }
 
     @Override
-    @Fluent
-    public ChoiceBuilder to(@FluentArg("uri")String uri) {
+
+    public ChoiceBuilder to(String uri) {
         super.to(uri);
         return parent;
     }
 
     @Override
-    @Fluent
-    public ChoiceBuilder process(@FluentArg("ref")Processor processor) {
-        super.process(processor);   
+
+    public ChoiceBuilder process(Processor processor) {
+        super.process(processor);
         return parent;
     }
 }

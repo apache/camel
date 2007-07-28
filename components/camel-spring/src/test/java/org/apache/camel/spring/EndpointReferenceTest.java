@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.example.DummyBean;
-import org.apache.camel.spring.xml.StatementRouteBuilder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.List;

@@ -19,8 +19,8 @@ package org.apache.camel.builder.xml;
 
 import org.apache.camel.Message;
 
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.Result;
+import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
 
 /**

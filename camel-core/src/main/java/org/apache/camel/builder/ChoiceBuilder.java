@@ -16,13 +16,15 @@
  */
 package org.apache.camel.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.sun.org.apache.xpath.internal.Arg;
 
 /**
  * @version $Revision$
@@ -43,16 +45,18 @@ public class ChoiceBuilder extends FromBuilder {
      *
      * @return a builder for creating a when predicate clause and action
      */
-    @Fluent(nestedActions=true)
     public WhenBuilder when(
-    		@FluentArg(value="predicate",element=true) 
-    		Predicate predicate) {
+
+    Predicate predicate
+    )
+
+    {
         WhenBuilder answer = new WhenBuilder(this, predicate);
         predicateBuilders.add(answer);
         return answer;
     }
 
-    @Fluent(nestedActions=true)
+
     public FromBuilder otherwise() {
         this.otherwise = new FromBuilder(parent);
         return otherwise;

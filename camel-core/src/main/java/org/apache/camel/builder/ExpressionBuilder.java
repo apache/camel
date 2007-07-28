@@ -20,9 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
 /**
@@ -47,7 +47,7 @@ public class ExpressionBuilder {
                 }
                 return header;
             }
-            
+
 
             @Override
             public String toString() {
@@ -119,7 +119,7 @@ public class ExpressionBuilder {
     public static <E extends Exchange> Expression<E> systemPropertyExpression(final String propertyName, final String defaultValue) {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-               return System.getProperty(propertyName, defaultValue);
+                return System.getProperty(propertyName, defaultValue);
             }
 
             @Override
@@ -321,7 +321,8 @@ public class ExpressionBuilder {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
                 String text = evaluateStringExpression(expression, exchange);
-                String replacement = evaluateStringExpression(replacementExpression, exchange);;
+                String replacement = evaluateStringExpression(replacementExpression, exchange);
+                ;
                 if (text == null || replacement == null) {
                     return null;
                 }
@@ -356,7 +357,7 @@ public class ExpressionBuilder {
      * Evaluates the expression on the given exchange and returns the String representation
      *
      * @param expression the expression to evaluate
-     * @param exchange the exchange to use to evaluate the expression
+     * @param exchange   the exchange to use to evaluate the expression
      * @return the String representation of the expression or null if it could not be evaluated
      */
     public static <E extends Exchange> String evaluateStringExpression(Expression<E> expression, E exchange) {

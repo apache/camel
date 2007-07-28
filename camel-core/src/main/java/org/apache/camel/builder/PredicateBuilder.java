@@ -42,7 +42,7 @@ public class PredicateBuilder {
         return new PredicateSupport<E>() {
             public boolean matches(E exchange) {
                 Object value = expression.evaluate(exchange);
-                    return evaluateValuePredicate(value);
+                return evaluateValuePredicate(value);
             }
 
             @Override
@@ -226,7 +226,7 @@ public class PredicateBuilder {
      * Returns a predicate which is true if the expression matches the given regular expression
      *
      * @param expression the expression to evaluate
-     * @param regex the regular expression to match against
+     * @param regex      the regular expression to match against
      * @return a new predicate
      */
     public static <E extends Exchange> Predicate<E> regex(final Expression<E> expression, final String regex) {
@@ -237,7 +237,7 @@ public class PredicateBuilder {
      * Returns a predicate which is true if the expression matches the given regular expression
      *
      * @param expression the expression to evaluate
-     * @param pattern the regular expression to match against
+     * @param pattern    the regular expression to match against
      * @return a new predicate
      */
     public static <E extends Exchange> Predicate<E> regex(final Expression<E> expression, final Pattern pattern) {

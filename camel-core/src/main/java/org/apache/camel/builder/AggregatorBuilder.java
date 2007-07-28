@@ -21,12 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.Service;
 import org.apache.camel.processor.Aggregator;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-
-import java.util.List;
 
 /**
  * A builder for the <a href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a> pattern

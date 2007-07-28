@@ -17,7 +17,6 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.LoggingErrorHandler;
@@ -27,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Uses the {@link Logger} as an error handler
- * 
+ *
  * @version $Revision$
  */
 public class LoggingErrorHandlerBuilder implements ErrorHandlerBuilder {

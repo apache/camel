@@ -17,8 +17,8 @@
  */
 package org.apache.camel.builder.xml;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -27,7 +27,7 @@ import java.util.Set;
  * @version $Revision: 1.1 $
  */
 public class NamespaceBuilder {
-    private Map<String,String> namespaces = new HashMap<String, String>();
+    private Map<String, String> namespaces = new HashMap<String, String>();
 
     public static NamespaceBuilder namespaceContext() {
         return new NamespaceBuilder();
@@ -50,9 +50,9 @@ public class NamespaceBuilder {
      */
     public XPathBuilder xpath(String xpath) {
         XPathBuilder answer = XPathBuilder.xpath(xpath);
-        Set<Map.Entry<String,String>> entries = namespaces.entrySet();
+        Set<Map.Entry<String, String>> entries = namespaces.entrySet();
         for (Map.Entry<String, String> entry : entries) {
-          answer.namespace(entry.getKey(), entry.getValue());
+            answer.namespace(entry.getKey(), entry.getValue());
         }
         return answer;
     }

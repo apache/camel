@@ -18,14 +18,10 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.processor.MulticastProcessor;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * A builder for the {@link MulticastProcessor} pattern
