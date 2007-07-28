@@ -23,7 +23,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class Namespaces {
     public static final String DEFAULT_NAMESPACE = "http://activemq.apache.org/camel/schema/spring";
-    
+
     public static final String IN_NAMESPACE = "http://camel.apache.org/xml/in/";
     public static final String OUT_NAMESPACE = "http://camel.apache.org/xml/out/";
     public static final String SYSTEM_PROPERTIES_NAMESPACE = "http://camel.apache.org/xml/variables/system-properties";

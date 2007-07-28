@@ -15,9 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.xml;
+package org.apache.camel.spring.handler;
 
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.spring.handler.BeanDefinitionParser;
 
 /**
  * A {@link BeanDefinitionParser} which lazy loads the type on which it creates to allow the schema to be loosly coupled

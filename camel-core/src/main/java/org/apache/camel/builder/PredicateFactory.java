@@ -22,7 +22,7 @@ import org.apache.camel.Predicate;
 
 /**
  * A Factory of {@link Predicate} objects typically implemented by a builder such as @{XPathBuilder}
- * 
+ *
  * @version $Revision$
  */
 public interface PredicateFactory<E extends Exchange> {

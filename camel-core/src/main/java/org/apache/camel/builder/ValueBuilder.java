@@ -48,58 +48,58 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
     // Predicate builders
     //-------------------------------------------------------------------------
 
-    @Fluent
-    public Predicate<E> isNotEqualTo(@FluentArg("value")Object value) {
+
+    public Predicate<E> isNotEqualTo(Object value) {
         Expression<E> right = asExpression(value);
         return onNewPredicate(PredicateBuilder.isNotEqualTo(expression, right));
     }
 
-    @Fluent
-    public Predicate<E> isEqualTo(@FluentArg("value")Object value) {
+
+    public Predicate<E> isEqualTo(Object value) {
         Expression<E> right = asExpression(value);
         return onNewPredicate(PredicateBuilder.isEqualTo(expression, right));
     }
 
-    @Fluent
-    public Predicate<E> isLessThan(@FluentArg("value")Object value) {
+
+    public Predicate<E> isLessThan(Object value) {
         Expression<E> right = asExpression(value);
         return onNewPredicate(PredicateBuilder.isLessThan(expression, right));
     }
 
-    @Fluent
-    public Predicate<E> isLessThanOrEqualTo(@FluentArg("value")Object value) {
+
+    public Predicate<E> isLessThanOrEqualTo(Object value) {
         Expression<E> right = asExpression(value);
         return onNewPredicate(PredicateBuilder.isLessThanOrEqualTo(expression, right));
     }
 
-    @Fluent
-    public Predicate<E> isGreaterThan(@FluentArg("value")Object value) {
+
+    public Predicate<E> isGreaterThan(Object value) {
         Expression<E> right = asExpression(value);
         return onNewPredicate(PredicateBuilder.isGreaterThan(expression, right));
     }
 
-    @Fluent
-    public Predicate<E> isGreaterThanOrEqualTo(@FluentArg("value")Object value) {
+
+    public Predicate<E> isGreaterThanOrEqualTo(Object value) {
         Expression<E> right = asExpression(value);
         return onNewPredicate(PredicateBuilder.isGreaterThanOrEqualTo(expression, right));
     }
 
-    @Fluent
-    public Predicate<E> isInstanceOf(@FluentArg("class")Class type) {
+
+    public Predicate<E> isInstanceOf(Class type) {
         return onNewPredicate(PredicateBuilder.isInstanceOf(expression, type));
     }
 
-    @Fluent
-    public Predicate<E> matchesRegex(@FluentArg("regex")String regex) {
+
+    public Predicate<E> matchesRegex(String regex) {
         return onNewPredicate(PredicateBuilder.regex(expression, regex));
     }
 
-    @Fluent
+
     public Predicate<E> isNull() {
         return onNewPredicate(PredicateBuilder.isNull(expression));
     }
 
-    @Fluent
+
     public Predicate<E> isNotNull() {
         return onNewPredicate(PredicateBuilder.isNotNull(expression));
     }
@@ -109,10 +109,10 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
      *
      * @param value the element which is compared to be contained within this expression
      * @return a predicate which evaluates to true if the given value expression is contained within this
-     * expression value
+     *         expression value
      */
-    @Fluent
-    public Predicate<E> contains(@FluentArg("value")Object value) {
+
+    public Predicate<E> contains(Object value) {
         Expression<E> right = asExpression(value);
         return onNewPredicate(PredicateBuilder.contains(expression, right));
     }
@@ -124,22 +124,21 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
      * @param regex the regular expression to match
      * @return a predicate which evaluates to true if the expression matches the regex
      */
-    @Fluent
+
     public Predicate<E> regex(String regex) {
         return onNewPredicate(PredicateBuilder.regex(expression, regex));
     }
 
-
     // Expression builders
     //-------------------------------------------------------------------------
 
-    @Fluent
+
     public ValueBuilder<E> tokenize() {
         return tokenize("\n");
     }
 
-    @Fluent
-    public ValueBuilder<E> tokenize(@FluentArg("token")String token) {
+
+    public ValueBuilder<E> tokenize(String token) {
         Expression<E> newExp = ExpressionBuilder.tokenizeExpression(expression, token);
         return new ValueBuilder<E>(newExp);
     }
@@ -147,8 +146,8 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
     /**
      * Tokenizes the string conversion of this expression using the given regular expression
      */
-    @Fluent
-    public ValueBuilder<E> regexTokenize(@FluentArg("regex")String regex) {
+
+    public ValueBuilder<E> regexTokenize(String regex) {
         Expression<E> newExp = ExpressionBuilder.regexTokenize(expression, regex);
         return new ValueBuilder<E>(newExp);
     }
@@ -156,8 +155,8 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
     /**
      * Replaces all occurrencies of the regular expression with the given replacement
      */
-    @Fluent
-    public ValueBuilder<E> regexReplaceAll(@FluentArg("regex")String regex, @FluentArg("replacement")String replacement) {
+
+    public ValueBuilder<E> regexReplaceAll(String regex, String replacement) {
         Expression<E> newExp = ExpressionBuilder.regexReplaceAll(expression, regex, replacement);
         return new ValueBuilder<E>(newExp);
     }
@@ -165,8 +164,8 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
     /**
      * Replaces all occurrencies of the regular expression with the given replacement
      */
-    @Fluent
-    public ValueBuilder<E> regexReplaceAll(@FluentArg("regex")String regex, @FluentArg("replacement")Expression<E> replacement) {
+
+    public ValueBuilder<E> regexReplaceAll(String regex, Expression<E> replacement) {
         Expression<E> newExp = ExpressionBuilder.regexReplaceAll(expression, regex, replacement);
         return new ValueBuilder<E>(newExp);
     }
@@ -178,8 +177,8 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
      * @param type the type to convert the value to
      * @return the current builder
      */
-    @Fluent
-    public ValueBuilder<E> convertTo(@FluentArg("type")Class type) {
+
+    public ValueBuilder<E> convertTo(Class type) {
         Expression<E> newExp = ExpressionBuilder.convertTo(expression, type);
         return new ValueBuilder<E>(newExp);
     }
@@ -189,22 +188,22 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
      *
      * @return the current builder
      */
-    @Fluent
+
     public ValueBuilder<E> convertToString() {
         return convertTo(String.class);
     }
 
     /**
      * Appends the string evaluation of this expression with the given value
+     *
      * @param value the value or expression to append
      * @return the current builder
      */
-    @Fluent
-    public ValueBuilder<E> append(@FluentArg("value") Object value) {
+
+    public ValueBuilder<E> append(Object value) {
         return new ValueBuilder<E>(ExpressionBuilder.append(expression, asExpression(value)));
     }
 
-    
     // Implementation methods
     //-------------------------------------------------------------------------
 

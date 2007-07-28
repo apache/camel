@@ -16,18 +16,15 @@
  */
 package org.apache.camel.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.processor.DelegateProcessor;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A <a href="http://activemq.apache.org/camel/dsl.html">Java DSL</a>
@@ -54,20 +51,20 @@ public abstract class RouteBuilder extends BuilderSupport {
      */
     public abstract void configure() throws Exception;
 
-    @Fluent
-    public FromBuilder from( @FluentArg("uri") String uri) {
-    	if( uri == null ) {
-    		throw new IllegalArgumentException("uri parameter cannot be null");
-    	}
-    	Endpoint endpoint = endpoint(uri);
-    	if( endpoint == null ) {
-    		throw new IllegalArgumentException("uri '"+uri+"' could not be resolved.");
-    	}
+
+    public FromBuilder from(String uri) {
+        if (uri == null) {
+            throw new IllegalArgumentException("uri parameter cannot be null");
+        }
+        Endpoint endpoint = endpoint(uri);
+        if (endpoint == null) {
+            throw new IllegalArgumentException("uri '" + uri + "' could not be resolved.");
+        }
         return from(endpoint);
     }
 
-    @Fluent
-    public FromBuilder from( @FluentArg("ref") Endpoint endpoint) {
+
+    public FromBuilder from(Endpoint endpoint) {
         FromBuilder answer = new FromBuilder(this, endpoint);
         addFromBuilder(answer);
         return answer;
@@ -95,13 +92,12 @@ public abstract class RouteBuilder extends BuilderSupport {
         return this;
     }
 
-    
-    @Fluent
-    public RouteBuilder intercept(@FluentArg("interceptor")DelegateProcessor interceptor) {
+
+    public RouteBuilder intercept(DelegateProcessor interceptor) {
         interceptors.add(interceptor);
         return this;
     }
-    
+
     // Properties
     //-----------------------------------------------------------------------
     public CamelContext getContext() {

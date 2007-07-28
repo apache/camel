@@ -24,7 +24,7 @@ import org.apache.camel.processor.Splitter;
 /**
  * A builder for the <a href="http://activemq.apache.org/camel/splitter.html">Splitter</a> pattern
  * where an expression is evaluated to iterate through each of the parts of a message and then each part is then send to some endpoint.
-
+ *
  * @version $Revision$
  */
 public class SplitterBuilder extends FromBuilder {

@@ -24,7 +24,7 @@ import javax.xml.transform.dom.DOMResult;
 
 /**
  * Uses DOM to handle results of the transformation
- * 
+ *
  * @version $Revision: 1.1 $
  */
 public class DomResultHandler implements ResultHandler {

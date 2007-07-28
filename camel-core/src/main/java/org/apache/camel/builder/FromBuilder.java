@@ -40,8 +40,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import sun.net.smtp.SmtpClient;
-
 /**
  * @version $Revision$
  */
@@ -68,16 +66,16 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
     /**
      * Sends the exchange to the given endpoint URI
      */
-    @Fluent
-    public ProcessorFactory to(@FluentArg("uri")String uri) {
+
+    public ProcessorFactory to(String uri) {
         return to(endpoint(uri));
     }
 
     /**
      * Sends the exchange to the given endpoint
      */
-    @Fluent
-    public ProcessorFactory to(@FluentArg("ref")Endpoint endpoint) {
+
+    public ProcessorFactory to(Endpoint endpoint) {
         ToBuilder answer = new ToBuilder(this, endpoint);
         addProcessBuilder(answer);
         return answer;
@@ -86,7 +84,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
     /**
      * Sends the exchange to a list of endpoints using the {@link MulticastProcessor} pattern
      */
-    @Fluent
+
     public ProcessorFactory to(String... uris) {
         return to(endpoints(uris));
     }
@@ -94,19 +92,24 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
     /**
      * Sends the exchange to a list of endpoints using the {@link MulticastProcessor} pattern
      */
-    @Fluent
+
     public ProcessorFactory to(
-            @FluentArg(value = "endpoint", attribute = false, element = true)
-            Endpoint... endpoints) {
+            Endpoint... endpoints)
+
+    {
         return to(endpoints(endpoints));
     }
 
     /**
      * Sends the exchange to a list of endpoint using the {@link MulticastProcessor} pattern
      */
-    @Fluent
-    public ProcessorFactory to(@FluentArg(value = "endpoint", attribute = false, element = true)
-    Collection<Endpoint> endpoints) {
+
+    public ProcessorFactory to(
+
+            Collection<Endpoint> endpoints
+    )
+
+    {
         return addProcessBuilder(new MulticastBuilder(this, endpoints));
     }
 
@@ -114,8 +117,8 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * Creates a {@link Pipeline} of the list of endpoints so that the message will get processed by each endpoint in turn
      * and for request/response the output of one endpoint will be the input of the next endpoint
      */
-    @Fluent
-    public ProcessorFactory pipeline(@FluentArg("uris")String... uris) {
+
+    public ProcessorFactory pipeline(String... uris) {
         return pipeline(endpoints(uris));
     }
 
@@ -123,8 +126,8 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * Creates a {@link Pipeline} of the list of endpoints so that the message will get processed by each endpoint in turn
      * and for request/response the output of one endpoint will be the input of the next endpoint
      */
-    @Fluent
-    public ProcessorFactory pipeline(@FluentArg("endpoints")Endpoint... endpoints) {
+
+    public ProcessorFactory pipeline(Endpoint... endpoints) {
         return pipeline(endpoints(endpoints));
     }
 
@@ -132,18 +135,18 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * Creates a {@link Pipeline} of the list of endpoints so that the message will get processed by each endpoint in turn
      * and for request/response the output of one endpoint will be the input of the next endpoint
      */
-    @Fluent
-    public ProcessorFactory pipeline(@FluentArg("endpoints")Collection<Endpoint> endpoints) {
+
+    public ProcessorFactory pipeline(Collection<Endpoint> endpoints) {
         return addProcessBuilder(new PipelineBuilder(this, endpoints));
     }
 
     /**
      * Creates an {@link IdempotentConsumer} to avoid duplicate messages
      */
-    @Fluent
+
     public IdempotentConsumerBuilder idempotentConsumer(
-            @FluentArg("messageIdExpression")Expression messageIdExpression,
-            @FluentArg("MessageIdRepository")MessageIdRepository messageIdRepository) {
+            Expression messageIdExpression,
+            MessageIdRepository messageIdRepository) {
         return (IdempotentConsumerBuilder) addProcessBuilder(new IdempotentConsumerBuilder(this, messageIdExpression, messageIdRepository));
     }
 
@@ -153,10 +156,12 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      *
      * @return the builder for a predicate
      */
-    @Fluent
+
     public FilterBuilder filter(
-            @FluentArg(value = "predicate", element = true)
-            Predicate predicate) {
+            Predicate predicate
+    )
+
+    {
         FilterBuilder answer = new FilterBuilder(this, predicate);
         addProcessBuilder(answer);
         return answer;
@@ -167,7 +172,6 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      *
      * @return the builder for a choice expression
      */
-    @Fluent(nestedActions = true)
     public ChoiceBuilder choice() {
         ChoiceBuilder answer = new ChoiceBuilder(this);
         addProcessBuilder(answer);
@@ -179,10 +183,12 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      *
      * @param receipients is the builder of the expression used in the {@link RecipientList} to decide the destinations
      */
-    @Fluent
+
     public RecipientListBuilder recipientList(
-            @FluentArg(value = "recipients", element = true)
-            Expression receipients) {
+            Expression receipients
+    )
+
+    {
         RecipientListBuilder answer = new RecipientListBuilder(this, receipients);
         addProcessBuilder(answer);
         return answer;
@@ -195,8 +201,13 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * @param receipients the expression on which to split
      * @return the builder
      */
-    @Fluent
-    public SplitterBuilder splitter(@FluentArg(value = "recipients", element = true)Expression receipients) {
+
+    public SplitterBuilder splitter(
+            Expression receipients
+
+    )
+
+    {
         SplitterBuilder answer = new SplitterBuilder(this, receipients);
         addProcessBuilder(answer);
         return answer;
@@ -222,8 +233,12 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * @param expressions the expressions on which to compare messages in order
      * @return the builder
      */
-    @Fluent
-    public ResequencerBuilder resequencer(@FluentArg(value = "expressions")List<Expression<Exchange>> expressions) {
+
+    public ResequencerBuilder resequencer(List
+
+            <Expression<Exchange>> expressions)
+
+    {
         ResequencerBuilder answer = new ResequencerBuilder(this, expressions);
         setRouteBuilder(answer);
         return answer;
@@ -237,7 +252,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * @param expressions the expressions on which to compare messages in order
      * @return the builder
      */
-    @Fluent
+
     public ResequencerBuilder resequencer(Expression<Exchange>... expressions) {
         List<Expression<Exchange>> list = new ArrayList<Expression<Exchange>>();
         for (Expression<Exchange> expression : expressions) {
@@ -259,9 +274,9 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * into a single invoice message.
      *
      * @param correlationExpression the expression used to calculate the correlation key. For a JMS message this could
-     * be the expression <code>header("JMSDestination")</code> or  <code>header("JMSCorrelationID")</code>
+     *                              be the expression <code>header("JMSDestination")</code> or  <code>header("JMSCorrelationID")</code>
      */
-    @Fluent
+
     public AggregatorBuilder aggregator(Expression correlationExpression) {
         AggregatorBuilder answer = new AggregatorBuilder(this, correlationExpression);
         setRouteBuilder(answer);
@@ -281,9 +296,9 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * into a single invoice message.
      *
      * @param correlationExpression the expression used to calculate the correlation key. For a JMS message this could
-     * be the expression <code>header("JMSDestination")</code> or  <code>header("JMSCorrelationID")</code>
+     *                              be the expression <code>header("JMSDestination")</code> or  <code>header("JMSCorrelationID")</code>
      */
-    @Fluent
+
     public AggregatorBuilder aggregator(Expression correlationExpression, AggregationStrategy strategy) {
         AggregatorBuilder answer = new AggregatorBuilder(this, correlationExpression);
         answer.aggregationStrategy(strategy);
@@ -298,7 +313,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * @param processAtExpression an expression to calculate the time at which the messages should be processed
      * @return the builder
      */
-    @Fluent
+
     public DelayerBuilder delayer(Expression<Exchange> processAtExpression) {
         return delayer(processAtExpression, 0L);
     }
@@ -308,11 +323,11 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * where an expression is used to calculate the time which the message will be dispatched on
      *
      * @param processAtExpression an expression to calculate the time at which the messages should be processed
-     * @param delay the delay in milliseconds which is added to the processAtExpression to determine the time the
-     * message should be processed
+     * @param delay               the delay in milliseconds which is added to the processAtExpression to determine the time the
+     *                            message should be processed
      * @return the builder
      */
-    @Fluent
+
     public DelayerBuilder delayer(Expression<Exchange> processAtExpression, long delay) {
         DelayerBuilder answer = new DelayerBuilder(this, processAtExpression, delay);
         setRouteBuilder(answer);
@@ -326,7 +341,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * @param delay the default delay in milliseconds
      * @return the builder
      */
-    @Fluent
+
     public DelayerBuilder delayer(long delay) {
         return delayer(null, delay);
     }
@@ -336,12 +351,9 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * A builder for the <a href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
      * where an expression is used to calculate the time which the message will be dispatched on
      *
-     * @param processAtExpression an expression to calculate the time at which the messages should be processed
-     * @param delay the delay in milliseconds which is added to the processAtExpression to determine the time the
-     * message should be processed
      * @return the builder
      */
-    @Fluent
+
     public ThrottlerBuilder throttler(long maximumRequestCount) {
         ThrottlerBuilder answer = new ThrottlerBuilder(this, maximumRequestCount);
         setRouteBuilder(answer);
@@ -355,8 +367,8 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * @param errorHandlerBuilder the error handler to be used by default for all child routes
      * @return the current builder with the error handler configured
      */
-    @Fluent
-    public FromBuilder errorHandler(@FluentArg("handler")ErrorHandlerBuilder errorHandlerBuilder) {
+
+    public FromBuilder errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
         setErrorHandlerBuilder(errorHandlerBuilder);
         return this;
     }
@@ -367,21 +379,20 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * @param condition the falg as to whether error handlers should be inherited or not
      * @return the current builder
      */
-    @Fluent
-    public FromBuilder inheritErrorHandler(@FluentArg("condition")boolean condition) {
+
+    public FromBuilder inheritErrorHandler(boolean condition) {
         setInheritErrorHandler(condition);
         return this;
     }
 
-    @Fluent(nestedActions = true)
     public InterceptorBuilder intercept() {
         InterceptorBuilder answer = new InterceptorBuilder(this);
         addProcessBuilder(answer);
         return answer;
     }
 
-    @Fluent
-    public FromBuilder intercept(@FluentArg("interceptor")DelegateProcessor interceptor) {
+
+    public FromBuilder intercept(DelegateProcessor interceptor) {
         InterceptorBuilder answer = new InterceptorBuilder(this);
         answer.add(interceptor);
         addProcessBuilder(answer);
@@ -394,7 +405,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      *
      * @return
      */
-    @Fluent
+
     public FromBuilder trace() {
         return trace(DEFAULT_TRACE_CATEGORY);
     }
@@ -406,8 +417,8 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * @param category the logging category trace messages will sent to.
      * @return
      */
-    @Fluent
-    public FromBuilder trace(@FluentArg("category")String category) {
+
+    public FromBuilder trace(String category) {
         final Log log = LogFactory.getLog(category);
         return intercept(new DelegateProcessor() {
             @Override
@@ -418,15 +429,14 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
         });
     }
 
-    @Fluent(nestedActions = true)
     public PolicyBuilder policies() {
         PolicyBuilder answer = new PolicyBuilder(this);
         addProcessBuilder(answer);
         return answer;
     }
 
-    @Fluent
-    public FromBuilder policy(@FluentArg("policy")Policy policy) {
+
+    public FromBuilder policy(Policy policy) {
         PolicyBuilder answer = new PolicyBuilder(this);
         answer.add(policy);
         addProcessBuilder(answer);
@@ -439,8 +449,8 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
     /**
      * Adds the custom processor to this destination which could be a final destination, or could be a transformation in a pipeline
      */
-    @Fluent
-    public FromBuilder process(@FluentArg("ref")Processor processor) {
+
+    public FromBuilder process(Processor processor) {
         addProcessorBuilder(processor);
         return this;
     }
@@ -448,7 +458,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
     /**
      * Adds a processor which sets the body on the IN message
      */
-    @Fluent
+
     public FromBuilder setBody(Expression expression) {
         addProcessorBuilder(ProcessorBuilder.setBody(expression));
         return this;
@@ -457,7 +467,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
     /**
      * Adds a processor which sets the body on the OUT message
      */
-    @Fluent
+
     public FromBuilder setOutBody(Expression expression) {
         addProcessorBuilder(ProcessorBuilder.setOutBody(expression));
         return this;
@@ -466,7 +476,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
     /**
      * Adds a processor which sets the header on the IN message
      */
-    @Fluent
+
     public FromBuilder setHeader(String name, Expression expression) {
         addProcessorBuilder(ProcessorBuilder.setHeader(name, expression));
         return this;
@@ -475,7 +485,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
     /**
      * Adds a processor which sets the header on the OUT message
      */
-    @Fluent
+
     public FromBuilder setOutHeader(String name, Expression expression) {
         addProcessorBuilder(ProcessorBuilder.setOutHeader(name, expression));
         return this;
@@ -484,7 +494,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
     /**
      * Adds a processor which sets the exchange property
      */
-    @Fluent
+
     public FromBuilder setProperty(String name, Expression expression) {
         addProcessorBuilder(ProcessorBuilder.setProperty(name, expression));
         return this;
@@ -493,7 +503,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
     /**
      * Converts the IN message body to the specified type
      */
-    @Fluent
+
     public FromBuilder convertBodyTo(Class type) {
         addProcessorBuilder(ProcessorBuilder.setBody(Builder.body().convertTo(type)));
         return this;
@@ -502,7 +512,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
     /**
      * Converts the OUT message body to the specified type
      */
-    @Fluent
+
     public FromBuilder convertOutBodyTo(Class type) {
         addProcessorBuilder(ProcessorBuilder.setOutBody(Builder.outBody().convertTo(type)));
         return this;

@@ -16,12 +16,11 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 /**
  * An interface representing a builder of a {@link Processor}
- * 
+ *
  * @version $Revision$
  */
 public interface ProcessorFactory {

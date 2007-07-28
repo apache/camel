@@ -21,7 +21,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.Throttler;
 
 /**
- * 
  * @version $Revision: 1.1 $
  */
 public class ThrottlerBuilder extends FromBuilder {

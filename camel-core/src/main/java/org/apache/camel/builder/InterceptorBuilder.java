@@ -17,59 +17,57 @@
  */
 package org.apache.camel.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.processor.DelegateProcessor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Revision: 519943 $
  */
 public class InterceptorBuilder implements ProcessorFactory {
     private final List<DelegateProcessor> intercepts = new ArrayList<DelegateProcessor>();
-	private final FromBuilder parent;
-	private FromBuilder target;
+    private final FromBuilder parent;
+    private FromBuilder target;
 
-	public InterceptorBuilder(FromBuilder parent) {
+    public InterceptorBuilder(FromBuilder parent) {
         this.parent = parent;
-	}
-	
-	@Fluent("interceptor")
-	public InterceptorBuilder add(@FluentArg("ref") DelegateProcessor interceptor) {
-		intercepts.add(interceptor);
-		return this;
-	}
-	
-	@Fluent(callOnElementEnd=true)
+    }
+
+    public InterceptorBuilder add(DelegateProcessor interceptor) {
+        intercepts.add(interceptor);
+        return this;
+    }
+
     public FromBuilder target() {
         this.target = new FromBuilder(parent);
         return target;
     }
 
     public Processor createProcessor() throws Exception {
-    	
-    	// The target is required.
-    	if( target == null ) 
-    		throw new RuntimeCamelException("target provided.");
-    	
-    	// Interceptors are optional
-    	DelegateProcessor first=null;
-    	DelegateProcessor last=null;
+
+        // The target is required.
+        if (target == null)
+            throw new RuntimeCamelException("target provided.");
+
+        // Interceptors are optional
+        DelegateProcessor first = null;
+        DelegateProcessor last = null;
         for (DelegateProcessor p : intercepts) {
-            if( first == null ) {
-            	first = p;
+            if (first == null) {
+                first = p;
             }
-            if( last != null ) {
-            	last.setProcessor(p);
+            if (last != null) {
+                last.setProcessor(p);
             }
             last = p;
         }
-        
+
         Processor p = target.createProcessor();
-        if( last != null ) {
-        	last.setProcessor(p);
+        if (last != null) {
+            last.setProcessor(p);
         }
         return first == null ? p : first;
     }

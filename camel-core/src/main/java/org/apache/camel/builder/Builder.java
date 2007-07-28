@@ -41,7 +41,7 @@ public class Builder {
     /**
      * Returns a predicate and value builder for headers on an exchange
      */
-    public static <E extends Exchange> ValueBuilder<E> header(@FluentArg("name") String name) {
+    public static <E extends Exchange> ValueBuilder<E> header(String name) {
         Expression<E> expression = ExpressionBuilder.headerExpression(name);
         return new ValueBuilder<E>(expression);
     }
@@ -57,7 +57,7 @@ public class Builder {
     /**
      * Returns a predicate and value builder for the inbound message body as a specific type
      */
-    public static <E extends Exchange, T> ValueBuilder<E> bodyAs( Class<T> type) {
+    public static <E extends Exchange, T> ValueBuilder<E> bodyAs(Class<T> type) {
         Expression<E> expression = ExpressionBuilder.<E, T>bodyExpression(type);
         return new ValueBuilder<E>(expression);
     }
