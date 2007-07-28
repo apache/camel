@@ -33,6 +33,7 @@
     <module>camel-example-jms-file</module>
     <module>camel-example-spring</module>
     <module>camel-example-etl</module>
+    <module>camel-example-bam</module>
     <!--<module>camel-example-osgi</module>-->
   </modules>
 
