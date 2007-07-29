@@ -195,9 +195,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     /**
      * Strategy method to try find {@link RouteBuilder} instances on the classpath
      */
-    protected void findRouteBuiders() throws IllegalAccessException, InstantiationException {
+    protected void findRouteBuiders() throws Exception, InstantiationException {
         if (packages != null && packages.length > 0) {
-            RouteBuilderFinder finder = new RouteBuilderFinder(this);
+            RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), packages);
             finder.appendBuilders(additionalBuilders);
         }
     }

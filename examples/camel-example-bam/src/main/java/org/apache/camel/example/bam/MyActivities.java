@@ -20,6 +20,10 @@ import org.apache.camel.bam.ActivityBuilder;
 import org.apache.camel.bam.ProcessBuilder;
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 import static org.apache.camel.util.Time.seconds;
+import org.apache.camel.Processor;
+import org.apache.camel.Exchange;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -28,6 +32,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 // START SNIPPET: example
 public class MyActivities extends ProcessBuilder {
+    private static final Log log = LogFactory.getLog(MyActivities.class);
 
     protected MyActivities(JpaTemplate jpaTemplate, TransactionTemplate transactionTemplate) {
         super(jpaTemplate, transactionTemplate);
@@ -45,7 +50,13 @@ public class MyActivities extends ProcessBuilder {
         // now lets add some rules
         invoice.starts().after(purchaseOrder.completes())
                 .expectWithin(seconds(1))
-                .errorIfOver(seconds(2)).to("log:failures");
+                .errorIfOver(seconds(2)).to("seda:failures");
+
+        from("seda:failures").process(new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                log.info("Failed process!: " + exchange + " with body: " + exchange.getIn().getBody());
+            }
+        });
     }
 };
 // END SNIPPET: example

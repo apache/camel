@@ -19,11 +19,8 @@ package org.apache.camel.spring;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ResolverUtil;
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
@@ -34,36 +31,26 @@ import java.util.Set;
  *
  * @version $Revision$
  */
-public class RouteBuilderFinder implements ApplicationContextAware {
-    private String[] packages = {};
+public class RouteBuilderFinder {
+    private final SpringCamelContext camelContext;
+    private final String[] packages;
     private ApplicationContext applicationContext;
     private ResolverUtil resolver = new ResolverUtil();
 
-    public RouteBuilderFinder(ApplicationContext applicationContext, String[] packages) {
-        this.applicationContext = applicationContext;
+    public RouteBuilderFinder(SpringCamelContext camelContext, String[] packages) {
+        this.camelContext = camelContext;
+        this.applicationContext = camelContext.getApplicationContext();
         this.packages = packages;
-    }
-
-    public RouteBuilderFinder(CamelContextFactoryBean factoryBean) {
-        this.applicationContext = factoryBean.getApplicationContext();
-        this.packages = factoryBean.getPackages();
     }
 
     public String[] getPackages() {
         return packages;
     }
 
-    public void setPackages(String[] packages) {
-        this.packages = packages;
-    }
-
     public ApplicationContext getApplicationContext() {
         return applicationContext;
     }
 
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
 
     /**
      * Appends all the {@link RouteBuilder} instances that can be found on the classpath
@@ -77,7 +64,8 @@ public class RouteBuilderFinder implements ApplicationContextAware {
                 continue;
             }
             if (isValidClass(aClass)) {
-                list.add(instantiateBuilder(aClass));
+                RouteBuilder builder = instantiateBuilder(aClass);
+                list.add(builder);
             }
         }
     }
@@ -102,19 +90,12 @@ public class RouteBuilderFinder implements ApplicationContextAware {
      */
     protected boolean isValidClass(Class type) {
         if (!Modifier.isAbstract(type.getModifiers()) && !type.isInterface()) {
-            Constructor[] constructors = type.getDeclaredConstructors();
-            for (Constructor constructor : constructors) {
-                Class[] classes = constructor.getParameterTypes();
-                if (classes.length == 0) {
-                    return true;
-                }
-            }
+            return true;
         }
         return false;
     }
 
     protected RouteBuilder instantiateBuilder(Class type) throws IllegalAccessException, InstantiationException {
-        // TODO we could support spring-injection for these types
-        return (RouteBuilder) type.newInstance();
+        return (RouteBuilder) camelContext.getInjector().newInstance(type);
     }
 }
