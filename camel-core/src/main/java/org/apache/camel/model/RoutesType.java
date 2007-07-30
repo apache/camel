@@ -123,5 +123,4 @@ public class RoutesType implements RouteContainer {
         getInterceptors().add(new InterceptorRef(interceptor));
         return this;
     }
-
 }

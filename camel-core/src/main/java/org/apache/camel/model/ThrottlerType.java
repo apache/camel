@@ -62,7 +62,7 @@ public class ThrottlerType extends ProcessorType {
         Processor childProcessor = routeContext.createProcessor(this);
         return new Throttler(childProcessor, maximumRequestsPerPeriod, timePeriodMillis);
     }
-    
+
     // Fluent API
     //-------------------------------------------------------------------------
 

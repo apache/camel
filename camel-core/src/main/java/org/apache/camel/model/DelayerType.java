@@ -19,7 +19,6 @@ package org.apache.camel.model;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.Exchange;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.Delayer;
@@ -70,6 +69,5 @@ public class DelayerType extends ExpressionNode {
         Processor childProcessor = routeContext.createProcessor(this);
         Expression processAtExpression = getExpression().createExpression(routeContext);
         return new Delayer(childProcessor, processAtExpression, delay);
-
     }
 }

@@ -18,14 +18,12 @@
 package org.apache.camel.model;
 
 import org.apache.camel.Processor;
-import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.impl.RouteContext;
+import org.apache.camel.processor.MulticastProcessor;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.util.List;
 
 /**

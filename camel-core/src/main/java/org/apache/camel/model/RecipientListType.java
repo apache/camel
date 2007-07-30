@@ -17,12 +17,11 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.Processor;
 import org.apache.camel.Expression;
-import org.apache.camel.model.language.ExpressionType;
-import org.apache.camel.processor.Splitter;
-import org.apache.camel.processor.RecipientList;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
+import org.apache.camel.model.language.ExpressionType;
+import org.apache.camel.processor.RecipientList;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
