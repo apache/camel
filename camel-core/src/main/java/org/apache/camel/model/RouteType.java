@@ -396,7 +396,7 @@ public class RouteType extends ProcessorType implements CamelContextAware {
      *
      * @return
      */
-    public FromBuilder trace() {
+    public RouteType trace() {
         return trace(DEFAULT_TRACE_CATEGORY);
     }
 
@@ -407,7 +407,7 @@ public class RouteType extends ProcessorType implements CamelContextAware {
      * @param category the logging category trace messages will sent to.
      * @return
      */
-    public FromBuilder trace(String category) {
+    public RouteType trace(String category) {
         final Log log = LogFactory.getLog(category);
         return intercept(new DelegateProcessor() {
             @Override
@@ -418,42 +418,21 @@ public class RouteType extends ProcessorType implements CamelContextAware {
         });
     }
 
-    public PolicyBuilder policies() {
-        throw new UnsupportedOperationException();
-/*
-        PolicyBuilder answer = new PolicyBuilder(this);
-        addProcessBuilder(answer);
+    public PolicyRef policies() {
+        PolicyRef answer = new PolicyRef();
+        getOutputs().add(answer);
         return answer;
-*/
     }
 
-    public FromBuilder policy(Policy policy) {
-        throw new UnsupportedOperationException();
-/*
-        PolicyBuilder answer = new PolicyBuilder(this);
-        answer.add(policy);
-        addProcessBuilder(answer);
-        return answer.target();
-*/
-    }
-
-    public InterceptorBuilder intercept() {
-        throw new UnsupportedOperationException();
-/*
-        InterceptorBuilder answer = new InterceptorBuilder(this);
-        addProcessBuilder(answer);
+    public PolicyRef policy(Policy policy) {
+        PolicyRef answer = new PolicyRef(policy);
+        getOutputs().add(answer);
         return answer;
-*/
     }
 
-    public FromBuilder intercept(DelegateProcessor interceptor) {
-        throw new UnsupportedOperationException();
-/*
-        InterceptorBuilder answer = new InterceptorBuilder(this);
-        answer.add(interceptor);
-        addProcessBuilder(answer);
-        return answer.target();
-*/
+    public RouteType intercept(DelegateProcessor interceptor) {
+        getInterceptors().add(new InterceptorRef(interceptor));
+        return this;
     }
 
     // Transformers

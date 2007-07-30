@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.processor.LoggingLevel;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.commons.logging.Log;
@@ -55,7 +56,6 @@ public abstract class BuilderSupport {
     /**
      * Returns a value builder for the given header
      */
-
     public ValueBuilder header(String name) {
         return Builder.header(name);
     }
@@ -63,7 +63,6 @@ public abstract class BuilderSupport {
     /**
      * Returns a predicate and value builder for the inbound body on an exchange
      */
-
     public ValueBuilder body() {
         return Builder.body();
     }
@@ -71,7 +70,6 @@ public abstract class BuilderSupport {
     /**
      * Returns a predicate and value builder for the inbound message body as a specific type
      */
-
     public <T> ValueBuilder bodyAs(Class<T> type) {
         return Builder.bodyAs(type);
     }
@@ -79,7 +77,6 @@ public abstract class BuilderSupport {
     /**
      * Returns a predicate and value builder for the outbound body on an exchange
      */
-
     public ValueBuilder outBody() {
         return Builder.outBody();
     }
@@ -87,7 +84,6 @@ public abstract class BuilderSupport {
     /**
      * Returns a predicate and value builder for the outbound message body as a specific type
      */
-
     public <T> ValueBuilder outBody(Class<T> type) {
         return Builder.outBody(type);
     }
@@ -95,7 +91,6 @@ public abstract class BuilderSupport {
     /**
      * Returns a value builder for the given system property
      */
-
     public ValueBuilder systemProperty(String name) {
         return Builder.systemProperty(name);
     }
@@ -103,24 +98,32 @@ public abstract class BuilderSupport {
     /**
      * Returns a value builder for the given system property
      */
-
     public ValueBuilder systemProperty(String name, String defaultValue) {
         return Builder.systemProperty(name, defaultValue);
     }
 
     /**
      * Resolves the given URI to an endpoint
+     *
+     * @throws NoSuchEndpointException if the endpoint URI could not be resolved
      */
-
-    public Endpoint endpoint(String uri) {
-        return getContext().getEndpoint(uri);
+    public Endpoint endpoint(String uri) throws NoSuchEndpointException {
+        if (uri == null) {
+            throw new IllegalArgumentException("uri parameter cannot be null");
+        }
+        Endpoint endpoint = getContext().getEndpoint(uri);
+        if (endpoint == null) {
+            throw new NoSuchEndpointException(uri);
+        }
+        return endpoint;
     }
 
     /**
      * Resolves the list of URIs into a list of {@link Endpoint} instances
+     *
+     * @throws NoSuchEndpointException if an endpoint URI could not be resolved
      */
-
-    public List<Endpoint> endpoints(String... uris) {
+    public List<Endpoint> endpoints(String... uris) throws NoSuchEndpointException {
         List<Endpoint> endpoints = new ArrayList<Endpoint>();
         for (String uri : uris) {
             endpoints.add(endpoint(uri));
@@ -131,7 +134,6 @@ public abstract class BuilderSupport {
     /**
      * Helper method to create a list of {@link Endpoint} instances
      */
-
     public List<Endpoint> endpoints(Endpoint... endpoints) {
         List<Endpoint> answer = new ArrayList<Endpoint>();
         for (Endpoint endpoint : endpoints) {
@@ -143,7 +145,6 @@ public abstract class BuilderSupport {
     /**
      * Creates a disabled error handler for removing the default error handler
      */
-
     public NoErrorHandlerBuilder noErrorHandler() {
         return new NoErrorHandlerBuilder();
     }
@@ -151,7 +152,6 @@ public abstract class BuilderSupport {
     /**
      * Creates an error handler which just logs errors
      */
-
     public LoggingErrorHandlerBuilder loggingErrorHandler() {
         return new LoggingErrorHandlerBuilder();
     }
@@ -159,7 +159,6 @@ public abstract class BuilderSupport {
     /**
      * Creates an error handler which just logs errors
      */
-
     public LoggingErrorHandlerBuilder loggingErrorHandler(String log) {
         return loggingErrorHandler(LogFactory.getLog(log));
     }
@@ -167,7 +166,6 @@ public abstract class BuilderSupport {
     /**
      * Creates an error handler which just logs errors
      */
-
     public LoggingErrorHandlerBuilder loggingErrorHandler(Log log) {
         return new LoggingErrorHandlerBuilder(log);
     }
@@ -175,21 +173,17 @@ public abstract class BuilderSupport {
     /**
      * Creates an error handler which just logs errors
      */
-
     public LoggingErrorHandlerBuilder loggingErrorHandler(Log log, LoggingLevel level) {
         return new LoggingErrorHandlerBuilder(log, level);
     }
-
 
     public DeadLetterChannelBuilder deadLetterChannel() {
         return new DeadLetterChannelBuilder();
     }
 
-
     public DeadLetterChannelBuilder deadLetterChannel(String deadLetterUri) {
         return deadLetterChannel(endpoint(deadLetterUri));
     }
-
 
     public DeadLetterChannelBuilder deadLetterChannel(Endpoint deadLetterEndpoint) {
         return new DeadLetterChannelBuilder(new SendProcessor(deadLetterEndpoint));
