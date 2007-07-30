@@ -26,6 +26,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.Date;
 
 /**
@@ -39,6 +41,7 @@ public class ActivityState extends TemporalEntity {
     private Integer receivedMessageCount = 0;
     private ActivityDefinition activityDefinition;
     private Date timeExpected;
+    @Temporal(TemporalType.TIME)
     private Date timeOverdue;
     private Integer escalationLevel = 0;
 
@@ -119,6 +122,7 @@ public class ActivityState extends TemporalEntity {
         this.receivedMessageCount = receivedMessageCount;
     }
 
+    @Temporal(TemporalType.TIME)
     public Date getTimeExpected() {
         return timeExpected;
     }
@@ -127,6 +131,7 @@ public class ActivityState extends TemporalEntity {
         this.timeExpected = timeExpected;
     }
 
+    @Temporal(TemporalType.TIME)
     public Date getTimeOverdue() {
         return timeOverdue;
     }

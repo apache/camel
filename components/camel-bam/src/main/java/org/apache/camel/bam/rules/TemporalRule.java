@@ -18,19 +18,22 @@ package org.apache.camel.bam.rules;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.bam.TimeExpression;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.model.ProcessInstance;
-import org.apache.camel.builder.FromBuilder;
-import org.apache.camel.builder.ProcessorFactory;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.RouteContext;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.model.OutputType;
+import org.apache.camel.model.RouteType;
 import static org.apache.camel.util.ServiceHelper.startServices;
 import static org.apache.camel.util.ServiceHelper.stopServices;
 import org.apache.camel.util.Time;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -45,7 +48,7 @@ public class TemporalRule extends ServiceSupport {
     private long expectedMillis;
     private long overdueMillis;
     private Processor overdueAction;
-    private ProcessorFactory overdueProcessorFactory;
+    private OutputType overdueProcessors = new OutputType();
 
     public TemporalRule(TimeExpression first, TimeExpression second) {
         this.first = first;
@@ -61,16 +64,16 @@ public class TemporalRule extends ServiceSupport {
         return this;
     }
 
-    public FromBuilder errorIfOver(Time builder) {
+    public OutputType errorIfOver(Time builder) {
         return errorIfOver(builder.toMillis());
     }
 
-    public FromBuilder errorIfOver(long millis) {
+    public OutputType errorIfOver(long millis) {
         overdueMillis = millis;
-
-        FromBuilder builder = new FromBuilder(second.getBuilder().getProcessBuilder(), null);
-        overdueProcessorFactory = builder;
-        return builder;
+        if (overdueProcessors == null) {
+            overdueProcessors = new OutputType();
+        }
+        return overdueProcessors;
     }
 
     public TimeExpression getFirst() {
@@ -82,8 +85,15 @@ public class TemporalRule extends ServiceSupport {
     }
 
     public Processor getOverdueAction() throws Exception {
-        if (overdueAction == null && overdueProcessorFactory != null) {
-            overdueAction = overdueProcessorFactory.createProcessor();
+        if (overdueAction == null && overdueProcessors != null) {
+
+            // TOOD refactor to avoid this messyness...
+            ArrayList<Route> list = new ArrayList<Route>();
+            RouteType route = new RouteType();
+            route.setCamelContext(first.getBuilder().getProcessBuilder().getContext());
+            RouteContext routeContext = new RouteContext(route, null, list);
+
+            overdueAction = overdueProcessors.createOutputsProcessor(routeContext);
         }
         return overdueAction;
     }
