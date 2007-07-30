@@ -40,8 +40,7 @@ public abstract class ServiceSupport implements Service {
     }
 
     public void stop() throws Exception {
-        if (stopped.compareAndSet(false, true)) {
-            stopping.set(true);
+        if (started.get() && stopping.compareAndSet(false, true)) {
             try {
                 doStop();
             }
