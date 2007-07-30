@@ -53,13 +53,7 @@ public abstract class RouteBuilder extends BuilderSupport {
 
 
     public FromBuilder from(String uri) {
-        if (uri == null) {
-            throw new IllegalArgumentException("uri parameter cannot be null");
-        }
         Endpoint endpoint = endpoint(uri);
-        if (endpoint == null) {
-            throw new IllegalArgumentException("uri '" + uri + "' could not be resolved.");
-        }
         return from(endpoint);
     }
 
@@ -91,7 +85,6 @@ public abstract class RouteBuilder extends BuilderSupport {
         setInheritErrorHandler(value);
         return this;
     }
-
 
     public RouteBuilder intercept(DelegateProcessor interceptor) {
         interceptors.add(interceptor);

@@ -17,8 +17,9 @@
  */
 package org.apache.camel.model;
 
+import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
-import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.spi.Policy;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,38 +30,24 @@ import javax.xml.bind.annotation.XmlTransient;
 /**
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "interceptor")
+@XmlRootElement(name = "policy")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InterceptorRef {
+public class PolicyRef extends OutputType {
     @XmlAttribute(required = true)
     private String ref;
     @XmlTransient
-    private DelegateProcessor interceptor;
+    private Policy policy;
 
-    public InterceptorRef() {
+    public PolicyRef() {
     }
 
-    public InterceptorRef(String ref) {
-        setRef(ref);
-    }
-
-    public InterceptorRef(DelegateProcessor interceptor) {
-        this.interceptor = interceptor;
+    public PolicyRef(Policy policy) {
+        this.policy = policy;
     }
 
     @Override
     public String toString() {
-        return "Interceptor[" + description() + "]";
-    }
-
-    public DelegateProcessor createInterceptor(RouteContext routeContext) {
-        if (interceptor == null) {
-            interceptor = routeContext.lookup(getRef(), DelegateProcessor.class);
-        }
-        if (interceptor == null) {
-            throw new IllegalArgumentException("No DelegateProcessor bean available for reference: " + getRef());
-        }
-        return interceptor;
+        return "Policy[" + description() + "]";
     }
 
     public String getRef() {
@@ -71,9 +58,27 @@ public class InterceptorRef {
         this.ref = ref;
     }
 
+    @Override
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
+        Processor childProcessor = super.createProcessor(routeContext);
+
+        Policy policy = resolvePolicy(routeContext);
+        if (policy == null) {
+            throw new IllegalArgumentException("No policy configured: " + this);
+        }
+        return policy.wrap(childProcessor);
+    }
+
+    protected Policy resolvePolicy(RouteContext routeContext) {
+        if (policy == null) {
+            policy = routeContext.lookup(getRef(), Policy.class);
+        }
+        return policy;
+    }
+
     protected String description() {
-        if (interceptor != null) {
-            return interceptor.toString();
+        if (policy != null) {
+            return policy.toString();
         }
         else {
             return "ref:  " + ref;

@@ -5,6 +5,7 @@ FilterType
 FromType
 IdempotentConsumerType
 OtherwiseType
+PolicyRef
 ProcessorRef
 RecipientListType
 ResequencerType
