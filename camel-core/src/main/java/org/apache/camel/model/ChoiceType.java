@@ -17,9 +17,9 @@
  */
 package org.apache.camel.model;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.Endpoint;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Collection;
 
 /**
  * @version $Revision: 1.1 $
@@ -77,7 +77,7 @@ public class ChoiceType extends ProcessorType {
         setOtherwise(answer);
         return answer;
     }
-    
+
     public ChoiceType to(Endpoint endpoint) {
         super.to(endpoint);
         return this;

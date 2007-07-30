@@ -34,7 +34,6 @@ import java.util.List;
 @XmlType(name = "outputType")
 public abstract class OutputType extends ProcessorType {
     private static final transient Log log = LogFactory.getLog(OutputType.class);
-    
     protected List<ProcessorType> outputs = new ArrayList<ProcessorType>();
     private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
 

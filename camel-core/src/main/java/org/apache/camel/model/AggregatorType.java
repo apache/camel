@@ -71,7 +71,6 @@ public class AggregatorType extends ExpressionNode {
         final Aggregator service = new Aggregator(from, processor, getExpression().createExpression(routeContext), aggregationStrategy);
 
         Route route = new Route<Exchange>(from, service) {
-
             @Override
             public String toString() {
                 return "AggregatorRoute[" + getEndpoint() + " -> " + processor + "]";
