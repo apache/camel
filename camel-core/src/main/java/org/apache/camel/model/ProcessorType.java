@@ -27,8 +27,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.builder.FromBuilder;
-import org.apache.camel.builder.IdempotentConsumerBuilder;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.converter.ObjectConverter;
@@ -571,8 +569,7 @@ public abstract class ProcessorType {
     }
 
     /**
-     * A strategy method which allows derived classes to wrap the child processor in some kind of interceptor such as
-     * a filter for the {@link IdempotentConsumerBuilder}.
+     * A strategy method which allows derived classes to wrap the child processor in some kind of interceptor
      *
      * @param routeContext
      * @param target       the processor which can be wrapped @return the original processor or a new wrapped interceptor
@@ -608,9 +605,7 @@ public abstract class ProcessorType {
     }
 
     /**
-     * A strategy method to allow newly created processors to be wrapped in an error handler. This feature
-     * could be disabled for child builders such as {@link IdempotentConsumerBuilder} which will rely on the
-     * {@link FromBuilder} to perform the error handling to avoid doubly-wrapped processors with 2 nested error handlers
+     * A strategy method to allow newly created processors to be wrapped in an error handler.
      */
     protected Processor wrapInErrorHandler(Processor processor) throws Exception {
         return getErrorHandlerBuilder().createErrorHandler(processor);

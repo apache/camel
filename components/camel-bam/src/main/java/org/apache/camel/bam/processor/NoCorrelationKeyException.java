@@ -16,9 +16,8 @@
  */
 package org.apache.camel.bam.processor;
 
-import org.apache.camel.CamelException;
-import org.apache.camel.Exchange;
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Exchange;
 
 /**
  * An exception thrown if no correlation key could be found for a message

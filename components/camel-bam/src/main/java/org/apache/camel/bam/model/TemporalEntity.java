@@ -16,6 +16,8 @@
  */
 package org.apache.camel.bam.model;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import java.util.Date;
 
@@ -36,6 +38,7 @@ public abstract class TemporalEntity extends EntitySupport {
         return timeCompleted != null;
     }
 
+    @Temporal(TemporalType.TIME)
     public Date getTimeStarted() {
         return timeStarted;
     }
@@ -44,6 +47,7 @@ public abstract class TemporalEntity extends EntitySupport {
         this.timeStarted = timeStarted;
     }
 
+    @Temporal(TemporalType.TIME)
     public Date getTimeCompleted() {
         return timeCompleted;
     }
