@@ -20,6 +20,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.RoutesType;
+import org.apache.camel.model.RouteType;
 import org.apache.camel.processor.DelegateProcessor;
 
 import java.util.ArrayList;
@@ -33,10 +35,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version $Revision$
  */
 public abstract class RouteBuilder extends BuilderSupport {
-    private List<FromBuilder> fromBuilders = new ArrayList<FromBuilder>();
     private AtomicBoolean initalized = new AtomicBoolean(false);
+    private RoutesType routeCollection = new RoutesType();
     private List<Route> routes = new ArrayList<Route>();
-    private List<DelegateProcessor> interceptors = new ArrayList<DelegateProcessor>();
 
     protected RouteBuilder() {
         this(null);
@@ -52,16 +53,13 @@ public abstract class RouteBuilder extends BuilderSupport {
     public abstract void configure() throws Exception;
 
 
-    public FromBuilder from(String uri) {
-        Endpoint endpoint = endpoint(uri);
-        return from(endpoint);
+    public RouteType from(String uri) {
+        return routeCollection.from(uri);
     }
 
 
-    public FromBuilder from(Endpoint endpoint) {
-        FromBuilder answer = new FromBuilder(this, endpoint);
-        addFromBuilder(answer);
-        return answer;
+    public RouteType from(Endpoint endpoint) {
+        return routeCollection.from(endpoint);
     }
 
     /**
@@ -82,12 +80,12 @@ public abstract class RouteBuilder extends BuilderSupport {
      * @return the current builder
      */
     public RouteBuilder inheritErrorHandler(boolean value) {
-        setInheritErrorHandler(value);
+        routeCollection.setInheritErrorHandlerFlag(value);
         return this;
     }
 
     public RouteBuilder intercept(DelegateProcessor interceptor) {
-        interceptors.add(interceptor);
+        routeCollection.intercept(interceptor);
         return this;
     }
 
@@ -110,24 +108,9 @@ public abstract class RouteBuilder extends BuilderSupport {
         return routes;
     }
 
-    /**
-     * Returns the builders which have been created
-     */
-    public List<FromBuilder> getFromBuilders() throws Exception {
-        checkInitialized();
-        return fromBuilders;
-    }
-
-    public List<DelegateProcessor> getInterceptors() {
-        return interceptors;
-    }
 
     // Implementation methods
     //-----------------------------------------------------------------------
-    public void addFromBuilder(FromBuilder answer) {
-        fromBuilders.add(answer);
-    }
-
     protected void checkInitialized() throws Exception {
         if (initalized.compareAndSet(false, true)) {
             configure();
@@ -136,10 +119,12 @@ public abstract class RouteBuilder extends BuilderSupport {
     }
 
     protected void populateRoutes(List<Route> routes) throws Exception {
-        for (FromBuilder builder : fromBuilders) {
-            Route route = builder.createRoute();
-            routes.add(route);
+        CamelContext camelContext = getContext();
+        if (camelContext == null) {
+            throw new IllegalArgumentException("No CamelContext has been injected!");
         }
+        routeCollection.setCamelContext(camelContext);
+        routeCollection.populateRoutes(routes);
     }
 
     /**

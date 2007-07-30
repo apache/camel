@@ -61,10 +61,16 @@ public class InterceptorBuilderTest extends TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("direct:a")
+                        .intercept(interceptor1)
+                        .intercept(interceptor2)
+                        .to("direct:d");
+/*
+    TODO keep old DSL?
                         .intercept()
                         .add(interceptor1)
                         .add(interceptor2)
                         .target().to("direct:d");
+*/
             }
         };        
         container.addRoutes(builder);

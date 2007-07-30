@@ -24,7 +24,7 @@ import org.apache.camel.Route;
 import org.apache.camel.model.FromType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
-import org.apache.camel.processor.MulticastProcessor;
+import org.apache.camel.processor.Pipeline;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,33 +68,7 @@ public class RouteContext {
     }
 
     public Processor createProcessor(ProcessorType node) throws Exception {
-        Processor processor = createProcessor(node.getOutputs());
-        return node.wrapProcessor(this, processor);
-    }
-
-    public Processor createProcessor(Collection<ProcessorType> outputs) throws Exception {
-        List<Processor> list = new ArrayList<Processor>();
-        for (ProcessorType output : outputs) {
-            Processor processor = output.createProcessor(this);
-            list.add(processor);
-        }
-        return createCompositeProcessor(list);
-    }
-
-    protected Processor createCompositeProcessor(List<Processor> list) {
-        if (list.size() == 0) {
-            return null;
-        }
-        Processor processor;
-        if (list.size() == 1) {
-            processor = list.get(0);
-        }
-        else {
-            //processor = new CompositeProcessor(list);
-            // TODO move into the node itself
-            processor = new MulticastProcessor(list);
-        }
-        return processor;
+        return node.createOutputsProcessor(this);
     }
 
     public Endpoint resolveEndpoint(String uri) {
@@ -140,7 +114,7 @@ public class RouteContext {
     public void commit() {
         // now lets turn all of the event driven consumer processors into a single route
         if (!eventDrivenProcessors.isEmpty()) {
-            Processor processor = createCompositeProcessor(eventDrivenProcessors);
+            Processor processor = Pipeline.newInstance(eventDrivenProcessors);
             routes.add(new EventDrivenConsumerRoute(getEndpoint(), processor));
         }
     }

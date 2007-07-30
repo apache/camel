@@ -87,4 +87,12 @@ public class ExpressionNode extends ProcessorType {
         Processor childProcessor = routeContext.createProcessor(this);
         return new FilterProcessor(getExpression().createPredicate(routeContext), childProcessor);
     }
+
+
+    @Override
+    protected void configureChild(ProcessorType output) {
+        if (isInheritErrorHandler()) {
+            output.setErrorHandlerBuilder(getErrorHandlerBuilder());
+        }
+    }
 }

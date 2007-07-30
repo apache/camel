@@ -237,10 +237,17 @@ public class RouteBuilderTest extends TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("seda:a")
+                        .intercept(interceptor1)
+                        .intercept(interceptor2)
+                        .to("seda:d");
+/*
+
+    TODO keep old DSL?
                         .intercept()
                         .add(interceptor1)
                         .add(interceptor2)
                         .target().to("seda:d");
+*/
             }
         };
         // END SNIPPET: e7
@@ -393,7 +400,7 @@ public class RouteBuilderTest extends TestSupport {
 
             assertIsInstanceOf(MemoryMessageIdRepository.class, idempotentConsumer.getMessageIdRepository());
 
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, idempotentConsumer.getNextProcessor());
+            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapErrorHandler(idempotentConsumer.getNextProcessor()));
             assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
         }
     }

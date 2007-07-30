@@ -4,6 +4,7 @@ DelayerType
 FilterType
 FromType
 IdempotentConsumerType
+MulticastType
 OtherwiseType
 PolicyRef
 ProcessorRef

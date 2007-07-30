@@ -40,7 +40,6 @@
     <dependency>
       <groupId>javax.xml</groupId>
       <artifactId>jaxb-api</artifactId>
-      <optional>true</optional>
     </dependency>
 
     <!-- testing -->

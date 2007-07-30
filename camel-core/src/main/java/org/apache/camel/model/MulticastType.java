@@ -18,70 +18,33 @@
 package org.apache.camel.model;
 
 import org.apache.camel.Processor;
+import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.impl.RouteContext;
-import org.apache.camel.spi.Policy;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.util.List;
 
 /**
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "policy")
+@XmlRootElement(name = "multicast")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PolicyRef extends OutputType {
-    @XmlAttribute(required = true)
-    private String ref;
-    @XmlTransient
-    private Policy policy;
-
-    public PolicyRef() {
-    }
-
-    public PolicyRef(Policy policy) {
-        this.policy = policy;
-    }
-
+public class MulticastType extends OutputType {
     @Override
     public String toString() {
-        return "Policy[" + description() + "]";
-    }
-
-    public String getRef() {
-        return ref;
-    }
-
-    public void setRef(String ref) {
-        this.ref = ref;
+        return "Multicast[" + getOutputs() + "]";
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = createOutputsProcessor(routeContext);
-
-        Policy policy = resolvePolicy(routeContext);
-        if (policy == null) {
-            throw new IllegalArgumentException("No policy configured: " + this);
-        }
-        return policy.wrap(childProcessor);
+        return createOutputsProcessor(routeContext);
     }
 
-    protected Policy resolvePolicy(RouteContext routeContext) {
-        if (policy == null) {
-            policy = routeContext.lookup(getRef(), Policy.class);
-        }
-        return policy;
-    }
-
-    protected String description() {
-        if (policy != null) {
-            return policy.toString();
-        }
-        else {
-            return "ref:  " + ref;
-        }
+    protected Processor createCompositeProcessor(List<Processor> list) {
+        return new MulticastProcessor(list);
     }
 }

@@ -56,6 +56,12 @@ public class MailMessage extends DefaultMessage {
         return (MailExchange) super.getExchange();
     }
 
+    public MailMessage copy() {
+        MailMessage answer = (MailMessage) super.copy();
+        answer.mailMessage = mailMessage;
+        return answer;
+    }
+
     /**
      * Returns the underlying Mail message
      *

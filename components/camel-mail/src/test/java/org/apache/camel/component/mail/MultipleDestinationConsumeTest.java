@@ -70,6 +70,7 @@ public class MultipleDestinationConsumeTest extends ContextTestSupport {
 
         MailExchange mailExchange = (MailExchange) exchange;
         Message inMessage = mailExchange.getIn().getMessage();
+        assertNotNull("In message has no JavaMail message!", inMessage);
         Enumeration iter = inMessage.getAllHeaders();
         while (iter.hasMoreElements()) {
             Header header = (Header) iter.nextElement();

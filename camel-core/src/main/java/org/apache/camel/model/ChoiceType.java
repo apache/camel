@@ -17,7 +17,9 @@
  */
 package org.apache.camel.model;
 
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Endpoint;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
@@ -30,6 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Collection;
 
 /**
  * @version $Revision: 1.1 $
@@ -62,6 +65,46 @@ public class ChoiceType extends ProcessorType {
         return new ChoiceProcessor(filters, otherwiseProcessor);
     }
 
+    // Fluent API
+    //-------------------------------------------------------------------------
+    public ChoiceType when(Predicate predicate) {
+        getWhenClauses().add(new WhenType(predicate));
+        return this;
+    }
+
+    public OtherwiseType otherwise() {
+        OtherwiseType answer = new OtherwiseType();
+        setOtherwise(answer);
+        return answer;
+    }
+    
+    public ChoiceType to(Endpoint endpoint) {
+        super.to(endpoint);
+        return this;
+    }
+
+    public ChoiceType to(Collection<Endpoint> endpoints) {
+        super.to(endpoints);
+        return this;
+    }
+
+    public ChoiceType to(Endpoint... endpoints) {
+        super.to(endpoints);
+        return this;
+    }
+
+    public ChoiceType to(String uri) {
+        super.to(uri);
+        return this;
+    }
+
+    public ChoiceType to(String... uris) {
+        super.to(uris);
+        return this;
+    }
+
+    // Properties
+    //-------------------------------------------------------------------------
     public List<WhenType> getWhenClauses() {
         return whenClauses;
     }
@@ -71,7 +114,16 @@ public class ChoiceType extends ProcessorType {
     }
 
     public List<ProcessorType> getOutputs() {
-        return Collections.EMPTY_LIST;
+        if (otherwise != null) {
+            return otherwise.getOutputs();
+        }
+        else if (whenClauses.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+        else {
+            WhenType when = whenClauses.get(whenClauses.size() - 1);
+            return when.getOutputs();
+        }
     }
 
     public OtherwiseType getOtherwise() {

@@ -16,8 +16,17 @@
  */
 package org.apache.camel.model;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Route;
+import org.apache.camel.processor.DelegateProcessor;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,18 +36,30 @@ import java.util.List;
  * @version $Revision: $
  */
 @XmlRootElement(name = "routes")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class RoutesType implements RouteContainer {
+    @XmlAttribute
+    private Boolean inheritErrorHandlerFlag = Boolean.TRUE; // TODO not sure how else to use an optional attribute in JAXB2
+    @XmlElementRef
     private List<RouteType> routes = new ArrayList<RouteType>();
+    @XmlTransient
+    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+    @XmlTransient
+    private CamelContext camelContext;
 
     @Override
     public String toString() {
         return "Routes: " + routes;
     }
 
+    public void populateRoutes(List<Route> answer) throws Exception {
+        for (RouteType route : routes) {
+            route.addRoutes(camelContext, answer);
+        }
+    }
+
     // Properties
     //-----------------------------------------------------------------------
-
-    @XmlElementRef
     public List<RouteType> getRoutes() {
         return routes;
     }
@@ -47,11 +68,60 @@ public class RoutesType implements RouteContainer {
         this.routes = routes;
     }
 
+    public List<InterceptorRef> getInterceptors() {
+        return interceptors;
+    }
+
+    public void setInterceptors(List<InterceptorRef> interceptors) {
+        this.interceptors = interceptors;
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    public Boolean getInheritErrorHandlerFlag() {
+        return inheritErrorHandlerFlag;
+    }
+
+    public void setInheritErrorHandlerFlag(Boolean inheritErrorHandlerFlag) {
+        this.inheritErrorHandlerFlag = inheritErrorHandlerFlag;
+    }
+
     // Fluent API
     //-------------------------------------------------------------------------
     public RouteType route() {
         RouteType route = new RouteType();
+        return route(route);
+    }
+
+    public RouteType from(String uri) {
+        RouteType route = new RouteType(uri);
+        return route(route);
+    }
+
+    public RouteType from(Endpoint endpoint) {
+        RouteType route = new RouteType(endpoint);
+        return route(route);
+    }
+
+    public RouteType route(RouteType route) {
+        // lets configure the route
+        route.setCamelContext(getCamelContext());
+        route.setInheritErrorHandlerFlag(getInheritErrorHandlerFlag());
+        route.getInterceptors().addAll(getInterceptors());
+
         getRoutes().add(route);
         return route;
     }
+
+    public RoutesType intercept(DelegateProcessor interceptor) {
+        getInterceptors().add(new InterceptorRef(interceptor));
+        return this;
+    }
+
 }

@@ -17,12 +17,11 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Creates a Pipeline pattern where the output of the previous step is sent as input to the next step, reusing the same
@@ -31,6 +30,16 @@ import java.util.Collection;
  * @version $Revision$
  */
 public class Pipeline extends MulticastProcessor implements Processor {
+    public static Processor newInstance(List<Processor> processors) {
+        if (processors.isEmpty()) {
+            return null;
+        }
+        else if (processors.size() == 1) {
+            return processors.get(0);
+        }
+        return new Pipeline(processors);
+    }
+
     public Pipeline(Collection<Processor> processors) {
         super(processors);
     }

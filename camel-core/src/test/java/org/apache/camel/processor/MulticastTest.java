@@ -71,7 +71,7 @@ public class MulticastTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").to("direct:x", "direct:y", "direct:z");
+                from("direct:a").multicast().to("direct:x", "direct:y", "direct:z");
                 // END SNIPPET: example
 
                 from("direct:x").process(processor).to("mock:x");
