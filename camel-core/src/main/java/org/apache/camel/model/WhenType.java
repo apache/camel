@@ -19,6 +19,8 @@ package org.apache.camel.model;
 
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.Predicate;
+import org.apache.camel.model.language.ExpressionType;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -27,6 +29,17 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "when")
 public class WhenType extends ExpressionNode {
+    public WhenType() {
+    }
+
+    public WhenType(Predicate predicate) {
+        super(predicate);
+    }
+
+    public WhenType(ExpressionType expression) {
+        super(expression);
+    }
+
     @Override
     public String toString() {
         return "When[ " + getExpression() + " -> " + getOutputs() + "]";

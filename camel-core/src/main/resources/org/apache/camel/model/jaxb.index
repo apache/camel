@@ -1,6 +1,9 @@
+AggregatorType
 ChoiceType
+DelayerType
 FilterType
 FromType
+IdempotentConsumerType
 OtherwiseType
 ProcessorRef
 RecipientListType
@@ -8,5 +11,6 @@ ResequencerType
 RouteType
 RoutesType
 SplitterType
+ThrottlerType
 ToType
 WhenType

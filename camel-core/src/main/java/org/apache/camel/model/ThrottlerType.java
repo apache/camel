@@ -1,4 +1,5 @@
-/*
+/**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -6,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,47 +17,60 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
-import org.apache.camel.model.language.ExpressionType;
-import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.processor.Throttler;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A base class for nodes which contain an expression and a number of outputs
- *
- * @version $Revision: $
+ * @version $Revision: 1.1 $
  */
+@XmlRootElement(name = "throttler")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExpressionNode extends ProcessorType {
+public class ThrottlerType extends ProcessorType {
+    @XmlAttribute
+    private Long maximumRequestsPerPeriod;
+    @XmlAttribute
+    private long timePeriodMillis = 1000;
     @XmlElement(required = false)
     private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
     @XmlElementRef
-    private ExpressionType expression;
-    @XmlElementRef
     private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
 
-    public ExpressionNode() {
+    public ThrottlerType() {
     }
 
-    public ExpressionNode(ExpressionType expression) {
-        this.expression = expression;
+    public ThrottlerType(long maximumRequestsPerPeriod) {
+        this.maximumRequestsPerPeriod = maximumRequestsPerPeriod;
     }
 
-    public ExpressionNode(Expression expression) {
-        setExpression(new ExpressionType(expression));
+    @Override
+    public String toString() {
+        return "Throttler[" + getMaximumRequestsPerPeriod() + " request per " + getTimePeriodMillis() + " millis -> " + getOutputs() + "]";
     }
 
-    public ExpressionNode(Predicate predicate) {
-        setExpression(new ExpressionType(predicate));
+    public Long getMaximumRequestsPerPeriod() {
+        return maximumRequestsPerPeriod;
+    }
+
+    public void setMaximumRequestsPerPeriod(Long maximumRequestsPerPeriod) {
+        this.maximumRequestsPerPeriod = maximumRequestsPerPeriod;
+    }
+
+    public long getTimePeriodMillis() {
+        return timePeriodMillis;
+    }
+
+    public void setTimePeriodMillis(long timePeriodMillis) {
+        this.timePeriodMillis = timePeriodMillis;
     }
 
     public List<InterceptorRef> getInterceptors() {
@@ -67,14 +81,6 @@ public class ExpressionNode extends ProcessorType {
         this.interceptors = interceptors;
     }
 
-    public ExpressionType getExpression() {
-        return expression;
-    }
-
-    public void setExpression(ExpressionType expression) {
-        this.expression = expression;
-    }
-
     public List<ProcessorType> getOutputs() {
         return outputs;
     }
@@ -83,8 +89,9 @@ public class ExpressionNode extends ProcessorType {
         this.outputs = outputs;
     }
 
-    protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
+    @Override
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
-        return new FilterProcessor(getExpression().createPredicate(routeContext), childProcessor);
+        return new Throttler(childProcessor, maximumRequestsPerPeriod, timePeriodMillis);
     }
 }

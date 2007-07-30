@@ -186,8 +186,8 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * @param expression the expression on which to compare messages in order
      * @return the builder
      */
-    public ResequencerBuilder resequencer(Expression<Exchange> expression) {
-        return resequencer(Collections.<Expression<Exchange>>singletonList(expression));
+    public ResequencerBuilder resequencer(Expression expression) {
+        return resequencer(Collections.<Expression>singletonList(expression));
     }
 
     /**
@@ -198,7 +198,7 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * @param expressions the expressions on which to compare messages in order
      * @return the builder
      */
-    public ResequencerBuilder resequencer(List<Expression<Exchange>> expressions) {
+    public ResequencerBuilder resequencer(List<Expression> expressions) {
         ResequencerBuilder answer = new ResequencerBuilder(this, expressions);
         setRouteBuilder(answer);
         return answer;
@@ -212,9 +212,9 @@ public class FromBuilder extends BuilderSupport implements ProcessorFactory {
      * @param expressions the expressions on which to compare messages in order
      * @return the builder
      */
-    public ResequencerBuilder resequencer(Expression<Exchange>... expressions) {
-        List<Expression<Exchange>> list = new ArrayList<Expression<Exchange>>();
-        for (Expression<Exchange> expression : expressions) {
+    public ResequencerBuilder resequencer(Expression... expressions) {
+        List<Expression> list = new ArrayList<Expression>();
+        for (Expression expression : expressions) {
             list.add(expression);
         }
         return resequencer(list);

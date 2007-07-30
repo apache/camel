@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,10 +45,23 @@ public class ToType extends ProcessorType {
     private String ref;
     @XmlElement(required = false)
     private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+    @XmlTransient
+    private Endpoint endpoint;
+
+    public ToType() {
+    }
+
+    public ToType(String uri) {
+        setUri(uri);
+    }
+
+    public ToType(Endpoint endpoint) {
+        setEndpoint(endpoint);
+    }
 
     @Override
     public String toString() {
-        return "To[" + FromType.description(getUri(), getRef()) + "]";
+        return "To[" + FromType.description(getUri(), getRef(), getEndpoint()) + "]";
     }
 
     @Override
@@ -58,7 +71,10 @@ public class ToType extends ProcessorType {
     }
 
     public Endpoint resolveEndpoint(RouteContext context) {
-        return context.resolveEndpoint(getUri(), getRef());
+        if (endpoint == null) {
+            endpoint = context.resolveEndpoint(getUri(), getRef());
+        }
+        return endpoint;
     }
 
     // Properties
@@ -87,6 +103,14 @@ public class ToType extends ProcessorType {
      */
     public void setRef(String ref) {
         this.ref = ref;
+    }
+
+    public Endpoint getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(Endpoint endpoint) {
+        this.endpoint = endpoint;
     }
 
     public List<ProcessorType> getOutputs() {
