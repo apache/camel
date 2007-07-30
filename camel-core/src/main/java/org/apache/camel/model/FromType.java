@@ -47,6 +47,10 @@ public class FromType {
         setUri(uri);
     }
 
+    public FromType(Endpoint endpoint) {
+        this.endpoint = endpoint;
+    }
+
     @Override
     public String toString() {
         return "From[" + description(getUri(), getRef(), getEndpoint()) + "]";

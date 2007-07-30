@@ -24,9 +24,9 @@ import org.apache.camel.processor.Throttler;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +56,26 @@ public class ThrottlerType extends ProcessorType {
     public String toString() {
         return "Throttler[" + getMaximumRequestsPerPeriod() + " request per " + getTimePeriodMillis() + " millis -> " + getOutputs() + "]";
     }
+
+    @Override
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
+        Processor childProcessor = routeContext.createProcessor(this);
+        return new Throttler(childProcessor, maximumRequestsPerPeriod, timePeriodMillis);
+    }
+    
+    // Fluent API
+    //-------------------------------------------------------------------------
+
+    /**
+     * Sets the time period during which the maximum request count is valid for
+     */
+    public ThrottlerType timePeriodMillis(long timePeriodMillis) {
+        this.timePeriodMillis = timePeriodMillis;
+        return this;
+    }
+
+    // Properties
+    //-------------------------------------------------------------------------
 
     public Long getMaximumRequestsPerPeriod() {
         return maximumRequestsPerPeriod;
@@ -87,11 +107,5 @@ public class ThrottlerType extends ProcessorType {
 
     public void setOutputs(List<ProcessorType> outputs) {
         this.outputs = outputs;
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = routeContext.createProcessor(this);
-        return new Throttler(childProcessor, maximumRequestsPerPeriod, timePeriodMillis);
     }
 }

@@ -17,6 +17,9 @@
  */
 package org.apache.camel.model;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
@@ -30,6 +33,8 @@ import java.util.List;
  */
 @XmlType(name = "outputType")
 public abstract class OutputType extends ProcessorType {
+    private static final transient Log log = LogFactory.getLog(OutputType.class);
+    
     protected List<ProcessorType> outputs = new ArrayList<ProcessorType>();
     private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
 
@@ -56,9 +61,20 @@ public abstract class OutputType extends ProcessorType {
         this.interceptors = interceptors;
     }
 
+    @Override
     protected void configureChild(ProcessorType output) {
-        if (output.isInheritErrorHandler()) {
+        if (isInheritErrorHandler()) {
             output.setErrorHandlerBuilder(getErrorHandlerBuilder());
         }
+        // don't inherit interceptors by default
+/*
+        List<InterceptorRef> list = output.getInterceptors();
+        if (list == null) {
+            log.warn("No interceptor collection: " + output);
+        }
+        else {
+            list.addAll(getInterceptors());
+        }
+*/
     }
 }
