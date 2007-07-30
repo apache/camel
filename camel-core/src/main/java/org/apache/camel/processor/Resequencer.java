@@ -40,7 +40,7 @@ public class Resequencer extends BatchProcessor {
         this(endpoint, processor, createSet(expression));
     }
 
-    public Resequencer(Endpoint endpoint, Processor processor, List<Expression<Exchange>> expressions) {
+    public Resequencer(Endpoint endpoint, Processor processor, List<Expression> expressions) {
         this(endpoint, processor, createSet(expressions));
     }
 
@@ -60,11 +60,11 @@ public class Resequencer extends BatchProcessor {
         return createSet(new ExpressionComparator<Exchange>(expression));
     }
 
-    protected static Set<Exchange> createSet(List<Expression<Exchange>> expressions) {
+    protected static Set<Exchange> createSet(List<Expression> expressions) {
         if (expressions.size() == 1) {
             return createSet(expressions.get(0));
         }
-        return createSet(new ExpressionListComparator<Exchange>(expressions));
+        return createSet(new ExpressionListComparator(expressions));
     }
 
     protected static Set<Exchange> createSet(Comparator<? super Exchange> comparator) {

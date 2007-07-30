@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Represents an XML &lt;to/&gt; element
@@ -36,6 +37,8 @@ public class FromType {
     private String uri;
     @XmlAttribute
     private String ref;
+    @XmlTransient
+    private Endpoint endpoint;
 
     public FromType() {
     }
@@ -46,11 +49,14 @@ public class FromType {
 
     @Override
     public String toString() {
-        return "From[" + description(getUri(), getRef()) + "]";
+        return "From[" + description(getUri(), getRef(), getEndpoint()) + "]";
     }
 
     public Endpoint resolveEndpoint(RouteContext context) {
-        return context.resolveEndpoint(getUri(), getRef());
+        if (endpoint == null) {
+            endpoint = context.resolveEndpoint(getUri(), getRef());
+        }
+        return endpoint;
     }
 
     // Properties
@@ -81,10 +87,21 @@ public class FromType {
         this.ref = ref;
     }
 
+    public Endpoint getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(Endpoint endpoint) {
+        this.endpoint = endpoint;
+    }
+
     // Implementation methods
     //-----------------------------------------------------------------------
-    protected static String description(String uri, String ref) {
-        if (uri != null) {
+    protected static String description(String uri, String ref, Endpoint endpoint) {
+        if (endpoint != null) {
+            return endpoint.getEndpointUri();
+        }
+        else if (uri != null) {
             return uri;
         }
         else if (ref != null) {

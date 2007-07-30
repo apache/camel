@@ -30,15 +30,15 @@ import java.util.List;
  *
  * @version $Revision: 1.1 $
  */
-public class ExpressionListComparator<E extends Exchange> implements Comparator<E> {
-    private final List<Expression<E>> expressions;
+public class ExpressionListComparator implements Comparator<Exchange> {
+    private final List<Expression> expressions;
 
-    public ExpressionListComparator(List<Expression<E>> expressions) {
+    public ExpressionListComparator(List<Expression> expressions) {
         this.expressions = expressions;
     }
 
-    public int compare(E e1, E e2) {
-        for (Expression<E> expression : expressions) {
+    public int compare(Exchange e1, Exchange e2) {
+        for (Expression expression : expressions) {
             Object o1 = expression.evaluate(e1);
             Object o2 = expression.evaluate(e2);
             int answer = ObjectHelper.compare(o1, o2);

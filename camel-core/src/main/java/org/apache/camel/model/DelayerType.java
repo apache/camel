@@ -17,11 +17,12 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.Processor;
 import org.apache.camel.Expression;
-import org.apache.camel.model.language.ExpressionType;
+import org.apache.camel.Processor;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.RouteContext;
-import org.apache.camel.processor.Splitter;
+import org.apache.camel.model.language.ExpressionType;
+import org.apache.camel.processor.Delayer;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -30,28 +31,45 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "splitter")
+@XmlRootElement(name = "delayer")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SplitterType extends ExpressionNode {
-    public SplitterType() {
+public class DelayerType extends ExpressionNode {
+    private Long delay = 0L;
+
+    public DelayerType() {
     }
 
-    public SplitterType(Expression expression) {
-        super(expression);
+    public DelayerType(Expression processAtExpression) {
+        super(processAtExpression);
     }
 
-    public SplitterType(ExpressionType expression) {
-        super(expression);
+    public DelayerType(ExpressionType processAtExpression) {
+        super(processAtExpression);
+    }
+
+    public DelayerType(Expression processAtExpression, long delay) {
+        super(processAtExpression);
+        this.delay = delay;
     }
 
     @Override
     public String toString() {
-        return "Splitter[ " + getExpression() + " -> " + getOutputs() + "]";
+        return "Delayer[ " + getExpression() + " -> " + getOutputs() + "]";
+    }
+
+    public Long getDelay() {
+        return delay;
+    }
+
+    public void setDelay(Long delay) {
+        this.delay = delay;
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
-        return new Splitter(getExpression().createExpression(routeContext), childProcessor);
+        Expression processAtExpression = getExpression().createExpression(routeContext);
+        return new Delayer(childProcessor, processAtExpression, delay);
+
     }
 }

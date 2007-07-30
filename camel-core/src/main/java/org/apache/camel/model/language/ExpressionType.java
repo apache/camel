@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
@@ -40,21 +41,31 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 @XmlType(name = "expressionType")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class ExpressionType {
+public class ExpressionType {
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     private String id;
     @XmlValue
     private String expression;
+    @XmlTransient
+    private Predicate predicate;
+    @XmlTransient
+    private Expression expressionValue;
 
-    public abstract String getLanguage();
-
-    protected ExpressionType() {
+    public ExpressionType() {
     }
 
-    protected ExpressionType(String expression) {
+    public ExpressionType(String expression) {
         this.expression = expression;
+    }
+
+    public ExpressionType(Predicate predicate) {
+        this.predicate = predicate;
+    }
+
+    public ExpressionType(Expression expression) {
+        this.expressionValue = expression;
     }
 
     @Override
@@ -62,16 +73,26 @@ public abstract class ExpressionType {
         return getLanguage() + "Expression[" + getExpression() + "]";
     }
 
+    public String getLanguage() {
+        return "";
+    }
+
     public Predicate<Exchange> createPredicate(RouteContext route) {
-        CamelContext camelContext = route.getCamelContext();
-        Language language = camelContext.resolveLanguage(getLanguage());
-        return language.createPredicate(getExpression());
+        if (predicate == null) {
+            CamelContext camelContext = route.getCamelContext();
+            Language language = camelContext.resolveLanguage(getLanguage());
+            predicate = language.createPredicate(getExpression());
+        }
+        return predicate;
     }
 
     public Expression createExpression(RouteContext routeContext) {
-        CamelContext camelContext = routeContext.getCamelContext();
-        Language language = camelContext.resolveLanguage(getLanguage());
-        return language.createExpression(getExpression());
+        if (expressionValue == null) {
+            CamelContext camelContext = routeContext.getCamelContext();
+            Language language = camelContext.resolveLanguage(getLanguage());
+            expressionValue = language.createExpression(getExpression());
+        }
+        return expressionValue;
     }
 
     public String getExpression() {

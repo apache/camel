@@ -19,13 +19,18 @@ package org.apache.camel.model;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.Service;
 import org.apache.camel.impl.RouteContext;
+import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.Resequencer;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,19 +38,54 @@ import java.util.List;
  * @version $Revision: 1.1 $
  */
 @XmlRootElement(name = "resequencer")
-public class ResequencerType extends ExpressionNode {
+public class ResequencerType extends ProcessorType {
+    @XmlElement(required = false)
+    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+    @XmlElementRef
+    private List<ExpressionType> expressions = new ArrayList<ExpressionType>();
+    @XmlElementRef
+    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
+    @XmlTransient
+    private List<Expression> expressionList;
+
+    public ResequencerType() {
+    }
+
+    public ResequencerType(List<Expression> expressions) {
+        this.expressionList = expressions;
+    }
+
     @Override
     public String toString() {
-        return "Resequencer[ " + getExpression() + " -> " + getOutputs() + "]";
+        return "Resequencer[ " + getExpressions() + " -> " + getOutputs() + "]";
+    }
+
+    public List<ExpressionType> getExpressions() {
+        return expressions;
+    }
+
+    public List<InterceptorRef> getInterceptors() {
+        return interceptors;
+    }
+
+    public void setInterceptors(List<InterceptorRef> interceptors) {
+        this.interceptors = interceptors;
+    }
+
+    public List<ProcessorType> getOutputs() {
+        return outputs;
+    }
+
+    public void setOutputs(List<ProcessorType> outputs) {
+        this.outputs = outputs;
     }
 
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         Endpoint from = routeContext.getEndpoint();
         final Processor processor = routeContext.createProcessor(this);
-        final Resequencer resequencer = new Resequencer(from, processor, getExpression().createExpression(routeContext));
+        final Resequencer resequencer = new Resequencer(from, processor, resolveExpressionList(routeContext));
 
         Route route = new Route<Exchange>(from, resequencer) {
-
             @Override
             public String toString() {
                 return "ResequencerRoute[" + getEndpoint() + " -> " + processor + "]";
@@ -53,5 +93,18 @@ public class ResequencerType extends ExpressionNode {
         };
 
         routes.add(route);
+    }
+
+    private List<Expression> resolveExpressionList(RouteContext routeContext) {
+        if (expressionList == null) {
+            expressionList = new ArrayList<Expression>();
+            for (ExpressionType expression : expressions) {
+                expressionList.add(expression.createExpression(routeContext));
+            }
+        }
+        if (expressionList.isEmpty()) {
+            throw new IllegalArgumentException("No expressions configured for: " + this);
+        }
+        return expressionList;
     }
 }

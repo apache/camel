@@ -29,11 +29,11 @@ import java.util.List;
  * @version $Revision: 1.1 $
  */
 public class ResequencerBuilder extends FromBuilder {
-    private final List<Expression<Exchange>> expressions;
+    private final List<Expression> expressions;
     private long batchTimeout = 1000L;
     private int batchSize = 100;
 
-    public ResequencerBuilder(FromBuilder builder, List<Expression<Exchange>> expressions) {
+    public ResequencerBuilder(FromBuilder builder, List<Expression> expressions) {
         super(builder);
         this.expressions = expressions;
     }
