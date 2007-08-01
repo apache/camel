@@ -17,22 +17,20 @@
  */
 package org.apache.camel.spring;
 
-import org.aopalliance.intercept.MethodInvocation;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelTemplate;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
 import org.apache.camel.MessageDriven;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spring.util.BeanInfo;
 import org.apache.camel.spring.util.DefaultMethodInvocationStrategy;
 import org.apache.camel.spring.util.MethodInvocationStrategy;
 import org.apache.camel.spring.util.ReflectionUtils;
+import org.apache.camel.spring.bind.BeanProcessor;
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 import org.apache.commons.logging.Log;
@@ -61,11 +59,9 @@ import java.lang.reflect.Method;
 public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
     private static final transient Log log = LogFactory.getLog(CamelBeanPostProcessor.class);
     @XmlTransient
-    private CamelContext camelContext;
+    private SpringCamelContext camelContext;
     @XmlTransient
     private ApplicationContext applicationContext;
-    @XmlTransient
-    private MethodInvocationStrategy invocationStrategy = new DefaultMethodInvocationStrategy();
     //private List<Consumer> consumers = new ArrayList<Consumer>();
 
     public CamelBeanPostProcessor() {
@@ -97,19 +93,11 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
         this.applicationContext = applicationContext;
     }
 
-    public MethodInvocationStrategy getInvocationStrategy() {
-        return invocationStrategy;
-    }
-
-    public void setInvocationStrategy(MethodInvocationStrategy invocationStrategy) {
-        this.invocationStrategy = invocationStrategy;
-    }
-
-    public CamelContext getCamelContext() {
+    public SpringCamelContext getCamelContext() {
         return camelContext;
     }
 
-    public void setCamelContext(CamelContext camelContext) {
+    public void setCamelContext(SpringCamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
@@ -219,33 +207,9 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
      * Create a processor which invokes the given method when an incoming message exchange is received
      */
     protected Processor createConsumerProcessor(final Object pojo, final Method method, final Endpoint endpoint) {
-        final BeanInfo beanInfo = new BeanInfo(pojo.getClass(), invocationStrategy);
-
-        return new Processor() {
-            @Override
-            public String toString() {
-                return "Processor on " + endpoint;
-            }
-
-            public void process(Exchange exchange) throws Exception {
-                if (log.isDebugEnabled()) {
-                    log.debug(">>>> invoking method for: " + exchange);
-                }
-                MethodInvocation invocation = beanInfo.createInvocation(method, pojo, exchange);
-                if (invocation == null) {
-                    throw new IllegalStateException("No method invocation could be created");
-                }
-                try {
-                    invocation.proceed();
-                }
-                catch (Exception e) {
-                    throw e;
-                }
-                catch (Throwable throwable) {
-                    throw new Exception(throwable);
-                }
-            }
-        };
+        BeanProcessor answer = new BeanProcessor(pojo, getCamelContext().getInvocationStrategy());
+        answer.setMethod(method);
+        return answer;
     }
 
     protected void addConsumer(Consumer consumer) {
@@ -295,4 +259,5 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
         }
         return endpoint;
     }
+
 }

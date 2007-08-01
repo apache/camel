@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.util;
+package org.apache.camel.spring.bind;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.camel.Exchange;
@@ -23,6 +23,7 @@ import org.apache.camel.Expression;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * @version $Revision: $
@@ -30,12 +31,20 @@ import java.lang.reflect.Method;
 public class MethodInfo {
     private Class type;
     private Method method;
+    private final List<ParameterInfo> parameters;
+    private final List<ParameterInfo> bodyParameters;
     private Expression parametersExpression;
 
-    public MethodInfo(Class type, Method method, Expression parametersExpression) {
+    public MethodInfo(Class type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters) {
         this.type = type;
         this.method = method;
-        this.parametersExpression = parametersExpression;
+        this.parameters = parameters;
+        this.bodyParameters = bodyParameters;
+        this.parametersExpression = createParametersExpression();
+    }
+
+    public String toString() {
+        return method.toString();
     }
 
     public MethodInvocation createMethodInvocation(final Object pojo, final Exchange messageExchange) {
@@ -75,7 +84,49 @@ public class MethodInfo {
         return parametersExpression;
     }
 
+    public List<ParameterInfo> getBodyParameters() {
+        return bodyParameters;
+    }
+
+    public Class getBodyParameterType() {
+        ParameterInfo parameterInfo = bodyParameters.get(0);
+        return parameterInfo.getType();
+    }
+
+
+    public boolean bodyParameterMatches(Class bodyType) {
+        Class actualType = getBodyParameterType();
+        return actualType != null && bodyType.isAssignableFrom(actualType);
+    }
+
+    public List<ParameterInfo> getParameters() {
+        return parameters;
+    }
+
+    public boolean hasBodyParameter() {
+        return !bodyParameters.isEmpty();
+    }
+    
     protected Object invoke(Method mth, Object pojo, Object[] arguments, Exchange exchange) throws IllegalAccessException, InvocationTargetException {
         return mth.invoke(pojo, arguments);
+    }
+
+    protected Expression createParametersExpression() {
+        return new Expression<Exchange>() {
+            public Object evaluate(Exchange exchange) {
+                int size = parameters.size();
+                Object[] answer = new Object[size];
+                for (int i = 0; i < size; i++) {
+                    Expression parameterExpression = parameters.get(i).getExpression();
+                    answer[i] = parameterExpression.evaluate(exchange);
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "ParametersExpression: " + parameters;
+            }
+        };
     }
 }

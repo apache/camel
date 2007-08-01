@@ -156,7 +156,6 @@ public class BatchProcessor extends ServiceSupport implements Runnable {
 
     protected void doStop() throws Exception {
         ServiceHelper.stopServices(consumer, processor);
-        consumer = null;
         collection.clear();
     }
 
