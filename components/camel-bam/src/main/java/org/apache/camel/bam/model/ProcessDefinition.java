@@ -25,12 +25,14 @@ import org.springframework.orm.jpa.JpaTemplate;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.UniqueConstraint;
 import java.util.List;
 
 /**
  * @version $Revision: 1.1 $
  */
 @Entity
+@UniqueConstraint(columnNames = {"name"})
 public class ProcessDefinition extends EntitySupport {
     private static final transient Log log = LogFactory.getLog(ProcessDefinition.class);
     private String name;

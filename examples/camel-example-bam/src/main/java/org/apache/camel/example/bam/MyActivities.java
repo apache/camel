@@ -50,7 +50,7 @@ public class MyActivities extends ProcessBuilder {
         // now lets add some rules
         invoice.starts().after(purchaseOrder.completes())
                 .expectWithin(seconds(1))
-                .errorIfOver(seconds(2)).to("seda:failures");
+                .errorIfOver(seconds(2)).to("log:org.apache.camel.example.bam.BamFailures?level=error");
 
         from("seda:failures").process(new Processor() {
             public void process(Exchange exchange) throws Exception {

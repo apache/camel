@@ -1,0 +1,5 @@
+<purchaseOrder id="p2">
+  <product>pizza</product>
+  <amount>2</amount>
+  <price>9.95</price>
+</purchaseOrder>
