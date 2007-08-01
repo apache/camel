@@ -14,25 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.endpoint;
+package org.apache.camel.spring.bind;
 
-import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
+import org.apache.camel.CamelExchangeException;
 
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
+ * An exception thrown if an attempted method invocation resulted in an ambiguous method
+ * such that multiple methods match the inbound message exchange
+ * 
  * @version $Revision: $
  */
-public class ProcessorStub implements Processor {
-    private List<Exchange> exchanges = new CopyOnWriteArrayList<Exchange>();
+public class AmbiguousMethodCallException extends CamelExchangeException {
+    private final List<MethodInfo> methods;
 
-    public void process(Exchange exchange) throws Exception {
-        exchanges.add(exchange);
+    public AmbiguousMethodCallException(Exchange exchange, List<MethodInfo> methods) {
+        super("Ambiguous method invocations possible: " + methods, exchange);
+        this.methods = methods;
     }
 
-    public List<Exchange> getExchanges() {
-        return exchanges;
+    /**
+     * The ambiguous methods for which a single method could not be chosen
+     */
+    public List<MethodInfo> getMethods() {
+        return methods;
     }
 }

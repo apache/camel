@@ -274,6 +274,13 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport {
     }
 
     protected Object extractResultBody(E result) {
-        return result != null ? result.getOut().getBody() : null;
+        Object answer = null;
+        if (result != null) {
+            answer = result.getOut().getBody();
+            if (answer == null) {
+                answer = result.getIn().getBody();
+            }
+        }
+        return answer;
     }
 }

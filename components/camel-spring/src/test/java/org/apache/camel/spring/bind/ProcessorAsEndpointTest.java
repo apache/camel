@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.endpoint;
+package org.apache.camel.spring.bind;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -55,7 +55,7 @@ public class ProcessorAsEndpointTest  extends SpringTestSupport {
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/endpoint/processorAsEndpoint.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/bind/processorAsEndpoint.xml");
     }
 
     protected int getExpectedRouteCount() {
