@@ -15,32 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.processor;
+package org.apache.camel.processor;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.NoSuchEndpointException;
 
 /**
  * @version $Revision: 1.1 $
-*/
-public class ProcessorEndpointConsumer extends DefaultConsumer<Exchange> {
-    private final ProcessorEndpoint endpoint;
+ */
+public class SendToNonExistingEndpointTest extends ContextTestSupport {
 
-    public ProcessorEndpointConsumer(ProcessorEndpoint endpoint, Processor processor) {
-        super(endpoint, processor);
-        this.endpoint = endpoint;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        endpoint.getLoadBalancer().addProcessor(getProcessor());
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        endpoint.getLoadBalancer().removeProcessor(getProcessor());
-        super.doStop();
+    public void testSendToNonExistingEndpoint() throws Exception {
+        try {
+            template.sendBody("thisUriDoesNotExist", "<hello>world!</hello>");
+            fail("Should have failed to send this message!");
+        }
+        catch (NoSuchEndpointException e) {
+            log.debug("Caught expected exception: " + e, e);
+            assertEquals("uri", "thisUriDoesNotExist", e.getUri());
+        }
     }
 }

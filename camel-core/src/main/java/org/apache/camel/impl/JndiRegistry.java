@@ -20,22 +20,26 @@ package org.apache.camel.impl;
 import org.apache.camel.spi.Registry;
 
 import javax.naming.Context;
-import javax.naming.NamingException;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.util.Hashtable;
 
 /**
  * A {@link Registry} implementation which looks up the objects in JNDI
- * 
+ *
  * @version $Revision: 1.1 $
  */
 public class JndiRegistry implements Registry {
     private Context context;
 
     public <T> T lookup(String name, Class<T> type) {
+        Object value = lookup(name);
+        return type.cast(value);
+    }
+
+    public Object lookup(String name) {
         try {
-            Object value = getContext().lookup(name);
-            return type.cast(value);
+            return getContext().lookup(name);
         }
         catch (NamingException e) {
             return null;

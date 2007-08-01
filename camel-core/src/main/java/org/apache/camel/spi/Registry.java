@@ -33,4 +33,13 @@ public interface Registry {
      * @return the service from the registry or null if it could not be found
      */
     <T> T lookup(String name, Class<T> type);
+
+    /**
+     * Looks up a service in the registry based purely on name,
+     * returning the service or null if it could not be found.
+     *
+     * @param name the name of the service
+     * @return the service from the registry or null if it could not be found
+     */
+    Object lookup(String name);
 }

@@ -45,6 +45,14 @@ public class Logger implements Processor {
         this.level = level;
     }
 
+    public Logger(String logName) {
+        this(LogFactory.getLog(logName));
+    }
+
+    public Logger(String logName, LoggingLevel level) {
+        this(LogFactory.getLog(logName), level);
+    }
+
     @Override
     public String toString() {
         return "Logger[" + log + "]";
@@ -69,7 +77,7 @@ public class Logger implements Processor {
                 break;
             case INFO:
                 if (log.isInfoEnabled()) {
-                    log.debug(logMessage(exchange));
+                    log.info(logMessage(exchange));
                 }
                 break;
             case TRACE:
