@@ -18,12 +18,8 @@
 package org.apache.camel.spring.spi;
 
 import org.apache.camel.spi.Registry;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
-
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.naming.InitialContext;
-import java.util.Hashtable;
 
 /**
  * A {@link Registry} implementation which looks up the objects in the Spring
@@ -39,8 +35,21 @@ public class ApplicationContextRegistry implements Registry {
     }
 
     public <T> T lookup(String name, Class<T> type) {
-        Object value = applicationContext.getBean(name, type);
-        return type.cast(value);
+        try {
+            Object value = applicationContext.getBean(name, type);
+            return type.cast(value);
+        }
+        catch (NoSuchBeanDefinitionException e) {
+            return null;
+        }
     }
 
+    public Object lookup(String name) {
+        try {
+            return applicationContext.getBean(name);
+        }
+        catch (NoSuchBeanDefinitionException e) {
+            return null;
+        }
+    }
 }

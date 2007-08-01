@@ -35,14 +35,18 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
  */
 public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E> {
     private String endpointUri;
-    private final Component component;
     private CamelContext context;
+    private Component component;
     private ScheduledExecutorService executorService;
 
     protected DefaultEndpoint(String endpointUri, Component component) {
-        this.endpointUri = endpointUri;
+        this(endpointUri, component.getCamelContext());
         this.component = component;
-        this.context = component.getCamelContext();
+    }
+
+    protected DefaultEndpoint(String endpointUri, CamelContext context) {
+        this.endpointUri = endpointUri;
+        this.context = context;
     }
 
     public int hashCode() {

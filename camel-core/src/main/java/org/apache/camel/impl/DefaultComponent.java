@@ -34,7 +34,7 @@ import java.util.concurrent.ThreadFactory;
 /**
  * @version $Revision$
  */
-public abstract  class DefaultComponent<E extends Exchange> extends ServiceSupport implements Component<E> {
+public abstract class DefaultComponent<E extends Exchange> extends ServiceSupport implements Component<E> {
 
 	private int defaultThreadPoolSize = 5;
     private CamelContext camelContext;

@@ -21,6 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -199,24 +200,25 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
                     // Use the URI prefix to find the component.
                     String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
-                    if (splitURI[1] == null) {
-                        throw new IllegalArgumentException("Invalid URI, it did not contain a scheme: " + uri);
+                    if (splitURI[1] != null) {
+                        String scheme = splitURI[0];
+                        Component component = getComponent(scheme);
+
+                        // Ask the component to resolve the endpoint.
+                        if (component != null) {
+                            // Have the component create the endpoint if it can.
+                            answer = component.createEndpoint(uri);
+                        }
                     }
-                    String scheme = splitURI[0];
-                    Component component = getComponent(scheme);
+                    if (answer == null) {
+                        answer = createEndpoint(uri);
+                    }
 
-                    // Ask the component to resolve the endpoint.
-                    if (component != null) {
-
-                        // Have the component create the endpoint if it can.
-                        answer = component.createEndpoint(uri);
-
-                        // If it's a singleton then auto register it.
-                        if (answer != null && answer.isSingleton()) {
-                            if (answer != null) {
-                                startServices(answer);
-                                endpoints.put(uri, answer);
-                            }
+                    // If it's a singleton then auto register it.
+                    if (answer != null && answer.isSingleton()) {
+                        if (answer != null) {
+                            startServices(answer);
+                            endpoints.put(uri, answer);
                         }
                     }
                 }
@@ -445,4 +447,40 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     protected Registry createRegistry() {
         return new JndiRegistry();
     }
+
+    /**
+     * A pluggable strategy to allow an endpoint to be created without requiring
+     * a component to be its factory, such as for looking up the URI inside
+     * some {@link Registry}
+     *
+     * @param uri the uri for the endpoint to be created
+     * @return the newly created endpoint or null if it could not be resolved
+     */
+    protected Endpoint createEndpoint(String uri) {
+        Object value = getRegistry().lookup(uri);
+        if (value instanceof Endpoint) {
+            return (Endpoint) value;
+        }
+        else if (value instanceof Processor) {
+            return new ProcessorEndpoint(uri, this, (Processor) value);
+        }
+        else if (value != null) {
+            return convertBeanToEndpoint(uri, value);
+        }
+        return null;
+    }
+
+    /**
+     * Attempt to convert the bean from a {@link Registry} to an
+     * endpoint using some kind of transformation or wrapper
+     *
+     * @param uri  the uri for the endpoint (and name in the registry)
+     * @param bean the bean to be converted to an endpoint, which will be not null
+     * @return a new endpoint
+     */
+    protected Endpoint convertBeanToEndpoint(String uri, Object bean) {
+        throw new IllegalArgumentException("uri: " + uri + " bean: " + bean
+                + " could not be converted to an Endpoint");
+    }
+
 }

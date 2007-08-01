@@ -15,32 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.processor;
+package org.apache.camel.impl;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
-import org.apache.camel.Exchange;
-import org.apache.camel.Consumer;
-import org.apache.camel.Producer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 
 /**
- * A base class for creating {@link Endpoint} implementations from a {@link Processor}
- *
+ * An endpoint which allows exchanges to be sent into it which just invokes a
+ * given {@link Processor}. This component does not support the use of consumers.
+ * 
  * @version $Revision: 1.1 $
  */
 public class ProcessorEndpoint extends DefaultEndpoint<Exchange> {
     private final Processor processor;
-    private final LoadBalancer loadBalancer;
 
-    protected ProcessorEndpoint(String endpointUri, Component component, Processor processor, LoadBalancer loadBalancer) {
+    public ProcessorEndpoint(String endpointUri, CamelContext context, Processor processor) {
+        super(endpointUri, context);
+        this.processor = processor;
+    }
+
+    public ProcessorEndpoint(String endpointUri, Component component, Processor processor) {
         super(endpointUri, component);
         this.processor = processor;
-        this.loadBalancer = loadBalancer;
     }
 
     public Exchange createExchange() {
@@ -56,22 +56,15 @@ public class ProcessorEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
-        return new ProcessorEndpointConsumer(this, processor);
+        throw new UnsupportedOperationException("You cannot consume from this endpoint!");
     }
 
     public Processor getProcessor() {
         return processor;
     }
 
-    public LoadBalancer getLoadBalancer() {
-        return loadBalancer;
-    }
-
     protected void onExchange(Exchange exchange) throws Exception {
         processor.process(exchange);
-
-        // now lets output to the load balancer
-        loadBalancer.process(exchange);
     }
 
 	public boolean isSingleton() {

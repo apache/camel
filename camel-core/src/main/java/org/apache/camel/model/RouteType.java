@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.impl.RouteContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -87,14 +88,14 @@ public class RouteType extends ProcessorType implements CamelContextAware {
         }
     }
 
-    public Endpoint resolveEndpoint(String uri) {
+    public Endpoint resolveEndpoint(String uri) throws NoSuchEndpointException {
         CamelContext context = getCamelContext();
         if (context == null) {
             throw new IllegalArgumentException("No CamelContext has been injected!");
         }
         Endpoint answer = context.getEndpoint(uri);
         if (answer == null) {
-            throw new IllegalArgumentException("No Endpoint found for uri: " + uri);
+            throw new NoSuchEndpointException(uri);
         }
         return answer;
     }
