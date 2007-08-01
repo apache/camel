@@ -25,6 +25,16 @@ import org.apache.camel.spring.Main;
  */
 public class RunTest extends TestCase {
     public void testRun() throws Exception {
+
+/*
+        new Thread() {
+            public void run() {
+                String[] args = {"--url", "jdbc:hsqldb:mem:camel_bam"};
+                DatabaseManagerSwing.main(args);
+            }
+        }.start();
+*/
+
         String[] args = {};
         Main.main(args);
     }

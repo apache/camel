@@ -84,6 +84,9 @@ public abstract class BamProcessorSupport<T> implements Processor {
                     return entity;
                 }
                 catch (Exception e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Caught: " + e, e);
+                    }
                     throw new RuntimeCamelException(e);
                 }
             }

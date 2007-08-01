@@ -27,6 +27,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.UniqueConstraint;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -37,6 +38,7 @@ import java.util.HashSet;
  * @version $Revision: $
  */
 @Entity
+@UniqueConstraint(columnNames = {"correlationKey"})
 public class ProcessInstance extends TemporalEntity {
     private static final transient Log log = LogFactory.getLog(ProcessInstance.class);
     private ProcessDefinition processDefinition;

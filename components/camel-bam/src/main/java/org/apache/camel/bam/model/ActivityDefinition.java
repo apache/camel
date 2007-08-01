@@ -23,11 +23,13 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.UniqueConstraint;
 
 /**
  * @version $Revision: 1.1 $
  */
 @Entity
+@UniqueConstraint(columnNames = {"name"})
 public class ActivityDefinition extends EntitySupport {
     private String name;
     private ProcessDefinition processDefinition;

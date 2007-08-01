@@ -1,0 +1,3 @@
+<invoice purchaseOrderId="p3">
+  <description>This invoice should tie up with purchase order p3</description>
+</invoice>
