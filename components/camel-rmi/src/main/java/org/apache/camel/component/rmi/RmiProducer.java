@@ -17,16 +17,16 @@
  */
 package org.apache.camel.component.rmi;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.component.bean.BeanProcessor;
+import org.apache.camel.component.bean.DefaultMethodInvocationStrategy;
+import org.apache.camel.impl.DefaultProducer;
+
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
-
-import org.apache.camel.component.pojo.PojoEndpoint;
-import org.apache.camel.component.pojo.PojoExchange;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.Exchange;
 
 /**
  * @version $Revision: 533076 $
@@ -35,16 +35,19 @@ public class RmiProducer extends DefaultProducer {
 
 	private final RmiEndpoint endpoint;
 	private Remote remote;
+    private BeanProcessor beanProcessor;
 
-	public RmiProducer(RmiEndpoint endpoint) throws AccessException, RemoteException, NotBoundException {
+    public RmiProducer(RmiEndpoint endpoint) throws AccessException, RemoteException, NotBoundException {
 		super(endpoint);
 		this.endpoint = endpoint;
 	}
 
-	public void process(Exchange exchange) throws AccessException, RemoteException, NotBoundException {
-        PojoExchange pojoExchange = endpoint.toExchangeType(exchange);
-        PojoEndpoint.invoke(getRemote(), pojoExchange);
-        exchange.copyFrom(pojoExchange);
+	public void process(Exchange exchange) throws Exception {
+        if (beanProcessor == null) {
+            // TODO pull the invocation strategy out of the context?
+            beanProcessor = new BeanProcessor(getRemote(), new DefaultMethodInvocationStrategy());
+        }
+        beanProcessor.process(exchange);
     }
 
 	public Remote getRemote() throws AccessException, RemoteException, NotBoundException {

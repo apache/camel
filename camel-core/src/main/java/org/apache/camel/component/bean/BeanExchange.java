@@ -1,5 +1,4 @@
-/**
- *
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,22 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pojo;
+package org.apache.camel.component.bean;
 
-import org.apache.camel.CamelException;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision: 519901 $
  */
-public class NoPojoAvailableException extends CamelException {
-    private final PojoEndpoint endpoint;
+public class BeanExchange extends DefaultExchange {
 
-    public NoPojoAvailableException(PojoEndpoint endpoint) {
-        super("No POJO available for endpoint: " + endpoint);
-        this.endpoint = endpoint;
+    public BeanExchange(CamelContext context) {
+        super(context);
     }
 
-    public PojoEndpoint getEndpoint() {
-        return endpoint;
+    public BeanInvocation getInvocation() {
+        return getIn().getBody(BeanInvocation.class);
+    }
+
+    public void setInvocation(BeanInvocation invocation) {
+        getIn().setBody(invocation);
+    }
+
+    @Override
+    public Exchange newInstance() {
+        return new BeanExchange(getContext());
     }
 }

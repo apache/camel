@@ -27,8 +27,8 @@ import java.rmi.server.UnicastRemoteObject;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
-import org.apache.camel.component.pojo.PojoExchange;
-import org.apache.camel.component.pojo.PojoInvocation;
+import org.apache.camel.component.bean.BeanExchange;
+import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
@@ -36,7 +36,7 @@ import org.apache.camel.impl.DefaultConsumer;
  *
  * @version $Revision: 533758 $
  */
-public class RmiConsumer extends DefaultConsumer<PojoExchange> implements InvocationHandler {
+public class RmiConsumer extends DefaultConsumer<BeanExchange> implements InvocationHandler {
 
 	private final RmiEndpoint endpoint;
 	private Remote stub;
@@ -86,8 +86,8 @@ public class RmiConsumer extends DefaultConsumer<PojoExchange> implements Invoca
         if (!isStarted()) {
             throw new IllegalStateException("The endpoint is not active: " + getEndpoint().getEndpointUri());
         }
-        PojoInvocation invocation = new PojoInvocation(proxy, method, args);
-        PojoExchange exchange = getEndpoint().createExchange();
+        BeanInvocation invocation = new BeanInvocation(proxy, method, args);
+        BeanExchange exchange = getEndpoint().createExchange();
         exchange.setInvocation(invocation);
         getProcessor().process(exchange);
         Throwable fault = exchange.getException();

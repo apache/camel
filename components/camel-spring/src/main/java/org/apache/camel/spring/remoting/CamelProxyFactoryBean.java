@@ -19,7 +19,7 @@ package org.apache.camel.spring.remoting;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.pojo.PojoComponent;
+import org.apache.camel.component.bean.ProxyHelper;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.remoting.support.UrlBasedRemoteAccessor;
 
@@ -48,7 +48,7 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
                 }
             }
 
-            this.serviceProxy = PojoComponent.createProxy(endpoint, getServiceInterface());
+            this.serviceProxy = ProxyHelper.createProxy(endpoint, getServiceInterface());
         }
         catch (Exception e) {
             throw new IllegalArgumentException(e);

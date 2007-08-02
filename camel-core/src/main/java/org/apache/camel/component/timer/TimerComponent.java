@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pojo.timer;
+package org.apache.camel.component.timer;
 
-import org.apache.camel.component.pojo.PojoExchange;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.bean.BeanExchange;
+import org.apache.camel.impl.DefaultComponent;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -29,7 +29,7 @@ import java.util.Map;
  *
  * @version $Revision: 519973 $
  */
-public class TimerComponent extends DefaultComponent<PojoExchange> {
+public class TimerComponent extends DefaultComponent<BeanExchange> {
     protected final ArrayList<TimerConsumer> timers = new ArrayList<TimerConsumer>();
 
     boolean addConsumer(TimerConsumer consumer) {
@@ -41,7 +41,7 @@ public class TimerComponent extends DefaultComponent<PojoExchange> {
     }
 
     @Override
-    protected Endpoint<PojoExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint<BeanExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         return new TimerEndpoint(uri, this, remaining);
     }
 }

@@ -32,10 +32,10 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -63,6 +63,7 @@ public class BeanInfo {
             }
         }
     }
+
     public Class getType() {
         return type;
     }
@@ -70,7 +71,7 @@ public class BeanInfo {
     public MethodInvocation createInvocation(Method method, Object pojo, Exchange exchange) throws RuntimeCamelException {
         MethodInfo methodInfo = introspect(type, method);
         if (methodInfo != null) {
-        return methodInfo.createMethodInvocation(pojo, exchange);
+            return methodInfo.createMethodInvocation(pojo, exchange);
         }
         return null;
     }
@@ -168,7 +169,7 @@ public class BeanInfo {
      * Lets try choose one of the available methods to invoke if we can match
      * the message body to the body parameter
      *
-     * @param pojo the bean to invoke a method on
+     * @param pojo     the bean to invoke a method on
      * @param exchange the message exchange
      * @return the method to invoke or null if no definitive method could be matched
      */
@@ -222,7 +223,6 @@ public class BeanInfo {
         }
         return null;
     }
-
 
 
     /**

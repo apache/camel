@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.pojo.PojoComponent;
+import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.jndi.JndiContext;
 
@@ -67,7 +67,7 @@ public class RmiRouteTest extends TestCase {
         
         // START SNIPPET: invoke
         Endpoint endpoint = camelContext.getEndpoint("direct:hello");
-        ISay proxy = PojoComponent.createProxy(endpoint, ISay.class);
+        ISay proxy = ProxyHelper.createProxy(endpoint, ISay.class);
         String rc = proxy.say();
         assertEquals("Good Bye!", rc);
         // END SNIPPET: invoke

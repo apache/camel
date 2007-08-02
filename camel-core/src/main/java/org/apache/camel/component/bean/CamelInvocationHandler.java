@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pojo;
+package org.apache.camel.component.bean;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
@@ -39,8 +39,8 @@ public class CamelInvocationHandler implements InvocationHandler {
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        PojoInvocation invocation = new PojoInvocation(proxy, method, args);
-        PojoExchange exchange = new PojoExchange(endpoint.getContext());
+        BeanInvocation invocation = new BeanInvocation(proxy, method, args);
+        BeanExchange exchange = new BeanExchange(endpoint.getContext());
         exchange.setInvocation(invocation);
 
         producer.process(exchange);

@@ -23,8 +23,8 @@ import org.apache.camel.util.ObjectHelper;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @version $Revision: $
@@ -107,7 +107,7 @@ public class MethodInfo {
     public boolean hasBodyParameter() {
         return !bodyParameters.isEmpty();
     }
-    
+
     protected Object invoke(Method mth, Object pojo, Object[] arguments, Exchange exchange) throws IllegalAccessException, InvocationTargetException {
         return mth.invoke(pojo, arguments);
     }

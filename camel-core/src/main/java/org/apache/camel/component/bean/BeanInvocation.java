@@ -14,36 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pojo;
+package org.apache.camel.component.bean;
 
 import org.apache.camel.Exchange;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
-public class PojoInvocation {
+public class BeanInvocation {
 
-	private final Object proxy;
-	private final Method method;
-	private final Object[] args;
+    private final Object proxy;
+    private final Method method;
+    private final Object[] args;
 
-	public PojoInvocation(Object proxy, Method method, Object[] args) {
-		this.proxy = proxy;
-		this.method = method;
-		this.args = args;
-	}
+    public BeanInvocation(Object proxy, Method method, Object[] args) {
+        this.proxy = proxy;
+        this.method = method;
+        this.args = args;
+    }
 
-	public Object[] getArgs() {
-		return args;
-	}
+    public Object[] getArgs() {
+        return args;
+    }
 
-	public Method getMethod() {
-		return method;
-	}
+    public Method getMethod() {
+        return method;
+    }
 
-	public Object getProxy() {
-		return proxy;
-	}
+    public Object getProxy() {
+        return proxy;
+    }
 
     /**
      * This causes us to invoke the endpoint Pojo using reflection.
