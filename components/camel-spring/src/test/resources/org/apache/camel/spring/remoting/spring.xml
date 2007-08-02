@@ -26,9 +26,7 @@
   <bean id="sayService" class="org.apache.camel.spring.remoting.SayService"/>
 
   <!--  Exposes the above bean as via the pojo:say endpoint -->
-  <bean id="serviceExporter" class="org.apache.camel.spring.remoting.CamelServiceExporter">
-    <property name="camelContext" ref="camel"/>
-    <property name="serviceName" value="say"/>
+  <bean id="say" class="org.apache.camel.spring.remoting.CamelServiceExporter">
     <property name="service" ref="sayService"/>
     <property name="serviceInterface" value="org.apache.camel.spring.remoting.ISay"/>
   </bean>

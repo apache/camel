@@ -37,7 +37,7 @@ public class BeanRouteTest extends SpringTestSupport {
         assertEquals("Returned value", "Bye James!", value);
     }
 
-    public void TODO_testChooseMethodUsingBodyType() throws Exception {
+    public void testChooseMethodUsingBodyType() throws Exception {
         Object value = template.sendBody("bean:myBean", 4);
 
         assertEquals("Returned value", 8L, value);

@@ -17,21 +17,14 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.camel.spring.bind.BeanProcessor;
-import org.apache.camel.spring.util.MethodInvocationStrategy;
-import org.apache.camel.spring.util.DefaultMethodInvocationStrategy;
-import org.apache.camel.spring.SpringCamelContext;
-import static org.apache.camel.util.ObjectHelper.notNull;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import java.util.Map;
 
@@ -42,24 +35,11 @@ import java.util.Map;
  *
  * @version $Revision: 1.1 $
  */
-public class BeanComponent extends DefaultComponent implements ApplicationContextAware {
+public class BeanComponent extends DefaultComponent {
     private static final Log log = LogFactory.getLog(BeanComponent.class);
-    private ApplicationContext applicationContext;
     private MethodInvocationStrategy invocationStrategy;
 
     public BeanComponent() {
-    }
-
-    public BeanComponent(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    public ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
-
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 
     public MethodInvocationStrategy getInvocationStrategy() {
@@ -77,22 +57,19 @@ public class BeanComponent extends DefaultComponent implements ApplicationContex
     //-----------------------------------------------------------------------
 
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        notNull(applicationContext, "applicationContext");
-        Object bean = applicationContext.getBean(remaining);
+        Registry registry = getCamelContext().getRegistry();
+        Object bean = registry.lookup(remaining);
+        if (bean == null) {
+            throw new IllegalArgumentException("No such bean: " + remaining + " in registry: " + registry);
+        }
         BeanProcessor processor = new BeanProcessor(bean, getInvocationStrategy());
         IntrospectionSupport.setProperties(processor, parameters);
         return new ProcessorEndpoint(uri, this, processor);
-        //return new BeanEndpoint(uri, this, remaining);
     }
 
     protected MethodInvocationStrategy createInvocationStrategy() {
         CamelContext context = getCamelContext();
-        if (context instanceof SpringCamelContext) {
-            SpringCamelContext springCamelContext = (SpringCamelContext) context;
-            return springCamelContext.getInvocationStrategy();
-        }
-        else {
-            log.warn("Not using a SpringCamelContext so using the default MethodInvocationStrategy");
-        return new DefaultMethodInvocationStrategy();}
+        // TODO add this to the context?
+        return new DefaultMethodInvocationStrategy();
     }
 }

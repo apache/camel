@@ -144,4 +144,9 @@ public class ConverterTest extends TestCase {
         boolean value = converter.convertTo(boolean.class, null);
         assertFalse(value);
     }
+
+    public void testPrimitiveIntConversion() throws Exception {
+        int value = converter.convertTo(int.class, 4);
+        assertEquals("value", 4, value);
+    }
 }

@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.bind;
+package org.apache.camel.component.bean;
 
-import org.aopalliance.intercept.MethodInvocation;
 import org.apache.camel.Body;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -25,7 +24,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Property;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.spring.util.MethodInvocationStrategy;
 import static org.apache.camel.util.ExchangeHelper.convertToType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

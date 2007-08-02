@@ -16,15 +16,13 @@
  */
 package org.apache.camel.component.pojo;
 
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.Component;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Represents a pojo endpoint that uses reflection
@@ -71,19 +69,7 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
      */
     public static void invoke(Object pojo, PojoExchange exchange) {
         PojoInvocation invocation = exchange.getInvocation();
-        try {
-            Object response = invocation.getMethod().invoke(pojo, invocation.getArgs());
-            exchange.getOut().setBody(response);
-        }
-        catch (InvocationTargetException e) {
-            exchange.setException(e.getCause());
-        }
-        catch (RuntimeException e) {
-            throw e;
-        }
-        catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
+        invocation.invoke(pojo, exchange);
     }
 
     public PojoExchange createExchange() {

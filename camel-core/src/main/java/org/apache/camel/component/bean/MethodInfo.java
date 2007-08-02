@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.bind;
+package org.apache.camel.component.bean;
 
-import org.aopalliance.intercept.MethodInvocation;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.util.ObjectHelper;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Arrays;
 
 /**
  * @version $Revision: $
@@ -96,7 +97,7 @@ public class MethodInfo {
 
     public boolean bodyParameterMatches(Class bodyType) {
         Class actualType = getBodyParameterType();
-        return actualType != null && bodyType.isAssignableFrom(actualType);
+        return actualType != null && ObjectHelper.isAssignableFrom(bodyType, actualType);
     }
 
     public List<ParameterInfo> getParameters() {
@@ -112,20 +113,24 @@ public class MethodInfo {
     }
 
     protected Expression createParametersExpression() {
+        final int size = parameters.size();
+        final Expression[] expressions = new Expression[size];
+        for (int i = 0; i < size; i++) {
+            Expression parameterExpression = parameters.get(i).getExpression();
+            expressions[i] = parameterExpression;
+        }
         return new Expression<Exchange>() {
             public Object evaluate(Exchange exchange) {
-                int size = parameters.size();
                 Object[] answer = new Object[size];
                 for (int i = 0; i < size; i++) {
-                    Expression parameterExpression = parameters.get(i).getExpression();
-                    answer[i] = parameterExpression.evaluate(exchange);
+                    answer[i] = expressions[i].evaluate(exchange);
                 }
                 return answer;
             }
 
             @Override
             public String toString() {
-                return "ParametersExpression: " + parameters;
+                return "ParametersExpression: " + Arrays.asList(expressions);
             }
         };
     }

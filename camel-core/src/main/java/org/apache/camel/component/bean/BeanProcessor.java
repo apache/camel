@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.bind;
+package org.apache.camel.component.bean;
 
-import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
-import org.aopalliance.intercept.MethodInvocation;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.component.pojo.PojoInvocation;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.spring.util.MethodInvocationStrategy;
+import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -61,6 +60,13 @@ public class BeanProcessor implements Processor {
         if (log.isDebugEnabled()) {
             log.debug(">>>> invoking method for: " + exchange);
         }
+        Message in = exchange.getIn();
+        PojoInvocation pojoInvoke = in.getBody(PojoInvocation.class);
+        if (pojoInvoke != null) {
+            pojoInvoke.invoke(pojo, exchange);
+            return;
+        }
+
         MethodInvocation invocation;
         if (method != null) {
             invocation = beanInfo.createInvocation(method, pojo, exchange);
@@ -68,7 +74,6 @@ public class BeanProcessor implements Processor {
         else {
             // lets pass in the method name to use if its specified
             if (ObjectHelper.isNotNullAndNonEmpty(methodName)) {
-                Message in = exchange.getIn();
                 if (isNullOrBlank(in.getHeader(METHOD_NAME, String.class))) {
                     in.setHeader(METHOD_NAME, methodName);
                 }

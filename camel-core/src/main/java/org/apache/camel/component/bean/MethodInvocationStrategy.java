@@ -14,41 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.bind;
+package org.apache.camel.component.bean;
 
 import org.apache.camel.Expression;
 
-import java.lang.annotation.Annotation;
-
 /**
+ * A strategy for invoking a method on a pojo from a message exchange
+ *
  * @version $Revision: $
  */
-public class ParameterInfo {
-    private final int index;
-    private final Class type;
-    private final Annotation[] annotations;
-    private final Expression expression;
+public interface MethodInvocationStrategy {
+    /**
+     * Creates an invocation on the given POJO using annotations to decide which method to invoke
+     * and to figure out which parameters to use
+     */
+/*    MethodInvocation createInvocation(Object pojo,
+                                      BeanInfo beanInfo,
+                                      Exchange messageExchange,
+                                      Endpoint pojoEndpoint) throws RuntimeCamelException;*/
 
-    public ParameterInfo(int index, Class type, Annotation[] annotations, Expression expression) {
-        this.index = index;
-        this.type = type;
-        this.annotations = annotations;
-        this.expression = expression;
-    }
-
-    public Annotation[] getAnnotations() {
-        return annotations;
-    }
-
-    public Expression getExpression() {
-        return expression;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public Class getType() {
-        return type;
-    }
+    Expression getDefaultParameterTypeExpression(Class parameterType);
 }

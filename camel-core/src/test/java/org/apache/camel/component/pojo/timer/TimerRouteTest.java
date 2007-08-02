@@ -17,16 +17,15 @@
  */
 package org.apache.camel.component.pojo.timer;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.pojo.PojoComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.jndi.JndiContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @version $Revision: 520220 $
@@ -35,33 +34,31 @@ public class TimerRouteTest extends TestCase {
     private static final transient Log log = LogFactory.getLog(TimerRouteTest.class);
 	
     public void testPojoRoutes() throws Exception {
-
-        CamelContext container = new DefaultCamelContext();
-        
         final AtomicInteger hitCount = new AtomicInteger();
 
-        PojoComponent component = new PojoComponent();
-        component.addService("bar", new Runnable(){
+        JndiContext context = new JndiContext();
+        context.bind("bar", new Runnable(){
 			public void run() {
 		        log.debug("hit");
 				hitCount.incrementAndGet();
 			}
         });
-        container.addComponent("pojo", component);
-        
+
+        CamelContext camelContext = new DefaultCamelContext(context);
+
         // lets add some routes
-        container.addRoutes(new RouteBuilder() {
+        camelContext.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("timer://foo?fixedRate=true&delay=0&period=500").to("pojo:bar");
             }
         });
         
-        container.start();
+        camelContext.start();
 
         // now lets wait for the timer to fire a few times.
         Thread.sleep(1000*2);
         assertTrue("", hitCount.get()>= 3 );
         
-        container.stop();
+        camelContext.stop();
     }
 }

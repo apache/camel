@@ -38,9 +38,11 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jndi.JndiContext;
 import static org.apache.camel.util.ServiceHelper.startServices;
 import static org.apache.camel.util.ServiceHelper.stopServices;
 
+import javax.naming.Context;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,6 +69,19 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private boolean autoCreateComponents = true;
     private LanguageResolver languageResolver = new DefaultLanguageResolver();
     private Registry registry;
+
+    public DefaultCamelContext() {
+    }
+
+    /**
+     * Creates the {@link CamelContext} using the given JNDI
+     * context as the registry
+     *
+     * @param jndiContext
+     */
+    public DefaultCamelContext(Context jndiContext) {
+        setRegistry(new JndiRegistry(jndiContext));
+    }
 
     /**
      * Adds a component to the container.
