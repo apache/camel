@@ -18,10 +18,9 @@ package org.apache.camel.component.pojo;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.component.bean.BeanComponent;
 
 import java.lang.reflect.Proxy;
-import java.util.Map;
 
 /**
  * Represents the component that manages {@link PojoEndpoint}.  It holds the
@@ -29,22 +28,21 @@ import java.util.Map;
  *
  * @version $Revision: 519973 $
  */
-public class PojoComponent extends DefaultComponent<PojoExchange> {
+public class PojoComponent extends BeanComponent {
 
-    public Object getService(String uri) {
-        return getCamelContext().getRegistry().lookup(uri);
-    }
+/*
 
     @Override
     protected Endpoint<PojoExchange> createEndpoint(String uri, final String remaining, Map parameters) throws Exception {
         return new PojoEndpoint(uri, this, remaining);
     }
-    
+*/
+
     /**
      * Creates a Proxy which sends PojoExchange to the endpoint.
      * @throws Exception 
      */
-    static public Object createProxy(final Endpoint endpoint, ClassLoader cl, Class interfaces[]) throws Exception {
+    public static Object createProxy(final Endpoint endpoint, ClassLoader cl, Class interfaces[]) throws Exception {
     	final Producer producer = endpoint.createProducer();
         return Proxy.newProxyInstance(cl, interfaces, new CamelInvocationHandler(endpoint, producer));
     }
@@ -53,7 +51,7 @@ public class PojoComponent extends DefaultComponent<PojoExchange> {
      * Creates a Proxy which sends PojoExchange to the endpoint.
      * @throws Exception 
      */
-    static public Object createProxy(Endpoint endpoint, Class interfaces[]) throws Exception {
+    public static Object createProxy(Endpoint endpoint, Class interfaces[]) throws Exception {
     	if( interfaces.length < 1 ) {
     		throw new IllegalArgumentException("You must provide at least 1 interface class.");
     	}
@@ -64,7 +62,7 @@ public class PojoComponent extends DefaultComponent<PojoExchange> {
      * @throws Exception 
      */
     @SuppressWarnings("unchecked")
-	static public <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<T> interfaceClass) throws Exception {
+	public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<T> interfaceClass) throws Exception {
         return (T) createProxy(endpoint, cl, new Class[]{interfaceClass});
     }
     
@@ -73,7 +71,7 @@ public class PojoComponent extends DefaultComponent<PojoExchange> {
      * @throws Exception 
      */
     @SuppressWarnings("unchecked")
-	static public <T> T createProxy(Endpoint endpoint, Class<T> interfaceClass) throws Exception {
+	public static <T> T createProxy(Endpoint endpoint, Class<T> interfaceClass) throws Exception {
         return (T) createProxy(endpoint, new Class[]{interfaceClass});
     }
 

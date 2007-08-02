@@ -57,14 +57,19 @@ public class BeanComponent extends DefaultComponent {
     //-----------------------------------------------------------------------
 
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        Object bean = getBean(remaining);
+        BeanProcessor processor = new BeanProcessor(bean, getInvocationStrategy());
+        IntrospectionSupport.setProperties(processor, parameters);
+        return new ProcessorEndpoint(uri, this, processor);
+    }
+
+    public Object getBean(String remaining) {
         Registry registry = getCamelContext().getRegistry();
         Object bean = registry.lookup(remaining);
         if (bean == null) {
             throw new IllegalArgumentException("No such bean: " + remaining + " in registry: " + registry);
         }
-        BeanProcessor processor = new BeanProcessor(bean, getInvocationStrategy());
-        IntrospectionSupport.setProperties(processor, parameters);
-        return new ProcessorEndpoint(uri, this, processor);
+        return bean;
     }
 
     protected MethodInvocationStrategy createInvocationStrategy() {

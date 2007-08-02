@@ -96,6 +96,6 @@ public class PojoEndpoint extends DefaultEndpoint<PojoExchange> {
     }
 
     protected Object lookupService() {
-        return getPojoComponent().getService(getPojoName());
+        return getPojoComponent().getBean(getPojoName());
     }
 }
