@@ -21,13 +21,13 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.pojo.PojoExchange;
+import org.apache.camel.component.bean.BeanExchange;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
  * @version $Revision:520964 $
  */
-public class RmiComponent extends DefaultComponent<PojoExchange> {
+public class RmiComponent extends DefaultComponent<BeanExchange> {
 
 	public RmiComponent() {
 	}
@@ -37,7 +37,7 @@ public class RmiComponent extends DefaultComponent<PojoExchange> {
 	}
 
 	@Override
-	protected Endpoint<PojoExchange> createEndpoint(String uri,
+	protected Endpoint<BeanExchange> createEndpoint(String uri,
 			String remaining, Map parameters) throws Exception {
 		return new RmiEndpoint(uri, this);
 	}

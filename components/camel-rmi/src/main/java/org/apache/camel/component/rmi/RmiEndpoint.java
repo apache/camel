@@ -16,6 +16,13 @@
  */
 package org.apache.camel.component.rmi;
 
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.bean.BeanExchange;
+import org.apache.camel.impl.DefaultEndpoint;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
@@ -24,17 +31,10 @@ import java.rmi.registry.Registry;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.pojo.PojoExchange;
-import org.apache.camel.impl.DefaultEndpoint;
-
 /**
  * @version $Revision:520964 $
  */
-public class RmiEndpoint extends DefaultEndpoint<PojoExchange> {
+public class RmiEndpoint extends DefaultEndpoint<BeanExchange> {
 
 	private List<Class> remoteInterfaces;
 	private ClassLoader classLoader;
@@ -50,17 +50,17 @@ public class RmiEndpoint extends DefaultEndpoint<PojoExchange> {
 		return false;
 	}
 
-	public PojoExchange createExchange() {
-		return new PojoExchange(getContext());
+	public BeanExchange createExchange() {
+		return new BeanExchange(getContext());
 	}
 
-	public Consumer<PojoExchange> createConsumer(Processor processor) throws Exception {
+	public Consumer<BeanExchange> createConsumer(Processor processor) throws Exception {
 		if( remoteInterfaces == null || remoteInterfaces.size()==0 )
 			throw new RuntimeCamelException("To create an RMI consumer, the RMI endpoint's remoteInterfaces property must be be configured.");
 		return new RmiConsumer(this, processor);
 	}
 
-	public Producer<PojoExchange> createProducer() throws Exception {
+	public Producer<BeanExchange> createProducer() throws Exception {
 		return new RmiProducer(this);
 	}
 

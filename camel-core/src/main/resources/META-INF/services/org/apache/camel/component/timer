@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.component.pojo.timer.TimerComponent
+class=org.apache.camel.component.timer.TimerComponent

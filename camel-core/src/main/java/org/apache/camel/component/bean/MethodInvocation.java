@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Method;
 
 /**
  * @version $Revision: $

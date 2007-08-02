@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pojo.timer;
+package org.apache.camel.component.timer;
 
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
@@ -32,16 +32,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class TimerRouteTest extends TestCase {
     private static final transient Log log = LogFactory.getLog(TimerRouteTest.class);
-	
+
     public void testPojoRoutes() throws Exception {
         final AtomicInteger hitCount = new AtomicInteger();
 
         JndiContext context = new JndiContext();
-        context.bind("bar", new Runnable(){
-			public void run() {
-		        log.debug("hit");
-				hitCount.incrementAndGet();
-			}
+        context.bind("bar", new Runnable() {
+            public void run() {
+                log.debug("hit");
+                hitCount.incrementAndGet();
+            }
         });
 
         CamelContext camelContext = new DefaultCamelContext(context);
@@ -52,13 +52,13 @@ public class TimerRouteTest extends TestCase {
                 from("timer://foo?fixedRate=true&delay=0&period=500").to("pojo:bar");
             }
         });
-        
+
         camelContext.start();
 
         // now lets wait for the timer to fire a few times.
-        Thread.sleep(1000*2);
-        assertTrue("", hitCount.get()>= 3 );
-        
+        Thread.sleep(1000 * 2);
+        assertTrue("", hitCount.get() >= 3);
+
         camelContext.stop();
     }
 }

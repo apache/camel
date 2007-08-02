@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Exchange;
 
 import java.util.List;
 
 /**
  * An exception thrown if an attempted method invocation resulted in an ambiguous method
  * such that multiple methods match the inbound message exchange
- * 
+ *
  * @version $Revision: $
  */
 public class AmbiguousMethodCallException extends CamelExchangeException {

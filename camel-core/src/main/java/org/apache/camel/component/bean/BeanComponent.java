@@ -63,11 +63,11 @@ public class BeanComponent extends DefaultComponent {
         return new ProcessorEndpoint(uri, this, processor);
     }
 
-    public Object getBean(String remaining) {
+    public Object getBean(String remaining) throws NoBeanAvailableException {
         Registry registry = getCamelContext().getRegistry();
         Object bean = registry.lookup(remaining);
         if (bean == null) {
-            throw new IllegalArgumentException("No such bean: " + remaining + " in registry: " + registry);
+            throw new NoBeanAvailableException(remaining);
         }
         return bean;
     }

@@ -19,7 +19,6 @@ package org.apache.camel.component.bean;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.pojo.PojoInvocation;
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 import org.apache.commons.logging.Log;
@@ -61,9 +60,9 @@ public class BeanProcessor implements Processor {
             log.debug(">>>> invoking method for: " + exchange);
         }
         Message in = exchange.getIn();
-        PojoInvocation pojoInvoke = in.getBody(PojoInvocation.class);
-        if (pojoInvoke != null) {
-            pojoInvoke.invoke(pojo, exchange);
+        BeanInvocation beanInvoke = in.getBody(BeanInvocation.class);
+        if (beanInvoke != null) {
+            beanInvoke.invoke(pojo, exchange);
             return;
         }
 

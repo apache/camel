@@ -18,9 +18,8 @@
 package org.apache.camel.impl;
 
 import junit.framework.TestCase;
-
 import org.apache.camel.Component;
-import org.apache.camel.component.pojo.PojoComponent;
+import org.apache.camel.component.bean.BeanComponent;
 
 /**
  * @version $Revision: 525634 $
@@ -29,15 +28,15 @@ public class DefaultCamelContextTest extends TestCase {
 
 	public void testAutoCreateComponentsOn() {
 		DefaultCamelContext ctx = new DefaultCamelContext();
-		Component component = ctx.getComponent("pojo");
+		Component component = ctx.getComponent("bean");
 		assertNotNull(component);
-		assertEquals(component.getClass(), PojoComponent.class);
+		assertEquals(component.getClass(), BeanComponent.class);
 	}
 	
 	public void testAutoCreateComponentsOff() {
 		DefaultCamelContext ctx = new DefaultCamelContext();
 		ctx.setAutoCreateComponents(false);
-		Component component = ctx.getComponent("pojo");
+		Component component = ctx.getComponent("bean");
 		assertNull(component);		
 	}
 	
