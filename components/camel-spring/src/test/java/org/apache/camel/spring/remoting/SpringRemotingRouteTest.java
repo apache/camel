@@ -20,16 +20,23 @@ package org.apache.camel.spring.remoting;
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision: 520220 $
  */
 public class SpringRemotingRouteTest extends TestCase {
+    private static final Log log = LogFactory.getLog(SpringRemotingRouteTest.class);
+
     public void testPojoRoutes() throws Exception {
 
         ClassPathXmlApplicationContext spring = new ClassPathXmlApplicationContext("org/apache/camel/spring/remoting/spring.xml");
-        spring.getBean("serviceExporter");
+        Object service = spring.getBean("say");
+        log.info("Found service!: " + service);
+        assertTrue("not an ISay!", service instanceof ISay);
+
         CamelContext camelContext = SpringCamelContext.springCamelContext(spring);
 
         // START SNIPPET: invoke

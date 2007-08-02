@@ -18,10 +18,12 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.spi.Registry;
+import org.apache.camel.RuntimeCamelException;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.naming.NameNotFoundException;
 import java.util.Hashtable;
 
 /**
@@ -32,6 +34,13 @@ import java.util.Hashtable;
 public class JndiRegistry implements Registry {
     private Context context;
 
+    public JndiRegistry() {
+    }
+
+    public JndiRegistry(Context context) {
+        this.context = context;
+    }
+
     public <T> T lookup(String name, Class<T> type) {
         Object value = lookup(name);
         return type.cast(value);
@@ -41,9 +50,25 @@ public class JndiRegistry implements Registry {
         try {
             return getContext().lookup(name);
         }
-        catch (NamingException e) {
+        catch (NameNotFoundException e) {
             return null;
         }
+        catch (NamingException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
+    public void bind(String s, Object o) {
+        try {
+            getContext().bind(s, o);
+        }
+        catch (NamingException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
+    public void close() throws NamingException {
+        getContext().close();
     }
 
     public Context getContext() throws NamingException {

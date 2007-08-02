@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.pojo;
 
+import org.apache.camel.Exchange;
+
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 public class PojoInvocation {
 
@@ -41,6 +44,27 @@ public class PojoInvocation {
 	public Object getProxy() {
 		return proxy;
 	}
+
+    /**
+     * This causes us to invoke the endpoint Pojo using reflection.
+     *
+     * @param pojo
+     */
+    public void invoke(Object pojo, Exchange exchange) {
+        try {
+            Object response = getMethod().invoke(pojo, getArgs());
+            exchange.getOut().setBody(response);
+        }
+        catch (InvocationTargetException e) {
+            exchange.setException(e.getCause());
+        }
+        catch (RuntimeException e) {
+            throw e;
+        }
+        catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
 }

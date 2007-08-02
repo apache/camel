@@ -57,6 +57,12 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         if (toType.isInstance(value)) {
             return toType.cast(value);
         }
+        else if (toType.isPrimitive()) {
+            Class primitiveType = ObjectHelper.convertPrimitiveTypeToWrapperType(toType);
+            if (primitiveType != toType) {
+                return (T) convertTo(primitiveType, value);
+            }
+        }
         checkLoaded();
         TypeConverter converter = getOrFindTypeConverter(toType, value);
         if (converter != null) {
@@ -74,6 +80,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         if (boolean.class.isAssignableFrom(toType)) {
             return (T) Boolean.FALSE;
         }
+
         return null;
     }
 

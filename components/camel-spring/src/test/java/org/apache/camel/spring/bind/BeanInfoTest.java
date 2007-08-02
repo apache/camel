@@ -18,12 +18,14 @@ package org.apache.camel.spring.bind;
 
 import junit.framework.TestCase;
 import org.apache.camel.Exchange;
-import org.apache.camel.spring.util.DefaultMethodInvocationStrategy;
+import org.apache.camel.component.bean.BeanProcessor;
+import org.apache.camel.component.bean.BeanInfo;
+import org.apache.camel.component.bean.DefaultMethodInvocationStrategy;
+import org.apache.camel.component.bean.MethodInvocation;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
-import org.aopalliance.intercept.MethodInvocation;
 
 /**
  * @version $Revision: $

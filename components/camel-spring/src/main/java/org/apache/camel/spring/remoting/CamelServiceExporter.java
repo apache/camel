@@ -17,65 +17,30 @@
  */
 package org.apache.camel.spring.remoting;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.component.pojo.PojoComponent;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.remoting.support.RemoteExporter;
 
 /**
- * Exports a Spring defined service to Camel as a Pojo endpoint.
+ * A {@link FactoryBean} to create a proxy to a service exposing a given {@link #getServiceInterface()}
  *
  * @author chirino
  */
-public class CamelServiceExporter extends RemoteExporter implements InitializingBean, DisposableBean {
-    CamelContext camelContext;
-    PojoComponent pojoComponent;
-    String serviceName;
+public class CamelServiceExporter extends RemoteExporter implements FactoryBean {
+    private boolean singleton = true;
 
-    public void afterPropertiesSet() throws Exception {
-        if (serviceName == null) {
-            throw new IllegalArgumentException("The serviceName must be configured.");
-        }
-        if (pojoComponent == null) {
-            if (camelContext == null) {
-                throw new IllegalArgumentException("A pojoComponent or camelContext must be configured.");
-            }
-            pojoComponent = (PojoComponent) camelContext.getComponent("pojo");
-            if (pojoComponent == null) {
-                throw new IllegalArgumentException("The pojoComponent could not be found.");
-            }
-        }
-        pojoComponent.addService(serviceName, getProxyForService());
+    public Object getObject() throws Exception {
+        return getProxyForService();
     }
 
-    public void destroy() throws Exception {
-        if (serviceName != null) {
-            pojoComponent.removeService(serviceName);
-        }
+    public Class getObjectType() {
+        return getServiceInterface();
     }
 
-    public PojoComponent getPojoComponent() {
-        return pojoComponent;
+    public boolean isSingleton() {
+        return singleton;
     }
 
-    public void setPojoComponent(PojoComponent pojoComponent) {
-        this.pojoComponent = pojoComponent;
-    }
-
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
+    public void setSingleton(boolean singleton) {
+        this.singleton = singleton;
     }
 }

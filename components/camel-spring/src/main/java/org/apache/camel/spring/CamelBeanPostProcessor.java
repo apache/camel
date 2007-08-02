@@ -17,7 +17,6 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelTemplate;
 import org.apache.camel.Consumer;
@@ -27,10 +26,8 @@ import org.apache.camel.MessageDriven;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spring.util.DefaultMethodInvocationStrategy;
-import org.apache.camel.spring.util.MethodInvocationStrategy;
+import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.spring.util.ReflectionUtils;
-import org.apache.camel.spring.bind.BeanProcessor;
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 import org.apache.commons.logging.Log;

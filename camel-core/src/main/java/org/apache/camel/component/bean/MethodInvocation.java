@@ -14,31 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.bind;
+package org.apache.camel.component.bean;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.CamelExchangeException;
-
-import java.util.List;
+import java.lang.reflect.Method;
+import java.lang.reflect.AccessibleObject;
 
 /**
- * An exception thrown if an attempted method invocation resulted in an ambiguous method
- * such that multiple methods match the inbound message exchange
- * 
  * @version $Revision: $
  */
-public class AmbiguousMethodCallException extends CamelExchangeException {
-    private final List<MethodInfo> methods;
+public interface MethodInvocation {
+    Method getMethod();
 
-    public AmbiguousMethodCallException(Exchange exchange, List<MethodInfo> methods) {
-        super("Ambiguous method invocations possible: " + methods, exchange);
-        this.methods = methods;
-    }
+    Object[] getArguments();
 
-    /**
-     * The ambiguous methods for which a single method could not be chosen
-     */
-    public List<MethodInfo> getMethods() {
-        return methods;
-    }
+    Object proceed() throws Throwable;
+
+    Object getThis();
+
+    AccessibleObject getStaticPart();
 }

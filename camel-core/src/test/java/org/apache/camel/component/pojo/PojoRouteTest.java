@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.util.jndi.JndiContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
@@ -30,14 +31,15 @@ import org.apache.camel.impl.DefaultCamelContext;
 public class PojoRouteTest extends TestCase {
 	
     public void testPojoRoutes() throws Exception {
-    	
-        CamelContext camelContext = new DefaultCamelContext();
-        
         // START SNIPPET: register
-        PojoComponent component = (PojoComponent)camelContext.getComponent("pojo");
-        component.addService("bye", new SayService("Good Bye!"));
+        // lets populate the context with the services we need
+        // note that we could just use a spring.xml file to avoid this step
+        JndiContext context = new JndiContext();
+        context.bind("bye", new SayService("Good Bye!"));
+
+        CamelContext camelContext = new DefaultCamelContext(context);
         // END SNIPPET: register
-        
+
         // START SNIPPET: route
         // lets add simple route
         camelContext.addRoutes(new RouteBuilder() {

@@ -317,4 +317,42 @@ public class ObjectHelper {
         }
     }
 
+    /**
+     * Returns true if a class is assignable from another class like the
+     * {@link Class#isAssignableFrom(Class)} method but which also includes
+     * coercion between primitive types to deal with Java 5 primitive type wrapping
+     */
+    public static boolean isAssignableFrom(Class a, Class b) {
+        a = convertPrimitiveTypeToWrapperType(a);
+        b = convertPrimitiveTypeToWrapperType(b);
+        return a.isAssignableFrom(b);
+    }
+
+    /**
+     * Converts primitive types such as int to its wrapper type like {@link Integeer}
+     */
+    public static Class convertPrimitiveTypeToWrapperType(Class type) {
+        if (type.isPrimitive()) {
+            if (type == int.class) {
+                return Integer.class;
+            }
+            else   if (type == long.class) {
+                return Long.class;
+            }
+            else   if (type == double.class) {
+                return Double.class;
+            }
+            else   if (type == float.class) {
+                return Float.class;
+            }
+            else   if (type == short.class) {
+                return Short.class;
+            }
+            else   if (type == byte.class) {
+                return Byte.class;
+            }
+        }
+        return type;
+    }
+
 }

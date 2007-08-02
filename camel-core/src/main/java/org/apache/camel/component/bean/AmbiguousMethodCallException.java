@@ -14,24 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.util;
+package org.apache.camel.component.bean;
 
-import org.apache.camel.Expression;
+import org.apache.camel.Exchange;
+import org.apache.camel.CamelExchangeException;
+
+import java.util.List;
 
 /**
- * A strategy for invoking a method on a pojo from a message exchange
- *
+ * An exception thrown if an attempted method invocation resulted in an ambiguous method
+ * such that multiple methods match the inbound message exchange
+ * 
  * @version $Revision: $
  */
-public interface MethodInvocationStrategy {
-    /**
-     * Creates an invocation on the given POJO using annotations to decide which method to invoke
-     * and to figure out which parameters to use
-     */
-/*    MethodInvocation createInvocation(Object pojo,
-                                      BeanInfo beanInfo,
-                                      Exchange messageExchange,
-                                      Endpoint pojoEndpoint) throws RuntimeCamelException;*/
+public class AmbiguousMethodCallException extends CamelExchangeException {
+    private final List<MethodInfo> methods;
 
-    Expression getDefaultParameterTypeExpression(Class parameterType);
+    public AmbiguousMethodCallException(Exchange exchange, List<MethodInfo> methods) {
+        super("Ambiguous method invocations possible: " + methods, exchange);
+        this.methods = methods;
+    }
+
+    /**
+     * The ambiguous methods for which a single method could not be chosen
+     */
+    public List<MethodInfo> getMethods() {
+        return methods;
+    }
 }

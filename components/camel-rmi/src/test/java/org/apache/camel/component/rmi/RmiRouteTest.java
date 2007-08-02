@@ -17,17 +17,17 @@
  */
 package org.apache.camel.component.rmi;
 
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.rmi.registry.LocateRegistry;
-
 import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.pojo.PojoComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.jndi.JndiContext;
+
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.rmi.registry.LocateRegistry;
 
 /**
  * @version $Revision: 520220 $
@@ -42,11 +42,11 @@ public class RmiRouteTest extends TestCase {
     	// Boot up a local RMI registry
     	LocateRegistry.createRegistry(1099);    	
     	
-        CamelContext camelContext = new DefaultCamelContext();
-        
         // START SNIPPET: register
-        PojoComponent component = (PojoComponent)camelContext.getComponent("pojo");
-        component.addService("bye", new SayService("Good Bye!"));
+        JndiContext context = new JndiContext();
+        context.bind("bye", new SayService("Good Bye!"));
+
+        CamelContext camelContext = new DefaultCamelContext(context);
         // END SNIPPET: register
         
         // START SNIPPET: route
