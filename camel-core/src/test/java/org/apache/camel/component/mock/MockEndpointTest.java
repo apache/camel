@@ -80,7 +80,7 @@ public class MockEndpointTest extends ContextTestSupport {
 
     protected void sendMessages(int... counters) {
         for (int counter : counters) {
-            template.sendBody("direct:a", "<message>" + counter + "</message>",
+            template.sendBodyAndHeader("direct:a", "<message>" + counter + "</message>",
                     "counter", counter);
         }
     }

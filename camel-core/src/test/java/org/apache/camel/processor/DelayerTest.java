@@ -30,7 +30,7 @@ public class DelayerTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(0);
 
-        template.sendBody("seda:a", "<hello>world!</hello>", "JMSTimestamp", System.currentTimeMillis());
+        template.sendBodyAndHeader("seda:a", "<hello>world!</hello>", "JMSTimestamp", System.currentTimeMillis());
         resultEndpoint.assertIsSatisfied();
 
         // now if we wait a bit longer we should receive the message!

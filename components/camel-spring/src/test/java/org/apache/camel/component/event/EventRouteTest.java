@@ -34,7 +34,7 @@ public class EventRouteTest extends SpringTestSupport {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedMessageCount(2);
 
-        template.sendBody(uri, expectedBody, "cheese", 123);
+        template.sendBodyAndHeader(uri, expectedBody, "cheese", 123);
 
         result.assertIsSatisfied();
 

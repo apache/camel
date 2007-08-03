@@ -59,7 +59,7 @@ public class ChoiceTest extends ContextTestSupport {
     }
 
     protected void sendMessage(final Object headerValue, final Object body) throws Exception {
-        template.sendBody("direct:start", body, "foo", headerValue);
+        template.sendBodyAndHeader("direct:start", body, "foo", headerValue);
     }
 
     @Override

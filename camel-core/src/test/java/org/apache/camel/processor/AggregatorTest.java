@@ -35,7 +35,7 @@ public class AggregatorTest extends ContextTestSupport {
         // lets send a large batch of messages
         for (int i = 1; i <= messageCount; i++) {
             String body = "message:" + i;
-            template.sendBody("direct:a", body, "cheese", 123);
+            template.sendBodyAndHeader("direct:a", body, "cheese", 123);
         }
 
         resultEndpoint.assertIsSatisfied();

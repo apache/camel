@@ -32,7 +32,7 @@ public class FileRouteTest extends ContextTestSupport {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedBodiesReceived(expectedBody);
 
-        template.sendBody(uri, expectedBody, "cheese", 123);
+        template.sendBodyAndHeader(uri, expectedBody, "cheese", 123);
 
         result.assertIsSatisfied();
     }

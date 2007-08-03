@@ -51,7 +51,7 @@ public class FtpRouteTest extends ContextTestSupport {
     }
 
     protected void sendExchange(final Object expectedBody) {
-        template.sendBody(startEndpointUri, expectedBody, "cheese", 123);
+        template.sendBodyAndHeader(startEndpointUri, expectedBody, "cheese", 123);
     }
 
     @Override
