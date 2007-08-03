@@ -18,6 +18,7 @@ package org.apache.camel.spring.example;
 
 import org.apache.camel.CamelTemplate;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -27,9 +28,9 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class MySender {
     @EndpointInject(uri = "mock:a")
-    private CamelTemplate successDesetination;
+    private ProducerTemplate successDesetination;
     @EndpointInject(uri = "mock:b")
-    private CamelTemplate failureDesetination;
+    private ProducerTemplate failureDesetination;
 
     public void doSomething(String name) {
         notNull(successDesetination, "successDesetination");
