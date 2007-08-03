@@ -17,7 +17,6 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
@@ -37,20 +36,20 @@ import java.util.Map;
  */
 public class BeanComponent extends DefaultComponent {
     private static final Log log = LogFactory.getLog(BeanComponent.class);
-    private MethodInvocationStrategy invocationStrategy;
+    private ParameterMappingStrategy parameterMappingStrategy;
 
     public BeanComponent() {
     }
 
-    public MethodInvocationStrategy getInvocationStrategy() {
-        if (invocationStrategy == null) {
-            invocationStrategy = createInvocationStrategy();
+    public ParameterMappingStrategy getParameterMappingStrategy() {
+        if (parameterMappingStrategy == null) {
+            parameterMappingStrategy = createParameterMappingStrategy();
         }
-        return invocationStrategy;
+        return parameterMappingStrategy;
     }
 
-    public void setInvocationStrategy(MethodInvocationStrategy invocationStrategy) {
-        this.invocationStrategy = invocationStrategy;
+    public void setParameterMappingStrategy(ParameterMappingStrategy parameterMappingStrategy) {
+        this.parameterMappingStrategy = parameterMappingStrategy;
     }
 
     // Implementation methods
@@ -58,7 +57,7 @@ public class BeanComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         Object bean = getBean(remaining);
-        BeanProcessor processor = new BeanProcessor(bean, getInvocationStrategy());
+        BeanProcessor processor = new BeanProcessor(bean, getParameterMappingStrategy());
         IntrospectionSupport.setProperties(processor, parameters);
         return new ProcessorEndpoint(uri, this, processor);
     }
@@ -72,9 +71,7 @@ public class BeanComponent extends DefaultComponent {
         return bean;
     }
 
-    protected MethodInvocationStrategy createInvocationStrategy() {
-        CamelContext context = getCamelContext();
-        // TODO add this to the context?
-        return new DefaultMethodInvocationStrategy();
+    protected ParameterMappingStrategy createParameterMappingStrategy() {
+        return BeanProcessor.createParameterMappingStrategy(getCamelContext());
     }
 }

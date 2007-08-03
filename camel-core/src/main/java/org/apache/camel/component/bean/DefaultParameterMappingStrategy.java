@@ -29,10 +29,10 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @version $Revision:$
  */
-public class DefaultMethodInvocationStrategy implements MethodInvocationStrategy {
+public class DefaultParameterMappingStrategy implements ParameterMappingStrategy {
     private Map<Class, Expression> parameterTypeToExpressionMap = new ConcurrentHashMap<Class, Expression>();
 
-    public DefaultMethodInvocationStrategy() {
+    public DefaultParameterMappingStrategy() {
     }
 
     public synchronized Expression getDefaultParameterTypeExpression(Class parameterType) {

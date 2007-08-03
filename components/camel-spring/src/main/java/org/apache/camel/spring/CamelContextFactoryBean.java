@@ -17,11 +17,11 @@
  */
 package org.apache.camel.spring;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteType;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -36,6 +36,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
@@ -54,8 +55,12 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private static final Log log = LogFactory.getLog(CamelContextFactoryBean.class);
     @XmlElement(name = "package", required = false)
     private String[] packages = {};
-    @XmlElement(name = "beanPostProcessor", required = false)
-    private CamelBeanPostProcessor beanPostProcessor;
+    @XmlElements({
+    @XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false),
+    @XmlElement(name = "proxyFactory", type = CamelProxyFactoryType.class, required = false),
+    @XmlElement(name = "serviceExporter", type = CamelServiceExporterType.class, required = false)
+            })
+    private List beans;
     @XmlElement(name = "endpoint", required = false)
     private List<EndpointFactoryBean> endpoints;
     @XmlElement(name = "route", required = false)
@@ -97,18 +102,25 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     public void onApplicationEvent(ApplicationEvent event) {
+        if (log.isDebugEnabled()) {
+            log.debug("Publishing event: " + event);
+        }
+
         if (event instanceof ContextRefreshedEvent) {
             // now lets start the CamelContext so that all its possible dependencies are initailized
             try {
+                log.info("Starting the context now!");
                 getContext().start();
             }
             catch (Exception e) {
                 throw new RuntimeCamelException(e);
             }
         }
+/*
         if (context != null) {
             context.onApplicationEvent(event);
         }
+*/
     }
 
     // Properties
@@ -201,4 +213,5 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             finder.appendBuilders(additionalBuilders);
         }
     }
+
 }

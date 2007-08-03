@@ -477,6 +477,24 @@ public abstract class ProcessorType {
     }
 
     /**
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
+     */
+    public ProcessorType beanRef(String ref) {
+        BeanRef answer = new BeanRef(ref);
+        addOutput(answer);
+        return this;
+    }
+
+    /**
+     * Adds a bean and method which is invoked which could be a final destination, or could be a transformation in a pipeline
+     */
+    public ProcessorType beanRef(String ref, String method) {
+        BeanRef answer = new BeanRef(ref, method);
+        addOutput(answer);
+        return this;
+    }
+
+    /**
      * Adds a processor which sets the body on the IN message
      */
     public ProcessorType setBody(Expression expression) {

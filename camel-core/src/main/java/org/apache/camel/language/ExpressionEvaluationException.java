@@ -14,34 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.remoting;
+package org.apache.camel.language;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.RuntimeCamelException;
 
-public class SayService implements ISay {
-    private static final Log log = LogFactory.getLog(SayService.class);
+/**
+ * @version $Revision: $
+ */
+public class ExpressionEvaluationException extends RuntimeCamelException {
+    private final Expression<Exchange> expression;
+    private final Exchange exchange;
 
-    String message = "Hello";
-
-    public SayService() {
+    public ExpressionEvaluationException(Expression<Exchange> expression, Exchange exchange, Throwable cause) {
+        super(cause);
+        this.expression = expression;
+        this.exchange = exchange;
     }
 
-    public SayService(String message) {
-        this.message = message;
-    }
-
-    public String say() {
-        log.info("Invoking say() method with message: " + message);
-        
-        return message;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
+    public Expression<Exchange> getExpression() {
+        return expression;
     }
 }

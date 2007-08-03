@@ -62,7 +62,7 @@ public class EventComponent extends DefaultComponent<Exchange> implements Applic
 
     protected EventEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         EventEndpoint answer = new EventEndpoint(uri, this);
-        getConfigurableApplicationContext().addApplicationListener(answer);
+        //getConfigurableApplicationContext().addApplicationListener(answer);
         return answer;
     }
 }

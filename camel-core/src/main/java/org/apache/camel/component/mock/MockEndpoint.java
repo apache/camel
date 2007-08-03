@@ -279,9 +279,9 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
      * expression to determine the message ID
      *
      * @param expression the expression used to create a unique message ID for
-     * message comparison (which could just be the message payload if the payload
-     * can be tested for uniqueness using {@link Object#equals(Object)}
-     * and {@link Object#hashCode()}
+     *                   message comparison (which could just be the message payload if the payload
+     *                   can be tested for uniqueness using {@link Object#equals(Object)}
+     *                   and {@link Object#hashCode()}
      */
     public void expectsNoDuplicates(final Expression<Exchange> expression) {
         expects(new Runnable() {
@@ -335,7 +335,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     public void assertNoDuplicates(Expression<Exchange> expression) {
-        Map<Object,Exchange> map = new HashMap<Object, Exchange>();
+        Map<Object, Exchange> map = new HashMap<Object, Exchange>();
         List<Exchange> list = getReceivedExchanges();
         for (int i = 0; i < list.size(); i++) {
             Exchange e2 = list.get(i);
@@ -506,6 +506,13 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     protected void fail(Object message) {
+        if (log.isDebugEnabled()) {
+            List<Exchange> list = getReceivedExchanges();
+            int index = 0;
+            for (Exchange exchange : list) {
+                log.debug("Received[" + (++index) +"]: " + exchange);
+            }
+        }
         throw new AssertionError(getEndpointUri() + " " + message);
     }
 

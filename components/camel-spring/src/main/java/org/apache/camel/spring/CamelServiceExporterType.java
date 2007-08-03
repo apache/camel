@@ -14,24 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean;
+package org.apache.camel.spring;
 
-import org.apache.camel.Expression;
+import org.apache.camel.model.IdentifiedType;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
 
 /**
- * A strategy for invoking a method on a pojo from a message exchange
- *
  * @version $Revision: $
- */
-public interface MethodInvocationStrategy {
-    /**
-     * Creates an invocation on the given POJO using annotations to decide which method to invoke
-     * and to figure out which parameters to use
-     */
-/*    MethodInvocation createInvocation(Object pojo,
-                                      BeanInfo beanInfo,
-                                      Exchange messageExchange,
-                                      Endpoint pojoEndpoint) throws RuntimeCamelException;*/
-
-    Expression getDefaultParameterTypeExpression(Class parameterType);
+*/
+@XmlRootElement(name = "serviceExporter")
+public class CamelServiceExporterType extends IdentifiedType {
+    @XmlAttribute
+    private String uri;
+    @XmlAttribute
+    private String serviceRef;
+    @XmlAttribute
+    private Class serviceInterface;
 }

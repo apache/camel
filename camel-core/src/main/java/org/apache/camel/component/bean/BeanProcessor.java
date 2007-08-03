@@ -19,6 +19,8 @@ package org.apache.camel.component.bean;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 import org.apache.commons.logging.Log;
@@ -40,13 +42,26 @@ public class BeanProcessor implements Processor {
     private Method method;
     private String methodName;
 
+    public static ParameterMappingStrategy createParameterMappingStrategy(CamelContext camelContext) {
+        Registry registry = camelContext.getRegistry();
+        ParameterMappingStrategy answer = registry.lookup(ParameterMappingStrategy.class.getName(), ParameterMappingStrategy.class);
+        if (answer == null) {
+            answer = new DefaultParameterMappingStrategy();
+        }
+        return answer;
+    }
+
     public BeanProcessor(Object pojo, BeanInfo beanInfo) {
         this.pojo = pojo;
         this.beanInfo = beanInfo;
     }
 
-    public BeanProcessor(Object pojo, MethodInvocationStrategy invocationStrategy) {
-        this(pojo, new BeanInfo(pojo.getClass(), invocationStrategy));
+    public BeanProcessor(Object pojo, ParameterMappingStrategy parameterMappingStrategy) {
+        this(pojo, new BeanInfo(pojo.getClass(), parameterMappingStrategy));
+    }
+
+    public BeanProcessor(Object pojo, CamelContext camelContext) {
+        this(pojo, createParameterMappingStrategy(camelContext));
     }
 
     @Override

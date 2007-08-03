@@ -1,4 +1,5 @@
 AggregatorType
+BeanRef
 ChoiceType
 DelayerType
 FilterType

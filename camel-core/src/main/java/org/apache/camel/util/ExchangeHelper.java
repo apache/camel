@@ -49,10 +49,7 @@ public class ExchangeHelper {
         }
         else {
             String uri = value.toString();
-            endpoint = (Endpoint<E>) exchange.getContext().getEndpoint(uri);
-            if (endpoint == null) {
-                throw new NoSuchEndpointException(uri);
-            }
+            endpoint = CamelContextHelper.getMandatoryEndpoint(exchange.getContext(), uri);
         }
         return endpoint;
     }

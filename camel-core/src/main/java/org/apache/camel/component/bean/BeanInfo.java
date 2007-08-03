@@ -47,12 +47,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BeanInfo {
     private static final transient Log log = LogFactory.getLog(BeanInfo.class);
     private Class type;
-    private MethodInvocationStrategy strategy;
+    private ParameterMappingStrategy strategy;
     private Map<String, MethodInfo> operations = new ConcurrentHashMap<String, MethodInfo>();
     private MethodInfo defaultMethod;
     private List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
 
-    public BeanInfo(Class type, MethodInvocationStrategy strategy) {
+    public BeanInfo(Class type, ParameterMappingStrategy strategy) {
         this.type = type;
         this.strategy = strategy;
         introspect(getType());

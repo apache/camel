@@ -14,34 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.remoting;
+package org.apache.camel.spring;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.model.IdentifiedType;
 
-public class SayService implements ISay {
-    private static final Log log = LogFactory.getLog(SayService.class);
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
 
-    String message = "Hello";
+/**
+ * @version $Revision: $
+*/ // to fudge the XSD generation
+@XmlRootElement(name = "proxyFactory")
+public class CamelProxyFactoryType extends IdentifiedType {
+    @XmlAttribute
+    private String serviceUrl;
+    @XmlAttribute
+    private Class serviceInterface;
 
-    public SayService() {
-    }
-
-    public SayService(String message) {
-        this.message = message;
-    }
-
-    public String say() {
-        log.info("Invoking say() method with message: " + message);
-        
-        return message;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
 }

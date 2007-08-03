@@ -204,7 +204,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
      * Create a processor which invokes the given method when an incoming message exchange is received
      */
     protected Processor createConsumerProcessor(final Object pojo, final Method method, final Endpoint endpoint) {
-        BeanProcessor answer = new BeanProcessor(pojo, getCamelContext().getInvocationStrategy());
+        BeanProcessor answer = new BeanProcessor(pojo, getCamelContext());
         answer.setMethod(method);
         return answer;
     }

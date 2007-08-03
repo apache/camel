@@ -20,9 +20,8 @@ package org.apache.camel.spring;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bean.BeanProcessor;
-import org.apache.camel.component.bean.DefaultMethodInvocationStrategy;
-import org.apache.camel.component.bean.MethodInvocationStrategy;
 import org.apache.camel.component.event.EventComponent;
 import org.apache.camel.component.event.EventEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -43,6 +42,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -58,7 +58,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     private static final transient Log log = LogFactory.getLog(SpringCamelContext.class);
     private ApplicationContext applicationContext;
     private EventEndpoint eventEndpoint;
-    private MethodInvocationStrategy invocationStrategy = new DefaultMethodInvocationStrategy();
 
     public SpringCamelContext() {
     }
@@ -92,11 +91,30 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     }
 
     public void onApplicationEvent(ApplicationEvent event) {
-        if (eventEndpoint != null) {
-            eventEndpoint.onApplicationEvent(event);
+        if (log.isDebugEnabled()) {
+            log.debug("Publishing event: " + event);
+        }
+
+        if (event instanceof ContextRefreshedEvent) {
+            // now lets start the CamelContext so that all its possible dependencies are initailized
+            try {
+                log.debug("Starting the CamelContext now that the ApplicationContext has started");
+                start();
+            }
+            catch (Exception e) {
+                throw new RuntimeCamelException(e);
+            }
+            if (eventEndpoint != null) {
+                eventEndpoint.onApplicationEvent(event);
+            }
         }
         else {
-            log.warn("No eventEndpoint enabled for event: " + event);
+            if (eventEndpoint != null) {
+                eventEndpoint.onApplicationEvent(event);
+            }
+            else {
+                log.warn("No eventEndpoint enabled for event: " + event);
+            }
         }
     }
 
@@ -109,7 +127,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-        
+
         if (applicationContext instanceof ConfigurableApplicationContext) {
             addComponent("event", new EventComponent(applicationContext));
         }
@@ -121,14 +139,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     public void setEventEndpoint(EventEndpoint eventEndpoint) {
         this.eventEndpoint = eventEndpoint;
-    }
-
-    public MethodInvocationStrategy getInvocationStrategy() {
-        return invocationStrategy;
-    }
-
-    public void setInvocationStrategy(MethodInvocationStrategy invocationStrategy) {
-        this.invocationStrategy = invocationStrategy;
     }
 
     // Implementation methods
@@ -159,7 +169,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     }
 
     protected Endpoint convertBeanToEndpoint(String uri, Object bean) {
-        Processor processor = new BeanProcessor(bean, getInvocationStrategy());
+        Processor processor = new BeanProcessor(bean, this);
         return new ProcessorEndpoint(uri, this, processor);
     }
 
