@@ -31,7 +31,7 @@ import java.util.Map;
  *
  * @version $Revision$
  */
-public class CamelTemplate<E extends Exchange> extends ServiceSupport {
+public class CamelTemplate<E extends Exchange> extends ServiceSupport implements ProducerTemplate<E> {
     private CamelContext context;
     private ProducerCache<E> producerCache = new ProducerCache<E>();
     private boolean useEndpointCache = true;
@@ -137,7 +137,20 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport {
      * @return the result
      */
     public Object sendBody(String endpointUri, final Object body, final String header, final Object headerValue) {
-        E result = send(endpointUri, new Processor() {
+        return sendBody(resolveMandatoryEndpoint(endpointUri), body, header, headerValue);
+    }
+    
+    /**
+     * Sends the body to an endpoint with a specified header and header value
+     *
+     * @param endpoint the Endpoint to send to
+     * @param body        the payload send
+     * @param header      the header name
+     * @param headerValue the header value
+     * @return the result
+     */
+    public Object sendBody(Endpoint endpoint, final Object body, final String header, final Object headerValue) {
+        E result = send(endpoint, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setHeader(header, headerValue);
@@ -146,7 +159,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport {
         });
         return extractResultBody(result);
     }
-    
+
     /**
      * Sends the body to an endpoint with the specified headers and header values
      *
@@ -155,7 +168,18 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport {
      * @return the result
      */
     public Object sendBody(String endpointUri, final Object body, final Map<String, Object> headers) {
-        E result = send(endpointUri, new Processor() {
+        return sendBody(resolveMandatoryEndpoint(endpointUri), body, headers);
+    }
+
+    /**
+     * Sends the body to an endpoint with the specified headers and header values
+     *
+     * @param endpoint the endpoint URI to send to
+     * @param body        the payload send
+     * @return the result
+     */
+    public Object sendBody(Endpoint endpoint, final Object body, final Map<String, Object> headers) {
+        E result = send(endpoint, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 for (Map.Entry<String, Object> header : headers.entrySet()) {
@@ -199,6 +223,13 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport {
         return send(getMandatoryDefaultEndpoint(), processor);
     }
 
+    public Object sendBody(Object body, String header, Object headerValue) {
+        return sendBody(getMandatoryDefaultEndpoint(), body, header, headerValue);
+    }
+
+    public Object sendBody(Object body, Map<String, Object> headers) {
+        return sendBody(getMandatoryDefaultEndpoint(), body, headers);
+    }
 
     // Properties
     //-----------------------------------------------------------------------
