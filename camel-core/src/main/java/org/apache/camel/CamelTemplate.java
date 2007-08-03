@@ -136,8 +136,8 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
      * @param headerValue the header value
      * @return the result
      */
-    public Object sendBody(String endpointUri, final Object body, final String header, final Object headerValue) {
-        return sendBody(resolveMandatoryEndpoint(endpointUri), body, header, headerValue);
+    public Object sendBodyAndHeader(String endpointUri, final Object body, final String header, final Object headerValue) {
+        return sendBodyAndHeader(resolveMandatoryEndpoint(endpointUri), body, header, headerValue);
     }
     
     /**
@@ -149,7 +149,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
      * @param headerValue the header value
      * @return the result
      */
-    public Object sendBody(Endpoint endpoint, final Object body, final String header, final Object headerValue) {
+    public Object sendBodyAndHeader(Endpoint endpoint, final Object body, final String header, final Object headerValue) {
         E result = send(endpoint, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
@@ -167,8 +167,8 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
      * @param body        the payload send
      * @return the result
      */
-    public Object sendBody(String endpointUri, final Object body, final Map<String, Object> headers) {
-        return sendBody(resolveMandatoryEndpoint(endpointUri), body, headers);
+    public Object sendBodyAndHeaders(String endpointUri, final Object body, final Map<String, Object> headers) {
+        return sendBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers);
     }
 
     /**
@@ -178,7 +178,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
      * @param body        the payload send
      * @return the result
      */
-    public Object sendBody(Endpoint endpoint, final Object body, final Map<String, Object> headers) {
+    public Object sendBodyAndHeaders(Endpoint endpoint, final Object body, final Map<String, Object> headers) {
         E result = send(endpoint, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
@@ -223,12 +223,12 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
         return send(getMandatoryDefaultEndpoint(), processor);
     }
 
-    public Object sendBody(Object body, String header, Object headerValue) {
-        return sendBody(getMandatoryDefaultEndpoint(), body, header, headerValue);
+    public Object sendBodyAndHeader(Object body, String header, Object headerValue) {
+        return sendBodyAndHeader(getMandatoryDefaultEndpoint(), body, header, headerValue);
     }
 
-    public Object sendBody(Object body, Map<String, Object> headers) {
-        return sendBody(getMandatoryDefaultEndpoint(), body, headers);
+    public Object sendBodyAndHeaders(Object body, Map<String, Object> headers) {
+        return sendBodyAndHeaders(getMandatoryDefaultEndpoint(), body, headers);
     }
 
     // Properties

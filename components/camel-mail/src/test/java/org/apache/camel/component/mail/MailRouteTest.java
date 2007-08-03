@@ -42,7 +42,7 @@ public class MailRouteTest extends ContextTestSupport {
 
         HashMap<String, Object> headers = new HashMap<String, Object>();
         headers.put("reply-to", "reply1@localhost");
-        template.sendBody("smtp://james@localhost", "hello world!", headers);
+        template.sendBodyAndHeaders("smtp://james@localhost", "hello world!", headers);
 
         // lets test the first sent worked
         assertMailboxReceivedMessages("james@localhost");

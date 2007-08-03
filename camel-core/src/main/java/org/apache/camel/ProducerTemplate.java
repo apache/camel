@@ -57,7 +57,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * @param headerValue the header value
      * @return the result
      */
-    Object sendBody(Object body, String header, Object headerValue);
+    Object sendBodyAndHeader(Object body, String header, Object headerValue);
 
     /**
      * Sends the body to the default endpoint with the specified headers and header values
@@ -65,7 +65,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * @param body        the payload send
      * @return the result
      */
-    Object sendBody(Object body, Map<String, Object> headers);
+    Object sendBodyAndHeaders(Object body, Map<String, Object> headers);
 
 
 

@@ -23,14 +23,7 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +55,7 @@ public class HttpRouteTest extends ContextTestSupport {
     }
 
     protected void invokeHttpEndpoint() throws IOException {
-        template.sendBody("http://localhost:8080/test", expectedBody, "Content-Type", "application/xml");
+        template.sendBodyAndHeader("http://localhost:8080/test", expectedBody, "Content-Type", "application/xml");
     }
 
     @Override

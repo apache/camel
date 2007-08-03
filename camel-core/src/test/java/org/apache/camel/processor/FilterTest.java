@@ -30,7 +30,7 @@ public class FilterTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start", "<matched/>", "foo", "bar");
+        template.sendBodyAndHeader("direct:start", "<matched/>", "foo", "bar");
 
         resultEndpoint.assertIsSatisfied();
     }
@@ -39,7 +39,7 @@ public class FilterTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(0);
 
-        template.sendBody("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
+        template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
 
         resultEndpoint.assertIsSatisfied();
     }
