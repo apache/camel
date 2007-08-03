@@ -17,30 +17,14 @@
  */
 package org.apache.camel.spring.remoting;
 
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.remoting.support.RemoteExporter;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * A {@link FactoryBean} to create a proxy to a service exposing a given {@link #getServiceInterface()}
- *
- * @author chirino
+ * @version $Revision: 520220 $
  */
-public class CamelServiceExporter extends RemoteExporter implements FactoryBean {
-    private boolean singleton = true;
+public class SpringRemotingWithServiceExportRouteTest extends SpringRemotingRouteTest {
 
-    public Object getObject() throws Exception {
-        return getProxyForService();
-    }
-
-    public Class getObjectType() {
-        return getServiceInterface();
-    }
-
-    public boolean isSingleton() {
-        return singleton;
-    }
-
-    public void setSingleton(boolean singleton) {
-        this.singleton = singleton;
+    protected ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/remoting/spring-with-exporter.xml");
     }
 }

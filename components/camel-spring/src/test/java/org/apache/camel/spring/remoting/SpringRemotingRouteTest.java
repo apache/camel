@@ -31,21 +31,26 @@ public class SpringRemotingRouteTest extends TestCase {
     private static final Log log = LogFactory.getLog(SpringRemotingRouteTest.class);
 
     public void testPojoRoutes() throws Exception {
-
-        ClassPathXmlApplicationContext spring = new ClassPathXmlApplicationContext("org/apache/camel/spring/remoting/spring.xml");
-        Object service = spring.getBean("say");
+        ClassPathXmlApplicationContext applicationContext = createApplicationContext();
+/*
+        Object service = applicationContext.getBean("say");
         log.info("Found service!: " + service);
         assertTrue("not an ISay!", service instanceof ISay);
+*/
 
-        CamelContext camelContext = SpringCamelContext.springCamelContext(spring);
+        CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext);
 
         // START SNIPPET: invoke
-        ISay proxy = (ISay) spring.getBean("sayProxy");
+        ISay proxy = (ISay) applicationContext.getBean("sayProxy");
         String rc = proxy.say();
         assertEquals("Hello", rc);
         // END SNIPPET: invoke
 
         camelContext.stop();
-        spring.destroy();
+        applicationContext.destroy();
+    }
+
+    protected ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/remoting/spring.xml");
     }
 }

@@ -21,6 +21,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.impl.RouteContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -93,11 +94,7 @@ public class RouteType extends ProcessorType implements CamelContextAware {
         if (context == null) {
             throw new IllegalArgumentException("No CamelContext has been injected!");
         }
-        Endpoint answer = context.getEndpoint(uri);
-        if (answer == null) {
-            throw new NoSuchEndpointException(uri);
-        }
-        return answer;
+        return CamelContextHelper.getMandatoryEndpoint(context, uri);
     }
 
     // Fluent API

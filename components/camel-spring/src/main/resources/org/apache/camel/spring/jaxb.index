@@ -2,3 +2,5 @@ CamelBeanPostProcessor
 CamelContextFactoryBean
 CamelTemplateFactoryBean
 EndpointFactoryBean
+CamelProxyFactoryType
+CamelServiceExporterType

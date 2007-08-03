@@ -19,7 +19,6 @@ package org.apache.camel.component.rmi;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.bean.BeanProcessor;
-import org.apache.camel.component.bean.DefaultMethodInvocationStrategy;
 import org.apache.camel.impl.DefaultProducer;
 
 import java.rmi.AccessException;
@@ -37,20 +36,19 @@ public class RmiProducer extends DefaultProducer {
 	private Remote remote;
     private BeanProcessor beanProcessor;
 
-    public RmiProducer(RmiEndpoint endpoint) throws AccessException, RemoteException, NotBoundException {
+    public RmiProducer(RmiEndpoint endpoint) throws RemoteException, NotBoundException {
 		super(endpoint);
 		this.endpoint = endpoint;
 	}
 
 	public void process(Exchange exchange) throws Exception {
         if (beanProcessor == null) {
-            // TODO pull the invocation strategy out of the context?
-            beanProcessor = new BeanProcessor(getRemote(), new DefaultMethodInvocationStrategy());
+            beanProcessor = new BeanProcessor(getRemote(), getEndpoint().getContext());
         }
         beanProcessor.process(exchange);
     }
 
-	public Remote getRemote() throws AccessException, RemoteException, NotBoundException {
+	public Remote getRemote() throws RemoteException, NotBoundException {
 		if( remote == null ) {
 			Registry registry = endpoint.getRegistry();				
 			remote = registry.lookup(endpoint.getName());			

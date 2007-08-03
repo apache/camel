@@ -14,34 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.remoting;
+package org.apache.camel.language;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.spi.Language;
+import org.apache.camel.RuntimeCamelException;
 
-public class SayService implements ISay {
-    private static final Log log = LogFactory.getLog(SayService.class);
+/**
+ * An exception thrown if some illegal syntax is rejected by a specific language
+ *
+ * @version $Revision: $
+ */
+public class IllegalSyntaxException extends RuntimeCamelException {
+    private final Language language;
+    private final String expression;
 
-    String message = "Hello";
-
-    public SayService() {
+    public IllegalSyntaxException(Language language, String expression) {
+        super("Illegal syntax for language: " + language + ". Expression: " + expression);
+        this.language = language;
+        this.expression = expression;
     }
 
-    public SayService(String message) {
-        this.message = message;
+    public String getExpression() {
+        return expression;
     }
 
-    public String say() {
-        log.info("Invoking say() method with message: " + message);
-        
-        return message;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
+    public Language getLanguage() {
+        return language;
     }
 }

@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.BeanInfo;
-import org.apache.camel.component.bean.DefaultMethodInvocationStrategy;
+import org.apache.camel.component.bean.DefaultParameterMappingStrategy;
 import org.apache.camel.component.bean.MethodInvocation;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -34,7 +34,7 @@ public class BeanInfoTest extends TestCase {
     private static final Log log = LogFactory.getLog(BeanInfoTest.class);
 
     protected Exchange exchange = new DefaultExchange(new DefaultCamelContext());
-    protected DefaultMethodInvocationStrategy strategy = new DefaultMethodInvocationStrategy();
+    protected DefaultParameterMappingStrategy strategy = new DefaultParameterMappingStrategy();
     protected ExampleBean bean = new ExampleBean();
     protected BeanInfo info;
 

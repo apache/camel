@@ -14,34 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.remoting;
+package org.apache.camel.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.Endpoint;
+import org.apache.camel.CamelContext;
+import org.apache.camel.NoSuchEndpointException;
 
-public class SayService implements ISay {
-    private static final Log log = LogFactory.getLog(SayService.class);
+/**
+ * A number of helper methods
+ *
+ * @version $Revision: $
+ */
+public class CamelContextHelper {
+    /**
+     * Returns the mandatory endpoint for the given URI or the
+     * {@link org.apache.camel.NoSuchEndpointException} is thrown
+     *
+     * @param camelContext
+     * @param uri
+     * @return
+     */
+    public static Endpoint getMandatoryEndpoint(CamelContext camelContext, String uri) throws NoSuchEndpointException {
+        Endpoint endpoint = camelContext.getEndpoint(uri);
+        if (endpoint == null) {
+            throw new NoSuchEndpointException(uri);
+        }
+        else {
+            return endpoint;
+        }
 
-    String message = "Hello";
-
-    public SayService() {
-    }
-
-    public SayService(String message) {
-        this.message = message;
-    }
-
-    public String say() {
-        log.info("Invoking say() method with message: " + message);
-        
-        return message;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 }

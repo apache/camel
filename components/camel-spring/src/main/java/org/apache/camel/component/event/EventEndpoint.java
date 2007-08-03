@@ -36,7 +36,7 @@ import org.springframework.context.ApplicationListener;
  *
  * @version $Revision: 1.1 $
  */
-public class EventEndpoint extends DefaultEndpoint<Exchange> implements ApplicationListener {
+public class EventEndpoint extends DefaultEndpoint<Exchange>  {
     private final EventComponent component;
     private LoadBalancer loadBalancer;
 
