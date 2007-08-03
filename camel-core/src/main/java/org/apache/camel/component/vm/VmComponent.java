@@ -17,13 +17,13 @@
  */
 package org.apache.camel.component.vm;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.seda.QueueComponent;
+import org.apache.camel.Exchange;
+import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.component.seda.SedaEndpoint;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -34,7 +34,7 @@ import java.util.concurrent.BlockingQueue;
  *
  * @version $Revision: 1.1 $
  */
-public class VmComponent<E extends Exchange> extends QueueComponent<E> {
+public class VmComponent<E extends Exchange> extends SedaComponent<E> {
     protected static Map<String, BlockingQueue<Exchange>> queues = new HashMap<String, BlockingQueue<Exchange>>();
 
     @Override
