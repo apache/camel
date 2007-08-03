@@ -15,13 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.converter;
+package org.apache.camel.spring.spi;
 
 import org.apache.camel.Converter;
+import org.apache.camel.component.bean.BeanInvocation;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.aopalliance.intercept.MethodInvocation;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +37,7 @@ import java.net.URL;
  * @version $Revision$
  */
 @Converter
-public class ResourceConverter {
+public class SpringConverters {
     @Converter
     public static InputStream toInputStream(Resource resource) throws IOException {
         return resource.getInputStream();
@@ -69,5 +71,10 @@ public class ResourceConverter {
     @Converter
     public static ByteArrayResource toResource(byte[] data) throws IOException {
         return new ByteArrayResource(data);
+    }
+
+    @Converter
+    public static BeanInvocation toBeanInvocation(MethodInvocation invocation) {
+        return new BeanInvocation(invocation.getThis(), invocation.getMethod(), invocation.getArguments());
     }
 }
