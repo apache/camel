@@ -37,6 +37,11 @@ public class NIOConverter {
     }
 
     @Converter
+    public static String toString(ByteBuffer buffer) {
+        return IOConverter.toString(buffer.array());
+    }
+
+    @Converter
     public static ByteBuffer toByteBuffer(byte[] data) {
         return ByteBuffer.wrap(data);
     }
