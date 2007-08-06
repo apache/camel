@@ -31,7 +31,7 @@ public class ValidatorRouteTest extends SpringTestSupport {
         try {
             template.sendBody("direct:start", body);
         }
-        catch (Exception e) {
+        catch (Throwable e) {
             log.error(e, e);
             fail("Caught: " + e);
         }
@@ -56,7 +56,7 @@ public class ValidatorRouteTest extends SpringTestSupport {
                 fail("Not a SchemaValidationException: " + e);
             }
         }
-        catch (Exception e) {
+        catch (Throwable e) {
             log.error(e, e);
             fail("Caught: " + e);
         }

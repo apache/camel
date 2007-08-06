@@ -19,6 +19,7 @@ package org.apache.camel.component.validator;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.component.validator.SpringValidator;
@@ -56,7 +57,12 @@ public class ValidatorComponent extends DefaultComponent<Exchange> {
         if (log.isDebugEnabled()) {
             log.debug(this + " using schema resource: " + resource);
         }
+        configureValidator(validator, uri, remaining, parameters);
         return new ProcessorEndpoint(uri, this, validator);
+    }
+
+    protected void configureValidator(SpringValidator validator, String uri, String remaining, Map parameters) throws Exception {
+        IntrospectionSupport.setProperties(validator, parameters);
     }
 
     protected Resource resolveMandatoryResource(String uri) {
