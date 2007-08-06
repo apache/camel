@@ -48,6 +48,7 @@
     <module>camel-jpa</module> 
     <module>camel-mail</module>
     <module>camel-mina</module>
+    <module>camel-msv</module>
     <module>camel-quartz</module>
     <module>camel-rmi</module>
     <module>camel-saxon</module>
