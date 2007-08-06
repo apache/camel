@@ -1,0 +1,8 @@
+<element xmlns="http://relaxng.org/ns/structure/1.0" ns="http://foo.com/bar" name="mail">
+  <element name="subject">
+    <text/>
+  </element>
+  <element name="body">
+    <text/>
+  </element>
+</element>
