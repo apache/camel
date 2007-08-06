@@ -23,6 +23,7 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.component.validator.SpringValidator;
+import org.apache.camel.component.ResourceBasedComponent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.ResourceLoader;
@@ -37,18 +38,7 @@ import java.util.Map;
  *
  * @version $Revision: 1.1 $
  */
-public class ValidatorComponent extends DefaultComponent<Exchange> {
-    private static final transient Log log = LogFactory.getLog(ValidatorComponent.class);
-
-    private ResourceLoader resourceLoader = new DefaultResourceLoader();
-
-    public ResourceLoader getResourceLoader() {
-        return resourceLoader;
-    }
-
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
-    }
+public class ValidatorComponent extends ResourceBasedComponent {
 
     protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         SpringValidator validator = new SpringValidator();
@@ -63,16 +53,5 @@ public class ValidatorComponent extends DefaultComponent<Exchange> {
 
     protected void configureValidator(SpringValidator validator, String uri, String remaining, Map parameters) throws Exception {
         IntrospectionSupport.setProperties(validator, parameters);
-    }
-
-    protected Resource resolveMandatoryResource(String uri) {
-        Resource resource = getResourceLoader().getResource(uri);
-        if (resource == null) {
-            throw new IllegalArgumentException("Could not find resource for URI: " + uri + " using: " + getResourceLoader());
-        }
-        else {
-            return resource;
-        }
-
     }
 }
