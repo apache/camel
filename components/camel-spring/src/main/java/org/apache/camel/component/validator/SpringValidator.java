@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.processor;
+package org.apache.camel.component.validator;
 
 import org.apache.camel.processor.validation.ValidatingProcessor;
 import org.springframework.core.io.Resource;
@@ -51,6 +51,4 @@ public class SpringValidator extends ValidatingProcessor {
             throw new IllegalArgumentException("You must specify a schema, schemaFile, schemaResource, schemaSource or schemaUrl property");
         }
     }
-
-
 }

@@ -22,6 +22,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
@@ -52,7 +53,7 @@ public class ValidatingProcessor implements Processor {
         Schema schema = getSchema();
         Validator validator = schema.newValidator();
 
-        Source source = exchange.getIn().getBody(Source.class);
+        Source source = exchange.getIn().getBody(DOMSource.class);
         if (source == null) {
             throw new NoXmlBodyValidationException(exchange);
         }
