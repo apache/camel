@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 /**
  * @version $Revision: $
 */
-@XmlRootElement(name = "serviceExporter")
+@XmlRootElement(name = "export")
 public class CamelServiceExporterType extends IdentifiedType {
     @XmlAttribute
     private String uri;
