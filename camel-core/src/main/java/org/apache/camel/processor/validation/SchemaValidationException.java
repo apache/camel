@@ -28,12 +28,12 @@ import java.util.List;
  * @version $Revision: $
  */
 public class SchemaValidationException extends ValidationException {
-    private Schema schema;
+    private Object schema;
     private List<SAXParseException> fatalErrors;
     private List<SAXParseException> errors;
     private List<SAXParseException> warnings;
 
-    public SchemaValidationException(Exchange exchange, Schema schema, List<SAXParseException> fatalErrors, List<SAXParseException> errors, List<SAXParseException> warnings) {
+    public SchemaValidationException(Exchange exchange, Object schema, List<SAXParseException> fatalErrors, List<SAXParseException> errors, List<SAXParseException> warnings) {
         super(exchange, message(schema, fatalErrors, errors, warnings));
         this.schema = schema;
         this.fatalErrors = fatalErrors;
@@ -46,7 +46,7 @@ public class SchemaValidationException extends ValidationException {
      *
      * @return the schema that failed
      */
-    public Schema getSchema() {
+    public Object getSchema() {
         return schema;
     }
 
@@ -78,7 +78,7 @@ public class SchemaValidationException extends ValidationException {
     }
 
 
-    protected static String message(Schema schema, List<SAXParseException> fatalErrors, List<SAXParseException> errors, List<SAXParseException> warnings) {
+    protected static String message(Object schema, List<SAXParseException> fatalErrors, List<SAXParseException> errors, List<SAXParseException> warnings) {
         StringBuffer buffer = new StringBuffer("Validation failed for: " + schema);
         if (!fatalErrors.isEmpty()) {
             buffer.append(" fatal errors: ");
