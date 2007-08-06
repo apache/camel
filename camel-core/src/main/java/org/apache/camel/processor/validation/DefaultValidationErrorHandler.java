@@ -58,4 +58,10 @@ public class DefaultValidationErrorHandler implements ValidatorErrorHandler {
             throw new SchemaValidationException(exchange, schema, fatalErrors, errors, warnings);
         }
     }
+
+    public void handleErrors(Exchange exchange, Object schema) throws ValidationException {
+        if (!isValid()) {
+            throw new SchemaValidationException(exchange, schema, fatalErrors, errors, warnings);
+        }
+    }
 }
