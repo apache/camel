@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
@@ -42,7 +43,7 @@ public class ValidatingProcessor implements Processor {
     private ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
 
     // for lazy creation of the Schema
-    private String schemaLanguage = "http://www.w3.org/2001/XMLSchema";
+    private String schemaLanguage = XMLConstants.W3C_XML_SCHEMA_NS_URI;
     private Source schemaSource;
     private SchemaFactory schemaFactory;
     private URL schemaUrl;
