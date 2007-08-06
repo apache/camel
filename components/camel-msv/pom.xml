@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-parent</artifactId>
+    <version>1.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>camel-msv</artifactId>
+  <name>Camel :: MSV</name>
+  <description>Camel MSV support</description>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.iso_relax.verifier.jaxp.validation</groupId>
+      <artifactId>isorelax-jaxp-bridge</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>msv</groupId>
+      <artifactId>isorelax</artifactId>
+      <version>20050913</version>
+    </dependency>
+    <dependency>
+      <groupId>msv</groupId>
+      <artifactId>msv</artifactId>
+      <version>20050913</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.msv.datatype.xsd</groupId>
+      <artifactId>xsdlib</artifactId>
+      <version>20060615</version>
+    </dependency>
+
+
+    <!-- for testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <repositories>
+    <!-- repo for isorelax / msv stuff -->
+    <repository>
+      <id>maven-java.net</id>
+      <name>Maven java.net Repository</name>
+      <url>http://repo1.maven.org/maven-java.net</url>
+      <layout>legacy</layout>
+    </repository>
+    <!-- for maven jaxb plugin -->
+    <repository>
+      <id>java.net</id>
+      <name>java.net Maven Repository</name>
+      <url>http://download.java.net/maven/1</url>
+      <!--<url>https://maven-repository.dev.java.net/nonav/repository</url>-->
+      <layout>legacy</layout>
+    </repository>
+  </repositories>
+</project>
