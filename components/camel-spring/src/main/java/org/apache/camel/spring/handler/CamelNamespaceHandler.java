@@ -47,8 +47,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     public static final String JAXB_PACKAGES = "org.apache.camel.spring:org.apache.camel.model:org.apache.camel.model.language";
 
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(EndpointFactoryBean.class);
-    protected BeanDefinitionParser proxyFactoryParser = new BeanDefinitionParser(CamelProxyFactoryBean.class);
-    protected BeanDefinitionParser serviceExporterParser = new BeanDefinitionParser(CamelServiceExporter.class);
+    protected BeanDefinitionParser proxyParser = new BeanDefinitionParser(CamelProxyFactoryBean.class);
+    protected BeanDefinitionParser exportParser = new BeanDefinitionParser(CamelServiceExporter.class);
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
 
     protected Set<String> parserElementNames = new HashSet<String>();
@@ -56,8 +56,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
     public void init() {
         registerParser("endpoint", endpointParser);
-        registerParser("proxyFactory", proxyFactoryParser);
-        registerParser("serviceExporter", serviceExporterParser);
+        registerParser("proxy", proxyParser);
+        registerParser("export", exportParser);
 
         registerParser("camelContext", new BeanDefinitionParser(CamelContextFactoryBean.class) {
             @Override
@@ -104,15 +104,15 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                                 parserContext.registerComponent(new BeanComponentDefinition(definition, id));
                             }
                         }
-                        else if (localName.equals("proxyFactory")) {
-                            BeanDefinition definition = proxyFactoryParser.parse(childElement, parserContext);
+                        else if (localName.equals("proxy")) {
+                            BeanDefinition definition = proxyParser.parse(childElement, parserContext);
                             String id = childElement.getAttribute("id");
                             if (isNotNullAndNonEmpty(id)) {
                                 parserContext.registerComponent(new BeanComponentDefinition(definition, id));
                             }
                         }
-                        else if (localName.equals("serviceExporter")) {
-                            BeanDefinition definition = serviceExporterParser.parse(childElement, parserContext);
+                        else if (localName.equals("export")) {
+                            BeanDefinition definition = exportParser.parse(childElement, parserContext);
                             String id = childElement.getAttribute("id");
                             if (isNotNullAndNonEmpty(id)) {
                                 parserContext.registerComponent(new BeanComponentDefinition(definition, id));

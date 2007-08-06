@@ -25,14 +25,14 @@
 
   <!-- START SNIPPET: proxy -->
   <!--  Creates a proxy to the direct:say endpoint. -->
-  <camel:proxyFactory id="sayProxy" serviceUrl="direct:say"
+  <camel:proxy id="sayProxy" serviceUrl="direct:say"
                       serviceInterface="org.apache.camel.spring.remoting.ISay"/>
   <!-- END SNIPPET: proxy -->
 
   <!-- START SNIPPET: export -->
   <bean id="sayService" class="org.apache.camel.spring.remoting.SayService"/>
 
-  <camel:serviceExporter id="say" uri="direct:sayImpl" serviceRef="sayService"
+  <camel:export id="say" uri="direct:sayImpl" serviceRef="sayService"
                          serviceInterface="org.apache.camel.spring.remoting.ISay"/>
   <!-- END SNIPPET: export -->
 

@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 /**
  * @version $Revision: $
 */ // to fudge the XSD generation
-@XmlRootElement(name = "proxyFactory")
+@XmlRootElement(name = "proxy")
 public class CamelProxyFactoryType extends IdentifiedType {
     @XmlAttribute
     private String serviceUrl;
