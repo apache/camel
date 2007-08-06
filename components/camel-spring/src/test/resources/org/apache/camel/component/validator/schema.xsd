@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema elementFormDefault="qualified" version="1.0"
+           targetNamespace="http://foo.com/bar"
+           xmlns:tns="http://foo.com/bar"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+
+  <xs:element name="mail">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="subject" type="xs:string"/>
+        <xs:element name="body" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
+

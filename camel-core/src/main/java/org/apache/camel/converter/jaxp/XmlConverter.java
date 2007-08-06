@@ -180,6 +180,21 @@ public class XmlConverter {
     }
 
     /**
+     * Converts the source instance to a {@link DOMSource} or returns null if the conversion is not
+     * supported (making it easy to derive from this class to add new kinds of conversion).
+     */
+    @Converter
+    public DOMSource toDOMSource(String text) throws ParserConfigurationException, IOException, SAXException, TransformerException {
+        Source source = toSource(text);
+        if (source != null) {
+            return toDOMSourceFromStream((StreamSource) source);
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
      */
