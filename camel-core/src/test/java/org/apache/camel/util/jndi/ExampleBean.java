@@ -1,4 +1,5 @@
-/*
+/**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -6,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,21 +17,30 @@
  */
 package org.apache.camel.util.jndi;
 
-
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.naming.spi.InitialContextFactory;
-import java.util.Hashtable;
-
 /**
- * A factory of the Cameel InitialContext which allows a Map to be used to create a
- * JNDI context.
- *
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.1 $
  */
-public class CamelInitialContextFactory implements InitialContextFactory {
+public class ExampleBean {
+    private String name;
+    private double price;
 
-    public Context getInitialContext(Hashtable environment) throws NamingException {
-        return new JndiContext(environment);
+    public String toString() {
+        return "ExampleBean[name: " + name + " price: " + price + "]";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 }

@@ -16,26 +16,18 @@
  */
 package org.apache.camel.util.jndi;
 
-import javax.naming.Binding;
-import javax.naming.CompositeName;
-import javax.naming.Context;
-import javax.naming.LinkRef;
-import javax.naming.Name;
-import javax.naming.NameClassPair;
-import javax.naming.NameNotFoundException;
-import javax.naming.NameParser;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.NotContextException;
-import javax.naming.OperationNotSupportedException;
-import javax.naming.Reference;
+import org.apache.camel.impl.ReflectionInjector;
+import org.apache.camel.spi.Injector;
+import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
+
+import javax.naming.*;
 import javax.naming.spi.NamingManager;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A default JNDI context
@@ -44,28 +36,56 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class JndiContext implements Context, Serializable {
     public static final String SEPARATOR = "/";
-
     private static final long serialVersionUID = -5754338187296859149L;
-
     protected static final NameParser nameParser = new NameParser() {
         public Name parse(String name) throws NamingException {
             return new CompositeName(name);
         }
     };
-
+    protected static Injector injector = new ReflectionInjector();
     private final Hashtable environment;        // environment for this context
     private final Map bindings;         // bindings at my level
     private final Map treeBindings;     // all bindings under me
-
     private boolean frozen = false;
     private String nameInNamespace = "";
+
+    /**
+     * A helper method to create the JNDI bindings from the input environment properties
+     * using $foo.class to point to a class name with $foo.* being properties set on the injected bean
+     */
+    public static Map createBindingsMapFromEnvironment(Hashtable env) {
+        Map answer = new HashMap(env);
+
+        for (Object object : env.entrySet()) {
+            Map.Entry entry = (Map.Entry) object;
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+
+            if (key instanceof String && value instanceof String) {
+                String keyText = (String) key;
+                String valueText = (String) value;
+                if (keyText.endsWith(".class")) {
+                    Class<?> type = ObjectHelper.loadClass(valueText);
+                    if (type != null) {
+                        String newEntry = keyText.substring(0, keyText.length() - ".class".length());
+                        Object bean = createBean(type, answer, newEntry + ".");
+                        if (bean != null) {
+                            answer.put(newEntry, bean);
+                        }
+                    }
+                }
+            }
+        }
+
+        return answer;
+    }
 
     public JndiContext() {
         this(new Hashtable());
     }
 
     public JndiContext(Hashtable env) {
-        this(env, new ConcurrentHashMap());
+        this(env, createBindingsMapFromEnvironment(env));
     }
 
     public JndiContext(Hashtable environment, Map bindings) {
@@ -410,5 +430,11 @@ public class JndiContext implements Context, Serializable {
             Map.Entry entry = getNext();
             return new Binding((String) entry.getKey(), entry.getValue());
         }
+    }
+
+    protected static Object createBean(Class<?> type, Map properties, String prefix) {
+        Object value = injector.newInstance(type);
+        IntrospectionSupport.setProperties(value, properties, prefix);
+        return value;
     }
 }
