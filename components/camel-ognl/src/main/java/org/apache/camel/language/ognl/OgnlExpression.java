@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,16 +16,17 @@
  */
 package org.apache.camel.language.ognl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import ognl.Ognl;
 import ognl.OgnlContext;
 import ognl.OgnlException;
-import org.apache.camel.Exchange;
-import org.apache.camel.language.IllegalSyntaxException;
-import org.apache.camel.language.ExpressionEvaluationException;
-import org.apache.camel.impl.ExpressionSupport;
 
-import java.util.Map;
-import java.util.HashMap;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.ExpressionSupport;
+import org.apache.camel.language.ExpressionEvaluationException;
+import org.apache.camel.language.IllegalSyntaxException;
 
 /**
  * @version $Revision: $
@@ -36,35 +37,33 @@ public class OgnlExpression extends ExpressionSupport<Exchange> {
     private final Class<?> type;
     private Object expression;
 
-    public static OgnlExpression ognl(String expression) {
-        return new OgnlExpression(new OgnlLanguage(), expression, Object.class);
-    }
-
     public OgnlExpression(OgnlLanguage language, String expressionString, Class<?> type) {
         this.expressionString = expressionString;
         this.type = type;
         try {
             this.expression = Ognl.parseExpression(expressionString);
-        }
-        catch (OgnlException e) {
+        } catch (OgnlException e) {
             throw new IllegalSyntaxException(language, expressionString);
         }
     }
 
+    public static OgnlExpression ognl(String expression) {
+        return new OgnlExpression(new OgnlLanguage(), expression, Object.class);
+    }
+
     public Object evaluate(Exchange exchange) {
-        // TODO we could use caching here but then we'd have possible concurrency issues
+        // TODO we could use caching here but then we'd have possible
+        // concurrency issues
         // so lets assume that the provider caches
         Map values = new HashMap();
         populateContext(values, exchange);
         OgnlContext oglContext = new OgnlContext();
         try {
             return Ognl.getValue(expression, oglContext, new RootObject(exchange));
-        }
-        catch (OgnlException e) {
+        } catch (OgnlException e) {
             throw new ExpressionEvaluationException(this, exchange, e);
         }
     }
-
 
     protected void populateContext(Map map, Exchange exchange) {
         map.put("exchange", exchange);

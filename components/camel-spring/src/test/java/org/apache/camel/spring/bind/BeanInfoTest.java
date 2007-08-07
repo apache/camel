@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,21 +17,22 @@
 package org.apache.camel.spring.bind;
 
 import junit.framework.TestCase;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.BeanInfo;
+import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.DefaultParameterMappingStrategy;
 import org.apache.camel.component.bean.MethodInvocation;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision: $
  */
 public class BeanInfoTest extends TestCase {
-    private static final Log log = LogFactory.getLog(BeanInfoTest.class);
+    private static final Log LOG = LogFactory.getLog(BeanInfoTest.class);
 
     protected Exchange exchange = new DefaultExchange(new DefaultCamelContext());
     protected DefaultParameterMappingStrategy strategy = new DefaultParameterMappingStrategy();
@@ -44,14 +45,14 @@ public class BeanInfoTest extends TestCase {
 
         Object value = invocation.proceed();
 
-        log.info("Value: " + value);
+        LOG.info("Value: " + value);
     }
 
     public void testBeanProcessor() throws Exception {
         BeanProcessor processor = new BeanProcessor(bean, info);
         processor.process(exchange);
 
-        log.info("Exchange is: " + exchange);
+        LOG.info("Exchange is: " + exchange);
     }
 
     protected void setUp() throws Exception {

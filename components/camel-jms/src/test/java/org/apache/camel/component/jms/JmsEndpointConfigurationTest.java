@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,15 +16,17 @@
  */
 package org.apache.camel.component.jms;
 
+import javax.jms.ConnectionFactory;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+import org.apache.camel.Processor;
+
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 
-import javax.jms.ConnectionFactory;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * @version $Revision: $

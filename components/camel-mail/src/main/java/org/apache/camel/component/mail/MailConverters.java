@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,14 +16,15 @@
  */
 package org.apache.camel.component.mail;
 
-import org.apache.camel.Converter;
+import java.io.IOException;
 
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.internet.MimeMultipart;
-import java.io.IOException;
+
+import org.apache.camel.Converter;
 
 /**
  * @version $Revision: 1.1 $
@@ -57,7 +57,8 @@ public class MailConverters {
 
     @Converter
     public static String toString(Multipart multipart) throws MessagingException, IOException {
-        for (int i = 0, size = multipart.getCount(); i < size; i++) {
+        int size = multipart.getCount();
+        for (int i = 0; i < size; i++) {
             BodyPart part = multipart.getBodyPart(i);
             if (part.getContentType().startsWith("text")) {
                 return part.getContent().toString();

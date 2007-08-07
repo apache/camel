@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,9 @@
  */
 package org.apache.camel.bam.rules;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -27,14 +30,12 @@ import org.apache.camel.impl.RouteContext;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.OutputType;
 import org.apache.camel.model.RouteType;
-import static org.apache.camel.util.ServiceHelper.startServices;
-import static org.apache.camel.util.ServiceHelper.stopServices;
 import org.apache.camel.util.Time;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.ArrayList;
-import java.util.Date;
+import static org.apache.camel.util.ServiceHelper.startServices;
+import static org.apache.camel.util.ServiceHelper.stopServices;
 
 /**
  * A temporal rule for use within BAM
@@ -42,7 +43,7 @@ import java.util.Date;
  * @version $Revision: $
  */
 public class TemporalRule extends ServiceSupport {
-    private static final transient Log log = LogFactory.getLog(TemporalRule.class);
+    private static final transient Log LOG = LogFactory.getLog(TemporalRule.class);
     private TimeExpression first;
     private TimeExpression second;
     private long expectedMillis;
@@ -135,7 +136,9 @@ public class TemporalRule extends ServiceSupport {
             ProcessInstance instance = activityState.getProcessInstance();
             ActivityState secondState = second.getActivityState(instance);
             if (secondState == null) {
-                log.error("Could not find the second state! Process is: " + instance + " with first state: " + first.getActivityState(instance) + " and the state I was called with was: " + activityState);
+                log.error("Could not find the second state! Process is: " 
+                + instance + " with first state: " + first.getActivityState(instance) 
+                + " and the state I was called with was: " + activityState);
             }
 */
 
@@ -145,9 +148,8 @@ public class TemporalRule extends ServiceSupport {
                 Exchange exchange = createExchange();
                 exchange.getIn().setBody(activityState);
                 processor.process(exchange);
-            }
-            else {
-                log.warn("Process has not actually expired; the time is: " + now + " but the overdue time is: " + overdue);
+            } else {
+                LOG.warn("Process has not actually expired; the time is: " + now + " but the overdue time is: " + overdue);
             }
         }
     }

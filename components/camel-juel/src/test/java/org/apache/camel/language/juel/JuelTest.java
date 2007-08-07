@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,12 +16,13 @@
  */
 package org.apache.camel.language.juel;
 
-import de.odysseus.el.util.SimpleContext;
-import junit.framework.TestCase;
-
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
+
+import junit.framework.TestCase;
+
+import de.odysseus.el.util.SimpleContext;
 
 /**
  * @version $Revision: $

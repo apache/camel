@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,5 +20,5 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface ISay extends Remote {
-    public String say() throws RemoteException;
+    String say() throws RemoteException;
 }

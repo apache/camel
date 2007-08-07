@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,24 +16,22 @@
  */
 package org.apache.camel.component.mail;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
+import java.util.Enumeration;
+import java.util.Properties;
 
 import javax.mail.Address;
+import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.Header;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.Properties;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Enumeration;
+
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version $Revision: 1.1 $
@@ -51,9 +48,10 @@ public class MultipleDestinationConsumeTest extends ContextTestSupport {
         MimeMessage message = new MimeMessage(mailSession);
         message.setText(body);
 
-        message.setRecipients(Message.RecipientType.TO, new Address[]{
-                new InternetAddress("james@localhost"), new InternetAddress("bar@localhost")
-        });
+        message.setRecipients(Message.RecipientType.TO, new Address[] {
+               new InternetAddress("james@localhost"), 
+               new InternetAddress("bar@localhost")
+            });
 
         Transport.send(message);
 

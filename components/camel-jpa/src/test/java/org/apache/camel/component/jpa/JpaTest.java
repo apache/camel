@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,33 +16,37 @@
  */
 package org.apache.camel.component.jpa;
 
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+
 import junit.framework.TestCase;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelTemplate;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.impl.DefaultCamelContext;
-import static org.apache.camel.util.ServiceHelper.startServices;
-import static org.apache.camel.util.ServiceHelper.stopServices;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.JpaTemplate;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import static org.apache.camel.util.ServiceHelper.startServices;
+import static org.apache.camel.util.ServiceHelper.stopServices;
 
 /**
  * @version $Revision$
  */
 public class JpaTest extends TestCase {
-    private static final transient Log log = LogFactory.getLog(JpaTest.class);
+    private static final transient Log LOG = LogFactory.getLog(JpaTest.class);
     protected CamelContext camelContext = new DefaultCamelContext();
     protected CamelTemplate template = new CamelTemplate(camelContext);
     protected JpaEndpoint endpoint;
@@ -83,7 +86,7 @@ public class JpaTest extends TestCase {
         // now lets create a consumer to consume it
         consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange e) {
-                log.info("Received exchange: " + e.getIn());
+                LOG.info("Received exchange: " + e.getIn());
                 receivedExchange = e;
                 latch.countDown();
             }

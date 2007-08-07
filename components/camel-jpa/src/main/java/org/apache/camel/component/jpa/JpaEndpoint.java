@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jpa;
+
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -27,12 +32,8 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.util.IntrospectionSupport;
-import org.springframework.orm.jpa.JpaTemplate;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import java.util.Map;
+import org.springframework.orm.jpa.JpaTemplate;
 
 /**
  * @version $Revision$
@@ -77,11 +78,11 @@ public class JpaEndpoint extends ScheduledPollEndpoint<Exchange> {
     }
 
     public boolean isSingleton() {
-		return false;
-	}
+        return false;
+    }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public JpaTemplate getTemplate() {
         if (template == null) {
             template = createTemplate();
@@ -167,7 +168,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint<Exchange> {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     protected JpaTemplate createTemplate() {
         return new JpaTemplate(getEntityManagerFactory());
     }
@@ -183,15 +184,14 @@ public class JpaEndpoint extends ScheduledPollEndpoint<Exchange> {
     protected TransactionStrategy createTransactionStrategy() {
         EntityManagerFactory emf = getEntityManagerFactory();
         return JpaTemplateTransactionStrategy.newInstance(emf, getTemplate());
-        //return new DefaultTransactionStrategy(emf);
+        // return new DefaultTransactionStrategy(emf);
     }
 
     protected Expression<Exchange> createProducerExpression() {
         final Class<?> type = getEntityType();
         if (type == null) {
             return ExpressionBuilder.bodyExpression();
-        }
-        else {
+        } else {
             return new Expression<Exchange>() {
                 public Object evaluate(Exchange exchange) {
                     Object answer = exchange.getIn().getBody(type);

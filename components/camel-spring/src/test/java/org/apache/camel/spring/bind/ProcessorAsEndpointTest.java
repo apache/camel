@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,18 +16,19 @@
  */
 package org.apache.camel.spring.bind;
 
+import java.util.List;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.spring.SpringTestSupport;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.util.List;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision: $
  */
-public class ProcessorAsEndpointTest  extends SpringTestSupport {
+public class ProcessorAsEndpointTest extends SpringTestSupport {
     protected Object body = "<hello>world!</hello>";
 
     public void testSendingToProcessorEndpoint() throws Exception {
@@ -46,10 +47,9 @@ public class ProcessorAsEndpointTest  extends SpringTestSupport {
         Endpoint endpoint = camelContext.getEndpoint(uri);
         assertNull("Should not have found an endpoint! Was: " + endpoint, endpoint);
         try {
-            template.sendBody(uri,body);
+            template.sendBody(uri, body);
             fail("We should have failed as this is a bad endpoint URI");
-        }
-        catch (NoSuchEndpointException e) {
+        } catch (NoSuchEndpointException e) {
             log.debug("Caught expected exception: " + e, e);
         }
     }

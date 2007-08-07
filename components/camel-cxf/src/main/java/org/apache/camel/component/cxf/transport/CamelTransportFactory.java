@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf.transport;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.annotation.Resource;
 
 import org.apache.camel.CamelContext;
 import org.apache.cxf.Bus;
@@ -27,11 +32,6 @@ import org.apache.cxf.transport.ConduitInitiator;
 import org.apache.cxf.transport.Destination;
 import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
-
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @version $Revision$

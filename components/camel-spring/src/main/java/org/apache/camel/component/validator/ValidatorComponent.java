@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,20 +16,15 @@
  */
 package org.apache.camel.component.validator;
 
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.camel.component.validator.SpringValidator;
 import org.apache.camel.component.ResourceBasedComponent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
+import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.util.IntrospectionSupport;
 
-import java.util.Map;
+import org.springframework.core.io.Resource;
 
 /**
  * The <a href="http://activemq.apache.org/camel/validator.html">Validator Component</a>
@@ -44,8 +38,8 @@ public class ValidatorComponent extends ResourceBasedComponent {
         SpringValidator validator = new SpringValidator();
         Resource resource = resolveMandatoryResource(remaining);
         validator.setSchemaResource(resource);
-        if (log.isDebugEnabled()) {
-            log.debug(this + " using schema resource: " + resource);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(this + " using schema resource: " + resource);
         }
         configureValidator(validator, uri, remaining, parameters);
         return new ProcessorEndpoint(uri, this, validator);

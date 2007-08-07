@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,15 +21,16 @@ import org.apache.camel.component.validator.ValidatorComponent;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.io.Resource;
+
 import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * @version $Revision: 1.1 $
  */
-public abstract class ResourceBasedComponent  extends DefaultComponent<Exchange>  {
-    protected static final transient Log log = LogFactory.getLog(ValidatorComponent.class);
+public abstract class ResourceBasedComponent extends DefaultComponent<Exchange> {
+    protected static final transient Log LOG = LogFactory.getLog(ValidatorComponent.class);
     private ResourceLoader resourceLoader = new DefaultResourceLoader();
 
     public ResourceLoader getResourceLoader() {
@@ -45,8 +45,7 @@ public abstract class ResourceBasedComponent  extends DefaultComponent<Exchange>
         Resource resource = getResourceLoader().getResource(uri);
         if (resource == null) {
             throw new IllegalArgumentException("Could not find resource for URI: " + uri + " using: " + getResourceLoader());
-        }
-        else {
+        } else {
             return resource;
         }
 

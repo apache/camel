@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mina;
+
+import java.net.SocketAddress;
 
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
@@ -26,15 +27,14 @@ import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
 
-import java.net.SocketAddress;
-
 /**
- * A @{link Consumer} for MINA
- *
+ * A
+ * 
+ * @{link Consumer} for MINA
  * @version $Revision$
  */
 public class MinaConsumer extends DefaultConsumer<MinaExchange> {
-    private static final transient Log log = LogFactory.getLog(MinaConsumer.class);
+    private static final transient Log LOG = LogFactory.getLog(MinaConsumer.class);
 
     private final MinaEndpoint endpoint;
     private final SocketAddress address;
@@ -43,15 +43,15 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
     public MinaConsumer(final MinaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-         address = endpoint.getAddress();
-         acceptor = endpoint.getAcceptor();
+        address = endpoint.getAddress();
+        acceptor = endpoint.getAcceptor();
     }
 
     @Override
     protected void doStart() throws Exception {
 
-        if (log.isDebugEnabled()) {
-            log.debug("Binding to server address: " + address + " using acceptor: " + acceptor);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Binding to server address: " + address + " using acceptor: " + acceptor);
         }
 
         IoHandler handler = new IoHandlerAdapter() {

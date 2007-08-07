@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,8 @@
  */
 package org.apache.camel.builder.sql;
 
-import static org.apache.camel.builder.sql.SqlBuilder.sql;
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -25,7 +26,7 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
-import java.util.List;
+import static org.apache.camel.builder.sql.SqlBuilder.sql;
 
 /**
  * @version $Revision: $
@@ -40,7 +41,7 @@ public class SqlTest extends TestSupport {
         Object value = expression.evaluate(exchange);
         assertIsInstanceOf(List.class, value);
 
-        List list = (List) value;
+        List list = (List)value;
         assertEquals("List size", 2, list.size());
 
         for (Object person : list) {
@@ -53,7 +54,7 @@ public class SqlTest extends TestSupport {
         Object value = expression.evaluate(exchange);
         assertIsInstanceOf(List.class, value);
 
-        List<Person> list = (List<Person>) value;
+        List<Person> list = (List<Person>)value;
         assertEquals("List size", 1, list.size());
 
         for (Person person : list) {
@@ -81,10 +82,12 @@ public class SqlTest extends TestSupport {
         Message message = exchange.getIn();
         message.setHeader("fooHeader", "James");
 
-        Person[] people = {new Person("James", "London"),
-                new Person("Guillaume", "Normandy"),
-                new Person("Rob", "London"),
-                new Person("Hiram", "Tampa")};
+        Person[] people = {
+            new Person("James", "London"), 
+            new Person("Guillaume", "Normandy"), 
+            new Person("Rob", "London"), 
+            new Person("Hiram", "Tampa")
+        };
 
         message.setBody(people);
         return exchange;

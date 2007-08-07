@@ -1,22 +1,24 @@
 /**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.camel.component.cxf.transport;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
@@ -27,11 +29,8 @@ import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.ConduitInitiator;
 import org.apache.cxf.transport.MessageObserver;
-import org.easymock.classextension.EasyMock;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import org.easymock.classextension.EasyMock;
 
 public class CamelDestinationTest extends CamelTestSupport {
     private Message destMessage;
@@ -41,8 +40,7 @@ public class CamelDestinationTest extends CamelTestSupport {
         while (inMessage == null && waitTime < 3000) {
             try {
                 Thread.sleep(1000);
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 // do nothing here
             }
             waitTime = waitTime + 1000;
@@ -55,8 +53,7 @@ public class CamelDestinationTest extends CamelTestSupport {
         while (destMessage == null && waitTime < 3000) {
             try {
                 Thread.sleep(1000);
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 // do nothing here
             }
             waitTime = waitTime + 1000;
@@ -87,43 +84,36 @@ public class CamelDestinationTest extends CamelTestSupport {
         BusFactory.setDefaultBus(null);
         bus = bf.createBus("/wsdl/camel_test_config.xml");
         BusFactory.setDefaultBus(bus);
-        setupServiceInfo("http://cxf.apache.org/camel_conf_test",
-                "/wsdl/camel_test_no_addr.wsdl",
-                "HelloWorldQueueBinMsgService",
-                "HelloWorldQueueBinMsgPort");
+        setupServiceInfo("http://cxf.apache.org/camel_conf_test", "/wsdl/camel_test_no_addr.wsdl", "HelloWorldQueueBinMsgService", "HelloWorldQueueBinMsgPort");
         CamelDestination destination = setupCamelDestination(false);
 
-        /*assertEquals("Can't get the right ServerConfig's MessageTimeToLive ",
-        500L,
-        destination.getServerConfig().getMessageTimeToLive());
-assertEquals("Can't get the right Server's MessageSelector",
-        "cxf_message_selector",
-        destination.getRuntimePolicy().getMessageSelector());
-assertEquals("Can't get the right SessionPoolConfig's LowWaterMark",
-        10,
-        destination.getSessionPool().getLowWaterMark());
-assertEquals("Can't get the right AddressPolicy's ConnectionPassword",
-        "testPassword",
-        destination.getCamelAddress().getConnectionPassword());*/
+        /*
+         * assertEquals("Can't get the right ServerConfig's MessageTimeToLive ",
+         * 500L, destination.getServerConfig().getMessageTimeToLive());
+         * assertEquals("Can't get the right Server's MessageSelector",
+         * "cxf_message_selector",
+         * destination.getRuntimePolicy().getMessageSelector());
+         * assertEquals("Can't get the right SessionPoolConfig's LowWaterMark",
+         * 10, destination.getSessionPool().getLowWaterMark());
+         * assertEquals("Can't get the right AddressPolicy's
+         * ConnectionPassword", "testPassword",
+         * destination.getCamelAddress().getConnectionPassword());
+         */
         BusFactory.setDefaultBus(null);
     }
 
     public void testOneWayDestination() throws Exception {
         destMessage = null;
         inMessage = null;
-        setupServiceInfo("http://cxf.apache.org/hello_world_camel",
-                "/wsdl/camel_test.wsdl",
-                "HWStaticReplyQBinMsgService",
-                "HWStaticReplyQBinMsgPort");
+        setupServiceInfo("http://cxf.apache.org/hello_world_camel", "/wsdl/camel_test.wsdl", "HWStaticReplyQBinMsgService", "HWStaticReplyQBinMsgPort");
         CamelConduit conduit = setupCamelConduit(true, false);
         Message outMessage = new MessageImpl();
         setupMessageHeader(outMessage);
         CamelDestination destination = null;
         try {
             destination = setupCamelDestination(true);
-            //destination.activate();
-        }
-        catch (IOException e) {
+            // destination.activate();
+        } catch (IOException e) {
             assertFalse("The CamelDestination activate should not through exception ", false);
             e.printStackTrace();
         }
@@ -138,24 +128,21 @@ assertEquals("Can't get the right AddressPolicy's ConnectionPassword",
     }
 
     private void setupMessageHeader(Message outMessage) {
-/*
-        CamelMessageHeadersType header = new CamelMessageHeadersType();
-        header.setCamelCorrelationID("Destination test");
-        header.setCamelDeliveryMode(3);
-        header.setCamelPriority(1);
-        header.setTimeToLive(1000);
-        outMessage.put(CamelConstants.Camel_CLIENT_REQUEST_HEADERS, header);
-*/
+        /*
+         * CamelMessageHeadersType header = new CamelMessageHeadersType();
+         * header.setCamelCorrelationID("Destination test");
+         * header.setCamelDeliveryMode(3); header.setCamelPriority(1);
+         * header.setTimeToLive(1000);
+         * outMessage.put(CamelConstants.Camel_CLIENT_REQUEST_HEADERS, header);
+         */
     }
 
     private void verifyReceivedMessage(Message inMessage) {
-        ByteArrayInputStream bis =
-                (ByteArrayInputStream) inMessage.getContent(InputStream.class);
+        ByteArrayInputStream bis = (ByteArrayInputStream)inMessage.getContent(InputStream.class);
         byte bytes[] = new byte[bis.available()];
         try {
             bis.read(bytes);
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             assertFalse("Read the Destination recieved Message error ", false);
             ex.printStackTrace();
         }
@@ -164,56 +151,49 @@ assertEquals("Can't get the right AddressPolicy's ConnectionPassword",
     }
 
     private void verifyRequestResponseHeaders(Message inMessage, Message outMessage) {
-/*
-        CamelMessageHeadersType outHeader =
-            (CamelMessageHeadersType)outMessage.get(CamelConstants.Camel_CLIENT_REQUEST_HEADERS);
-        
-        CamelMessageHeadersType inHeader =
-            (CamelMessageHeadersType)inMessage.get(CamelConstants.Camel_CLIENT_RESPONSE_HEADERS);
-
-        verifyJmsHeaderEquality(outHeader, inHeader);
-*/
+        /*
+         * CamelMessageHeadersType outHeader =
+         * (CamelMessageHeadersType)outMessage.get(CamelConstants.Camel_CLIENT_REQUEST_HEADERS);
+         * CamelMessageHeadersType inHeader =
+         * (CamelMessageHeadersType)inMessage.get(CamelConstants.Camel_CLIENT_RESPONSE_HEADERS);
+         * verifyJmsHeaderEquality(outHeader, inHeader);
+         */
 
     }
 
     private void verifyHeaders(Message inMessage, Message outMessage) {
-/*
-        CamelMessageHeadersType outHeader =
-            (CamelMessageHeadersType)outMessage.get(CamelConstants.Camel_CLIENT_REQUEST_HEADERS);
-        
-        CamelMessageHeadersType inHeader =
-            (CamelMessageHeadersType)inMessage.get(CamelConstants.Camel_SERVER_REQUEST_HEADERS);
-        verifyJmsHeaderEquality(outHeader, inHeader);
-*/
+        /*
+         * CamelMessageHeadersType outHeader =
+         * (CamelMessageHeadersType)outMessage.get(CamelConstants.Camel_CLIENT_REQUEST_HEADERS);
+         * CamelMessageHeadersType inHeader =
+         * (CamelMessageHeadersType)inMessage.get(CamelConstants.Camel_SERVER_REQUEST_HEADERS);
+         * verifyJmsHeaderEquality(outHeader, inHeader);
+         */
 
     }
 
     /*
-        private void verifyJmsHeaderEquality(CamelMessageHeadersType outHeader, CamelMessageHeadersType inHeader) {
-            assertEquals("The inMessage and outMessage Camel Header's CorrelationID should be equals",
-                         outHeader.getCamelCorrelationID(), inHeader.getCamelCorrelationID());
-            assertEquals("The inMessage and outMessage Camel Header's CamelPriority should be equals",
-                         outHeader.getCamelPriority(), inHeader.getCamelPriority());
-            assertEquals("The inMessage and outMessage Camel Header's CamelType should be equals",
-                         outHeader.getCamelType(), inHeader.getCamelType());
-
-        }
-
-    */
+     * private void verifyJmsHeaderEquality(CamelMessageHeadersType outHeader,
+     * CamelMessageHeadersType inHeader) { assertEquals("The inMessage and
+     * outMessage Camel Header's CorrelationID should be equals",
+     * outHeader.getCamelCorrelationID(), inHeader.getCamelCorrelationID());
+     * assertEquals("The inMessage and outMessage Camel Header's CamelPriority
+     * should be equals", outHeader.getCamelPriority(),
+     * inHeader.getCamelPriority()); assertEquals("The inMessage and outMessage
+     * Camel Header's CamelType should be equals", outHeader.getCamelType(),
+     * inHeader.getCamelType()); }
+     */
     public void testRoundTripDestination() throws Exception {
 
         inMessage = null;
-        setupServiceInfo("http://cxf.apache.org/hello_world_camel",
-                "/wsdl/camel_test.wsdl",
-                "HelloWorldService",
-                "HelloWorldPort");
-        //set up the conduit send to be true 
+        setupServiceInfo("http://cxf.apache.org/hello_world_camel", "/wsdl/camel_test.wsdl", "HelloWorldService", "HelloWorldPort");
+        // set up the conduit send to be true
         CamelConduit conduit = setupCamelConduit(true, false);
         final Message outMessage = new MessageImpl();
         setupMessageHeader(outMessage);
         final CamelDestination destination = setupCamelDestination(true);
 
-        //set up MessageObserver for handlering the conduit message
+        // set up MessageObserver for handlering the conduit message
         MessageObserver observer = new MessageObserver() {
             public void onMessage(Message m) {
                 Exchange exchange = new ExchangeImpl();
@@ -221,24 +201,23 @@ assertEquals("Can't get the right AddressPolicy's ConnectionPassword",
                 m.setExchange(exchange);
                 verifyReceivedMessage(m);
                 verifyHeaders(m, outMessage);
-                //setup the message for 
+                // setup the message for
                 Conduit backConduit;
                 try {
                     backConduit = destination.getBackChannel(m, null, null);
-                    //wait for the message to be got from the conduit
+                    // wait for the message to be got from the conduit
                     Message replyMessage = new MessageImpl();
                     sendoutMessage(backConduit, replyMessage, true);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
         };
         destination.setMessageObserver(observer);
-        //set is oneway false for get response from destination
+        // set is oneway false for get response from destination
         sendoutMessage(conduit, outMessage, false);
-        //wait for the message to be got from the destination, 
+        // wait for the message to be got from the destination,
         // create the thread to handler the Destination incomming message
 
         waitForReceiveInMessage();
@@ -250,32 +229,27 @@ assertEquals("Can't get the right AddressPolicy's ConnectionPassword",
 
     public void testPropertyExclusion() throws Exception {
 
-        final String customPropertyName =
-                "THIS_PROPERTY_WILL_NOT_BE_AUTO_COPIED";
+        final String customPropertyName = "THIS_PROPERTY_WILL_NOT_BE_AUTO_COPIED";
 
         inMessage = null;
-        setupServiceInfo("http://cxf.apache.org/hello_world_camel",
-                "/wsdl/camel_test.wsdl",
-                "HelloWorldService",
-                "HelloWorldPort");
-        //set up the conduit send to be true 
+        setupServiceInfo("http://cxf.apache.org/hello_world_camel", "/wsdl/camel_test.wsdl", "HelloWorldService", "HelloWorldPort");
+        // set up the conduit send to be true
         CamelConduit conduit = setupCamelConduit(true, false);
         final Message outMessage = new MessageImpl();
         setupMessageHeader(outMessage);
 
-/*
-        CamelPropertyType excludeProp = new CamelPropertyType();
-        excludeProp.setName(customPropertyName);
-        excludeProp.setValue(customPropertyName);
-        
-        CamelMessageHeadersType headers = (CamelMessageHeadersType)
-            outMessage.get(CamelConstants.Camel_CLIENT_REQUEST_HEADERS);
-        headers.getProperty().add(excludeProp);
-*/
+        /*
+         * CamelPropertyType excludeProp = new CamelPropertyType();
+         * excludeProp.setName(customPropertyName);
+         * excludeProp.setValue(customPropertyName); CamelMessageHeadersType
+         * headers = (CamelMessageHeadersType)
+         * outMessage.get(CamelConstants.Camel_CLIENT_REQUEST_HEADERS);
+         * headers.getProperty().add(excludeProp);
+         */
 
         final CamelDestination destination = setupCamelDestination(true);
 
-        //set up MessageObserver for handlering the conduit message
+        // set up MessageObserver for handlering the conduit message
         MessageObserver observer = new MessageObserver() {
             public void onMessage(Message m) {
                 Exchange exchange = new ExchangeImpl();
@@ -283,24 +257,23 @@ assertEquals("Can't get the right AddressPolicy's ConnectionPassword",
                 m.setExchange(exchange);
                 verifyReceivedMessage(m);
                 verifyHeaders(m, outMessage);
-                //setup the message for 
+                // setup the message for
                 Conduit backConduit;
                 try {
                     backConduit = destination.getBackChannel(m, null, null);
-                    //wait for the message to be got from the conduit
+                    // wait for the message to be got from the conduit
                     Message replyMessage = new MessageImpl();
                     sendoutMessage(backConduit, replyMessage, true);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
         };
         destination.setMessageObserver(observer);
-        //set is oneway false for get response from destination
+        // set is oneway false for get response from destination
         sendoutMessage(conduit, outMessage, false);
-        //wait for the message to be got from the destination, 
+        // wait for the message to be got from the destination,
         // create the thread to handler the Destination incomming message
 
         waitForReceiveInMessage();
@@ -308,11 +281,12 @@ assertEquals("Can't get the right AddressPolicy's ConnectionPassword",
 
         verifyRequestResponseHeaders(inMessage, outMessage);
 
-/*
-        CamelMessageHeadersType inHeader =
-            (CamelMessageHeadersType)inMessage.get(CamelConstants.Camel_CLIENT_RESPONSE_HEADERS);
-        assertTrue("property has been excluded", inHeader.getProperty().isEmpty());
-*/
+        /*
+         * CamelMessageHeadersType inHeader =
+         * (CamelMessageHeadersType)inMessage.get(CamelConstants.Camel_CLIENT_RESPONSE_HEADERS);
+         * assertTrue("property has been excluded",
+         * inHeader.getProperty().isEmpty());
+         */
 
         // wait for a while for the camel session recycling
         Thread.sleep(1000);

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,15 +16,15 @@
  */
 package org.apache.camel.bam.rules;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.model.ProcessDefinition;
 import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @version $Revision: $

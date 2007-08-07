@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,12 +25,21 @@ import org.apache.camel.Producer;
  * @version $Revision: $
  */
 public class InjectedBean {
-    // Endpoint
-    //-----------------------------------------------------------------------
     @EndpointInject(uri = "direct:fieldInjectedEndpoint")
     private Endpoint fieldInjectedEndpoint;
     private Endpoint propertyInjectedEndpoint;
 
+    @EndpointInject(uri = "direct:fieldInjectedProducer")
+    private Producer fieldInjectedProducer;
+    private Producer propertyInjectedProducer;
+    
+    @EndpointInject(uri = "direct:fieldInjectedCamelTemplate")
+    private CamelTemplate fieldInjectedCamelTemplate;
+    private CamelTemplate propertyInjectedCamelTemplate;
+
+
+    // Endpoint
+    //-----------------------------------------------------------------------
     public Endpoint getFieldInjectedEndpoint() {
         return fieldInjectedEndpoint;
     }
@@ -46,9 +55,6 @@ public class InjectedBean {
 
     // Producer
     //-----------------------------------------------------------------------
-    @EndpointInject(uri = "direct:fieldInjectedProducer")
-    private Producer fieldInjectedProducer;
-    private Producer propertyInjectedProducer;
 
     public Producer getFieldInjectedProducer() {
         return fieldInjectedProducer;
@@ -65,10 +71,6 @@ public class InjectedBean {
 
     // CamelTemplate
     //-----------------------------------------------------------------------
-    @EndpointInject(uri = "direct:fieldInjectedCamelTemplate")
-    private CamelTemplate fieldInjectedCamelTemplate;
-    private CamelTemplate propertyInjectedCamelTemplate;
-
     public CamelTemplate getFieldInjectedCamelTemplate() {
         return fieldInjectedCamelTemplate;
     }

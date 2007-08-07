@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,14 +16,15 @@
  */
 package org.apache.camel.language.juel;
 
-import de.odysseus.el.util.SimpleContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.impl.ExpressionSupport;
-
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
+
+import de.odysseus.el.util.SimpleContext;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.impl.ExpressionSupport;
 
 /**
  * @version $Revision: $
@@ -34,13 +35,13 @@ public class JuelExpression extends ExpressionSupport<Exchange> {
     private final Class<?> type;
     private ExpressionFactory expressionFactory;
 
-    public static JuelExpression el(String expression) {
-        return new JuelExpression(expression, Object.class);
-    }
-
     public JuelExpression(String expression, Class<?> type) {
         this.expression = expression;
         this.type = type;
+    }
+
+    public static JuelExpression el(String expression) {
+        return new JuelExpression(expression, Object.class);
     }
 
     public Object evaluate(Exchange exchange) {

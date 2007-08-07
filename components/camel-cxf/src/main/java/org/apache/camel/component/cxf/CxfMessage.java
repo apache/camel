@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,15 +16,16 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.Map;
+
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 
-import java.util.Map;
-
 /**
- * An Apache CXF {@link Message} which provides access to the underlying CXF features
- *
+ * An Apache CXF {@link Message} which provides access to the underlying CXF
+ * features
+ * 
  * @version $Revision$
  */
 public class CxfMessage extends DefaultMessage {
@@ -43,20 +43,19 @@ public class CxfMessage extends DefaultMessage {
     public String toString() {
         if (cxfMessage != null) {
             return "CxfMessage: " + cxfMessage;
-        }
-        else {
+        } else {
             return "CxfMessage: " + getBody();
         }
     }
 
     @Override
     public CxfExchange getExchange() {
-        return (CxfExchange) super.getExchange();
+        return (CxfExchange)super.getExchange();
     }
 
     /**
      * Returns the underlying CXF message
-     *
+     * 
      * @return the CXF message
      */
     public Message getMessage() {

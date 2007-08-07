@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,16 +16,17 @@
  */
 package org.apache.camel.converter.jaxb;
 
-import org.apache.camel.converter.HasAnnotation;
-import org.apache.camel.converter.jaxp.XmlConverter;
-import org.w3c.dom.Document;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.util.JAXBSource;
 import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+
+import org.apache.camel.converter.HasAnnotation;
+import org.apache.camel.converter.jaxp.XmlConverter;
 
 /**
  * @version $Revision$
@@ -67,12 +67,11 @@ public class JaxbConverter {
         return context;
     }
 
-/*
-    public void write(OutputStream out, Object value) throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(value.getClass());
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		marshaller.marshal(value, out);
-    }
-*/
+//    public void write(OutputStream out, Object value) throws JAXBException {
+//        JAXBContext context = JAXBContext.newInstance(value.getClass());
+//        Marshaller marshaller = context.createMarshaller();
+//        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+//        marshaller.marshal(value, out);
+//    }
+
 }

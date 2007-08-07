@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,13 +16,15 @@
  */
 package org.apache.camel.component.jpa;
 
-import org.apache.camel.impl.ServiceSupport;
-import static org.apache.camel.util.ObjectHelper.notNull;
-import org.springframework.orm.jpa.JpaCallback;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+
+import org.apache.camel.impl.ServiceSupport;
+
+import org.springframework.orm.jpa.JpaCallback;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * @version $Revision$
@@ -51,8 +52,7 @@ public class DefaultTransactionStrategy extends ServiceSupport implements Transa
             Object answer = callback.doInJpa(em);
             transaction.commit();
             return answer;
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             if (transaction != null) {
                 transaction.rollback();
             }

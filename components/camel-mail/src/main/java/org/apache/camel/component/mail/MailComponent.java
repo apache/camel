@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,20 +16,32 @@
  */
 package org.apache.camel.component.mail;
 
+import java.net.URI;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
-
-import java.util.Map;
-import java.net.URI;
-import java.net.URL;
 
 /**
  * @version $Revision:520964 $
  */
 public class MailComponent extends DefaultComponent<MailExchange> {
     private MailConfiguration configuration;
+
+    public MailComponent() {
+        this.configuration = new MailConfiguration();
+    }
+
+    public MailComponent(MailConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public MailComponent(CamelContext context) {
+        super(context);
+        this.configuration = new MailConfiguration();
+    }
 
     /**
      * Static builder method
@@ -44,19 +55,6 @@ public class MailComponent extends DefaultComponent<MailExchange> {
      */
     public static MailComponent mailComponent(MailConfiguration configuration) {
         return new MailComponent(configuration);
-    }
-
-    public MailComponent() {
-        this.configuration = new MailConfiguration();
-    }
-
-    public MailComponent(MailConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
-    public MailComponent(CamelContext context) {
-        super(context);
-        this.configuration = new MailConfiguration();
     }
 
     @Override

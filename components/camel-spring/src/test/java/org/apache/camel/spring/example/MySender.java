@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,14 +16,14 @@
  */
 package org.apache.camel.spring.example;
 
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
+
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * An example POJO which is injected with a CamelTemplate
- *
+ * 
  * @version $Revision: $
  */
 public class MySender {
@@ -40,8 +40,7 @@ public class MySender {
 
         if (name.equals("James")) {
             successDesetination.sendBody(body);
-        }
-        else {
+        } else {
             failureDesetination.sendBody(body);
         }
     }

@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,13 +16,13 @@
  */
 package org.apache.camel.component.xmpp;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.jivesoftware.smack.AccountManager;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -33,11 +32,11 @@ import org.jivesoftware.smack.packet.Presence;
 
 /**
  * An XMPP Endpoint
- *
+ * 
  * @version $Revision:520964 $
  */
 public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
-    private static final transient Log log = LogFactory.getLog(XmppEndpoint.class);
+    private static final transient Log LOG = LogFactory.getLog(XmppEndpoint.class);
     private XmppBinding binding;
     private XMPPConnection connection;
     private String host;
@@ -58,8 +57,7 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     public Producer<XmppExchange> createProducer() throws Exception {
         if (room != null) {
             return createGroupChatProducer(room);
-        }
-        else {
+        } else {
             if (participant == null) {
                 throw new IllegalArgumentException("No room or participant configured on this endpoint: " + this);
             }
@@ -88,7 +86,7 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public XmppBinding getBinding() {
         if (binding == null) {
             binding = new XmppBinding();
@@ -97,8 +95,9 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     }
 
     /**
-     * Sets the binding used to convert from a Camel message to and from an XMPP message
-     *
+     * Sets the binding used to convert from a Camel message to and from an XMPP
+     * message
+     * 
      * @param binding the binding to use
      */
     public void setBinding(XmppBinding binding) {
@@ -197,20 +196,19 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     protected XMPPConnection createConnection() throws XMPPException {
         XMPPConnection connection;
         if (port > 0) {
             connection = new XMPPConnection(host, port);
-        }
-        else {
+        } else {
             connection = new XMPPConnection(host);
         }
         if (login && !connection.isAuthenticated()) {
             if (user != null) {
-                log.info("Logging in to XMPP as user: " + user + " on connection: " + connection);
+                LOG.info("Logging in to XMPP as user: " + user + " on connection: " + connection);
                 if (password == null) {
-                    log.warn("No password configured for user: " + user);
+                    LOG.warn("No password configured for user: " + user);
                 }
 
                 if (createAccount) {
@@ -219,13 +217,11 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
                 }
                 if (resource != null) {
                     connection.login(user, password, resource);
-                }
-                else {
+                } else {
                     connection.login(user, password);
                 }
-            }
-            else {
-                log.info("Logging in anonymously to XMPP on connection: " + connection);
+            } else {
+                LOG.info("Logging in anonymously to XMPP on connection: " + connection);
                 connection.loginAnonymously();
             }
 
@@ -234,9 +230,9 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
         }
         return connection;
     }
-    
-	public boolean isSingleton() {
-		return true;
-	}
+
+    public boolean isSingleton() {
+        return true;
+    }
 
 }

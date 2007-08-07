@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,28 +16,29 @@
  */
 package org.apache.camel.bam.processor;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
 /**
- * A base {@link Processor} for working on
- * <a href="http://activemq.apache.org/camel/bam.html">BAM</a> which a derived class would do the actual
- * persistence such as the {@link JpaBamProcessor}
- *
+ * A base {@link Processor} for working on <a
+ * href="http://activemq.apache.org/camel/bam.html">BAM</a> which a derived
+ * class would do the actual persistence such as the {@link JpaBamProcessor}
+ * 
  * @version $Revision: $
  */
 public abstract class BamProcessorSupport<T> implements Processor {
-    private static final transient Log log = LogFactory.getLog(BamProcessorSupport.class);
+    private static final transient Log LOG = LogFactory.getLog(BamProcessorSupport.class);
     private Class<T> entityType;
     private Expression<Exchange> correlationKeyExpression;
     private TransactionTemplate transactionTemplate;
@@ -48,12 +49,12 @@ public abstract class BamProcessorSupport<T> implements Processor {
 
         Type type = getClass().getGenericSuperclass();
         if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
+            ParameterizedType parameterizedType = (ParameterizedType)type;
             Type[] arguments = parameterizedType.getActualTypeArguments();
             if (arguments.length > 0) {
                 Type argumentType = arguments[0];
                 if (argumentType instanceof Class) {
-                    this.entityType = (Class<T>) argumentType;
+                    this.entityType = (Class<T>)argumentType;
                 }
             }
         }
@@ -76,16 +77,15 @@ public abstract class BamProcessorSupport<T> implements Processor {
 
                     T entity = loadEntity(exchange, key);
 
-                    if (log.isDebugEnabled()) {
-                        log.debug("Correlation key: " + key + " with entity: " + entity);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Correlation key: " + key + " with entity: " + entity);
                     }
                     processEntity(exchange, entity);
 
                     return entity;
-                }
-                catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Caught: " + e, e);
+                } catch (Exception e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Caught: " + e, e);
                     }
                     throw new RuntimeCamelException(e);
                 }
@@ -94,7 +94,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
     }
 
     // Properties
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     public Expression<Exchange> getCorrelationKeyExpression() {
         return correlationKeyExpression;
     }
@@ -104,7 +104,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
     }
 
     // Implemenation methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     protected abstract void processEntity(Exchange exchange, T entity) throws Exception;
 
     protected abstract T loadEntity(Exchange exchange, Object key);

@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,13 +17,14 @@
 package org.apache.camel.spring.spi;
 
 import org.apache.camel.spi.Registry;
+
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 
 /**
  * A {@link Registry} implementation which looks up the objects in the Spring
  * {@link ApplicationContext}
- *
+ * 
  * @version $Revision: 1.1 $
  */
 public class ApplicationContextRegistry implements Registry {
@@ -38,8 +38,7 @@ public class ApplicationContextRegistry implements Registry {
         try {
             Object value = applicationContext.getBean(name, type);
             return type.cast(value);
-        }
-        catch (NoSuchBeanDefinitionException e) {
+        } catch (NoSuchBeanDefinitionException e) {
             return null;
         }
     }
@@ -47,8 +46,7 @@ public class ApplicationContextRegistry implements Registry {
     public Object lookup(String name) {
         try {
             return applicationContext.getBean(name);
-        }
-        catch (NoSuchBeanDefinitionException e) {
+        } catch (NoSuchBeanDefinitionException e) {
             return null;
         }
     }

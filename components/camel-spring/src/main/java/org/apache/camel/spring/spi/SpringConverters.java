@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,18 +16,21 @@
  */
 package org.apache.camel.spring.spi;
 
-import org.apache.camel.Converter;
-import org.apache.camel.component.bean.BeanInvocation;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.aopalliance.intercept.MethodInvocation;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+
+import org.aopalliance.intercept.MethodInvocation;
+
+import org.apache.camel.Converter;
+import org.apache.camel.component.bean.BeanInvocation;
+
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+
 
 /**
  * Some Spring based
@@ -37,7 +39,11 @@ import java.net.URL;
  * @version $Revision$
  */
 @Converter
-public class SpringConverters {
+public final class SpringConverters {
+    
+    private SpringConverters() {        
+    }
+    
     @Converter
     public static InputStream toInputStream(Resource resource) throws IOException {
         return resource.getInputStream();

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,11 @@
  */
 package org.apache.camel.spring.bind;
 
-import org.apache.camel.Processor;
-import org.apache.camel.Exchange;
-
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 
 /**
  * @version $Revision: $

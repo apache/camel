@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,23 +16,25 @@
  */
 package org.apache.camel.component.xmpp;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ProducerCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jivesoftware.smack.packet.Message;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import org.jivesoftware.smack.packet.Message;
 
 /**
  * An integration test which requires a Jabber server to be running, by default on localhost.
@@ -46,7 +47,7 @@ import java.util.concurrent.TimeUnit;
 public class XmppRouteTest extends TestCase {
     protected static boolean enabled;
     protected static String xmppUrl;
-    private static final transient Log log = LogFactory.getLog(XmppRouteTest.class);
+    private static final transient Log LOG = LogFactory.getLog(XmppRouteTest.class);
     protected XmppExchange receivedExchange;
     protected CamelContext container = new DefaultCamelContext();
     protected CountDownLatch latch = new CountDownLatch(1);
@@ -100,11 +101,11 @@ public class XmppRouteTest extends TestCase {
 
         Assert.assertEquals("cheese header", 123, receivedMessage.getHeader("cheese"));
         Object body = receivedMessage.getBody();
-        XmppRouteTest.log.debug("Received body: " + body);
+        XmppRouteTest.LOG.debug("Received body: " + body);
         Message xmppMessage = receivedMessage.getXmppMessage();
         assertNotNull(xmppMessage);
 
-        XmppRouteTest.log.debug("Received XMPP message: " + xmppMessage.getBody());
+        XmppRouteTest.LOG.debug("Received XMPP message: " + xmppMessage.getBody());
         return body;
     }
 
@@ -114,7 +115,7 @@ public class XmppRouteTest extends TestCase {
             String uriPrefx = getUriPrefix();
             final String uri1 = uriPrefx + "a";
             final String uri2 = uriPrefx + "b";
-            log.info("Using URI " + uri1 + " and " + uri2);
+            LOG.info("Using URI " + uri1 + " and " + uri2);
 
             // lets add some routes
             container.addRoutes(new RouteBuilder() {
@@ -122,7 +123,7 @@ public class XmppRouteTest extends TestCase {
                     from(uri1).to(uri2);
                     from(uri2).process(new Processor() {
                         public void process(Exchange e) {
-                            log.info("Received exchange: " + e);
+                            LOG.info("Received exchange: " + e);
                             receivedExchange = (XmppExchange) e;
                             latch.countDown();
                         }

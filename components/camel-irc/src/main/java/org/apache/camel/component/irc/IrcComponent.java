@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,31 +16,28 @@
  */
 package org.apache.camel.component.irc;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.schwering.irc.lib.IRCConnection;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
+import org.schwering.irc.lib.IRCConnection;
 
 /**
  * Defines the <a href="http://activemq.apache.org/camel/irc.html">IRC Component</a>
- *
+ * 
  * @version $Revision:$
  */
 public class IrcComponent extends DefaultComponent<IrcExchange> {
-    private static final transient Log log = LogFactory.getLog(IrcComponent.class);
+    private static final transient Log LOG = LogFactory.getLog(IrcComponent.class);
     private IrcConfiguration configuration;
     private final Map<String, IRCConnection> connectionCache = new HashMap<String, IRCConnection>();
-
-    public static IrcComponent ircComponent() {
-        return new IrcComponent();
-    }
 
     public IrcComponent() {
         configuration = new IrcConfiguration();
@@ -56,11 +52,16 @@ public class IrcComponent extends DefaultComponent<IrcExchange> {
         configuration = new IrcConfiguration();
     }
 
+    public static IrcComponent ircComponent() {
+        return new IrcComponent();
+    }
+
     protected IrcEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         IrcConfiguration config = getConfiguration().copy();
         config.configure(new URI(uri));
 
-        // lets make sure we copy the configuration as each endpoint can customize its own version
+        // lets make sure we copy the configuration as each endpoint can
+        // customize its own version
         final IrcEndpoint endpoint = new IrcEndpoint(uri, this, config);
 
         IntrospectionSupport.setProperties(endpoint.getConfiguration(), parameters);
@@ -78,12 +79,11 @@ public class IrcComponent extends DefaultComponent<IrcExchange> {
     public synchronized IRCConnection getIRCConnection(IrcConfiguration configuration) {
         final IRCConnection connection;
         if (connectionCache.containsKey(configuration.getCacheKey())) {
-            if (log.isDebugEnabled()) {
-                log.debug("Returning Cached Connection to " + configuration.getHostname() + " " + configuration.getTarget());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Returning Cached Connection to " + configuration.getHostname() + " " + configuration.getTarget());
             }
             connection = connectionCache.get(configuration.getCacheKey());
-        }
-        else {
+        } else {
             connection = createConnection(configuration);
             connectionCache.put(configuration.getCacheKey(), connection);
         }
@@ -91,20 +91,20 @@ public class IrcComponent extends DefaultComponent<IrcExchange> {
     }
 
     protected IRCConnection createConnection(IrcConfiguration configuration) {
-        log.debug("Creating Connection to " + configuration.getHostname() + " destination: " + configuration.getTarget()
-                + " nick: " + configuration.getNickname() + " user: " + configuration.getUsername());
+        LOG.debug("Creating Connection to " + configuration.getHostname() + " destination: " + configuration.getTarget() + " nick: " + configuration.getNickname() + " user: "
+                  + configuration.getUsername());
 
-        final IRCConnection conn = new IRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(), configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
+        final IRCConnection conn = new IRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(), configuration.getNickname(), configuration.getUsername(),
+                                                     configuration.getRealname());
         conn.setEncoding("UTF-8");
-//        conn.setDaemon(true);
+        // conn.setDaemon(true);
         conn.setColors(configuration.isColors());
         conn.setPong(true);
 
         try {
             conn.connect();
-        }
-        catch (Exception e) {
-            log.error("Failed to connect: " + e, e);
+        } catch (Exception e) {
+            LOG.error("Failed to connect: " + e, e);
 
             // TODO use checked exceptions?
             throw new RuntimeCamelException(e);
@@ -116,15 +116,15 @@ public class IrcComponent extends DefaultComponent<IrcExchange> {
         try {
             connection.doQuit();
             connection.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
     protected synchronized void doStop() throws Exception {
-        // lets use a copy so we can clear the connections eagerly in case of exceptions
+        // lets use a copy so we can clear the connections eagerly in case of
+        // exceptions
         Map<String, IRCConnection> map = new HashMap<String, IRCConnection>(connectionCache);
         connectionCache.clear();
         for (Map.Entry<String, IRCConnection> entry : map.entrySet()) {

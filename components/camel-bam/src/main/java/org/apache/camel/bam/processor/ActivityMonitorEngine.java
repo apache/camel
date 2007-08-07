@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,37 +16,40 @@
  */
 package org.apache.camel.bam.processor;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.PersistenceException;
+
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.rules.ProcessRules;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.PersistenceException;
-import java.util.Date;
-import java.util.List;
-
 /**
- * A timer engine to monitor for expired activities and perform whatever actions are required.
- *
+ * A timer engine to monitor for expired activities and perform whatever actions
+ * are required.
+ * 
  * @version $Revision: $
  */
 public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
-    private static final Log log = LogFactory.getLog(ActivityMonitorEngine.class);
+    private static final Log LOG = LogFactory.getLog(ActivityMonitorEngine.class);
     private JpaTemplate template;
     private TransactionTemplate transactionTemplate;
     private ProcessRules rules;
-    private int escalateLevel = 0;
+    private int escalateLevel;
     private long windowMillis = 1000L;
     private Thread thread;
-    private boolean useLocking = false;
+    private boolean useLocking;
 
     public ActivityMonitorEngine(JpaTemplate template, TransactionTemplate transactionTemplate, ProcessRules rules) {
         this.template = template;
@@ -64,7 +66,7 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
     }
 
     public void run() {
-        log.debug("Starting to poll for timeout events");
+        LOG.debug("Starting to poll for timeout events");
 
         while (!isStopped()) {
             try {
@@ -83,42 +85,39 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
 
                 long timeToSleep = nextPoll - System.currentTimeMillis();
                 if (timeToSleep > 0) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Sleeping for " + timeToSleep + " millis");
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Sleeping for " + timeToSleep + " millis");
                     }
                     try {
                         Thread.sleep(timeToSleep);
-                    }
-                    catch (InterruptedException e) {
-                        log.debug("Caught: " + e, e);
+                    } catch (InterruptedException e) {
+                        LOG.debug("Caught: " + e, e);
                     }
                 }
-            }
-            catch (Exception e) {
-                log.error("Caught: " + e, e);
+            } catch (Exception e) {
+                LOG.error("Caught: " + e, e);
             }
         }
     }
 
     protected void fireExpiredEvent(final ActivityState activityState) {
-        if (log.isDebugEnabled()) {
-            log.debug("Trying to fire expiration of: " + activityState);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Trying to fire expiration of: " + activityState);
         }
 
         template.execute(new JpaCallback() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
                 // lets try lock the object first
                 if (isUseLocking()) {
-                    log.info("Attempting to lock: " + activityState);
+                    LOG.info("Attempting to lock: " + activityState);
                     entityManager.lock(activityState, LockModeType.WRITE);
-                    log.info("Grabbed lock: " + activityState);
+                    LOG.info("Grabbed lock: " + activityState);
                 }
 
                 try {
                     rules.processExpired(activityState);
-                }
-                catch (Exception e) {
-                    log.error("Failed to process expiration of: " + activityState + ". Reason: " + e, e);
+                } catch (Exception e) {
+                    LOG.error("Failed to process expiration of: " + activityState + ". Reason: " + e, e);
                 }
                 activityState.setEscalationLevel(escalateLevel + 1);
                 return null;

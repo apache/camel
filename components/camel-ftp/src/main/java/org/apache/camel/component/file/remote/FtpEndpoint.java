@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,15 +16,15 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.io.IOException;
+
 import org.apache.camel.Processor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTPClient;
 
-import java.io.IOException;
-
 public class FtpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
-    private static final transient Log log = LogFactory.getLog(FtpEndpoint.class);
+    private static final transient Log LOG = LogFactory.getLog(FtpEndpoint.class);
 
     public FtpEndpoint(String uri, RemoteFileComponent remoteFileComponent, RemoteFileConfiguration configuration) {
         super(uri, remoteFileComponent, configuration);
@@ -46,7 +45,7 @@ public class FtpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
         RemoteFileConfiguration config = getConfiguration();
         String host = config.getHost();
         int port = config.getPort();
-        log.debug("Connecting to host: " + host + " port: " + port);
+        LOG.debug("Connecting to host: " + host + " port: " + port);
 
         client.connect(host, port);
         client.login(config.getUsername(), config.getPassword());

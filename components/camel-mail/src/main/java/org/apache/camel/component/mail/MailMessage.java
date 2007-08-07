@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,18 +16,19 @@
  */
 package org.apache.camel.component.mail;
 
-import org.apache.camel.impl.DefaultMessage;
-import org.apache.camel.util.CollectionHelper;
+import java.util.Enumeration;
+import java.util.Map;
 
 import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import java.util.Enumeration;
-import java.util.Map;
+
+import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.util.CollectionHelper;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with Mail
- *
+ * 
  * @version $Revision:520964 $
  */
 public class MailMessage extends DefaultMessage {
@@ -45,26 +45,25 @@ public class MailMessage extends DefaultMessage {
     public String toString() {
         if (mailMessage != null) {
             return "MailMessage: " + mailMessage;
-        }
-        else {
+        } else {
             return "MailMessage: " + getBody();
         }
     }
 
     @Override
     public MailExchange getExchange() {
-        return (MailExchange) super.getExchange();
+        return (MailExchange)super.getExchange();
     }
 
     public MailMessage copy() {
-        MailMessage answer = (MailMessage) super.copy();
+        MailMessage answer = (MailMessage)super.copy();
         answer.mailMessage = mailMessage;
         return answer;
     }
 
     /**
      * Returns the underlying Mail message
-     *
+     * 
      * @return the underlying Mail message
      */
     public Message getMessage() {
@@ -80,8 +79,7 @@ public class MailMessage extends DefaultMessage {
         if (mailMessage != null) {
             try {
                 answer = mailMessage.getHeader(name);
-            }
-            catch (MessagingException e) {
+            } catch (MessagingException e) {
                 throw new MessageHeaderAccessException(name, e);
             }
         }
@@ -113,19 +111,17 @@ public class MailMessage extends DefaultMessage {
             Enumeration names;
             try {
                 names = mailMessage.getAllHeaders();
-            }
-            catch (MessagingException e) {
+            } catch (MessagingException e) {
                 throw new MessageHeaderNamesAccessException(e);
             }
             try {
                 while (names.hasMoreElements()) {
-                    Header header = (Header) names.nextElement();
+                    Header header = (Header)names.nextElement();
                     String value = header.getValue();
                     String name = header.getName();
                     CollectionHelper.appendValue(map, name, value);
                 }
-            }
-            catch (Throwable e) {
+            } catch (Throwable e) {
                 throw new MessageHeaderNamesAccessException(e);
             }
         }

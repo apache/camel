@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +16,9 @@
  */
 package org.apache.camel.component.irc;
 
-import org.apache.camel.RuntimeCamelException;
-
 import java.net.URI;
+
+import org.apache.camel.RuntimeCamelException;
 
 public class IrcConfiguration implements Cloneable {
     String target;
@@ -62,9 +61,8 @@ public class IrcConfiguration implements Cloneable {
 
     public IrcConfiguration copy() {
         try {
-            return (IrcConfiguration) clone();
-        }
-        catch (CloneNotSupportedException e) {
+            return (IrcConfiguration)clone();
+        } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
     }
@@ -218,24 +216,8 @@ public class IrcConfiguration implements Cloneable {
     }
 
     public String toString() {
-        return "IrcConfiguration{" +
-                "target='" + target + '\'' +
-                ", hostname='" + hostname + '\'' +
-                ", password='" + password + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", realname='" + realname + '\'' +
-                ", username='" + username + '\'' +
-                ", persistent=" + persistent +
-                ", colors=" + colors +
-                ", onNick=" + onNick +
-                ", onQuit=" + onQuit +
-                ", onJoin=" + onJoin +
-                ", onKick=" + onKick +
-                ", onMode=" + onMode +
-                ", onPart=" + onPart +
-                ", onTopic=" + onTopic +
-                ", onPrivmsg=" + onPrivmsg +
-                ", ports=" + ports +
-                '}';
+        return "IrcConfiguration{" + "target='" + target + '\'' + ", hostname='" + hostname + '\'' + ", password='" + password + '\'' + ", nickname='" + nickname + '\'' + ", realname='" + realname
+               + '\'' + ", username='" + username + '\'' + ", persistent=" + persistent + ", colors=" + colors + ", onNick=" + onNick + ", onQuit=" + onQuit + ", onJoin=" + onJoin + ", onKick="
+               + onKick + ", onMode=" + onMode + ", onPart=" + onPart + ", onTopic=" + onTopic + ", onPrivmsg=" + onPrivmsg + ", ports=" + ports + '}';
     }
 }

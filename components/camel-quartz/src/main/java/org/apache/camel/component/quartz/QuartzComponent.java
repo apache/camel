@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,32 +16,30 @@
  */
 package org.apache.camel.component.quartz;
 
+import java.net.URI;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
-import org.quartz.CronTrigger;
 import org.quartz.impl.StdSchedulerFactory;
-
-import java.util.Map;
-import java.net.URI;
-
-import com.sun.jndi.toolkit.url.Uri;
 
 /**
  * A <a href="http://activemq.apache.org/camel/quartz.html">Quartz Component</a>
- *
+ * 
  * @version $Revision:520964 $
  */
 public class QuartzComponent extends DefaultComponent<QuartzExchange> {
-    private static final transient Log log = LogFactory.getLog(QuartzComponent.class);
+    private static final transient Log LOG = LogFactory.getLog(QuartzComponent.class);
     private SchedulerFactory factory;
     private Scheduler scheduler;
     private Map<Trigger, JobDetail> triggers;
@@ -76,28 +73,21 @@ public class QuartzComponent extends DefaultComponent<QuartzExchange> {
                 // lets allow / instead of spaces and allow $ instead of ?
                 cronExpression = cronExpression.replace('/', ' ');
                 cronExpression = cronExpression.replace('$', '?');
-                log.debug("Creating cron trigger: " + cronExpression);
+                LOG.debug("Creating cron trigger: " + cronExpression);
                 cronTrigger.setCronExpression(cronExpression);
                 answer.setTrigger(cronTrigger);
-            }
-            else {
+            } else {
                 name = path;
             }
             group = u.getHost();
-        }
-        else {
+        } else {
             name = u.getHost();
         }
-/*
-        String[] names = ObjectHelper.splitOnCharacter(remaining, "/", 2);
-        if (names[1] != null) {
-            group = names[0];
-            name = names[1];
-        }
-        else {
-            name = names[0];
-        }
-*/
+        /*
+         * String[] names = ObjectHelper.splitOnCharacter(remaining, "/", 2); if
+         * (names[1] != null) { group = names[0]; name = names[1]; } else { name =
+         * names[0]; }
+         */
         Trigger trigger = cronTrigger;
         if (trigger == null) {
             trigger = answer.getTrigger();
@@ -129,7 +119,7 @@ public class QuartzComponent extends DefaultComponent<QuartzExchange> {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public SchedulerFactory getFactory() {
         if (factory == null) {
             factory = createSchedulerFactory();
@@ -161,7 +151,7 @@ public class QuartzComponent extends DefaultComponent<QuartzExchange> {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     protected SchedulerFactory createSchedulerFactory() {
         return new StdSchedulerFactory();
     }

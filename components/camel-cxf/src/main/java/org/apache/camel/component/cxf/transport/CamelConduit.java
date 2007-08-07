@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf.transport;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
@@ -34,14 +41,6 @@ import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.AttributedURIType;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * @version $Revision$
  */
@@ -51,12 +50,11 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     private final CamelTransportBase base;
     private String targetCamelEndpointUri;
 
-/*
-    protected ClientConfig clientConfig;
-    protected ClientBehaviorPolicyType runtimePolicy;
-    protected AddressType address;
-    protected SessionPoolType sessionPool;
-*/
+    /*
+     * protected ClientConfig clientConfig; protected ClientBehaviorPolicyType
+     * runtimePolicy; protected AddressType address; protected SessionPoolType
+     * sessionPool;
+     */
 
     public CamelConduit(CamelContext camelContext, Bus bus, EndpointInfo endpointInfo, EndpointReferenceType targetReference) {
         super(targetReference);
@@ -74,8 +72,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     public void prepare(Message message) throws IOException {
         getLogger().log(Level.FINE, "CamelConduit send message");
 
-        message.setContent(OutputStream.class,
-                new CamelOutputStream(message));
+        message.setContent(OutputStream.class, new CamelOutputStream(message));
     }
 
     public void close() {
@@ -100,16 +97,16 @@ public class CamelConduit extends AbstractConduit implements Configurable {
 
     private void initConfig() {
 
-/*
-        this.address = base.endpointInfo.getTraversedExtensor(new AddressType(),
-                                                              AddressType.class);
-        this.sessionPool = base.endpointInfo.getTraversedExtensor(new SessionPoolType(),
-                                                                  SessionPoolType.class);
-        this.clientConfig = base.endpointInfo.getTraversedExtensor(new ClientConfig(),
-                                                                   ClientConfig.class);
-        this.runtimePolicy = base.endpointInfo.getTraversedExtensor(new ClientBehaviorPolicyType(),
-                                                                    ClientBehaviorPolicyType.class);
-*/
+        /*
+         * this.address = base.endpointInfo.getTraversedExtensor(new
+         * AddressType(), AddressType.class); this.sessionPool =
+         * base.endpointInfo.getTraversedExtensor(new SessionPoolType(),
+         * SessionPoolType.class); this.clientConfig =
+         * base.endpointInfo.getTraversedExtensor(new ClientConfig(),
+         * ClientConfig.class); this.runtimePolicy =
+         * base.endpointInfo.getTraversedExtensor(new
+         * ClientBehaviorPolicyType(), ClientBehaviorPolicyType.class);
+         */
 
         Configurer configurer = base.bus.getExtension(Configurer.class);
         if (null != configurer) {
@@ -126,7 +123,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         }
 
         protected void doFlush() throws IOException {
-            //do nothing here
+            // do nothing here
         }
 
         protected void doClose() throws IOException {
@@ -145,21 +142,16 @@ public class CamelConduit extends AbstractConduit implements Configurable {
             base.template.send(targetCamelEndpointUri, new Processor() {
                 public void process(org.apache.camel.Exchange reply) {
                     Object request = null;
-
                     if (isTextPayload()) {
                         request = currentStream.toString();
-                    }
-                    else {
-                        request = ((ByteArrayOutputStream) currentStream).toByteArray();
+                    } else {
+                        request = ((ByteArrayOutputStream)currentStream).toByteArray();
                     }
 
                     getLogger().log(Level.FINE, "Conduit Request is :[" + request + "]");
                     String replyTo = base.getReplyDestination();
-
-                    //TODO setting up the responseExpected
-
+                    // TODO setting up the responseExpected
                     base.marshal(request, replyTo, reply);
-
                     base.setMessageProperties(outMessage, reply);
 
                     String correlationID = null;
@@ -169,9 +161,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
 
                         if (id != null) {
                             if (correlationID != null) {
-                                String error = "User cannot set CamelCorrelationID when "
-                                        + "making a request/reply invocation using "
-                                        + "a static replyTo Queue.";
+                                String error = "User cannot set CamelCorrelationID when " + "making a request/reply invocation using " + "a static replyTo Queue.";
                             }
                             correlationID = id;
                         }
@@ -179,10 +169,11 @@ public class CamelConduit extends AbstractConduit implements Configurable {
 
                     if (correlationID != null) {
                         reply.getIn().setHeader(CamelConstants.CAMEL_CORRELATION_ID, correlationID);
-                    }
-                    else {
-                        //No message correlation id is set. Whatever comeback will be accepted as responses.
-                        // We assume that it will only happen in case of the temp. reply queue.
+                    } else {
+                        // No message correlation id is set. Whatever comeback
+                        // will be accepted as responses.
+                        // We assume that it will only happen in case of the
+                        // temp. reply queue.
                     }
 
                     getLogger().log(Level.FINE, "template sending request: ", reply.getIn());
@@ -194,53 +185,42 @@ public class CamelConduit extends AbstractConduit implements Configurable {
             // REVISIT distinguish decoupled case or oneway call
             Object response = null;
 
-            //TODO if outMessage need to get the response
+            // TODO if outMessage need to get the response
             Message inMessage = new MessageImpl();
             outMessage.getExchange().setInMessage(inMessage);
-            //set the message header back to the incomeMessage
-            //inMessage.put(CamelConstants.CAMEL_CLIENT_RESPONSE_HEADERS,
-            //              outMessage.get(CamelConstants.CAMEL_CLIENT_RESPONSE_HEADERS));
+            // set the message header back to the incomeMessage
+            // inMessage.put(CamelConstants.CAMEL_CLIENT_RESPONSE_HEADERS,
+            // outMessage.get(CamelConstants.CAMEL_CLIENT_RESPONSE_HEADERS));
 
             /*
-            Object result1;
-
-            Object result = null;
-
-            javax.camel.Message camelMessage1 = pooledSession.consumer().receive(timeout);
-            getLogger().log(Level.FINE, "template received reply: " , camelMessage1);
-
-            if (camelMessage1 != null) {
-
-                base.populateIncomingContext(camelMessage1, outMessage, CamelConstants.CAMEL_CLIENT_RESPONSE_HEADERS);
-                String messageType = camelMessage1 instanceof TextMessage
-                            ? CamelConstants.TEXT_MESSAGE_TYPE : CamelConstants.BINARY_MESSAGE_TYPE;
-                result = base.unmarshal((org.apache.camel.Exchange) outMessage);
-                result1 = result;
-            } else {
-                String error = "CamelClientTransport.receive() timed out. No message available.";
-                getLogger().log(Level.SEVERE, error);
-                //TODO: Review what exception should we throw.
-                throw new CamelException(error);
-
-            }
-            response = result1;
-
-            //set the message header back to the incomeMessage
-            inMessage.put(CamelConstants.CAMEL_CLIENT_RESPONSE_HEADERS,
-                          outMessage.get(CamelConstants.CAMEL_CLIENT_RESPONSE_HEADERS));
-
-            */
+             * Object result1; Object result = null; javax.camel.Message
+             * camelMessage1 = pooledSession.consumer().receive(timeout);
+             * getLogger().log(Level.FINE, "template received reply: " ,
+             * camelMessage1); if (camelMessage1 != null) {
+             * base.populateIncomingContext(camelMessage1, outMessage,
+             * CamelConstants.CAMEL_CLIENT_RESPONSE_HEADERS); String messageType =
+             * camelMessage1 instanceof TextMessage ?
+             * CamelConstants.TEXT_MESSAGE_TYPE :
+             * CamelConstants.BINARY_MESSAGE_TYPE; result =
+             * base.unmarshal((org.apache.camel.Exchange) outMessage); result1 =
+             * result; } else { String error = "CamelClientTransport.receive()
+             * timed out. No message available."; getLogger().log(Level.SEVERE,
+             * error); //TODO: Review what exception should we throw. throw new
+             * CamelException(error); } response = result1; //set the message
+             * header back to the incomeMessage
+             * inMessage.put(CamelConstants.CAMEL_CLIENT_RESPONSE_HEADERS,
+             * outMessage.get(CamelConstants.CAMEL_CLIENT_RESPONSE_HEADERS));
+             */
 
             getLogger().log(Level.FINE, "The Response Message is : [" + response + "]");
 
             // setup the inMessage response stream
             byte[] bytes = null;
             if (response instanceof String) {
-                String requestString = (String) response;
+                String requestString = (String)response;
                 bytes = requestString.getBytes();
-            }
-            else {
-                bytes = (byte[]) response;
+            } else {
+                bytes = (byte[])response;
             }
             inMessage.setContent(InputStream.class, new ByteArrayInputStream(bytes));
             getLogger().log(Level.FINE, "incoming observer is " + incomingObserver);
@@ -260,8 +240,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         protected MessageObserver decoupledMessageObserver;
         private EndpointReferenceType address;
 
-        DecoupledDestination(EndpointReferenceType ref,
-                MessageObserver incomingObserver) {
+        DecoupledDestination(EndpointReferenceType ref, MessageObserver incomingObserver) {
             address = ref;
             decoupledMessageObserver = incomingObserver;
         }
@@ -270,10 +249,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
             return address;
         }
 
-        public Conduit getBackChannel(Message inMessage,
-                Message partialResponse,
-                EndpointReferenceType addr)
-                throws IOException {
+        public Conduit getBackChannel(Message inMessage, Message partialResponse, EndpointReferenceType addr) throws IOException {
             // shouldn't be called on decoupled endpoint
             return null;
         }

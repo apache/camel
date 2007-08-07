@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,10 +16,10 @@
  */
 package org.apache.camel.example.etl;
 
-import static org.apache.camel.language.juel.JuelExpression.el;
 import org.apache.camel.component.file.FileComponent;
-import org.apache.camel.language.juel.JuelExpression;
 import org.apache.camel.spring.SpringRouteBuilder;
+
+import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
  * @version $Revision: 1.1 $
@@ -28,16 +27,14 @@ import org.apache.camel.spring.SpringRouteBuilder;
 // START SNIPPET: example
 public class EtlRoutes extends SpringRouteBuilder {
     public void configure() throws Exception {
-        from("file:src/data?noop=true").
-                convertBodyTo(PersonDocument.class).
-                //intercept(transactionInterceptor()).
-                to("jpa:org.apache.camel.example.etl.CustomerEntity");
-
+        from("file:src/data?noop=true").convertBodyTo(PersonDocument.class)
+        //  .intercept(transactionInterceptor())
+            .to("jpa:org.apache.camel.example.etl.CustomerEntity");
 
         // the following will dump the database to files
-        from("jpa:org.apache.camel.example.etl.CustomerEntity?consumeDelete=false").
-        		setHeader(FileComponent.HEADER_FILE_NAME, el("${in.body.userName}.xml")).
-        		to("file:target/customers");
+        from("jpa:org.apache.camel.example.etl.CustomerEntity?consumeDelete=false")
+            .setHeader(FileComponent.HEADER_FILE_NAME, el("${in.body.userName}.xml"))
+            .to("file:target/customers");
     }
 }
 // END SNIPPET: example

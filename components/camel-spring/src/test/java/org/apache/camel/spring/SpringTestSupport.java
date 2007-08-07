@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,16 +16,17 @@
  */
 package org.apache.camel.spring;
 
+import java.util.List;
+
 import org.apache.camel.CamelTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.util.ObjectHelper;
+
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import java.util.List;
 
 /**
  * @version $Revision: 1.1 $
@@ -63,15 +63,15 @@ public abstract class SpringTestSupport extends TestSupport {
     }
 
     /**
-     * Looks up the mandatory spring bean of the given name and type, failing if it is not present or the correct type
+     * Looks up the mandatory spring bean of the given name and type, failing if
+     * it is not present or the correct type
      */
     public <T> T getMandatoryBean(Class<T> type, String name) {
         Object value = applicationContext.getBean(name);
         assertNotNull("No spring bean found for name <" + name + ">", value);
         if (type.isInstance(value)) {
             return type.cast(value);
-        }
-        else {
+        } else {
             fail("Spring bean <" + name + "> is not an instanceof " + type.getName() + " but is of type " + ObjectHelper.className(value));
             return null;
         }

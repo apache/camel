@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,21 +16,23 @@
  */
 package org.apache.camel.bam.processor;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.bam.model.ProcessDefinition;
 import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.camel.util.IntrospectionSupport;
+
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.List;
-
 /**
- * A base class for JPA based BAM which can use any entity to store the process instance information which
- * allows derived classes to specialise the process instance entity.
- *
+ * A base class for JPA based BAM which can use any entity to store the process
+ * instance information which allows derived classes to specialise the process
+ * instance entity.
+ * 
  * @version $Revision: $
  */
 public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
@@ -87,7 +89,7 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     }
 
     // Implementatiom methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     protected T loadEntity(Exchange exchange, Object key) {
         List<T> list = template.find(getFindByKeyQuery(), key);
         T entity = null;
@@ -119,15 +121,14 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
      * Create a new instance of the entity for the given key
      */
     protected T createEntity(Exchange exchange, Object key) {
-        return (T) exchange.getContext().getInjector().newInstance(getEntityType());
+        return (T)exchange.getContext().getInjector().newInstance(getEntityType());
     }
 
     protected void processEntity(Exchange exchange, T entity) throws Exception {
         if (entity instanceof Processor) {
-            Processor processor = (Processor) entity;
+            Processor processor = (Processor)entity;
             processor.process(exchange);
-        }
-        else {
+        } else {
             // TODO add other extension points - eg. passing in Activity
             throw new IllegalArgumentException("No processor defined for this route");
         }

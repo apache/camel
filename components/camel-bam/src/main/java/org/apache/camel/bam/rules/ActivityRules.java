@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,9 @@
  */
 package org.apache.camel.bam.rules;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.bam.ProcessBuilder;
 import org.apache.camel.bam.model.ActivityDefinition;
@@ -26,16 +29,13 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Represents a activity which is typically a system or could be an endpoint
  *
  * @version $Revision: $
  */
 public class ActivityRules extends ServiceSupport {
-    private static final transient Log log = LogFactory.getLog(ActivityRules.class);
+    private static final transient Log LOG = LogFactory.getLog(ActivityRules.class);
     private int expectedMessages = 1;
     private ProcessRules processRules;
     private List<TemporalRule> rules = new ArrayList<TemporalRule>();

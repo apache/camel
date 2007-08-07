@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mina;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.net.URI;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -33,13 +38,6 @@ import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 import org.apache.mina.transport.vmpipe.VmPipeAcceptor;
 import org.apache.mina.transport.vmpipe.VmPipeAddress;
 import org.apache.mina.transport.vmpipe.VmPipeConnector;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
 
 /**
  * @version $Revision$
@@ -59,14 +57,11 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         String protocol = u.getScheme();
         if (protocol.equals("tcp")) {
             return createSocketEndpoint(uri, u);
-        }
-        else if (protocol.equals("udp") || protocol.equals("mcast") || protocol.equals("multicast")) {
+        } else if (protocol.equals("udp") || protocol.equals("mcast") || protocol.equals("multicast")) {
             return createDatagramEndpoint(uri, u);
-        }
-        else if (protocol.equals("vm")) {
+        } else if (protocol.equals("vm")) {
             return createVmEndpoint(uri, u);
-        }
-        else {
+        } else {
             throw new IOException("Unrecognised MINA protocol: " + protocol + " for uri: " + uri);
         }
     }

@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,21 +16,20 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.camel.impl.DefaultMessage;
-import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
-import java.util.Enumeration;
-import java.io.IOException;
+
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.impl.DefaultMessage;
 
 /**
  * @version $Revision$
  */
 public class HttpMessage extends DefaultMessage {
     private HttpServletRequest request;
-
 
     public HttpMessage(HttpExchange exchange, HttpServletRequest request) {
         setExchange(exchange);
@@ -44,7 +42,7 @@ public class HttpMessage extends DefaultMessage {
 
     @Override
     public HttpExchange getExchange() {
-        return (HttpExchange) super.getExchange();
+        return (HttpExchange)super.getExchange();
     }
 
     public HttpServletRequest getRequest() {
@@ -55,8 +53,7 @@ public class HttpMessage extends DefaultMessage {
     protected Object createBody() {
         try {
             return getExchange().getEndpoint().getBinding().parseBody(this);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeCamelException(e);
         }
     }
@@ -65,7 +62,7 @@ public class HttpMessage extends DefaultMessage {
     protected void populateInitialHeaders(Map<String, Object> map) {
         Enumeration names = request.getHeaderNames();
         while (names.hasMoreElements()) {
-            String name = (String) names.nextElement();
+            String name = (String)names.nextElement();
             Object value = request.getHeader(name);
             map.put(name, value);
         }

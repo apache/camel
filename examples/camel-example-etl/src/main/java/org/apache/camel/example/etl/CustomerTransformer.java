@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,22 +16,23 @@
  */
 package org.apache.camel.example.etl;
 
+import java.util.List;
+
 import org.apache.camel.Converter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.orm.jpa.JpaTemplate;
 
-import java.util.List;
+import org.springframework.orm.jpa.JpaTemplate;
 
 /**
  * A Message Transformer of an XML document to a Customer entity bean
- *
+ * 
  * @version $Revision: 1.1 $
  */
 // START SNIPPET: example
 @Converter
 public class CustomerTransformer {
-    private static final transient Log log = LogFactory.getLog(CustomerTransformer.class);
+    private static final transient Log LOG = LogFactory.getLog(CustomerTransformer.class);
     private JpaTemplate template;
 
     public CustomerTransformer(JpaTemplate template) {
@@ -40,7 +40,8 @@ public class CustomerTransformer {
     }
 
     /**
-     * A transformation method to convert a person document into a customer entity
+     * A transformation method to convert a person document into a customer
+     * entity
      */
     @Converter
     public CustomerEntity toCustomer(PersonDocument doc) {
@@ -53,7 +54,7 @@ public class CustomerTransformer {
         customer.setSurname(doc.getLastName());
         customer.setCity(doc.getCity());
 
-        log.debug("Created customer: " + customer);
+        LOG.debug("Created customer: " + customer);
         return customer;
     }
 
@@ -67,8 +68,7 @@ public class CustomerTransformer {
             answer.setUserName(user);
             template.persist(answer);
             return answer;
-        }
-        else {
+        } else {
             return list.get(0);
         }
     }

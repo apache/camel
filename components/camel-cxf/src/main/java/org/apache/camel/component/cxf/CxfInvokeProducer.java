@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,18 +16,18 @@
  */
 package org.apache.camel.component.cxf;
 
-import org.apache.camel.RuntimeCamelException;
+import java.util.List;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientFactoryBean;
 
-import java.util.List;
-
 /**
  * Sends messages from Camel into the CXF endpoint
- *
+ * 
  * @version $Revision$
  */
 public class CxfInvokeProducer extends DefaultProducer {
@@ -51,8 +50,7 @@ public class CxfInvokeProducer extends DefaultProducer {
         Object[] response = null;
         try {
             response = client.invoke(endpoint.getProperty(CxfConstants.METHOD), params.toArray());
-        }                                                           
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
 
@@ -62,7 +60,8 @@ public class CxfInvokeProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        // TODO Add support for sending message inputstream.  Currently, we only handle
+        // TODO Add support for sending message inputstream. Currently, we only
+        // handle
         // method invocation with pojo.
 
         // TODO Add support for endpoints associated with a WSDL
@@ -87,5 +86,3 @@ public class CxfInvokeProducer extends DefaultProducer {
         super.doStop();
     }
 }
-
-

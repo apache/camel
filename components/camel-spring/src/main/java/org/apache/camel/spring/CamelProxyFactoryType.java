@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,10 +16,10 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.model.IdentifiedType;
-
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.camel.model.IdentifiedType;
 
 /**
  * @version $Revision: $

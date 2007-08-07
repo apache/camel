@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,16 +16,16 @@
  */
 package org.apache.camel.component.mail;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Endpoint;
-import org.apache.camel.util.ObjectHelper;
+import java.util.Properties;
 
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.Properties;
+
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 
 /**
  * @version $Revision: 1.1 $
@@ -38,29 +37,25 @@ public class MailMessageTest extends ContextTestSupport {
     protected String body = "Hello World!";
 
     public void testMailMessageHandlesMultipleHeaders() throws Exception {
-        mimeMessage.setRecipients(Message.RecipientType.TO, new Address[]{
-                new InternetAddress("james@localhost"), new InternetAddress("bar@localhost")
-        });
+        mimeMessage.setRecipients(Message.RecipientType.TO, new Address[] {new InternetAddress("james@localhost"), new InternetAddress("bar@localhost")});
 
         MailExchange exchange = endpoint.createExchange(mimeMessage);
         MailMessage in = exchange.getIn();
         String value = in.getHeader("TO", String.class);
         assertEquals("value", "james@localhost, bar@localhost", value);
-/*
-        String[] values = assertIsInstanceOf(String[].class, header);
-        log.debug("Found values: " + ObjectHelper.asString(values));
-        assertEquals("Size", 2, values.length);
-        assertEquals("values[0]", "james@localhost", values[0]);
-        assertEquals("values[1]", "bar@localhost", values[1]);
-*/
+        /*
+         * String[] values = assertIsInstanceOf(String[].class, header);
+         * log.debug("Found values: " + ObjectHelper.asString(values));
+         * assertEquals("Size", 2, values.length); assertEquals("values[0]",
+         * "james@localhost", values[0]); assertEquals("values[1]",
+         * "bar@localhost", values[1]);
+         */
 
         assertEquals("body", body, in.getBody());
     }
 
     public void testMailMessageHandlesSingleHeader() throws Exception {
-        mimeMessage.setRecipients(Message.RecipientType.TO, new Address[]{
-                new InternetAddress("james@localhost")
-        });
+        mimeMessage.setRecipients(Message.RecipientType.TO, new Address[] {new InternetAddress("james@localhost")});
 
         MailExchange exchange = endpoint.createExchange(mimeMessage);
         MailMessage in = exchange.getIn();
