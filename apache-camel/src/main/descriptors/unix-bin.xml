@@ -78,10 +78,13 @@
         <include>org.apache.camel:camel-irc</include>
         <include>org.apache.camel:camel-jaxb</include>
         <include>org.apache.camel:camel-jbi</include>
+        <include>org.apache.camel:camel-jing</include>
         <include>org.apache.camel:camel-jms</include>
         <include>org.apache.camel:camel-josql</include>
         <include>org.apache.camel:camel-jpa</include>
         <include>org.apache.camel:camel-mail</include>
+        <include>org.apache.camel:camel-msv</include>
+        <include>org.apache.camel:camel-ognl</include>
         <include>org.apache.camel:camel-quartz</include>
         <include>org.apache.camel:camel-rmi</include>
         <include>org.apache.camel:camel-mina</include>
