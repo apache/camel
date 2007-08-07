@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,13 +33,13 @@ public class ProducerTest extends TestSupport {
     private CamelContext context = new DefaultCamelContext();
 
     public void testUsingADerivedExchange() throws Exception {
-        DefaultEndpoint<MyExchange> endpoint = new DefaultEndpoint<MyExchange>("foo", new DefaultComponent(){
-			@Override
-			protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-				return null;
-			}
-        	
-        } ) {
+        DefaultEndpoint<MyExchange> endpoint = new DefaultEndpoint<MyExchange>("foo", new DefaultComponent() {
+            @Override
+            protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+                return null;
+            }
+
+        }) {
             public Consumer<MyExchange> createConsumer(Processor processor) throws Exception {
                 return null;
             }
@@ -48,7 +47,7 @@ public class ProducerTest extends TestSupport {
             public MyExchange createExchange() {
                 return new MyExchange(getContext());
             }
- 
+
             public Producer<MyExchange> createProducer() throws Exception {
                 return null;
             }
@@ -56,7 +55,7 @@ public class ProducerTest extends TestSupport {
             public boolean isSingleton() {
                 return false;
             }
-            
+
         };
 
         DefaultProducer producer = new DefaultProducer(endpoint) {
@@ -75,7 +74,6 @@ public class ProducerTest extends TestSupport {
         MyExchange actual = endpoint.toExchangeType(exchange);
         assertNotNull(actual);
         assertTrue("Not same exchange", actual != exchange);
-
 
         MyExchange expected = new MyExchange(context);
         actual = endpoint.toExchangeType(expected);

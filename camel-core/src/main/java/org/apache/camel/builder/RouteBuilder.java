@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,22 +16,24 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Route;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.RoutesType;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.processor.DelegateProcessor;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Route;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.RouteType;
+import org.apache.camel.model.RoutesType;
+import org.apache.camel.processor.DelegateProcessor;
+
 /**
- * A <a href="http://activemq.apache.org/camel/dsl.html">Java DSL</a>
- * which is used to build {@link Route} instances in a @{link CamelContext} for smart routing.
- *
+ * A <a href="http://activemq.apache.org/camel/dsl.html">Java DSL</a> which is
+ * used to build {@link Route} instances in a
+ * 
+ * @{link CamelContext} for smart routing.
+ * 
  * @version $Revision$
  */
 public abstract class RouteBuilder extends BuilderSupport {
@@ -52,11 +54,9 @@ public abstract class RouteBuilder extends BuilderSupport {
      */
     public abstract void configure() throws Exception;
 
-
     public RouteType from(String uri) {
         return routeCollection.from(uri);
     }
-
 
     public RouteType from(Endpoint endpoint) {
         return routeCollection.from(endpoint);
@@ -64,8 +64,9 @@ public abstract class RouteBuilder extends BuilderSupport {
 
     /**
      * Installs the given error handler builder
-     *
-     * @param errorHandlerBuilder the error handler to be used by default for all child routes
+     * 
+     * @param errorHandlerBuilder the error handler to be used by default for
+     *                all child routes
      * @return the current builder with the error handler configured
      */
     public RouteBuilder errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
@@ -74,9 +75,11 @@ public abstract class RouteBuilder extends BuilderSupport {
     }
 
     /**
-     * Configures whether or not the error handler is inherited by every processing node (or just the top most one)
-     *
-     * @param value the flag as to whether error handlers should be inherited or not
+     * Configures whether or not the error handler is inherited by every
+     * processing node (or just the top most one)
+     * 
+     * @param value the flag as to whether error handlers should be inherited or
+     *                not
      * @return the current builder
      */
     public RouteBuilder inheritErrorHandler(boolean value) {
@@ -90,7 +93,7 @@ public abstract class RouteBuilder extends BuilderSupport {
     }
 
     // Properties
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     public CamelContext getContext() {
         CamelContext context = super.getContext();
         if (context == null) {
@@ -108,9 +111,8 @@ public abstract class RouteBuilder extends BuilderSupport {
         return routes;
     }
 
-
     // Implementation methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     protected void checkInitialized() throws Exception {
         if (initalized.compareAndSet(false, true)) {
             configure();

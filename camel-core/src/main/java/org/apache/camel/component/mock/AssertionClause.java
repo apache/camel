@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,19 +16,20 @@
  */
 package org.apache.camel.component.mock;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
-import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
-import org.apache.camel.builder.ValueBuilder;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
+import org.apache.camel.builder.ValueBuilder;
+
+import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
+import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
+
 /**
  * A builder of assertions on message exchanges
- *
+ * 
  * @version $Revision: 1.1 $
  */
 public abstract class AssertionClause<E extends Exchange> implements Runnable {
@@ -37,7 +37,7 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
     private List<Predicate<E>> predicates = new ArrayList<Predicate<E>>();
 
     // Builder methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * Adds the given predicate to this assertion clause
@@ -66,7 +66,8 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
     }
 
     /**
-     * Returns a predicate and value builder for the inbound message body as a specific type
+     * Returns a predicate and value builder for the inbound message body as a
+     * specific type
      */
 
     public <T> PredicateValueBuilder bodyAs(Class<T> type) {
@@ -75,7 +76,8 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
     }
 
     /**
-     * Returns a predicate and value builder for the outbound body on an exchange
+     * Returns a predicate and value builder for the outbound body on an
+     * exchange
      */
 
     public PredicateValueBuilder outBody() {
@@ -84,7 +86,8 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
     }
 
     /**
-     * Returns a predicate and value builder for the outbound message body as a specific type
+     * Returns a predicate and value builder for the outbound message body as a
+     * specific type
      */
 
     public <T> PredicateValueBuilder outBody(Class<T> type) {

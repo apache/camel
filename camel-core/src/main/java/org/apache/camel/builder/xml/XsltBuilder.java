@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,20 +16,6 @@
  */
 package org.apache.camel.builder.xml;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.ExpectedBodyTypeException;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
-import org.apache.camel.RuntimeTransformException;
-import org.apache.camel.converter.jaxp.XmlConverter;
-import static org.apache.camel.util.ObjectHelper.notNull;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,10 +24,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.stream.StreamSource;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.ExpectedBodyTypeException;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.RuntimeTransformException;
+import org.apache.camel.converter.jaxp.XmlConverter;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
+
 /**
  * Creates a <a href="http://activemq.apache.org/camel/processor.html">Processor</a>
  * which performs an XSLT transformation of the IN message body
- *
+ * 
  * @version $Revision: 531854 $
  */
 public class XsltBuilder implements Processor {
@@ -77,7 +78,7 @@ public class XsltBuilder implements Processor {
     }
 
     // Builder methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * Creates an XSLT processor using the given transformer instance
@@ -150,7 +151,7 @@ public class XsltBuilder implements Processor {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public Map<String, Object> getParameters() {
         return parameters;
@@ -200,12 +201,10 @@ public class XsltBuilder implements Processor {
         if (source == null) {
             if (isFailOnNullBody()) {
                 throw new ExpectedBodyTypeException(exchange, Source.class);
-            }
-            else {
+            } else {
                 try {
                     source = converter.toSource(converter.createDocument());
-                }
-                catch (ParserConfigurationException e) {
+                } catch (ParserConfigurationException e) {
                     throw new RuntimeTransformException(e);
                 }
             }

@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.impl.converter;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
@@ -27,18 +33,11 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * @version $Revision$
  */
 public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistry {
-    private static final transient Log log = LogFactory.getLog(DefaultTypeConverter.class);
+    private static final transient Log LOG = LogFactory.getLog(DefaultTypeConverter.class);
     private Map<TypeMapping, TypeConverter> typeMappings = new HashMap<TypeMapping, TypeConverter>();
     private Injector injector;
     private List<TypeConverterLoader> typeConverterLoaders = new ArrayList<TypeConverterLoader>();
@@ -56,11 +55,10 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     public <T> T convertTo(Class<T> toType, Object value) {
         if (toType.isInstance(value)) {
             return toType.cast(value);
-        }
-        else if (toType.isPrimitive()) {
+        } else if (toType.isPrimitive()) {
             Class primitiveType = ObjectHelper.convertPrimitiveTypeToWrapperType(toType);
             if (primitiveType != toType) {
-                return (T) convertTo(primitiveType, value);
+                return (T)convertTo(primitiveType, value);
             }
         }
         checkLoaded();
@@ -76,9 +74,10 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
             }
         }
 
-        // lets avoid NullPointerException when converting to boolean for null values
+        // lets avoid NullPointerException when converting to boolean for null
+        // values
         if (boolean.class.isAssignableFrom(toType)) {
-            return (T) Boolean.FALSE;
+            return (T)Boolean.FALSE;
         }
 
         return null;
@@ -89,7 +88,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         synchronized (typeMappings) {
             TypeConverter converter = typeMappings.get(key);
             if (converter != null) {
-                log.warn("Overriding type converter from: " + converter + " to: " + typeConverter);
+                LOG.warn("Overriding type converter from: " + converter + " to: " + typeConverter);
             }
             typeMappings.put(key, typeConverter);
         }
@@ -98,7 +97,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     public void addFallbackConverter(TypeConverter converter) {
         fallbackConverters.add(converter);
         if (converter instanceof TypeConverterAware) {
-            TypeConverterAware typeConverterAware = (TypeConverterAware) converter;
+            TypeConverterAware typeConverterAware = (TypeConverterAware)converter;
             typeConverterAware.setTypeConverter(this);
         }
     }
@@ -163,7 +162,8 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
             // lets test for arrays
             if (fromType.isArray() && !fromType.getComponentType().isPrimitive()) {
-                // TODO can we try walking the inheritence-tree for the element types?
+                // TODO can we try walking the inheritence-tree for the element
+                // types?
                 if (!fromType.equals(Object[].class)) {
                     fromSuperClass = Object[].class;
 
@@ -210,12 +210,10 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
                 // lets try load any other failback converters
                 try {
                     loadFallbackTypeConverters();
-                }
-                catch (NoFactoryAvailableException e) {
+                } catch (NoFactoryAvailableException e) {
                     // ignore its fine to have none
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeCamelException(e);
             }
         }
@@ -223,9 +221,10 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
     protected void loadFallbackTypeConverters() throws IOException, ClassNotFoundException {
         FactoryFinder finder = new FactoryFinder();
-        List<TypeConverter> converters = finder.newInstances("FallbackTypeConverter", getInjector(), TypeConverter.class);
+        List<TypeConverter> converters = finder.newInstances("FallbackTypeConverter", getInjector(),
+                                                             TypeConverter.class);
         for (TypeConverter converter : converters) {
-          addFallbackConverter(converter);
+            addFallbackConverter(converter);
         }
     }
 
@@ -252,8 +251,9 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         @Override
         public boolean equals(Object object) {
             if (object instanceof TypeMapping) {
-                TypeMapping that = (TypeMapping) object;
-                return ObjectHelper.equals(this.fromType, that.fromType) && ObjectHelper.equals(this.toType, that.toType);
+                TypeMapping that = (TypeMapping)object;
+                return ObjectHelper.equals(this.fromType, that.fromType)
+                       && ObjectHelper.equals(this.toType, that.toType);
             }
             return false;
         }

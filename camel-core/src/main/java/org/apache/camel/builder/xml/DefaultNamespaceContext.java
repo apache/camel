@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,18 +16,19 @@
  */
 package org.apache.camel.builder.xml;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.xpath.XPathFactory;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  * An implementation of {@link NamespaceContext} which uses a simple Map where
@@ -108,7 +108,8 @@ public class DefaultNamespaceContext implements NamespaceContext {
             setNamespacesFromDom((Element) parentNode);
         }
         NamedNodeMap attributes = element.getAttributes();
-        for (int i = 0, size = attributes.getLength(); i < size; i++) {
+        int size = attributes.getLength();
+        for (int i = 0; i < size; i++) {
             Attr node = (Attr) attributes.item(i);
             String name = node.getName();
             if (name.startsWith("xmlns:")) {

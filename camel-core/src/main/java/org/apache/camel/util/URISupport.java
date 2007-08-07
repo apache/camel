@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,12 +32,13 @@ import java.util.Map;
  */
 public class URISupport {
     public static class CompositeData {
+        public String host;
+
         String scheme;
         String path;
         URI components[];
         Map parameters;
         String fragment;
-        public String host;
 
         public URI[] getComponents() {
             return components;
@@ -73,8 +73,7 @@ public class URISupport {
 
             if (host != null && host.length() != 0) {
                 sb.append(host);
-            }
-            else {
+            } else {
                 sb.append('(');
                 for (int i = 0; i < components.length; i++) {
                     if (i != 0) {
@@ -112,16 +111,14 @@ public class URISupport {
                         String name = URLDecoder.decode(parameters[i].substring(0, p), "UTF-8");
                         String value = URLDecoder.decode(parameters[i].substring(p + 1), "UTF-8");
                         rc.put(name, value);
-                    }
-                    else {
+                    } else {
                         rc.put(parameters[i], null);
                     }
                 }
             }
             return rc;
-        }
-        catch (UnsupportedEncodingException e) {
-            throw (URISyntaxException) new URISyntaxException(e.toString(), "Invalid encoding").initCause(e);
+        } catch (UnsupportedEncodingException e) {
+            throw (URISyntaxException)new URISyntaxException(e.toString(), "Invalid encoding").initCause(e);
         }
     }
 
@@ -132,12 +129,10 @@ public class URISupport {
             int idx = schemeSpecificPart.lastIndexOf('?');
             if (idx < 0) {
                 return Collections.EMPTY_MAP;
-            }
-            else {
+            } else {
                 query = schemeSpecificPart.substring(idx + 1);
             }
-        }
-        else {
+        } else {
             query = stripPrefix(query, "?");
         }
         return parseQuery(query);
@@ -154,7 +149,8 @@ public class URISupport {
      * Creates a URI with the given query
      */
     public static URI createURIWithQuery(URI uri, String query) throws URISyntaxException {
-        return new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), uri.getPath(), query, uri.getFragment());
+        return new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), uri.getPath(),
+                       query, uri.getFragment());
     }
 
     public static CompositeData parseComposite(URI uri) throws URISyntaxException {
@@ -195,8 +191,7 @@ public class URISupport {
             p = ssp.lastIndexOf(")");
             componentString = ssp.substring(intialParen + 1, p);
             params = ssp.substring(p + 1).trim();
-        }
-        else {
+        } else {
             componentString = ssp;
             params = "";
         }
@@ -213,8 +208,7 @@ public class URISupport {
                 rc.path = stripPrefix(params.substring(0, p), "/");
             }
             rc.parameters = parseQuery(params.substring(p + 1));
-        }
-        else {
+        } else {
             if (params.length() > 0) {
                 rc.path = stripPrefix(params, "/");
             }
@@ -234,18 +228,20 @@ public class URISupport {
         char chars[] = str.toCharArray();
         for (int i = 0; i < chars.length; i++) {
             switch (chars[i]) {
-                case '(':
-                    depth++;
-                    break;
-                case ')':
-                    depth--;
-                    break;
-                case ',':
-                    if (depth == 0) {
-                        String s = str.substring(last, i);
-                        l.add(s);
-                        last = i + 1;
-                    }
+            case '(':
+                depth++;
+                break;
+            case ')':
+                depth--;
+                break;
+            case ',':
+                if (depth == 0) {
+                    String s = str.substring(last, i);
+                    l.add(s);
+                    last = i + 1;
+                }
+                break;
+            default:
             }
         }
 
@@ -278,31 +274,28 @@ public class URISupport {
                 for (Iterator iter = options.keySet().iterator(); iter.hasNext();) {
                     if (first) {
                         first = false;
-                    }
-                    else {
+                    } else {
                         rc.append("&");
                     }
 
-                    String key = (String) iter.next();
-                    String value = (String) options.get(key);
+                    String key = (String)iter.next();
+                    String value = (String)options.get(key);
                     rc.append(URLEncoder.encode(key, "UTF-8"));
                     rc.append("=");
                     rc.append(URLEncoder.encode(value, "UTF-8"));
                 }
                 return rc.toString();
-            }
-            else {
+            } else {
                 return "";
             }
-        }
-        catch (UnsupportedEncodingException e) {
-            throw (URISyntaxException) new URISyntaxException(e.toString(), "Invalid encoding").initCause(e);
+        } catch (UnsupportedEncodingException e) {
+            throw (URISyntaxException)new URISyntaxException(e.toString(), "Invalid encoding").initCause(e);
         }
     }
 
     /**
      * Creates a URI from the original URI and the remaining paramaters
-     *
+     * 
      * @throws URISyntaxException
      */
     public static URI createRemainingURI(URI originalURI, Map params) throws URISyntaxException {
@@ -313,8 +306,9 @@ public class URISupport {
         return createURIWithQuery(originalURI, s);
     }
 
-    static public URI changeScheme(URI bindAddr, String scheme) throws URISyntaxException {
-        return new URI(scheme, bindAddr.getUserInfo(), bindAddr.getHost(), bindAddr.getPort(), bindAddr.getPath(), bindAddr.getQuery(), bindAddr.getFragment());
+    public static URI changeScheme(URI bindAddr, String scheme) throws URISyntaxException {
+        return new URI(scheme, bindAddr.getUserInfo(), bindAddr.getHost(), bindAddr.getPort(), bindAddr
+            .getPath(), bindAddr.getQuery(), bindAddr.getFragment());
     }
 
     public static boolean checkParenthesis(String str) {

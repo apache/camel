@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +16,9 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ServiceHelper;
@@ -38,12 +37,11 @@ public class DefaultConsumer<E extends Exchange> extends ServiceSupport implemen
     }
 
     @Override
-	public String toString() {
-		return "Consumer on " + endpoint;
-	}
+    public String toString() {
+        return "Consumer on " + endpoint;
+    }
 
-
-	public Endpoint<E> getEndpoint() {
+    public Endpoint<E> getEndpoint() {
         return endpoint;
     }
 
@@ -72,7 +70,7 @@ public class DefaultConsumer<E extends Exchange> extends ServiceSupport implemen
 
     /**
      * Handles the given exception using the {@link #getExceptionHandler()}
-     *
+     * 
      * @param t the exception to handle
      */
     protected void handleException(Throwable t) {

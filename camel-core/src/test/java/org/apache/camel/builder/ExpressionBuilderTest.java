@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,17 +16,21 @@
  */
 package org.apache.camel.builder;
 
+import java.util.Arrays;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.TestSupport;
-import static org.apache.camel.builder.ExpressionBuilder.*;
-import static org.apache.camel.builder.PredicateBuilder.contains;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
-import java.util.Arrays;
+import static org.apache.camel.builder.ExpressionBuilder.constantExpression;
+import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
+import static org.apache.camel.builder.ExpressionBuilder.regexReplaceAll;
+import static org.apache.camel.builder.ExpressionBuilder.regexTokenize;
+import static org.apache.camel.builder.PredicateBuilder.contains;
 
 /**
  * @version $Revision$
@@ -37,17 +40,20 @@ public class ExpressionBuilderTest extends TestSupport {
 
     public void testRegexTokenize() throws Exception {
         Expression<Exchange> expression = regexTokenize(headerExpression("location"), ",");
-        assertExpression(expression, exchange, Arrays.asList(new String[]{"Islington", "London", "UK"}));
+        assertExpression(expression, exchange, Arrays.asList(new String[] {"Islington", "London", "UK"}));
 
-        Predicate<Exchange> predicate = contains(regexTokenize(headerExpression("location"), ","), constantExpression("London"));
+        Predicate<Exchange> predicate = contains(regexTokenize(headerExpression("location"), ","),
+                                                 constantExpression("London"));
         assertPredicate(predicate, exchange, true);
 
-        predicate = contains(regexTokenize(headerExpression("location"), ","), constantExpression("Manchester"));
+        predicate = contains(regexTokenize(headerExpression("location"), ","),
+                             constantExpression("Manchester"));
         assertPredicate(predicate, exchange, false);
     }
 
     public void testRegexReplaceAll() throws Exception {
-        Expression<Exchange> expression = regexReplaceAll(headerExpression("location"), "London", "Westminster");
+        Expression<Exchange> expression = regexReplaceAll(headerExpression("location"), "London",
+                                                          "Westminster");
         assertExpression(expression, exchange, "Islington,Westminster,UK");
 
         expression = regexReplaceAll(headerExpression("location"), "London", headerExpression("name"));

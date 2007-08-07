@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,15 +16,14 @@
  */
 package org.apache.camel.converter.jaxp;
 
-
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.lang.reflect.Constructor;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -47,43 +45,44 @@ import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.apache.camel.util.ObjectHelper;
+
 import org.apache.camel.Converter;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * A helper class to transform to and from various JAXB types such as {@link Source} and {@link Document}
- *
+ * A helper class to transform to and from various JAXB types such as
+ * {@link Source} and {@link Document}
+ * 
  * @version $Revision$
  */
 @Converter
 public class XmlConverter {
+    
     public static final String DEFAULT_CHARSET_PROPERTY = "org.apache.camel.default.charset";
-
-    public static String defaultCharset = ObjectHelper.getSystemProperty(DEFAULT_CHARSET_PROPERTY, "UTF-8");
-
-    private DocumentBuilderFactory documentBuilderFactory;
-    private TransformerFactory transformerFactory;
-
+    public static final String DEFAULT_CHARSET = ObjectHelper.getSystemProperty(DEFAULT_CHARSET_PROPERTY, "UTF-8");    
+    
     /*
-     * When converting a DOM tree to a SAXSource,
-     * we try to use Xalan internal DOM parser if
-     * available.  Else, transform the DOM tree
-     * to a String and build a SAXSource on top of
-     * it.
+     * When converting a DOM tree to a SAXSource, we try to use Xalan internal
+     * DOM parser if available. Else, transform the DOM tree to a String and
+     * build a SAXSource on top of it.
      */
-    private static final Class dom2SaxClass;
+    private static final Class DOM2SAX_CLASS;
 
     static {
         Class cl = null;
         try {
             cl = Class.forName("org.apache.xalan.xsltc.trax.DOM2SAX");
-        } catch (Throwable t) {}
-        dom2SaxClass = cl;
+        } catch (Throwable ignore) {
+        }
+        DOM2SAX_CLASS = cl;
     }
 
+    private DocumentBuilderFactory documentBuilderFactory;
+    private TransformerFactory transformerFactory;
 
     public XmlConverter() {
     }
@@ -91,7 +90,6 @@ public class XmlConverter {
     public XmlConverter(DocumentBuilderFactory documentBuilderFactory) {
         this.documentBuilderFactory = documentBuilderFactory;
     }
-
 
     /**
      * Converts the given input Source into the required result
@@ -104,7 +102,7 @@ public class XmlConverter {
         if (transformer == null) {
             throw new TransformerException("Could not create a transformer - JAXP is misconfigured!");
         }
-        transformer.setOutputProperty(OutputKeys.ENCODING, defaultCharset);
+        transformer.setOutputProperty(OutputKeys.ENCODING, DEFAULT_CHARSET);
         transformer.transform(source, result);
     }
 
@@ -115,7 +113,6 @@ public class XmlConverter {
     public BytesSource toSource(byte[] data) {
         return new BytesSource(data);
     }
-
 
     /**
      * Converts the given String to a Source
@@ -141,9 +138,9 @@ public class XmlConverter {
         if (source == null) {
             return null;
         } else if (source instanceof StringSource) {
-            return ((StringSource) source).getText();
+            return ((StringSource)source).getText();
         } else if (source instanceof BytesSource) {
-            return new String(((BytesSource) source).getData());
+            return new String(((BytesSource)source).getData());
         } else {
             StringWriter buffer = new StringWriter();
             toResult(source, new StreamResult(buffer));
@@ -160,56 +157,54 @@ public class XmlConverter {
     }
 
     /**
-     * Converts the source instance to a {@link DOMSource} or returns null if the conversion is not
-     * supported (making it easy to derive from this class to add new kinds of conversion).
+     * Converts the source instance to a {@link DOMSource} or returns null if
+     * the conversion is not supported (making it easy to derive from this class
+     * to add new kinds of conversion).
      */
     @Converter
-    public DOMSource toDOMSource(Source source) throws ParserConfigurationException, IOException, SAXException, TransformerException {
+    public DOMSource toDOMSource(Source source) throws ParserConfigurationException, IOException,
+        SAXException, TransformerException {
         if (source instanceof DOMSource) {
-            return (DOMSource) source;
-        }
-        else if (source instanceof SAXSource) {
-            return toDOMSourceFromSAX((SAXSource) source);
-        }
-        else if (source instanceof StreamSource) {
-            return toDOMSourceFromStream((StreamSource) source);
-        }
-        else {
+            return (DOMSource)source;
+        } else if (source instanceof SAXSource) {
+            return toDOMSourceFromSAX((SAXSource)source);
+        } else if (source instanceof StreamSource) {
+            return toDOMSourceFromStream((StreamSource)source);
+        } else {
             return null;
         }
     }
 
     /**
-     * Converts the source instance to a {@link DOMSource} or returns null if the conversion is not
-     * supported (making it easy to derive from this class to add new kinds of conversion).
+     * Converts the source instance to a {@link DOMSource} or returns null if
+     * the conversion is not supported (making it easy to derive from this class
+     * to add new kinds of conversion).
      */
     @Converter
-    public DOMSource toDOMSource(String text) throws ParserConfigurationException, IOException, SAXException, TransformerException {
+    public DOMSource toDOMSource(String text) throws ParserConfigurationException, IOException, SAXException,
+        TransformerException {
         Source source = toSource(text);
         if (source != null) {
-            return toDOMSourceFromStream((StreamSource) source);
-        }
-        else {
+            return toDOMSourceFromStream((StreamSource)source);
+        } else {
             return null;
         }
     }
 
     /**
-     * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
-     * supported (making it easy to derive from this class to add new kinds of conversion).
+     * Converts the source instance to a {@link SAXSource} or returns null if
+     * the conversion is not supported (making it easy to derive from this class
+     * to add new kinds of conversion).
      */
     @Converter
     public SAXSource toSAXSource(Source source) throws IOException, SAXException, TransformerException {
         if (source instanceof SAXSource) {
-            return (SAXSource) source;
-        }
-        else if (source instanceof DOMSource) {
-            return toSAXSourceFromDOM((DOMSource) source);
-        }
-        else if (source instanceof StreamSource) {
-            return toSAXSourceFromStream((StreamSource) source);
-        }
-        else {
+            return (SAXSource)source;
+        } else if (source instanceof DOMSource) {
+            return toSAXSourceFromDOM((DOMSource)source);
+        } else if (source instanceof StreamSource) {
+            return toSAXSourceFromStream((StreamSource)source);
+        } else {
             return null;
         }
     }
@@ -217,11 +212,11 @@ public class XmlConverter {
     @Converter
     public StreamSource toStreamSource(Source source) throws TransformerException {
         if (source instanceof StreamSource) {
-            return (StreamSource) source;
+            return (StreamSource)source;
         } else if (source instanceof DOMSource) {
-            return toStreamSourceFromDOM((DOMSource) source);
+            return toStreamSourceFromDOM((DOMSource)source);
         } else if (source instanceof SAXSource) {
-            return toStreamSourceFromSAX((SAXSource) source);
+            return toStreamSourceFromSAX((SAXSource)source);
         } else {
             return null;
         }
@@ -272,7 +267,8 @@ public class XmlConverter {
     }
 
     @Converter
-    public DOMSource toDOMSourceFromStream(StreamSource source) throws ParserConfigurationException, IOException, SAXException {
+    public DOMSource toDOMSourceFromStream(StreamSource source) throws ParserConfigurationException,
+        IOException, SAXException {
         DocumentBuilder builder = createDocumentBuilder();
         String systemId = source.getSystemId();
         Document document = null;
@@ -285,8 +281,7 @@ public class XmlConverter {
                 InputSource inputsource = new InputSource(inputStream);
                 inputsource.setSystemId(systemId);
                 document = builder.parse(inputsource);
-            }
-            else {
+            } else {
                 throw new IOException("No input stream or reader available");
             }
         }
@@ -295,10 +290,10 @@ public class XmlConverter {
 
     @Converter
     public SAXSource toSAXSourceFromDOM(DOMSource source) throws TransformerException {
-        if (dom2SaxClass != null) {
+        if (DOM2SAX_CLASS != null) {
             try {
-                Constructor cns = dom2SaxClass.getConstructor(new Class[] { Node.class });
-                XMLReader converter = (XMLReader) cns.newInstance(new Object[] { source.getNode() });
+                Constructor cns = DOM2SAX_CLASS.getConstructor(new Class[] {Node.class});
+                XMLReader converter = (XMLReader)cns.newInstance(new Object[] {source.getNode()});
                 return new SAXSource(converter, new InputSource());
             } catch (Exception e) {
                 throw new TransformerException(e);
@@ -311,12 +306,14 @@ public class XmlConverter {
     }
 
     @Converter
-    public DOMSource toDOMSourceFromSAX(SAXSource source) throws IOException, SAXException, ParserConfigurationException, TransformerException {
+    public DOMSource toDOMSourceFromSAX(SAXSource source) throws IOException, SAXException,
+        ParserConfigurationException, TransformerException {
         return new DOMSource(toDOMNodeFromSAX(source));
     }
 
     @Converter
-    public Node toDOMNodeFromSAX(SAXSource source) throws ParserConfigurationException, IOException, SAXException, TransformerException {
+    public Node toDOMNodeFromSAX(SAXSource source) throws ParserConfigurationException, IOException,
+        SAXException, TransformerException {
         DOMResult result = new DOMResult();
         toResult(source, result);
         return result.getNode();
@@ -324,19 +321,21 @@ public class XmlConverter {
 
     /**
      * Converts the given TRaX Source into a W3C DOM node
+     * 
      * @throws SAXException
      * @throws IOException
      * @throws ParserConfigurationException
      */
     @Converter
-    public Node toDOMNode(Source source) throws TransformerException, ParserConfigurationException, IOException, SAXException {
+    public Node toDOMNode(Source source) throws TransformerException, ParserConfigurationException,
+        IOException, SAXException {
         DOMSource domSrc = toDOMSource(source);
-        return domSrc != null ? domSrc.getNode() :  null;
+        return domSrc != null ? domSrc.getNode() : null;
     }
 
     /**
      * Create a DOM element from the given source.
-     *
+     * 
      * @param source
      * @return
      * @throws TransformerException
@@ -345,16 +344,16 @@ public class XmlConverter {
      * @throws SAXException
      */
     @Converter
-    public Element toDOMElement(Source source) throws TransformerException, ParserConfigurationException, IOException, SAXException {
+    public Element toDOMElement(Source source) throws TransformerException, ParserConfigurationException,
+        IOException, SAXException {
         Node node = toDOMNode(source);
         return toDOMElement(node);
     }
 
     /**
-     * Create a DOM element from the DOM node.
-     * Simply cast if the node is an Element, or
-     * return the root element if it is a Document.
-     *
+     * Create a DOM element from the DOM node. Simply cast if the node is an
+     * Element, or return the root element if it is a Document.
+     * 
      * @param node
      * @return
      * @throws TransformerException
@@ -363,11 +362,11 @@ public class XmlConverter {
     public Element toDOMElement(Node node) throws TransformerException {
         // If the node is an document, return the root element
         if (node instanceof Document) {
-            return ((Document) node).getDocumentElement();
-        // If the node is an element, just cast it
+            return ((Document)node).getDocumentElement();
+            // If the node is an element, just cast it
         } else if (node instanceof Element) {
-            return (Element) node;
-        // Other node types are not handled
+            return (Element)node;
+            // Other node types are not handled
         } else {
             throw new TransformerException("Unable to convert DOM node to an Element");
         }
@@ -375,7 +374,7 @@ public class XmlConverter {
 
     /**
      * Converts the given data to a DOM document
-     *
+     * 
      * @param data is the data to be parsed
      * @return the parsed document
      */
@@ -387,31 +386,33 @@ public class XmlConverter {
 
     /**
      * Converts the given {@link InputStream} to a DOM document
-     *
+     * 
      * @param in is the data to be parsed
      * @return the parsed document
      */
     @Converter
-    public Document toDOMDocument(InputStream in) throws IOException, SAXException, ParserConfigurationException {
+    public Document toDOMDocument(InputStream in) throws IOException, SAXException,
+        ParserConfigurationException {
         DocumentBuilder documentBuilder = getDocumentBuilderFactory().newDocumentBuilder();
         return documentBuilder.parse(in);
     }
 
     /**
      * Converts the given {@link InputSource} to a DOM document
-     *
+     * 
      * @param in is the data to be parsed
      * @return the parsed document
      */
     @Converter
-    public Document toDOMDocument(InputSource in) throws IOException, SAXException, ParserConfigurationException {
+    public Document toDOMDocument(InputSource in) throws IOException, SAXException,
+        ParserConfigurationException {
         DocumentBuilder documentBuilder = getDocumentBuilderFactory().newDocumentBuilder();
         return documentBuilder.parse(in);
     }
 
     /**
      * Converts the given {@link String} to a DOM document
-     *
+     * 
      * @param text is the data to be parsed
      * @return the parsed document
      */
@@ -422,7 +423,7 @@ public class XmlConverter {
 
     /**
      * Converts the given {@link File} to a DOM document
-     *
+     * 
      * @param file is the data to be parsed
      * @return the parsed document
      */
@@ -432,10 +433,9 @@ public class XmlConverter {
         return documentBuilder.parse(file);
     }
 
-
     /**
      * Create a DOM document from the given source.
-     *
+     * 
      * @param source
      * @return
      * @throws TransformerException
@@ -444,18 +444,17 @@ public class XmlConverter {
      * @throws SAXException
      */
     @Converter
-    public Document toDOMDocument(Source source) throws TransformerException, ParserConfigurationException, IOException, SAXException {
+    public Document toDOMDocument(Source source) throws TransformerException, ParserConfigurationException,
+        IOException, SAXException {
         Node node = toDOMNode(source);
         return toDOMDocument(node);
     }
 
     /**
-     * Create a DOM document from the given Node.
-     * If the node is an document, just cast it,
-     * if the node is an root element, retrieve its
-     * owner element or create a new document and import
-     * the node.
-     *
+     * Create a DOM document from the given Node. If the node is an document,
+     * just cast it, if the node is an root element, retrieve its owner element
+     * or create a new document and import the node.
+     * 
      * @param node
      * @return
      * @throws ParserConfigurationException
@@ -465,27 +464,27 @@ public class XmlConverter {
     public Document toDOMDocument(Node node) throws ParserConfigurationException, TransformerException {
         // If the node is the document, just cast it
         if (node instanceof Document) {
-            return (Document) node;
-        // If the node is an element
+            return (Document)node;
+            // If the node is an element
         } else if (node instanceof Element) {
-            Element elem = (Element) node;
+            Element elem = (Element)node;
             // If this is the root element, return its owner document
             if (elem.getOwnerDocument().getDocumentElement() == elem) {
                 return elem.getOwnerDocument();
-            // else, create a new doc and copy the element inside it
+                // else, create a new doc and copy the element inside it
             } else {
                 Document doc = createDocument();
                 doc.appendChild(doc.importNode(node, true));
                 return doc;
             }
-        // other element types are not handled
+            // other element types are not handled
         } else {
             throw new TransformerException("Unable to convert DOM node to a Document");
         }
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public DocumentBuilderFactory getDocumentBuilderFactory() {
         if (documentBuilderFactory == null) {
             documentBuilderFactory = createDocumentBuilderFactory();
@@ -497,9 +496,8 @@ public class XmlConverter {
         this.documentBuilderFactory = documentBuilderFactory;
     }
 
-
     // Helper methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public DocumentBuilderFactory createDocumentBuilderFactory() {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -507,7 +505,6 @@ public class XmlConverter {
         factory.setIgnoringComments(true);
         return factory;
     }
-
 
     public DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
         DocumentBuilderFactory factory = getDocumentBuilderFactory();

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,31 +16,38 @@
  */
 package org.apache.camel.component.bean;
 
+import java.lang.reflect.Proxy;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 
-import java.lang.reflect.Proxy;
-
 /**
  * A helper class for creating proxies which delegate to Camel
- *
+ * 
  * @version $Revision: 519973 $
  */
 public class ProxyHelper {
 
     /**
+     * Utility classes should not have a public constructor.
+     */
+    private ProxyHelper() {        
+    }
+
+    /**
      * Creates a Proxy which sends PojoExchange to the endpoint.
-     *
+     * 
      * @throws Exception
      */
-    public static Object createProxy(final Endpoint endpoint, ClassLoader cl, Class interfaces[]) throws Exception {
+    public static Object createProxy(final Endpoint endpoint, ClassLoader cl, Class interfaces[])
+        throws Exception {
         final Producer producer = endpoint.createProducer();
         return Proxy.newProxyInstance(cl, interfaces, new CamelInvocationHandler(endpoint, producer));
     }
 
     /**
      * Creates a Proxy which sends PojoExchange to the endpoint.
-     *
+     * 
      * @throws Exception
      */
     public static Object createProxy(Endpoint endpoint, Class interfaces[]) throws Exception {
@@ -52,23 +59,23 @@ public class ProxyHelper {
 
     /**
      * Creates a Proxy which sends PojoExchange to the endpoint.
-     *
+     * 
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<T> interfaceClass) throws Exception {
-        return (T) createProxy(endpoint, cl, new Class[]{interfaceClass});
+    public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<T> interfaceClass)
+        throws Exception {
+        return (T)createProxy(endpoint, cl, new Class[] {interfaceClass});
     }
 
     /**
      * Creates a Proxy which sends PojoExchange to the endpoint.
-     *
+     * 
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
     public static <T> T createProxy(Endpoint endpoint, Class<T> interfaceClass) throws Exception {
-        return (T) createProxy(endpoint, new Class[]{interfaceClass});
+        return (T)createProxy(endpoint, new Class[] {interfaceClass});
     }
-
 
 }

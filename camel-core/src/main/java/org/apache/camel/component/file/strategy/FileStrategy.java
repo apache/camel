@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,10 +16,10 @@
  */
 package org.apache.camel.component.file.strategy;
 
+import java.io.File;
+
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.FileExchange;
-
-import java.io.File;
 
 /**
  * Represents a strategy for marking that a file is processed.
@@ -39,5 +38,5 @@ public interface FileStrategy {
     /**
      * Releases any file locks and possibly deletes or moves the file
      */
-    public void commit(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception;
+    void commit(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception;
 }

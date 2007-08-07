@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,20 +21,20 @@ import org.apache.camel.Message;
 import org.apache.camel.util.UuidGenerator;
 
 /**
- * A base class for implementation inheritence providing the core {@link Message} body
- * handling features but letting the derived class deal with headers.
- *
- * Unless a specific provider wishes to do something particularly clever with headers you probably
- * want to just derive from {@link DefaultMessage}
- *
+ * A base class for implementation inheritence providing the core
+ * {@link Message} body handling features but letting the derived class deal
+ * with headers.
+ * 
+ * Unless a specific provider wishes to do something particularly clever with
+ * headers you probably want to just derive from {@link DefaultMessage}
+ * 
  * @version $Revision$
  */
 public abstract class MessageSupport implements Message {
-    private static final UuidGenerator defaultIdGenerator = new UuidGenerator();
+    private static final UuidGenerator DEFALT_ID_GENERATOR = new UuidGenerator();
     private Exchange exchange;
     private Object body;
-    private String messageId = defaultIdGenerator.generateId();
-    
+    private String messageId = DEFALT_ID_GENERATOR.generateId();
 
     public Object getBody() {
         if (body == null) {
@@ -44,28 +43,28 @@ public abstract class MessageSupport implements Message {
         return body;
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({"unchecked" })
     public <T> T getBody(Class<T> type) {
         Exchange e = getExchange();
         if (e != null) {
             return e.getContext().getTypeConverter().convertTo(type, getBody());
         }
-        return (T) getBody();
+        return (T)getBody();
     }
 
     public void setBody(Object body) {
         this.body = body;
     }
 
-    public <T> void setBody(Object body, Class<T> type) {
+    public <T> void setBody(Object value, Class<T> type) {
         Exchange e = getExchange();
         if (e != null) {
-            T value = e.getContext().getTypeConverter().convertTo(type, body);
-            if (value != null) {
-                body = value;
+            T v = e.getContext().getTypeConverter().convertTo(type, value);
+            if (v != null) {
+                value = v;
             }
         }
-        setBody(body);
+        setBody(value);
     }
 
     public Message copy() {
@@ -86,34 +85,33 @@ public abstract class MessageSupport implements Message {
 
     /**
      * Returns a new instance
-     *
+     * 
      * @return
      */
     public abstract Message newInstance();
 
-
     /**
-     * A factory method to allow a provider to lazily create the message body for inbound messages from other sources
-     *
-     * @return the value of the message body or null if there is no value available
+     * A factory method to allow a provider to lazily create the message body
+     * for inbound messages from other sources
+     * 
+     * @return the value of the message body or null if there is no value
+     *         available
      */
     protected Object createBody() {
         return null;
     }
 
-    
     /**
      * @return the messageId
      */
-    public String getMessageId(){
+    public String getMessageId() {
         return this.messageId;
     }
 
-    
     /**
      * @param messageId the messageId to set
      */
-    public void setMessageId(String messageId){
-        this.messageId=messageId;
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 }

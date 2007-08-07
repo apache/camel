@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +16,9 @@
  */
 package org.apache.camel.builder.xml;
 
-import org.apache.camel.RuntimeExpressionException;
-
 import javax.xml.xpath.XPathException;
+
+import org.apache.camel.RuntimeExpressionException;
 
 /**
  * An exception thrown if am XPath expression could not be parsed or evaluated

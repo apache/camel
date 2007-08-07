@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,16 +16,17 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Collection;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 
-import java.util.Collection;
-
 /**
- * Represents a composite pattern, aggregating a collection of processors together as a single processor
- *
+ * Represents a composite pattern, aggregating a collection of processors
+ * together as a single processor
+ * 
  * @version $Revision$
  */
 public class CompositeProcessor extends ServiceSupport implements Processor {
@@ -49,8 +49,7 @@ public class CompositeProcessor extends ServiceSupport implements Processor {
         for (Processor processor : processors) {
             if (first) {
                 first = false;
-            }
-            else {
+            } else {
                 builder.append(", ");
             }
             builder.append(processor.toString());

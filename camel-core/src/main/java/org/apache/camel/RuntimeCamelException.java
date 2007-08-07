@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,9 +20,9 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class RuntimeCamelException extends RuntimeException {
-	private static final long serialVersionUID = 8046489554418284257L;
+    private static final long serialVersionUID = 8046489554418284257L;
 
-	public RuntimeCamelException() {
+    public RuntimeCamelException() {
     }
 
     public RuntimeCamelException(String message) {

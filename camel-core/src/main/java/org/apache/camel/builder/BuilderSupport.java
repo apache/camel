@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,9 @@
  */
 package org.apache.camel.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
@@ -24,13 +27,10 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Base class for implementation inheritance for different clauses in the
- * <a href="http://activemq.apache.org/camel/dsl.html">Java DSL</a>
- *
+ * Base class for implementation inheritance for different clauses in the <a
+ * href="http://activemq.apache.org/camel/dsl.html">Java DSL</a>
+ * 
  * @version $Revision: $
  */
 public abstract class BuilderSupport {
@@ -51,7 +51,7 @@ public abstract class BuilderSupport {
     }
 
     // Builder methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * Returns a value builder for the given header
@@ -68,21 +68,24 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns a predicate and value builder for the inbound message body as a specific type
+     * Returns a predicate and value builder for the inbound message body as a
+     * specific type
      */
     public <T> ValueBuilder bodyAs(Class<T> type) {
         return Builder.bodyAs(type);
     }
 
     /**
-     * Returns a predicate and value builder for the outbound body on an exchange
+     * Returns a predicate and value builder for the outbound body on an
+     * exchange
      */
     public ValueBuilder outBody() {
         return Builder.outBody();
     }
 
     /**
-     * Returns a predicate and value builder for the outbound message body as a specific type
+     * Returns a predicate and value builder for the outbound message body as a
+     * specific type
      */
     public <T> ValueBuilder outBody(Class<T> type) {
         return Builder.outBody(type);
@@ -104,7 +107,7 @@ public abstract class BuilderSupport {
 
     /**
      * Resolves the given URI to an endpoint
-     *
+     * 
      * @throws NoSuchEndpointException if the endpoint URI could not be resolved
      */
     public Endpoint endpoint(String uri) throws NoSuchEndpointException {
@@ -120,7 +123,7 @@ public abstract class BuilderSupport {
 
     /**
      * Resolves the list of URIs into a list of {@link Endpoint} instances
-     *
+     * 
      * @throws NoSuchEndpointException if an endpoint URI could not be resolved
      */
     public List<Endpoint> endpoints(String... uris) throws NoSuchEndpointException {
@@ -190,7 +193,7 @@ public abstract class BuilderSupport {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public CamelContext getContext() {
         return context;
     }
@@ -209,8 +212,7 @@ public abstract class BuilderSupport {
     protected ErrorHandlerBuilder createErrorHandlerBuilder() {
         if (isInheritErrorHandler()) {
             return new DeadLetterChannelBuilder();
-        }
-        else {
+        } else {
             return new NoErrorHandlerBuilder();
         }
     }

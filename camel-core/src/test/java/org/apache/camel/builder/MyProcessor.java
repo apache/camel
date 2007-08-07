@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,10 +22,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class MyProcessor implements Processor {
-    private static final transient Log log = LogFactory.getLog(MyProcessor.class);
+    private static final transient Log LOG = LogFactory.getLog(MyProcessor.class);
     
     public void process(Exchange exchange) {
-        log.debug("Called with exchange: " + exchange);
+        LOG.debug("Called with exchange: " + exchange);
     }
 
     @Override

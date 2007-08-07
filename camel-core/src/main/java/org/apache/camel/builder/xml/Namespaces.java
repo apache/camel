@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,9 +29,16 @@ public class Namespaces {
     public static final String SYSTEM_PROPERTIES_NAMESPACE = "http://camel.apache.org/xml/variables/system-properties";
     public static final String ENVIRONMENT_VARIABLES = "http://camel.apache.org/xml/variables/environment-variables";
     public static final String EXCHANGE_PROPERTY = "http://camel.apache.org/xml/variables/exchange-property";
+    
+    /**
+     * Utility classes should not have a public constructor.
+     */
+    private Namespaces() {        
+    }
 
     /**
-     * Returns true if the given namespaceURI is empty or if it matches the given expected namespace
+     * Returns true if the given namespaceURI is empty or if it matches the
+     * given expected namespace
      */
     public static boolean isMatchingNamespaceOrEmptyNamespace(String namespaceURI, String expectedNamespace) {
         return ObjectHelper.isNullOrBlank(namespaceURI) || namespaceURI.equals(expectedNamespace);

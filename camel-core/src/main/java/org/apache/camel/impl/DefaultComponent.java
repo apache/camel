@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,26 +16,26 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.URISupport;
-import org.apache.camel.util.ObjectHelper;
-
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
+
 /**
  * @version $Revision$
  */
 public abstract class DefaultComponent<E extends Exchange> extends ServiceSupport implements Component<E> {
 
-	private int defaultThreadPoolSize = 5;
+    private int defaultThreadPoolSize = 5;
     private CamelContext camelContext;
     private ScheduledExecutorService executorService;
 
@@ -48,10 +47,10 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
     }
 
     public Endpoint<E> createEndpoint(String uri) throws Exception {
-        ObjectHelper.notNull(getCamelContext(), "camelContext");        
+        ObjectHelper.notNull(getCamelContext(), "camelContext");
         URI u = new URI(uri);
         String path = u.getSchemeSpecificPart();
-        
+
         // lets trim off any query arguments
         if (path.startsWith("//")) {
             path = path.substring(2);
@@ -68,7 +67,7 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
         }
         if (parameters != null) {
             if (endpoint instanceof ScheduledPollEndpoint) {
-                ScheduledPollEndpoint scheduledPollEndpoint = (ScheduledPollEndpoint) endpoint;
+                ScheduledPollEndpoint scheduledPollEndpoint = (ScheduledPollEndpoint)endpoint;
                 scheduledPollEndpoint.configureProperties(parameters);
             }
             IntrospectionSupport.setProperties(endpoint, parameters);
@@ -119,15 +118,17 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
         }
     }
 
-
     /**
-     * A factory method allowing derived components to create a new endpoint from the given URI,
-     * remaining path and optional parameters
-     *
-     * @param uri        the full URI of the endpoint
-     * @param remaining  the remaining part of the URI without the query parameters or component prefix
+     * A factory method allowing derived components to create a new endpoint
+     * from the given URI, remaining path and optional parameters
+     * 
+     * @param uri the full URI of the endpoint
+     * @param remaining the remaining part of the URI without the query
+     *                parameters or component prefix
      * @param parameters the optional parameters passed in
-     * @return a newly created endpoint or null if the endpoint cannot be created based on the inputs
+     * @return a newly created endpoint or null if the endpoint cannot be
+     *         created based on the inputs
      */
-    abstract protected Endpoint<E> createEndpoint(String uri, String remaining, Map parameters) throws Exception;
+    protected abstract Endpoint<E> createEndpoint(String uri, String remaining, Map parameters)
+        throws Exception;
 }

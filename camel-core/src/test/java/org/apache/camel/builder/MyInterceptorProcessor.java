@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,11 +22,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class MyInterceptorProcessor extends DelegateProcessor {
-    private static final transient Log log = LogFactory.getLog(MyInterceptorProcessor.class);
+    private static final transient Log LOG = LogFactory.getLog(MyInterceptorProcessor.class);
 
     public void process(Exchange exchange) throws Exception {
-		log.debug("START of onExchange: "+exchange);
-		super.process(exchange);
-		log.debug("END of onExchange: "+exchange);
-	}
+        LOG.debug("START of onExchange: " + exchange);
+        super.process(exchange);
+        LOG.debug("END of onExchange: " + exchange);
+    }
 }

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,16 +16,10 @@
  */
 package org.apache.camel.component.seda;
 
-import org.apache.camel.Endpoint;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.component.seda.SedaEndpoint;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * An implementation of the <a href="http://activemq.apache.org/camel/queue.html">Queue components</a>
@@ -35,9 +29,9 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @version $Revision: 519973 $
  */
 public class QueueComponent<E extends Exchange> extends SedaComponent<E> {
-    private static final transient Log log = LogFactory.getLog(QueueComponent.class);
+    private static final transient Log LOG = LogFactory.getLog(QueueComponent.class);
 
     public QueueComponent() {
-        log.warn("This component has been deprecated; please use the seda: URI format instead of queue:");
+        LOG.warn("This component has been deprecated; please use the seda: URI format instead of queue:");
     }
 }

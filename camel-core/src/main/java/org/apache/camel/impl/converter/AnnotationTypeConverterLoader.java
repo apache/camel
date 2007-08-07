@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,33 +16,37 @@
  */
 package org.apache.camel.impl.converter;
 
-import org.apache.camel.Converter;
-import org.apache.camel.impl.CachingInjector;
-import org.apache.camel.util.ResolverUtil;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
-import static java.lang.reflect.Modifier.*;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import static java.lang.reflect.Modifier.isAbstract;
+import static java.lang.reflect.Modifier.isPublic;
+import static java.lang.reflect.Modifier.isStatic;
+
+import org.apache.camel.Converter;
+import org.apache.camel.impl.CachingInjector;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResolverUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+
 /**
  * A class which will auto-discover converter objects and methods to pre-load
  * the registry of converters on startup
- *
+ * 
  * @version $Revision$
  */
 public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverter";
-    private static final transient Log log = LogFactory.getLog(AnnotationTypeConverterLoader.class);
+    private static final transient Log LOG = LogFactory.getLog(AnnotationTypeConverterLoader.class);
     private ResolverUtil resolver = new ResolverUtil();
     private Set<Class> visitedClasses = new HashSet<Class>();
 
@@ -52,17 +55,19 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         resolver.findAnnotated(Converter.class, packageNames);
         Set<Class> classes = resolver.getClasses();
         for (Class type : classes) {
-            if (log.isDebugEnabled()) {
-                log.debug("Loading converter class: " + ObjectHelper.name(type));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Loading converter class: " + ObjectHelper.name(type));
             }
             loadConverterMethods(registry, type);
         }
     }
 
     /**
-     * Finds the names of the packages to search for on the classpath looking for text files on the classpath
-     * at the  @{link #META_INF_SERVICES} location
-     *
+     * Finds the names of the packages to search for on the classpath looking
+     * for text files on the classpath at the
+     * 
+     * @{link #META_INF_SERVICES} location
+     * 
      * @return a collection of packages to search for
      * @throws IOException
      */
@@ -91,13 +96,11 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                         }
                         tokenize(packages, line);
                     }
-                }
-                finally {
+                } finally {
                     try {
                         reader.close();
-                    }
-                    catch (IOException e) {
-                        log.warn("Caught exception closing stream: " + e, e);
+                    } catch (IOException e) {
+                        LOG.warn("Caught exception closing stream: " + e, e);
                     }
                 }
             }
@@ -105,7 +108,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     }
 
     /**
-     * Tokenizes the line from the META-IN/services file using commas and ignoring whitespace between packages
+     * Tokenizes the line from the META-IN/services file using commas and
+     * ignoring whitespace between packages
      */
     protected void tokenize(Set<String> packages, String line) {
         StringTokenizer iter = new StringTokenizer(line, ",");
@@ -133,31 +137,29 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             if (annotation != null) {
                 Class<?>[] parameterTypes = method.getParameterTypes();
                 if (parameterTypes == null || parameterTypes.length != 1) {
-                    log.warn("Ignoring bad converter on type: " + type.getName()
-                            + " method: " + method + " as a converter method should have one parameter");
-                }
-                else {
+                    LOG.warn("Ignoring bad converter on type: " + type.getName() + " method: " + method
+                             + " as a converter method should have one parameter");
+                } else {
                     int modifiers = method.getModifiers();
                     if (isAbstract(modifiers) || !isPublic(modifiers)) {
-                        log.warn("Ignoring bad converter on type: " + type.getName()
-                                + " method: " + method + " as a converter method is not a public and concrete method");
-                    }
-                    else {
+                        LOG.warn("Ignoring bad converter on type: " + type.getName() + " method: " + method
+                                 + " as a converter method is not a public and concrete method");
+                    } else {
                         Class toType = method.getReturnType();
                         if (toType.equals(Void.class)) {
-                            log.warn("Ignoring bad converter on type: " + type.getName()
-                                    + " method: " + method + " as a converter method returns a void method");
-                        }
-                        else {
+                            LOG.warn("Ignoring bad converter on type: " + type.getName() + " method: "
+                                     + method + " as a converter method returns a void method");
+                        } else {
                             Class fromType = parameterTypes[0];
                             if (isStatic(modifiers)) {
-                                registry.addTypeConverter(toType, fromType, new StaticMethodTypeConverter(method));
-                            }
-                            else {
+                                registry.addTypeConverter(toType, fromType,
+                                                          new StaticMethodTypeConverter(method));
+                            } else {
                                 if (injector == null) {
                                     injector = new CachingInjector(registry, type);
                                 }
-                                registry.addTypeConverter(toType, fromType, new InstanceMethodTypeConverter(injector, method));
+                                registry.addTypeConverter(toType, fromType,
+                                                          new InstanceMethodTypeConverter(injector, method));
                             }
                         }
                     }

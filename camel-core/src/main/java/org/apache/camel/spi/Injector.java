@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,14 +18,16 @@ package org.apache.camel.spi;
 
 /**
  * A pluggable strategy for creating and possibly dependency injecting objects
- * which could be implemented using straight forward reflection or using Spring or Guice to perform dependency injection.
- *
+ * which could be implemented using straight forward reflection or using Spring
+ * or Guice to perform dependency injection.
+ * 
  * @version $Revision$
  */
 public interface Injector {
     /**
-     * Instantiates a new instance of the given type possibly injecting values into the object in the process
-     *
+     * Instantiates a new instance of the given type possibly injecting values
+     * into the object in the process
+     * 
      * @param type the type of object to create
      * @return a newly created instance
      */

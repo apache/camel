@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,10 +16,11 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.model.language.ExpressionType;
+import java.util.List;
 
 import javax.xml.bind.JAXBException;
-import java.util.List;
+
+import org.apache.camel.model.language.ExpressionType;
 
 /**
  * @version $Revision: 1.1 $
@@ -110,7 +110,7 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     protected RouteType assertOneRoute(String uri) throws JAXBException {
         RouteContainer context = assertParseAsJaxb(uri);
@@ -183,7 +183,8 @@ public class XmlParseTest extends XmlTestSupport {
         List<InterceptorRef> interceptors = route.getInterceptors();
         for (String name : names) {
             int nextIdx = idx + 1;
-            assertTrue("Not enough interceptors! Expected: " + nextIdx + " but have: " + interceptors, nextIdx <= interceptors.size());
+            assertTrue("Not enough interceptors! Expected: " + nextIdx + " but have: " + interceptors,
+                       nextIdx <= interceptors.size());
 
             InterceptorRef interceptor = interceptors.get(idx++);
             assertEquals("Interceptor: " + idx, name, interceptor.getRef());

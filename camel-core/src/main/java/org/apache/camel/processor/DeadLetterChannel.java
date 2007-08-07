@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,35 +25,37 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Implements a
- * <a href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter Channel</a>
- * after attempting to redeliver the message using the {@link RedeliveryPolicy}
- *
+ * Implements a <a
+ * href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter
+ * Channel</a> after attempting to redeliver the message using the
+ * {@link RedeliveryPolicy}
+ * 
  * @version $Revision$
  */
 public class DeadLetterChannel extends ServiceSupport implements ErrorHandler {
     public static final String REDELIVERY_COUNTER = "org.apache.camel.RedeliveryCounter";
     public static final String REDELIVERED = "org.apache.camel.Redelivered";
 
-    private static final transient Log log = LogFactory.getLog(DeadLetterChannel.class);
+    private static final transient Log LOG = LogFactory.getLog(DeadLetterChannel.class);
     private Processor output;
     private Processor deadLetter;
     private RedeliveryPolicy redeliveryPolicy;
     private Logger logger;
 
-    public static <E extends Exchange> Logger createDefaultLogger() {
-        return new Logger(log, LoggingLevel.ERROR);
-    }
-
     public DeadLetterChannel(Processor output, Processor deadLetter) {
         this(output, deadLetter, new RedeliveryPolicy(), DeadLetterChannel.createDefaultLogger());
     }
 
-    public DeadLetterChannel(Processor output, Processor deadLetter, RedeliveryPolicy redeliveryPolicy, Logger logger) {
+    public DeadLetterChannel(Processor output, Processor deadLetter, RedeliveryPolicy redeliveryPolicy,
+                             Logger logger) {
         this.deadLetter = deadLetter;
         this.output = output;
         this.redeliveryPolicy = redeliveryPolicy;
         this.logger = logger;
+    }
+    
+    public static <E extends Exchange> Logger createDefaultLogger() {
+        return new Logger(LOG, LoggingLevel.ERROR);
     }
 
     @Override
@@ -76,20 +77,18 @@ public class DeadLetterChannel extends ServiceSupport implements ErrorHandler {
             try {
                 output.process(exchange);
                 return;
-            }
-            catch (RuntimeException e) {
+            } catch (RuntimeException e) {
                 logger.log("On delivery attempt: " + redeliveryCounter + " caught: " + e, e);
             }
             redeliveryCounter = incrementRedeliveryCounter(exchange);
-        }
-        while (redeliveryPolicy.shouldRedeliver(redeliveryCounter));
+        } while (redeliveryPolicy.shouldRedeliver(redeliveryCounter));
 
         // now lets send to the dead letter queue
         deadLetter.process(exchange);
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * Returns the output processor
@@ -99,7 +98,8 @@ public class DeadLetterChannel extends ServiceSupport implements ErrorHandler {
     }
 
     /**
-     * Returns the dead letter that message exchanges will be sent to if the redelivery attempts fail
+     * Returns the dead letter that message exchanges will be sent to if the
+     * redelivery attempts fail
      */
     public Processor getDeadLetter() {
         return deadLetter;
@@ -121,17 +121,19 @@ public class DeadLetterChannel extends ServiceSupport implements ErrorHandler {
     }
 
     /**
-     * Sets the logger strategy; which {@link Log} to use and which {@link LoggingLevel} to use
+     * Sets the logger strategy; which {@link Log} to use and which
+     * {@link LoggingLevel} to use
      */
     public void setLogger(Logger logger) {
         this.logger = logger;
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
-     * Increments the redelivery counter and adds the redelivered flag if the message has been redelivered
+     * Increments the redelivery counter and adds the redelivered flag if the
+     * message has been redelivered
      */
     protected int incrementRedeliveryCounter(Exchange exchange) {
         Message in = exchange.getIn();
@@ -147,15 +149,14 @@ public class DeadLetterChannel extends ServiceSupport implements ErrorHandler {
 
     protected void sleep(long redeliveryDelay) {
         if (redeliveryDelay > 0) {
-            if (log.isDebugEnabled()) {
-                log.debug("Sleeping for: " + redeliveryDelay + " until attempting redelivery");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sleeping for: " + redeliveryDelay + " until attempting redelivery");
             }
             try {
                 Thread.sleep(redeliveryDelay);
-            }
-            catch (InterruptedException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Thread interupted: " + e, e);
+            } catch (InterruptedException e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Thread interupted: " + e, e);
                 }
             }
         }

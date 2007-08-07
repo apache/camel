@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,23 +23,23 @@ import org.apache.camel.impl.DefaultConsumer;
 
 /**
  * Generate an Exchange after getting a JMX Notification
+ * 
  * @version $Revision: 523016 $
  */
-public class JMXConsumer extends DefaultConsumer implements
-        NotificationListener {
+public class JMXConsumer extends DefaultConsumer implements NotificationListener {
 
-	JMXEndpoint jmxEndpoint;
+    JMXEndpoint jmxEndpoint;
 
-	public JMXConsumer(JMXEndpoint endpoint,Processor processor){
-		super(endpoint,processor);
-		this.jmxEndpoint=endpoint;
-	}
+    public JMXConsumer(JMXEndpoint endpoint, Processor processor) {
+        super(endpoint, processor);
+        this.jmxEndpoint = endpoint;
+    }
 
-	public void handleNotification(Notification notification,Object handback){
-		try{
-			getProcessor().process(jmxEndpoint.createExchange(notification));
-		}catch(Throwable e){
-			handleException(e);
-		}
-	}
+    public void handleNotification(Notification notification, Object handback) {
+        try {
+            getProcessor().process(jmxEndpoint.createExchange(notification));
+        } catch (Throwable e) {
+            handleException(e);
+        }
+    }
 }

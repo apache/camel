@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,17 +16,15 @@
  */
 package org.apache.camel.builder;
 
-import static org.apache.camel.processor.idempotent.MemoryMessageIdRepository.memoryMessageIdRepository;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
-import org.apache.camel.Producer;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.DeadLetterChannel;
@@ -38,6 +36,8 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MemoryMessageIdRepository;
+
+import static org.apache.camel.processor.idempotent.MemoryMessageIdRepository.memoryMessageIdRepository;
 
 /**
  * @version $Revision$
@@ -95,7 +95,9 @@ public class RouteBuilderTest extends TestSupport {
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapErrorHandler(filterProcessor.getProcessor()));
+            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class,
+                                                             unwrapErrorHandler(filterProcessor
+                                                                 .getProcessor()));
             assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
         }
     }
@@ -104,10 +106,8 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e3
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("seda:a").choice()
-                        .when(header("foo").isEqualTo("bar")).to("seda:b")
-                        .when(header("foo").isEqualTo("cheese")).to("seda:c")
-                        .otherwise().to("seda:d");
+                from("seda:a").choice().when(header("foo").isEqualTo("bar")).to("seda:b")
+                    .when(header("foo").isEqualTo("cheese")).to("seda:c").otherwise().to("seda:d");
             }
         };
         // END SNIPPET: e3
@@ -192,7 +192,8 @@ public class RouteBuilderTest extends TestSupport {
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
-            assertEquals("Should be called with my processor", myProcessor, unwrapErrorHandler(filterProcessor.getProcessor()));
+            assertEquals("Should be called with my processor", myProcessor,
+                         unwrapErrorHandler(filterProcessor.getProcessor()));
         }
     }
 
@@ -231,23 +232,17 @@ public class RouteBuilderTest extends TestSupport {
         interceptor1 = new DelegateProcessor() {
         };
 
-        // START SNIPPET: e7        
+        // START SNIPPET: e7
         interceptor2 = new MyInterceptorProcessor();
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("seda:a")
-                        .intercept(interceptor1)
-                        .intercept(interceptor2)
-                        .to("seda:d");
-/*
-
-    TODO keep old DSL?
-                        .intercept()
-                        .add(interceptor1)
-                        .add(interceptor2)
-                        .target().to("seda:d");
-*/
+                from("seda:a").intercept(interceptor1).intercept(interceptor2).to("seda:d");
+                /*
+                 * 
+                 * TODO keep old DSL? .intercept() .add(interceptor1)
+                 * .add(interceptor2) .target().to("seda:d");
+                 */
             }
         };
         // END SNIPPET: e7
@@ -295,12 +290,15 @@ public class RouteBuilderTest extends TestSupport {
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             log.debug("processor: " + processor);
-            /* TODO
-            FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
-
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, filterProcessor.getProcessor());
-            assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
-            */
+            /*
+             * TODO FilterProcessor filterProcessor =
+             * assertIsInstanceOf(FilterProcessor.class, processor);
+             * 
+             * SendProcessor sendProcessor =
+             * assertIsInstanceOf(SendProcessor.class,
+             * filterProcessor.getProcessor()); assertEquals("Endpoint URI",
+             * "seda:b", sendProcessor.getDestination().getEndpointUri());
+             */
         }
     }
 
@@ -373,9 +371,8 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: idempotent
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("seda:a").idempotentConsumer(
-                        header("myMessageId"), memoryMessageIdRepository(200)
-                ).to("seda:b");
+                from("seda:a").idempotentConsumer(header("myMessageId"), memoryMessageIdRepository(200))
+                    .to("seda:b");
             }
         };
         // END SNIPPET: idempotent
@@ -396,39 +393,42 @@ public class RouteBuilderTest extends TestSupport {
 
             IdempotentConsumer idempotentConsumer = assertIsInstanceOf(IdempotentConsumer.class, processor);
 
-            assertEquals("messageIdExpression", "header(myMessageId)", idempotentConsumer.getMessageIdExpression().toString());
+            assertEquals("messageIdExpression", "header(myMessageId)", idempotentConsumer
+                .getMessageIdExpression().toString());
 
             assertIsInstanceOf(MemoryMessageIdRepository.class, idempotentConsumer.getMessageIdRepository());
 
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapErrorHandler(idempotentConsumer.getNextProcessor()));
+            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class,
+                                                             unwrapErrorHandler(idempotentConsumer
+                                                                 .getNextProcessor()));
             assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
         }
     }
 
     protected void assertSendTo(Processor processor, String uri) {
-    	if (!(processor instanceof SendProcessor)) {
-    		processor = unwrapErrorHandler(processor);
-    	}
+        if (!(processor instanceof SendProcessor)) {
+            processor = unwrapErrorHandler(processor);
+        }
 
         SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, processor);
         assertEquals("Endpoint URI", uri, sendProcessor.getDestination().getEndpointUri());
     }
 
     protected void assertSendToProcessor(Processor processor, String uri) {
-    	if (!(processor instanceof Producer)) {
-    		processor = unwrapErrorHandler(processor);
-    	}
-    	if (processor instanceof SendProcessor) {
-    		assertSendTo(processor, uri);
-    	}
-    	else {
-	        Producer producer = assertIsInstanceOf(Producer.class, processor);
-	        assertEquals("Endpoint URI", uri, producer.getEndpoint().getEndpointUri());
-    	}
+        if (!(processor instanceof Producer)) {
+            processor = unwrapErrorHandler(processor);
+        }
+        if (processor instanceof SendProcessor) {
+            assertSendTo(processor, uri);
+        } else {
+            Producer producer = assertIsInstanceOf(Producer.class, processor);
+            assertEquals("Endpoint URI", uri, producer.getEndpoint().getEndpointUri());
+        }
     }
 
     /**
-     * By default routes should be wrapped in the {@link DeadLetterChannel} so lets unwrap that and return the actual processor
+     * By default routes should be wrapped in the {@link DeadLetterChannel} so
+     * lets unwrap that and return the actual processor
      */
     protected Processor getProcessorWithoutErrorHandler(Route route) {
         EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
@@ -437,14 +437,11 @@ public class RouteBuilderTest extends TestSupport {
     }
 
     protected Processor unwrapErrorHandler(Processor processor) {
-    	if (processor instanceof DeadLetterChannel) {
-    		DeadLetterChannel deadLetter = (DeadLetterChannel) processor;
-    		return deadLetter.getOutput();
-    	}
-    	else {
-    		return processor;
-    	}
+        if (processor instanceof DeadLetterChannel) {
+            DeadLetterChannel deadLetter = (DeadLetterChannel)processor;
+            return deadLetter.getOutput();
+        } else {
+            return processor;
+        }
     }
 }
-
-    

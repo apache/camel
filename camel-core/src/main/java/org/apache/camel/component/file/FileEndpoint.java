@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
+import java.io.File;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -28,23 +29,22 @@ import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.File;
-
 /**
- * A <a href="http://activemq.apache.org/camel/file.html">File Endpoint</a> for working with file systems
- *
+ * A <a href="http://activemq.apache.org/camel/file.html">File Endpoint</a> for
+ * working with file systems
+ * 
  * @version $Revision: 523016 $
  */
 public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
-    private static final transient Log log = LogFactory.getLog(FileEndpoint.class);
+    private static final transient Log LOG = LogFactory.getLog(FileEndpoint.class);
     private File file;
     private FileStrategy fileStrategy;
     private boolean autoCreate = true;
     private boolean lock = true;
-    private boolean delete = false;
-    private boolean noop = false;
-    private String moveNamePrefix = null;
-    private String moveNamePostfix = null;
+    private boolean delete;
+    private boolean noop;
+    private String moveNamePrefix;
+    private String moveNamePostfix;
     private String[] excludedNamePrefixes = {"."};
 
     protected FileEndpoint(File file, String endpointUri, FileComponent component) {
@@ -119,15 +119,15 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     public FileStrategy getFileStrategy() {
         if (fileStrategy == null) {
             fileStrategy = createFileStrategy();
-            log.debug("" + this + " using strategy: " + fileStrategy);
+            LOG.debug("" + this + " using strategy: " + fileStrategy);
         }
         return fileStrategy;
     }
 
     /**
-     * Sets the strategy to be used when the file has been processed
-     * such as deleting or renaming it etc.
-     *
+     * Sets the strategy to be used when the file has been processed such as
+     * deleting or renaming it etc.
+     * 
      * @param fileStrategy the new stategy to use
      */
     public void setFileStrategy(FileStrategy fileStrategy) {
@@ -155,9 +155,9 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     }
 
     /**
-     * Sets the name postfix appended to moved files. For example
-     * to rename all the files from * to *.done set this value to ".done"
-     *
+     * Sets the name postfix appended to moved files. For example to rename all
+     * the files from * to *.done set this value to ".done"
+     * 
      * @param moveNamePostfix
      * @see RenameFileStrategy#setNamePostfix(String)
      */
@@ -170,10 +170,10 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     }
 
     /**
-     * Sets the name prefix appended to moved files. For example
-     * to move processed files into a hidden directory called ".camel"
-     * set this value to ".camel/"
-     *
+     * Sets the name prefix appended to moved files. For example to move
+     * processed files into a hidden directory called ".camel" set this value to
+     * ".camel/"
+     * 
      * @see RenameFileStrategy#setNamePrefix(String)
      */
     public void setMoveNamePrefix(String moveNamePrefix) {
@@ -185,8 +185,8 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     }
 
     /**
-     * Sets the excluded file name prefixes, such as "." for hidden files
-     * which are excluded by default
+     * Sets the excluded file name prefixes, such as "." for hidden files which
+     * are excluded by default
      */
     public void setExcludedNamePrefixes(String[] excludedNamePrefixes) {
         this.excludedNamePrefixes = excludedNamePrefixes;
@@ -197,9 +197,9 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     }
 
     /**
-     * If set to true then the default {@link FileStrategy} will be to use
-     * the {@link NoOpFileStrategy} to not move or copy processed files
-     *
+     * If set to true then the default {@link FileStrategy} will be to use the
+     * {@link NoOpFileStrategy} to not move or copy processed files
+     * 
      * @param noop
      */
     public void setNoop(boolean noop) {
@@ -212,17 +212,15 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     protected FileStrategy createFileStrategy() {
         if (isNoop()) {
             return new NoOpFileStrategy();
-        }
-        else if (moveNamePostfix != null || moveNamePrefix != null) {
+        } else if (moveNamePostfix != null || moveNamePrefix != null) {
             if (isDelete()) {
-                throw new IllegalArgumentException("You cannot set the deleteFiles property and a moveFilenamePostfix or moveFilenamePrefix");
+                throw new IllegalArgumentException(
+                                                   "You cannot set the deleteFiles property and a moveFilenamePostfix or moveFilenamePrefix");
             }
             return new RenameFileStrategy(isLock(), moveNamePrefix, moveNamePostfix);
-        }
-        else if (isDelete()) {
+        } else if (isDelete()) {
             return new DeleteFileStrategy(isLock());
-        }
-        else {
+        } else {
             return new RenameFileStrategy(isLock());
         }
     }

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,21 +16,23 @@
  */
 package org.apache.camel;
 
-
 /**
- * An <a href="http://activemq.apache.org/camel/endpoint.html">endpoint</a> implements the 
- * <a href="http://activemq.apache.org/camel/message-endpoint.html">Message Endpoint</a>
- * pattern and represents an endpoint that can send and receive message exchanges
- *
+ * An <a href="http://activemq.apache.org/camel/endpoint.html">endpoint</a>
+ * implements the <a
+ * href="http://activemq.apache.org/camel/message-endpoint.html">Message
+ * Endpoint</a> pattern and represents an endpoint that can send and receive
+ * message exchanges
+ * 
  * @see Exchange, Message
  * @version $Revision$
  */
 public interface Endpoint<E extends Exchange> {
 
     /**
-     * Returns if the endpoint should be a CamelContext singleton.  If the endpoint is a Singleton,
-     * then a single Endpoint instance will be shared by all routes with the same URI.  Because the endpoint
-     * is shared, it should be treated as an immutable.
+     * Returns if the endpoint should be a CamelContext singleton. If the
+     * endpoint is a Singleton, then a single Endpoint instance will be shared
+     * by all routes with the same URI. Because the endpoint is shared, it
+     * should be treated as an immutable.
      */
     boolean isSingleton();
 
@@ -38,15 +40,15 @@ public interface Endpoint<E extends Exchange> {
      * Returns the string representation of the endpoint URI
      */
     String getEndpointUri();
-    
+
     /**
      * Create a new exchange for communicating with this endpoint
      */
     E createExchange();
 
     /**
-     * Creates a new exchange for communicating with this exchange using the given exchange to pre-populate the values
-     * of the headers and messages
+     * Creates a new exchange for communicating with this exchange using the
+     * given exchange to pre-populate the values of the headers and messages
      */
     E createExchange(Exchange exchange);
 
@@ -57,34 +59,39 @@ public interface Endpoint<E extends Exchange> {
 
     /**
      * Returns the context which created the endpoint
-     *
+     * 
      * @return the context which created the endpoint
      */
     CamelContext getContext();
 
     /**
      * Creates a new producer which is used send messages into the endpoint
-     *
+     * 
      * @return a newly created producer
      */
     Producer<E> createProducer() throws Exception;
 
     /**
-     * Creates a new <a href="http://activemq.apache.org/camel/event-driven-consumer.html">Event Driven Consumer</a>
-     * which consumes messages from the endpoint using the given processor
-     *
+     * Creates a new <a
+     * href="http://activemq.apache.org/camel/event-driven-consumer.html">Event
+     * Driven Consumer</a> which consumes messages from the endpoint using the
+     * given processor
+     * 
      * @return a newly created consumer
      */
     Consumer<E> createConsumer(Processor processor) throws Exception;
 
     /**
-     * Creates a new <a href="http://activemq.apache.org/camel/polling-consumer.html">Polling Consumer</a>
-     * so that the caller can poll message exchanges from the consumer
-     * using {@link PollingConsumer#receive()}, {@link PollingConsumer#receiveNoWait()} or {@link PollingConsumer#receive(long)}
-     * whenever it is ready to do so rather than using the
-     * <a href="http://activemq.apache.org/camel/event-driven-consumer.html">Event Based Consumer</a>
-     * returned by {@link #createConsumer(Processor)}
-     *
+     * Creates a new <a
+     * href="http://activemq.apache.org/camel/polling-consumer.html">Polling
+     * Consumer</a> so that the caller can poll message exchanges from the
+     * consumer using {@link PollingConsumer#receive()},
+     * {@link PollingConsumer#receiveNoWait()} or
+     * {@link PollingConsumer#receive(long)} whenever it is ready to do so
+     * rather than using the <a
+     * href="http://activemq.apache.org/camel/event-driven-consumer.html">Event
+     * Based Consumer</a> returned by {@link #createConsumer(Processor)}
+     * 
      * @return a newly created pull consumer
      * @throws Exception if the pull consumer could not be created
      */

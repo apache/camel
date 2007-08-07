@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,6 @@
  */
 package org.apache.camel.util;
 
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.converter.ObjectConverter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,14 +24,25 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.converter.ObjectConverter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * A number of useful helper methods for working with Objects
- *
+ * 
  * @version $Revision$
  */
 public class ObjectHelper {
-    private static final transient Log log = LogFactory.getLog(ObjectHelper.class);
+    private static final transient Log LOG = LogFactory.getLog(ObjectHelper.class);
 
+    /**
+     * Utility classes should not have a public constructor.
+     */
+    private ObjectHelper() {        
+    }
+    
     /**
      * A helper method for comparing objects for equality while handling nulls
      */
@@ -49,6 +55,7 @@ public class ObjectHelper {
 
     /**
      * Returns true if the given object is equal to any of the expected value
+     * 
      * @param expression
      * @param s
      * @param s1
@@ -62,11 +69,10 @@ public class ObjectHelper {
         }
         return false;
     }
-    
+
     /**
      * A helper method for performing an ordered comparsion on the objects
-     * handling nulls and objects which do not
-     * handle sorting gracefully
+     * handling nulls and objects which do not handle sorting gracefully
      */
     public static int compare(Object a, Object b) {
         if (a == b) {
@@ -79,10 +85,9 @@ public class ObjectHelper {
             return 1;
         }
         if (a instanceof Comparable) {
-            Comparable comparable = (Comparable) a;
+            Comparable comparable = (Comparable)a;
             return comparable.compareTo(b);
-        }
-        else {
+        } else {
             int answer = a.getClass().getName().compareTo(b.getClass().getName());
             if (answer == 0) {
                 answer = a.hashCode() - b.hashCode();
@@ -113,10 +118,11 @@ public class ObjectHelper {
     }
 
     /**
-     * Removes any starting characters on the given text which match the given character
-     *
+     * Removes any starting characters on the given text which match the given
+     * character
+     * 
      * @param text the string
-     * @param ch   the initial characters to remove
+     * @param ch the initial characters to remove
      * @return either the original string or the new substring
      */
     public static String removeStartingCharacters(String text, char ch) {
@@ -135,10 +141,9 @@ public class ObjectHelper {
      */
     public static boolean contains(Object collectionOrArray, Object value) {
         if (collectionOrArray instanceof Collection) {
-            Collection collection = (Collection) collectionOrArray;
+            Collection collection = (Collection)collectionOrArray;
             return collection.contains(value);
-        }
-        else {
+        } else {
             Iterator iter = ObjectConverter.iterator(value);
             while (iter.hasNext()) {
                 if (equals(value, iter.next())) {
@@ -150,20 +155,20 @@ public class ObjectHelper {
     }
 
     /**
-     * Returns the predicate matching boolean on a {@link List} result set
-     * where if the first element is a boolean its value is used
-     * otherwise this method returns true if the collection is not empty
-     *
-     * @returns true if the first element is a boolean and its value is true or if the list is non empty
+     * Returns the predicate matching boolean on a {@link List} result set where
+     * if the first element is a boolean its value is used otherwise this method
+     * returns true if the collection is not empty
+     * 
+     * @returns true if the first element is a boolean and its value is true or
+     *          if the list is non empty
      */
     public static boolean matches(List list) {
         if (!list.isEmpty()) {
             Object value = list.get(0);
             if (value instanceof Boolean) {
-                Boolean flag = (Boolean) value;
+                Boolean flag = (Boolean)value;
                 return flag.booleanValue();
-            }
-            else {
+            } else {
                 // lets assume non-empty results are true
                 return true;
             }
@@ -180,26 +185,30 @@ public class ObjectHelper {
     }
 
     /**
-     * A helper method to access a system property, catching any security exceptions
-     *
-     * @param name         the name of the system property required
-     * @param defaultValue the default value to use if the property is not available or a security exception prevents access
-     * @return the system property value or the default value if the property is not available or security does not allow its access
+     * A helper method to access a system property, catching any security
+     * exceptions
+     * 
+     * @param name the name of the system property required
+     * @param defaultValue the default value to use if the property is not
+     *                available or a security exception prevents access
+     * @return the system property value or the default value if the property is
+     *         not available or security does not allow its access
      */
     public static String getSystemProperty(String name, String defaultValue) {
         try {
             return System.getProperty(name, defaultValue);
-        }
-        catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Caught security exception accessing system property: " + name + ". Reason: " + e, e);
+        } catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Caught security exception accessing system property: " + name + ". Reason: " + e,
+                          e);
             }
             return defaultValue;
         }
     }
 
     /**
-     * Returns the type name of the given type or null if the type variable is null
+     * Returns the type name of the given type or null if the type variable is
+     * null
      */
     public static String name(Class type) {
         return type != null ? type.getName() : null;
@@ -212,11 +221,10 @@ public class ObjectHelper {
         return name(value != null ? value.getClass() : null);
     }
 
-
     /**
-     * Attempts to load the given class name using the thread context class loader
-     * or the class loader used to load this class
-     *
+     * Attempts to load the given class name using the thread context class
+     * loader or the class loader used to load this class
+     * 
      * @param name the name of the class to load
      * @return the class or null if it could not be loaded
      */
@@ -225,10 +233,12 @@ public class ObjectHelper {
     }
 
     /**
-     * Attempts to load the given class name using the thread context class loader or the given class loader
-     *
-     * @param name   the name of the class to load
-     * @param loader the class loader to use after the thread context class loader
+     * Attempts to load the given class name using the thread context class
+     * loader or the given class loader
+     * 
+     * @param name the name of the class to load
+     * @param loader the class loader to use after the thread context class
+     *                loader
      * @return the class or null if it could not be loaded
      */
     public static Class<?> loadClass(String name, ClassLoader loader) {
@@ -236,13 +246,11 @@ public class ObjectHelper {
         if (contextClassLoader != null) {
             try {
                 return contextClassLoader.loadClass(name);
-            }
-            catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException e) {
                 try {
                     return loader.loadClass(name);
-                }
-                catch (ClassNotFoundException e1) {
-                    log.debug("Could not find class: " + name + ". Reason: " + e);
+                } catch (ClassNotFoundException e1) {
+                    LOG.debug("Could not find class: " + name + ". Reason: " + e);
                 }
             }
         }
@@ -252,32 +260,31 @@ public class ObjectHelper {
     /**
      * A helper method to invoke a method via reflection and wrap any exceptions
      * as {@link RuntimeCamelException} instances
-     *
-     * @param method     the method to invoke
-     * @param instance   the object instance (or null for static methods)
+     * 
+     * @param method the method to invoke
+     * @param instance the object instance (or null for static methods)
      * @param parameters the parameters to the method
      * @return the result of the method invocation
      */
     public static Object invokeMethod(Method method, Object instance, Object... parameters) {
         try {
             return method.invoke(instance, parameters);
-        }
-        catch (IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             throw new RuntimeCamelException(e);
-        }
-        catch (InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
             throw new RuntimeCamelException(e.getCause());
         }
     }
 
     /**
      * Returns a list of methods which are annotated with the given annotation
-     *
-     * @param type           the type to reflect on
+     * 
+     * @param type the type to reflect on
      * @param annotationType the annotation type
      * @return a list of the methods found
      */
-    public static List<Method> findMethodsWithAnnotation(Class<?> type, Class<? extends Annotation> annotationType) {
+    public static List<Method> findMethodsWithAnnotation(Class<?> type,
+                                                         Class<? extends Annotation> annotationType) {
         List<Method> answer = new ArrayList<Method>();
         do {
             Method[] methods = type.getDeclaredMethods();
@@ -287,22 +294,20 @@ public class ObjectHelper {
                 }
             }
             type = type.getSuperclass();
-        }
-        while (type != null);
+        } while (type != null);
         return answer;
     }
 
     /**
      * Turns the given object arrays into a meaningful string
-     *
+     * 
      * @param objects an array of objects or null
      * @return a meaningful string
      */
     public static String asString(Object[] objects) {
         if (objects == null) {
             return "null";
-        }
-        else {
+        } else {
             StringBuffer buffer = new StringBuffer("{");
             int counter = 0;
             for (Object object : objects) {
@@ -320,7 +325,8 @@ public class ObjectHelper {
     /**
      * Returns true if a class is assignable from another class like the
      * {@link Class#isAssignableFrom(Class)} method but which also includes
-     * coercion between primitive types to deal with Java 5 primitive type wrapping
+     * coercion between primitive types to deal with Java 5 primitive type
+     * wrapping
      */
     public static boolean isAssignableFrom(Class a, Class b) {
         a = convertPrimitiveTypeToWrapperType(a);
@@ -329,30 +335,27 @@ public class ObjectHelper {
     }
 
     /**
-     * Converts primitive types such as int to its wrapper type like {@link Integeer}
+     * Converts primitive types such as int to its wrapper type like
+     * {@link Integeer}
      */
     public static Class convertPrimitiveTypeToWrapperType(Class type) {
+        Class rc = type;
         if (type.isPrimitive()) {
             if (type == int.class) {
-                return Integer.class;
-            }
-            else   if (type == long.class) {
-                return Long.class;
-            }
-            else   if (type == double.class) {
-                return Double.class;
-            }
-            else   if (type == float.class) {
-                return Float.class;
-            }
-            else   if (type == short.class) {
-                return Short.class;
-            }
-            else   if (type == byte.class) {
-                return Byte.class;
+                rc = Integer.class;
+            } else if (type == long.class) {
+                rc = Long.class;
+            } else if (type == double.class) {
+                rc = Double.class;
+            } else if (type == float.class) {
+                rc = Float.class;
+            } else if (type == short.class) {
+                rc = Short.class;
+            } else if (type == byte.class) {
+                rc = Byte.class;
             }
         }
-        return type;
+        return rc;
     }
 
 }

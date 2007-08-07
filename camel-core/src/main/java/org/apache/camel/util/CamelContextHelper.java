@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,30 +16,37 @@
  */
 package org.apache.camel.util;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 
 /**
  * A number of helper methods
- *
+ * 
  * @version $Revision: $
  */
 public class CamelContextHelper {
+    
+    /**
+     * Utility classes should not have a public constructor.
+     */
+    private CamelContextHelper() {        
+    }
+
     /**
      * Returns the mandatory endpoint for the given URI or the
      * {@link org.apache.camel.NoSuchEndpointException} is thrown
-     *
+     * 
      * @param camelContext
      * @param uri
      * @return
      */
-    public static Endpoint getMandatoryEndpoint(CamelContext camelContext, String uri) throws NoSuchEndpointException {
+    public static Endpoint getMandatoryEndpoint(CamelContext camelContext, String uri)
+        throws NoSuchEndpointException {
         Endpoint endpoint = camelContext.getEndpoint(uri);
         if (endpoint == null) {
             throw new NoSuchEndpointException(uri);
-        }
-        else {
+        } else {
             return endpoint;
         }
 

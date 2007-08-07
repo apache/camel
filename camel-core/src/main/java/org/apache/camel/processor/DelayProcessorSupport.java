@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,23 +16,23 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.AlreadyStoppedException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 /**
  * A useful base class for any processor which provides some kind of throttling
  * or delayed processing
- *
+ * 
  * @version $Revision: $
  */
 public abstract class DelayProcessorSupport extends DelegateProcessor {
-    private static final transient Log log = LogFactory.getLog(Delayer.class);
+    private static final transient Log LOG = LogFactory.getLog(Delayer.class);
     private CountDownLatch stoppedLatch = new CountDownLatch(1);
     private boolean fastStop = true;
 
@@ -52,8 +52,8 @@ public abstract class DelayProcessorSupport extends DelegateProcessor {
     /**
      * Enables & disables a fast stop; basically to avoid waiting a possibly
      * long time for delays to complete before the context shuts down; instead
-     * the current processing method throws {@link org.apache.camel.AlreadyStoppedException}
-     * to terminate processing.
+     * the current processing method throws
+     * {@link org.apache.camel.AlreadyStoppedException} to terminate processing.
      */
     public void setFastStop(boolean fastStop) {
         this.fastStop = fastStop;
@@ -68,8 +68,8 @@ public abstract class DelayProcessorSupport extends DelegateProcessor {
 
     /**
      * Wait until the given system time before continuing
-     *
-     * @param time     the system time to wait for
+     * 
+     * @param time the system time to wait for
      * @param exchange the exchange being processed
      */
     protected void waitUntil(long time, Exchange exchange) throws Exception {
@@ -77,15 +77,13 @@ public abstract class DelayProcessorSupport extends DelegateProcessor {
             long delay = time - currentSystemTime();
             if (delay < 0) {
                 return;
-            }
-            else {
+            } else {
                 if (isFastStop() && (isStopped() || isStopping())) {
                     throw new AlreadyStoppedException();
                 }
                 try {
                     sleep(delay);
-                }
-                catch (InterruptedException e) {
+                } catch (InterruptedException e) {
                     handleSleepInteruptedException(e);
                 }
             }
@@ -93,22 +91,22 @@ public abstract class DelayProcessorSupport extends DelegateProcessor {
     }
 
     protected void sleep(long delay) throws InterruptedException {
-        if (log.isDebugEnabled()) {
-            log.debug("Sleeping for: " + delay + " millis");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Sleeping for: " + delay + " millis");
         }
         if (isFastStop()) {
             stoppedLatch.await(delay, TimeUnit.MILLISECONDS);
-        }
-        else {
+        } else {
             Thread.sleep(delay);
         }
     }
 
     /**
-     * Called when a sleep is interupted; allows derived classes to handle this case differently
+     * Called when a sleep is interupted; allows derived classes to handle this
+     * case differently
      */
     protected void handleSleepInteruptedException(InterruptedException e) {
-        log.debug("Sleep interupted: " + e, e);
+        LOG.debug("Sleep interupted: " + e, e);
     }
 
     protected long currentSystemTime() {

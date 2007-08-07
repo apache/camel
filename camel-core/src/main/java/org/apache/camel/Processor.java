@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,12 +17,13 @@
 package org.apache.camel;
 
 /**
- * A <a href="http://activemq.apache.org/camel/processor.html">processor</a>
- * is used to implement the
- * <a href="http://activemq.apache.org/camel/event-driven-consumer.html">Event Driven Consumer</a>
- * and <a href="http://activemq.apache.org/camel/message-transformer.html">Message Transformer</a>
- * patterns and to process message exchanges.
- *
+ * A <a href="http://activemq.apache.org/camel/processor.html">processor</a> is
+ * used to implement the <a
+ * href="http://activemq.apache.org/camel/event-driven-consumer.html">Event
+ * Driven Consumer</a> and <a
+ * href="http://activemq.apache.org/camel/message-transformer.html">Message
+ * Transformer</a> patterns and to process message exchanges.
+ * 
  * @version $Revision$
  */
 public interface Processor {
@@ -30,7 +31,7 @@ public interface Processor {
     /**
      * Processes the message exchange
      * 
-     * @throws Exception if an internal processing error has occurred. 
+     * @throws Exception if an internal processing error has occurred.
      */
     void process(Exchange exchange) throws Exception;
 }

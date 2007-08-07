@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class SendProcessor extends ServiceSupport implements Processor, Service {
-    private static final transient Log log = LogFactory.getLog(SendProcessor.class);
+    private static final transient Log LOG = LogFactory.getLog(SendProcessor.class);
     private Endpoint destination;
     private Producer producer;
 
@@ -45,8 +44,7 @@ public class SendProcessor extends ServiceSupport implements Processor, Service 
         if (producer != null) {
             try {
                 producer.stop();
-            }
-            finally {
+            } finally {
                 producer = null;
             }
         }
@@ -59,13 +57,11 @@ public class SendProcessor extends ServiceSupport implements Processor, Service 
     public void process(Exchange exchange) throws Exception {
         if (producer == null) {
             if (isStopped()) {
-                log.warn("Ignoring exchange sent after processor is stopped: " + exchange);
-            }
-            else {
+                LOG.warn("Ignoring exchange sent after processor is stopped: " + exchange);
+            } else {
                 throw new IllegalStateException("No producer, this processor has not been started!");
             }
-        }
-        else {
+        } else {
             producer.process(exchange);
         }
     }

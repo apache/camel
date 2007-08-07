@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,23 +16,23 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
+
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.strategy.FileStrategy;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.File;
-
 /**
  * @version $Revision: 523016 $
  */
 public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
-    private static final transient Log log = LogFactory.getLog(FileConsumer.class);
+    private static final transient Log LOG = LogFactory.getLog(FileConsumer.class);
     private final FileEndpoint endpoint;
     private boolean recursive = true;
     private String regexPattern = "";
-    private long lastPollTime = 0l;
+    private long lastPollTime;
 
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -48,18 +47,16 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     protected void pollFileOrDirectory(File fileOrDirectory, boolean processDir) {
         if (!fileOrDirectory.isDirectory()) {
             pollFile(fileOrDirectory); // process the file
-        }
-        else if (processDir) {
+        } else if (processDir) {
             if (isValidFile(fileOrDirectory)) {
-                log.debug("Polling directory " + fileOrDirectory);
+                LOG.debug("Polling directory " + fileOrDirectory);
                 File[] files = fileOrDirectory.listFiles();
                 for (int i = 0; i < files.length; i++) {
                     pollFileOrDirectory(files[i], isRecursive()); // self-recursion
                 }
             }
-        }
-        else {
-            log.debug("Skipping directory " + fileOrDirectory);
+        } else {
+            LOG.debug("Skipping directory " + fileOrDirectory);
         }
     }
 
@@ -70,20 +67,18 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                 FileExchange exchange = endpoint.createExchange(file);
 
                 try {
-                    if (log.isDebugEnabled()) {
-                        log.debug("About to process file:  " + file + " using exchange: " + exchange);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("About to process file:  " + file + " using exchange: " + exchange);
                     }
                     if (strategy.begin(endpoint, exchange, file)) {
                         getProcessor().process(exchange);
                         strategy.commit(endpoint, exchange, file);
-                    }
-                    else {
-                        if (log.isDebugEnabled()) {
-                            log.debug(endpoint + " cannot process file: " + file);
+                    } else {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug(endpoint + " cannot process file: " + file);
                         }
                     }
-                }
-                catch (Throwable e) {
+                } catch (Throwable e) {
                     handleException(e);
                 }
             }

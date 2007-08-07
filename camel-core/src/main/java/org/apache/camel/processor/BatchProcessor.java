@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -28,16 +30,14 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 /**
- * A base class for any kind of {@link Processor} which implements some kind of batch processing.
- *
+ * A base class for any kind of {@link Processor} which implements some kind of
+ * batch processing.
+ * 
  * @version $Revision: 1.1 $
  */
 public class BatchProcessor extends ServiceSupport implements Runnable {
-    private static final transient Log log = LogFactory.getLog(Resequencer.class);
+    private static final transient Log LOG = LogFactory.getLog(Resequencer.class);
     private Endpoint endpoint;
     private Processor processor;
     private Collection<Exchange> collection;
@@ -58,12 +58,11 @@ public class BatchProcessor extends ServiceSupport implements Runnable {
     }
 
     public void run() {
-        log.debug("Starting thread for " + this);
+        LOG.debug("Starting thread for " + this);
         while (!isStopped() && !isStopping()) {
             try {
                 processBatch();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 getExceptionHandler().handleException(e);
             }
         }
@@ -71,7 +70,7 @@ public class BatchProcessor extends ServiceSupport implements Runnable {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public ExceptionHandler getExceptionHandler() {
         if (exceptionHandler == null) {
             exceptionHandler = new LoggingExceptionHandler(getClass());
@@ -108,8 +107,8 @@ public class BatchProcessor extends ServiceSupport implements Runnable {
     }
 
     /**
-     * A transactional method to process a batch of messages up to a timeout period
-     * or number of messages reached.
+     * A transactional method to process a batch of messages up to a timeout
+     * period or number of messages reached.
      */
     protected synchronized void processBatch() throws Exception {
         long start = System.currentTimeMillis();
@@ -124,8 +123,9 @@ public class BatchProcessor extends ServiceSupport implements Runnable {
             collection.add(exchange);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Finsihed batch size: " + batchSize + " timeout: " + batchTimeout + " so sending set: " + collection);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Finsihed batch size: " + batchSize + " timeout: " + batchTimeout + " so sending set: "
+                      + collection);
         }
 
         // lets send the batch
@@ -138,8 +138,9 @@ public class BatchProcessor extends ServiceSupport implements Runnable {
     }
 
     /**
-     * Strategy Method to process an exchange in the batch. This method allows derived classes
-     * to perform custom processing before or after an individual exchange is processed
+     * Strategy Method to process an exchange in the batch. This method allows
+     * derived classes to perform custom processing before or after an
+     * individual exchange is processed
      */
     protected void processExchange(Exchange exchange) throws Exception {
         processor.process(exchange);

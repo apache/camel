@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,26 +16,33 @@
  */
 package org.apache.camel.builder.xml;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import static org.apache.camel.builder.xml.Namespaces.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.xpath.XPathVariableResolver;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+import javax.xml.xpath.XPathVariableResolver;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import static org.apache.camel.builder.xml.Namespaces.ENVIRONMENT_VARIABLES;
+import static org.apache.camel.builder.xml.Namespaces.EXCHANGE_PROPERTY;
+import static org.apache.camel.builder.xml.Namespaces.IN_NAMESPACE;
+import static org.apache.camel.builder.xml.Namespaces.OUT_NAMESPACE;
+import static org.apache.camel.builder.xml.Namespaces.SYSTEM_PROPERTIES_NAMESPACE;
+
 /**
- * A variable resolver for XPath expressions which support properties on the messge, exchange as well
- * as making system properties and environment properties available.
- *
+ * A variable resolver for XPath expressions which support properties on the
+ * messge, exchange as well as making system properties and environment
+ * properties available.
+ * 
  * @version $Revision: 521692 $
  */
 public class MessageVariableResolver implements XPathVariableResolver {
 
-    private static final transient Log log = LogFactory.getLog(MessageVariableResolver.class);
+    private static final transient Log LOG = LogFactory.getLog(MessageVariableResolver.class);
 
     private Exchange exchange;
     private Map<String, Object> variables = new HashMap<String, Object>();
@@ -66,28 +72,24 @@ public class MessageVariableResolver implements XPathVariableResolver {
                     answer = exchange.getProperty(localPart);
                 }
             }
-        }
-        else if (uri.equals(SYSTEM_PROPERTIES_NAMESPACE)) {
+        } else if (uri.equals(SYSTEM_PROPERTIES_NAMESPACE)) {
             try {
                 answer = System.getProperty(localPart);
+            } catch (Exception e) {
+                LOG
+                    .debug("Security exception evaluating system property: " + localPart + ". Reason: " + e,
+                           e);
             }
-            catch (Exception e) {
-                log.debug("Security exception evaluating system property: " + localPart + ". Reason: " + e, e);
-            }
-        }
-        else if (uri.equals(ENVIRONMENT_VARIABLES)) {
+        } else if (uri.equals(ENVIRONMENT_VARIABLES)) {
             answer = System.getenv().get(localPart);
-        }
-        else if (uri.equals(EXCHANGE_PROPERTY)) {
+        } else if (uri.equals(EXCHANGE_PROPERTY)) {
             answer = exchange.getProperty(localPart);
-        }
-        else if (uri.equals(IN_NAMESPACE)) {
+        } else if (uri.equals(IN_NAMESPACE)) {
             answer = in.getHeader(localPart);
             if (answer == null && localPart.equals("body")) {
                 answer = in.getBody();
             }
-        }
-        else if (uri.equals(OUT_NAMESPACE)) {
+        } else if (uri.equals(OUT_NAMESPACE)) {
             Message out = exchange.getOut();
             answer = out.getHeader(localPart);
             if (answer == null && localPart.equals("body")) {

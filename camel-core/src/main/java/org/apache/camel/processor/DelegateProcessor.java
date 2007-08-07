@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,13 +19,12 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.spi.Policy;
 import org.apache.camel.util.ServiceHelper;
 
 /**
- * A Delegate pattern which delegates processing to a nested processor which can be useful for implementation inheritence
- * when writing an {@link Policy}
- *
+ * A Delegate pattern which delegates processing to a nested processor which can
+ * be useful for implementation inheritance when writing an {@link Policy}
+ * 
  * @version $Revision: 519941 $
  */
 public class DelegateProcessor extends ServiceSupport implements Processor {

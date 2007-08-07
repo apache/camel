@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,16 +16,8 @@
  */
 package org.apache.camel.builder.xml;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.Message;
-import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeExpressionException;
-import static org.apache.camel.builder.xml.Namespaces.*;
-import static org.apache.camel.converter.ObjectConverter.toBoolean;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
+import java.io.StringReader;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPath;
@@ -38,20 +29,35 @@ import javax.xml.xpath.XPathFactoryConfigurationException;
 import javax.xml.xpath.XPathFunction;
 import javax.xml.xpath.XPathFunctionException;
 import javax.xml.xpath.XPathFunctionResolver;
-import java.io.StringReader;
-import java.util.List;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import org.xml.sax.InputSource;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Message;
+import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeExpressionException;
+
+import static org.apache.camel.builder.xml.Namespaces.DEFAULT_NAMESPACE;
+import static org.apache.camel.builder.xml.Namespaces.IN_NAMESPACE;
+import static org.apache.camel.builder.xml.Namespaces.OUT_NAMESPACE;
+import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmptyNamespace;
+import static org.apache.camel.converter.ObjectConverter.toBoolean;
 
 /**
  * Creates an XPath expression builder
- *
+ * 
  * @version $Revision: 531854 $
  */
 public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicate<E> {
     private final String text;
     private XPathFactory xpathFactory;
     private Class documentType = Document.class;
-    private QName resultType = null;
-    private String objectModelUri = null;
+    private QName resultType;
+    private String objectModelUri;
     private DefaultNamespaceContext namespaceContext;
     private XPathFunctionResolver functionResolver;
     private XPathExpression expression;
@@ -62,13 +68,12 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     private XPathFunction outBodyFunction;
     private XPathFunction outHeaderFunction;
 
+    public XPathBuilder(String text) {
+        this.text = text;
+    }
 
     public static XPathBuilder xpath(String text) {
         return new XPathBuilder(text);
-    }
-
-    public XPathBuilder(String text) {
-        this.text = text;
     }
 
     @Override
@@ -93,11 +98,11 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     }
 
     // Builder methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * Sets the expression result type to boolean
-     *
+     * 
      * @return the current builder
      */
     public XPathBuilder<E> booleanResult() {
@@ -107,7 +112,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
 
     /**
      * Sets the expression result type to boolean
-     *
+     * 
      * @return the current builder
      */
     public XPathBuilder<E> nodeResult() {
@@ -117,7 +122,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
 
     /**
      * Sets the expression result type to boolean
-     *
+     * 
      * @return the current builder
      */
     public XPathBuilder<E> nodeSetResult() {
@@ -127,7 +132,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
 
     /**
      * Sets the expression result type to boolean
-     *
+     * 
      * @return the current builder
      */
     public XPathBuilder<E> numberResult() {
@@ -137,7 +142,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
 
     /**
      * Sets the expression result type to boolean
-     *
+     * 
      * @return the current builder
      */
     public XPathBuilder<E> stringResult() {
@@ -147,7 +152,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
 
     /**
      * Sets the object model URI to use
-     *
+     * 
      * @return the current builder
      */
     public XPathBuilder<E> objectModel(String uri) {
@@ -156,8 +161,9 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     }
 
     /**
-     * Sets the {@link XPathFunctionResolver} instance to use on these XPath expressions
-     *
+     * Sets the {@link XPathFunctionResolver} instance to use on these XPath
+     * expressions
+     * 
      * @return the current builder
      */
     public XPathBuilder<E> functionResolver(XPathFunctionResolver functionResolver) {
@@ -166,10 +172,12 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     }
 
     /**
-     * Registers the namespace prefix and URI with the builder so that the prefix can be used in XPath expressions
-     *
-     * @param prefix is the namespace prefix that can be used in the XPath expressions
-     * @param uri    is the namespace URI to which the prefix refers
+     * Registers the namespace prefix and URI with the builder so that the
+     * prefix can be used in XPath expressions
+     * 
+     * @param prefix is the namespace prefix that can be used in the XPath
+     *                expressions
+     * @param uri is the namespace URI to which the prefix refers
      * @return the current builder
      */
     public XPathBuilder<E> namespace(String prefix, String uri) {
@@ -178,16 +186,16 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     }
 
     /**
-     * Registers a variable (in the global namespace) which can be referred to from XPath expressions
+     * Registers a variable (in the global namespace) which can be referred to
+     * from XPath expressions
      */
     public XPathBuilder<E> variable(String name, Object value) {
         variableResolver.addVariable(name, value);
         return this;
     }
 
-
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public XPathFactory getXPathFactory() throws XPathFactoryConfigurationException {
         if (xpathFactory == null) {
             if (objectModelUri != null) {
@@ -221,11 +229,11 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     public DefaultNamespaceContext getNamespaceContext() {
         if (namespaceContext == null) {
             try {
-                DefaultNamespaceContext defaultNamespaceContext = new DefaultNamespaceContext(getXPathFactory());
+                DefaultNamespaceContext defaultNamespaceContext = new DefaultNamespaceContext(
+                                                                                              getXPathFactory());
                 populateDefaultNamespaces(defaultNamespaceContext);
                 namespaceContext = defaultNamespaceContext;
-            }
-            catch (XPathFactoryConfigurationException e) {
+            } catch (XPathFactoryConfigurationException e) {
                 throw new RuntimeExpressionException(e);
             }
         }
@@ -244,7 +252,8 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
         this.functionResolver = functionResolver;
     }
 
-    public XPathExpression getExpression() throws XPathFactoryConfigurationException, XPathExpressionException {
+    public XPathExpression getExpression() throws XPathFactoryConfigurationException,
+        XPathExpressionException {
         if (expression == null) {
             expression = createXPathExpression();
         }
@@ -334,7 +343,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * Evaluates the expression as the given result type
@@ -346,32 +355,28 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
             Object document = getDocument(exchange);
             if (resultType != null) {
                 if (document instanceof InputSource) {
-                    InputSource inputSource = (InputSource) document;
+                    InputSource inputSource = (InputSource)document;
                     return getExpression().evaluate(inputSource, resultType);
-                }
-                else {
+                } else {
                     return getExpression().evaluate(document, resultType);
                 }
-            }
-            else {
+            } else {
                 if (document instanceof InputSource) {
-                    InputSource inputSource = (InputSource) document;
+                    InputSource inputSource = (InputSource)document;
                     return getExpression().evaluate(inputSource);
-                }
-                else {
+                } else {
                     return getExpression().evaluate(document);
                 }
             }
-        }
-        catch (XPathExpressionException e) {
+        } catch (XPathExpressionException e) {
             throw new InvalidXPathExpression(getText(), e);
-        }
-        catch (XPathFactoryConfigurationException e) {
+        } catch (XPathFactoryConfigurationException e) {
             throw new InvalidXPathExpression(getText(), e);
         }
     }
 
-    protected XPathExpression createXPathExpression() throws XPathExpressionException, XPathFactoryConfigurationException {
+    protected XPathExpression createXPathExpression() throws XPathExpressionException,
+        XPathFactoryConfigurationException {
         XPath xPath = getXPathFactory().newXPath();
 
         // lets now clear any factory references to avoid keeping them around
@@ -417,7 +422,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
                 }
                 if (answer == null) {
                     if (isMatchingNamespaceOrEmptyNamespace(qName.getNamespaceURI(), IN_NAMESPACE)
-                            || isMatchingNamespaceOrEmptyNamespace(qName.getNamespaceURI(), DEFAULT_NAMESPACE)) {
+                        || isMatchingNamespaceOrEmptyNamespace(qName.getNamespaceURI(), DEFAULT_NAMESPACE)) {
                         String localPart = qName.getLocalPart();
                         if (localPart.equals("body") && argumentCount == 0) {
                             return getBodyFunction();

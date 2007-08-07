@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,17 +16,22 @@
  */
 package org.apache.camel.util;
 
-import java.util.concurrent.TimeUnit;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A helper class for working with times in various units
- *
+ * 
  * @version $Revision: $
  */
 public class Time {
     private long number;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
+
+    public Time(long number, TimeUnit timeUnit) {
+        this.number = number;
+        this.timeUnit = timeUnit;
+    }
 
     public static Time millis(long value) {
         return new Time(value, TimeUnit.MILLISECONDS);
@@ -54,11 +59,6 @@ public class Time {
 
     public static Time days(long value) {
         return new Time(daysAsSeconds(value), TimeUnit.MILLISECONDS);
-    }
-
-    public Time(long number, TimeUnit timeUnit) {
-        this.number = number;
-        this.timeUnit = timeUnit;
     }
 
     public long toMillis() {

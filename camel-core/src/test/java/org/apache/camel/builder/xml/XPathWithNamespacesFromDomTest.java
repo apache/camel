@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,19 +16,10 @@
  */
 package org.apache.camel.builder.xml;
 
-import org.apache.camel.TestSupport;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.Exchange;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Message;
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.xml.xpath.XPathFunctionResolver;
+import org.apache.camel.ContextTestSupport;
 
 /**
  * @version $Revision: 534495 $
@@ -37,8 +27,9 @@ import javax.xml.xpath.XPathFunctionResolver;
 public class XPathWithNamespacesFromDomTest extends ContextTestSupport {
 
     public void testXPathUsingDomForNamespaces() throws Exception {
-        Document document = context.getTypeConverter().convertTo(Document.class, "<x:foo xmlns:x='n1' xmlns:y='n2'><bar id='a' xmlns:y='n3'/></x:foo>");
-        Element element = (Element) document.getElementsByTagName("bar").item(0);
+        Document document = context.getTypeConverter()
+            .convertTo(Document.class, "<x:foo xmlns:x='n1' xmlns:y='n2'><bar id='a' xmlns:y='n3'/></x:foo>");
+        Element element = (Element)document.getElementsByTagName("bar").item(0);
         assertNotNull("Could not find element for id 'a'", element);
 
         XPathBuilder builder = XPathBuilder.xpath("//y:foo[@id='z']");

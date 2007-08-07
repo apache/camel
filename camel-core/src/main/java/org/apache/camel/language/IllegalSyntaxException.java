@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,8 +16,8 @@
  */
 package org.apache.camel.language;
 
-import org.apache.camel.spi.Language;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Language;
 
 /**
  * An exception thrown if some illegal syntax is rejected by a specific language

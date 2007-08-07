@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mock;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -32,24 +39,16 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 /**
- * A Mock endpoint which provides a literate, fluent API for testing routes using
- * a <a href="http://jmock.org/">JMock style</a> API.
- *
+ * A Mock endpoint which provides a literate, fluent API for testing routes
+ * using a <a href="http://jmock.org/">JMock style</a> API.
+ * 
  * @version $Revision: 1.1 $
  */
 public class MockEndpoint extends DefaultEndpoint<Exchange> {
-    private static final transient Log log = LogFactory.getLog(MockEndpoint.class);
+    private static final transient Log LOG = LogFactory.getLog(MockEndpoint.class);
     private int expectedCount = -1;
-    private int counter = 0;
+    private int counter;
     private Map<Integer, Processor> processors = new HashMap<Integer, Processor>();
     private List<Exchange> receivedExchanges = new CopyOnWriteArrayList<Exchange>();
     private List<Throwable> failures = new CopyOnWriteArrayList<Throwable>();
@@ -60,6 +59,10 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     private int expectedMinimumCount = -1;
     private List expectedBodyValues;
     private List actualBodyValues = new ArrayList();
+
+    public MockEndpoint(String endpointUri, Component component) {
+        super(endpointUri, component);
+    }
 
     public static void assertWait(long timeout, TimeUnit unit, MockEndpoint... endpoints) throws InterruptedException {
         long start = System.currentTimeMillis();
@@ -95,10 +98,6 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         }
     }
 
-    public MockEndpoint(String endpointUri, Component component) {
-        super(endpointUri, component);
-    }
-
     public Exchange createExchange() {
         return new DefaultExchange(getContext());
     }
@@ -116,19 +115,22 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     // Testing API
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
-     * Validates that all the available expectations on this endpoint are satisfied; or throw an exception
+     * Validates that all the available expectations on this endpoint are
+     * satisfied; or throw an exception
      */
     public void assertIsSatisfied() throws InterruptedException {
         assertIsSatisfied(sleepForEmptyTest);
     }
 
     /**
-     * Validates that all the available expectations on this endpoint are satisfied; or throw an exception
-     *
-     * @param timeoutForEmptyEndpoints the timeout in milliseconds that we should wait for the test to be true
+     * Validates that all the available expectations on this endpoint are
+     * satisfied; or throw an exception
+     * 
+     * @param timeoutForEmptyEndpoints the timeout in milliseconds that we
+     *                should wait for the test to be true
      */
     public void assertIsSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {
         if (expectedCount >= 0) {
@@ -136,17 +138,15 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
                 if (expectedCount == 0) {
                     // lets wait a little bit just in case
                     if (timeoutForEmptyEndpoints > 0) {
-                        log.debug("Sleeping for: " + timeoutForEmptyEndpoints + " millis to check there really are no messages received");
+                        LOG.debug("Sleeping for: " + timeoutForEmptyEndpoints + " millis to check there really are no messages received");
                         Thread.sleep(timeoutForEmptyEndpoints);
                     }
-                }
-                else {
+                } else {
                     waitForCompleteLatch();
                 }
             }
             assertEquals("Received message count", expectedCount, getReceivedCounter());
-        }
-        else if (expectedMinimumCount > 0 && getReceivedCounter() < expectedMinimumCount) {
+        } else if (expectedMinimumCount > 0 && getReceivedCounter() < expectedMinimumCount) {
             waitForCompleteLatch();
         }
 
@@ -161,12 +161,11 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
 
         for (Throwable failure : failures) {
             if (failure != null) {
-                log.error("Caught on " + getEndpointUri() + " Exception: " + failure, failure);
+                LOG.error("Caught on " + getEndpointUri() + " Exception: " + failure, failure);
                 fail("Failed due to caught exception: " + failure);
             }
         }
     }
-
 
     /**
      * Validates that the assertions fail on this endpoint
@@ -175,44 +174,46 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         try {
             assertIsSatisfied();
             fail("Expected assertion failure!");
-        }
-        catch (AssertionError e) {
-            log.info("Caught expected failure: " + e);
+        } catch (AssertionError e) {
+            LOG.info("Caught expected failure: " + e);
         }
     }
 
     /**
-     * Specifies the expected number of message exchanges that should be received by this endpoint
-     *
-     * @param expectedCount the number of message exchanges that should be expected by this endpoint
+     * Specifies the expected number of message exchanges that should be
+     * received by this endpoint
+     * 
+     * @param expectedCount the number of message exchanges that should be
+     *                expected by this endpoint
      */
     public void expectedMessageCount(int expectedCount) {
         this.expectedCount = expectedCount;
         if (expectedCount <= 0) {
             latch = null;
-        }
-        else {
+        } else {
             latch = new CountDownLatch(expectedCount);
         }
     }
 
     /**
-     * Specifies the minimum number of expected message exchanges that should be received by this endpoint
-     *
-     * @param expectedCount the number of message exchanges that should be expected by this endpoint
+     * Specifies the minimum number of expected message exchanges that should be
+     * received by this endpoint
+     * 
+     * @param expectedCount the number of message exchanges that should be
+     *                expected by this endpoint
      */
     public void expectedMinimumMessageCount(int expectedCount) {
         this.expectedMinimumCount = expectedCount;
         if (expectedCount <= 0) {
             latch = null;
-        }
-        else {
+        } else {
             latch = new CountDownLatch(expectedMinimumCount);
         }
     }
 
     /**
-     * Adds an expectation that the given body values are received by this endpoint
+     * Adds an expectation that the given body values are received by this
+     * endpoint
      */
     public void expectedBodiesReceived(final List bodies) {
         expectedMessageCount(bodies.size());
@@ -235,7 +236,8 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     /**
-     * Adds an expectation that the given body values are received by this endpoint
+     * Adds an expectation that the given body values are received by this
+     * endpoint
      */
     public void expectedBodiesReceived(Object... bodies) {
         List bodyList = new ArrayList();
@@ -246,9 +248,9 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     /**
-     * Adds an expectation that messages received should have ascending values of the given expression
-     * such as a user generated counter value
-     *
+     * Adds an expectation that messages received should have ascending values
+     * of the given expression such as a user generated counter value
+     * 
      * @param expression
      */
     public void expectsAscending(final Expression<Exchange> expression) {
@@ -259,11 +261,10 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         });
     }
 
-
     /**
-     * Adds an expectation that messages received should have descending values of the given expression
-     * such as a user generated counter value
-     *
+     * Adds an expectation that messages received should have descending values
+     * of the given expression such as a user generated counter value
+     * 
      * @param expression
      */
     public void expectsDescending(final Expression<Exchange> expression) {
@@ -275,13 +276,14 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     /**
-     * Adds an expectation that no duplicate messages should be received using the
-     * expression to determine the message ID
-     *
+     * Adds an expectation that no duplicate messages should be received using
+     * the expression to determine the message ID
+     * 
      * @param expression the expression used to create a unique message ID for
-     *                   message comparison (which could just be the message payload if the payload
-     *                   can be tested for uniqueness using {@link Object#equals(Object)}
-     *                   and {@link Object#hashCode()}
+     *                message comparison (which could just be the message
+     *                payload if the payload can be tested for uniqueness using
+     *                {@link Object#equals(Object)} and
+     *                {@link Object#hashCode()}
      */
     public void expectsNoDuplicates(final Expression<Exchange> expression) {
         expects(new Runnable() {
@@ -298,7 +300,6 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         assertMessagesSorted(expression, true);
     }
 
-
     /**
      * Asserts that the messages have descending values of the given expression
      */
@@ -307,7 +308,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     protected void assertMessagesSorted(Expression<Exchange> expression, boolean ascending) {
-        String type = (ascending) ? "ascending" : "descending";
+        String type = ascending ? "ascending" : "descending";
         ExpressionComparator comparator = new ExpressionComparator(expression);
         List<Exchange> list = getReceivedExchanges();
         for (int i = 1; i < list.size(); i++) {
@@ -316,19 +317,15 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
             Exchange e2 = list.get(i);
             int result = comparator.compare(e1, e2);
             if (result == 0) {
-                fail("Messages not " + type + ". Messages" + j + " and " + i
-                        + " are equal with value: " + expression.evaluate(e1)
-                        + " for expression: " + expression + ". Exchanges: " + e1 + " and " + e2);
-            }
-            else {
+                fail("Messages not " + type + ". Messages" + j + " and " + i + " are equal with value: " + expression.evaluate(e1) + " for expression: " + expression + ". Exchanges: " + e1 + " and "
+                     + e2);
+            } else {
                 if (!ascending) {
                     result = result * -1;
                 }
                 if (result > 0) {
-                    fail("Messages not " + type + ". Message " + j
-                            + " has value: " + expression.evaluate(e1)
-                            + " and message " + i + " has value: " + expression.evaluate(e2)
-                            + " for expression: " + expression + ". Exchanges: " + e1 + " and " + e2);
+                    fail("Messages not " + type + ". Message " + j + " has value: " + expression.evaluate(e1) + " and message " + i + " has value: " + expression.evaluate(e2) + " for expression: "
+                         + expression + ". Exchanges: " + e1 + " and " + e2);
                 }
             }
         }
@@ -342,18 +339,16 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
             Object key = expression.evaluate(e2);
             Exchange e1 = map.get(key);
             if (e1 != null) {
-                fail("Duplicate message found on message " + i
-                        + " has value: " + key
-                        + " for expression: " + expression + ". Exchanges: " + e1 + " and " + e2);
-            }
-            else {
+                fail("Duplicate message found on message " + i + " has value: " + key + " for expression: " + expression + ". Exchanges: " + e1 + " and " + e2);
+            } else {
                 map.put(key, e2);
             }
         }
     }
 
     /**
-     * Adds the expection which will be invoked when enough messages are received
+     * Adds the expection which will be invoked when enough messages are
+     * received
      */
     public void expects(Runnable runnable) {
         tests.add(runnable);
@@ -361,7 +356,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
 
     /**
      * Adds an assertion to the given message index
-     *
+     * 
      * @param messageIndex the number of the message
      * @return the assertion clause
      */
@@ -377,7 +372,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
 
     /**
      * Adds an assertion to all the received messages
-     *
+     * 
      * @return the assertion clause
      */
     public AssertionClause allMessages() {
@@ -404,7 +399,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public List<Throwable> getFailures() {
         return failures;
     }
@@ -426,10 +421,11 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     /**
-     * Allows a sleep to be specified to wait to check that this endpoint really is empty when
-     * {@link #expectedMessageCount(int)} is called with zero
-     *
-     * @param sleepForEmptyTest the milliseconds to sleep for to determine that this endpoint really is empty
+     * Allows a sleep to be specified to wait to check that this endpoint really
+     * is empty when {@link #expectedMessageCount(int)} is called with zero
+     * 
+     * @param sleepForEmptyTest the milliseconds to sleep for to determine that
+     *                this endpoint really is empty
      */
     public void setSleepForEmptyTest(long sleepForEmptyTest) {
         this.sleepForEmptyTest = sleepForEmptyTest;
@@ -440,15 +436,15 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     /**
-     * Sets the maximum amount of time the {@link #assertIsSatisfied()}
-     * will wait on a latch until it is satisfied
+     * Sets the maximum amount of time the {@link #assertIsSatisfied()} will
+     * wait on a latch until it is satisfied
      */
     public void setDefaulResultWaitMillis(long defaulResultWaitMillis) {
         this.defaulResultWaitMillis = defaulResultWaitMillis;
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     protected synchronized void onExchange(Exchange exchange) {
         try {
             Message in = exchange.getIn();
@@ -465,7 +461,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
                 }
             }
 
-            log.debug(getEndpointUri() + " >>>> " + (++counter) + " : " + exchange + " with body: " + actualBody);
+            LOG.debug(getEndpointUri() + " >>>> " + (++counter) + " : " + exchange + " with body: " + actualBody);
 
             receivedExchanges.add(exchange);
 
@@ -477,8 +473,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
             if (latch != null) {
                 latch.countDown();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             failures.add(e);
         }
     }
@@ -489,7 +484,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         }
 
         // now lets wait for the results
-        log.debug("Waiting on the latch for: " + defaulResultWaitMillis + " millis");
+        LOG.debug("Waiting on the latch for: " + defaulResultWaitMillis + " millis");
         latch.await(defaulResultWaitMillis, TimeUnit.MILLISECONDS);
     }
 
@@ -506,11 +501,11 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     protected void fail(Object message) {
-        if (log.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             List<Exchange> list = getReceivedExchanges();
             int index = 0;
             for (Exchange exchange : list) {
-                log.debug("Received[" + (++index) +"]: " + exchange);
+                LOG.debug("Received[" + (++index) + "]: " + exchange);
             }
         }
         throw new AssertionError(getEndpointUri() + " " + message);

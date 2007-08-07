@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,9 @@ import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
  * @version $Revision: 1.1 $
  */
 public class ChoiceTest extends ContextTestSupport {
-    protected MockEndpoint x, y, z;
+    protected MockEndpoint x;
+    protected MockEndpoint y;
+    protected MockEndpoint z;
 
     public void testSendToFirstWhen() throws Exception {
         String body = "<one/>";
