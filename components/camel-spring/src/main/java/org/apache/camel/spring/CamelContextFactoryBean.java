@@ -91,7 +91,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // lets force any lazy creation
         getContext();
 
-        log.info("Found JAXB created routes: " + getRoutes());
+        log.debug("Found JAXB created routes: " + getRoutes());
 
         findRouteBuiders();
         installRoutes();
@@ -109,7 +109,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (event instanceof ContextRefreshedEvent) {
             // now lets start the CamelContext so that all its possible dependencies are initailized
             try {
-                log.info("Starting the context now!");
+                log.debug("Starting the context now!");
                 getContext().start();
             }
             catch (Exception e) {
