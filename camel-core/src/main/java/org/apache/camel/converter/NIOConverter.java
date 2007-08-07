@@ -16,9 +16,10 @@
  */
 package org.apache.camel.converter;
 
-import java.nio.ByteBuffer;
-
 import org.apache.camel.Converter;
+
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 /**
  * Some core java.nio based 
@@ -86,5 +87,10 @@ public class NIOConverter {
         ByteBuffer buf = ByteBuffer.allocate(8);
         buf.putDouble(value);
         return buf;
+    }
+
+    @Converter
+    public static InputStream toInputStream(ByteBuffer bufferbuffer) {
+        return IOConverter.toInputStream(toByteArray(bufferbuffer));
     }
 }
