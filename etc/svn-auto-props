@@ -1,0 +1,83 @@
+#
+#
+#    Licensed to the Apache Software Foundation (ASF) under one
+#    or more contributor license agreements. See the NOTICE file
+#    distributed with this work for additional information
+#    regarding copyright ownership. The ASF licenses this file
+#    to you under the Apache License, Version 2.0 (the
+#    "License"); you may not use this file except in compliance
+#    with the License. You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing,
+#    software distributed under the License is distributed on an
+#    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#    KIND, either express or implied. See the License for the
+#    specific language governing permissions and limitations
+#    under the License.
+#
+#
+### Section for configuring miscelleneous Subversion options.
+[miscellany]
+### Set enable-auto-props to 'yes' to enable automatic properties
+### for 'svn add' and 'svn import', it defaults to 'no'.
+### Automatic properties are defined in the section 'auto-props'.
+enable-auto-props = yes
+
+### Section for configuring automatic properties.
+### The format of the entries is:
+###   file-name-pattern = propname[=value][;propname[=value]...]
+### The file-name-pattern can contain wildcards (such as '*' and
+### '?').  All entries which match will be applied to the file.
+### Note that auto-props functionality must be enabled, which
+### is typically done by setting the 'enable-auto-props' option.
+[auto-props]
+*.java = svn:eol-style=native;svn:keywords=Rev Date
+*.xml = svn:mime-type=text/xml;svn:eol-style=native;svn:keywords=Rev Date
+*.xsl = svn:mime-type=text/xml;svn:eol-style=native;svn:keywords=Rev Date
+*.xsd = svn:mime-type=text/xml;svn:eol-style=native;svn:keywords=Rev Date
+*.xjb = svn:mime-type=text/xml;svn:eol-style=native;svn:keywords=Rev Date
+*.wsdl = svn:mime-type=text/xml;svn:eol-style=native;svn:keywords=Rev Date
+*.properties = svn:mime-type=text/plain;svn:eol-style=native;svn:keywords=Rev Date
+.checkstyle = svn:mime-type=text/xml;svn:eol-style=native;svn:keywords=Rev Date
+.pmd = svn:mime-type=text/xml;svn:eol-style=native;svn:keywords=Rev Date
+.ruleset = svn:mime-type=text/xml;svn:eol-style=native;svn:keywords=Rev Date
+*.c = svn:eol-style=native;svn:keywords=Rev Date
+*.cpp = svn:eol-style=native;svn:keywords=Rev Date
+*.h = svn:eol-style=native;svn:keywords=Rev Date
+*.dsp = svn:eol-style=CRLF
+*.dsw = svn:eol-style=CRLF
+*.sh = svn:eol-style=native;svn:executable
+*.bat = svn:eol-style=native
+*.pl = svn:eol-style=native
+*.py = svn:eol-style=native
+*.cmd = svn:eol-style=native
+*.txt = svn:eol-style=native;svn:mime-type=text/plain
+*.cat = svn:eol-style=native;svn:mime-type=text/plain
+*.htm* = svn:eol-style=native;svn:mime-type=text/html;svn:keywords=Rev Date
+ChangeLog = svn:eol-style=native;svn:mime-type=text/plain
+README* = svn:eol-style=native;svn:mime-type=text/plain
+LICENSE* = svn:eol-style=native;svn:mime-type=text/plain
+NOTICE* = svn:eol-style=native;svn:mime-type=text/plain
+TODO* = svn:eol-style=native;svn:mime-type=text/plain
+KEYS* = svn:eol-style=native;svn:mime-type=text/plain
+INSTALL* = svn:eol-style=native;svn:mime-type=text/plain
+WHATSNEW* = svn:eol-style=native;svn:mime-type=text/plain
+NEWS* = svn:eol-style=native;svn:mime-type=text/plain
+COPYING = svn:eol-style=native;svn:mime-type=text/plain
+*.png = svn:mime-type=image/png
+*.jpg = svn:mime-type=image/jpeg
+*.gif = svn:mime-type=image/gif
+Makefile = svn:eol-style=native
+*.css = svn:eol-style=native
+*.js = svn:eol-style=native
+*.jsx = svn:eol-style=native
+#Tuscany/SCA work should also have:
+*.wsdd = svn:mime-type=text/xml;svn:eol-style=native;svn:keywords=Rev Date
+*.scdl = svn:mime-type=text/xml;svn:eol-style=native;svn:keywords=Rev Date
+*.componentType = svn:mime-type=text/xml;svn:eol-style=native;svn:keywords=Rev Date
+*.fragment = svn:eol-style=native
+sca.subsystem = svn:eol-style=native;svn:mime-type=text/xml
+
+
