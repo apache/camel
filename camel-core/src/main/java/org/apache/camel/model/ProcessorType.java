@@ -204,6 +204,17 @@ public abstract class ProcessorType {
     }
 
     /**
+     * Creates a try/catch block
+     *
+     * @return the builder for a tryBlock expression
+     */
+    public TryType tryBlock() {
+        TryType answer = new TryType();
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
      * Creates a dynamic <a href="http://activemq.apache.org/camel/recipient-list.html">Recipient List</a> pattern.
      *
      * @param receipients is the builder of the expression used in the {@link RecipientList} to decide the destinations
