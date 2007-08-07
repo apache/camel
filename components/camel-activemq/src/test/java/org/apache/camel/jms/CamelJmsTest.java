@@ -91,6 +91,6 @@ public class CamelJmsTest extends SpringTestSupport {
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/jms/spring.xml");
+        return new ClassPathXmlApplicationContext("org/apache/activemq/camel/spring.xml");
     }
 }
