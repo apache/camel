@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import junit.framework.TestCase;
+import org.apache.camel.util.jndi.JndiTest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,8 +26,7 @@ import java.util.List;
  * @version $Revision: $
  */
 public class RegistryTest extends TestCase {
-
-    protected JndiRegistry registry = new JndiRegistry();
+    protected JndiRegistry registry;
 
     public void testBind() throws Exception {
         List foo = Arrays.asList("a", "b", "c");
@@ -45,5 +45,10 @@ public class RegistryTest extends TestCase {
     public void testLookupOfUnknownName() throws Exception {
         Object value = registry.lookup("No such entry!");
         assertNull("Should not find anything!", value);
+    }
+
+    protected void setUp() throws Exception {
+        super.setUp();
+        registry = new JndiRegistry(JndiTest.createInitialContext());
     }
 }

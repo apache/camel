@@ -19,7 +19,9 @@ package org.apache.camel;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Language;
+import org.apache.camel.util.jndi.JndiTest;
 
 /**
  * A useful base class which creates a {@link CamelContext} with some routes along with a {@link CamelTemplate}
@@ -92,7 +94,7 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        return new DefaultCamelContext();
+        return new DefaultCamelContext(new JndiRegistry(JndiTest.createInitialContext()));
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
