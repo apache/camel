@@ -16,9 +16,11 @@
 ## ------------------------------------------------------------------------
 AggregatorType
 BeanRef
+CatchType
 ChoiceType
 DelayerType
 FilterType
+FinallyType
 FromType
 IdempotentConsumerType
 MulticastType
@@ -32,4 +34,5 @@ RoutesType
 SplitterType
 ThrottlerType
 ToType
+TryType
 WhenType
