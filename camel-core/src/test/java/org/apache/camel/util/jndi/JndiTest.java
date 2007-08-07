@@ -22,12 +22,24 @@ import org.apache.camel.TestSupport;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.util.Hashtable;
+import java.util.Properties;
+import java.io.InputStream;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class JndiTest extends TestSupport {
     protected Context context;
+
+    public static Context createInitialContext() throws Exception {
+        InputStream in = JndiTest.class.getClassLoader().getResourceAsStream("jndi-example.properties");
+        assertNotNull("Cannot find jndi-example.properties on the classpath!", in);
+        Properties properties = new Properties();
+        properties.load(in);
+        return new InitialContext(new Hashtable(properties));
+
+    }
 
     public void testLookupOfSimpleName() throws Exception {
         Object value = assertLookup("foo");
@@ -52,6 +64,6 @@ public class JndiTest extends TestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
-        context = new InitialContext();
+        context = createInitialContext();
     }
 }
