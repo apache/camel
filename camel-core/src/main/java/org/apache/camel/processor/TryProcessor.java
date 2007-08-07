@@ -18,6 +18,8 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -28,7 +30,7 @@ import java.util.List;
  *
  * @version $Revision: $
  */
-public class TryProcessor implements Processor {
+public class TryProcessor extends ServiceSupport implements Processor {
     private static final Log log = LogFactory.getLog(TryProcessor.class);
 
     private final Processor tryProcessor;
@@ -39,6 +41,11 @@ public class TryProcessor implements Processor {
         this.tryProcessor = tryProcessor;
         this.catchClauses = catchClauses;
         this.finallyProcessor = finallyProcessor;
+    }
+
+    public String toString() {
+        String finallyText = (finallyProcessor == null) ? "" : " Finally {" + finallyProcessor + "}";
+        return "Try {" + tryProcessor + "} " + catchClauses + finallyText;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -65,9 +72,19 @@ public class TryProcessor implements Processor {
         }
     }
 
+    protected void doStart() throws Exception {
+        ServiceHelper.startServices(tryProcessor, catchClauses, finallyProcessor);
+    }
+
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(tryProcessor, catchClauses, finallyProcessor);
+    }
+
     protected void handleException(Exchange exchange, Exception e) throws Exception {
         for (CatchProcessor catchClause : catchClauses) {
             if (catchClause.catches(e)) {
+                // lets attach the exception to the exchange
+                exchange.setException(e);
                 try {
                     catchClause.process(exchange);
                 }
@@ -75,8 +92,11 @@ public class TryProcessor implements Processor {
                     log.warn("Caught exception inside catch clause: " + e1, e1);
                     throw e1;
                 }
-                break;
+                return;
             }
         }
+
+        // unhandled exception
+        throw e;
     }
 }

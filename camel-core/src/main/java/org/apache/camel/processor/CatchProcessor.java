@@ -18,21 +18,25 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.ServiceSupport;
 
 import java.util.List;
 
 /**
  * @version $Revision: $
  */
-public class CatchProcessor implements Processor {
+public class CatchProcessor extends DelegateProcessor {
     private List<Class> exceptions;
-    private Processor processor;
 
     public CatchProcessor(List<Class> exceptions, Processor processor) {
+        super(processor);
         this.exceptions = exceptions;
-        this.processor = processor;
     }
 
+    @Override
+    public String toString() {
+        return "Catch[" + exceptions + " -> " + getProcessor() + "]";
+    }
 
     public boolean catches(Exception e) {
         for (Class type : exceptions) {
@@ -43,7 +47,7 @@ public class CatchProcessor implements Processor {
         return false;
     }
 
-    public void process(Exchange exchange) throws Exception {
-        processor.process(exchange);
+    public List<Class> getExceptions() {
+        return exceptions;
     }
 }

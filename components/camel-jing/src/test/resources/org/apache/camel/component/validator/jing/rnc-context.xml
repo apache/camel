@@ -26,7 +26,7 @@
     <route>
       <from uri="direct:start"/>
       <try>
-        <to uri="validator:org/apache/camel/component/validator/schema.xsd"/>
+        <to uri="rnc:org/apache/camel/component/validator/jing/schema.rnc"/>
         <to uri="mock:valid"/>
 
         <catch>

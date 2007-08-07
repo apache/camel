@@ -39,7 +39,7 @@ import java.util.List;
 public class CatchType extends ProcessorType {
     @XmlElement(required = false)
     private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
-    @XmlElement
+    @XmlElement(name="exception")
     private List<String> exceptions = new ArrayList<String>();
     @XmlElementRef
     private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
