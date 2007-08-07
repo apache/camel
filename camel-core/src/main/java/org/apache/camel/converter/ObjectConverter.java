@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,51 +16,57 @@
  */
 package org.apache.camel.converter;
 
-import org.apache.camel.Converter;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
+import org.apache.camel.Converter;
+
 /**
- * Some core java.lang based
- * <a href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
- *
+ * Some core java.lang based <a
+ * href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
+ * 
  * @version $Revision$
  */
 @Converter
 public class ObjectConverter {
+    
+    /**
+     * Utility classes should not have a public constructor.
+     */
+    private ObjectConverter() {        
+    }
+    
     public static boolean isCollection(Object value) {
         // TODO we should handle primitive array types?
         return value instanceof Collection || (value != null && value.getClass().isArray());
     }
 
     /**
-     * Creates an iterator over the value if the value is a collection, an Object[] or a primitive type array; otherwise
-     * to simplify the caller's code, we just create a singleton collection iterator over a single value
+     * Creates an iterator over the value if the value is a collection, an
+     * Object[] or a primitive type array; otherwise to simplify the caller's
+     * code, we just create a singleton collection iterator over a single value
      */
     @Converter
     public static Iterator iterator(Object value) {
         if (value == null) {
             return Collections.EMPTY_LIST.iterator();
-        }
-        else if (value instanceof Collection) {
-            Collection collection = (Collection) value;
+        } else if (value instanceof Collection) {
+            Collection collection = (Collection)value;
             return collection.iterator();
-        }
-        else if (value.getClass().isArray()) {
+        } else if (value.getClass().isArray()) {
             // TODO we should handle primitive array types?
             return Arrays.asList(value).iterator();
-        }
-        else {
+        } else {
             return Collections.singletonList(value).iterator();
         }
     }
 
     /**
-     * Converts the given value to a boolean, handling strings or Boolean objects;
-     * otherwise returning false if the value could not be converted to a boolean
+     * Converts the given value to a boolean, handling strings or Boolean
+     * objects; otherwise returning false if the value could not be converted to
+     * a boolean
      */
     @Converter
     public static boolean toBool(Object value) {
@@ -73,13 +78,14 @@ public class ObjectConverter {
     }
 
     /**
-     * Converts the given value to a Boolean, handling strings or Boolean objects;
-     * otherwise returning null if the value cannot be converted to a boolean
+     * Converts the given value to a Boolean, handling strings or Boolean
+     * objects; otherwise returning null if the value cannot be converted to a
+     * boolean
      */
     @Converter
     public static Boolean toBoolean(Object value) {
         if (value instanceof Boolean) {
-            return (Boolean) value;
+            return (Boolean)value;
         }
         if (value instanceof String) {
             return "true".equalsIgnoreCase(value.toString()) ? Boolean.TRUE : Boolean.FALSE;

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,69 +16,52 @@
  */
 package org.apache.camel.util.jndi;
 
-import org.apache.camel.impl.ReflectionInjector;
-import org.apache.camel.spi.Injector;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
-
-import javax.naming.*;
-import javax.naming.spi.NamingManager;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.naming.Binding;
+import javax.naming.CompositeName;
+import javax.naming.Context;
+import javax.naming.LinkRef;
+import javax.naming.Name;
+import javax.naming.NameClassPair;
+import javax.naming.NameNotFoundException;
+import javax.naming.NameParser;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.NotContextException;
+import javax.naming.OperationNotSupportedException;
+import javax.naming.Reference;
+import javax.naming.spi.NamingManager;
+
+import org.apache.camel.impl.ReflectionInjector;
+import org.apache.camel.spi.Injector;
+import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
+
 /**
  * A default JNDI context
- *
+ * 
  * @version $Revision: 1.2 $ $Date: 2005/08/27 03:52:39 $
  */
 public class JndiContext implements Context, Serializable {
     public static final String SEPARATOR = "/";
-    private static final long serialVersionUID = -5754338187296859149L;
-    protected static final NameParser nameParser = new NameParser() {
+    protected static final NameParser NAME_PARSER = new NameParser() {
         public Name parse(String name) throws NamingException {
             return new CompositeName(name);
         }
     };
-    protected static Injector injector = new ReflectionInjector();
-    private final Hashtable environment;        // environment for this context
-    private final Map bindings;         // bindings at my level
-    private final Map treeBindings;     // all bindings under me
-    private boolean frozen = false;
+    protected static final Injector INJETOR = new ReflectionInjector();
+    private static final long serialVersionUID = -5754338187296859149L;
+        
+    private final Hashtable environment; // environment for this context
+    private final Map bindings; // bindings at my level
+    private final Map treeBindings; // all bindings under me
+    private boolean frozen;
     private String nameInNamespace = "";
-
-    /**
-     * A helper method to create the JNDI bindings from the input environment properties
-     * using $foo.class to point to a class name with $foo.* being properties set on the injected bean
-     */
-    public static Map createBindingsMapFromEnvironment(Hashtable env) {
-        Map answer = new HashMap(env);
-
-        for (Object object : env.entrySet()) {
-            Map.Entry entry = (Map.Entry) object;
-            Object key = entry.getKey();
-            Object value = entry.getValue();
-
-            if (key instanceof String && value instanceof String) {
-                String keyText = (String) key;
-                String valueText = (String) value;
-                if (keyText.endsWith(".class")) {
-                    Class<?> type = ObjectHelper.loadClass(valueText);
-                    if (type != null) {
-                        String newEntry = keyText.substring(0, keyText.length() - ".class".length());
-                        Object bean = createBean(type, answer, newEntry + ".");
-                        if (bean != null) {
-                            answer.put(newEntry, bean);
-                        }
-                    }
-                }
-            }
-        }
-
-        return answer;
-    }
 
     public JndiContext() {
         this(new Hashtable());
@@ -91,8 +74,7 @@ public class JndiContext implements Context, Serializable {
     public JndiContext(Hashtable environment, Map bindings) {
         if (environment == null) {
             this.environment = new Hashtable();
-        }
-        else {
+        } else {
             this.environment = new Hashtable(environment);
         }
         this.bindings = bindings;
@@ -114,6 +96,38 @@ public class JndiContext implements Context, Serializable {
         this(clone, env);
         this.nameInNamespace = nameInNamespace;
     }
+    
+    /**
+     * A helper method to create the JNDI bindings from the input environment
+     * properties using $foo.class to point to a class name with $foo.* being
+     * properties set on the injected bean
+     */
+    public static Map createBindingsMapFromEnvironment(Hashtable env) {
+        Map answer = new HashMap(env);
+
+        for (Object object : env.entrySet()) {
+            Map.Entry entry = (Map.Entry)object;
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+
+            if (key instanceof String && value instanceof String) {
+                String keyText = (String)key;
+                String valueText = (String)value;
+                if (keyText.endsWith(".class")) {
+                    Class<?> type = ObjectHelper.loadClass(valueText);
+                    if (type != null) {
+                        String newEntry = keyText.substring(0, keyText.length() - ".class".length());
+                        Object bean = createBean(type, answer, newEntry + ".");
+                        if (bean != null) {
+                            answer.put(newEntry, bean);
+                        }
+                    }
+                }
+            }
+        }
+
+        return answer;
+    }
 
     public void freeze() {
         frozen = true;
@@ -124,13 +138,15 @@ public class JndiContext implements Context, Serializable {
     }
 
     /**
-     * internalBind is intended for use only during setup or possibly by suitably synchronized superclasses.
-     * It binds every possible lookup into a map in each context.  To do this, each context
-     * strips off one name segment and if necessary creates a new context for it. Then it asks that context
-     * to bind the remaining name.  It returns a map containing all the bindings from the next context, plus
-     * the context it just created (if it in fact created it). (the names are suitably extended by the segment
-     * originally lopped off).
-     *
+     * internalBind is intended for use only during setup or possibly by
+     * suitably synchronized superclasses. It binds every possible lookup into a
+     * map in each context. To do this, each context strips off one name segment
+     * and if necessary creates a new context for it. Then it asks that context
+     * to bind the remaining name. It returns a map containing all the bindings
+     * from the next context, plus the context it just created (if it in fact
+     * created it). (the names are suitably extended by the segment originally
+     * lopped off).
+     * 
      * @param name
      * @param value
      * @return
@@ -148,8 +164,7 @@ public class JndiContext implements Context, Serializable {
             }
             bindings.put(name, value);
             newBindings.put(name, value);
-        }
-        else {
+        } else {
             String segment = name.substring(0, pos);
             assert segment != null;
             assert !segment.equals("");
@@ -159,16 +174,15 @@ public class JndiContext implements Context, Serializable {
                 treeBindings.put(segment, o);
                 bindings.put(segment, o);
                 newBindings.put(segment, o);
-            }
-            else if (!(o instanceof JndiContext)) {
+            } else if (!(o instanceof JndiContext)) {
                 throw new NamingException("Something already bound where a subcontext should go");
             }
-            JndiContext defaultContext = (JndiContext) o;
+            JndiContext defaultContext = (JndiContext)o;
             String remainder = name.substring(pos + 1);
             Map subBindings = defaultContext.internalBind(remainder, value);
             for (Iterator iterator = subBindings.entrySet().iterator(); iterator.hasNext();) {
-                Map.Entry entry = (Map.Entry) iterator.next();
-                String subName = segment + "/" + (String) entry.getKey();
+                Map.Entry entry = (Map.Entry)iterator.next();
+                String subName = segment + "/" + (String)entry.getKey();
                 Object bound = entry.getValue();
                 treeBindings.put(subName, bound);
                 newBindings.put(subName, bound);
@@ -186,7 +200,7 @@ public class JndiContext implements Context, Serializable {
     }
 
     public Hashtable getEnvironment() throws NamingException {
-        return (Hashtable) environment.clone();
+        return (Hashtable)environment.clone();
     }
 
     public Object removeFromEnvironment(String propName) throws NamingException {
@@ -210,23 +224,20 @@ public class JndiContext implements Context, Serializable {
                     throw new NamingException("scheme " + scheme + " not recognized");
                 }
                 return ctx.lookup(name);
-            }
-            else {
+            } else {
                 // Split out the first name of the path
                 // and look for it in the bindings map.
                 CompositeName path = new CompositeName(name);
 
                 if (path.size() == 0) {
                     return this;
-                }
-                else {
+                } else {
                     String first = path.get(0);
                     Object value = bindings.get(first);
                     if (value == null) {
                         throw new NameNotFoundException(name);
-                    }
-                    else if (value instanceof Context && path.size() > 1) {
-                        Context subContext = (Context) value;
+                    } else if (value instanceof Context && path.size() > 1) {
+                        Context subContext = (Context)value;
                         value = subContext.lookup(path.getSuffix(1));
                     }
                     return value;
@@ -234,18 +245,16 @@ public class JndiContext implements Context, Serializable {
             }
         }
         if (result instanceof LinkRef) {
-            LinkRef ref = (LinkRef) result;
+            LinkRef ref = (LinkRef)result;
             result = lookup(ref.getLinkName());
         }
         if (result instanceof Reference) {
             try {
                 result = NamingManager.getObjectInstance(result, null, null, this.environment);
-            }
-            catch (NamingException e) {
+            } catch (NamingException e) {
                 throw e;
-            }
-            catch (Exception e) {
-                throw (NamingException) new NamingException("could not look up : " + name).initCause(e);
+            } catch (Exception e) {
+                throw (NamingException)new NamingException("could not look up : " + name).initCause(e);
             }
         }
         if (result instanceof JndiContext) {
@@ -253,7 +262,7 @@ public class JndiContext implements Context, Serializable {
             if (prefix.length() > 0) {
                 prefix = prefix + SEPARATOR;
             }
-            result = new JndiContext((JndiContext) result, environment, prefix + name);
+            result = new JndiContext((JndiContext)result, environment, prefix + name);
         }
         return result;
     }
@@ -267,7 +276,7 @@ public class JndiContext implements Context, Serializable {
     }
 
     public Name composeName(Name name, Name prefix) throws NamingException {
-        Name result = (Name) prefix.clone();
+        Name result = (Name)prefix.clone();
         result.addAll(name);
         return result;
     }
@@ -282,11 +291,9 @@ public class JndiContext implements Context, Serializable {
         Object o = lookup(name);
         if (o == this) {
             return new ListEnumeration();
-        }
-        else if (o instanceof Context) {
-            return ((Context) o).list("");
-        }
-        else {
+        } else if (o instanceof Context) {
+            return ((Context)o).list("");
+        } else {
             throw new NotContextException();
         }
     }
@@ -295,11 +302,9 @@ public class JndiContext implements Context, Serializable {
         Object o = lookup(name);
         if (o == this) {
             return new ListBindingEnumeration();
-        }
-        else if (o instanceof Context) {
-            return ((Context) o).listBindings("");
-        }
-        else {
+        } else if (o instanceof Context) {
+            return ((Context)o).listBindings("");
+        } else {
             throw new NotContextException();
         }
     }
@@ -323,8 +328,7 @@ public class JndiContext implements Context, Serializable {
     public void bind(String name, Object value) throws NamingException {
         if (isFrozen()) {
             throw new OperationNotSupportedException();
-        }
-        else {
+        } else {
             internalBind(name, value);
         }
     }
@@ -354,11 +358,11 @@ public class JndiContext implements Context, Serializable {
     }
 
     public NameParser getNameParser(Name name) throws NamingException {
-        return nameParser;
+        return NAME_PARSER;
     }
 
     public NameParser getNameParser(String name) throws NamingException {
-        return nameParser;
+        return NAME_PARSER;
     }
 
     public void rebind(Name name, Object value) throws NamingException {
@@ -397,7 +401,7 @@ public class JndiContext implements Context, Serializable {
         }
 
         protected Map.Entry getNext() {
-            return (Map.Entry) i.next();
+            return (Map.Entry)i.next();
         }
 
         public void close() throws NamingException {
@@ -414,7 +418,7 @@ public class JndiContext implements Context, Serializable {
 
         public Object nextElement() {
             Map.Entry entry = getNext();
-            return new NameClassPair((String) entry.getKey(), entry.getValue().getClass().getName());
+            return new NameClassPair((String)entry.getKey(), entry.getValue().getClass().getName());
         }
     }
 
@@ -428,12 +432,12 @@ public class JndiContext implements Context, Serializable {
 
         public Object nextElement() {
             Map.Entry entry = getNext();
-            return new Binding((String) entry.getKey(), entry.getValue());
+            return new Binding((String)entry.getKey(), entry.getValue());
         }
     }
 
     protected static Object createBean(Class<?> type, Map properties, String prefix) {
-        Object value = injector.newInstance(type);
+        Object value = INJETOR.newInstance(type);
         IntrospectionSupport.setProperties(value, properties, prefix);
         return value;
     }

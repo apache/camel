@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,12 +16,13 @@
  */
 package org.apache.camel.processor.validation;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.ValidationException;
-import org.xml.sax.ErrorHandler;
-
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.validation.Schema;
+
+import org.xml.sax.ErrorHandler;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.ValidationException;
 
 /**
  * @version $Revision: $

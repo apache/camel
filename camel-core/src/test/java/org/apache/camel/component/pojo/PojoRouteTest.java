@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,16 +20,16 @@ import junit.framework.TestCase;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.bean.ProxyHelper;
-import org.apache.camel.util.jndi.JndiContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.jndi.JndiContext;
 
 /**
  * @version $Revision: 520220 $
  */
 public class PojoRouteTest extends TestCase {
-	
+
     public void testPojoRoutes() throws Exception {
         // START SNIPPET: register
         // lets populate the context with the services we need
@@ -51,14 +50,14 @@ public class PojoRouteTest extends TestCase {
         // END SNIPPET: route
 
         camelContext.start();
-        
+
         // START SNIPPET: invoke
         Endpoint endpoint = camelContext.getEndpoint("direct:hello");
         ISay proxy = ProxyHelper.createProxy(endpoint, ISay.class);
         String rc = proxy.say();
         assertEquals("Good Bye!", rc);
         // END SNIPPET: invoke
-        
+
         camelContext.stop();
     }
 }

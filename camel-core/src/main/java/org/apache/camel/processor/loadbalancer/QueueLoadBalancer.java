@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,15 +16,15 @@
  */
 package org.apache.camel.processor.loadbalancer;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
-import java.util.List;
-
 /**
- * A base class for {@link LoadBalancer} implementations which choose a single destination for each exchange
- * (rather like JMS Queues)
- *
+ * A base class for {@link LoadBalancer} implementations which choose a single
+ * destination for each exchange (rather like JMS Queues)
+ * 
  * @version $Revision: 1.1 $
  */
 public abstract class QueueLoadBalancer extends LoadBalancerSupport {
@@ -38,8 +37,7 @@ public abstract class QueueLoadBalancer extends LoadBalancerSupport {
         Processor processor = chooseProcessor(list, exchange);
         if (processor == null) {
             throw new IllegalStateException("No processors could be chosen to process " + exchange);
-        }
-        else {
+        } else {
             processor.process(exchange);
         }
     }

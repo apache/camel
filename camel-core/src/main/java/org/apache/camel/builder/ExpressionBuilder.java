@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,14 +16,14 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 
 /**
  * @version $Revision: $
@@ -32,8 +32,14 @@ public class ExpressionBuilder {
 
 
     /**
+     * Utility classes should not have a public constructor.
+     */
+    private ExpressionBuilder() {        
+    }
+    
+    /**
      * Returns an expression for the header value with the given name
-     *
+     * 
      * @param headerName the name of the header the expression will return
      * @return an expression object which will return the header value
      */
@@ -48,7 +54,6 @@ public class ExpressionBuilder {
                 return header;
             }
 
-
             @Override
             public String toString() {
                 return "header(" + headerName + ")";
@@ -58,7 +63,7 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for the out header value with the given name
-     *
+     * 
      * @param headerName the name of the header the expression will return
      * @return an expression object which will return the header value
      */
@@ -73,7 +78,6 @@ public class ExpressionBuilder {
                 return header;
             }
 
-
             @Override
             public String toString() {
                 return "outHeader(" + headerName + ")";
@@ -83,7 +87,7 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for the property value with the given name
-     *
+     * 
      * @param propertyName the name of the property the expression will return
      * @return an expression object which will return the property value
      */
@@ -102,8 +106,9 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for a system property value with the given name
-     *
-     * @param propertyName the name of the system property the expression will return
+     * 
+     * @param propertyName the name of the system property the expression will
+     *                return
      * @return an expression object which will return the system property value
      */
     public static <E extends Exchange> Expression<E> systemPropertyExpression(final String propertyName) {
@@ -112,11 +117,13 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for a system property value with the given name
-     *
-     * @param propertyName the name of the system property the expression will return
+     * 
+     * @param propertyName the name of the system property the expression will
+     *                return
      * @return an expression object which will return the system property value
      */
-    public static <E extends Exchange> Expression<E> systemPropertyExpression(final String propertyName, final String defaultValue) {
+    public static <E extends Exchange> Expression<E> systemPropertyExpression(final String propertyName,
+                                                                              final String defaultValue) {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
                 return System.getProperty(propertyName, defaultValue);
@@ -131,7 +138,7 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for the contant value
-     *
+     * 
      * @param value the value the expression will return
      * @return an expression object which will return the constant value
      */
@@ -164,9 +171,9 @@ public class ExpressionBuilder {
         };
     }
 
-
     /**
-     * Returns the expression for the exchanges inbound message body converted to the given type
+     * Returns the expression for the exchanges inbound message body converted
+     * to the given type
      */
     public static <E extends Exchange, T> Expression<E> bodyExpression(final Class<T> type) {
         return new Expression<E>() {
@@ -230,7 +237,8 @@ public class ExpressionBuilder {
     }
 
     /**
-     * Returns an expression which converts the given expression to the given type
+     * Returns an expression which converts the given expression to the given
+     * type
      */
     public static <E extends Exchange> Expression<E> convertTo(final Expression expression, final Class type) {
         return new Expression<E>() {
@@ -247,9 +255,11 @@ public class ExpressionBuilder {
     }
 
     /**
-     * Returns a tokenize expression which will tokenize the string with the given token
+     * Returns a tokenize expression which will tokenize the string with the
+     * given token
      */
-    public static <E extends Exchange> Expression<E> tokenizeExpression(final Expression<E> expression, final String token) {
+    public static <E extends Exchange> Expression<E> tokenizeExpression(final Expression<E> expression,
+                                                                        final String token) {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
                 String text = evaluateStringExpression(expression, exchange);
@@ -272,9 +282,11 @@ public class ExpressionBuilder {
     }
 
     /**
-     * Returns a tokenize expression which will tokenize the string with the given regex
+     * Returns a tokenize expression which will tokenize the string with the
+     * given regex
      */
-    public static <E extends Exchange> Expression<E> regexTokenize(final Expression<E> expression, String regexTokenizer) {
+    public static <E extends Exchange> Expression<E> regexTokenize(final Expression<E> expression,
+                                                                   String regexTokenizer) {
         final Pattern pattern = Pattern.compile(regexTokenizer);
         return new Expression<E>() {
             public Object evaluate(E exchange) {
@@ -293,9 +305,11 @@ public class ExpressionBuilder {
     }
 
     /**
-     * Transforms the expression into a String then performs the regex replaceAll to transform the String and return the result
+     * Transforms the expression into a String then performs the regex
+     * replaceAll to transform the String and return the result
      */
-    public static <E extends Exchange> Expression<E> regexReplaceAll(final Expression<E> expression, String regex, final String replacement) {
+    public static <E extends Exchange> Expression<E> regexReplaceAll(final Expression<E> expression,
+                                                                     String regex, final String replacement) {
         final Pattern pattern = Pattern.compile(regex);
         return new Expression<E>() {
             public Object evaluate(E exchange) {
@@ -314,15 +328,17 @@ public class ExpressionBuilder {
     }
 
     /**
-     * Transforms the expression into a String then performs the regex replaceAll to transform the String and return the result
+     * Transforms the expression into a String then performs the regex
+     * replaceAll to transform the String and return the result
      */
-    public static <E extends Exchange> Expression<E> regexReplaceAll(final Expression<E> expression, String regex, final Expression<E> replacementExpression) {
+    public static <E extends Exchange> Expression<E> regexReplaceAll(final Expression<E> expression,
+                                                                     String regex,
+                                                                     final Expression<E> replacementExpression) {
         final Pattern pattern = Pattern.compile(regex);
         return new Expression<E>() {
             public Object evaluate(E exchange) {
                 String text = evaluateStringExpression(expression, exchange);
                 String replacement = evaluateStringExpression(replacementExpression, exchange);
-                ;
                 if (text == null || replacement == null) {
                     return null;
                 }
@@ -336,11 +352,11 @@ public class ExpressionBuilder {
         };
     }
 
-
     /**
      * Appends the String evaluations of the two expressions together
      */
-    public static <E extends Exchange> Expression<E> append(final Expression<E> left, final Expression<E> right) {
+    public static <E extends Exchange> Expression<E> append(final Expression<E> left,
+                                                            final Expression<E> right) {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
                 return evaluateStringExpression(left, exchange) + evaluateStringExpression(right, exchange);
@@ -354,11 +370,13 @@ public class ExpressionBuilder {
     }
 
     /**
-     * Evaluates the expression on the given exchange and returns the String representation
-     *
+     * Evaluates the expression on the given exchange and returns the String
+     * representation
+     * 
      * @param expression the expression to evaluate
-     * @param exchange   the exchange to use to evaluate the expression
-     * @return the String representation of the expression or null if it could not be evaluated
+     * @param exchange the exchange to use to evaluate the expression
+     * @return the String representation of the expression or null if it could
+     *         not be evaluated
      */
     public static <E extends Exchange> String evaluateStringExpression(Expression<E> expression, E exchange) {
         Object value = expression.evaluate(exchange);
@@ -375,7 +393,8 @@ public class ExpressionBuilder {
     /**
      * Returns an expression for the given system property
      */
-    public static <E extends Exchange> Expression<E> systemProperty(final String name, final String defaultValue) {
+    public static <E extends Exchange> Expression<E> systemProperty(final String name,
+                                                                    final String defaultValue) {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
                 return System.getProperty(name, defaultValue);

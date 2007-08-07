@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,39 +29,39 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
- * Represents the component that manages {@link DirectEndpoint}.  It holds the 
+ * Represents the component that manages {@link DirectEndpoint}. It holds the
  * list of named direct endpoints.
- *
+ * 
  * @org.apache.xbean.XBean
  * @version $Revision: 519973 $
  */
 public class DirectComponent<E extends Exchange> implements Component<E> {
 
-	private CamelContext context;
+    private CamelContext context;
 
-	public CamelContext getCamelContext() {
-		return context;
-	}
+    public CamelContext getCamelContext() {
+        return context;
+    }
 
-	public ScheduledExecutorService getExecutorService() {
-		return null;
-	}
+    public ScheduledExecutorService getExecutorService() {
+        return null;
+    }
 
-	public Endpoint<E> createEndpoint(String uri) throws Exception {
+    public Endpoint<E> createEndpoint(String uri) throws Exception {
 
-        ObjectHelper.notNull(getCamelContext(), "camelContext");        
+        ObjectHelper.notNull(getCamelContext(), "camelContext");
         URI u = new URI(uri);
         Map parameters = URISupport.parseParamters(u);
 
-        Endpoint<E> endpoint = new DirectEndpoint<E>(uri,this);
+        Endpoint<E> endpoint = new DirectEndpoint<E>(uri, this);
         if (parameters != null) {
             IntrospectionSupport.setProperties(endpoint, parameters);
         }
         return endpoint;
-	}
+    }
 
-	public void setCamelContext(CamelContext context) {
-		this.context = context;
-	}	
+    public void setCamelContext(CamelContext context) {
+        this.context = context;
+    }
 
 }

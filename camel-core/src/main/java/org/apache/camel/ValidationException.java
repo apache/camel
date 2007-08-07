@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,10 +18,10 @@ package org.apache.camel;
 
 /**
  * The base class for any validation exception, such as
- * {@link org.apache.camel.processor.validation.SchemaValidationException}
- * so that it is easy to treat all validation errors in a similar way
- * irrespective of the particular validation technology used.
- *
+ * {@link org.apache.camel.processor.validation.SchemaValidationException} so
+ * that it is easy to treat all validation errors in a similar way irrespective
+ * of the particular validation technology used.
+ * 
  * @version $Revision: $
  */
 public class ValidationException extends CamelExchangeException {

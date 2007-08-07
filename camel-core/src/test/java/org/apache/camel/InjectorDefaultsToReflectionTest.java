@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,11 +27,12 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class InjectorDefaultsToReflectionTest extends TestCase {
-    private static final transient Log log = LogFactory.getLog(InjectorDefaultsToReflectionTest.class);
+    private static final transient Log LOG = LogFactory.getLog(InjectorDefaultsToReflectionTest.class);
     
     public void testInjectorIsReflectionByDefault() throws Exception {
         Injector injector = new DefaultCamelContext().getInjector();
-        assertTrue("Injector should be reflection based but was: " + injector, injector instanceof ReflectionInjector);
-        log.debug("Found injector: " + injector);
+        assertTrue("Injector should be reflection based but was: " + injector,
+                   injector instanceof ReflectionInjector);
+        LOG.debug("Found injector: " + injector);
     }
 }

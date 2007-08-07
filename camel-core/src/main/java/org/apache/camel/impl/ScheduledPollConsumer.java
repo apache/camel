@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,24 +16,25 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
 /**
  * A useful base class for any consumer which is polling based
- *
+ * 
  * @version $Revision$
  */
-public abstract class ScheduledPollConsumer<E extends Exchange> extends DefaultConsumer<E> implements Runnable {
-    private static final transient Log log = LogFactory.getLog(ScheduledPollConsumer.class);
-    
+public abstract class ScheduledPollConsumer<E extends Exchange> extends DefaultConsumer<E> implements
+    Runnable {
+    private static final transient Log LOG = LogFactory.getLog(ScheduledPollConsumer.class);
+
     private final ScheduledExecutorService executor;
     private long initialDelay = 1000;
     private long delay = 500;
@@ -58,17 +58,16 @@ public abstract class ScheduledPollConsumer<E extends Exchange> extends DefaultC
      * Invoked whenever we should be polled
      */
     public void run() {
-        log.debug("Starting to poll");
+        LOG.debug("Starting to poll");
         try {
             poll();
-        }
-        catch (Exception e) {
-            log.warn("Caught: " + e, e);
+        } catch (Exception e) {
+            LOG.warn("Caught: " + e, e);
         }
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public long getInitialDelay() {
         return initialDelay;
     }
@@ -102,11 +101,11 @@ public abstract class ScheduledPollConsumer<E extends Exchange> extends DefaultC
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * The polling method which is invoked periodically to poll this consumer
-     *
+     * 
      * @throws Exception
      */
     protected abstract void poll() throws Exception;
@@ -116,8 +115,7 @@ public abstract class ScheduledPollConsumer<E extends Exchange> extends DefaultC
         super.doStart();
         if (isUseFixedDelay()) {
             future = executor.scheduleWithFixedDelay(this, getInitialDelay(), getDelay(), getTimeUnit());
-        }
-        else {
+        } else {
             future = executor.scheduleAtFixedRate(this, getInitialDelay(), getDelay(), getTimeUnit());
         }
     }

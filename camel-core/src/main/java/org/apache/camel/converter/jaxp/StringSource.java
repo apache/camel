@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,13 +23,12 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
-import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 /**
- * A helper class which provides a JAXP {@link Source} from a String
- * which can be read as many times as required.
- *
+ * A helper class which provides a JAXP {@link Source} from a String which can
+ * be read as many times as required.
+ * 
  * @version $Revision$
  */
 public class StringSource extends StreamSource implements Serializable {
@@ -51,7 +50,7 @@ public class StringSource extends StreamSource implements Serializable {
 
     public StringSource(String text, String systemId, String encoding) {
         this.text = text;
-        this.encoding=encoding;
+        this.encoding = encoding;
         setSystemId(systemId);
     }
 

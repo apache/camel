@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,19 +16,19 @@
  */
 package org.apache.camel.processor.aggregate;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-
 import java.util.AbstractCollection;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+
 /**
- * A {@link Collection} which aggregates exchanges together using a correlation expression
- * so that there is only a single message exchange sent for a single correlation key.
- *
+ * A {@link Collection} which aggregates exchanges together using a correlation
+ * expression so that there is only a single message exchange sent for a single
+ * correlation key.
+ * 
  * @version $Revision: 1.1 $
  */
 public class AggregationCollection extends AbstractCollection<Exchange> {
@@ -37,7 +36,8 @@ public class AggregationCollection extends AbstractCollection<Exchange> {
     private final AggregationStrategy aggregationStrategy;
     private Map<Object, Exchange> map = new LinkedHashMap<Object, Exchange>();
 
-    public AggregationCollection(Expression<Exchange> correlationExpression, AggregationStrategy aggregationStrategy) {
+    public AggregationCollection(Expression<Exchange> correlationExpression,
+                                 AggregationStrategy aggregationStrategy) {
         this.correlationExpression = correlationExpression;
         this.aggregationStrategy = aggregationStrategy;
     }

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,18 +16,18 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.RouteContext;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.RouteContext;
+
 /**
  * Represents an XML &lt;to/&gt; element
- *
+ * 
  * @version $Revision: $
  */
 @XmlRootElement(name = "from")
@@ -64,14 +64,14 @@ public class FromType {
     }
 
     // Properties
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     public String getUri() {
         return uri;
     }
 
     /**
      * Sets the URI of the endpoint to use
-     *
+     * 
      * @param uri the endpoint URI to use
      */
     public void setUri(String uri) {
@@ -83,8 +83,9 @@ public class FromType {
     }
 
     /**
-     * Sets the name of the endpoint within the registry (such as the Spring ApplicationContext or JNDI) to use
-     *
+     * Sets the name of the endpoint within the registry (such as the Spring
+     * ApplicationContext or JNDI) to use
+     * 
      * @param ref the reference name to use
      */
     public void setRef(String ref) {
@@ -100,18 +101,15 @@ public class FromType {
     }
 
     // Implementation methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     protected static String description(String uri, String ref, Endpoint endpoint) {
         if (endpoint != null) {
             return endpoint.getEndpointUri();
-        }
-        else if (uri != null) {
+        } else if (uri != null) {
             return uri;
-        }
-        else if (ref != null) {
+        } else if (ref != null) {
             return "ref:" + ref;
-        }
-        else {
+        } else {
             return "no uri or ref supplied!";
         }
     }

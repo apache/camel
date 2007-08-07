@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,17 +19,16 @@ package org.apache.camel.language.simple;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.language.IllegalSyntaxException;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
+import org.apache.camel.language.IllegalSyntaxException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A <a href="http://activemq.apache.org/camel/simple.html>simple language</a>
- * which maps simple property style notations
- * to acces headers and bodies. Examples of supported expressions are
- * <p/>
+ * which maps simple property style notations to acces headers and bodies.
+ * Examples of supported expressions are <p/>
  * <ul>
  * <li>in.header.foo or header.foo to access an inbound header called 'foo'</li>
  * <li>in.body or body to access the inbound body</li>
@@ -38,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  * <li>property.foo to access the exchange property called 'foo'</li>
  * <li>sys.foo to access the system property called 'foo'</li>
  * </ul>
- *
+ * 
  * @version $Revision: $
  */
 public class SimpleLanguage implements Language {
@@ -50,8 +49,7 @@ public class SimpleLanguage implements Language {
     public Expression<Exchange> createExpression(String expression) {
         if (ObjectHelper.isEqualToAny(expression, "body", "in.body")) {
             return ExpressionBuilder.bodyExpression();
-        }
-        else if (ObjectHelper.equals(expression, "out.body")) {
+        } else if (ObjectHelper.equals(expression, "out.body")) {
             return ExpressionBuilder.outBodyExpression();
         }
         String remainder = ifStartsWithReturnRemainder("in.header.", expression);

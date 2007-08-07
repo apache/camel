@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,8 +23,8 @@ import java.io.InputStream;
  * @version $Revision: 520124 $
  */
 public interface Unmarshaller {
-	
-	/**
+
+    /**
      * Unmarshals the given stream into an object.
      */
     Object unmarshal(InputStream stream) throws IOException;

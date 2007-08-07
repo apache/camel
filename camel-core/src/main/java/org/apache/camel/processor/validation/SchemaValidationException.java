@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,24 +16,26 @@
  */
 package org.apache.camel.processor.validation;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.ValidationException;
+import java.util.List;
+
 import org.xml.sax.SAXParseException;
 
-import java.util.List;
+import org.apache.camel.Exchange;
+import org.apache.camel.ValidationException;
 
 /**
  * A Schema validation exception occurred
- *
+ * 
  * @version $Revision: $
  */
 public class SchemaValidationException extends ValidationException {
-    private Object schema;
-    private List<SAXParseException> fatalErrors;
-    private List<SAXParseException> errors;
-    private List<SAXParseException> warnings;
+    private final Object schema;
+    private final List<SAXParseException> fatalErrors;
+    private final List<SAXParseException> errors;
+    private final List<SAXParseException> warnings;
 
-    public SchemaValidationException(Exchange exchange, Object schema, List<SAXParseException> fatalErrors, List<SAXParseException> errors, List<SAXParseException> warnings) {
+    public SchemaValidationException(Exchange exchange, Object schema, List<SAXParseException> fatalErrors,
+                                     List<SAXParseException> errors, List<SAXParseException> warnings) {
         super(exchange, message(schema, fatalErrors, errors, warnings));
         this.schema = schema;
         this.fatalErrors = fatalErrors;
@@ -43,7 +45,7 @@ public class SchemaValidationException extends ValidationException {
 
     /**
      * Returns the schema that failed
-     *
+     * 
      * @return the schema that failed
      */
     public Object getSchema() {
@@ -52,7 +54,7 @@ public class SchemaValidationException extends ValidationException {
 
     /**
      * Returns the validation errors
-     *
+     * 
      * @return the validation errors
      */
     public List<SAXParseException> getErrors() {
@@ -61,7 +63,7 @@ public class SchemaValidationException extends ValidationException {
 
     /**
      * Returns the fatal validation errors
-     *
+     * 
      * @return the fatal validation errors
      */
     public List<SAXParseException> getFatalErrors() {
@@ -70,15 +72,15 @@ public class SchemaValidationException extends ValidationException {
 
     /**
      * Returns the validation warnings
-     *
+     * 
      * @return the validation warnings
      */
     public List<SAXParseException> getWarnings() {
         return warnings;
     }
 
-
-    protected static String message(Object schema, List<SAXParseException> fatalErrors, List<SAXParseException> errors, List<SAXParseException> warnings) {
+    protected static String message(Object schema, List<SAXParseException> fatalErrors,
+                                    List<SAXParseException> errors, List<SAXParseException> warnings) {
         StringBuffer buffer = new StringBuffer("Validation failed for: " + schema);
         if (!fatalErrors.isEmpty()) {
             buffer.append(" fatal errors: ");

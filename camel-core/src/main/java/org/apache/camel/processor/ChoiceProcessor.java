@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,19 +16,20 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Implements a Choice structure where one or more predicates are used which if they are true their processors
- * are used, with a default otherwise clause used if none match.
- *
+ * Implements a Choice structure where one or more predicates are used which if
+ * they are true their processors are used, with a default otherwise clause used
+ * if none match.
+ * 
  * @version $Revision$
  */
 public class ChoiceProcessor extends ServiceSupport implements Processor {
@@ -61,8 +61,7 @@ public class ChoiceProcessor extends ServiceSupport implements Processor {
         for (FilterProcessor processor : filters) {
             if (first) {
                 first = false;
-            }
-            else {
+            } else {
                 builder.append(", ");
             }
             builder.append("when ");
@@ -85,7 +84,6 @@ public class ChoiceProcessor extends ServiceSupport implements Processor {
     public Processor getOtherwise() {
         return otherwise;
     }
-
 
     protected void doStart() throws Exception {
         ServiceHelper.startServices(filters);

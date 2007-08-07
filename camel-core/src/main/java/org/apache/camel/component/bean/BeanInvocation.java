@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.Exchange;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import org.apache.camel.Exchange;
 
 public class BeanInvocation {
 
@@ -47,24 +47,20 @@ public class BeanInvocation {
 
     /**
      * This causes us to invoke the endpoint Pojo using reflection.
-     *
+     * 
      * @param pojo
      */
     public void invoke(Object pojo, Exchange exchange) {
         try {
             Object response = getMethod().invoke(pojo, getArgs());
             exchange.getOut().setBody(response);
-        }
-        catch (InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
             exchange.setException(e.getCause());
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             throw e;
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             throw new RuntimeException(e);
         }
     }
-
 
 }

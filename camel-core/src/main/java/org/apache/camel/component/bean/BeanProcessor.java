@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,40 +16,33 @@
  */
 package org.apache.camel.component.bean;
 
+import java.lang.reflect.Method;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.lang.reflect.Method;
+import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 
 /**
- * A {@link Processor} which converts the inbound exchange to a method invocation on a POJO
- *
+ * A {@link Processor} which converts the inbound exchange to a method
+ * invocation on a POJO
+ * 
  * @version $Revision: $
  */
 public class BeanProcessor implements Processor {
     public static final String METHOD_NAME = "org.apache.camel.MethodName";
-    private static final Log log = LogFactory.getLog(BeanProcessor.class);
+    private static final Log LOG = LogFactory.getLog(BeanProcessor.class);
 
     private final Object pojo;
     private final BeanInfo beanInfo;
     private Method method;
     private String methodName;
-
-    public static ParameterMappingStrategy createParameterMappingStrategy(CamelContext camelContext) {
-        Registry registry = camelContext.getRegistry();
-        ParameterMappingStrategy answer = registry.lookup(ParameterMappingStrategy.class.getName(), ParameterMappingStrategy.class);
-        if (answer == null) {
-            answer = new DefaultParameterMappingStrategy();
-        }
-        return answer;
-    }
 
     public BeanProcessor(Object pojo, BeanInfo beanInfo) {
         this.pojo = pojo;
@@ -64,6 +57,15 @@ public class BeanProcessor implements Processor {
         this(pojo, createParameterMappingStrategy(camelContext));
     }
 
+    public static ParameterMappingStrategy createParameterMappingStrategy(CamelContext camelContext) {
+        Registry registry = camelContext.getRegistry();
+        ParameterMappingStrategy answer = registry.lookup(ParameterMappingStrategy.class.getName(),
+                                                          ParameterMappingStrategy.class);
+        if (answer == null) {
+            answer = new DefaultParameterMappingStrategy();
+        }
+        return answer;
+    }
     @Override
     public String toString() {
         String description = method != null ? " " + method : "";
@@ -71,8 +73,8 @@ public class BeanProcessor implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug(">>>> invoking method for: " + exchange);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(">>>> invoking method for: " + exchange);
         }
         Message in = exchange.getIn();
         BeanInvocation beanInvoke = in.getBody(BeanInvocation.class);
@@ -84,8 +86,7 @@ public class BeanProcessor implements Processor {
         MethodInvocation invocation;
         if (method != null) {
             invocation = beanInfo.createInvocation(method, pojo, exchange);
-        }
-        else {
+        } else {
             // lets pass in the method name to use if its specified
             if (ObjectHelper.isNotNullAndNonEmpty(methodName)) {
                 if (isNullOrBlank(in.getHeader(METHOD_NAME, String.class))) {
@@ -102,17 +103,15 @@ public class BeanProcessor implements Processor {
             if (value != null) {
                 exchange.getIn().setBody(value);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw e;
-        }
-        catch (Throwable throwable) {
+        } catch (Throwable throwable) {
             throw new Exception(throwable);
         }
     }
 
     // Properties
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     public Method getMethod() {
         return method;

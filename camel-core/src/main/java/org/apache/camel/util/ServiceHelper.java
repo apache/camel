@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,28 +16,32 @@
  */
 package org.apache.camel.util;
 
+import java.util.Collection;
+
 import org.apache.camel.Service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.Collection;
-
 /**
  * A collection of helper methods for working with {@link Service} objects
- *
+ * 
  * @version $Revision$
  */
 public class ServiceHelper {
-    private static final transient Log log = LogFactory.getLog(ServiceHelper.class);
-
-
+    private static final transient Log LOG = LogFactory.getLog(ServiceHelper.class);
+    
+    /**
+     * Utility classes should not have a public constructor.
+     */
+    private ServiceHelper() {        
+    }
+    
     public static void startService(Object value) throws Exception {
         if (value instanceof Service) {
-            Service service = (Service) value;
+            Service service = (Service)value;
             service.start();
-        }
-        else if (value instanceof Collection) {
-            startServices((Collection) value);
+        } else if (value instanceof Collection) {
+            startServices((Collection)value);
         }
     }
 
@@ -57,7 +60,7 @@ public class ServiceHelper {
     public static void startServices(Collection services) throws Exception {
         for (Object value : services) {
             if (value instanceof Service) {
-                Service service = (Service) value;
+                Service service = (Service)value;
                 service.start();
             }
         }
@@ -70,12 +73,11 @@ public class ServiceHelper {
         Exception firstException = null;
         for (Object value : services) {
             if (value instanceof Service) {
-                Service service = (Service) value;
+                Service service = (Service)value;
                 try {
                     service.stop();
-                }
-                catch (Exception e) {
-                    log.debug("Caught exception shutting down: " + e, e);
+                } catch (Exception e) {
+                    LOG.debug("Caught exception shutting down: " + e, e);
                     if (firstException == null) {
                         firstException = e;
                     }
@@ -89,14 +91,12 @@ public class ServiceHelper {
 
     public static void stopService(Object value) throws Exception {
         if (value instanceof Service) {
-            Service service = (Service) value;
+            Service service = (Service)value;
             service.stop();
-        }
-        else if (value instanceof Collection) {
-            stopServices((Collection) value);
+        } else if (value instanceof Collection) {
+            stopServices((Collection)value);
         }
     }
-
 
     /**
      * Stops all of the given services, throwing the first exception caught
@@ -105,12 +105,11 @@ public class ServiceHelper {
         Exception firstException = null;
         for (Object value : services) {
             if (value instanceof Service) {
-                Service service = (Service) value;
+                Service service = (Service)value;
                 try {
                     service.stop();
-                }
-                catch (Exception e) {
-                    log.debug("Caught exception shutting down: " + e, e);
+                } catch (Exception e) {
+                    LOG.debug("Caught exception shutting down: " + e, e);
                     if (firstException == null) {
                         firstException = e;
                     }

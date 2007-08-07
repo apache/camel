@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,17 +28,17 @@ import javax.xml.transform.stream.StreamSource;
  * @version $Revision: 520124 $
  */
 public abstract class XmlUnmarshaller implements Unmarshaller {
-	
-	/**
+
+    /**
      * Unmarshals the given stream into an object.
      */
     public Object unmarshal(InputStream stream) throws IOException {
-    	return unmarshal(new StreamSource(stream));
+        return unmarshal(new StreamSource(stream));
     }
 
-	/**
+    /**
      * Unmarshals the given stream into an object.
      */
-    abstract public Object unmarshal(Source stream) throws IOException;
-    
+    public abstract Object unmarshal(Source stream) throws IOException;
+
 }

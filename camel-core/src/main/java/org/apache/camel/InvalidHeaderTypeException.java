@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,12 +21,12 @@ package org.apache.camel;
  */
 public class InvalidHeaderTypeException extends RuntimeCamelException {
 
-	private static final long serialVersionUID = -8417806626073055262L;
-	private Object headerValue;
+    private static final long serialVersionUID = -8417806626073055262L;
+    private final Object headerValue;
 
     public InvalidHeaderTypeException(Throwable cause, Object headerValue) {
-        super(cause.getMessage() + " headerValue is: " + headerValue + " of type: "
-                + typeName(headerValue), cause);
+        super(cause.getMessage() + " headerValue is: " + headerValue + " of type: " + typeName(headerValue),
+              cause);
         this.headerValue = headerValue;
     }
 
@@ -34,7 +34,6 @@ public class InvalidHeaderTypeException extends RuntimeCamelException {
         super(message);
         this.headerValue = headerValue;
     }
-
 
     /**
      * Returns the actual header value

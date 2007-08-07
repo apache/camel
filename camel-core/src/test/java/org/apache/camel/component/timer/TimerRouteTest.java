@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +16,10 @@
  */
 package org.apache.camel.component.timer;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import junit.framework.TestCase;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -25,13 +27,11 @@ import org.apache.camel.util.jndi.JndiContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * @version $Revision: 520220 $
  */
 public class TimerRouteTest extends TestCase {
-    private static final transient Log log = LogFactory.getLog(TimerRouteTest.class);
+    private static final transient Log LOG = LogFactory.getLog(TimerRouteTest.class);
 
     public void testPojoRoutes() throws Exception {
         final AtomicInteger hitCount = new AtomicInteger();
@@ -39,7 +39,7 @@ public class TimerRouteTest extends TestCase {
         JndiContext context = new JndiContext();
         context.bind("bar", new Runnable() {
             public void run() {
-                log.debug("hit");
+                LOG.debug("hit");
                 hitCount.incrementAndGet();
             }
         });

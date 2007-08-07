@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,9 +22,11 @@ import java.util.Random;
 // Code taken from the ActiveMQ codebase
 
 /**
- * The policy used to decide how many times to redeliver and the time between the redeliveries before being sent to a
- * <a href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter Channel</a>
- *
+ * The policy used to decide how many times to redeliver and the time between
+ * the redeliveries before being sent to a <a
+ * href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter
+ * Channel</a>
+ * 
  * @version $Revision$
  */
 public class RedeliveryPolicy implements Cloneable, Serializable {
@@ -33,10 +34,10 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected int maximumRedeliveries = 6;
     protected long initialRedeliveryDelay = 1000L;
     protected double backOffMultiplier = 2;
-    protected boolean useExponentialBackOff = false;
+    protected boolean useExponentialBackOff;
     // +/-15% for a 30% spread -cgs
     protected double collisionAvoidanceFactor = 0.15d;
-    protected boolean useCollisionAvoidance = false;
+    protected boolean useCollisionAvoidance;
 
     public RedeliveryPolicy() {
     }
@@ -48,22 +49,22 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
 
     public RedeliveryPolicy copy() {
         try {
-            return (RedeliveryPolicy) clone();
-        }
-        catch (CloneNotSupportedException e) {
+            return (RedeliveryPolicy)clone();
+        } catch (CloneNotSupportedException e) {
             throw new RuntimeException("Could not clone: " + e, e);
         }
     }
 
     /**
-     * Returns true if the policy decides that the message exchange should be redelivered
+     * Returns true if the policy decides that the message exchange should be
+     * redelivered
      */
     public boolean shouldRedeliver(int redeliveryCounter) {
         return redeliveryCounter < getMaximumRedeliveries();
     }
 
     // Builder methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * Sets the maximum number of times a message exchange will be redelivered
@@ -82,7 +83,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Enables collision avoidence which adds some randomization to the backoff timings to reduce contention probability
+     * Enables collision avoidence which adds some randomization to the backoff
+     * timings to reduce contention probability
      */
     public RedeliveryPolicy useCollisionAvoidance() {
         setUseCollisionAvoidance(true);
@@ -90,7 +92,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Enables exponential backof using the {@link #getBackOffMultiplier()} to increase the time between retries
+     * Enables exponential backof using the {@link #getBackOffMultiplier()} to
+     * increase the time between retries
      */
     public RedeliveryPolicy useExponentialBackOff() {
         setUseExponentialBackOff(true);
@@ -98,11 +101,12 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Enables exponential backoff and sets the multiplier used to increase the delay between redeliveries
+     * Enables exponential backoff and sets the multiplier used to increase the
+     * delay between redeliveries
      */
-    public RedeliveryPolicy backOffMultiplier(double backOffMultiplier) {
+    public RedeliveryPolicy backOffMultiplier(double multiplier) {
         useExponentialBackOff();
-        setBackOffMultiplier(backOffMultiplier);
+        setBackOffMultiplier(multiplier);
         return this;
     }
 
@@ -116,24 +120,26 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public double getBackOffMultiplier() {
         return backOffMultiplier;
     }
 
     /**
-     * Sets the multiplier used to increase the delay between redeliveries if {@link #setUseExponentialBackOff(boolean)} is enabled
+     * Sets the multiplier used to increase the delay between redeliveries if
+     * {@link #setUseExponentialBackOff(boolean)} is enabled
      */
     public void setBackOffMultiplier(double backOffMultiplier) {
         this.backOffMultiplier = backOffMultiplier;
     }
 
     public short getCollisionAvoidancePercent() {
-        return (short) Math.round(collisionAvoidanceFactor * 100);
+        return (short)Math.round(collisionAvoidanceFactor * 100);
     }
 
     /**
-     * Sets the percentage used for collision avoidence if enabled via {@link #setUseCollisionAvoidance(boolean)}
+     * Sets the percentage used for collision avoidence if enabled via
+     * {@link #setUseCollisionAvoidance(boolean)}
      */
     public void setCollisionAvoidancePercent(short collisionAvoidancePercent) {
         this.collisionAvoidanceFactor = collisionAvoidancePercent * 0.01d;
@@ -144,7 +150,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Sets the factor used for collision avoidence if enabled via {@link #setUseCollisionAvoidance(boolean)}
+     * Sets the factor used for collision avoidence if enabled via
+     * {@link #setUseCollisionAvoidance(boolean)}
      */
     public void setCollisionAvoidanceFactor(double collisionAvoidanceFactor) {
         this.collisionAvoidanceFactor = collisionAvoidanceFactor;
@@ -177,11 +184,9 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
 
         if (previousDelay == 0) {
             redeliveryDelay = initialRedeliveryDelay;
-        }
-        else if (useExponentialBackOff && backOffMultiplier > 1) {
+        } else if (useExponentialBackOff && backOffMultiplier > 1) {
             redeliveryDelay = Math.round(backOffMultiplier * previousDelay);
-        }
-        else {
+        } else {
             redeliveryDelay = previousDelay;
         }
 
@@ -192,7 +197,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
              * go in that direction. -cgs
              */
             Random random = getRandomNumberGenerator();
-            double variance = (random.nextBoolean() ? collisionAvoidanceFactor : -collisionAvoidanceFactor) * random.nextDouble();
+            double variance = (random.nextBoolean() ? collisionAvoidanceFactor : -collisionAvoidanceFactor)
+                              * random.nextDouble();
             redeliveryDelay += redeliveryDelay * variance;
         }
 
@@ -204,7 +210,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Enables/disables collision avoidence which adds some randomization to the backoff timings to reduce contention probability
+     * Enables/disables collision avoidence which adds some randomization to the
+     * backoff timings to reduce contention probability
      */
     public void setUseCollisionAvoidance(boolean useCollisionAvoidance) {
         this.useCollisionAvoidance = useCollisionAvoidance;
@@ -215,7 +222,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Enables/disables exponential backof using the {@link #getBackOffMultiplier()} to increase the time between retries
+     * Enables/disables exponential backof using the
+     * {@link #getBackOffMultiplier()} to increase the time between retries
      */
     public void setUseExponentialBackOff(boolean useExponentialBackOff) {
         this.useExponentialBackOff = useExponentialBackOff;

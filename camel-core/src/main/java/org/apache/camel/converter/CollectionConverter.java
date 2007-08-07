@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,14 +16,14 @@
  */
 package org.apache.camel.converter;
 
-import org.apache.camel.Converter;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.camel.Converter;
 
 /**
  * Some core java.util Collection based
@@ -33,6 +33,12 @@ import java.util.Set;
  */
 @Converter
 public class CollectionConverter {
+
+    /**
+     * Utility classes should not have a public constructor.
+     */
+    private CollectionConverter() {        
+    }
 
     /**
      * Converts a collection to an array

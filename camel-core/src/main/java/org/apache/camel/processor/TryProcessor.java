@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
@@ -23,15 +25,13 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.List;
-
 /**
  * Implements try/catch/finally type processing
- *
+ * 
  * @version $Revision: $
  */
 public class TryProcessor extends ServiceSupport implements Processor {
-    private static final Log log = LogFactory.getLog(TryProcessor.class);
+    private static final Log LOG = LogFactory.getLog(TryProcessor.class);
 
     private final Processor tryProcessor;
     private final List<CatchProcessor> catchClauses;
@@ -57,16 +57,14 @@ public class TryProcessor extends ServiceSupport implements Processor {
             if (finallyProcessor != null) {
                 finallyProcessor.process(exchange);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             handleException(exchange, e);
-            
+
             if (!doneTry && finallyProcessor != null) {
                 try {
                     finallyProcessor.process(exchange);
-                }
-                catch (Exception e2) {
-                    log.warn("Caught exception in finally block while handling other exception: " + e2, e2);
+                } catch (Exception e2) {
+                    LOG.warn("Caught exception in finally block while handling other exception: " + e2, e2);
                 }
             }
         }
@@ -87,9 +85,8 @@ public class TryProcessor extends ServiceSupport implements Processor {
                 exchange.setException(e);
                 try {
                     catchClause.process(exchange);
-                }
-                catch (Exception e1) {
-                    log.warn("Caught exception inside catch clause: " + e1, e1);
+                } catch (Exception e1) {
+                    LOG.warn("Caught exception inside catch clause: " + e1, e1);
                     throw e1;
                 }
                 return;

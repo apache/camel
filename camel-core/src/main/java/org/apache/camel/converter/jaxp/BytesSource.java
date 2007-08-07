@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,13 +16,12 @@
  */
 package org.apache.camel.converter.jaxp;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+
+import javax.xml.transform.stream.StreamSource;
 
 /**
  * A helper class which provides a JAXP {@link Source} from a byte[]

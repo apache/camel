@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,18 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.Body;
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.Header;
-import org.apache.camel.Message;
-import org.apache.camel.Property;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.ExpressionBuilder;
-import static org.apache.camel.util.ExchangeHelper.convertToType;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -38,14 +26,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.camel.Body;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Header;
+import org.apache.camel.Message;
+import org.apache.camel.Property;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import static org.apache.camel.util.ExchangeHelper.convertToType;
+
 /**
  * Represents the metadata about a bean type created via a combination of
  * introspection and annotations together with some useful sensible defaults
- *
+ * 
  * @version $Revision: $
  */
 public class BeanInfo {
-    private static final transient Log log = LogFactory.getLog(BeanInfo.class);
+    private static final transient Log LOG = LogFactory.getLog(BeanInfo.class);
     private Class type;
     private ParameterMappingStrategy strategy;
     private Map<String, MethodInfo> operations = new ConcurrentHashMap<String, MethodInfo>();
@@ -68,7 +69,8 @@ public class BeanInfo {
         return type;
     }
 
-    public MethodInvocation createInvocation(Method method, Object pojo, Exchange exchange) throws RuntimeCamelException {
+    public MethodInvocation createInvocation(Method method, Object pojo, Exchange exchange)
+        throws RuntimeCamelException {
         MethodInfo methodInfo = introspect(type, method);
         if (methodInfo != null) {
             return methodInfo.createMethodInvocation(pojo, exchange);
@@ -76,7 +78,8 @@ public class BeanInfo {
         return null;
     }
 
-    public MethodInvocation createInvocation(Object pojo, Exchange exchange) throws RuntimeCamelException, AmbiguousMethodCallException {
+    public MethodInvocation createInvocation(Object pojo, Exchange exchange) throws RuntimeCamelException,
+        AmbiguousMethodCallException {
         MethodInfo methodInfo = null;
 
         // TODO use some other mechanism?
@@ -120,23 +123,24 @@ public class BeanInfo {
         for (int i = 0; i < parameterTypes.length; i++) {
             Class parameterType = parameterTypes[i];
             Annotation[] parameterAnnotations = parametersAnnotations[i];
-            Expression expression = createParameterUnmarshalExpression(clazz, method,
-                    parameterType, parameterAnnotations);
+            Expression expression = createParameterUnmarshalExpression(clazz, method, parameterType,
+                                                                       parameterAnnotations);
             if (expression == null) {
                 if (parameterTypes.length == 1 && bodyParameters.isEmpty()) {
                     // lets assume its the body
                     expression = ExpressionBuilder.bodyExpression(parameterType);
-                }
-                else {
-                    if (log.isDebugEnabled()) {
-                        log.debug("No expression available for method: "
-                                + method.toString() + " which already has a body so ignoring parameter: " + i + " so ignoring method");
+                } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("No expression available for method: " + method.toString()
+                                  + " which already has a body so ignoring parameter: " + i
+                                  + " so ignoring method");
                     }
                     return null;
                 }
             }
 
-            ParameterInfo parameterInfo = new ParameterInfo(i, parameterType, parameterAnnotations, expression);
+            ParameterInfo parameterInfo = new ParameterInfo(i, parameterType, parameterAnnotations,
+                                                            expression);
             parameters.add(parameterInfo);
             if (isPossibleBodyParameter(parameterAnnotations)) {
                 bodyParameters.add(parameterInfo);
@@ -147,16 +151,13 @@ public class BeanInfo {
         String opName = method.getName();
 
         /*
-
-        TODO allow an annotation to expose the operation name to use
-
-        if (method.getAnnotation(Operation.class) != null) {
-            String name = method.getAnnotation(Operation.class).name();
-            if (name != null && name.length() > 0) {
-                opName = name;
-            }
-        }
-        */
+         * 
+         * TODO allow an annotation to expose the operation name to use
+         * 
+         * if (method.getAnnotation(Operation.class) != null) { String name =
+         * method.getAnnotation(Operation.class).name(); if (name != null &&
+         * name.length() > 0) { opName = name; } }
+         */
         MethodInfo methodInfo = new MethodInfo(clazz, method, parameters, bodyParameters);
         operations.put(opName, methodInfo);
         if (methodInfo.hasBodyParameter()) {
@@ -168,16 +169,16 @@ public class BeanInfo {
     /**
      * Lets try choose one of the available methods to invoke if we can match
      * the message body to the body parameter
-     *
-     * @param pojo     the bean to invoke a method on
+     * 
+     * @param pojo the bean to invoke a method on
      * @param exchange the message exchange
-     * @return the method to invoke or null if no definitive method could be matched
+     * @return the method to invoke or null if no definitive method could be
+     *         matched
      */
     protected MethodInfo chooseMethod(Object pojo, Exchange exchange) throws AmbiguousMethodCallException {
         if (operationsWithBody.size() == 1) {
             return operationsWithBody.get(0);
-        }
-        else if (!operationsWithBody.isEmpty()) {
+        } else if (!operationsWithBody.isEmpty()) {
             // lets see if we can find a method who's body param type matches
             // the message body
             Message in = exchange.getIn();
@@ -193,8 +194,7 @@ public class BeanInfo {
                 }
                 if (possibles.size() == 1) {
                     return possibles.get(0);
-                }
-                else if (possibles.isEmpty()) {
+                } else if (possibles.isEmpty()) {
                     // lets try converting
                     Object newBody = null;
                     MethodInfo matched = null;
@@ -202,9 +202,9 @@ public class BeanInfo {
                         Object value = convertToType(exchange, methodInfo.getBodyParameterType(), body);
                         if (value != null) {
                             if (newBody != null) {
-                                throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched, methodInfo));
-                            }
-                            else {
+                                throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched,
+                                                                                               methodInfo));
+                            } else {
                                 newBody = value;
                                 matched = methodInfo;
                             }
@@ -214,8 +214,7 @@ public class BeanInfo {
                         in.setBody(newBody);
                         return matched;
                     }
-                }
-                else {
+                } else {
                     throw new AmbiguousMethodCallException(exchange, possibles);
                 }
             }
@@ -224,25 +223,25 @@ public class BeanInfo {
         return null;
     }
 
-
     /**
-     * Creates an expression for the given parameter type if the parameter can be mapped
-     * automatically or null if the parameter cannot be mapped due to unsufficient
-     * annotations or not fitting with the default type conventions.
+     * Creates an expression for the given parameter type if the parameter can
+     * be mapped automatically or null if the parameter cannot be mapped due to
+     * unsufficient annotations or not fitting with the default type
+     * conventions.
      */
-    protected Expression createParameterUnmarshalExpression(Class clazz, Method method, Class parameterType, Annotation[] parameterAnnotation) {
+    protected Expression createParameterUnmarshalExpression(Class clazz, Method method, Class parameterType,
+                                                            Annotation[] parameterAnnotation) {
 
         // TODO look for a parameter annotation that converts into an expression
         for (Annotation annotation : parameterAnnotation) {
-            Expression answer = createParameterUnmarshalExpressionForAnnotation(
-                    clazz, method, parameterType, annotation);
+            Expression answer = createParameterUnmarshalExpressionForAnnotation(clazz, method, parameterType,
+                                                                                annotation);
             if (answer != null) {
                 return answer;
             }
         }
         return strategy.getDefaultParameterTypeExpression(parameterType);
     }
-
 
     protected boolean isPossibleBodyParameter(Annotation[] annotations) {
         if (annotations != null) {
@@ -255,26 +254,25 @@ public class BeanInfo {
         return true;
     }
 
-    protected Expression createParameterUnmarshalExpressionForAnnotation(Class clazz, Method method, Class parameterType, Annotation annotation) {
+    protected Expression createParameterUnmarshalExpressionForAnnotation(Class clazz, Method method,
+                                                                         Class parameterType,
+                                                                         Annotation annotation) {
         if (annotation instanceof Property) {
-            Property propertyAnnotation = (Property) annotation;
+            Property propertyAnnotation = (Property)annotation;
             return ExpressionBuilder.propertyExpression(propertyAnnotation.name());
-        }
-        else if (annotation instanceof Header) {
-            Header headerAnnotation = (Header) annotation;
+        } else if (annotation instanceof Header) {
+            Header headerAnnotation = (Header)annotation;
             return ExpressionBuilder.headerExpression(headerAnnotation.name());
-        }
-        else if (annotation instanceof Body) {
-            Body content = (Body) annotation;
+        } else if (annotation instanceof Body) {
+            Body content = (Body)annotation;
             return ExpressionBuilder.bodyExpression(parameterType);
 
             // TODO allow annotations to be used to create expressions?
-/*
-        } else if (annotation instanceof XPath) {
-            XPath xpathAnnotation = (XPath) annotation;
-            return new JAXPStringXPathExpression(xpathAnnotation.xpath());
-        }
-*/
+            /*
+             * } else if (annotation instanceof XPath) { XPath xpathAnnotation =
+             * (XPath) annotation; return new
+             * JAXPStringXPathExpression(xpathAnnotation.xpath()); }
+             */
         }
         return null;
     }

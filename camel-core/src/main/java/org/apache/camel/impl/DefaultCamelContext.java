@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +15,16 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+
+import javax.naming.Context;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -38,22 +47,13 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jndi.JndiContext;
+
 import static org.apache.camel.util.ServiceHelper.startServices;
 import static org.apache.camel.util.ServiceHelper.stopServices;
 
-import javax.naming.Context;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-
 /**
  * Represents the context used to configure routes and the policies to use.
- *
+ * 
  * @version $Revision: 520517 $
  * @org.apache.xbean.XBean element="container" rootElement="true"
  */
@@ -74,9 +74,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     /**
-     * Creates the {@link CamelContext} using the given JNDI
-     * context as the registry
-     *
+     * Creates the {@link CamelContext} using the given JNDI context as the
+     * registry
+     * 
      * @param jndiContext
      */
     public DefaultCamelContext(Context jndiContext) {
@@ -117,13 +117,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     if (component != null) {
                         addComponent(name, component);
                         if (isStarted()) {
-                            // If the component is looked up after the context is started,
+                            // If the component is looked up after the context
+                            // is started,
                             // lets start it up.
                             startServices(component);
                         }
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     throw new RuntimeCamelException("Could not auto create component: " + name, e);
                 }
             }
@@ -135,17 +135,18 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         Component component = getComponent(name);
         if (componentType.isInstance(component)) {
             return componentType.cast(component);
-        }
-        else {
-            throw new IllegalArgumentException("The component is not of type: " + componentType + " but is: " + component);
+        } else {
+            throw new IllegalArgumentException("The component is not of type: " + componentType + " but is: "
+                                               + component);
         }
     }
 
     /**
      * Removes a previously added component.
-     *
+     * 
      * @param componentName
-     * @return the previously added component or null if it had not been previously added.
+     * @return the previously added component or null if it had not been
+     *         previously added.
      */
     public Component removeComponent(String componentName) {
         synchronized (components) {
@@ -154,11 +155,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     /**
-     * Gets the a previously added component by name or lazily creates the component
-     * using the factory Callback.
-     *
+     * Gets the a previously added component by name or lazily creates the
+     * component using the factory Callback.
+     * 
      * @param componentName
-     * @param factory       used to create a new component instance if the component was not previously added.
+     * @param factory used to create a new component instance if the component
+     *                was not previously added.
      * @return
      */
     public Component getOrCreateComponent(String componentName, Callable<Component> factory) {
@@ -168,13 +170,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 try {
                     component = factory.call();
                     if (component == null) {
-                        throw new RuntimeCamelException("Factory failed to create the " + componentName + " component, it returned null.");
+                        throw new RuntimeCamelException("Factory failed to create the " + componentName
+                                                        + " component, it returned null.");
                     }
                     components.put(componentName, component);
                     component.setCamelContext(this);
-                }
-                catch (Exception e) {
-                    throw new RuntimeCamelException("Factory failed to create the " + componentName + " component", e);
+                } catch (Exception e) {
+                    throw new RuntimeCamelException("Factory failed to create the " + componentName
+                                                    + " component", e);
                 }
             }
             return component;
@@ -182,7 +185,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     // Endpoint Management Methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     public Collection<Endpoint> getSingletonEndpoints() {
         synchronized (endpoints) {
@@ -243,8 +246,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                             endpoints.put(uri, answer);
                         }
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     throw new ResolveEndpointFailedException(uri, e);
                 }
             }
@@ -256,14 +258,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         Endpoint endpoint = getEndpoint(name);
         if (endpointType.isInstance(endpoint)) {
             return endpointType.cast(endpoint);
-        }
-        else {
-            throw new IllegalArgumentException("The endpoint is not of type: " + endpointType + " but is: " + endpoint);
+        } else {
+            throw new IllegalArgumentException("The endpoint is not of type: " + endpointType + " but is: "
+                                               + endpoint);
         }
     }
 
     // Route Management Methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     public List<Route> getRoutes() {
         return routes;
     }
@@ -275,8 +277,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     public void addRoutes(Collection<Route> routes) throws Exception {
         if (this.routes == null) {
             this.routes = new ArrayList<Route>(routes);
-        }
-        else {
+        } else {
             this.routes.addAll(routes);
         }
         if (isStarted()) {
@@ -291,7 +292,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     // Helper methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     /**
      * Resolves a language for creating expressions
@@ -301,7 +302,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     // Properties
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     public ExchangeConverter getExchangeConverter() {
         if (exchangeConverter == null) {
             exchangeConverter = createExchangeConverter();
@@ -374,7 +375,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     // Implementation methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     protected void doStart() throws Exception {
         forceLazyInitialization();
@@ -406,8 +407,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     /**
-     * Lets force some lazy initialization to occur upfront
-     * before we start any components and create routes
+     * Lets force some lazy initialization to occur upfront before we start any
+     * components and create routes
      */
     protected void forceLazyInitialization() {
         getExchangeConverter();
@@ -436,22 +437,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     protected Injector createInjector() {
         FactoryFinder finder = new FactoryFinder();
         try {
-            return (Injector) finder.newInstance("Injector");
-        }
-        catch (NoFactoryAvailableException e) {
+            return (Injector)finder.newInstance("Injector");
+        } catch (NoFactoryAvailableException e) {
             // lets use the default
             return new ReflectionInjector();
-        }
-        catch (IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             throw new RuntimeCamelException(e);
-        }
-        catch (InstantiationException e) {
+        } catch (InstantiationException e) {
             throw new RuntimeCamelException(e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeCamelException(e);
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             throw new RuntimeCamelException(e);
         }
     }
@@ -472,37 +468,36 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     /**
      * A pluggable strategy to allow an endpoint to be created without requiring
-     * a component to be its factory, such as for looking up the URI inside
-     * some {@link Registry}
-     *
+     * a component to be its factory, such as for looking up the URI inside some
+     * {@link Registry}
+     * 
      * @param uri the uri for the endpoint to be created
      * @return the newly created endpoint or null if it could not be resolved
      */
     protected Endpoint createEndpoint(String uri) {
         Object value = getRegistry().lookup(uri);
         if (value instanceof Endpoint) {
-            return (Endpoint) value;
-        }
-        else if (value instanceof Processor) {
-            return new ProcessorEndpoint(uri, this, (Processor) value);
-        }
-        else if (value != null) {
+            return (Endpoint)value;
+        } else if (value instanceof Processor) {
+            return new ProcessorEndpoint(uri, this, (Processor)value);
+        } else if (value != null) {
             return convertBeanToEndpoint(uri, value);
         }
         return null;
     }
 
     /**
-     * Attempt to convert the bean from a {@link Registry} to an
-     * endpoint using some kind of transformation or wrapper
-     *
-     * @param uri  the uri for the endpoint (and name in the registry)
-     * @param bean the bean to be converted to an endpoint, which will be not null
+     * Attempt to convert the bean from a {@link Registry} to an endpoint using
+     * some kind of transformation or wrapper
+     * 
+     * @param uri the uri for the endpoint (and name in the registry)
+     * @param bean the bean to be converted to an endpoint, which will be not
+     *                null
      * @return a new endpoint
      */
     protected Endpoint convertBeanToEndpoint(String uri, Object bean) {
         throw new IllegalArgumentException("uri: " + uri + " bean: " + bean
-                + " could not be converted to an Endpoint");
+                                           + " could not be converted to an Endpoint");
     }
 
 }

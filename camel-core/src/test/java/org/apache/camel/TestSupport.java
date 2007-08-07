@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,18 +16,19 @@
  */
 package org.apache.camel;
 
+import java.util.List;
+
 import junit.framework.TestCase;
+
 import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.List;
-
 /**
  * A bunch of useful testing methods
- *
+ * 
  * @version $Revision$
  */
 public abstract class TestSupport extends TestCase {
@@ -36,7 +36,7 @@ public abstract class TestSupport extends TestCase {
     protected transient Log log = LogFactory.getLog(getClass());
 
     // Builder methods for expressions used when testing
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * Returns a value builder for the given header
@@ -55,7 +55,8 @@ public abstract class TestSupport extends TestCase {
     }
 
     /**
-     * Returns a predicate and value builder for the inbound message body as a specific type
+     * Returns a predicate and value builder for the inbound message body as a
+     * specific type
      */
 
     public <T> ValueBuilder bodyAs(Class<T> type) {
@@ -63,7 +64,8 @@ public abstract class TestSupport extends TestCase {
     }
 
     /**
-     * Returns a predicate and value builder for the outbound body on an exchange
+     * Returns a predicate and value builder for the outbound body on an
+     * exchange
      */
 
     public ValueBuilder outBody() {
@@ -71,7 +73,8 @@ public abstract class TestSupport extends TestCase {
     }
 
     /**
-     * Returns a predicate and value builder for the outbound message body as a specific type
+     * Returns a predicate and value builder for the outbound message body as a
+     * specific type
      */
 
     public <T> ValueBuilder outBody(Class<T> type) {
@@ -95,12 +98,12 @@ public abstract class TestSupport extends TestCase {
     }
 
     // Assertions
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     protected <T> T assertIsInstanceOf(Class<T> expectedType, Object value) {
         assertNotNull("Expected an instance of type: " + expectedType.getName() + " but was null", value);
-        assertTrue("object should be a " + expectedType.getName() + " but was: " + value + " with type: " + value.getClass().getName(),
-                expectedType.isInstance(value));
+        assertTrue("object should be a " + expectedType.getName() + " but was: " + value + " with type: "
+                   + value.getClass().getName(), expectedType.isInstance(value));
         return expectedType.cast(value);
     }
 
@@ -154,8 +157,7 @@ public abstract class TestSupport extends TestCase {
     protected void assertPredicateDoesNotMatch(Predicate predicate, Exchange exchange) {
         try {
             predicate.assertMatches("Predicate should match", exchange);
-        }
-        catch (AssertionError e) {
+        } catch (AssertionError e) {
             log.debug("Caught expected assertion error: " + e);
         }
         assertPredicate(predicate, exchange, false);
@@ -190,7 +192,8 @@ public abstract class TestSupport extends TestCase {
     /**
      * Resolves an endpoint and asserts that it is found
      */
-    protected <T extends Endpoint> T resolveMandatoryEndpoint(CamelContext context, String uri, Class<T> endpointType) {
+    protected <T extends Endpoint> T resolveMandatoryEndpoint(CamelContext context, String uri,
+                                                              Class<T> endpointType) {
         T endpoint = context.getEndpoint(uri, endpointType);
 
         assertNotNull("No endpoint found for URI: " + uri, endpoint);

@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,22 +16,20 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
-import org.apache.camel.ValidationException;
-import org.apache.camel.impl.RouteContext;
-import org.apache.camel.processor.CatchProcessor;
-import org.apache.camel.processor.TryProcessor;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.processor.CatchProcessor;
+import org.apache.camel.processor.TryProcessor;
 
 /**
  * @version $Revision: 1.1 $
@@ -40,12 +37,11 @@ import java.util.List;
 @XmlRootElement(name = "try")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TryType extends OutputType {
-/*
-    @XmlElement(required = false)
-    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
-    @XmlElementRef
-    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
-*/
+    /*
+     * @XmlElement(required = false) private List<InterceptorRef> interceptors =
+     * new ArrayList<InterceptorRef>(); @XmlElementRef private List<ProcessorType>
+     * outputs = new ArrayList<ProcessorType>();
+     */
     @XmlTransient
     private List<CatchType> catchClauses;
     @XmlTransient
@@ -78,7 +74,7 @@ public class TryType extends OutputType {
     }
 
     // Fluent API
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public CatchType handle(Class<?> exceptionType) {
         CatchType answer = new CatchType(exceptionType);
         getOutputs().add(answer);
@@ -122,7 +118,7 @@ public class TryType extends OutputType {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public List<CatchType> getCatchClauses() {
         if (catchClauses == null) {
@@ -150,7 +146,6 @@ public class TryType extends OutputType {
         super.setOutputs(outputs);
     }
 
-
     public void addOutput(ProcessorType output) {
         initialized = false;
         getOutputs().add(output);
@@ -168,17 +163,15 @@ public class TryType extends OutputType {
 
             for (ProcessorType output : outputs) {
                 if (output instanceof CatchType) {
-                    catchClauses.add((CatchType) output);
-                }
-                else if (output instanceof FinallyType) {
+                    catchClauses.add((CatchType)output);
+                } else if (output instanceof FinallyType) {
                     if (finallyClause != null) {
-                        throw new IllegalArgumentException("Multiple finally clauses added: " + finallyClause + " and " + output);
+                        throw new IllegalArgumentException("Multiple finally clauses added: " + finallyClause
+                                                           + " and " + output);
+                    } else {
+                        finallyClause = (FinallyType)output;
                     }
-                    else {
-                        finallyClause = (FinallyType) output;
-                    }
-                }
-                else {
+                } else {
                     outputsWithoutCatches.add(output);
                 }
             }

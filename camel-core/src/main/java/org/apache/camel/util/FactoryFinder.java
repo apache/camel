@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,8 +16,6 @@
  */
 package org.apache.camel.util;
 
-import org.apache.camel.spi.Injector;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.camel.spi.Injector;
 
 public class FactoryFinder {
     private final String path;
@@ -42,47 +41,50 @@ public class FactoryFinder {
 
     /**
      * Creates a new instance of the given key
-     *
-     * @param key is the key to add to the path to find a text file
-     *            containing the factory name
+     * 
+     * @param key is the key to add to the path to find a text file containing
+     *                the factory name
      * @return a newly created instance
      */
-    public Object newInstance(String key)
-            throws IllegalAccessException, InstantiationException, IOException, ClassNotFoundException {
-        return newInstance(key, (String) null);
+    public Object newInstance(String key) throws IllegalAccessException, InstantiationException, IOException,
+        ClassNotFoundException {
+        return newInstance(key, (String)null);
     }
 
-    public Object newInstance(String key, String propertyPrefix)
-            throws IllegalAccessException, InstantiationException, IOException, ClassNotFoundException {
+    public Object newInstance(String key, String propertyPrefix) throws IllegalAccessException,
+        InstantiationException, IOException, ClassNotFoundException {
         Class clazz = findClass(key, propertyPrefix);
         return clazz.newInstance();
     }
 
     public Object newInstance(String key, Injector injector) throws IOException, ClassNotFoundException {
-        return newInstance(key, injector, (String) null);
+        return newInstance(key, injector, (String)null);
     }
 
-    public Object newInstance(String key, Injector injector, String propertyPrefix) throws IOException, ClassNotFoundException {
+    public Object newInstance(String key, Injector injector, String propertyPrefix) throws IOException,
+        ClassNotFoundException {
         Class type = findClass(key, propertyPrefix);
         return injector.newInstance(type);
     }
 
-    public <T> T newInstance(String key, Injector injector, Class<T> expectedType) throws IOException, ClassNotFoundException {
+    public <T> T newInstance(String key, Injector injector, Class<T> expectedType) throws IOException,
+        ClassNotFoundException {
         return newInstance(key, injector, null, expectedType);
     }
 
-    public <T> T newInstance(String key, Injector injector, String propertyPrefix, Class<T> expectedType) throws IOException, ClassNotFoundException {
+    public <T> T newInstance(String key, Injector injector, String propertyPrefix, Class<T> expectedType)
+        throws IOException, ClassNotFoundException {
         Class type = findClass(key, propertyPrefix);
         Object value = injector.newInstance(type);
         if (expectedType.isInstance(value)) {
             return expectedType.cast(value);
-        }
-        else {
+        } else {
             throw new ClassCastException("Not instanceof " + expectedType.getName() + " value: " + value);
         }
     }
 
-    public <T> List<T> newInstances(String key, Injector injector, Class<T> type) throws IOException, ClassNotFoundException {
+    public <T> List<T> newInstances(String key, Injector injector, Class<T> type) throws IOException,
+        ClassNotFoundException {
         List<Class> list = findClasses(key);
         List<T> answer = new ArrayList<T>(list.size());
         answer.add(newInstance(key, injector, type));
@@ -98,7 +100,7 @@ public class FactoryFinder {
             propertyPrefix = "";
         }
 
-        Class clazz = (Class) classMap.get(propertyPrefix + key);
+        Class clazz = (Class)classMap.get(propertyPrefix + key);
         if (clazz == null) {
             clazz = newInstance(doFindFactoryProperies(key), propertyPrefix);
             classMap.put(propertyPrefix + key, clazz);
@@ -110,13 +112,15 @@ public class FactoryFinder {
         return findClasses(key, null);
     }
 
-    public List<Class> findClasses(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
+    public List<Class> findClasses(String key, String propertyPrefix) throws ClassNotFoundException,
+        IOException {
         // TODO change to support finding multiple classes on the classpath!
         Class type = findClass(key, propertyPrefix);
         return Collections.singletonList(type);
     }
 
-    private Class newInstance(Properties properties, String propertyPrefix) throws ClassNotFoundException, IOException {
+    private Class newInstance(Properties properties, String propertyPrefix) throws ClassNotFoundException,
+        IOException {
 
         String className = properties.getProperty(propertyPrefix + "class");
         if (className == null) {
@@ -127,8 +131,7 @@ public class FactoryFinder {
         if (loader != null) {
             try {
                 clazz = loader.loadClass(className);
-            }
-            catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException e) {
                 // ignore
             }
         }
@@ -161,12 +164,10 @@ public class FactoryFinder {
             Properties properties = new Properties();
             properties.load(reader);
             return properties;
-        }
-        finally {
+        } finally {
             try {
                 reader.close();
-            }
-            catch (Exception e) {
+            } catch (Exception ignore) {
             }
         }
     }

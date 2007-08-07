@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,12 +16,12 @@
  */
 package org.apache.camel.component.file.strategy;
 
+import java.io.File;
+
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.FileExchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.File;
 
 /**
  * A strategy which will delete the file when its processed
@@ -30,7 +29,7 @@ import java.io.File;
  * @version $Revision: 1.1 $
  */
 public class DeleteFileStrategy extends FileStategySupport {
-    private static final transient Log log = LogFactory.getLog(DeleteFileStrategy.class);
+    private static final transient Log LOG = LogFactory.getLog(DeleteFileStrategy.class);
 
     public DeleteFileStrategy() {
     }
@@ -40,8 +39,8 @@ public class DeleteFileStrategy extends FileStategySupport {
     }
 
     public void commit(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("Deleting file: " + file);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Deleting file: " + file);
         }
         file.delete();
         super.commit(endpoint, exchange, file);

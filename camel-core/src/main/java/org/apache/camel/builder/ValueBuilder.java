@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,7 @@ import org.apache.camel.Predicate;
 
 /**
  * A builder of expressions or predicates based on values.
- *
+ * 
  * @version $Revision: $
  */
 public class ValueBuilder<E extends Exchange> implements Expression<E> {
@@ -46,70 +46,62 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
     }
 
     // Predicate builders
-    //-------------------------------------------------------------------------
-
+    // -------------------------------------------------------------------------
 
     public Predicate<E> isNotEqualTo(Object value) {
         Expression<E> right = asExpression(value);
         return onNewPredicate(PredicateBuilder.isNotEqualTo(expression, right));
     }
 
-
     public Predicate<E> isEqualTo(Object value) {
         Expression<E> right = asExpression(value);
         return onNewPredicate(PredicateBuilder.isEqualTo(expression, right));
     }
-
 
     public Predicate<E> isLessThan(Object value) {
         Expression<E> right = asExpression(value);
         return onNewPredicate(PredicateBuilder.isLessThan(expression, right));
     }
 
-
     public Predicate<E> isLessThanOrEqualTo(Object value) {
         Expression<E> right = asExpression(value);
         return onNewPredicate(PredicateBuilder.isLessThanOrEqualTo(expression, right));
     }
-
 
     public Predicate<E> isGreaterThan(Object value) {
         Expression<E> right = asExpression(value);
         return onNewPredicate(PredicateBuilder.isGreaterThan(expression, right));
     }
 
-
     public Predicate<E> isGreaterThanOrEqualTo(Object value) {
         Expression<E> right = asExpression(value);
         return onNewPredicate(PredicateBuilder.isGreaterThanOrEqualTo(expression, right));
     }
 
-
     public Predicate<E> isInstanceOf(Class type) {
         return onNewPredicate(PredicateBuilder.isInstanceOf(expression, type));
     }
-
 
     public Predicate<E> matchesRegex(String regex) {
         return onNewPredicate(PredicateBuilder.regex(expression, regex));
     }
 
-
     public Predicate<E> isNull() {
         return onNewPredicate(PredicateBuilder.isNull(expression));
     }
-
 
     public Predicate<E> isNotNull() {
         return onNewPredicate(PredicateBuilder.isNotNull(expression));
     }
 
     /**
-     * Create a predicate that the left hand expression contains the value of the right hand expression
-     *
-     * @param value the element which is compared to be contained within this expression
-     * @return a predicate which evaluates to true if the given value expression is contained within this
-     *         expression value
+     * Create a predicate that the left hand expression contains the value of
+     * the right hand expression
+     * 
+     * @param value the element which is compared to be contained within this
+     *                expression
+     * @return a predicate which evaluates to true if the given value expression
+     *         is contained within this expression value
      */
 
     public Predicate<E> contains(Object value) {
@@ -117,12 +109,13 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
         return onNewPredicate(PredicateBuilder.contains(expression, right));
     }
 
-
     /**
-     * Creates a predicate which is true if this expression matches the given regular expression
-     *
+     * Creates a predicate which is true if this expression matches the given
+     * regular expression
+     * 
      * @param regex the regular expression to match
-     * @return a predicate which evaluates to true if the expression matches the regex
+     * @return a predicate which evaluates to true if the expression matches the
+     *         regex
      */
 
     public Predicate<E> regex(String regex) {
@@ -130,13 +123,11 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
     }
 
     // Expression builders
-    //-------------------------------------------------------------------------
-
+    // -------------------------------------------------------------------------
 
     public ValueBuilder<E> tokenize() {
         return tokenize("\n");
     }
-
 
     public ValueBuilder<E> tokenize(String token) {
         Expression<E> newExp = ExpressionBuilder.tokenizeExpression(expression, token);
@@ -144,7 +135,8 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
     }
 
     /**
-     * Tokenizes the string conversion of this expression using the given regular expression
+     * Tokenizes the string conversion of this expression using the given
+     * regular expression
      */
 
     public ValueBuilder<E> regexTokenize(String regex) {
@@ -153,7 +145,8 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
     }
 
     /**
-     * Replaces all occurrencies of the regular expression with the given replacement
+     * Replaces all occurrencies of the regular expression with the given
+     * replacement
      */
 
     public ValueBuilder<E> regexReplaceAll(String regex, String replacement) {
@@ -162,7 +155,8 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
     }
 
     /**
-     * Replaces all occurrencies of the regular expression with the given replacement
+     * Replaces all occurrencies of the regular expression with the given
+     * replacement
      */
 
     public ValueBuilder<E> regexReplaceAll(String regex, Expression<E> replacement) {
@@ -170,10 +164,10 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
         return new ValueBuilder<E>(newExp);
     }
 
-
     /**
-     * Converts the current value to the given type using the registered type converters
-     *
+     * Converts the current value to the given type using the registered type
+     * converters
+     * 
      * @param type the type to convert the value to
      * @return the current builder
      */
@@ -185,7 +179,7 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
 
     /**
      * Converts the current value a String using the registered type converters
-     *
+     * 
      * @return the current builder
      */
 
@@ -195,7 +189,7 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
 
     /**
      * Appends the string evaluation of this expression with the given value
-     *
+     * 
      * @param value the value or expression to append
      * @return the current builder
      */
@@ -205,11 +199,11 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
-     * A stategy method to allow derived classes to deal with the newly created predicate
-     * in different ways
+     * A stategy method to allow derived classes to deal with the newly created
+     * predicate in different ways
      */
     protected Predicate<E> onNewPredicate(Predicate<E> predicate) {
         return predicate;
@@ -217,9 +211,8 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
 
     protected Expression<E> asExpression(Object value) {
         if (value instanceof Expression) {
-            return (Expression<E>) value;
-        }
-        else {
+            return (Expression<E>)value;
+        } else {
             return ExpressionBuilder.constantExpression(value);
         }
     }

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,28 +16,28 @@
  */
 package org.apache.camel.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.util.UuidGenerator;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * A default implementation of {@link Exchange}
- *
+ * 
  * @version $Revision$
  */
 public class DefaultExchange implements Exchange {
-    private static final UuidGenerator defaultIdGenerator = new UuidGenerator();
+    private static final UuidGenerator DEFAULT_ID_GENERATOR = new UuidGenerator();
     protected final CamelContext context;
     private Map<String, Object> properties;
     private Message in;
     private Message out;
     private Message fault;
     private Throwable exception;
-    private String exchangeId = DefaultExchange.defaultIdGenerator.generateId();
+    private String exchangeId = DefaultExchange.DEFAULT_ID_GENERATOR.generateId();
 
     public DefaultExchange(CamelContext context) {
         this.context = context;
@@ -61,23 +61,25 @@ public class DefaultExchange implements Exchange {
         setProperties(safeCopy(exchange.getProperties()));
         setIn(safeCopy(exchange.getIn()));
         setOut(safeCopy(exchange.getOut()));
-       	setFault(safeCopy(exchange.getFault()));        
+        setFault(safeCopy(exchange.getFault()));
         setException(exchange.getException());
     }
 
-    static private Map<String, Object> safeCopy(Map<String, Object> properties) {
-		if(properties == null)
-			return null;
-		return new HashMap<String, Object>(properties);
-	}
+    private static Map<String, Object> safeCopy(Map<String, Object> properties) {
+        if (properties == null) {
+            return null;
+        }
+        return new HashMap<String, Object>(properties);
+    }
 
-	static private Message safeCopy(Message message) {
-    	if( message == null)
-    		return null;
-    	return message.copy();
-	}
+    private static Message safeCopy(Message message) {
+        if (message == null) {
+            return null;
+        }
+        return message.copy();
+    }
 
-	public Exchange newInstance() {
+    public Exchange newInstance() {
         return new DefaultExchange(context);
     }
 
@@ -186,7 +188,7 @@ public class DefaultExchange implements Exchange {
      */
     protected void configureMessage(Message message) {
         if (message instanceof MessageSupport) {
-            MessageSupport messageSupport = (MessageSupport) message;
+            MessageSupport messageSupport = (MessageSupport)message;
             messageSupport.setExchange(this);
         }
     }

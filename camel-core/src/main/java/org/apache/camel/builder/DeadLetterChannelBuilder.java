@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,8 +27,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A builder of a <a href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter Channel</a>
- *
+ * A builder of a <a
+ * href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter
+ * Channel</a>
+ * 
  * @version $Revision$
  */
 public class DeadLetterChannelBuilder implements ErrorHandlerBuilder {
@@ -63,7 +64,7 @@ public class DeadLetterChannelBuilder implements ErrorHandlerBuilder {
     }
 
     // Builder methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public DeadLetterChannelBuilder backOffMultiplier(double backOffMultiplier) {
         getRedeliveryPolicy().backOffMultiplier(backOffMultiplier);
         return this;
@@ -133,7 +134,7 @@ public class DeadLetterChannelBuilder implements ErrorHandlerBuilder {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public RedeliveryPolicy getRedeliveryPolicy() {
         return redeliveryPolicy;
     }
@@ -179,14 +180,16 @@ public class DeadLetterChannelBuilder implements ErrorHandlerBuilder {
 
     public Expression getDefaultDeadLetterEndpointExpression() {
         if (defaultDeadLetterEndpointExpression == null) {
-            defaultDeadLetterEndpointExpression = ExpressionBuilder.constantExpression(getDefaultDeadLetterEndpointUri());
+            defaultDeadLetterEndpointExpression = ExpressionBuilder
+                .constantExpression(getDefaultDeadLetterEndpointUri());
         }
         return defaultDeadLetterEndpointExpression;
     }
 
     /**
-     * Sets the expression used to decide the dead letter channel endpoint for an exchange
-     * if no factory is provided via {@link #setDeadLetterFactory(ProcessorFactory)}
+     * Sets the expression used to decide the dead letter channel endpoint for
+     * an exchange if no factory is provided via
+     * {@link #setDeadLetterFactory(ProcessorFactory)}
      */
     public void setDefaultDeadLetterEndpointExpression(Expression defaultDeadLetterEndpointExpression) {
         this.defaultDeadLetterEndpointExpression = defaultDeadLetterEndpointExpression;
@@ -197,10 +200,12 @@ public class DeadLetterChannelBuilder implements ErrorHandlerBuilder {
     }
 
     /**
-     * Sets the default dead letter endpoint URI used if no factory is provided via {@link #setDeadLetterFactory(ProcessorFactory)}
-     * and no expression is provided via {@link #setDefaultDeadLetterEndpointExpression(Expression)}
-     *
-     * @param defaultDeadLetterEndpointUri the default URI if no deadletter factory or expression is provided
+     * Sets the default dead letter endpoint URI used if no factory is provided
+     * via {@link #setDeadLetterFactory(ProcessorFactory)} and no expression is
+     * provided via {@link #setDefaultDeadLetterEndpointExpression(Expression)}
+     * 
+     * @param defaultDeadLetterEndpointUri the default URI if no deadletter
+     *                factory or expression is provided
      */
     public void setDefaultDeadLetterEndpointUri(String defaultDeadLetterEndpointUri) {
         this.defaultDeadLetterEndpointUri = defaultDeadLetterEndpointUri;

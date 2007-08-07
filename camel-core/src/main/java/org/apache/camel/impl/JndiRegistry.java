@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,18 +16,19 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.spi.Registry;
-import org.apache.camel.RuntimeCamelException;
+import java.util.Hashtable;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.naming.NameNotFoundException;
-import java.util.Hashtable;
+import javax.naming.NamingException;
+
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Registry;
 
 /**
  * A {@link Registry} implementation which looks up the objects in JNDI
- *
+ * 
  * @version $Revision: 1.1 $
  */
 public class JndiRegistry implements Registry {
@@ -49,11 +49,9 @@ public class JndiRegistry implements Registry {
     public Object lookup(String name) {
         try {
             return getContext().lookup(name);
-        }
-        catch (NameNotFoundException e) {
+        } catch (NameNotFoundException e) {
             return null;
-        }
-        catch (NamingException e) {
+        } catch (NamingException e) {
             throw new RuntimeCamelException(e);
         }
     }
@@ -61,8 +59,7 @@ public class JndiRegistry implements Registry {
     public void bind(String s, Object o) {
         try {
             getContext().bind(s, o);
-        }
-        catch (NamingException e) {
+        } catch (NamingException e) {
             throw new RuntimeCamelException(e);
         }
     }

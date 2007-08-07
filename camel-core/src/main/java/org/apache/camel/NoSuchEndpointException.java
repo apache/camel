@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,17 +16,16 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.processor.RecipientList;
 
 /**
- * A runtime exception thrown if a routing processor such as a {@link RecipientList} is unable to resolve
- * an {@link Endpoint} from a URI.
- *
+ * A runtime exception thrown if a routing processor such as a
+ * {@link RecipientList} is unable to resolve an {@link Endpoint} from a URI.
+ * 
  * @version $Revision$
  */
 public class NoSuchEndpointException extends RuntimeCamelException {
-	private static final long serialVersionUID = -8721487431101572630L;
-	private final String uri;
+    private static final long serialVersionUID = -8721487431101572630L;
+    private final String uri;
 
     public NoSuchEndpointException(String uri) {
         super("No endpoint could be found for: " + uri);

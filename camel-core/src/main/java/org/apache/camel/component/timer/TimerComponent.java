@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.timer;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.bean.BeanExchange;
 import org.apache.camel.impl.DefaultComponent;
-
-import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Represents the component that manages {@link TimerEndpoint}.  It holds the

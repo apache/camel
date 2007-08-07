@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,24 +16,25 @@
  */
 package org.apache.camel;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.annotation.ElementType;
 
 /**
- * Used to indicate a method on a POJO which is used as a {@link Consumer} of {@link Exchange} instances to process
- * {@link Message} instances.
- *
- * Either a <a href="http://activemq.apache.org/camel/uris.html">URI</a> for an endpoint
- * should be configured, or a name of an endpoint
- * which refers to a Spring bean name in your Spring ApplicationContext.
- *
+ * Used to indicate a method on a POJO which is used as a {@link Consumer} of
+ * {@link Exchange} instances to process {@link Message} instances.
+ * 
+ * Either a <a href="http://activemq.apache.org/camel/uris.html">URI</a> for an
+ * endpoint should be configured, or a name of an endpoint which refers to a
+ * Spring bean name in your Spring ApplicationContext.
+ * 
  * @version $Revision: 523756 $
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR})
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
 public @interface MessageDriven {
     String uri() default "";
+
     String name() default "";
 }

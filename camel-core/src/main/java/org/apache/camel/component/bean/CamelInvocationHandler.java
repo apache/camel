@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Producer;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.Producer;
 
 /**
  * An {@link java.lang.reflect.InvocationHandler} which invokes a

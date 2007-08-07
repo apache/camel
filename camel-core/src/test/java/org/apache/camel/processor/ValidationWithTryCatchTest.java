@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  * @version $Revision: 1.1 $
  */
 public class ValidationWithTryCatchTest extends ValidationTest {
-    
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -36,8 +36,7 @@ public class ValidationWithTryCatchTest extends ValidationTest {
                             validator.process(exchange);
 
                             template.send("mock:valid", exchange);
-                        }
-                        catch (ValidationException e) {
+                        } catch (ValidationException e) {
                             template.send("mock:invalid", exchange);
                         }
                     }

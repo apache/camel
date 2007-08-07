@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,14 +20,20 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 
 /**
- * A helper class for including portions of the
- * <a href="http://activemq.apache.org/camel/expression.html">expression</a> and
- * <a href="http://activemq.apache.org/camel/predicate.html">predicate</a>
- * <a href="http://activemq.apache.org/camel/dsl.html">Java DSL</a>
- *
+ * A helper class for including portions of the <a
+ * href="http://activemq.apache.org/camel/expression.html">expression</a> and
+ * <a href="http://activemq.apache.org/camel/predicate.html">predicate</a> <a
+ * href="http://activemq.apache.org/camel/dsl.html">Java DSL</a>
+ * 
  * @version $Revision: 1.1 $
  */
 public class Builder {
+    
+    /**
+     * Utility classes should not have a public constructor.
+     */
+    private Builder() {        
+    }
 
     /**
      * Returns a constant expression
@@ -55,15 +60,17 @@ public class Builder {
     }
 
     /**
-     * Returns a predicate and value builder for the inbound message body as a specific type
+     * Returns a predicate and value builder for the inbound message body as a
+     * specific type
      */
     public static <E extends Exchange, T> ValueBuilder<E> bodyAs(Class<T> type) {
-        Expression<E> expression = ExpressionBuilder.<E, T>bodyExpression(type);
+        Expression<E> expression = ExpressionBuilder.<E, T> bodyExpression(type);
         return new ValueBuilder<E>(expression);
     }
 
     /**
-     * Returns a predicate and value builder for the outbound body on an exchange
+     * Returns a predicate and value builder for the outbound body on an
+     * exchange
      */
     public static <E extends Exchange> ValueBuilder<E> outBody() {
         Expression<E> expression = ExpressionBuilder.bodyExpression();
@@ -71,13 +78,13 @@ public class Builder {
     }
 
     /**
-     * Returns a predicate and value builder for the outbound message body as a specific type
+     * Returns a predicate and value builder for the outbound message body as a
+     * specific type
      */
     public static <E extends Exchange, T> ValueBuilder<E> outBody(Class<T> type) {
-        Expression<E> expression = ExpressionBuilder.<E, T>bodyExpression(type);
+        Expression<E> expression = ExpressionBuilder.<E, T> bodyExpression(type);
         return new ValueBuilder<E>(expression);
     }
-
 
     /**
      * Returns an expression for the given system property
@@ -89,7 +96,8 @@ public class Builder {
     /**
      * Returns an expression for the given system property
      */
-    public static <E extends Exchange> ValueBuilder<E> systemProperty(final String name, final String defaultValue) {
-        return new ValueBuilder<E>(ExpressionBuilder.<E>systemProperty(name, defaultValue));
+    public static <E extends Exchange> ValueBuilder<E> systemProperty(final String name,
+                                                                      final String defaultValue) {
+        return new ValueBuilder<E>(ExpressionBuilder.<E> systemProperty(name, defaultValue));
     }
 }

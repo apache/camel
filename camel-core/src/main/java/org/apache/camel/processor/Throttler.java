@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,14 +21,13 @@ import org.apache.camel.Processor;
 
 /**
  * A <a href="http://activemq.apache.org/camel/throttler.html">Throttler</a>
- * will set a limit on the maximum number of message exchanges which can be
- * sent to a processor within a specific time period.
- * <p/>
- * This pattern can be extremely useful if you have some external system which
- * meters access; such as only allowing 100 requests per second; or if huge load
- * can cause a particular systme to malfunction or to reduce its throughput
- * you might want to introduce some throttling.
- *
+ * will set a limit on the maximum number of message exchanges which can be sent
+ * to a processor within a specific time period. <p/> This pattern can be
+ * extremely useful if you have some external system which meters access; such
+ * as only allowing 100 requests per second; or if huge load can cause a
+ * particular systme to malfunction or to reduce its throughput you might want
+ * to introduce some throttling.
+ * 
  * @version $Revision: $
  */
 public class Throttler extends DelayProcessorSupport {
@@ -36,7 +35,6 @@ public class Throttler extends DelayProcessorSupport {
     private long timePeriodMillis;
     private long startTimeMillis;
     private long requestCount;
-
 
     public Throttler(Processor processor, long maximumRequestsPerPeriod) {
         this(processor, maximumRequestsPerPeriod, 1000);
@@ -50,11 +48,12 @@ public class Throttler extends DelayProcessorSupport {
 
     @Override
     public String toString() {
-        return "Throttler[requests: " + maximumRequestsPerPeriod + " per: " + timePeriodMillis + " (ms) to: " + getProcessor() + "]";
+        return "Throttler[requests: " + maximumRequestsPerPeriod + " per: " + timePeriodMillis + " (ms) to: "
+               + getProcessor() + "]";
     }
 
     // Properties
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     public long getMaximumRequestsPerPeriod() {
         return maximumRequestsPerPeriod;
     }
@@ -78,7 +77,8 @@ public class Throttler extends DelayProcessorSupport {
     }
 
     /**
-     * The number of requests which have taken place so far within this time period
+     * The number of requests which have taken place so far within this time
+     * period
      */
     public long getRequestCount() {
         return requestCount;
@@ -92,7 +92,7 @@ public class Throttler extends DelayProcessorSupport {
     }
 
     // Implementation methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     protected void delay(Exchange exchange) throws Exception {
         long now = currentSystemTime();
         if (startTimeMillis == 0) {
@@ -103,8 +103,7 @@ public class Throttler extends DelayProcessorSupport {
             // so lets reset things
             requestCount = 1;
             startTimeMillis = now;
-        }
-        else {
+        } else {
             if (++requestCount > maximumRequestsPerPeriod) {
                 // lets sleep until the start of the next time period
                 long time = startTimeMillis + timePeriodMillis;

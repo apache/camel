@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,22 +16,45 @@
  */
 package org.apache.camel.converter;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.Writer;
+
 import org.apache.camel.Converter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
-import java.nio.ByteBuffer;
-
 /**
- * Some core java.io based
- * <a href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
- *
+ * Some core java.io based <a
+ * href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
+ * 
  * @version $Revision$
  */
 @Converter
 public class IOConverter {
-    private static final transient Log log = LogFactory.getLog(IOConverter.class);
+    private static final transient Log LOG = LogFactory.getLog(IOConverter.class);
+
+    /**
+     * Utility classes should not have a public constructor.
+     */
+    private IOConverter() {        
+    }
 
     @Converter
     public static InputStream toInputStream(File file) throws FileNotFoundException {
@@ -69,7 +91,6 @@ public class IOConverter {
         return new OutputStreamWriter(out);
     }
 
-
     @Converter
     public static StringReader toReader(String text) {
         // TODO could we automatically find this?
@@ -95,9 +116,8 @@ public class IOConverter {
     @Converter
     public static String toString(Reader reader) throws IOException {
         if (reader instanceof BufferedReader) {
-            return toString((BufferedReader) reader);
-        }
-        else {
+            return toString((BufferedReader)reader);
+        } else {
             return toString(new BufferedReader(reader));
         }
     }
@@ -117,23 +137,20 @@ public class IOConverter {
                 }
                 if (first) {
                     first = false;
-                }
-                else {
+                } else {
                     builder.append("\n");
                 }
                 builder.append(line);
             }
-        }
-        finally {
+        } finally {
             try {
                 reader.close();
-            }
-            catch (IOException e) {
-                log.warn("Failed to close stream: "+ e, e);
+            } catch (IOException e) {
+                LOG.warn("Failed to close stream: " + e, e);
             }
         }
     }
-    
+
     @Converter
     public static String toString(InputStream in) throws IOException {
         return toString(toReader(in));
