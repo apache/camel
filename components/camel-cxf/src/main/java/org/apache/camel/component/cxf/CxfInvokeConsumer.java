@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,7 +24,7 @@ import org.apache.cxf.message.Message;
 
 /**
  * A consumer of exchanges for a service in CXF
- *
+ * 
  * @version $Revision$
  */
 public class CxfInvokeConsumer extends DefaultConsumer<CxfExchange> {
@@ -41,8 +40,8 @@ public class CxfInvokeConsumer extends DefaultConsumer<CxfExchange> {
     protected void doStart() throws Exception {
         super.doStart();
         // TODO we need to add custom cxf message observer and wire the
-        // incomingCxfMessage method.  Also, custom cxf interceptors are
-        // needed in order to object SOAP/XML message.  Currently, the
+        // incomingCxfMessage method. Also, custom cxf interceptors are
+        // needed in order to object SOAP/XML message. Currently, the
         // CXF service invoker will invoke the service class.
         if (server != null) {
             // start a cxf service
@@ -51,7 +50,7 @@ public class CxfInvokeConsumer extends DefaultConsumer<CxfExchange> {
             svrBean.setServiceClass(Class.forName(cxfEndpoint.getProperty(CxfConstants.IMPL)));
             svrBean.setBus(cxfEndpoint.getBus());
 
-            server = (ServerImpl) svrBean.create();
+            server = (ServerImpl)svrBean.create();
             server.start();
         }
     }
@@ -68,11 +67,12 @@ public class CxfInvokeConsumer extends DefaultConsumer<CxfExchange> {
     // TODO this method currently is not being called.
     protected void incomingCxfMessage(Message message) {
         try {
-			CxfExchange exchange = cxfEndpoint.createExchange(message);
-			getProcessor().process(exchange);
-		} catch (Exception e) {
-			// TODO: what do do if we are getting processing errors from camel?  Shutdown?
-			e.printStackTrace();
-		}
+            CxfExchange exchange = cxfEndpoint.createExchange(message);
+            getProcessor().process(exchange);
+        } catch (Exception e) {
+            // TODO: what do do if we are getting processing errors from camel?
+            // Shutdown?
+            e.printStackTrace();
+        }
     }
 }

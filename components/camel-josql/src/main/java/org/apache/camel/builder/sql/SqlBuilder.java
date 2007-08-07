@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,31 +16,33 @@
  */
 package org.apache.camel.builder.sql;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.util.ObjectHelper;
+
 import org.josql.Query;
 import org.josql.QueryExecutionException;
 import org.josql.QueryParseException;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashMap;
-
 /**
- * A builder of SQL {@link org.apache.camel.Expression} and {@link org.apache.camel.Predicate} implementations
- *
+ * A builder of SQL {@link org.apache.camel.Expression} and
+ * {@link org.apache.camel.Predicate} implementations
+ * 
  * @version $Revision: $
  */
 public class SqlBuilder<E extends Exchange> implements Expression<E>, Predicate<E> {
 
     private Query query;
-    private Map<String,Object> variables = new HashMap<String, Object>();
+    private Map<String, Object> variables = new HashMap<String, Object>();
 
     public SqlBuilder(Query query) {
         this.query = query;
@@ -63,11 +65,11 @@ public class SqlBuilder<E extends Exchange> implements Expression<E>, Predicate<
     }
 
     // Builder API
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     /**
      * Creates a new builder for the given SQL query string
-     *
+     * 
      * @param sql the SQL query to perform
      * @return a new builder
      * @throws QueryParseException if there is an issue with the SQL
@@ -86,9 +88,8 @@ public class SqlBuilder<E extends Exchange> implements Expression<E>, Predicate<
         return this;
     }
 
-
     // Properties
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     public Map<String, Object> getVariables() {
         return variables;
     }
@@ -97,9 +98,8 @@ public class SqlBuilder<E extends Exchange> implements Expression<E>, Predicate<
         this.variables = properties;
     }
 
-
     // Implementation methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     protected boolean matches(E exchange, List list) {
         return ObjectHelper.matches(list);
     }
@@ -113,8 +113,7 @@ public class SqlBuilder<E extends Exchange> implements Expression<E>, Predicate<
         }
         try {
             return query.execute(list).getResults();
-        }
-        catch (QueryExecutionException e) {
+        } catch (QueryExecutionException e) {
             throw new RuntimeExpressionException(e);
         }
     }
@@ -130,7 +129,7 @@ public class SqlBuilder<E extends Exchange> implements Expression<E>, Predicate<
         query.setVariable("out", exchange.getOut());
     }
 
-    protected void addVariables(Map <String, Object> map) {
+    protected void addVariables(Map<String, Object> map) {
         Set<Map.Entry<String, Object>> propertyEntries = map.entrySet();
         for (Map.Entry<String, Object> entry : propertyEntries) {
             query.setVariable(entry.getKey(), entry.getValue());

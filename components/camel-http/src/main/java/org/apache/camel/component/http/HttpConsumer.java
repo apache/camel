@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +17,6 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.Processor;
-import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
@@ -26,16 +24,16 @@ import org.apache.camel.impl.DefaultConsumer;
  */
 public class HttpConsumer extends DefaultConsumer<HttpExchange> {
 
-	private final HttpEndpoint endpoint;
+    private final HttpEndpoint endpoint;
 
-	public HttpConsumer(HttpEndpoint endpoint, Processor processor) {
-		super(endpoint, processor);
-		this.endpoint = endpoint;
-	}
+    public HttpConsumer(HttpEndpoint endpoint, Processor processor) {
+        super(endpoint, processor);
+        this.endpoint = endpoint;
+    }
 
     @Override
     public HttpEndpoint getEndpoint() {
-        return (HttpEndpoint) super.getEndpoint();
+        return (HttpEndpoint)super.getEndpoint();
     }
 
     public HttpBinding getBinding() {
@@ -47,15 +45,15 @@ public class HttpConsumer extends DefaultConsumer<HttpExchange> {
     }
 
     @Override
-	protected void doStart() throws Exception {
-		super.doStart();
-		endpoint.connect(this);		
-	}
-	
-	@Override
-	protected void doStop() throws Exception {
-		endpoint.disconnect(this);
-		super.doStop();
-	}
+    protected void doStart() throws Exception {
+        super.doStart();
+        endpoint.connect(this);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        endpoint.disconnect(this);
+        super.doStop();
+    }
 
 }

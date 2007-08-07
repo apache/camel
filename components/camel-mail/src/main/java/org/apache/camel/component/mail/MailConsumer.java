@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,28 +16,26 @@
  */
 package org.apache.camel.component.mail;
 
-import org.apache.camel.Consumer;
+import javax.mail.Flags;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.event.MessageCountEvent;
+import javax.mail.event.MessageCountListener;
+
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Transport;
-import javax.mail.event.MessageCountEvent;
-import javax.mail.event.MessageCountListener;
-
 /**
- * A {@link Consumer} which consumes messages from JavaMail using a {@link Transport} and dispatches them
- * to the {@link Processor}
- *
+ * A {@link Consumer} which consumes messages from JavaMail using a
+ * {@link Transport} and dispatches them to the {@link Processor}
+ * 
  * @version $Revision: 523430 $
  */
 public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements MessageCountListener {
-    private static final transient Log log = LogFactory.getLog(MailConsumer.class);
+    private static final transient Log LOG = LogFactory.getLog(MailConsumer.class);
     private final MailEndpoint endpoint;
     private final Folder folder;
 
@@ -71,8 +68,7 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements
 
                     flagMessageDeleted(message);
                 }
-            }
-            catch (MessagingException e) {
+            } catch (MessagingException e) {
                 handleException(e);
             }
         }
@@ -81,12 +77,11 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements
     public void messagesRemoved(MessageCountEvent event) {
         Message[] messages = event.getMessages();
         for (Message message : messages) {
-            if (log.isDebugEnabled()) {
+            if (LOG.isDebugEnabled()) {
                 try {
-                    log.debug("Removing message: " + message.getSubject());
-                }
-                catch (MessagingException e) {
-                    log.debug("Ignored: " + e);
+                    LOG.debug("Removing message: " + message.getSubject());
+                } catch (MessagingException e) {
+                    LOG.debug("Ignored: " + e);
                 }
             }
         }
@@ -100,8 +95,7 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements
             Message[] messages = folder.getMessages();
             MessageCountEvent event = new MessageCountEvent(folder, MessageCountEvent.ADDED, true, messages);
             messagesAdded(event);
-        }
-        else if (count == -1) {
+        } else if (count == -1) {
             throw new MessagingException("Folder: " + folder.getFullName() + " is closed");
         }
 
@@ -112,8 +106,7 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements
         try {
             MailExchange exchange = endpoint.createExchange(message);
             getProcessor().process(exchange);
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             handleException(e);
         }
     }
@@ -127,8 +120,7 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements
     protected void flagMessageDeleted(Message message) throws MessagingException {
         if (endpoint.getConfiguration().isDeleteProcessedMessages()) {
             message.setFlag(Flags.Flag.DELETED, true);
-        }
-        else {
+        } else {
             message.setFlag(Flags.Flag.SEEN, true);
         }
     }

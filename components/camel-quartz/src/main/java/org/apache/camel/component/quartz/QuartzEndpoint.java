@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.quartz;
 
+import java.util.Date;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -24,26 +28,23 @@ import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.Trigger;
 import org.quartz.SimpleTrigger;
-
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
+import org.quartz.Trigger;
 
 /**
  * A <a href="http://activemq.apache.org/quartz.html">Quartz Endpoint</a>
- *
+ * 
  * @version $Revision:520964 $
  */
 public class QuartzEndpoint extends DefaultEndpoint<QuartzExchange> {
     public static final String ENDPOINT_KEY = "org.apache.camel.quartz";
-    private static final transient Log log = LogFactory.getLog(QuartzEndpoint.class);
+    private static final transient Log LOG = LogFactory.getLog(QuartzEndpoint.class);
     private Scheduler scheduler;
     private LoadBalancer loadBalancer;
     private Trigger trigger;
@@ -99,21 +100,19 @@ public class QuartzEndpoint extends DefaultEndpoint<QuartzExchange> {
 
     /**
      * This method is invoked when a Quartz job is fired.
-     *
+     * 
      * @param jobExecutionContext the Quartz Job context
      */
     public void onJobExecute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        if (log.isDebugEnabled()) {
-            log.debug("Firing Quartz Job with context: " + jobExecutionContext);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Firing Quartz Job with context: " + jobExecutionContext);
         }
         QuartzExchange exchange = createExchange(jobExecutionContext);
         try {
             getLoadBalancer().process(exchange);
-        }
-        catch (JobExecutionException e) {
+        } catch (JobExecutionException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new JobExecutionException(e);
         }
     }
@@ -135,11 +134,11 @@ public class QuartzEndpoint extends DefaultEndpoint<QuartzExchange> {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @Override
     public QuartzComponent getComponent() {
-        return (QuartzComponent) super.getComponent();
+        return (QuartzComponent)super.getComponent();
     }
 
     public boolean isSingleton() {
@@ -184,7 +183,7 @@ public class QuartzEndpoint extends DefaultEndpoint<QuartzExchange> {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public synchronized void consumerStarted(QuartzConsumer consumer) throws SchedulerException {
         getLoadBalancer().addProcessor(consumer.getProcessor());
 

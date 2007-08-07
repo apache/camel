@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,15 +18,18 @@ package org.apache.camel.spring.remoting;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.component.bean.CamelInvocationHandler;
 import org.apache.camel.util.CamelContextHelper;
-import static org.apache.camel.util.ObjectHelper.notNull;
+
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A Spring interceptor which sends a message exchange to an endpoint before the method is invoked

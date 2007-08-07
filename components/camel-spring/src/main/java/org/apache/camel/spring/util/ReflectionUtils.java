@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,18 +28,13 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
             public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
                 if (method.getAnnotation(annotation) != null) {
                     try {
-                        method.invoke(bean, (Object[]) null);
-                    }
-                    catch (IllegalArgumentException ex) {
-                        throw new IllegalStateException("Failure to invoke " + method + " on "
-                                + bean.getClass() + ": args=[]", ex);
-                    }
-                    catch (IllegalAccessException ex) {
+                        method.invoke(bean, (Object[])null);
+                    } catch (IllegalArgumentException ex) {
+                        throw new IllegalStateException("Failure to invoke " + method + " on " + bean.getClass() + ": args=[]", ex);
+                    } catch (IllegalAccessException ex) {
                         throw new UnsupportedOperationException(ex.toString());
-                    }
-                    catch (InvocationTargetException ex) {
-                        throw new UnsupportedOperationException("PostConstruct method on bean threw exception",
-                                ex.getTargetException());
+                    } catch (InvocationTargetException ex) {
+                        throw new UnsupportedOperationException("PostConstruct method on bean threw exception", ex.getTargetException());
                     }
                 }
             }
@@ -57,12 +52,9 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
             if (shouldSetAccessible) {
                 f.setAccessible(oldAccessible);
             }
-        }
-        catch (IllegalArgumentException ex) {
-            throw new UnsupportedOperationException("Cannot inject value of class '"
-                    + value.getClass() + "' into " + f);
-        }
-        catch (IllegalAccessException ex) {
+        } catch (IllegalArgumentException ex) {
+            throw new UnsupportedOperationException("Cannot inject value of class '" + value.getClass() + "' into " + f);
+        } catch (IllegalAccessException ex) {
             ReflectionUtils.handleReflectionException(ex);
         }
     }

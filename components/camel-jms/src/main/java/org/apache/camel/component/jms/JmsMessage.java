@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,27 +16,27 @@
  */
 package org.apache.camel.component.jms;
 
-import java.beans.DesignMode;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.Map;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
-import javax.jms.TemporaryTopic;
 import javax.jms.Topic;
+
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with JMS
- *
+ * 
  * @version $Revision:520964 $
  */
 public class JmsMessage extends DefaultMessage {
-    private static final transient Log log = LogFactory.getLog(JmsMessage.class);
+    private static final transient Log LOG = LogFactory.getLog(JmsMessage.class);
     private Message jmsMessage;
 
     public JmsMessage() {
@@ -51,30 +50,28 @@ public class JmsMessage extends DefaultMessage {
     public String toString() {
         if (jmsMessage != null) {
             return "JmsMessage: " + jmsMessage;
-        }
-        else {
+        } else {
             return "JmsMessage: " + getBody();
         }
     }
 
-       
     /**
      * Returns the underlying JMS message
-     *
+     * 
      * @return the underlying JMS message
      */
     public Message getJmsMessage() {
         return jmsMessage;
     }
 
-    public void setJmsMessage(Message jmsMessage){
-        this.jmsMessage=jmsMessage;
-        try{
-            String id=getDestinationAsString(jmsMessage.getJMSDestination());
-            id+=getSanitizedString(jmsMessage.getJMSMessageID());
+    public void setJmsMessage(Message jmsMessage) {
+        this.jmsMessage = jmsMessage;
+        try {
+            String id = getDestinationAsString(jmsMessage.getJMSDestination());
+            id += getSanitizedString(jmsMessage.getJMSMessageID());
             setMessageId(id);
-        }catch(JMSException e){
-            log.error("Failed to get message id from message "+jmsMessage,e);
+        } catch (JMSException e) {
+            LOG.error("Failed to get message id from message " + jmsMessage, e);
         }
     }
 
@@ -83,8 +80,7 @@ public class JmsMessage extends DefaultMessage {
         if (jmsMessage != null) {
             try {
                 answer = jmsMessage.getObjectProperty(name);
-            }
-            catch (JMSException e) {
+            } catch (JMSException e) {
                 throw new MessagePropertyAccessException(name, e);
             }
         }
@@ -103,7 +99,7 @@ public class JmsMessage extends DefaultMessage {
     protected Object createBody() {
         if (jmsMessage != null && getExchange() instanceof JmsExchange) {
             JmsExchange exchange = (JmsExchange)getExchange();
-            return (exchange.getBinding().extractBodyFromJms(exchange, jmsMessage));
+            return exchange.getBinding().extractBodyFromJms(exchange, jmsMessage);
         }
         return null;
     }
@@ -114,8 +110,7 @@ public class JmsMessage extends DefaultMessage {
             Enumeration names;
             try {
                 names = jmsMessage.getPropertyNames();
-            }
-            catch (JMSException e) {
+            } catch (JMSException e) {
                 throw new MessagePropertyNamesAccessException(e);
             }
             while (names.hasMoreElements()) {
@@ -123,28 +118,27 @@ public class JmsMessage extends DefaultMessage {
                 try {
                     Object value = jmsMessage.getObjectProperty(name);
                     map.put(name, value);
-                }
-                catch (JMSException e) {
+                } catch (JMSException e) {
                     throw new MessagePropertyAccessException(name, e);
                 }
             }
         }
     }
-    
+
     private String getDestinationAsString(Destination destination) throws JMSException {
         String result = "";
         if (destination == null) {
-        	result = "null destination!";
+            result = "null destination!";
         } else if (destination instanceof Topic) {
             result += "topic" + File.separator + getSanitizedString(((Topic)destination).getTopicName());
-        }else {
+        } else {
             result += "queue" + File.separator + getSanitizedString(((Queue)destination).getQueueName());
         }
         result += File.separator;
         return result;
     }
+
     private String getSanitizedString(Object value) {
         return value != null ? value.toString().replaceAll("[^a-zA-Z0-9\\.\\_\\-]", "_") : "";
     }
 }
-

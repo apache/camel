@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,26 +16,28 @@
  */
 package org.apache.camel.component.jpa;
 
+import java.lang.reflect.Method;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.PersistenceException;
+import javax.persistence.Query;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.orm.jpa.JpaCallback;
 
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
-import java.lang.reflect.Method;
-import java.util.List;
+import org.springframework.orm.jpa.JpaCallback;
 
 /**
  * @version $Revision$
  */
 public class JpaConsumer extends ScheduledPollConsumer<Exchange> {
-    private static final transient Log log = LogFactory.getLog(JpaConsumer.class);
+    private static final transient Log LOG = LogFactory.getLog(JpaConsumer.class);
     private final JpaEndpoint endpoint;
     private final TransactionStrategy template;
     private QueryFactory queryFactory;
@@ -58,17 +59,17 @@ public class JpaConsumer extends ScheduledPollConsumer<Exchange> {
                 configureParameters(query);
                 List results = query.getResultList();
                 for (Object result : results) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Processing new entity: " + result);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Processing new entity: " + result);
                     }
 
                     if (lockEntity(result, entityManager)) {
-                        // lets turn the result into an exchange and fire it into the processor
+                        // lets turn the result into an exchange and fire it
+                        // into the processor
                         Exchange exchange = createExchange(result);
                         try {
                             getProcessor().process(exchange);
-                        }
-                        catch (Exception e) {
+                        } catch (Exception e) {
                             throw new PersistenceException(e);
                         }
                         getDeleteHandler().deleteObject(entityManager, result);
@@ -81,7 +82,7 @@ public class JpaConsumer extends ScheduledPollConsumer<Exchange> {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public JpaEndpoint getEndpoint() {
         return endpoint;
     }
@@ -136,12 +137,13 @@ public class JpaConsumer extends ScheduledPollConsumer<Exchange> {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
-     * A strategy method to lock an object with an exclusive lock so that it can be processed
-     *
-     * @param entity        the entity to be locked
+     * A strategy method to lock an object with an exclusive lock so that it can
+     * be processed
+     * 
+     * @param entity the entity to be locked
      * @param entityManager
      * @return true if the entity was locked
      */
@@ -150,15 +152,14 @@ public class JpaConsumer extends ScheduledPollConsumer<Exchange> {
             return true;
         }
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("Acquiring exclusive lock on entity: " + entity);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Acquiring exclusive lock on entity: " + entity);
             }
             entityManager.lock(entity, LockModeType.WRITE);
             return true;
-        }
-        catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Failed to achieve lock on entity: " + entity + ". Reason: " + e, e);
+        } catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Failed to achieve lock on entity: " + entity + ". Reason: " + e, e);
             }
             return false;
         }
@@ -167,33 +168,29 @@ public class JpaConsumer extends ScheduledPollConsumer<Exchange> {
     protected QueryFactory createQueryFactory() {
         if (query != null) {
             return QueryBuilder.query(query);
-        }
-        else if (namedQuery != null) {
+        } else if (namedQuery != null) {
             return QueryBuilder.namedQuery(namedQuery);
-        }
-        else if (nativeQuery != null) {
+        } else if (nativeQuery != null) {
             return QueryBuilder.nativeQuery(nativeQuery);
-        }
-        else {
+        } else {
             Class<?> entityType = endpoint.getEntityType();
             if (entityType == null) {
                 return null;
-            }
-            else {
+            } else {
                 return QueryBuilder.query("select x from " + entityType.getName() + " x");
             }
         }
     }
 
     protected DeleteHandler<Object> createDeleteHandler() {
-        // TODO auto-discover an annotation in the entity bean to indicate the process completed method call?
+        // TODO auto-discover an annotation in the entity bean to indicate the
+        // process completed method call?
         Class<?> entityType = getEndpoint().getEntityType();
         if (entityType != null) {
             List<Method> methods = ObjectHelper.findMethodsWithAnnotation(entityType, Consumed.class);
             if (methods.size() > 1) {
                 throw new IllegalArgumentException("Only one method can be annotated with the @Consumed annotation but found: " + methods);
-            }
-            else if (methods.size() == 1) {
+            } else if (methods.size() == 1) {
                 final Method method = methods.get(0);
 
                 return new DeleteHandler<Object>() {
@@ -209,8 +206,7 @@ public class JpaConsumer extends ScheduledPollConsumer<Exchange> {
                     entityManager.remove(entityBean);
                 }
             };
-        }
-        else {
+        } else {
             return new DeleteHandler<Object>() {
                 public void deleteObject(EntityManager entityManager, Object entityBean) {
                     // do nothing

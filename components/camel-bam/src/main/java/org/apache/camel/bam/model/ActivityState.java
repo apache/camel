@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,9 +16,7 @@
  */
 package org.apache.camel.bam.model;
 
-import org.apache.camel.bam.processor.ProcessContext;
-import org.apache.camel.bam.rules.ActivityRules;
-import org.apache.camel.util.ObjectHelper;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -28,11 +26,14 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.util.Date;
+
+import org.apache.camel.bam.processor.ProcessContext;
+import org.apache.camel.bam.rules.ActivityRules;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The default state for a specific activity within a process
- *
+ * 
  * @version $Revision: $
  */
 @Entity
@@ -72,8 +73,7 @@ public class ActivityState extends TemporalEntity {
         int expectedMessages = activityRules.getExpectedMessages();
         if (messageCount == expectedMessages) {
             onExpectedMessage(context);
-        }
-        else if (messageCount > expectedMessages) {
+        } else if (messageCount > expectedMessages) {
             onExcessMessage(context);
         }
     }
@@ -86,8 +86,8 @@ public class ActivityState extends TemporalEntity {
     }
 
     // Properties
-    //-----------------------------------------------------------------------
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    // -----------------------------------------------------------------------
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST })
     public ProcessInstance getProcessInstance() {
         return processInstance;
     }
@@ -97,7 +97,7 @@ public class ActivityState extends TemporalEntity {
         processInstance.getActivityStates().add(this);
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST })
     public ActivityDefinition getActivityDefinition() {
         return activityDefinition;
     }
@@ -148,7 +148,7 @@ public class ActivityState extends TemporalEntity {
     }
 
     // Implementation methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     /**
      * Called when the first message is reached
@@ -171,8 +171,8 @@ public class ActivityState extends TemporalEntity {
     }
 
     /**
-     * Called when an excess message (after the expected number of messages)
-     * are received
+     * Called when an excess message (after the expected number of messages) are
+     * received
      */
     protected void onExcessMessage(ProcessContext context) {
         // TODO

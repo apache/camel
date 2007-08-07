@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,35 +16,37 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.TestCase;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.CamelTemplate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.cxf.frontend.ServerFactoryBean;
-import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.bus.CXFBusFactory;
-
-import java.util.*;
+import org.apache.cxf.endpoint.ServerImpl;
+import org.apache.cxf.frontend.ServerFactoryBean;
 
 /**
  * @version $Revision$
  */
 public class CxfTest extends TestCase {
-    private static final transient Log log = LogFactory.getLog(CxfTest.class);
+    private static final transient Log LOG = LogFactory.getLog(CxfTest.class);
     protected CamelContext camelContext = new DefaultCamelContext();
     protected CamelTemplate<CxfExchange> template = new CamelTemplate<CxfExchange>(camelContext);
 
-    final private String transportAddress = "http://localhost:28080/test";
-    final private String testMessage = "Hello World!";
+    private final String transportAddress = "http://localhost:28080/test";
+    private final String testMessage = "Hello World!";
     private ServerImpl server;
-    
+
     @Override
     protected void setUp() throws Exception {
-        
+
         // start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
 
@@ -56,36 +57,33 @@ public class CxfTest extends TestCase {
         server = (ServerImpl)svrBean.create();
         server.start();
     }
-    
+
     @Override
     protected void tearDown() throws Exception {
         if (server != null) {
             server.stop();
         }
     }
-    
+
     public void testInvokeOfServer() throws Exception {
 
-        CxfExchange exchange = (CxfExchange) 
-            template.send(getUri(),
-                        new Processor() {
-                            public void process(final Exchange exchange) {
-                                final List<String> params = new ArrayList<String>();
-                                params.add(testMessage);
-                                exchange.getIn().setBody(params);
-                            }
-                        });
+        CxfExchange exchange = (CxfExchange)template.send(getUri(), new Processor() {
+            public void process(final Exchange exchange) {
+                final List<String> params = new ArrayList<String>();
+                params.add(testMessage);
+                exchange.getIn().setBody(params);
+            }
+        });
 
         org.apache.camel.Message out = exchange.getOut();
 
         Object[] output = (Object[])out.getBody();
-        log.info("Received output text: " + output[0]);
-        
+        LOG.info("Received output text: " + output[0]);
+
         assertEquals("reply body on Camel", testMessage, output[0]);
     }
 
     private String getUri() {
-        return "cxf:" + transportAddress 
-            + "?sei=org.apache.camel.component.cxf.HelloService&method=echo";
+        return "cxf:" + transportAddress + "?sei=org.apache.camel.component.cxf.HelloService&method=echo";
     }
 }

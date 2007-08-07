@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,8 @@
  */
 package org.apache.camel.bam;
 
+import java.util.Date;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -25,8 +27,6 @@ import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.camel.builder.ProcessorFactory;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
-
-import java.util.Date;
 
 /**
  * @version $Revision: $

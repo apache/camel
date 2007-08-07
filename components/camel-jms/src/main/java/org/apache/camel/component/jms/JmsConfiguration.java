@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,8 +16,12 @@
  */
 package org.apache.camel.component.jms;
 
+import javax.jms.ConnectionFactory;
+import javax.jms.ExceptionListener;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
+
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
@@ -33,9 +36,6 @@ import org.springframework.jms.listener.serversession.ServerSessionMessageListen
 import org.springframework.jms.listener.serversession.ServerSessionMessageListenerContainer102;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.transaction.PlatformTransactionManager;
-
-import javax.jms.ConnectionFactory;
-import javax.jms.ExceptionListener;
 
 /**
  * @version $Revision$
@@ -72,8 +72,8 @@ public class JmsConfiguration implements Cloneable {
     private int idleTaskExecutionLimit = 1;
     private int maxConcurrentConsumers = 1;
     // JmsTemplate only
-    private boolean useVersion102 = false;
-    private boolean explicitQosEnabled = false;
+    private boolean useVersion102;
+    private boolean explicitQosEnabled;
     private boolean deliveryPersistent = true;
     private long timeToLive = -1;
     private MessageConverter messageConverter;
@@ -98,18 +98,15 @@ public class JmsConfiguration implements Cloneable {
      */
     public JmsConfiguration copy() {
         try {
-            return (JmsConfiguration) clone();
-        }
-        catch (CloneNotSupportedException e) {
+            return (JmsConfiguration)clone();
+        } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
     }
 
     public JmsOperations createJmsOperations(boolean pubSubDomain, String destination) {
         ConnectionFactory factory = getTemplateConnectionFactory();
-        JmsTemplate template = useVersion102
-                ? new JmsTemplate102(factory, pubSubDomain)
-                : new JmsTemplate(factory);
+        JmsTemplate template = useVersion102 ? new JmsTemplate102(factory, pubSubDomain) : new JmsTemplate(factory);
         template.setPubSubDomain(pubSubDomain);
         template.setDefaultDestinationName(destination);
 
@@ -133,11 +130,11 @@ public class JmsConfiguration implements Cloneable {
 
         template.setSessionTransacted(transacted);
 
-        // This is here for completeness, but the template should not get used for receiving messages.
+        // This is here for completeness, but the template should not get used
+        // for receiving messages.
         if (acknowledgementMode >= 0) {
             template.setSessionAcknowledgeMode(acknowledgementMode);
-        }
-        else if (acknowledgementModeName != null) {
+        } else if (acknowledgementModeName != null) {
             template.setSessionAcknowledgeModeName(acknowledgementModeName);
         }
         return template;
@@ -162,7 +159,8 @@ public class JmsConfiguration implements Cloneable {
             container.setDurableSubscriptionName(durableSubscriptionName);
         }
 
-        // lets default to durable subscription if the subscriber name and client ID are specified (as there's
+        // lets default to durable subscription if the subscriber name and
+        // client ID are specified (as there's
         // no reason to specify them if not! :)
         if (durableSubscriptionName != null && clientId != null) {
             container.setSubscriptionDurable(true);
@@ -178,26 +176,24 @@ public class JmsConfiguration implements Cloneable {
 
         if (acknowledgementMode >= 0) {
             container.setSessionAcknowledgeMode(acknowledgementMode);
-        }
-        else if (acknowledgementModeName != null) {
+        } else if (acknowledgementModeName != null) {
             container.setSessionAcknowledgeModeName(acknowledgementModeName);
         }
 
         if (container instanceof DefaultMessageListenerContainer) {
             // this includes DefaultMessageListenerContainer102
-            DefaultMessageListenerContainer listenerContainer = (DefaultMessageListenerContainer) container;
+            DefaultMessageListenerContainer listenerContainer = (DefaultMessageListenerContainer)container;
             if (concurrentConsumers >= 0) {
                 listenerContainer.setConcurrentConsumers(concurrentConsumers);
             }
 
             if (cacheLevel >= 0) {
                 listenerContainer.setCacheLevel(cacheLevel);
-            }
-            else if (cacheLevelName != null) {
+            } else if (cacheLevelName != null) {
                 listenerContainer.setCacheLevelName(cacheLevelName);
-            }
-            else {
-                // Default to CACHE_CONSUMER unless specified.  This works best with most JMS providers.
+            } else {
+                // Default to CACHE_CONSUMER unless specified. This works best
+                // with most JMS providers.
                 listenerContainer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
             }
 
@@ -229,20 +225,18 @@ public class JmsConfiguration implements Cloneable {
             if (transactionTimeout >= 0) {
                 listenerContainer.setTransactionTimeout(transactionTimeout);
             }
-        }
-        else if (container instanceof ServerSessionMessageListenerContainer) {
+        } else if (container instanceof ServerSessionMessageListenerContainer) {
             // this includes ServerSessionMessageListenerContainer102
-            ServerSessionMessageListenerContainer listenerContainer = (ServerSessionMessageListenerContainer) container;
+            ServerSessionMessageListenerContainer listenerContainer = (ServerSessionMessageListenerContainer)container;
             if (maxMessagesPerTask >= 0) {
                 listenerContainer.setMaxMessagesPerTask(maxMessagesPerTask);
             }
             if (serverSessionFactory != null) {
                 listenerContainer.setServerSessionFactory(serverSessionFactory);
             }
-        }
-        else if (container instanceof SimpleMessageListenerContainer) {
+        } else if (container instanceof SimpleMessageListenerContainer) {
             // this includes SimpleMessageListenerContainer102
-            SimpleMessageListenerContainer listenerContainer = (SimpleMessageListenerContainer) container;
+            SimpleMessageListenerContainer listenerContainer = (SimpleMessageListenerContainer)container;
             if (concurrentConsumers >= 0) {
                 listenerContainer.setConcurrentConsumers(concurrentConsumers);
             }
@@ -254,7 +248,7 @@ public class JmsConfiguration implements Cloneable {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public ConnectionFactory getConnectionFactory() {
         if (connectionFactory == null) {
             connectionFactory = createConnectionFactory();
@@ -263,10 +257,11 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the default connection factory to be used if a connection factory is not specified
-     * for either {@link #setTemplateConnectionFactory(ConnectionFactory)} or
+     * Sets the default connection factory to be used if a connection factory is
+     * not specified for either
+     * {@link #setTemplateConnectionFactory(ConnectionFactory)} or
      * {@link #setListenerConnectionFactory(ConnectionFactory)}
-     *
+     * 
      * @param connectionFactory the default connection factory to use
      */
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
@@ -281,9 +276,11 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the connection factory to be used for consuming messages via the {@link #createMessageListenerContainer()}
-     *
-     * @param listenerConnectionFactory the connection factory to use for consuming messages
+     * Sets the connection factory to be used for consuming messages via the
+     * {@link #createMessageListenerContainer()}
+     * 
+     * @param listenerConnectionFactory the connection factory to use for
+     *                consuming messages
      */
     public void setListenerConnectionFactory(ConnectionFactory listenerConnectionFactory) {
         this.listenerConnectionFactory = listenerConnectionFactory;
@@ -297,10 +294,11 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the connection factory to be used for sending messages via the {@link JmsTemplate} via
-     * {@link #createJmsOperations(boolean, String)}
-     *
-     * @param templateConnectionFactory the connection factory for sending messages
+     * Sets the connection factory to be used for sending messages via the
+     * {@link JmsTemplate} via {@link #createJmsOperations(boolean, String)}
+     * 
+     * @param templateConnectionFactory the connection factory for sending
+     *                messages
      */
     public void setTemplateConnectionFactory(ConnectionFactory templateConnectionFactory) {
         this.templateConnectionFactory = templateConnectionFactory;
@@ -573,23 +571,24 @@ public class JmsConfiguration implements Cloneable {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     protected AbstractMessageListenerContainer chooseMessageListenerContainerImplementation() {
         // TODO we could allow a spring container to auto-inject these objects?
         switch (consumerType) {
-            case Simple:
-                return isUseVersion102() ? new SimpleMessageListenerContainer102() : new SimpleMessageListenerContainer();
-            case ServerSessionPool:
-                return isUseVersion102() ? new ServerSessionMessageListenerContainer102() : new ServerSessionMessageListenerContainer();
-            case Default:
-                return isUseVersion102() ? new DefaultMessageListenerContainer102() : new DefaultMessageListenerContainer();
-            default:
-                throw new IllegalArgumentException("Unknown consumer type: " + consumerType);
+        case Simple:
+            return isUseVersion102() ? new SimpleMessageListenerContainer102() : new SimpleMessageListenerContainer();
+        case ServerSessionPool:
+            return isUseVersion102() ? new ServerSessionMessageListenerContainer102() : new ServerSessionMessageListenerContainer();
+        case Default:
+            return isUseVersion102() ? new DefaultMessageListenerContainer102() : new DefaultMessageListenerContainer();
+        default:
+            throw new IllegalArgumentException("Unknown consumer type: " + consumerType);
         }
     }
 
     /**
-     * Factory method which allows derived classes to customize the lazy creation
+     * Factory method which allows derived classes to customize the lazy
+     * creation
      */
     protected ConnectionFactory createConnectionFactory() {
         ObjectHelper.notNull(connectionFactory, "connectionFactory");
@@ -597,14 +596,16 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Factory method which allows derived classes to customize the lazy creation
+     * Factory method which allows derived classes to customize the lazy
+     * creation
      */
     protected ConnectionFactory createListenerConnectionFactory() {
         return getConnectionFactory();
     }
 
     /**
-     * Factory method which allows derived classes to customize the lazy creation
+     * Factory method which allows derived classes to customize the lazy
+     * creation
      */
     protected ConnectionFactory createTemplateConnectionFactory() {
         return getConnectionFactory();

@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,16 +16,17 @@
  */
 package org.apache.camel.component.jpa;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 /**
  * A builder of query expressions
- *
+ * 
  * @version $Revision$
  */
 public abstract class QueryBuilder implements QueryFactory {
@@ -34,7 +34,7 @@ public abstract class QueryBuilder implements QueryFactory {
 
     /**
      * Creates a query builder using the JPA query syntax
-     *
+     * 
      * @param query JPA query language to create
      * @return a query builder
      */
@@ -85,7 +85,7 @@ public abstract class QueryBuilder implements QueryFactory {
 
     /**
      * Specifies the parameters to the query
-     *
+     * 
      * @param parameters the parameters to be configured on the query
      * @return this query builder
      */
@@ -94,8 +94,9 @@ public abstract class QueryBuilder implements QueryFactory {
     }
 
     /**
-     * Specifies the parameters to the query as an ordered collection of parameters
-     *
+     * Specifies the parameters to the query as an ordered collection of
+     * parameters
+     * 
      * @param parameters the parameters to be configured on the query
      * @return this query builder
      */
@@ -119,7 +120,7 @@ public abstract class QueryBuilder implements QueryFactory {
 
     /**
      * Specifies the parameters to the query as a Map of key/value pairs
-     *
+     * 
      * @param parameterMap the parameters to be configured on the query
      * @return this query builder
      */
@@ -156,8 +157,7 @@ public abstract class QueryBuilder implements QueryFactory {
     protected String getParameterDescription() {
         if (parameterBuilder == null) {
             return "";
-        }
-        else {
+        } else {
             return " " + parameterBuilder.toString();
         }
     }

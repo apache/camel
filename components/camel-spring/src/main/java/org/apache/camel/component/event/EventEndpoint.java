@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,17 +25,17 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
 
 /**
  * An <a href="http://activemq.apache.org/camel/event.html">Event Endpoint</a>
  * for working with Spring ApplicationEvents
- *
+ * 
  * @version $Revision: 1.1 $
  */
-public class EventEndpoint extends DefaultEndpoint<Exchange>  {
+public class EventEndpoint extends DefaultEndpoint<Exchange> {
     private final EventComponent component;
     private LoadBalancer loadBalancer;
 
@@ -80,8 +79,7 @@ public class EventEndpoint extends DefaultEndpoint<Exchange>  {
         exchange.getIn().setBody(event);
         try {
             getLoadBalancer().process(exchange);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
     }
@@ -98,7 +96,7 @@ public class EventEndpoint extends DefaultEndpoint<Exchange>  {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public synchronized void consumerStarted(EventConsumer consumer) {
         getLoadBalancer().addProcessor(consumer.getProcessor());
     }

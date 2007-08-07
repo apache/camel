@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision: $
  */
 public class MyConsumer {
-    private static final Log log = LogFactory.getLog(MyConsumer.class);
+    private static final Log LOG = LogFactory.getLog(MyConsumer.class);
     @EndpointInject(uri = "mock:result")
     private CamelTemplate destination;
 
@@ -37,7 +37,7 @@ public class MyConsumer {
     public void doSomething(String body) {
         ObjectHelper.notNull(destination, "destination");
 
-        log.info("Received body: " + body);
+        LOG.info("Received body: " + body);
         destination.sendBody(body);
     }
 

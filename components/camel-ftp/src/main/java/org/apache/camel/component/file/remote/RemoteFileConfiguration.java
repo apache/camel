@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +16,9 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.RuntimeCamelException;
-
 import java.net.URI;
+
+import org.apache.camel.RuntimeCamelException;
 
 public class RemoteFileConfiguration implements Cloneable {
     private String protocol;
@@ -28,7 +27,7 @@ public class RemoteFileConfiguration implements Cloneable {
     private int port;
     private String password;
     private String file;
-    private boolean binary = false;
+    private boolean binary;
     private boolean directory = true;
 
     public RemoteFileConfiguration() {
@@ -40,17 +39,16 @@ public class RemoteFileConfiguration implements Cloneable {
 
     public RemoteFileConfiguration copy() {
         try {
-            return (RemoteFileConfiguration) clone();
-        }
-        catch (CloneNotSupportedException e) {
+            return (RemoteFileConfiguration)clone();
+        } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
     }
 
     public String toString() {
-        return protocol + ":\\" + username + "@" +  host + ":" + port + "/" + directory;
+        return protocol + ":\\" + username + "@" + host + ":" + port + "/" + directory;
     }
-    
+
     public void configure(URI uri) {
         setProtocol(uri.getScheme());
         setDefaultPort();
@@ -63,8 +61,7 @@ public class RemoteFileConfiguration implements Cloneable {
     protected void setDefaultPort() {
         if ("ftp".equalsIgnoreCase(protocol)) {
             setPort(21);
-        }
-        else if ("sftp".equalsIgnoreCase(protocol)) {
+        } else if ("sftp".equalsIgnoreCase(protocol)) {
             setPort(22);
         }
     }
@@ -136,15 +133,7 @@ public class RemoteFileConfiguration implements Cloneable {
     }
 
     public String dump() {
-        return "RemoteFileConfiguration{" +
-                "protocol='" + protocol + '\'' +
-                ", username='" + username + '\'' +
-                ", host='" + host + '\'' +
-                ", port=" + port +
-                ", password='" + password + '\'' +
-                ", file='" + file + '\'' +
-                ", binary=" + binary +
-                ", directory=" + directory +
-                '}';
+        return "RemoteFileConfiguration{" + "protocol='" + protocol + '\'' + ", username='" + username + '\'' + ", host='" + host + '\'' + ", port=" + port + ", password='" + password + '\''
+               + ", file='" + file + '\'' + ", binary=" + binary + ", directory=" + directory + '}';
     }
 }

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.validator;
 
-import org.apache.camel.processor.validation.ValidatingProcessor;
-import org.springframework.core.io.Resource;
+import java.io.IOException;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-import java.io.IOException;
+
+import org.apache.camel.processor.validation.ValidatingProcessor;
+
+import org.springframework.core.io.Resource;
 
 /**
  * @version $Revision: $
@@ -42,12 +44,10 @@ public class SpringValidator extends ValidatingProcessor {
         if (schemaResource != null) {
             if (schemaResource.getURL() == null) {
                 return new StreamSource(schemaResource.getInputStream());
-            }
-            else {
+            } else {
                 return new StreamSource(schemaResource.getInputStream(), schemaResource.getURL().toExternalForm());
             }
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("You must specify a schema, schemaFile, schemaResource, schemaSource or schemaUrl property");
         }
     }

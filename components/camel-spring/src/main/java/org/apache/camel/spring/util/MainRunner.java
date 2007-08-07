@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,49 +16,47 @@
  */
 package org.apache.camel.spring.util;
 
-import static org.apache.camel.util.ObjectHelper.name;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.camel.util.ObjectHelper;
-import org.springframework.beans.factory.InitializingBean;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.springframework.beans.factory.InitializingBean;
+
+import static org.apache.camel.util.ObjectHelper.name;
+
 /**
  * A simple helper bean for running main classes from within the spring.xml
- * usually asynchronous in a background thread; which is useful for demos
- * such as running Swing programs in the same JVM.
- *
+ * usually asynchronous in a background thread; which is useful for demos such
+ * as running Swing programs in the same JVM.
+ * 
  * @version $Revision: $
  */
 public class MainRunner implements InitializingBean, Runnable {
-    private static final Log log = LogFactory.getLog(MainRunner.class);
+    private static final Log LOG = LogFactory.getLog(MainRunner.class);
 
     private Class main;
     private String[] args = {};
     private boolean asyncRun = true;
-    private long delay = 0;
+    private long delay;
 
     public String toString() {
-        return "MainRunner(" + name(main) + " " + Arrays.asList(getArgs()) +")";
+        return "MainRunner(" + name(main) + " " + Arrays.asList(getArgs()) + ")";
     }
 
     public void run() {
         try {
             runMethodWithoutCatchingExceptions();
-        }
-        catch (NoSuchMethodException e) {
-            log.error("Class: " + name(main) + " does not have a main method: " + e, e);
-        }
-        catch (IllegalAccessException e) {
-            log.error("Failed to run: " + this + ". Reason: " + e, e);
-        }
-        catch (InvocationTargetException e) {
+        } catch (NoSuchMethodException e) {
+            LOG.error("Class: " + name(main) + " does not have a main method: " + e, e);
+        } catch (IllegalAccessException e) {
+            LOG.error("Failed to run: " + this + ". Reason: " + e, e);
+        } catch (InvocationTargetException e) {
             Throwable throwable = e.getTargetException();
-            log.error("Failed to run: " + this + ". Reason: " + throwable, throwable);
+            LOG.error("Failed to run: " + this + ". Reason: " + throwable, throwable);
         }
     }
 
@@ -66,9 +64,8 @@ public class MainRunner implements InitializingBean, Runnable {
         if (delay > 0) {
             try {
                 Thread.sleep(delay);
-            }
-            catch (InterruptedException e) {
-                log.info("Caught: " + e, e);
+            } catch (InterruptedException e) {
+                LOG.info("Caught: " + e, e);
             }
         }
         Method method = main.getMethod("main", String[].class);
@@ -118,8 +115,7 @@ public class MainRunner implements InitializingBean, Runnable {
         if (isAsyncRun()) {
             Thread thread = new Thread(this, "Thread for: " + this);
             thread.start();
-        }
-        else {
+        } else {
             runMethodWithoutCatchingExceptions();
         }
     }

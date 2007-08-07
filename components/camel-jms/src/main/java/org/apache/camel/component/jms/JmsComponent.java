@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,24 +16,27 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.Map;
+
+import javax.jms.ConnectionFactory;
+import javax.jms.ExceptionListener;
+import javax.jms.Session;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
-import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.listener.serversession.ServerSessionFactory;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.ExceptionListener;
-import javax.jms.Session;
-import java.util.Map;
+import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 
 /**
  * A <a href="http://activemq.apache.org/jms.html">JMS Component</a>
- *
+ * 
  * @version $Revision:520964 $
  */
 public class JmsComponent extends DefaultComponent<JmsExchange> {
@@ -43,6 +45,17 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
 
     private JmsConfiguration configuration;
 
+    public JmsComponent() {
+    }
+
+    public JmsComponent(JmsConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public JmsComponent(CamelContext context) {
+        super(context);
+    }
+    
     /**
      * Static builder method
      */
@@ -72,7 +85,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
         template.setAcknowledgementMode(Session.CLIENT_ACKNOWLEDGE);
         return jmsComponent(template);
     }
-    
+
     /**
      * Static builder method
      */
@@ -88,22 +101,11 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
         return jmsComponent(template);
     }
 
-	public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory, PlatformTransactionManager transactionManager) {
+    public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory, PlatformTransactionManager transactionManager) {
         JmsConfiguration template = new JmsConfiguration(connectionFactory);
         template.setTransactionManager(transactionManager);
         template.setTransacted(true);
         return jmsComponent(template);
-	}
-
-    public JmsComponent() {
-    }
-
-    public JmsComponent(JmsConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
-    public JmsComponent(CamelContext context) {
-        super(context);
     }
 
     @Override
@@ -113,18 +115,18 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
         if (remaining.startsWith(QUEUE_PREFIX)) {
             pubSubDomain = false;
             remaining = removeStartingCharacters(remaining.substring(QUEUE_PREFIX.length()), '/');
-        }
-        else if (remaining.startsWith(TOPIC_PREFIX)) {
+        } else if (remaining.startsWith(TOPIC_PREFIX)) {
             pubSubDomain = true;
             remaining = removeStartingCharacters(remaining.substring(TOPIC_PREFIX.length()), '/');
         }
 
         final String subject = convertPathToActualDestination(remaining);
 
-        // lets make sure we copy the configuration as each endpoint can customize its own version
+        // lets make sure we copy the configuration as each endpoint can
+        // customize its own version
         JmsEndpoint endpoint = new JmsEndpoint(uri, this, subject, pubSubDomain, getConfiguration().copy());
 
-        String selector = (String) parameters.remove("selector");
+        String selector = (String)parameters.remove("selector");
         if (selector != null) {
             endpoint.setSelector(selector);
         }
@@ -141,13 +143,12 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
 
     /**
      * Sets the JMS configuration
-     *
+     * 
      * @param configuration the configuration to use by default for endpoints
      */
     public void setConfiguration(JmsConfiguration configuration) {
         this.configuration = configuration;
     }
-
 
     public void setAcceptMessagesWhileStopping(boolean acceptMessagesWhileStopping) {
         getConfiguration().setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);
@@ -286,8 +287,8 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
     }
 
     /**
-     * A strategy method allowing the URI destination to be translated into the actual JMS destination name
-     * (say by looking up in JNDI or something)
+     * A strategy method allowing the URI destination to be translated into the
+     * actual JMS destination name (say by looking up in JNDI or something)
      */
     protected String convertPathToActualDestination(String path) {
         return path;
@@ -295,8 +296,9 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
 
     /**
      * Factory method to create the default configuration instance
-     *
-     * @return a newly created configuration object which can then be further customized
+     * 
+     * @return a newly created configuration object which can then be further
+     *         customized
      */
     protected JmsConfiguration createConfiguration() {
         return new JmsConfiguration();

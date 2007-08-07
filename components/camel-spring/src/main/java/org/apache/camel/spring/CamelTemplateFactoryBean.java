@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,23 +16,24 @@
  */
 package org.apache.camel.spring;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelTemplate;
 import org.apache.camel.Endpoint;
+
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAttribute;
-
 /**
- * A Spring {@link FactoryBean} for creating a new {@link CamelTemplate} instance
- * with a minimum of XML
- *
+ * A Spring {@link FactoryBean} for creating a new {@link CamelTemplate}
+ * instance with a minimum of XML
+ * 
  * @version $Revision: $
  */
 @XmlRootElement(name = "camelTemplate")
@@ -55,8 +56,7 @@ public class CamelTemplateFactoryBean implements FactoryBean, InitializingBean, 
             Endpoint endpoint = context.getEndpoint(defaultEndpoint);
             if (endpoint == null) {
                 throw new IllegalArgumentException("No endpoint found for URI: " + defaultEndpoint);
-            }
-            else {
+            } else {
                 return new CamelTemplate(context, endpoint);
             }
         }
@@ -71,9 +71,8 @@ public class CamelTemplateFactoryBean implements FactoryBean, InitializingBean, 
         return true;
     }
 
-
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -87,7 +86,8 @@ public class CamelTemplateFactoryBean implements FactoryBean, InitializingBean, 
     }
 
     /**
-     * Sets the default endpoint URI used by default for sending message exchanges
+     * Sets the default endpoint URI used by default for sending message
+     * exchanges
      */
     public void setDefaultEndpoint(String defaultEndpoint) {
         this.defaultEndpoint = defaultEndpoint;

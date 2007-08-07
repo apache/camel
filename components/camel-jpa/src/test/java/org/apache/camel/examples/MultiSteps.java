@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,14 +16,14 @@
  */
 package org.apache.camel.examples;
 
-import org.apache.camel.component.jpa.Consumed;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
+
+import org.apache.camel.component.jpa.Consumed;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents a task which has multiple steps so that it can move from stage to stage
@@ -36,7 +35,7 @@ import javax.persistence.NamedQuery;
 @Entity
 @NamedQuery(name = "step1", query = "select x from MultiSteps x where x.step = 1")
 public class MultiSteps {
-    private static final transient Log log = LogFactory.getLog(MultiSteps.class);
+    private static final transient Log LOG = LogFactory.getLog(MultiSteps.class);
     private Long id;
     private String address;
     private int step;
@@ -87,6 +86,6 @@ public class MultiSteps {
     public void goToNextStep() {
         setStep(getStep() + 1);
 
-        log.info("Invoked the completion complete method. Now updated the step to: " + getStep());
+        LOG.info("Invoked the completion complete method. Now updated the step to: " + getStep());
     }
 }

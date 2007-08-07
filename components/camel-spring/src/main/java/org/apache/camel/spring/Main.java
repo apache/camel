@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,12 +16,6 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.impl.ServiceSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -29,24 +23,26 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.impl.ServiceSupport;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 /**
- * A command line tool for booting up a CamelContext using an
- * optional Spring ApplicationContext
- *
+ * A command line tool for booting up a CamelContext using an optional Spring
+ * ApplicationContext
+ * 
  * @version $Revision: $
  */
 public class Main extends ServiceSupport {
-    private static final Log log = LogFactory.getLog(Main.class);
+    private static final Log LOG = LogFactory.getLog(Main.class);
     private String applicationContextUri = "META-INF/spring/*.xml";
     private AbstractApplicationContext applicationContext;
     private List<Option> options = new ArrayList<Option>();
     private CountDownLatch latch = new CountDownLatch(1);
     private AtomicBoolean completed = new AtomicBoolean(false);
-
-    public static void main(String[] args) {
-        Main main = new Main();
-        main.run(args);
-    }
 
     public Main() {
         addOption(new Option("h", "help", "Displays the help screen") {
@@ -61,6 +57,11 @@ public class Main extends ServiceSupport {
                 setApplicationContextUri(parameter);
             }
         });
+    }
+
+    public static void main(String[] args) {
+        Main main = new Main();
+        main.run(args);
     }
 
     /**
@@ -80,9 +81,8 @@ public class Main extends ServiceSupport {
                 start();
                 waitUntilCompleted();
                 stop();
-            }
-            catch (Exception e) {
-                log.error("Failed: " + e, e);
+            } catch (Exception e) {
+                LOG.error("Failed: " + e, e);
             }
         }
     }
@@ -103,8 +103,7 @@ public class Main extends ServiceSupport {
         System.out.println();
 
         for (Option option : options) {
-            System.out.println("  " + option.getAbbreviation() + " or " + option.getFullName()
-                    + " = " + option.getDescription());
+            System.out.println("  " + option.getAbbreviation() + " or " + option.getFullName() + " = " + option.getDescription());
         }
     }
 
@@ -189,8 +188,7 @@ public class Main extends ServiceSupport {
                 System.err.println("Expected fileName for ");
                 showOptions();
                 completed();
-            }
-            else {
+            } else {
                 String parameter = remainingArgs.removeFirst();
                 doProcess(arg, parameter, remainingArgs);
             }
@@ -200,7 +198,7 @@ public class Main extends ServiceSupport {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public AbstractApplicationContext getApplicationContext() {
         return applicationContext;
     }
@@ -218,9 +216,9 @@ public class Main extends ServiceSupport {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     protected void doStart() throws Exception {
-        log.info("Apache Camel " + getVersion() + " starting");
+        LOG.info("Apache Camel " + getVersion() + " starting");
         if (applicationContext == null) {
             applicationContext = createDefaultApplicationContext();
         }
@@ -232,7 +230,7 @@ public class Main extends ServiceSupport {
     }
 
     protected void doStop() throws Exception {
-        log.info("Apache Camel terminating");
+        LOG.info("Apache Camel terminating");
 
         if (applicationContext != null) {
             applicationContext.close();
@@ -243,8 +241,7 @@ public class Main extends ServiceSupport {
         while (!completed.get()) {
             try {
                 latch.await();
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 // ignore
             }
         }

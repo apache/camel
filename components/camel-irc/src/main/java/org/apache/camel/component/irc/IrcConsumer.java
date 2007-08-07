@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,11 +26,12 @@ import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
 
 public class IrcConsumer extends DefaultConsumer<IrcExchange> {
-    private static final transient Log log = LogFactory.getLog(IrcConsumer.class);
-    final private IrcEndpoint endpoint;
-    final private IRCConnection connection;
-    final IrcConfiguration configuration;
-    private FilteredIRCEventAdapter listener = null;
+    private static final transient Log LOG = LogFactory.getLog(IrcConsumer.class);
+    
+    private final IrcConfiguration configuration;
+    private final IrcEndpoint endpoint;
+    private final IRCConnection connection;
+    private FilteredIRCEventAdapter listener;
 
     public IrcConsumer(IrcEndpoint endpoint, Processor processor, IRCConnection connection) {
         super(endpoint, processor);
@@ -56,7 +56,7 @@ public class IrcConsumer extends DefaultConsumer<IrcExchange> {
         String target = endpoint.getConfiguration().getTarget();
         connection.addIRCEventListener(new FilteredIRCEventAdapter(target));
 
-        log.debug("joining: " + target);
+        LOG.debug("joining: " + target);
         connection.doJoin(target);
     }
 
@@ -77,9 +77,9 @@ public class IrcConsumer extends DefaultConsumer<IrcExchange> {
                 IrcExchange exchange = endpoint.createOnNickExchange(user, newNick);
                 try {
                     getProcessor().process(exchange);
-                }
-                catch (Exception e) {
-                    // TODO: what should we do when a processing failure occurs??
+                } catch (Exception e) {
+                    // TODO: what should we do when a processing failure
+                    // occurs??
                     e.printStackTrace();
                 }
             }
@@ -91,9 +91,9 @@ public class IrcConsumer extends DefaultConsumer<IrcExchange> {
                 IrcExchange exchange = endpoint.createOnQuitExchange(user, msg);
                 try {
                     getProcessor().process(exchange);
-                }
-                catch (Exception e) {
-                    // TODO: what should we do when a processing failure occurs??
+                } catch (Exception e) {
+                    // TODO: what should we do when a processing failure
+                    // occurs??
                     e.printStackTrace();
                 }
             }
@@ -106,9 +106,9 @@ public class IrcConsumer extends DefaultConsumer<IrcExchange> {
                     IrcExchange exchange = endpoint.createOnJoinExchange(channel, user);
                     try {
                         getProcessor().process(exchange);
-                    }
-                    catch (Exception e) {
-                        // TODO: what should we do when a processing failure occurs??
+                    } catch (Exception e) {
+                        // TODO: what should we do when a processing failure
+                        // occurs??
                         e.printStackTrace();
                     }
                 }
@@ -122,9 +122,9 @@ public class IrcConsumer extends DefaultConsumer<IrcExchange> {
                     IrcExchange exchange = endpoint.createOnKickExchange(channel, user, passiveNick, msg);
                     try {
                         getProcessor().process(exchange);
-                    }
-                    catch (Exception e) {
-                        // TODO: what should we do when a processing failure occurs??
+                    } catch (Exception e) {
+                        // TODO: what should we do when a processing failure
+                        // occurs??
                         e.printStackTrace();
                     }
                 }
@@ -138,9 +138,9 @@ public class IrcConsumer extends DefaultConsumer<IrcExchange> {
                     IrcExchange exchange = endpoint.createOnModeExchange(channel, user, modeParser);
                     try {
                         getProcessor().process(exchange);
-                    }
-                    catch (Exception e) {
-                        // TODO: what should we do when a processing failure occurs??
+                    } catch (Exception e) {
+                        // TODO: what should we do when a processing failure
+                        // occurs??
                         e.printStackTrace();
                     }
                 }
@@ -154,9 +154,9 @@ public class IrcConsumer extends DefaultConsumer<IrcExchange> {
                     IrcExchange exchange = endpoint.createOnPartExchange(channel, user, msg);
                     try {
                         getProcessor().process(exchange);
-                    }
-                    catch (Exception e) {
-                        // TODO: what should we do when a processing failure occurs??
+                    } catch (Exception e) {
+                        // TODO: what should we do when a processing failure
+                        // occurs??
                         e.printStackTrace();
                     }
                 }
@@ -170,9 +170,9 @@ public class IrcConsumer extends DefaultConsumer<IrcExchange> {
                     IrcExchange exchange = endpoint.createOnTopicExchange(channel, user, topic);
                     try {
                         getProcessor().process(exchange);
-                    }
-                    catch (Exception e) {
-                        // TODO: what should we do when a processing failure occurs??
+                    } catch (Exception e) {
+                        // TODO: what should we do when a processing failure
+                        // occurs??
                         e.printStackTrace();
                     }
                 }
@@ -186,9 +186,9 @@ public class IrcConsumer extends DefaultConsumer<IrcExchange> {
                     IrcExchange exchange = endpoint.createOnPrivmsgExchange(target, user, msg);
                     try {
                         getProcessor().process(exchange);
-                    }
-                    catch (Exception e) {
-                        // TODO: what should we do when a processing failure occurs??
+                    } catch (Exception e) {
+                        // TODO: what should we do when a processing failure
+                        // occurs??
                         e.printStackTrace();
                     }
                 }

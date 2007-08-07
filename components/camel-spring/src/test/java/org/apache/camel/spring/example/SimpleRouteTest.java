@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,8 +17,8 @@
 package org.apache.camel.spring.example;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 import org.apache.camel.spring.SpringTestSupport;
+
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class SayService implements ISay {
-    private static final Log log = LogFactory.getLog(SayService.class);
+    private static final Log LOG = LogFactory.getLog(SayService.class);
 
     String message = "Hello";
 
@@ -32,7 +32,7 @@ public class SayService implements ISay {
     }
 
     public String say() {
-        log.info("Invoking say() method with message: " + message);
+        LOG.info("Invoking say() method with message: " + message);
         
         return message;
     }

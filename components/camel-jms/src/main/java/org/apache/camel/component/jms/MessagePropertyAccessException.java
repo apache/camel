@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,7 @@ import javax.jms.JMSException;
  */
 public class MessagePropertyAccessException extends RuntimeJmsException {
     private static final long serialVersionUID = -3996286386119163309L;
-    private String propertyName;
+    private final String propertyName;
 
     public MessagePropertyAccessException(String propertyName, JMSException e) {
         super("Error accessing header: " + propertyName, e);

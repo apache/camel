@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.spring.SpringTestSupport;
+
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -47,8 +48,7 @@ public class BeanRouteTest extends SpringTestSupport {
         try {
             Object value = template.sendBody("bean:myBean", body);
             fail("We should have failed to invoke an ambiguous method but instead got: " + value);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.info("Caught expected failure: " + e, e);
         }
     }

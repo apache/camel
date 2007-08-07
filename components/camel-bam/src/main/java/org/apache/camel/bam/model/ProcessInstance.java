@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,9 +16,9 @@
  */
 package org.apache.camel.bam.model;
 
-import org.apache.camel.bam.rules.ActivityRules;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -28,9 +28,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.UniqueConstraint;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
+
+import org.apache.camel.bam.rules.ActivityRules;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents a single business process
@@ -38,9 +39,9 @@ import java.util.HashSet;
  * @version $Revision: $
  */
 @Entity
-@UniqueConstraint(columnNames = {"correlationKey"})
+@UniqueConstraint(columnNames = {"correlationKey" })
 public class ProcessInstance extends TemporalEntity {
-    private static final transient Log log = LogFactory.getLog(ProcessInstance.class);
+    private static final transient Log LOG = LogFactory.getLog(ProcessInstance.class);
     private ProcessDefinition processDefinition;
     private Collection<ActivityState> activityStates = new HashSet<ActivityState>();
     private String correlationKey;
@@ -61,7 +62,7 @@ public class ProcessInstance extends TemporalEntity {
         return super.getId();
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST })
     public ProcessDefinition getProcessDefinition() {
         return processDefinition;
     }
@@ -70,7 +71,7 @@ public class ProcessInstance extends TemporalEntity {
         this.processDefinition = processDefinition;
     }
 
-    @OneToMany(mappedBy = "processInstance", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "processInstance", fetch = FetchType.LAZY, cascade = {CascadeType.ALL })
     public Collection<ActivityState> getActivityStates() {
         return activityStates;
     }

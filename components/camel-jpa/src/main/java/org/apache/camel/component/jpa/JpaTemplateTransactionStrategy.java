@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,17 +16,18 @@
  */
 package org.apache.camel.component.jpa;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceException;
+
 import org.apache.camel.impl.ServiceSupport;
+
 import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceException;
 
 /**
  * Delegates the strategy to the {@link JpaTemplate} and {@link TransactionTemplate} for transaction handling
@@ -37,6 +37,11 @@ import javax.persistence.PersistenceException;
 public class JpaTemplateTransactionStrategy extends ServiceSupport implements TransactionStrategy {
     private final JpaTemplate jpaTemplate;
     private final TransactionTemplate transactionTemplate;
+
+    public JpaTemplateTransactionStrategy(JpaTemplate jpaTemplate, TransactionTemplate transactionTemplate) {
+        this.jpaTemplate = jpaTemplate;
+        this.transactionTemplate = transactionTemplate;
+    }
 
     /**
      * Creates a new implementation from the given JPA factory
@@ -54,11 +59,6 @@ public class JpaTemplateTransactionStrategy extends ServiceSupport implements Tr
         tranasctionTemplate.afterPropertiesSet();
 
         return new JpaTemplateTransactionStrategy(template, tranasctionTemplate);
-    }
-
-    public JpaTemplateTransactionStrategy(JpaTemplate jpaTemplate, TransactionTemplate transactionTemplate) {
-        this.jpaTemplate = jpaTemplate;
-        this.transactionTemplate = transactionTemplate;
     }
 
     public Object execute(final JpaCallback callback) {

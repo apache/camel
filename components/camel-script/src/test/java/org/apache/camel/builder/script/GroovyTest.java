@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,17 +18,18 @@ package org.apache.camel.builder.script;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.TestSupport;
-import static org.apache.camel.builder.script.ScriptBuilder.groovy;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import static org.apache.camel.builder.script.ScriptBuilder.groovy;
+
 /**
  * @version $Revision$
  */
 public class GroovyTest extends TestSupport {
-    private static final transient Log log = LogFactory.getLog(GroovyTest.class);
+    private static final transient Log LOG = LogFactory.getLog(GroovyTest.class);
 
     protected Exchange exchange;
 
@@ -38,7 +38,7 @@ public class GroovyTest extends TestSupport {
         assertExpression(groovy("exchange.in.headers.name"), exchange, "James");
         assertExpression(groovy("exchange.in.headers['doesNotExist']"), exchange, null);
     }
-    
+
     public void testPredicateEvaluation() throws Exception {
         assertPredicate(groovy("exchange.in.headers.name == 'James'"), exchange, true);
         assertPredicate(groovy("exchange.in.headers.name == 'Hiram'"), exchange, false);
@@ -60,9 +60,8 @@ public class GroovyTest extends TestSupport {
         try {
             groovy("exchange.doesNotExist").evaluate(exchange);
             fail("This test case should have thrown an exception!");
-        }
-        catch (ScriptEvaluationException e) {
-            log.debug("Caught expected exception: " + e, e);
+        } catch (ScriptEvaluationException e) {
+            LOG.debug("Caught expected exception: " + e, e);
             String message = e.getMessage();
             assertTrue("The message should include 'doesNotExist' but was: " + message, message.contains("doesNotExist"));
         }

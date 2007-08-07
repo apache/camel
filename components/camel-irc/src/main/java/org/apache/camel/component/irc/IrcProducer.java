@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,7 +25,11 @@ import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventListener;
 
 public class IrcProducer extends DefaultProducer<IrcExchange> {
-    private static final transient Log log = LogFactory.getLog(IrcProducer.class);
+
+    public static final String[] COMMANDS = new String[] {"AWAY", "INVITE", "ISON", "JOIN", "KICK", "LIST", "NAMES", "PRIVMSG", "MODE", "NICK", "NOTICE", "PART", "PONG", "QUIT", "TOPIC", "WHO",
+                                                          "WHOIS", "WHOWAS", "USERHOST"};
+    private static final transient Log LOG = LogFactory.getLog(IrcProducer.class);
+
     private IRCConnection connection;
     private IrcEndpoint endpoint;
     private IRCEventListener ircErrorLogger;
@@ -42,18 +45,16 @@ public class IrcProducer extends DefaultProducer<IrcExchange> {
             final String msg = exchange.getIn().getBody(String.class);
             if (isMessageACommand(msg)) {
                 connection.send(msg);
-            }
-            else {
+            } else {
                 final String target = endpoint.getConfiguration().getTarget();
 
-                if (log.isDebugEnabled()) {
-                    log.debug("sending to: " + target + " message: " + msg);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("sending to: " + target + " message: " + msg);
                 }
 
                 connection.doPrivmsg(target, msg);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
     }
@@ -67,7 +68,7 @@ public class IrcProducer extends DefaultProducer<IrcExchange> {
 
         final String target = endpoint.getConfiguration().getTarget();
 
-        log.debug("joining: " + target);
+        LOG.debug("joining: " + target);
         connection.doJoin(target);
     }
 
@@ -80,7 +81,7 @@ public class IrcProducer extends DefaultProducer<IrcExchange> {
     }
 
     protected boolean isMessageACommand(String msg) {
-        for (String command : commands) {
+        for (String command : COMMANDS) {
             if (msg.startsWith(command)) {
                 return true;
             }
@@ -89,14 +90,7 @@ public class IrcProducer extends DefaultProducer<IrcExchange> {
     }
 
     protected IRCEventListener createIrcErrorLogger() {
-        return new IrcErrorLogger(log);
+        return new IrcErrorLogger(LOG);
     }
 
-    public final String[] commands = new String[]{
-            "AWAY", "INVITE", "ISON", "JOIN",
-            "KICK", "LIST", "NAMES", "PRIVMSG",
-            "MODE", "NICK", "NOTICE", "PART",
-            "PONG", "QUIT", "TOPIC", "WHO",
-            "WHOIS", "WHOWAS", "USERHOST"
-    };
 }

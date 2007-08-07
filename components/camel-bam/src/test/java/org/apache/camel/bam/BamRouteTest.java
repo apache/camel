@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,16 +16,16 @@
  */
 package org.apache.camel.bam;
 
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
-import static org.apache.camel.util.Time.seconds;
-import org.apache.camel.model.language.XPathExpression;
+
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import static org.apache.camel.builder.xml.XPathBuilder.xpath;
+import static org.apache.camel.util.Time.seconds;
 
 /**
  * @version $Revision: $

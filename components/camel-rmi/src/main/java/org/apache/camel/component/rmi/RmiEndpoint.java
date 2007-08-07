@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,13 +16,6 @@
  */
 package org.apache.camel.component.rmi;
 
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.bean.BeanExchange;
-import org.apache.camel.impl.DefaultEndpoint;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
@@ -31,86 +24,96 @@ import java.rmi.registry.Registry;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.bean.BeanExchange;
+import org.apache.camel.impl.DefaultEndpoint;
+
 /**
  * @version $Revision:520964 $
  */
 public class RmiEndpoint extends DefaultEndpoint<BeanExchange> {
 
-	private List<Class> remoteInterfaces;
-	private ClassLoader classLoader;
-	private URI uri;
-	private int port;
+    private List<Class> remoteInterfaces;
+    private ClassLoader classLoader;
+    private URI uri;
+    private int port;
 
-	protected RmiEndpoint(String endpointUri, RmiComponent component) throws URISyntaxException {
-		super(endpointUri, component);
-		this.uri = new URI(endpointUri);
-	}
+    protected RmiEndpoint(String endpointUri, RmiComponent component) throws URISyntaxException {
+        super(endpointUri, component);
+        this.uri = new URI(endpointUri);
+    }
 
-	public boolean isSingleton() {
-		return false;
-	}
+    public boolean isSingleton() {
+        return false;
+    }
 
-	public BeanExchange createExchange() {
-		return new BeanExchange(getContext());
-	}
+    public BeanExchange createExchange() {
+        return new BeanExchange(getContext());
+    }
 
-	public Consumer<BeanExchange> createConsumer(Processor processor) throws Exception {
-		if( remoteInterfaces == null || remoteInterfaces.size()==0 )
-			throw new RuntimeCamelException("To create an RMI consumer, the RMI endpoint's remoteInterfaces property must be be configured.");
-		return new RmiConsumer(this, processor);
-	}
+    public Consumer<BeanExchange> createConsumer(Processor processor) throws Exception {
+        if (remoteInterfaces == null || remoteInterfaces.size() == 0) {
+            throw new RuntimeCamelException("To create an RMI consumer, the RMI endpoint's remoteInterfaces property must be be configured.");
+        }
+        return new RmiConsumer(this, processor);
+    }
 
-	public Producer<BeanExchange> createProducer() throws Exception {
-		return new RmiProducer(this);
-	}
+    public Producer<BeanExchange> createProducer() throws Exception {
+        return new RmiProducer(this);
+    }
 
-	public String getName() {
-		String path = uri.getPath();
-		if( path == null )
-			path = uri.getSchemeSpecificPart();
-		return path;
-	}
+    public String getName() {
+        String path = uri.getPath();
+        if (path == null) {
+            path = uri.getSchemeSpecificPart();
+        }
+        return path;
+    }
 
-	public Registry getRegistry() throws RemoteException {
-		if( uri.getHost()!=null ) {
-			if( uri.getPort() == -1 ) {
-				return LocateRegistry.getRegistry(uri.getHost());
-			} else {
-				return LocateRegistry.getRegistry(uri.getHost(), uri.getPort());				
-			}
-		} else {
-			return LocateRegistry.getRegistry();
-		}
-	}
+    public Registry getRegistry() throws RemoteException {
+        if (uri.getHost() != null) {
+            if (uri.getPort() == -1) {
+                return LocateRegistry.getRegistry(uri.getHost());
+            } else {
+                return LocateRegistry.getRegistry(uri.getHost(), uri.getPort());
+            }
+        } else {
+            return LocateRegistry.getRegistry();
+        }
+    }
 
-	public List<Class> getRemoteInterfaces() {
-		return remoteInterfaces;
-	}
+    public List<Class> getRemoteInterfaces() {
+        return remoteInterfaces;
+    }
 
-	public void setRemoteInterfaces(List<Class> remoteInterfaces) {
-		this.remoteInterfaces = remoteInterfaces;
-		if( classLoader== null && !remoteInterfaces.isEmpty() ) {
-			classLoader = remoteInterfaces.get(0).getClassLoader();
-		}
-	}
-	public void setRemoteInterfaces(Class... remoteInterfaces) {
-		setRemoteInterfaces(Arrays.asList(remoteInterfaces));		
-	}
+    public void setRemoteInterfaces(List<Class> remoteInterfaces) {
+        this.remoteInterfaces = remoteInterfaces;
+        if (classLoader == null && !remoteInterfaces.isEmpty()) {
+            classLoader = remoteInterfaces.get(0).getClassLoader();
+        }
+    }
 
-	public ClassLoader getClassLoader() {
-		return classLoader;
-	}
-	public void setClassLoader(ClassLoader classLoader) {
-		this.classLoader = classLoader;
-	}
+    public void setRemoteInterfaces(Class... remoteInterfaces) {
+        setRemoteInterfaces(Arrays.asList(remoteInterfaces));
+    }
 
-	public int getPort() {
-		return port;
-	}
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
 
-	public void setPort(int port) {
-		this.port = port;
-	}
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
 
 }

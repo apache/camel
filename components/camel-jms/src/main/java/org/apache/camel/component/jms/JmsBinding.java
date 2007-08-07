@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +16,11 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.Exchange;
+import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
@@ -27,54 +30,46 @@ import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
-import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+
+import org.apache.camel.Exchange;
 
 /**
- * A Strategy used to convert between a Camel {@JmsExchange} and {@JmsMessage} to and from a
- * JMS {@link Message}
- *
+ * A Strategy used to convert between a Camel {@JmsExchange} and {@JmsMessage}
+ * to and from a JMS {@link Message}
+ * 
  * @version $Revision$
  */
 public class JmsBinding {
     /**
      * Extracts the body from the JMS message
-     *
+     * 
      * @param exchange
      * @param message
      */
     public Object extractBodyFromJms(JmsExchange exchange, Message message) {
         try {
             if (message instanceof ObjectMessage) {
-                ObjectMessage objectMessage = (ObjectMessage) message;
+                ObjectMessage objectMessage = (ObjectMessage)message;
                 return objectMessage.getObject();
-            }
-            else if (message instanceof TextMessage) {
-                TextMessage textMessage = (TextMessage) message;
+            } else if (message instanceof TextMessage) {
+                TextMessage textMessage = (TextMessage)message;
                 return textMessage.getText();
-            }
-            else if (message instanceof MapMessage) {
-                return createMapFromMapMessage((MapMessage) message);
-            }
-            else if (message instanceof BytesMessage || message instanceof StreamMessage) {
+            } else if (message instanceof MapMessage) {
+                return createMapFromMapMessage((MapMessage)message);
+            } else if (message instanceof BytesMessage || message instanceof StreamMessage) {
                 // TODO we need a decoder to be able to process the message
                 return message;
-            }
-            else {
+            } else {
                 return null;
             }
-        }
-        catch (JMSException e) {
+        } catch (JMSException e) {
             throw new RuntimeJmsException("Failed to extract body due to: " + e + ". Message: " + message, e);
         }
     }
 
     /**
      * Creates a JMS message from the Camel exchange and message
-     *
+     * 
      * @param session the JMS session used to create the message
      * @return a newly created JMS Message instance containing the
      * @throws JMSException if the message could not be created
@@ -102,12 +97,10 @@ public class JmsBinding {
 
     protected Message createJmsMessage(Object body, Session session) throws JMSException {
         if (body instanceof String) {
-            return session.createTextMessage((String) body);
-        }
-        else if (body instanceof Serializable) {
-            return session.createObjectMessage((Serializable) body);
-        }
-        else {
+            return session.createTextMessage((String)body);
+        } else if (body instanceof Serializable) {
+            return session.createObjectMessage((Serializable)body);
+        } else {
             return session.createMessage();
         }
     }

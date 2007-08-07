@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,10 +16,10 @@
  */
 package org.apache.camel.spring.spi;
 
-import org.apache.camel.impl.ReflectionInjector;
 import org.apache.camel.spi.Injector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 
@@ -30,10 +29,10 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
  * @version $Revision$
  */
 public class SpringInjector implements Injector {
-    private static final transient Log log = LogFactory.getLog(SpringInjector.class);
+    private static final transient Log LOG = LogFactory.getLog(SpringInjector.class);
     private final AbstractRefreshableApplicationContext applicationContext;
     private int autowireMode = AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR;
-    private boolean dependencyCheck = false;
+    private boolean dependencyCheck;
 
     public SpringInjector(AbstractRefreshableApplicationContext applicationContext) {
         this.applicationContext = applicationContext;

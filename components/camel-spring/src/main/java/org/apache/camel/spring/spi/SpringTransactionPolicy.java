@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,7 +28,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @version $Revision: 1.1 $
  */
 public class SpringTransactionPolicy<E> implements Policy<E> {
-    private static final transient Log log = LogFactory.getLog(SpringTransactionPolicy.class);
+    private static final transient Log LOG = LogFactory.getLog(SpringTransactionPolicy.class);
     private TransactionTemplate template;
 
     public SpringTransactionPolicy(TransactionTemplate template) {
@@ -39,7 +38,7 @@ public class SpringTransactionPolicy<E> implements Policy<E> {
     public Processor wrap(Processor processor) {
         final TransactionTemplate transactionTemplate = getTemplate();
         if (transactionTemplate == null) {
-            log.warn("No TransactionTemplate available so transactions will not be enabled!");
+            LOG.warn("No TransactionTemplate available so transactions will not be enabled!");
             return processor;
         }
 

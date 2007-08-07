@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,12 +19,14 @@ package org.apache.camel.spring;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.spi.TransactionInterceptor;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * An extension of the {@link RouteBuilder} to provide some additional helper methods
- *
+ * An extension of the {@link RouteBuilder} to provide some additional helper
+ * methods
+ * 
  * @version $Revision: 1.1 $
  */
 public abstract class SpringRouteBuilder extends RouteBuilder {
@@ -36,22 +37,24 @@ public abstract class SpringRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Looks up the bean with the given name in the application context and returns it, or throws an exception if the
-     * bean is not present or is not of the given type
-     *
-     * @param type     the type of the bean
+     * Looks up the bean with the given name in the application context and
+     * returns it, or throws an exception if the bean is not present or is not
+     * of the given type
+     * 
+     * @param type the type of the bean
      * @param beanName the name of the bean in the application context
      * @return the bean
      */
     public <T> T bean(Class<T> type, String beanName) {
         ApplicationContext context = getApplicationContext();
-        return (T) context.getBean(beanName, type);
+        return (T)context.getBean(beanName, type);
     }
 
     /**
-     * Looks up the bean with the given type in the application context and returns it, or throws an exception if the
-     * bean is not present or there are multiple possible beans to choose from for the given type
-     *
+     * Looks up the bean with the given type in the application context and
+     * returns it, or throws an exception if the bean is not present or there
+     * are multiple possible beans to choose from for the given type
+     * 
      * @param type the type of the bean
      * @return the bean
      */
@@ -62,9 +65,8 @@ public abstract class SpringRouteBuilder extends RouteBuilder {
             int count = names.length;
             if (count == 1) {
                 // lets instantiate the single bean
-                return (T) context.getBean(names[0]);
-            }
-            else if (count > 1) {
+                return (T)context.getBean(names[0]);
+            } else if (count > 1) {
                 throw new IllegalArgumentException("Too many beans in the application context of type: " + type + ". Found: " + count);
             }
         }
@@ -72,19 +74,19 @@ public abstract class SpringRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Returns the application context which has been configured via the {@link #setApplicationContext(ApplicationContext)}
-     * method  or from the underlying {@link SpringCamelContext}
-     *
+     * Returns the application context which has been configured via the
+     * {@link #setApplicationContext(ApplicationContext)} method or from the
+     * underlying {@link SpringCamelContext}
+     * 
      * @return
      */
     public ApplicationContext getApplicationContext() {
         if (applicationContext == null) {
             CamelContext camelContext = getContext();
             if (camelContext instanceof SpringCamelContext) {
-                SpringCamelContext springCamelContext = (SpringCamelContext) camelContext;
+                SpringCamelContext springCamelContext = (SpringCamelContext)camelContext;
                 return springCamelContext.getApplicationContext();
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException("This SpringBuilder is not being used with a SpringCamelContext and there is no applicationContext property configured");
             }
         }

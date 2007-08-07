@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,17 +18,18 @@ package org.apache.camel.component.jms;
 
 import javax.jms.Message;
 
-import org.apache.camel.Processor;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
+
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 
 /**
  * A <a href="http://activemq.apache.org/jms.html">JMS Endpoint</a>
- *
-  * @version $Revision:520964 $
+ * 
+ * @version $Revision:520964 $
  */
 public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     private JmsBinding binding;
@@ -54,7 +55,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
      */
     public JmsProducer createProducer(JmsOperations template) throws Exception {
         if (template instanceof JmsTemplate) {
-            JmsTemplate jmsTemplate = (JmsTemplate) template;
+            JmsTemplate jmsTemplate = (JmsTemplate)template;
             jmsTemplate.setPubSubDomain(pubSubDomain);
             jmsTemplate.setDefaultDestinationName(destination);
         }
@@ -68,7 +69,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
 
     /**
      * Creates a consumer using the given processor and listener container
-     *
+     * 
      * @param processor the processor to use to process the messages
      * @param listenerContainer the listener container
      * @return a newly created consumer
@@ -98,7 +99,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public JmsBinding getBinding() {
         if (binding == null) {
             binding = new JmsBinding();
@@ -107,8 +108,9 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     }
 
     /**
-     * Sets the binding used to convert from a Camel message to and from a JMS message
-     *
+     * Sets the binding used to convert from a Camel message to and from a JMS
+     * message
+     * 
      * @param binding the binding to use
      */
     public void setBinding(JmsBinding binding) {
@@ -134,10 +136,9 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
         this.selector = selector;
     }
 
-	public boolean isSingleton() {
-		return false;
-	}
-
+    public boolean isSingleton() {
+        return false;
+    }
 
     protected JmsOperations createJmsOperations() {
         return configuration.createJmsOperations(pubSubDomain, destination);

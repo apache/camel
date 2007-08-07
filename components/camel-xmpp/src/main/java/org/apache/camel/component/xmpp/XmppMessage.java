@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,16 +16,17 @@
  */
 package org.apache.camel.component.xmpp;
 
-import org.apache.camel.impl.DefaultMessage;
-import org.jivesoftware.smack.packet.Message;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.camel.impl.DefaultMessage;
+
+import org.jivesoftware.smack.packet.Message;
+
 /**
  * Represents a {@link org.apache.camel.Message} for working with XMPP
- *
+ * 
  * @version $Revision:520964 $
  */
 public class XmppMessage extends DefaultMessage {
@@ -44,20 +44,19 @@ public class XmppMessage extends DefaultMessage {
     public String toString() {
         if (xmppMessage != null) {
             return "XmppMessage: " + xmppMessage;
-        }
-        else {
+        } else {
             return "XmppMessage: " + getBody();
         }
     }
 
     @Override
     public XmppExchange getExchange() {
-        return (XmppExchange) super.getExchange();
+        return (XmppExchange)super.getExchange();
     }
 
     /**
      * Returns the underlying XMPP message
-     *
+     * 
      * @return the underlying XMPP message
      */
     public Message getXmppMessage() {
@@ -76,8 +75,7 @@ public class XmppMessage extends DefaultMessage {
     public void setHeader(String name, Object value) {
         if (value == null) {
             xmppMessage.deleteProperty(name);
-        }
-        else {
+        } else {
             xmppMessage.setProperty(name, value);
         }
     }
@@ -87,7 +85,7 @@ public class XmppMessage extends DefaultMessage {
         Map<String, Object> answer = new HashMap<String, Object>();
         Iterator iter = xmppMessage.getPropertyNames();
         while (iter.hasNext()) {
-            String name = (String) iter.next();
+            String name = (String)iter.next();
             answer.put(name, xmppMessage.getProperty(name));
         }
         return answer;

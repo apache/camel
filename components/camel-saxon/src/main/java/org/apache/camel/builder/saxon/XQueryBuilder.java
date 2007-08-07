@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,26 +16,6 @@
  */
 package org.apache.camel.builder.saxon;
 
-import net.sf.saxon.Configuration;
-import net.sf.saxon.om.DocumentInfo;
-import net.sf.saxon.query.DynamicQueryContext;
-import net.sf.saxon.query.StaticQueryContext;
-import net.sf.saxon.query.XQueryExpression;
-import net.sf.saxon.trans.XPathException;
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeExpressionException;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.converter.jaxp.BytesSource;
-import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.converter.jaxp.StringSource;
-import org.w3c.dom.Node;
-
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,9 +27,32 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Node;
+
+import net.sf.saxon.Configuration;
+import net.sf.saxon.om.DocumentInfo;
+import net.sf.saxon.query.DynamicQueryContext;
+import net.sf.saxon.query.StaticQueryContext;
+import net.sf.saxon.query.XQueryExpression;
+import net.sf.saxon.trans.XPathException;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeExpressionException;
+import org.apache.camel.converter.jaxp.BytesSource;
+import org.apache.camel.converter.jaxp.StringSource;
+import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.util.ObjectHelper;
+
 /**
  * Creates an XQuery builder
- *
+ * 
  * @version $Revision$
  */
 public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>, Predicate<E> {
@@ -70,22 +72,21 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
     public Object evaluate(E exchange) {
         try {
             switch (resultsFormat) {
-                case Bytes:
-                    return evaluateAsBytes(exchange);
-                case BytesSource:
-                    return evaluateAsBytesSource(exchange);
-                case DOM:
-                    return evaluateAsDOM(exchange);
-                case List:
-                    return evaluateAsList(exchange);
-                case StringSource:
-                    return evaluateAsStringSource(exchange);
-                case String:
-                default:
-                    return evaluateAsString(exchange);
+            case Bytes:
+                return evaluateAsBytes(exchange);
+            case BytesSource:
+                return evaluateAsBytesSource(exchange);
+            case DOM:
+                return evaluateAsDOM(exchange);
+            case List:
+                return evaluateAsList(exchange);
+            case StringSource:
+                return evaluateAsStringSource(exchange);
+            case String:
+            default:
+                return evaluateAsString(exchange);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeExpressionException(e);
         }
     }
@@ -130,8 +131,7 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
         try {
             List list = evaluateAsList(exchange);
             return matches(exchange, list);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeExpressionException(e);
         }
     }
@@ -142,14 +142,13 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
             if (!matches(exchange, list)) {
                 throw new AssertionError(this + " failed on " + exchange + " as evaluated: " + list);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new AssertionError(e);
         }
     }
 
     // Builder methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public static <E extends Exchange> XQueryBuilder<E> xquery(final String queryText) {
         return new XQueryBuilder<E>() {
             protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext) throws XPathException {
@@ -215,7 +214,7 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public XQueryExpression getExpression() throws IOException, XPathException {
         if (expression == null) {
@@ -300,7 +299,7 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
 
     /**
      * Configures the dynamic context with exchange specific parameters
-     *
+     * 
      * @param dynamicQueryContext
      * @param exchange
      * @throws Exception
@@ -323,8 +322,8 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
     }
 
     /**
-     * To avoid keeping around any unnecessary objects after the expresion has been created lets
-     * nullify references here
+     * To avoid keeping around any unnecessary objects after the expresion has
+     * been created lets nullify references here
      */
     protected void clearBuilderReferences() {
         staticQueryContext = null;

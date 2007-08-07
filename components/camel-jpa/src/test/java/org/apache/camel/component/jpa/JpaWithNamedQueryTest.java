@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,32 +16,35 @@
  */
 package org.apache.camel.component.jpa;
 
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+
 import junit.framework.TestCase;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelTemplate;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.examples.MultiSteps;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.JpaTemplate;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Revision$
  */
 public class JpaWithNamedQueryTest extends TestCase {
-    private static final transient Log log = LogFactory.getLog(JpaWithNamedQueryTest.class);
+    private static final transient Log LOG = LogFactory.getLog(JpaWithNamedQueryTest.class);
     protected CamelContext camelContext = new DefaultCamelContext();
     protected CamelTemplate template = new CamelTemplate(camelContext);
     protected JpaEndpoint endpoint;
@@ -81,13 +83,13 @@ public class JpaWithNamedQueryTest extends TestCase {
         // now lets assert that there is a result
         results = jpaTemplate.find(queryText);
         assertEquals("Should have results: " + results, 1, results.size());
-        MultiSteps mail = (MultiSteps) results.get(0);
+        MultiSteps mail = (MultiSteps)results.get(0);
         assertEquals("address property", "foo@bar.com", mail.getAddress());
 
         // now lets create a consumer to consume it
         consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange e) {
-                log.info("Received exchange: " + e.getIn());
+                LOG.info("Received exchange: " + e.getIn());
                 receivedExchange = e;
                 latch.countDown();
             }
@@ -103,7 +105,8 @@ public class JpaWithNamedQueryTest extends TestCase {
         assertEquals("address property", "foo@bar.com", result.getAddress());
 
         // lets now test that the database is updated
-        // TODO we need to sleep as we will be invoked from inside the transaction!
+        // TODO we need to sleep as we will be invoked from inside the
+        // transaction!
         Thread.sleep(1000);
 
         transactionStrategy.execute(new JpaCallback() {
@@ -115,14 +118,13 @@ public class JpaWithNamedQueryTest extends TestCase {
 
                 int counter = 1;
                 for (MultiSteps row : rows) {
-                    log.info("entity: " + counter++ + " = " + row);
+                    LOG.info("entity: " + counter++ + " = " + row);
 
                     if (row.getAddress().equals("foo@bar.com")) {
-                        log.info("Found updated row: " + row);
+                        LOG.info("Found updated row: " + row);
 
                         assertEquals("Updated row step for: " + row, 2, row.getStep());
-                    }
-                    else {
+                    } else {
                         // dummy row
                         assertEquals("dummy row step for: " + row, 4, row.getStep());
                     }
@@ -141,7 +143,7 @@ public class JpaWithNamedQueryTest extends TestCase {
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
         assertNotNull("Could not find endpoint!", value);
         assertTrue("Should be a JPA endpoint but was: " + value, value instanceof JpaEndpoint);
-        endpoint = (JpaEndpoint) value;
+        endpoint = (JpaEndpoint)value;
 
         transactionStrategy = endpoint.createTransactionStrategy();
         jpaTemplate = endpoint.getTemplate();

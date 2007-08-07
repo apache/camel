@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,22 +16,23 @@
  */
 package org.apache.camel.component.mail;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.converter.ObjectConverter;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.converter.ObjectConverter;
 
 /**
- * A Strategy used to convert between a Camel {@Exchange} and {@Message} to and from a
- * Mail {@link MimeMessage}
- *
+ * A Strategy used to convert between a Camel {@Exchange} and {@Message} to and
+ * from a Mail {@link MimeMessage}
+ * 
  * @version $Revision: 521240 $
  */
 public class MailBinding {
@@ -51,8 +51,7 @@ public class MailBinding {
                 mimeMessage.setFrom(new InternetAddress(from));
             }
             mimeMessage.setText(exchange.getIn().getBody(String.class));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeMailException("Failed to populate body due to: " + e + ". Exchange: " + exchange, e);
         }
     }
@@ -63,15 +62,14 @@ public class MailBinding {
 
     /**
      * Extracts the body from the Mail message
-     *
+     * 
      * @param exchange
      * @param message
      */
     public Object extractBodyFromMail(MailExchange exchange, Message message) {
         try {
             return message.getContent();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeMailException("Failed to extract body due to: " + e + ". Message: " + message, e);
         }
     }
@@ -94,8 +92,7 @@ public class MailBinding {
                             Object value = iter.next();
                             mimeMessage.addHeader(headerName, asString(exchange, value));
                         }
-                    }
-                    else {
+                    } else {
                         mimeMessage.setHeader(headerName, asString(exchange, headerValue));
                     }
                 }

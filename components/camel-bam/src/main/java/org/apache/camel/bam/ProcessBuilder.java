@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,9 @@
  */
 package org.apache.camel.bam;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -26,18 +29,17 @@ import org.apache.camel.bam.processor.ActivityMonitorEngine;
 import org.apache.camel.bam.processor.JpaBamProcessor;
 import org.apache.camel.bam.rules.ProcessRules;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.util.ObjectHelper.notNull;
+
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A builder of a process definition
- *
+ * 
  * @version $Revision: $
  */
 public abstract class ProcessBuilder extends RouteBuilder {
@@ -54,14 +56,14 @@ public abstract class ProcessBuilder extends RouteBuilder {
         this(jpaTemplate, transactionTemplate, createProcessName());
     }
 
-    protected static synchronized String createProcessName() {
-        return "Process-" + (++processCounter);
-    }
-
     protected ProcessBuilder(JpaTemplate jpaTemplate, TransactionTemplate transactionTemplate, String processName) {
         this.jpaTemplate = jpaTemplate;
         this.transactionTemplate = transactionTemplate;
         this.processName = processName;
+    }
+
+    protected static synchronized String createProcessName() {
+        return "Process-" + (++processCounter);
     }
 
     public ActivityBuilder activity(String endpointUri) {
@@ -93,7 +95,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
     }
 
     // Properties
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     public List<ActivityBuilder> getActivityBuilders() {
         return activityBuilders;
     }
@@ -134,7 +136,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     protected void populateRoutes(List<Route> routes) throws Exception {
         boolean first = true;
         for (ActivityBuilder builder : activityBuilders) {
@@ -148,14 +150,13 @@ public abstract class ProcessBuilder extends RouteBuilder {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public ActivityDefinition findOrCreateActivityDefinition(String activityName) {
         ProcessDefinition definition = getProcessDefinition();
         List<ActivityDefinition> list = jpaTemplate.find("select x from " + ActivityDefinition.class.getName() + " x where x.processDefinition = ?1 and x.name = ?2", definition, activityName);
         if (!list.isEmpty()) {
             return list.get(0);
-        }
-        else {
+        } else {
             ActivityDefinition answer = new ActivityDefinition();
             answer.setName(activityName);
             answer.setProcessDefinition(ProcessDefinition.getRefreshedProcessDefinition(jpaTemplate, definition));
@@ -168,8 +169,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
         List<ProcessDefinition> list = jpaTemplate.find("select x from " + ProcessDefinition.class.getName() + " x where x.name = ?1", processName);
         if (!list.isEmpty()) {
             return list.get(0);
-        }
-        else {
+        } else {
             ProcessDefinition answer = new ProcessDefinition();
             answer.setName(processName);
             jpaTemplate.persist(answer);
