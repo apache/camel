@@ -20,17 +20,17 @@ package org.apache.camel.model;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
-import org.apache.camel.processor.TryProcessor;
 import org.apache.camel.processor.CatchProcessor;
+import org.apache.camel.processor.TryProcessor;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -38,29 +38,40 @@ import java.util.List;
  */
 @XmlRootElement(name = "try")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TryType extends ProcessorType {
+public class TryType extends OutputType {
+/*
     @XmlElement(required = false)
     private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
     @XmlElementRef
-    private List<CatchType> catchClauses = new ArrayList<CatchType>();
-    @XmlElement(required = false)
+    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
+*/
+    @XmlTransient
+    private List<CatchType> catchClauses;
+    @XmlTransient
     private FinallyType finallyClause;
+    @XmlTransient
+    private boolean initialized;
+    @XmlTransient
+    private List<ProcessorType> outputsWithoutCatches;
 
     @Override
     public String toString() {
-        return "Try[ " + getCatchClauses() + " " + getFinallyClause() + "]";
+        return "Try[ " + getOutputs() + "]";
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor tryProcessor = routeContext.createProcessor(this);
+        Processor tryProcessor = createOutputsProcessor(routeContext, getOutputsWithoutCatches());
+
         Processor finallyProcessor = null;
         if (finallyClause != null) {
             finallyProcessor = finallyClause.createProcessor(routeContext);
         }
         List<CatchProcessor> catchProcessors = new ArrayList<CatchProcessor>();
-        for (CatchType catchClause : catchClauses) {
-            catchProcessors.add(catchClause.createProcessor(routeContext));
+        if (catchClauses != null) {
+            for (CatchType catchClause : catchClauses) {
+                catchProcessors.add(catchClause.createProcessor(routeContext));
+            }
         }
         return new TryProcessor(tryProcessor, catchProcessors, finallyProcessor);
     }
@@ -68,13 +79,13 @@ public class TryType extends ProcessorType {
     // Fluent API
     //-------------------------------------------------------------------------
     public TryType when(Class exceptionType) {
-        getCatchClauses().add(new CatchType(exceptionType));
+        getOutputs().add(new CatchType(exceptionType));
         return this;
     }
 
     public FinallyType otherwise() {
         FinallyType answer = new FinallyType();
-        setFinallyClause(answer);
+        getOutputs().add(answer);
         return answer;
     }
 
@@ -105,40 +116,65 @@ public class TryType extends ProcessorType {
 
     // Properties
     //-------------------------------------------------------------------------
+
     public List<CatchType> getCatchClauses() {
+        if (catchClauses == null) {
+            checkInitialized();
+        }
         return catchClauses;
     }
 
-    public void setCatchClauses(List<CatchType> catchClauses) {
-        this.catchClauses = catchClauses;
-    }
-
-    public List<ProcessorType> getOutputs() {
-        if (finallyClause != null) {
-            return finallyClause.getOutputs();
-        }
-        else if (catchClauses.isEmpty()) {
-            return Collections.EMPTY_LIST;
-        }
-        else {
-            CatchType when = catchClauses.get(catchClauses.size() - 1);
-            return when.getOutputs();
-        }
-    }
-
     public FinallyType getFinallyClause() {
+        if (finallyClause == null) {
+            checkInitialized();
+        }
         return finallyClause;
     }
 
-    public void setFinallyClause(FinallyType finallyClause) {
-        this.finallyClause = finallyClause;
+    public List<ProcessorType> getOutputsWithoutCatches() {
+        if (outputsWithoutCatches == null) {
+            checkInitialized();
+        }
+        return outputsWithoutCatches;
     }
 
-    public List<InterceptorRef> getInterceptors() {
-        return interceptors;
+    public void setOutputs(List<ProcessorType> outputs) {
+        initialized = false;
+        super.setOutputs(outputs);
     }
 
-    public void setInterceptors(List<InterceptorRef> interceptors) {
-        this.interceptors = interceptors;
+
+    public void addOutput(ProcessorType output) {
+        initialized = false;
+        getOutputs().add(output);
+    }
+
+    /**
+     * Checks whether or not this object has been initialized
+     */
+    protected void checkInitialized() {
+        if (!initialized) {
+            initialized = true;
+            outputsWithoutCatches = new ArrayList<ProcessorType>();
+            catchClauses = new ArrayList<CatchType>();
+            finallyClause = null;
+
+            for (ProcessorType output : outputs) {
+                if (output instanceof CatchType) {
+                    catchClauses.add((CatchType) output);
+                }
+                else if (output instanceof FinallyType) {
+                    if (finallyClause != null) {
+                        throw new IllegalArgumentException("Multiple finally clauses added: " + finallyClause + " and " + output);
+                    }
+                    else {
+                        finallyClause = (FinallyType) output;
+                    }
+                }
+                else {
+                    outputsWithoutCatches.add(output);
+                }
+            }
+        }
     }
 }

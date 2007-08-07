@@ -24,12 +24,16 @@
 
   <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
-      <from uri="direct:rng"/>
-      <to uri="jing:org/apache/camel/component/validator/jing/schema.rng"/>
-    </route>
-    <route>
-      <from uri="direct:rnc"/>
-      <to uri="rnc:org/apache/camel/component/validator/jing/schema.rnc"/>
+      <from uri="direct:start"/>
+      <try>
+        <to uri="rng:org/apache/camel/component/validator/jing/schema.rng"/>
+        <to uri="mock:valid"/>
+
+        <catch>
+          <exception>org.apache.camel.ValidationException</exception>
+          <to uri="mock:invalid"/>
+        </catch>
+      </try>
     </route>
   </camelContext>
 

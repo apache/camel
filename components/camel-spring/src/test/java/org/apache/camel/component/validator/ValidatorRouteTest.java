@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.validator;
 
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.processor.validation.SchemaValidationException;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -25,41 +24,33 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version $Revision: $
  */
 public class ValidatorRouteTest extends SpringTestSupport {
+    protected MockEndpoint validEndpoint;
+    protected MockEndpoint invalidEndpoint;
 
     public void testValidMessage() throws Exception {
-        String body = "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>";
-        try {
-            template.sendBody("direct:start", body);
-        }
-        catch (Throwable e) {
-            log.error(e, e);
-            fail("Caught: " + e);
-        }
+        validEndpoint.expectedMessageCount(1);
+
+        template.sendBody("direct:start",
+                "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>");
+
+        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
     }
 
     public void testInvalidMessage() throws Exception {
-        String body = "<mail xmlns='http://foo.com/bar'><body>Hello world!</body></mail>";
-        try {
-            template.sendBody("direct:start", body);
-        }
+        invalidEndpoint.expectedMessageCount(1);
 
-        // TODO ideally we'd not have to wrap validation exceptions!
-        // TODO should we expose checked exceptions on CamelTemplate
-        // or should we make validation errors be runtime exceptions?
-        catch (RuntimeCamelException e) {
-            Throwable cause = e.getCause();
-            if (cause instanceof SchemaValidationException) {
-                log.debug("Caught expected schema validation exception: " + e, e);
-            }
-            else {
-                log.error(e, e);
-                fail("Not a SchemaValidationException: " + e);
-            }
-        }
-        catch (Throwable e) {
-            log.error(e, e);
-            fail("Caught: " + e);
-        }
+        template.sendBody("direct:start",
+                "<mail xmlns='http://foo.com/bar'><body>Hello world!</body></mail>");
+
+        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);
+        invalidEndpoint = resolveMandatoryEndpoint("mock:invalid", MockEndpoint.class);
     }
 
     protected int getExpectedRouteCount() {
@@ -70,5 +61,4 @@ public class ValidatorRouteTest extends SpringTestSupport {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/validator/camelContext.xml");
     }
-
 }

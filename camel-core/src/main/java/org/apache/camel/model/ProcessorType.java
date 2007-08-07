@@ -69,21 +69,7 @@ public abstract class ProcessorType {
 
     public Processor createOutputsProcessor(RouteContext routeContext) throws Exception {
         Collection<ProcessorType> outputs = getOutputs();
-        List<Processor> list = new ArrayList<Processor>();
-        for (ProcessorType output : outputs) {
-            Processor processor = output.createProcessor(routeContext);
-            list.add(processor);
-        }
-        Processor processor = null;
-        if (!list.isEmpty()) {
-            if (list.size() == 1) {
-                processor = list.get(0);
-            }
-            else {
-                processor = createCompositeProcessor(list);
-            }
-        }
-        return processor;
+        return createOutputsProcessor(routeContext, outputs);
     }
 
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
@@ -653,5 +639,23 @@ public abstract class ProcessorType {
     protected Processor createCompositeProcessor(List<Processor> list) {
         //return new MulticastProcessor(list);
         return new Pipeline(list);
+    }
+
+    protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorType> outputs) throws Exception {
+        List<Processor> list = new ArrayList<Processor>();
+        for (ProcessorType output : outputs) {
+            Processor processor = output.createProcessor(routeContext);
+            list.add(processor);
+        }
+        Processor processor = null;
+        if (!list.isEmpty()) {
+            if (list.size() == 1) {
+                processor = list.get(0);
+            }
+            else {
+                processor = createCompositeProcessor(list);
+            }
+        }
+        return processor;
     }
 }
