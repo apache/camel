@@ -19,6 +19,7 @@ package org.apache.camel.model;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.ValidationException;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.TryProcessor;
@@ -78,15 +79,21 @@ public class TryType extends OutputType {
 
     // Fluent API
     //-------------------------------------------------------------------------
-    public TryType when(Class exceptionType) {
-        getOutputs().add(new CatchType(exceptionType));
-        return this;
+    public CatchType handle(Class<?> exceptionType) {
+        CatchType answer = new CatchType(exceptionType);
+        getOutputs().add(answer);
+        return answer;
     }
 
-    public FinallyType otherwise() {
+    public FinallyType handleAll() {
         FinallyType answer = new FinallyType();
         getOutputs().add(answer);
         return answer;
+    }
+
+    public TryType process(Processor processor) {
+        super.process(processor);
+        return this;
     }
 
     public TryType to(Endpoint endpoint) {
