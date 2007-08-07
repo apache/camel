@@ -17,6 +17,7 @@
 package org.apache.camel.processor.validation;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ValidationException;
 
 /**
  * An exception found if no XML body is available on the inbound message
