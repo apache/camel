@@ -14,30 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.validation;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.ValidationException;
-import org.xml.sax.ErrorHandler;
-
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.validation.Schema;
+package org.apache.camel;
 
 /**
+ * The base class for any validation exception, such as
+ * {@link org.apache.camel.processor.validation.SchemaValidationException}
+ * so that it is easy to treat all validation errors in a similar way
+ * irrespective of the particular validation technology used.
+ *
  * @version $Revision: $
  */
-public interface ValidatorErrorHandler extends ErrorHandler {
-    /**
-     * Resets any state within this error handler
-     */
-    void reset();
+public class ValidationException extends CamelExchangeException {
 
-    /**
-     * Process any errors which may have occurred during validation
-     *
-     * @param exchange
-     * @param schema
-     * @param result
-     */
-    void handleErrors(Exchange exchange, Schema schema, DOMResult result) throws ValidationException;
+    public ValidationException(Exchange exchange, String message) {
+        super(message, exchange);
+    }
+
 }

@@ -16,14 +16,15 @@
  */
 package org.apache.camel.processor.validation;
 
-import org.xml.sax.SAXParseException;
-import org.xml.sax.SAXException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ValidationException;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.validation.Schema;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Revision: $

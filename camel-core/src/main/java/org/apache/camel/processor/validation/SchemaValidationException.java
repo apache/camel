@@ -17,9 +17,9 @@
 package org.apache.camel.processor.validation;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ValidationException;
 import org.xml.sax.SAXParseException;
 
-import javax.xml.validation.Schema;
 import java.util.List;
 
 /**
