@@ -1,0 +1,6 @@
+default namespace = "http://foo.com/bar"
+
+element mail {
+  element subject { text },
+  element body { text }
+}

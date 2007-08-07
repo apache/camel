@@ -28,35 +28,51 @@
     <version>1.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>components</artifactId>
-  <name>Camel :: Components</name>
-  <description>Camel Components</description>
-  <packaging>pom</packaging>
+  <artifactId>camel-jing</artifactId>
+  <name>Camel :: Jing</name>
+  <description>Camel Jing support</description>
 
-  <modules>
-    <module>camel-activemq</module>
-    <module>camel-bam</module>
-    <module>camel-cxf</module>
-    <module>camel-ftp</module>
-    <module>camel-juel</module>
-    <module>camel-http</module>
-    <module>camel-irc</module>
-    <module>camel-jaxb</module>
-    <module>camel-jbi</module>
-    <module>camel-jing</module>
-    <module>camel-jms</module>
-    <module>camel-josql</module>
-    <module>camel-jpa</module>
-    <module>camel-mail</module>
-    <module>camel-mina</module>
-    <module>camel-msv</module>
-    <module>camel-ognl</module>
-    <module>camel-quartz</module>
-    <module>camel-rmi</module>
-    <module>camel-saxon</module>
-    <module>camel-script</module>
-    <module>camel-spring</module>
-    <module>camel-xmpp</module>
-  </modules>
+  <dependencies>
+
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>thaiopensource</groupId>
+      <artifactId>jing</artifactId>
+      <version>20030619</version>
+    </dependency>
+
+
+    <!-- for testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
 </project>
