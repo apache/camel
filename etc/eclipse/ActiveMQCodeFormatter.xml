@@ -253,7 +253,7 @@
 <setting id="org.eclipse.jdt.core.formatter.keep_empty_array_initializer_on_one_line" value="false"/>
 <setting id="org.eclipse.jdt.core.formatter.keep_imple_if_on_one_line" value="false"/>
 <setting id="org.eclipse.jdt.core.formatter.keep_then_statement_on_same_line" value="false"/>
-<setting id="org.eclipse.jdt.core.formatter.lineSplit" value="110"/>
+<setting id="org.eclipse.jdt.core.formatter.lineSplit" value="180"/>
 <setting id="org.eclipse.jdt.core.formatter.number_of_blank_lines_at_beginning_of_method_body" value="0"/>
 <setting id="org.eclipse.jdt.core.formatter.number_of_empty_lines_to_preserve" value="1"/>
 <setting id="org.eclipse.jdt.core.formatter.put_empty_statement_on_new_line" value="true"/>
