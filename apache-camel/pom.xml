@@ -72,10 +72,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jbi</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
     </dependency>
     <dependency>
@@ -183,7 +179,7 @@
             </goals>
             <configuration>
               <includes>camel-activemq,camel-bam,camel-core,camel-cxf,camel-ftp,camel-juel,
-                camel-http,camel-irc,camel-jaxb,camel-jbi,camel-jing,camel-jms,camel-josql,
+                camel-http,camel-irc,camel-jaxb,camel-jing,camel-jms,camel-josql,
                 camel-jpa,camel-mail,camel-mina,camel-msv,camel-ognl,camel-quartz,camel-rmi,
                 camel-saxon,camel-script,camel-spring,camel-xmpp,commons-logging</includes>
             </configuration>
