@@ -30,6 +30,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class BamRouteTest extends SpringTestSupport {
     protected MockEndpoint overdueEndpoint;
+    protected int errorTimeout = 2;
 
     public void testBam() throws Exception {
         overdueEndpoint.expectedMessageCount(1);
@@ -71,7 +72,7 @@ public class BamRouteTest extends SpringTestSupport {
                 // now lets add some rules
                 b.starts().after(a.completes())
                         .expectWithin(seconds(1))
-                        .errorIfOver(seconds(2)).to("mock:overdue");
+                        .errorIfOver(seconds(errorTimeout)).to("mock:overdue");
             }
         };
         // END SNIPPET: example
