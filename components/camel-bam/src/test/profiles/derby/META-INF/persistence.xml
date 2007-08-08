@@ -25,14 +25,9 @@
     <class>org.apache.camel.bam.model.ProcessInstance</class>
 
     <properties>
-      <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
-      <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
-      <property name="hibernate.connection.url" value="jdbc:mysql://localhost/camel_bam?relaxAutoCommit=true"/>
-
-      <!-- TODO change to correct user -->
-      <property name="hibernate.connection.username" value="jstrachan"/>
-      <!--<property name="hibernate.connection.password" value=""/>-->
-
+      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyDialect"/>
+      <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="hibernate.connection.url" value="jdbc:derby:target/test/database;create=true"/>
       <property name="hibernate.hbm2ddl.auto" value="create"/>
     </properties>
 

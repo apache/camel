@@ -19,15 +19,7 @@ package org.apache.camel.bam.model;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.commons.logging.Log;
@@ -39,27 +31,29 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision: $
  */
 @Entity
-@UniqueConstraint(columnNames = {"correlationKey" })
-public class ProcessInstance extends TemporalEntity {
+public class ProcessInstance  {
     private static final transient Log LOG = LogFactory.getLog(ProcessInstance.class);
     private ProcessDefinition processDefinition;
     private Collection<ActivityState> activityStates = new HashSet<ActivityState>();
     private String correlationKey;
+    private Date timeStarted;
+    private Date timeCompleted;
 
     public ProcessInstance() {
         setTimeStarted(new Date());
     }
 
     public String toString() {
-        return getClass().getName() + "[id: " + getId() + ", key: " + getCorrelationKey() + "]";
+        return "ProcessInstance[" + getCorrelationKey() + "]";
     }
 
-    // This crap is required to work around a bug in hibernate
-    @Override
     @Id
-    @GeneratedValue
-    public Long getId() {
-        return super.getId();
+    public String getCorrelationKey() {
+        return correlationKey;
+    }
+
+    public void setCorrelationKey(String correlationKey) {
+        this.correlationKey = correlationKey;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST })
@@ -80,15 +74,34 @@ public class ProcessInstance extends TemporalEntity {
         this.activityStates = activityStates;
     }
 
-    public String getCorrelationKey() {
-        return correlationKey;
+
+    @Transient
+    public boolean isStarted() {
+        return timeStarted != null;
     }
 
-    public void setCorrelationKey(String correlationKey) {
-        this.correlationKey = correlationKey;
+    @Transient
+    public boolean isCompleted() {
+        return timeCompleted != null;
     }
 
-    // Helper methods
+    @Temporal(TemporalType.TIME)
+    public Date getTimeStarted() {
+        return timeStarted;
+    }
+
+    public void setTimeStarted(Date timeStarted) {
+        this.timeStarted = timeStarted;
+    }
+
+    @Temporal(TemporalType.TIME)
+    public Date getTimeCompleted() {
+        return timeCompleted;
+    }
+
+    public void setTimeCompleted(Date timeCompleted) {
+        this.timeCompleted = timeCompleted;
+    }    // Helper methods
     //-------------------------------------------------------------------------
 
     /**
