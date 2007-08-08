@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.io.InputStream;
-import java.util.Set;
-
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
+
+import java.io.InputStream;
+import java.util.Set;
 
 /**
  * The binding of how Camel messages get mapped to Apache CXF and back again
@@ -28,7 +28,6 @@ import org.apache.cxf.message.MessageImpl;
  * @version $Revision$
  */
 public class CxfBinding {
-
     public Object extractBodyFromCxf(CxfExchange exchange, Message message) {
         //  TODO how do we choose a format?
         return getBody(message);
@@ -48,7 +47,10 @@ public class CxfBinding {
     public MessageImpl createCxfMessage(CxfExchange exchange) {
         MessageImpl answer = (MessageImpl) exchange.getInMessage();
 
-        // TODO is InputStream the best type to give to CXF?
+        // CXF uses the stax which is based on the stream API to parser the XML, so
+        // the CXF transport is also based on the stream API.
+        // And the interceptors are also based on the stream API,
+        // so lets use an InputStream to host the CXF on wire message.
         CxfMessage in = exchange.getIn();
         Object body = in.getBody(InputStream.class);
         if (body == null) {
