@@ -227,11 +227,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jbi</artifactId>
-        <version>${camel-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jms</artifactId>
         <version>${camel-version}</version>
       </dependency>
@@ -762,15 +757,11 @@
               <artifactId>maven-pmd-plugin</artifactId>
             </plugin>
       -->
-<!--
-      TODO this currently fails in the camel-jbi project for some bizarre reason
-      
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
         <version>2.0</version>
       </plugin>
--->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>taglist-maven-plugin</artifactId>
