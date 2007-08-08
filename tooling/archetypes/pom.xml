@@ -33,7 +33,6 @@
 
   <modules>
     <module>camel-router</module>
-    <module>camel-jbi-service-unit</module>
   </modules>
 
 </project>
