@@ -42,35 +42,38 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging-api</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>javax.persistence</groupId>
       <artifactId>persistence-api</artifactId>
       <version>1.0</version>
     </dependency>
 
+    <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
       <type>test-jar</type>
-      <optional>true</optional>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
       <type>test-jar</type>
-      <optional>true</optional>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-juel</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
       <scope>test</scope>
     </dependency>
     <!--
@@ -88,12 +91,6 @@
         </dependency>
     -->
 
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>5.0.5</version>
-      <scope>test</scope>
-    </dependency>
 
     <dependency>
       <groupId>junit</groupId>
@@ -110,6 +107,7 @@
         <configuration>
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
+          <forkMode>pertest</forkMode>
           <includes>
             <include>**/*Test.*</include>
           </includes>
@@ -163,6 +161,41 @@
         </dependency>
       </dependencies>
     </profile>
+    <profile>
+      <id>derby</id>
+      <build>
+        <testResources>
+          <testResource>
+            <directory>${basedir}/src/test/profiles/derby</directory>
+          </testResource>
+          <testResource>
+            <directory>${basedir}/src/test/resources</directory>
+          </testResource>
+        </testResources>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate-entitymanager</artifactId>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate</artifactId>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.derby</groupId>
+          <artifactId>derby</artifactId>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
 
     <profile>
       <id>mysql</id>
@@ -188,8 +221,9 @@
           <scope>test</scope>
         </dependency>
         <dependency>
-          <groupId>hsqldb</groupId>
-          <artifactId>hsqldb</artifactId>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <version>5.0.5</version>
           <scope>test</scope>
         </dependency>
         <dependency>

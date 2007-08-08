@@ -16,25 +16,27 @@
  */
 package org.apache.camel.bam.processor;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.persistence.EntityExistsException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * A base {@link Processor} for working on <a
  * href="http://activemq.apache.org/camel/bam.html">BAM</a> which a derived
  * class would do the actual persistence such as the {@link JpaBamProcessor}
- * 
+ *
  * @version $Revision: $
  */
 public abstract class BamProcessorSupport<T> implements Processor {
@@ -42,6 +44,15 @@ public abstract class BamProcessorSupport<T> implements Processor {
     private Class<T> entityType;
     private Expression<Exchange> correlationKeyExpression;
     private TransactionTemplate transactionTemplate;
+    private int maximumRetries = 30;
+
+    public int getMaximumRetries() {
+        return maximumRetries;
+    }
+
+    public void setMaximumRetries(int maximumRetries) {
+        this.maximumRetries = maximumRetries;
+    }
 
     protected BamProcessorSupport(TransactionTemplate transactionTemplate, Expression<Exchange> correlationKeyExpression) {
         this.transactionTemplate = transactionTemplate;
@@ -49,12 +60,12 @@ public abstract class BamProcessorSupport<T> implements Processor {
 
         Type type = getClass().getGenericSuperclass();
         if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType)type;
+            ParameterizedType parameterizedType = (ParameterizedType) type;
             Type[] arguments = parameterizedType.getActualTypeArguments();
             if (arguments.length > 0) {
                 Type argumentType = arguments[0];
                 if (argumentType instanceof Class) {
-                    this.entityType = (Class<T>)argumentType;
+                    this.entityType = (Class<T>) argumentType;
                 }
             }
         }
@@ -70,27 +81,46 @@ public abstract class BamProcessorSupport<T> implements Processor {
     }
 
     public void process(final Exchange exchange) {
-        transactionTemplate.execute(new TransactionCallback() {
-            public Object doInTransaction(TransactionStatus status) {
-                try {
-                    Object key = getCorrelationKey(exchange);
-
-                    T entity = loadEntity(exchange, key);
-
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Correlation key: " + key + " with entity: " + entity);
-                    }
-                    processEntity(exchange, entity);
-
-                    return entity;
-                } catch (Exception e) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Caught: " + e, e);
-                    }
-                    throw new RuntimeCamelException(e);
-                }
+        Object entity = null;
+        for (int i = 0; entity == null && i < maximumRetries; i++) {
+            if (i > 0) {
+                LOG.info("Retry attempt due to duplicate row: " + i);
             }
-        });
+            entity = transactionTemplate.execute(new TransactionCallback() {
+                public Object doInTransaction(TransactionStatus status) {
+                    try {
+                        Object key = getCorrelationKey(exchange);
+
+                        T entity = loadEntity(exchange, key);
+
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Correlation key: " + key + " with entity: " + entity);
+                        }
+                        processEntity(exchange, entity);
+
+                        return entity;
+                    }
+                    catch (JpaSystemException e) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Likely exception is due to duplicate row in concurrent setting: " + e, e);
+                        }
+                        LOG.info("Attempt to insert duplicate row due to concurrency issue, so retrying: " + e);
+                        return retryDueToDuplicate(status);
+                    }
+                    catch (DataIntegrityViolationException e) {
+                        Throwable throwable = e.getCause();
+                        if (throwable instanceof EntityExistsException) {
+                            LOG.info("Attempt to insert duplicate row due to concurrency issue, so retrying: " + throwable);
+                            return retryDueToDuplicate(status);
+                        }
+                        return onError(status, throwable);
+                    }
+                    catch (Throwable e) {
+                        return onError(status, e);
+                    }
+                }
+            });
+        }
     }
 
     // Properties
@@ -115,5 +145,16 @@ public abstract class BamProcessorSupport<T> implements Processor {
             throw new NoCorrelationKeyException(this, exchange);
         }
         return value;
+    }
+
+    protected Object retryDueToDuplicate(TransactionStatus status) {
+        status.setRollbackOnly();
+        return null;
+    }
+
+    protected Object onError(TransactionStatus status, Throwable e) {
+        status.setRollbackOnly();
+        LOG.error("Caught: " + e, e);
+        throw new RuntimeCamelException(e);
     }
 }

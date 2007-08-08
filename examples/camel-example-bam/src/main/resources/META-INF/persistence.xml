@@ -31,6 +31,12 @@
       <property name="hibernate.connection.password" value=""/>
       <property name="hibernate.connection.url" value="jdbc:hsqldb:mem:camel_bam"/>
       <property name="hibernate.hbm2ddl.auto" value="create"/>
+
+      <!-- debugging flags -->
+<!--
+      <property name="hibernate.show_sql" value="true"/>
+      <property name="hibernate.format_sql" value="true"/>
+-->
     </properties>
 
   </persistence-unit>

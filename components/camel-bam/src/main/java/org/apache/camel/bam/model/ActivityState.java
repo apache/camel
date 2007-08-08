@@ -16,7 +16,9 @@
  */
 package org.apache.camel.bam.model;
 
-import java.util.Date;
+import org.apache.camel.bam.processor.ProcessContext;
+import org.apache.camel.bam.rules.ActivityRules;
+import org.apache.camel.util.ObjectHelper;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -26,10 +28,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.apache.camel.bam.processor.ProcessContext;
-import org.apache.camel.bam.rules.ActivityRules;
-import org.apache.camel.util.ObjectHelper;
+import javax.persistence.Transient;
+import java.util.Date;
 
 /**
  * The default state for a specific activity within a process
@@ -56,7 +56,7 @@ public class ActivityState extends TemporalEntity {
 
     @Override
     public String toString() {
-        return "ActivityState[" + getId() + " " + getActivityDefinition() + "]";
+        return "ActivityState[" + getId() + " on " + getProcessInstance() + " " + getActivityDefinition() + "]";
     }
 
     public synchronized void processExchange(ActivityRules activityRules, ProcessContext context) throws Exception {
@@ -145,6 +145,15 @@ public class ActivityState extends TemporalEntity {
         if (timeCompleted != null) {
             setEscalationLevel(-1);
         }
+    }
+
+    @Transient
+    public String getCorrelationKey() {
+        ProcessInstance pi = getProcessInstance();
+        if (pi == null) {
+            return null;
+        }
+        return pi.getCorrelationKey();
     }
 
     // Implementation methods
