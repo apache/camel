@@ -16,29 +16,12 @@
  */
 package org.apache.camel.converter;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.Writer;
-
 import org.apache.camel.Converter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.io.*;
+import java.net.URL;
 
 /**
  * Some core java.io based <a
@@ -54,6 +37,11 @@ public class IOConverter {
      * Utility classes should not have a public constructor.
      */
     private IOConverter() {        
+    }
+
+    @Converter
+    public static InputStream toInputStream(URL url) throws IOException {
+        return url.openStream();
     }
 
     @Converter
@@ -111,6 +99,16 @@ public class IOConverter {
     @Converter
     public static String toString(byte[] data) {
         return new String(data);
+    }
+
+    @Converter
+    public static String toString(File file) throws IOException {
+        return toString(toReader(file));
+    }
+
+    @Converter
+    public static String toString(URL url) throws IOException {
+        return toString(toInputStream(url));
     }
 
     @Converter

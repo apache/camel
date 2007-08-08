@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.net.URL;
 
 import junit.framework.TestCase;
 
@@ -138,6 +139,14 @@ public class ConverterTest extends TestCase {
         File file = converter.convertTo(File.class, "foo.txt");
         assertNotNull("Should have converted to a file!");
         assertEquals("file name", "foo.txt", file.getName());
+    }
+
+    public void testFileToString() throws Exception {
+        URL resource = getClass().getResource("dummy.txt");
+        assertNotNull("Cannot find resource!");
+        File file = new File(resource.getFile());
+        String text = converter.convertTo(String.class, file);
+        assertEquals("file content", "Hello World!", text);
     }
 
     public void testPrimitiveBooleanConversion() throws Exception {

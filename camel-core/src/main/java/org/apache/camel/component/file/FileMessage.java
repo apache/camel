@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
-import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultMessage;
+
+import java.io.File;
 
 /**
  * A {@link Exchange} for File
@@ -64,14 +62,6 @@ public class FileMessage extends DefaultMessage {
 
     @Override
     protected Object createBody() {
-        if (file != null) {
-            // lets extract the body
-            try {
-                return new FileInputStream(file);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeCamelException("File has been deleted: " + file + ". Reason: " + e, e);
-            }
-        }
-        return super.createBody();
+        return file;
     }
 }
