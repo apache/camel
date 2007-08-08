@@ -19,6 +19,8 @@ package org.apache.camel.bam;
 
 import static org.apache.camel.language.juel.JuelExpression.el;
 
+import java.util.concurrent.CountDownLatch;
+
 /**
  * @version $Revision: 1.1 $
  */
@@ -29,15 +31,31 @@ public class MultipleActivitiesConcurrentlyTest extends MultipleProcessesTest {
         overdueEndpoint.expectedMessageCount(1);
         overdueEndpoint.message(0).predicate(el("${in.body.correlationKey == '124'}"));
 
+        final CountDownLatch startLatch = new CountDownLatch(1);
+        final CountDownLatch endLatch = new CountDownLatch(1);
+
         Thread thread = new Thread("B sender") {
             public void run() {
+                startLatch.countDown();
                 sendBMessages();
+                endLatch.countDown();
             }
         };
         thread.start();
 
+        startLatch.await();
+
         sendAMessages();
 
+        endLatch.await();
+        
         overdueEndpoint.assertIsSatisfied();
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        errorTimeout = 5;
+        
+        super.setUp();
     }
 }
