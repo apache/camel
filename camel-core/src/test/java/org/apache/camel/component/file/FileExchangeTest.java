@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -6,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,41 +17,22 @@
  */
 package org.apache.camel.component.file;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
 
 import java.io.File;
 
 /**
- * A {@link Exchange} for File
- *
- * @version $Revision: 520985 $
+ * @version $Revision: 1.1 $
  */
-public class FileExchange extends DefaultExchange {
-    private File file;
+public class FileExchangeTest extends ContextTestSupport {
+    
+    public void testCopy() {
+        File file = new File(FileExchangeTest.class.getResource("FileExchangeTest.class").getFile());
 
-    public FileExchange(CamelContext camelContext, File file) {
-        super(camelContext);
-        setIn(new FileMessage(file));
-        this.file = file;
-    }
-
-    /**
-     * @return the file
-     */
-    public File getFile() {
-        return this.file;
-    }
-
-    /**
-     * @param file the file to set
-     */
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    public Exchange copy() {
-        return new FileExchange(getContext(), getFile());
+        FileExchange fileExchange = new FileExchange(context, file);
+        Exchange exchange = fileExchange.copy();
+        FileExchange copy = assertIsInstanceOf(FileExchange.class, exchange);
+        assertEquals("File", file, copy.getFile());
     }
 }
