@@ -19,20 +19,44 @@ package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.processor.Pipeline;
 
 import java.io.File;
+import java.util.Collections;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class FileExchangeTest extends ContextTestSupport {
-    
-    public void testCopy() {
-        File file = new File(FileExchangeTest.class.getResource("FileExchangeTest.class").getFile());
+    protected File file;
 
+    public void testCopy() {
         FileExchange fileExchange = new FileExchange(context, file);
         Exchange exchange = fileExchange.copy();
         FileExchange copy = assertIsInstanceOf(FileExchange.class, exchange);
         assertEquals("File", file, copy.getFile());
+        Object body = copy.getIn().getBody();
+        assertNotNull("Should have a body!", body);
+    }
+
+    public void testPipelineCopy() throws Exception {
+        Processor myProcessor = new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                Object body = exchange.getIn().getBody();
+                assertNotNull("Should have a body!", body);
+            }
+        };
+
+        Pipeline pipeline = new Pipeline(Collections.singletonList(myProcessor));
+        FileExchange exchange = new FileExchange(context, file);
+        pipeline.process(exchange.copy());            
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        file = new File(FileExchangeTest.class.getResource("FileExchangeTest.class").getFile());
     }
 }

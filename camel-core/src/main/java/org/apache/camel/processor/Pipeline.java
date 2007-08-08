@@ -21,6 +21,9 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Message;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Creates a Pipeline pattern where the output of the previous step is sent as
@@ -29,7 +32,7 @@ import org.apache.camel.Processor;
  * @version $Revision$
  */
 public class Pipeline extends MulticastProcessor implements Processor {
-
+    private static final transient Log LOG = LogFactory.getLog(Pipeline.class);
 
     public Pipeline(Collection<Processor> processors) {
         super(processors);
@@ -70,8 +73,17 @@ public class Pipeline extends MulticastProcessor implements Processor {
         // now lets set the input of the next exchange to the output of the
         // previous message if it is not null
         Object output = previousExchange.getOut().getBody();
+        Message in = answer.getIn();
         if (output != null) {
-            answer.getIn().setBody(output);
+            in.setBody(output);
+        }
+        else {
+            Object previousInBody = previousExchange.getIn().getBody();
+            if (in.getBody() == null && previousInBody != null) {
+                LOG.warn("Bad exchange implementation; the copy() method did not copy across the in body: " + previousExchange
+                        + " of type: " + previousExchange.getClass());
+                in.setBody(previousInBody);
+            }
         }
         return answer;
     }
