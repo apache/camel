@@ -28,8 +28,8 @@ import org.apache.camel.Processor;
  *
  * @version $Revision$
  */
-public class NoErrorHandlerBuilder<E extends Exchange> implements ErrorHandlerBuilder<E> {
-    public ErrorHandlerBuilder<E> copy() {
+public class NoErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
+    public ErrorHandlerBuilder copy() {
         return this;
     }
 

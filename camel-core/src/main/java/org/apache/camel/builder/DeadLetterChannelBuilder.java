@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision$
  */
-public class DeadLetterChannelBuilder implements ErrorHandlerBuilder {
+public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
     private RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
     private ProcessorFactory deadLetterFactory;
     private Processor defaultDeadLetterEndpoint;
@@ -60,7 +60,9 @@ public class DeadLetterChannelBuilder implements ErrorHandlerBuilder {
 
     public Processor createErrorHandler(Processor processor) throws Exception {
         Processor deadLetter = getDeadLetterFactory().createProcessor();
-        return new DeadLetterChannel(processor, deadLetter, getRedeliveryPolicy(), getLogger());
+        DeadLetterChannel answer = new DeadLetterChannel(processor, deadLetter, getRedeliveryPolicy(), getLogger());
+        configure(answer);
+        return answer;
     }
 
     // Builder methods

@@ -14,26 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder;
+package org.apache.camel.processor;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-
-import java.util.List;
+import org.apache.camel.ValidationException;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version $Revision: 1.1 $
  */
-public interface ErrorHandlerBuilder {
-    /**
-     * Creates a copy of this builder
-     */
-    ErrorHandlerBuilder copy();
+public class ValidationWithExceptionTest extends ValidationTest {
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                exception(ValidationException.class).to("mock:invalid");
 
-    /**
-     * Creates the error handler interceptor
-     */
-    Processor createErrorHandler(Processor processor) throws Exception;
-
-    void addErrorHandlers(List<Class> exceptionClasses, Processor errorHandler);
+                from("direct:start").
+                        process(validator).
+                        to("mock:valid");
+            }
+        };
+    }
 }

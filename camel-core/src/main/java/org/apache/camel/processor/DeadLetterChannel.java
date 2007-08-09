@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision$
  */
-public class DeadLetterChannel extends ServiceSupport implements ErrorHandler {
+public class DeadLetterChannel extends ErrorHandlerSupport {
     public static final String REDELIVERY_COUNTER = "org.apache.camel.RedeliveryCounter";
     public static final String REDELIVERED = "org.apache.camel.Redelivered";
 
@@ -77,7 +77,10 @@ public class DeadLetterChannel extends ServiceSupport implements ErrorHandler {
             try {
                 output.process(exchange);
                 return;
-            } catch (RuntimeException e) {
+            } catch (Throwable e) {
+                if (customProcessorForException(exchange, e)) {
+                    return;
+                }
                 logger.log("On delivery attempt: " + redeliveryCounter + " caught: " + e, e);
             }
             redeliveryCounter = incrementRedeliveryCounter(exchange);
