@@ -16,14 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -41,12 +33,22 @@ import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MessageIdRepository;
 import org.apache.camel.spi.Policy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @version $Revision: 1.1 $
@@ -55,14 +57,15 @@ public abstract class ProcessorType {
     public static final String DEFAULT_TRACE_CATEGORY = "org.apache.camel.TRACE";
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Boolean inheritErrorHandlerFlag = Boolean.TRUE; // TODO not sure how
-                                                            // else to use an
+    private DelegateProcessor lastInterceptor;
+    // else to use an
                                                             // optional
                                                             // attribute in
                                                             // JAXB2
 
     public abstract List<ProcessorType> getOutputs();
 
-    public abstract List<InterceptorRef> getInterceptors();
+    public abstract List<InterceptorType> getInterceptors();
 
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         throw new UnsupportedOperationException("Not implemented yet for class: " + getClass().getName());
@@ -416,6 +419,26 @@ public abstract class ProcessorType {
         return this;
     }
 
+    public InterceptType intercept() {
+        InterceptType answer = new InterceptType();
+        getOutputs().add(answer);
+        return answer;
+    }
+
+    public ProcessorType proceed() {
+        getOutputs().add(new ProceedType());
+        return this;
+    }
+
+    /**
+     * Apply an interceptor route if the predicate is true
+     */
+    public OtherwiseType intercept(Predicate predicate) {
+        InterceptType answer = new InterceptType();
+        getOutputs().add(answer);
+        return answer.when(predicate);
+    }
+
     public ProcessorType interceptors(String... refs) {
         for (String ref : refs) {
             interceptor(ref);
@@ -476,6 +499,7 @@ public abstract class ProcessorType {
 
     public ProcessorType intercept(DelegateProcessor interceptor) {
         getInterceptors().add(new InterceptorRef(interceptor));
+        lastInterceptor = interceptor;
         return this;
     }
 
@@ -638,7 +662,7 @@ public abstract class ProcessorType {
      * @param target the processor which can be wrapped
      * @return the original processor or a new wrapped interceptor
      */
-    protected Processor wrapProcessorInInterceptors(RouteContext routeContext, Processor target) {
+    protected Processor wrapProcessorInInterceptors(RouteContext routeContext, Processor target) throws Exception {
         // The target is required.
         if (target == null) {
             throw new RuntimeCamelException("target provided.");
@@ -647,20 +671,23 @@ public abstract class ProcessorType {
         // Interceptors are optional
         DelegateProcessor first = null;
         DelegateProcessor last = null;
-        List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>(routeContext.getRoute()
+        List<InterceptorType> interceptors = new ArrayList<InterceptorType>(routeContext.getRoute()
             .getInterceptors());
-        interceptors.addAll(getInterceptors());
-        if (interceptors != null) {
-            for (InterceptorRef interceptorRef : interceptors) {
-                DelegateProcessor p = interceptorRef.createInterceptor(routeContext);
-                if (first == null) {
-                    first = p;
-                }
-                if (last != null) {
-                    last.setProcessor(p);
-                }
-                last = p;
+        List<InterceptorType> list = getInterceptors();
+        for (InterceptorType interceptorType : list) {
+            if (!interceptors.contains(interceptorType)) {
+                interceptors.add(interceptorType);
             }
+        }
+        for (InterceptorType interceptorRef : interceptors) {
+            DelegateProcessor p = interceptorRef.createInterceptor(routeContext);
+            if (first == null) {
+                first = p;
+            }
+            if (last != null) {
+                last.setProcessor(p);
+            }
+            last = p;
         }
 
         if (last != null) {

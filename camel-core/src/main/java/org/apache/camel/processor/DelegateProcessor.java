@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.spi.Policy;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -66,5 +67,12 @@ public class DelegateProcessor extends ServiceSupport implements Processor {
 
     protected void doStop() throws Exception {
         ServiceHelper.stopServices(processor);
+    }
+
+    /**
+     * Proceed with the underlying delegated processor
+     */
+    public void proceed(Exchange exchange) throws Exception {
+        processNext(exchange);
     }
 }

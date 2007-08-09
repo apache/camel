@@ -16,11 +16,10 @@
  */
 package org.apache.camel.model;
 
-import java.util.List;
+import org.apache.camel.model.language.ExpressionType;
 
 import javax.xml.bind.JAXBException;
-
-import org.apache.camel.model.language.ExpressionType;
+import java.util.List;
 
 /**
  * @version $Revision: 1.1 $
@@ -180,13 +179,13 @@ public class XmlParseTest extends XmlTestSupport {
 
     protected void assertInterceptorRefs(ProcessorType route, String... names) {
         int idx = 0;
-        List<InterceptorRef> interceptors = route.getInterceptors();
+        List<InterceptorType> interceptors = route.getInterceptors();
         for (String name : names) {
             int nextIdx = idx + 1;
             assertTrue("Not enough interceptors! Expected: " + nextIdx + " but have: " + interceptors,
-                       nextIdx <= interceptors.size());
+                    nextIdx <= interceptors.size());
 
-            InterceptorRef interceptor = interceptors.get(idx++);
+            InterceptorRef interceptor = assertIsInstanceOf(InterceptorRef.class, interceptors.get(idx++));
             assertEquals("Interceptor: " + idx, name, interceptor.getRef());
         }
     }

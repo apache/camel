@@ -40,8 +40,8 @@ public class ThrottlerType extends ProcessorType {
     private Long maximumRequestsPerPeriod;
     @XmlAttribute
     private long timePeriodMillis = 1000;
-    @XmlElement(required = false)
-    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+    @XmlElementRef
+    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     @XmlElementRef
     private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
 
@@ -94,11 +94,11 @@ public class ThrottlerType extends ProcessorType {
         this.timePeriodMillis = timePeriodMillis;
     }
 
-    public List<InterceptorRef> getInterceptors() {
+    public List<InterceptorType> getInterceptors() {
         return interceptors;
     }
 
-    public void setInterceptors(List<InterceptorRef> interceptors) {
+    public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
     }
 

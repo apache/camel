@@ -72,6 +72,23 @@ public class PredicateBuilder {
     }
 
     /**
+     * A helper method to return the logical not of the given predicate
+     */
+    public static <E extends Exchange> Predicate<E> not(final Predicate<E> predicate) {
+        notNull(predicate, "predicate");
+        return new PredicateSupport<E>() {
+            public boolean matches(E exchange) {
+                return !predicate.matches(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "not " + predicate;
+            }
+        };
+    }
+
+    /**
      * A helper method to combine multiple predicates by a logical AND
      */
     public static <E extends Exchange> Predicate<E> and(final Predicate<E> left, final Predicate<E> right) {
@@ -285,5 +302,4 @@ public class PredicateBuilder {
 
         };
     }
-
 }

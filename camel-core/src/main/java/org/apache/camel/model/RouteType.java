@@ -48,8 +48,8 @@ import org.apache.commons.logging.LogFactory;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteType extends ProcessorType implements CamelContextAware {
     private static final transient Log LOG = LogFactory.getLog(RouteType.class);
-    @XmlElement(required = false, name = "interceptor")
-    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+    @XmlElementRef
+    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     @XmlElementRef
     private List<FromType> inputs = new ArrayList<FromType>();
     @XmlElementRef
@@ -100,6 +100,10 @@ public class RouteType extends ProcessorType implements CamelContextAware {
 
     // Fluent API
     // -----------------------------------------------------------------------
+
+    /**
+     * Creates an input to the route
+     */
     public RouteType from(String uri) {
         getInputs().add(new FromType(uri));
         return this;
@@ -108,11 +112,11 @@ public class RouteType extends ProcessorType implements CamelContextAware {
     // Properties
     // -----------------------------------------------------------------------
 
-    public List<InterceptorRef> getInterceptors() {
+    public List<InterceptorType> getInterceptors() {
         return interceptors;
     }
 
-    public void setInterceptors(List<InterceptorRef> interceptors) {
+    public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
     }
 
@@ -165,7 +169,7 @@ public class RouteType extends ProcessorType implements CamelContextAware {
         if (isInheritErrorHandler()) {
             output.setErrorHandlerBuilder(getErrorHandlerBuilder());
         }
-        List<InterceptorRef> list = output.getInterceptors();
+        List<InterceptorType> list = output.getInterceptors();
         if (list == null) {
             LOG.warn("No interceptor collection: " + output);
         } else {

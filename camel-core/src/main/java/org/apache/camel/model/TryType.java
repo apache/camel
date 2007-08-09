@@ -37,11 +37,6 @@ import org.apache.camel.processor.TryProcessor;
 @XmlRootElement(name = "try")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TryType extends OutputType {
-    /*
-     * @XmlElement(required = false) private List<InterceptorRef> interceptors =
-     * new ArrayList<InterceptorRef>(); @XmlElementRef private List<ProcessorType>
-     * outputs = new ArrayList<ProcessorType>();
-     */
     @XmlTransient
     private List<CatchType> catchClauses;
     @XmlTransient
