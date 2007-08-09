@@ -33,16 +33,6 @@
   <description>An example showing how to use Camel as a Business Activity Monitoring tool</description>
 
   <dependencies>
-<!--
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jpa</artifactId>
-    </dependency>
--->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-bam</artifactId>
@@ -111,34 +101,13 @@
         <artifactId>camel-maven-plugin</artifactId>
       </plugin>
 
-      <!-- allows the example to be ran via 'mvn exec:java' -->
+      <!-- allows the example to be ran via 'mvn compile exec:java' -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <!--
-                       <goals>
-                         <goal>java</goal>
-                       </goals>
-            -->
-            <phase>install</phase>
-          </execution>
-        </executions>
         <configuration>
-          <mainClass>org.apache.camel.example.etl.Main</mainClass>
+          <mainClass>org.apache.camel.example.bam.Main</mainClass>
           <includePluginDependencies>false</includePluginDependencies>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <childDelegation>false</childDelegation>
-          <useFile>true</useFile>
-          <excludes>
-            <exclude>**/RunTest.*</exclude>
-          </excludes>
         </configuration>
       </plugin>
 
