@@ -24,6 +24,7 @@ import java.io.StringWriter;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.util.JAXBSource;
 import javax.xml.transform.Source;
@@ -40,6 +41,15 @@ import org.apache.commons.logging.LogFactory;
 public class FallbackTypeConverter implements TypeConverter, TypeConverterAware {
     private static final transient Log LOG = LogFactory.getLog(FallbackTypeConverter.class);
     private TypeConverter parentTypeConverter;
+    private boolean prettyPrint = true;
+
+    public boolean isPrettyPrint() {
+        return prettyPrint;
+    }
+
+    public void setPrettyPrint(boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
+    }
 
     public void setTypeConverter(TypeConverter parentTypeConverter) {
         this.parentTypeConverter = parentTypeConverter;
@@ -115,7 +125,9 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
             if (answer == null) {
                 // lets try a stream
                 StringWriter buffer = new StringWriter();
-                context.createMarshaller().marshal(value, buffer);
+                Marshaller marshaller = context.createMarshaller();
+                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, isPrettyPrint() ? Boolean.TRUE : Boolean.FALSE);
+                marshaller.marshal(value, buffer);
                 return parentTypeConverter.convertTo(type, buffer.toString());
             }
             return answer;
