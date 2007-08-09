@@ -16,17 +16,19 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-
 import org.apache.camel.Exchange;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 /**
  * A {@link Producer} implementation for File
@@ -40,6 +42,10 @@ public class FileProducer extends DefaultProducer {
     public FileProducer(FileEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
+    }
+
+    public FileEndpoint getEndpoint() {
+        return (FileEndpoint) super.getEndpoint();
     }
 
     /**
@@ -62,13 +68,24 @@ public class FileProducer extends DefaultProducer {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating file: " + file);
         }
+        FileChannel fc = null;
         try {
-            FileChannel fc = new RandomAccessFile(file, "rw").getChannel();
-            fc.position(fc.size());
+            if (getEndpoint().isAppend()) {
+                fc = new RandomAccessFile(file, "rw").getChannel();
+                fc.position(fc.size());
+            }
+            else {
+                fc = new FileOutputStream(file).getChannel();
+            }
             fc.write(payload);
-            fc.close();
-        } catch (Throwable e) {
+        }
+        catch (Throwable e) {
             LOG.error("Failed to write to File: " + file, e);
+        }
+        finally {
+            if (fc != null) {
+                fc.close();
+            }
         }
     }
 

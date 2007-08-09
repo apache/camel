@@ -43,6 +43,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     private boolean lock = true;
     private boolean delete;
     private boolean noop;
+    private boolean append = true;
     private String moveNamePrefix;
     private String moveNamePostfix;
     private String[] excludedNamePrefixes = {"."};
@@ -204,6 +205,20 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      */
     public void setNoop(boolean noop) {
         this.noop = noop;
+    }
+
+    public boolean isAppend() {
+        return append;
+    }
+
+    /**
+     * When writing do we append to the end of the file, or replace it?
+     * The default is to append
+     *
+     * @param append whether to append (or replace)
+     */
+    public void setAppend(boolean append) {
+        this.append = append;
     }
 
     /**
