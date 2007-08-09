@@ -16,18 +16,19 @@
  */
 package org.apache.camel.util;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A number of useful helper methods for working with Objects
@@ -336,7 +337,7 @@ public class ObjectHelper {
 
     /**
      * Converts primitive types such as int to its wrapper type like
-     * {@link Integeer}
+     * {@link Integer}
      */
     public static Class convertPrimitiveTypeToWrapperType(Class type) {
         Class rc = type;
@@ -358,4 +359,10 @@ public class ObjectHelper {
         return rc;
     }
 
+    /**
+     * Helper method to return the default character set name
+     */
+    public static String getDefaultCharacterSet() {
+        return Charset.defaultCharset().name();
+    }
 }
