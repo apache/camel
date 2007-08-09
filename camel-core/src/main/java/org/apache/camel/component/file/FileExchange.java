@@ -50,7 +50,7 @@ public class FileExchange extends DefaultExchange {
         this.file = file;
     }
 
-    public Exchange copy() {
+    public Exchange newInstance() {
         return new FileExchange(getContext(), getFile());
     }
 }
