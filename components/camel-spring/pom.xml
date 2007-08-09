@@ -118,25 +118,13 @@
         </configuration>
       </plugin>
 
-      <!-- lets distribute the test cases as a jar -->
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
-          <id>process-sources</id>
-          <phase>process-sources</phase>
+            <id>process-sources</id>
+            <phase>process-sources</phase>
             <configuration>
               <tasks>
                 <echo>Copying to code together for the XSD generation</echo>
@@ -182,6 +170,20 @@
               <goal>run</goal>
             </goals>
           </execution>
+
+          <execution>
+            <id>package</id>
+            <phase>package</phase>
+            <configuration>
+              <tasks>
+                <echo>Deleting unwanted resources from the test-jar</echo>
+                <delete file="${project.build.directory}/test-classes/log4j.properties" verbose="true"/>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
         </executions>
         <dependencies>
           <dependency>
@@ -191,6 +193,27 @@
           </dependency>
         </dependencies>
       </plugin>
+
+
+      <!-- generate the attached tests jar -->
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <!-- TODO: this doesn't work - if ever we can figure out the maven ninja to get it working -->
+          <!-- TODO: we can zap the Ant package phase stuff above -->
+          <excludes>
+            <exclude>**/*/log4j.properties</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
 
       <plugin>
         <groupId>com.sun.tools.jxc.maven2</groupId>
