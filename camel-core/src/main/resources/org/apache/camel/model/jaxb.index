@@ -19,6 +19,7 @@ BeanRef
 CatchType
 ChoiceType
 DelayerType
+ExceptionType
 FilterType
 FinallyType
 FromType

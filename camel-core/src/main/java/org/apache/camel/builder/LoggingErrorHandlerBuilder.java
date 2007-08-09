@@ -20,6 +20,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.LoggingLevel;
+import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -28,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class LoggingErrorHandlerBuilder implements ErrorHandlerBuilder {
+public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     private Log log = LogFactory.getLog(Logger.class);
     private LoggingLevel level = LoggingLevel.INFO;
 
@@ -52,7 +53,9 @@ public class LoggingErrorHandlerBuilder implements ErrorHandlerBuilder {
     }
 
     public Processor createErrorHandler(Processor processor) {
-        return new LoggingErrorHandler(processor, log, level);
+        LoggingErrorHandler handler = new LoggingErrorHandler(processor, log, level);
+        configure(handler);
+        return handler;
     }
 
     public LoggingLevel getLevel() {

@@ -421,13 +421,19 @@ public abstract class ProcessorType {
 
     public InterceptType intercept() {
         InterceptType answer = new InterceptType();
-        getOutputs().add(answer);
+        addOutput(answer);
         return answer;
     }
 
     public ProcessorType proceed() {
-        getOutputs().add(new ProceedType());
+        addOutput(new ProceedType());
         return this;
+    }
+
+    public ExceptionType exception(Class exceptionType) {
+        ExceptionType answer = new ExceptionType(exceptionType);
+        addOutput(answer);
+        return answer;
     }
 
     /**
@@ -435,7 +441,7 @@ public abstract class ProcessorType {
      */
     public OtherwiseType intercept(Predicate predicate) {
         InterceptType answer = new InterceptType();
-        getOutputs().add(answer);
+        addOutput(answer);
         return answer.when(predicate);
     }
 

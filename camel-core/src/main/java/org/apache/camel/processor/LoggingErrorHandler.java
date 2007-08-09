@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision$
  */
-public class LoggingErrorHandler extends ServiceSupport implements ErrorHandler {
+public class LoggingErrorHandler extends ErrorHandlerSupport {
     private Processor output;
     private Log log;
     private LoggingLevel level;
@@ -51,8 +51,10 @@ public class LoggingErrorHandler extends ServiceSupport implements ErrorHandler 
     public void process(Exchange exchange) throws Exception {
         try {
             output.process(exchange);
-        } catch (RuntimeException e) {
-            logError(exchange, e);
+        } catch (Throwable e) {
+            if (!customProcessorForException(exchange, e)) {
+                logError(exchange, e);
+            }
         }
     }
 
@@ -84,7 +86,7 @@ public class LoggingErrorHandler extends ServiceSupport implements ErrorHandler 
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    protected void logError(Exchange exchange, RuntimeException e) {
+    protected void logError(Exchange exchange, Throwable e) {
         switch (level) {
         case DEBUG:
             if (log.isDebugEnabled()) {
@@ -122,7 +124,7 @@ public class LoggingErrorHandler extends ServiceSupport implements ErrorHandler 
         }
     }
 
-    protected Object logMessage(Exchange exchange, RuntimeException e) {
+    protected Object logMessage(Exchange exchange, Throwable e) {
         return e + " while processing exchange: " + exchange;
     }
 

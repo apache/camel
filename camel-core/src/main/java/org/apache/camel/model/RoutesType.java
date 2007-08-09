@@ -51,6 +51,8 @@ public class RoutesType implements RouteContainer {
     @XmlTransient
     private List<InterceptType> intercepts = new ArrayList<InterceptType>();
     @XmlTransient
+    private List<ExceptionType> exceptions = new ArrayList<ExceptionType>();
+    @XmlTransient
     private CamelContext camelContext;
 
     @Override
@@ -88,6 +90,14 @@ public class RoutesType implements RouteContainer {
 
     public void setIntercepts(List<InterceptType> intercepts) {
         this.intercepts = intercepts;
+    }
+
+    public List<ExceptionType> getExceptions() {
+        return exceptions;
+    }
+
+    public void setExceptions(List<ExceptionType> exceptions) {
+        this.exceptions = exceptions;
     }
 
     public CamelContext getCamelContext() {
@@ -139,6 +149,7 @@ public class RoutesType implements RouteContainer {
         route.setInheritErrorHandlerFlag(getInheritErrorHandlerFlag());
         route.getInterceptors().addAll(getInterceptors());
         route.getOutputs().addAll(getIntercepts());
+        route.getOutputs().addAll(getExceptions());
         getRoutes().add(route);
         return route;
     }
@@ -160,4 +171,9 @@ public class RoutesType implements RouteContainer {
         return answer.when(predicate);
     }
 
+    public ExceptionType exception(Class exceptionType) {
+        ExceptionType answer = new ExceptionType(exceptionType);
+        getExceptions().add(answer);
+        return answer;
+    }
 }

@@ -72,13 +72,13 @@ public class TryType extends OutputType {
     // -------------------------------------------------------------------------
     public CatchType handle(Class<?> exceptionType) {
         CatchType answer = new CatchType(exceptionType);
-        getOutputs().add(answer);
+        addOutput(answer);
         return answer;
     }
 
     public FinallyType handleAll() {
         FinallyType answer = new FinallyType();
-        getOutputs().add(answer);
+        addOutput(answer);
         return answer;
     }
 

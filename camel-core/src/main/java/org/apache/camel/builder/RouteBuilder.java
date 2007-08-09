@@ -26,6 +26,7 @@ import org.apache.camel.model.OtherwiseType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.RoutesType;
+import org.apache.camel.model.ExceptionType;
 import org.apache.camel.processor.DelegateProcessor;
 
 import java.util.ArrayList;
@@ -121,6 +122,13 @@ public abstract class RouteBuilder extends BuilderSupport {
      */
     public OtherwiseType intercept(Predicate predicate) {
         return routeCollection.intercept(predicate);
+    }
+
+    /**
+     * Adds an exception handler route for the given exception type
+     */
+    public ExceptionType exception(Class exceptionType) {
+        return routeCollection.exception(exceptionType);
     }
 
     // Properties
