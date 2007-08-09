@@ -16,39 +16,40 @@
  */
 package org.apache.camel.builder.saxon;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Node;
-
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.StaticQueryContext;
 import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.trans.XPathException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.BytesSource;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.util.ObjectHelper;
+import org.w3c.dom.Node;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Creates an XQuery builder
@@ -147,8 +148,8 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
         }
     }
 
-    // Builder methods
-    // -------------------------------------------------------------------------
+    // Static helper methods
+    //-------------------------------------------------------------------------
     public static <E extends Exchange> XQueryBuilder<E> xquery(final String queryText) {
         return new XQueryBuilder<E>() {
             protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext) throws XPathException {
@@ -173,6 +174,25 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
         };
     }
 
+    public static <E extends Exchange> XQueryBuilder<E> xquery(File file, String characterSet) throws FileNotFoundException {
+        return xquery(IOConverter.toInputStream(file), characterSet);
+    }
+
+    public static <E extends Exchange> XQueryBuilder<E> xquery(URL url, String characterSet) throws IOException {
+        return xquery(IOConverter.toInputStream(url), characterSet);
+    }
+
+    public static <E extends Exchange> XQueryBuilder<E> xquery(File file) throws FileNotFoundException {
+        return xquery(IOConverter.toInputStream(file), ObjectHelper.getDefaultCharacterSet());
+    }
+
+    public static <E extends Exchange> XQueryBuilder<E> xquery(URL url) throws IOException {
+        return xquery(IOConverter.toInputStream(url), ObjectHelper.getDefaultCharacterSet());
+    }
+
+
+    // Fluent API
+    // -------------------------------------------------------------------------
     public XQueryBuilder<E> asBytes() {
         setResultsFormat(ResultFormat.Bytes);
         return this;
