@@ -16,25 +16,31 @@
  */
 package org.apache.camel.impl;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.camel.Service;
+import org.apache.camel.util.ServiceHelper;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A useful base class which ensures that a service is only initialized once and
  * provides some helper methods for enquiring of its status
- * 
+ *
  * @version $Revision$
  */
 public abstract class ServiceSupport implements Service {
     private static int threadCounter;
-
     private AtomicBoolean started = new AtomicBoolean(false);
     private AtomicBoolean stopping = new AtomicBoolean(false);
     private AtomicBoolean stopped = new AtomicBoolean(false);
+    private Collection childServices;
 
     public void start() throws Exception {
         if (started.compareAndSet(false, true)) {
+            if (childServices != null) {
+                ServiceHelper.startServices(childServices);
+            }
             doStart();
         }
     }
@@ -43,7 +49,11 @@ public abstract class ServiceSupport implements Service {
         if (started.get() && stopping.compareAndSet(false, true)) {
             try {
                 doStop();
-            } finally {
+            }
+            finally {
+                if (childServices != null) {
+                    ServiceHelper.stopServices(childServices);
+                }
                 stopped.set(true);
                 started.set(false);
                 stopping.set(false);
@@ -85,5 +95,21 @@ public abstract class ServiceSupport implements Service {
 
     protected static synchronized int nextThreadCounter() {
         return ++threadCounter;
+    }
+
+    protected void addChildService(Object childService) {
+        if (childServices == null) {
+            childServices = new ArrayList();
+        }
+        childServices.add(childService);
+    }
+
+    protected boolean removeChildService(Object childService) {
+        if (childServices != null) {
+            return childServices.remove(childService);
+        }
+        else {
+            return false;
+        }
     }
 }

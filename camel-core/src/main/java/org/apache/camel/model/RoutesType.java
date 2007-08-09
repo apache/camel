@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
+import org.apache.camel.Predicate;
 import org.apache.camel.processor.DelegateProcessor;
 
 /**
@@ -46,7 +47,9 @@ public class RoutesType implements RouteContainer {
     @XmlElementRef
     private List<RouteType> routes = new ArrayList<RouteType>();
     @XmlTransient
-    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
+    @XmlTransient
+    private List<InterceptType> intercepts = new ArrayList<InterceptType>();
     @XmlTransient
     private CamelContext camelContext;
 
@@ -71,12 +74,20 @@ public class RoutesType implements RouteContainer {
         this.routes = routes;
     }
 
-    public List<InterceptorRef> getInterceptors() {
+    public List<InterceptorType> getInterceptors() {
         return interceptors;
     }
 
-    public void setInterceptors(List<InterceptorRef> interceptors) {
+    public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
+    }
+
+    public List<InterceptType> getIntercepts() {
+        return intercepts;
+    }
+
+    public void setIntercepts(List<InterceptType> intercepts) {
+        this.intercepts = intercepts;
     }
 
     public CamelContext getCamelContext() {
@@ -97,16 +108,26 @@ public class RoutesType implements RouteContainer {
 
     // Fluent API
     //-------------------------------------------------------------------------
+
+    /**
+     * Creates a new route
+     */
     public RouteType route() {
         RouteType route = new RouteType();
         return route(route);
     }
 
+    /**
+     * Creates a new route from the given URI input
+     */
     public RouteType from(String uri) {
         RouteType route = new RouteType(uri);
         return route(route);
     }
 
+    /**
+     * Creates a new route from the given endpoint
+     */
     public RouteType from(Endpoint endpoint) {
         RouteType route = new RouteType(endpoint);
         return route(route);
@@ -117,7 +138,7 @@ public class RoutesType implements RouteContainer {
         route.setCamelContext(getCamelContext());
         route.setInheritErrorHandlerFlag(getInheritErrorHandlerFlag());
         route.getInterceptors().addAll(getInterceptors());
-
+        route.getOutputs().addAll(getIntercepts());
         getRoutes().add(route);
         return route;
     }
@@ -126,4 +147,17 @@ public class RoutesType implements RouteContainer {
         getInterceptors().add(new InterceptorRef(interceptor));
         return this;
     }
+    
+    public InterceptType intercept() {
+        InterceptType answer = new InterceptType();
+        getIntercepts().add(answer);
+        return answer;
+    }
+
+    public OtherwiseType intercept(Predicate predicate) {
+        InterceptType answer = new InterceptType();
+        getIntercepts().add(answer);
+        return answer.when(predicate);
+    }
+
 }

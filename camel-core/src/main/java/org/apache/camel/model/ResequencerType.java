@@ -39,8 +39,8 @@ import org.apache.camel.processor.Resequencer;
  */
 @XmlRootElement(name = "resequencer")
 public class ResequencerType extends ProcessorType {
-    @XmlElement(required = false)
-    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+    @XmlElementRef
+    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     @XmlElementRef
     private List<ExpressionType> expressions = new ArrayList<ExpressionType>();
     @XmlElementRef
@@ -64,11 +64,11 @@ public class ResequencerType extends ProcessorType {
         return expressions;
     }
 
-    public List<InterceptorRef> getInterceptors() {
+    public List<InterceptorType> getInterceptors() {
         return interceptors;
     }
 
-    public void setInterceptors(List<InterceptorRef> interceptors) {
+    public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
     }
 

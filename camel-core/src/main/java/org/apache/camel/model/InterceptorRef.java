@@ -30,7 +30,7 @@ import org.apache.camel.processor.DelegateProcessor;
  */
 @XmlRootElement(name = "interceptor")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InterceptorRef {
+public class InterceptorRef extends InterceptorType {
     @XmlAttribute(required = true)
     private String ref;
     @XmlTransient

@@ -16,17 +16,21 @@
  */
 package org.apache.camel.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Predicate;
 import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.InterceptType;
+import org.apache.camel.model.OtherwiseType;
+import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.RoutesType;
 import org.apache.camel.processor.DelegateProcessor;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A <a href="http://activemq.apache.org/camel/dsl.html">Java DSL</a> which is
@@ -54,10 +58,16 @@ public abstract class RouteBuilder extends BuilderSupport {
      */
     public abstract void configure() throws Exception;
 
+    /**
+     * Creates a new route from the given URI input
+     */
     public RouteType from(String uri) {
         return routeCollection.from(uri);
     }
 
+    /**
+     * Creates a new route from the given endpoint
+     */
     public RouteType from(Endpoint endpoint) {
         return routeCollection.from(endpoint);
     }
@@ -87,9 +97,30 @@ public abstract class RouteBuilder extends BuilderSupport {
         return this;
     }
 
+    /**
+     * Adds the given interceptor to this route
+     */
     public RouteBuilder intercept(DelegateProcessor interceptor) {
         routeCollection.intercept(interceptor);
         return this;
+    }
+
+    /**
+     * Adds a route for an interceptor; use the {@link ProcessorType#proceed()} method
+     * to continue processing the underying route being intercepted.
+     *
+     * @return
+     */
+    public InterceptType intercept() {
+        return routeCollection.intercept();
+    }
+
+    /**
+     * Applies a route for an interceptor if the given predicate is true
+     * otherwise the interceptor route is not applied
+     */
+    public OtherwiseType intercept(Predicate predicate) {
+        return routeCollection.intercept(predicate);
     }
 
     // Properties

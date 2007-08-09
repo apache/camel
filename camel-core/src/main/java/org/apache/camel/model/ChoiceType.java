@@ -40,8 +40,8 @@ import org.apache.camel.processor.FilterProcessor;
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceType extends ProcessorType {
-    @XmlElement(required = false)
-    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+    @XmlElementRef
+    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     @XmlElementRef
     private List<WhenType> whenClauses = new ArrayList<WhenType>();
     @XmlElement(required = false)
@@ -76,6 +76,11 @@ public class ChoiceType extends ProcessorType {
         OtherwiseType answer = new OtherwiseType();
         setOtherwise(answer);
         return answer;
+    }
+
+    public ChoiceType proceed() {
+        super.proceed();
+        return this;
     }
 
     public ChoiceType to(Endpoint endpoint) {
@@ -132,11 +137,11 @@ public class ChoiceType extends ProcessorType {
         this.otherwise = otherwise;
     }
 
-    public List<InterceptorRef> getInterceptors() {
+    public List<InterceptorType> getInterceptors() {
         return interceptors;
     }
 
-    public void setInterceptors(List<InterceptorRef> interceptors) {
+    public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
     }
 }

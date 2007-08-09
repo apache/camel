@@ -38,8 +38,8 @@ import org.apache.camel.processor.FilterProcessor;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExpressionNode extends ProcessorType {
-    @XmlElement(required = false)
-    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+    @XmlElementRef
+    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     @XmlElementRef
     private ExpressionType expression;
     @XmlElementRef
@@ -60,11 +60,11 @@ public class ExpressionNode extends ProcessorType {
         setExpression(new ExpressionType(predicate));
     }
 
-    public List<InterceptorRef> getInterceptors() {
+    public List<InterceptorType> getInterceptors() {
         return interceptors;
     }
 
-    public void setInterceptors(List<InterceptorRef> interceptors) {
+    public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
     }
 

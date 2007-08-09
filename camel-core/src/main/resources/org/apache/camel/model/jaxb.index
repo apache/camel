@@ -23,9 +23,12 @@ FilterType
 FinallyType
 FromType
 IdempotentConsumerType
+InterceptType
+InterceptorRef
 MulticastType
 OtherwiseType
 PolicyRef
+ProceedType
 ProcessorRef
 RecipientListType
 ResequencerType

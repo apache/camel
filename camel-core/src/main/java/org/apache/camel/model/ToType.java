@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlElementRef;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
@@ -44,8 +45,8 @@ public class ToType extends ProcessorType {
     private String uri;
     @XmlAttribute
     private String ref;
-    @XmlElement(required = false)
-    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+    @XmlElementRef
+    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     @XmlTransient
     private Endpoint endpoint;
 
@@ -119,11 +120,11 @@ public class ToType extends ProcessorType {
         return Collections.EMPTY_LIST;
     }
 
-    public List<InterceptorRef> getInterceptors() {
+    public List<InterceptorType> getInterceptors() {
         return interceptors;
     }
 
-    public void setInterceptors(List<InterceptorRef> interceptors) {
+    public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
     }
 }

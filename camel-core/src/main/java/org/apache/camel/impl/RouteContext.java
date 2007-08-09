@@ -28,7 +28,9 @@ import org.apache.camel.Route;
 import org.apache.camel.model.FromType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.processor.Interceptor;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.processor.ProceedProcessor;
 
 /**
  * The context used to activate new routing rules
@@ -41,6 +43,7 @@ public class RouteContext {
     private final Collection<Route> routes;
     private Endpoint endpoint;
     private List<Processor> eventDrivenProcessors = new ArrayList<Processor>();
+    private Interceptor lastInterceptor;
 
     public RouteContext(RouteType route, FromType from, Collection<Route> routes) {
         this.route = route;
@@ -121,5 +124,19 @@ public class RouteContext {
 
     public void addEventDrivenProcessor(Processor processor) {
         eventDrivenProcessors.add(processor);
+    }
+
+    public void intercept(Interceptor interceptor) {
+        getRoute().intercept(interceptor);
+        lastInterceptor = interceptor;
+    }
+
+    public Processor createProceedProcessor() {
+        if (lastInterceptor == null) {
+            throw new IllegalArgumentException("Cannot proceed() from outside of an interceptor!");
+        }
+        else {
+            return new ProceedProcessor(lastInterceptor);
+        }
     }
 }
