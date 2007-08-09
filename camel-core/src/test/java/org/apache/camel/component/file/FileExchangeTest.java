@@ -40,6 +40,18 @@ public class FileExchangeTest extends ContextTestSupport {
         assertNotNull("Should have a body!", body);
     }
 
+    public void testCopyAfterBodyChanged() throws Exception {
+        FileExchange original = new FileExchange(context, file);
+        Object expectedBody = 1234;
+        original.getIn().setBody(expectedBody);
+        Exchange exchange = original.copy();
+        FileExchange copy = assertIsInstanceOf(FileExchange.class, exchange);
+        assertEquals("File", file, copy.getFile());
+        Object body = copy.getIn().getBody();
+        assertNotNull("Should have a body!", body);
+        assertEquals("Copied exchange in body", expectedBody, body);
+    }
+
     public void testPipelineCopy() throws Exception {
         Processor myProcessor = new Processor() {
             public void process(Exchange exchange) throws Exception {
