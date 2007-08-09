@@ -58,32 +58,14 @@
 
   <build>
     <plugins>
+
+      <!-- allows the example to be ran via 'mvn compile exec:java' -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <phase>install</phase>
-          </execution>
-        </executions>
         <configuration>
           <mainClass>org.apache.camel.example.jmstofile.CamelJmsToFileExample</mainClass>
-
-          <arguments>
-            <!--<argument>argument1</argument>-->
-          </arguments>
-
-          <systemProperties>
-<!--
-            <systemProperty>
-              <key>myproperty</key>
-              <value>myvalue</value>
-            </systemProperty>
--->
-          </systemProperties>
+          <includePluginDependencies>false</includePluginDependencies>
         </configuration>
       </plugin>
     </plugins>
