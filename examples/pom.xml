@@ -29,12 +29,39 @@
   <description>Camel Examples</description>
   <packaging>pom</packaging>
 
+  <repositories>
+    <!-- this should not be required as its syncd to ibiblio -->
+    <repository>
+      <id>apache.m2.repo</id>
+      <name>Apache Maven2 Repository</name>
+      <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
+    </repository>
+    <repository>
+      <id>logicblaze.repo</id>
+      <name>LogicBlaze Repository</name>
+      <url>http://repo.logicblaze.com/maven2-all</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <!-- this should not be required as its syncd to ibiblio -->
+    <pluginRepository>
+      <id>apache.m2.repo</id>
+      <name>Apache Maven2 Repository</name>
+      <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>logicblaze.repo</id>
+      <name>LogicBlaze Repository</name>
+      <url>http://repo.logicblaze.com/maven2-all</url>
+    </pluginRepository>
+  </pluginRepositories>
+
   <modules>
     <module>camel-example-jms-file</module>
     <module>camel-example-spring</module>
     <module>camel-example-etl</module>
     <module>camel-example-bam</module>
-    <!--<module>camel-example-osgi</module>-->
   </modules>
 
 </project>
