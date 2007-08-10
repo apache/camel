@@ -77,7 +77,10 @@ public class JmsMessage extends DefaultMessage {
 
     public Object getHeader(String name) {
         Object answer = null;
-        if (jmsMessage != null) {
+        
+        // we will exclude using JMS-prefixed headers here to avoid strangeness with some JMS providers
+        // e.g. ActiveMQ returns the String not the Destination type for "JMSReplyTo"!
+        if (jmsMessage != null && !name.startsWith("JMS")) {
             try {
                 answer = jmsMessage.getObjectProperty(name);
             } catch (JMSException e) {

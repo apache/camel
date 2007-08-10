@@ -20,42 +20,46 @@ import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComponent;
-import org.apache.camel.component.jms.JmsExchange;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.mock.AssertionClause;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.jms.Message;
 import javax.jms.Destination;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @version $Revision: 538973 $
  */
-public class ActiveMQJmsHeaderRouteTest extends ContextTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(ActiveMQJmsHeaderRouteTest.class);
+public class ActiveMQReplyToHeaderUsingConverterTest extends ContextTestSupport {
+    private static final transient Log LOG = LogFactory.getLog(ActiveMQReplyToHeaderUsingConverterTest.class);
 
     protected Object expectedBody = "<time>" + new Date() + "</time>";
-    protected ActiveMQQueue replyQueue = new ActiveMQQueue("test.reply.queue");
+    protected String replyQueueName = "queue://test.my.reply.queue";
     protected String correlationID = "ABC-123";
     protected String messageType = getClass().getName();
 
-    public void testForwardingAMessageAcrossJMSKeepingCustomJMSHeaders() throws Exception {
+    public void testSendingAMessageFromCamelSetsCustomJmsHeaders() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
 
         resultEndpoint.expectedBodiesReceived(expectedBody);
-        AssertionClause firstMessageExpectations = resultEndpoint.message(0);
-        firstMessageExpectations.header("cheese").isEqualTo(123);
-        firstMessageExpectations.header("JMSReplyTo").isEqualTo(replyQueue);
-        firstMessageExpectations.header("JMSCorrelationID").isEqualTo(correlationID);
-        firstMessageExpectations.header("JMSType").isEqualTo(messageType);
+        AssertionClause firstMessage = resultEndpoint.message(0);
+        firstMessage.header("cheese").isEqualTo(123);
+        firstMessage.header("JMSCorrelationID").isEqualTo(correlationID);
+        firstMessage.header("JMSReplyTo").isEqualTo(ActiveMQConverter.toDestination(replyQueueName));
+        firstMessage.header("JMSType").isEqualTo(messageType);
 
-        template.sendBodyAndHeader("activemq:test.a", expectedBody, "cheese", 123);
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put("cheese", 123);
+        headers.put("JMSReplyTo", replyQueueName);
+        headers.put("JMSCorrelationID", correlationID);
+        headers.put("JMSType", messageType);
+        template.sendBodyAndHeaders("activemq:test.a", expectedBody, headers);
 
         resultEndpoint.assertIsSatisfied();
 
@@ -64,7 +68,7 @@ public class ActiveMQJmsHeaderRouteTest extends ContextTestSupport {
         Object replyTo = exchange.getIn().getHeader("JMSReplyTo");
         LOG.info("Reply to is: " + replyTo);
         Destination destination = assertIsInstanceOf(Destination.class, replyTo);
-        assertEquals("ReplyTo", replyQueue.toString(), destination.toString());
+        assertEquals("ReplyTo", replyQueueName, destination.toString());
     }
 
     protected CamelContext createCamelContext() throws Exception {
@@ -80,16 +84,7 @@ public class ActiveMQJmsHeaderRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:test.a").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // lets set the custom JMS headers using the JMS API
-                        JmsExchange jmsExchange = assertIsInstanceOf(JmsExchange.class, exchange);
-                        Message inMessage = jmsExchange.getInMessage();
-                        inMessage.setJMSReplyTo(replyQueue);
-                        inMessage.setJMSCorrelationID(correlationID);
-                        inMessage.setJMSType(messageType);
-                    }
-                }).to("activemq:test.b");
+                from("activemq:test.a").to("activemq:test.b");
 
                 from("activemq:test.b").to("mock:result");
             }
