@@ -107,6 +107,23 @@ public class JmsMessage extends DefaultMessage {
     @Override
     protected void populateInitialHeaders(Map<String, Object> map) {
         if (jmsMessage != null) {
+            // lets populate the standard JMS message headers
+            try {
+                map.put("JMSCorrelationID", jmsMessage.getJMSCorrelationID());
+                map.put("JMSDeliveryMode", jmsMessage.getJMSDeliveryMode());
+                map.put("JMSDestination", jmsMessage.getJMSDestination());
+                map.put("JMSExpiration", jmsMessage.getJMSExpiration());
+                map.put("JMSMessageID", jmsMessage.getJMSMessageID());
+                map.put("JMSPriority", jmsMessage.getJMSPriority());
+                map.put("JMSRedelivered", jmsMessage.getJMSRedelivered());
+                map.put("JMSReplyTo", jmsMessage.getJMSReplyTo());
+                map.put("JMSTimestamp", jmsMessage.getJMSTimestamp());
+                map.put("JMSType", jmsMessage.getJMSType());
+            }
+            catch (JMSException e) {
+                throw new MessageJMSPropertyAccessException(e);
+            }
+
             Enumeration names;
             try {
                 names = jmsMessage.getPropertyNames();
