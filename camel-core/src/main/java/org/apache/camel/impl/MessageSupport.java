@@ -69,10 +69,14 @@ public abstract class MessageSupport implements Message {
 
     public Message copy() {
         Message answer = newInstance();
-        answer.setMessageId(getMessageId());
-        answer.setBody(getBody());
-        answer.getHeaders().putAll(getHeaders());
+        answer.copyFrom(this);
         return answer;
+    }
+
+    public void copyFrom(Message that) {
+        setMessageId(that.getMessageId());
+        setBody(that.getBody());
+        getHeaders().putAll(that.getHeaders());
     }
 
     public Exchange getExchange() {

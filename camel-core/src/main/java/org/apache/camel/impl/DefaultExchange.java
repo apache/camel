@@ -59,10 +59,31 @@ public class DefaultExchange implements Exchange {
             return;
         }
         setProperties(safeCopy(exchange.getProperties()));
-        setIn(safeCopy(exchange.getIn()));
-        setOut(safeCopy(exchange.getOut()));
-        setFault(safeCopy(exchange.getFault()));
+
+        // this can cause strangeness if we copy, say, a FileMessage onto an FtpExchange with overloaded getExchange() methods etc.
+
+        safeCopy(getIn(), exchange, exchange.getIn());
+        Message copyOut = exchange.getOut();
+        if (copyOut != null) {
+            safeCopy(getOut(true), exchange, copyOut);
+        }
+        Message copyFault = exchange.getFault();
+        if (copyFault != null) {
+            safeCopy(getFault(), exchange, copyFault);
+        }
+
+/*
+        setIn(safeCopy(exchange, exchange.getIn()));
+        setOut(safeCopy(exchange, exchange.getOut()));
+        setFault(safeCopy(exchange, exchange.getFault()));
+*/
         setException(exchange.getException());
+    }
+
+    private static void safeCopy(Message message, Exchange exchange, Message that) {
+        if (message != null) {
+            message.copyFrom(that);
+        }
     }
 
     private static Map<String, Object> safeCopy(Map<String, Object> properties) {
@@ -72,11 +93,16 @@ public class DefaultExchange implements Exchange {
         return new HashMap<String, Object>(properties);
     }
 
-    private static Message safeCopy(Message message) {
+    private static Message safeCopy(Exchange exchange, Message message) {
         if (message == null) {
             return null;
         }
-        return message.copy();
+        Message answer = message.copy();
+        if (answer instanceof MessageSupport) {
+            MessageSupport messageSupport = (MessageSupport) answer;
+            messageSupport.setExchange(exchange);
+        }
+        return answer;
     }
 
     public Exchange newInstance() {
