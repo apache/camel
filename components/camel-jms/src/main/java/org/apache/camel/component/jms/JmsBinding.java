@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.jms;
 
-import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import org.apache.camel.Exchange;
+import org.apache.camel.util.ExchangeHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.jms.BytesMessage;
+import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
@@ -30,8 +30,11 @@ import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
-
-import org.apache.camel.Exchange;
+import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A Strategy used to convert between a Camel {@JmsExchange} and {@JmsMessage}
@@ -40,6 +43,8 @@ import org.apache.camel.Exchange;
  * @version $Revision$
  */
 public class JmsBinding {
+    private static final transient Log LOG = LogFactory.getLog(JmsBinding.class);
+
     /**
      * Extracts the body from the JMS message
      * 
@@ -89,7 +94,29 @@ public class JmsBinding {
         for (Map.Entry<String, Object> entry : entries) {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
-            if (shouldOutputHeader(in, headerName, headerValue)) {
+            
+            if (headerName.startsWith("JMS")) {
+                if (headerName.equals("JMSCorrelationID")) {
+                    jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
+                }
+                else if (headerName.equals("JMSCorrelationID")) {
+                    jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
+                }
+                else if (headerName.equals("JMSReplyTo")) {
+                    jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class, headerValue));
+                }
+                else if (headerName.equals("JMSType")) {
+                    jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
+                }
+                else if (LOG.isDebugEnabled()) {
+                    // The following properties are set by the MessageProducer
+                    //   JMSDeliveryMode, JMSDestination, JMSExpiration, JMSPriority,
+                    // The following are set on the underlying JMS provider
+                    //   JMSMessageID, JMSTimestamp, JMSRedelivered
+                    LOG.debug("Ignoring JMS header: " + headerName + " with value: " + headerValue);
+                }
+            }
+            else if (shouldOutputHeader(in, headerName, headerValue)) {
                 jmsMessage.setObjectProperty(headerName, headerValue);
             }
         }
