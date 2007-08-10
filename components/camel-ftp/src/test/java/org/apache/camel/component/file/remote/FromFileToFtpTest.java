@@ -30,7 +30,7 @@ public class FromFileToFtpTest extends FtpRouteTest {
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        ftpUrl = "ftp://admin@localhost:20010/tmp2/camel?password=admin";
+        ftpUrl = "ftp://admin@localhost:20011/tmp2/camel?password=admin";
 
 
         return new RouteBuilder() {
