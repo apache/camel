@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -32,7 +33,7 @@ import java.nio.channels.FileChannel;
 
 /**
  * A {@link Producer} implementation for File
- * 
+ *
  * @version $Revision: 523016 $
  */
 public class FileProducer extends DefaultProducer {
@@ -57,6 +58,58 @@ public class FileProducer extends DefaultProducer {
     }
 
     public void process(FileExchange exchange) throws Exception {
+        InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
+        File file = createFileName(exchange);
+        buildDirectory(file);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("About to write to: " + file + " from exchange: " + exchange);
+        }
+        FileChannel fc = null;
+        try {
+            if (getEndpoint().isAppend()) {
+                fc = new RandomAccessFile(file, "rw").getChannel();
+                fc.position(fc.size());
+            }
+            else {
+                fc = new FileOutputStream(file).getChannel();
+            }
+            int size = getEndpoint().getBufferSize();
+            byte[] buffer = new byte[size];
+            ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
+            while (true) {
+                int count = in.read(buffer);
+                if (count <= 0) {
+                    break;
+                }
+                else if (count < size) {
+                    byteBuffer = ByteBuffer.wrap(buffer, 0, count);
+                    fc.write(byteBuffer);
+                    break;
+                }
+                else {
+                    fc.write(byteBuffer);
+                }
+            }
+        }
+        finally {
+            if (in != null) {
+                try {
+                    in.close();
+                }
+                catch (IOException e) {
+                    LOG.warn("Failed to close input: " + e, e);
+                }
+            }
+            if (fc != null) {
+                try {
+                    fc.close();
+                }
+                catch (IOException e) {
+                    LOG.warn("Failed to close output: " + e, e);
+                }
+            }
+        }
+        /*
         ByteBuffer payload = exchange.getIn().getBody(ByteBuffer.class);
         if (payload == null) {
             InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
@@ -87,6 +140,7 @@ public class FileProducer extends DefaultProducer {
                 fc.close();
             }
         }
+        */
     }
 
     protected File createFileName(FileExchange exchange) {
@@ -98,13 +152,15 @@ public class FileProducer extends DefaultProducer {
             File answer = new File(endpointFile, name);
             if (answer.isDirectory()) {
                 return new File(answer, fileName);
-            } else {
+            }
+            else {
                 return answer;
             }
         }
         if (endpointFile != null && endpointFile.isDirectory()) {
             return new File(endpointFile, fileName);
-        } else {
+        }
+        else {
             return new File(fileName);
         }
     }

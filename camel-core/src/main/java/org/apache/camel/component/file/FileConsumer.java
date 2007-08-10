@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.Processor;
-import org.apache.camel.component.file.strategy.FileStrategy;
+import org.apache.camel.component.file.strategy.FileProcessStrategy;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.io.File;
 
 /**
  * @version $Revision: 523016 $
@@ -47,7 +47,8 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     protected void pollFileOrDirectory(File fileOrDirectory, boolean processDir) {
         if (!fileOrDirectory.isDirectory()) {
             pollFile(fileOrDirectory); // process the file
-        } else if (processDir) {
+        }
+        else if (processDir) {
             if (isValidFile(fileOrDirectory)) {
                 LOG.debug("Polling directory " + fileOrDirectory);
                 File[] files = fileOrDirectory.listFiles();
@@ -55,32 +56,47 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                     pollFileOrDirectory(files[i], isRecursive()); // self-recursion
                 }
             }
-        } else {
+        }
+        else {
             LOG.debug("Skipping directory " + fileOrDirectory);
         }
     }
 
     protected void pollFile(final File file) {
-        if (file.exists() && file.lastModified() > lastPollTime) {
-            if (isValidFile(file)) {
-                FileStrategy strategy = endpoint.getFileStrategy();
-                FileExchange exchange = endpoint.createExchange(file);
-
-                try {
+        if (!file.exists()) {
+            return;
+        }
+        if (isValidFile(file)) {
+            // we only care about file modified times if we are not deleting/moving files
+            if (endpoint.isNoop()) {
+                long fileModified = file.lastModified();
+                if (fileModified <= lastPollTime) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("About to process file:  " + file + " using exchange: " + exchange);
+                        LOG.debug("Ignoring file: " + file + " as modified time: " + fileModified + " less than last poll time: " + lastPollTime);
                     }
-                    if (strategy.begin(endpoint, exchange, file)) {
-                        getProcessor().process(exchange);
-                        strategy.commit(endpoint, exchange, file);
-                    } else {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug(endpoint + " cannot process file: " + file);
-                        }
-                    }
-                } catch (Throwable e) {
-                    handleException(e);
+                    return;
                 }
+            }
+
+            FileProcessStrategy processStrategy = endpoint.getFileStrategy();
+            FileExchange exchange = endpoint.createExchange(file);
+
+            try {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("About to process file:  " + file + " using exchange: " + exchange);
+                }
+                if (processStrategy.begin(endpoint, exchange, file)) {
+                    getProcessor().process(exchange);
+                    processStrategy.commit(endpoint, exchange, file);
+                }
+                else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(endpoint + " cannot process file: " + file);
+                    }
+                }
+            }
+            catch (Throwable e) {
+                handleException(e);
             }
         }
     }
@@ -103,9 +119,19 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
             }
         }
         String[] prefixes = endpoint.getExcludedNamePrefixes();
-        for (String prefix : prefixes) {
-            if (name.startsWith(prefix)) {
-                return false;
+        if (prefixes != null) {
+            for (String prefix : prefixes) {
+                if (name.startsWith(prefix)) {
+                    return false;
+                }
+            }
+        }
+        String[] postfixes = endpoint.getExcludedNamePostfixes();
+        if (postfixes != null) {
+            for (String postfix : postfixes) {
+                if (name.endsWith(postfix)) {
+                    return false;
+                }
             }
         }
         return true;

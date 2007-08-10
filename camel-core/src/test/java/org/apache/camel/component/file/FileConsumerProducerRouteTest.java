@@ -16,13 +16,29 @@
  */
 package org.apache.camel.component.file;
 
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision: 529902 $
  */
-public class FileRenameRouteTest extends FileRouteTest {
+public class FileConsumerProducerRouteTest extends ContextTestSupport {
+    public void testFileRoute() throws Exception {
+        MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        result.expectedMessageCount(2);
+        result.setDefaulResultWaitMillis(10000);
+
+        result.assertIsSatisfied();
+    }
+
     @Override
-    protected void setUp() throws Exception {
-        uri = "file:target/test-rename-inbox?moveNamePrefix=foo/";
-        super.setUp();
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("file:src/main/data?noop=true").to("file:target/test-consumer-produer-inbox");
+                from("file:target/test-consumer-produer-inbox").to("mock:result");
+            }
+        };
     }
 }
