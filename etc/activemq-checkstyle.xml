@@ -81,7 +81,9 @@ lengths, if/try depths, etc...
         </module>
         <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
         <module name="RedundantImport"/>
+        <!-- When you javadoc {@link } an import is added that checkstyle thinks is unused import.
         <module name="UnusedImports"/>
+        -->
         <module name="ImportOrder">
             <property name="groups" value="java,javax,org.w3c,org.xml,junit"/>
             <property name="ordered" value="true"/>
@@ -103,7 +105,7 @@ lengths, if/try depths, etc...
         </module>
         <module name="FileLength">
             <property name="max" value="3000"/>
-	</module>
+    </module>
         <module name="LineLength">
             <property name="max" value="200"/>
         </module>
@@ -111,9 +113,11 @@ lengths, if/try depths, etc...
             <property name="max" value="150"/>
             <property name="countEmpty" value="false"/>
         </module>
+        <!-- We should try to get this enabled soon.. 
         <module name="ParameterNumber">
             <property name="max" value="7"/>
         </module>
+        -->
 
         <!-- Checks for whitespace                               -->
         <!-- See http://checkstyle.sf.net/config_whitespace.html -->
@@ -147,9 +151,11 @@ lengths, if/try depths, etc...
         <module name="AvoidNestedBlocks">
             <property name="allowInSwitchCase" value="true"/>
         </module>
+        <!-- We use alot of emply blocks..  they can be good too.
         <module name="EmptyBlock">
             <property name="option" value="text"/>
         </module>
+        -->
         <module name="LeftCurly"/>
         <module name="NeedBraces"/>
         <module name="RightCurly"/>
@@ -181,28 +187,30 @@ lengths, if/try depths, etc...
         <module name="SimplifyBooleanReturn"/>
         <module name="StringLiteralEquality"/>
         <module name="NestedIfDepth">
-            <property name="max" value="3"/>
+            <property name="max" value="8"/>
         </module>
         <module name="NestedTryDepth">
-            <property name="max" value="3"/>
+            <property name="max" value="8"/>
         </module>
         <module name="SuperClone"/>
         <module name="SuperFinalize"/>
         <!--<module name="IllegalCatch"/>-->
-	<module name="IllegalThrows">
-	  <property name="illegalClassNames" value="java.lang.Error,java.lang.RuntimeException"/>
-	</module>
+    <module name="IllegalThrows">
+      <property name="illegalClassNames" value="java.lang.Error,java.lang.RuntimeException"/>
+    </module>
         <!--<module name="RedundantThrows"/>-->
         <module name="PackageDeclaration"/>
         <module name="JUnitTestCase"/>
         <module name="ReturnCount">
-            <property name="max" value="6"/>
+            <property name="max" value="20"/>
         </module>
-        
+
+        <!-- Um.. we tend to use these alot.. perhaps enable this check later.
         <module name="IllegalType">
             <property name="format" value="^xxx$"/>
-            <property name="illegalClassNames" value="java.util.GregorianCalendar, java.util.Hashtable, java.util.HashSet, java.util.HashMap, java.util.ArrayList, java.util.LinkedList, java.util.LinkedHashMap, java.util.LinkedHashSet, java.util.TreeSet, java.util.TreeMap"/>
+            <property name="illegalClassNames" value="java.util.GregorianCalendar, java.util.Hashtable, java.util.HashSet, java.util.HashMap, java.util.ArrayList, java.util.LinkedList, java.util.LinkedHashMap, java.util.LinkedHashSet, java.util.TreeSet, java.util.TreeMap"/> We use alot of emply blocks..  they can be good too.
         </module>
+        -->
         <module name="DeclarationOrder"/>
         <!--<module name="ParameterAssignment"/>-->
         <module name="ExplicitInitialization"/>
@@ -224,15 +232,15 @@ lengths, if/try depths, etc...
         <module name="InterfaceIsType"/>
         <module name="MutableException"/>
         <module name="ThrowsCount">
-        	<property name="max" value="5"/>
+            <property name="max" value="5"/>
         </module>
         <module name="VisibilityModifier">
             <property name="protectedAllowed" value="true"/>
             <property name="packageAllowed" value="true"/>
-			<!-- this is needed for the resource injection unit tests.  It will removed 
-			     when private member inject is supported.
-			-->
-    		<property name="publicMemberPattern" value="resource[12].*"/>
+            <!-- this is needed for the resource injection unit tests.  It will removed 
+                 when private member inject is supported.
+            -->
+            <property name="publicMemberPattern" value="resource[12].*"/>
         </module>
 
 
@@ -240,17 +248,19 @@ lengths, if/try depths, etc...
         <!-- Metrics checks.                   -->
         <!-- See http://checkstyle.sf.net/config_metrics.html -->
         <module name="BooleanExpressionComplexity">
-        	<property name="max" value="6"/>
+            <property name="max" value="6"/>
         </module>
         <!--<module name="ClassDataAbstractionCoupling"/>-->
         <!--<module name="ClassFanOutComplexity"/>-->
         <!--<module name="CyclomaticComplexity"/>-->
         <!--<module name="NPathComplexity"/>-->
+        <!-- Ah big methods aint so bad! :)
         <module name="JavaNCSS">
-       		<property name="methodMaximum" value="75"/>
+            <property name="methodMaximum" value="75"/>
         </module>
+        -->
 
-		
+        
         <!-- Miscellaneous other checks.                   -->
         <!-- See http://checkstyle.sf.net/config_misc.html -->
         <!-- 
@@ -264,17 +274,17 @@ lengths, if/try depths, etc...
         </module>
         -->
         <module name="TodoComment">
-			<property name="format" value="WARNING"/>
-		</module>
+            <property name="format" value="WARNING"/>
+        </module>
 
         <module name="UpperEll"/>
         
         <!--Assert statement may have side effects:-->
-		<module name="DescendantToken">
-    		<property name="tokens" value="LITERAL_ASSERT"/>
-		    <property name="limitedTokens" value="ASSIGN,DEC,INC,POST_DEC,POST_INC,PLUS_ASSIGN,MINUS_ASSIGN,STAR_ASSIGN,DIV_ASSIGN,MOD_ASSIGN,BSR_ASSIGN,SR_ASSIGN,SL_ASSIGN,BAND_ASSIGN,BXOR_ASSIGN,BOR_ASSIGN"/>
-		    <property name="maximumNumber" value="0"/>
-		</module>
+        <module name="DescendantToken">
+            <property name="tokens" value="LITERAL_ASSERT"/>
+            <property name="limitedTokens" value="ASSIGN,DEC,INC,POST_DEC,POST_INC,PLUS_ASSIGN,MINUS_ASSIGN,STAR_ASSIGN,DIV_ASSIGN,MOD_ASSIGN,BSR_ASSIGN,SR_ASSIGN,SL_ASSIGN,BAND_ASSIGN,BXOR_ASSIGN,BOR_ASSIGN"/>
+            <property name="maximumNumber" value="0"/>
+        </module>
  
         <!--<module name="UncommentedMain"/>-->
         <!--module name="TrailingComment"/-->
