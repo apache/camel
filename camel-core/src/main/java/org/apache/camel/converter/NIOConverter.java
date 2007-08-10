@@ -18,6 +18,10 @@ package org.apache.camel.converter;
 
 import org.apache.camel.Converter;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
@@ -51,6 +55,14 @@ public class NIOConverter {
         return ByteBuffer.wrap(data);
     }
     
+    @Converter
+    public static ByteBuffer toByteBuffer(File file) throws IOException {
+       byte[] buf = new byte[(int) file.length()];
+       InputStream in = new BufferedInputStream(new FileInputStream(file));
+       in.read(buf);
+       return ByteBuffer.wrap(buf);
+    }
+
     @Converter
     public static ByteBuffer toByteBuffer(String value) {
         ByteBuffer buf = ByteBuffer.allocate(value.length());
