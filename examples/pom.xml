@@ -37,8 +37,8 @@
       <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
     </repository>
     <repository>
-      <id>logicblaze.repo</id>
-      <name>LogicBlaze Repository</name>
+      <id>open.iona.m2-all</id>
+      <name>IONA Open Source Community Dependency Repository</name>
       <url>http://repo.logicblaze.com/maven2-all</url>
     </repository>
   </repositories>
@@ -51,8 +51,8 @@
       <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
     </pluginRepository>
     <pluginRepository>
-      <id>logicblaze.repo</id>
-      <name>LogicBlaze Repository</name>
+      <id>open.iona.m2-all</id>
+      <name>IONA Open Source Community Dependency Repository</name>
       <url>http://repo.logicblaze.com/maven2-all</url>
     </pluginRepository>
   </pluginRepositories>
@@ -63,5 +63,36 @@
     <module>camel-example-etl</module>
     <module>camel-example-bam</module>
   </modules>
+
+  <profiles>
+    <!-- 
+      This profile allows you to add a repository to the repo list so that 
+      you can test the examples out against a staged version of the camel distribution 
+    -->
+    <profile>
+      <id>add-remote-repo</id>
+      <activation>
+        <property>
+          <name>remoteRepo</name>
+        </property>
+      </activation>
+
+      <repositories>
+        <repository>
+          <id>dynamic.repo</id>
+          <name>Repository Dynamicly Added Via the Command Line</name>
+          <url>$remoteRepo</url>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>dynamic.repo</id>
+          <name>Repository Dynamicly Added Via the Command Line</name>
+          <url>$remoteRepo</url>
+        </pluginRepository>
+      </pluginRepositories>
+
+    </profile>
+  </profiles>
 
 </project>
