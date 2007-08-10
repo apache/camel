@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-parent</artifactId>
+    <version>1.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>camel-etc</artifactId>
+  <packaging>pom</packaging>
+  <name>Camel Etc</name>
+  <description>Misc stuff</description>
+
+  <properties>
+    <workspace>${basedir}../../workspace</workspace>
+  </properties>
+  <build>
+      <defaultGoal>process-test-sources</defaultGoal>
+      <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-eclipse-plugin</artifactId>
+              <inherited>false</inherited>
+              <executions>
+                  <execution>
+                      <id>setup.eclipse.workspace</id>
+                      <phase>process-test-sources</phase>
+                      <goals>
+                          <goal>add-maven-repo</goal>
+                      </goals>
+                      <configuration>
+                          <workspace>${workspace}</workspace>
+                      </configuration>
+                  </execution>
+              </executions>
+          </plugin>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-antrun-plugin</artifactId>
+              <inherited>false</inherited>
+              <dependencies>
+                  <dependency>
+                      <groupId>ant</groupId>
+                      <artifactId>ant-nodeps</artifactId>
+                      <version>1.6.5</version>
+                  </dependency>
+                  <dependency>
+                      <groupId>ant</groupId>
+                      <artifactId>ant-trax</artifactId>
+                      <version>1.6.5</version>
+                  </dependency>
+              </dependencies>
+              <executions>
+                  <execution>
+                      <id>setup.workspace</id>
+                      <phase>validate</phase>
+                      <configuration>
+                          <tasks>
+                              <path id="ecp.ws.path" location="${workspace}" />
+                              <property name="full.eclipse.workspace" refid="ecp.ws.path" />
+                              <path path="${basedir}" id="etc.path"/>
+
+                              <whichresource resource="/activemq-eclipse-pmd" property="pmd.url"><classpath refid="etc.path"/></whichresource>
+                              <whichresource resource="/activemq-pmd-ruleset.xml" property="pmdruleset.url"><classpath refid="etc.path"/></whichresource>
+                              <whichresource resource="/activemq-eclipse-checkstyle" property="eclipse.checkstyle.url"><classpath refid="etc.path"/></whichresource>
+                              <whichresource resource="/activemq-checkstyle.xml" property="checkstyle.url"><classpath refid="etc.path"/></whichresource>>
+
+                              <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings" />
+                              <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle" />
+                              <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/net.sourceforge.pmd.eclipse" />
+
+                              <get src="${checkstyle.url}" dest="${full.eclipse.workspace}/activemq-checkstyle.xml" />
+
+                              <!-- Add checkstyle config -->
+                              <copy file="${basedir}/eclipse/template.checkstyle-config.xml" tofile="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml" overwrite="no">
+                                  <filterset>
+                                      <filter token="CHECKSTYLE_CONFIG_FILE" value="${full.eclipse.workspace}/activemq-checkstyle.xml" />
+                                      <filter token="APACHE_HEADER_FILE" value="${full.eclipse.workspace}/activemq-header.txt" />
+                                  </filterset>
+                              </copy>
+
+                              <xslt style="${basedir}/eclipse/addcheckstyle.xsl" in="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml" out="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml.new">
+                                  <param name="checkstyleconfig" expression="${full.eclipse.workspace}/activemq-checkstyle.xml" />
+                              </xslt>
+                              <copy file="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml.new" tofile="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml" overwrite="yes" />
+
+
+                              <!-- Add warning flags that we want -->
+                              <propertyfile file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs">
+                                  <entry key="org.eclipse.jdt.core.compiler.problem.missingSerialVersion" value="ignore" />
+                                  <entry key="org.eclipse.jdt.core.compiler.problem.unusedImport" value="ignore" />
+                                  <entry key="org.eclipse.jdt.core.compiler.problem.annotationSuperInterface" value="ignore" />
+                                  <entry key="org.eclipse.jdt.core.compiler.problem.rawTypeReference" value="ignore" />
+                              </propertyfile>
+
+
+                              <!-- Add code format rules -->
+                              <concat destfile="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs" append="true" fixlastline="true">
+                                  <filelist dir="${basedir}/eclipse" files="org.eclipse.jdt.core.prefs" />
+                              </concat>
+                              <loadfile property="eclipse.code.format" srcFile="${basedir}/eclipse/ActiveMQCodeFormatter.xml" />
+                              <loadfile property="eclipse.code.templates" srcFile="${basedir}/eclipse/codetemplates.xml" />
+                              <propertyfile file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.ui.prefs">
+                                  <entry key="formatter_profile" value="_ActiveMQ Java Conventions" />
+                                  <entry key="org.eclipse.jdt.ui.formatterprofiles" value="${eclipse.code.format}" />
+                                  <entry key="org.eclipse.jdt.ui.text.custom_code_templates" value="${eclipse.code.templates}" />
+
+                                  <!-- Add import order -->
+                                  <entry key="org.eclipse.jdt.ui.importorder" value="java;javax;org.w3c;org.xml;w3c;" />
+                                  <!-- Sort order -->
+                                  <entry key="org.eclipse.jdt.ui.visibility.order" value="B,R,D,V," />
+                                  <entry key="outlinesortoption" value="T,SF,F,SI,I,C,SM,M," />
+                                        <entry key="org.eclipse.jdt.ui.enable.visibility.order" value="true" />
+                              </propertyfile>
+                          </tasks>
+                      </configuration>
+                      <goals>
+                          <goal>run</goal>
+                      </goals>
+                  </execution>
+              </executions>
+          </plugin>
+      </plugins>
+  </build>
+</project>
