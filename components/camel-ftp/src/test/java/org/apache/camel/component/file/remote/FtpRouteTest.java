@@ -32,11 +32,11 @@ import org.apache.ftpserver.interfaces.FtpServerContext;
  */
 public class FtpRouteTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
-    protected String startEndpointUri = "ftp://admin@localhost:20010/tmp/camel?password=admin";
+    protected String ftpUrl = "ftp://admin@localhost:20010/tmp/camel?password=admin";
     protected FtpServer ftpServer;
+    protected String expectedBody = "Hello there!";
 
-    public void testFtpRouteWithTextMessage() throws Exception {
-        String expectedBody = "Hello there!";
+    public void testFtpRoute() throws Exception {
 
         resultEndpoint.expectedBodiesReceived(expectedBody);
 
@@ -50,7 +50,7 @@ public class FtpRouteTest extends ContextTestSupport {
     }
 
     protected void sendExchange(final Object expectedBody) {
-        template.sendBodyAndHeader(startEndpointUri, expectedBody, "cheese", 123);
+        template.sendBodyAndHeader(ftpUrl, expectedBody, "cheese", 123);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class FtpRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(startEndpointUri).to("mock:result");
+                from(ftpUrl).to("mock:result");
             }
         };
     }

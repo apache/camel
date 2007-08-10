@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.impl.MessageSupport;
+
 import java.util.Map;
 
 /**
@@ -120,4 +122,8 @@ public interface Message {
      */
     Message copy();
 
+    /**
+     * Copies the contents of the other message into this message
+     */
+    void copyFrom(Message message);
 }
