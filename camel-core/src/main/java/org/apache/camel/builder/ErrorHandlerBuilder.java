@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.model.ExceptionType;
 
 import java.util.List;
 
@@ -35,5 +36,5 @@ public interface ErrorHandlerBuilder {
      */
     Processor createErrorHandler(Processor processor) throws Exception;
 
-    void addErrorHandlers(List<Class> exceptionClasses, Processor errorHandler);
+    void addErrorHandlers(ExceptionType exception);
 }

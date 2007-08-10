@@ -17,34 +17,25 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.Processor;
+import org.apache.camel.model.ExceptionType;
 import org.apache.camel.processor.ErrorHandlerSupport;
 
-import java.util.IdentityHashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @version $Revision: 1.1 $
  */
 public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
-    private Map<List<Class>, Processor> exceptionHandlers = new IdentityHashMap<List<Class>, Processor>();
+    private List<ExceptionType> exceptions = new ArrayList<ExceptionType>();
 
-    public void addErrorHandlers(List<Class> exceptionClasses, Processor errorHandler) {
-        exceptionHandlers.put(exceptionClasses, errorHandler);
+    public void addErrorHandlers(ExceptionType exception) {
+        exceptions.add(exception);
     }
 
     protected void configure(ErrorHandlerSupport handler) {
-        Set<Map.Entry<List<Class>, Processor>> entries = exceptionHandlers.entrySet();
-        for (Map.Entry<List<Class>, Processor> entry : entries) {
-            configure(handler, entry.getKey(), entry.getValue());
-        }
-    }
-
-    protected void configure(ErrorHandlerSupport handler, List<Class> exceptionTypes, Processor exceptionProcessor) {
-        for (Class exceptionType : exceptionTypes) {
-            handler.addCustomProcessor(exceptionType, exceptionProcessor);
+        for (ExceptionType exception : exceptions) {
+            handler.addExceptionPolicy(exception);
         }
     }
 }

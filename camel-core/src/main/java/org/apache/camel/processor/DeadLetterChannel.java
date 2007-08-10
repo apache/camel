@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.model.ExceptionType;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -67,10 +68,14 @@ public class DeadLetterChannel extends ErrorHandlerSupport {
         int redeliveryCounter = 0;
         long redeliveryDelay = 0;
 
+        // default behaviour which can be overloaded on a per exception basis
+        RedeliveryPolicy currentRedeliveryPolicy = redeliveryPolicy;
+        Processor failureProcessor = deadLetter;
+
         do {
             if (redeliveryCounter > 0) {
                 // Figure out how long we should wait to resend this message.
-                redeliveryDelay = redeliveryPolicy.getRedeliveryDelay(redeliveryDelay);
+                redeliveryDelay = currentRedeliveryPolicy.getRedeliveryDelay(redeliveryDelay);
                 sleep(redeliveryDelay);
             }
 
@@ -78,16 +83,23 @@ public class DeadLetterChannel extends ErrorHandlerSupport {
                 output.process(exchange);
                 return;
             } catch (Throwable e) {
-                if (customProcessorForException(exchange, e)) {
-                    return;
-                }
                 logger.log("On delivery attempt: " + redeliveryCounter + " caught: " + e, e);
+                redeliveryCounter = incrementRedeliveryCounter(exchange, e);
+
+
+                ExceptionType exceptionPolicy = getExceptionPolicy(exchange, e);
+                if (exceptionPolicy != null) {
+                    currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(currentRedeliveryPolicy);
+                    Processor processor = exceptionPolicy.getErrorHandler();
+                    if (processor != null) {
+                        failureProcessor = processor;
+                    }
+                }
             }
-            redeliveryCounter = incrementRedeliveryCounter(exchange);
-        } while (redeliveryPolicy.shouldRedeliver(redeliveryCounter));
+        } while (currentRedeliveryPolicy.shouldRedeliver(redeliveryCounter));
 
         // now lets send to the dead letter queue
-        deadLetter.process(exchange);
+        failureProcessor.process(exchange);
     }
 
     // Properties
@@ -138,7 +150,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport {
      * Increments the redelivery counter and adds the redelivered flag if the
      * message has been redelivered
      */
-    protected int incrementRedeliveryCounter(Exchange exchange) {
+    protected int incrementRedeliveryCounter(Exchange exchange, Throwable e) {
         Message in = exchange.getIn();
         Integer counter = in.getHeader(REDELIVERY_COUNTER, Integer.class);
         int next = 1;
@@ -147,6 +159,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport {
         }
         in.setHeader(REDELIVERY_COUNTER, next);
         in.setHeader(REDELIVERED, true);
+        exchange.setException(e);
         return next;
     }
 

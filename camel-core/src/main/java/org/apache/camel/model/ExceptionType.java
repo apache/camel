@@ -31,12 +31,13 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.CatchProcessor;
+import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "error")
+@XmlRootElement(name = "onException")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExceptionType extends ProcessorType {
     @XmlElementRef
@@ -47,6 +48,9 @@ public class ExceptionType extends ProcessorType {
     private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
     @XmlTransient
     private List<Class> exceptionClasses;
+    @XmlTransient
+    private Processor errorHandler;
+    private Integer retry;
 
     public ExceptionType() {
     }
@@ -62,14 +66,24 @@ public class ExceptionType extends ProcessorType {
 
     @Override
     public String toString() {
-        return "Error[ " + getExceptionClasses() + " -> " + getOutputs() + "]";
+        return "Exception[ " + getExceptionClasses() + " -> " + getOutputs() + "]";
+    }
+
+    /**
+     * Allows an exception handler to create a new redelivery policy for this exception type
+     * @param redeliveryPolicy the current redelivery policy
+     * @return a newly created redelivery policy, or return the original policy if no customization is required
+     * for this exception handler.
+     */
+    public RedeliveryPolicy createRedeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
+        return redeliveryPolicy;
     }
 
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         // lets attach a processor to an error handler
-        Processor errorHandler = routeContext.createProcessor(this);
+        errorHandler = routeContext.createProcessor(this);
         ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
-        builder.addErrorHandlers(getExceptionClasses(), errorHandler);
+        builder.addErrorHandlers(this);
     }
 
     @Override
@@ -111,6 +125,10 @@ public class ExceptionType extends ProcessorType {
 
     public void setExceptions(List<String> exceptions) {
         this.exceptions = exceptions;
+    }
+
+    public Processor getErrorHandler() {
+        return errorHandler;
     }
 
     protected List<Class> createExceptionClasses() {
