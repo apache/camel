@@ -45,7 +45,7 @@
     <dependency>
       <groupId>javax.xml</groupId>
       <artifactId>jaxb-api</artifactId>
-      <optional>true</optional>
+      <optional>false</optional>
     </dependency>
 
     <!-- for parsing the XML -->
