@@ -32,9 +32,10 @@ import org.apache.ftpserver.interfaces.FtpServerContext;
  */
 public class FtpRouteTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
-    protected String ftpUrl = "ftp://admin@localhost:20010/tmp/camel?password=admin";
+    protected String ftpUrl;
     protected FtpServer ftpServer;
     protected String expectedBody = "Hello there!";
+    protected String port = "20010";
 
     public void testFtpRoute() throws Exception {
 
@@ -55,6 +56,7 @@ public class FtpRouteTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
+        ftpUrl = createFtpUrl();
         ftpServer = createFtpServer();
         ftpServer.start();
 
@@ -80,6 +82,10 @@ public class FtpRouteTest extends ContextTestSupport {
         };
     }
 
+    protected String createFtpUrl() {
+        return "ftp://admin@localhost:" + port + "/tmp/camel?password=admin";
+    }
+
     protected FtpServer createFtpServer() throws Exception {
         // get the configuration object
         Properties properties = createFtpServerProperties();
@@ -95,7 +101,7 @@ public class FtpRouteTest extends ContextTestSupport {
     protected Properties createFtpServerProperties() {
         Properties properties = new Properties();
         //properties.setProperty("config.data-connection.passive.ports", "20010");
-        properties.setProperty("config.listeners.default.port", "20010");
+        properties.setProperty("config.listeners.default.port", port);
         properties.setProperty("config.create-default-user", "true");
         return properties;
     }

@@ -29,10 +29,12 @@ public class FromFileToFtpTest extends FtpRouteTest {
         resultEndpoint.assertIsSatisfied();
     }
 
+    protected String createFtpUrl() {
+        port = "20011";
+        return "ftp://admin@localhost:" + port + "/tmp2/camel?password=admin";
+    }
+
     protected RouteBuilder createRouteBuilder() throws Exception {
-        ftpUrl = "ftp://admin@localhost:20011/tmp2/camel?password=admin";
-
-
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("file:src/main/data?noop=true").to(ftpUrl);
