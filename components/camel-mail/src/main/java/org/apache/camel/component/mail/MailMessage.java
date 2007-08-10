@@ -126,4 +126,12 @@ public class MailMessage extends DefaultMessage {
             }
         }
     }
+
+    public void copyFrom(org.apache.camel.Message that) {
+        super.copyFrom(that);
+        if (that instanceof MailMessage) {
+            MailMessage mailMessage = (MailMessage) that;
+            this.mailMessage = mailMessage.mailMessage;
+        }
+    }
 }
