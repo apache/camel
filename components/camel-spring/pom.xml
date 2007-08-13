@@ -153,8 +153,17 @@
             <configuration>
               <tasks>
                 <echo>Running the XSDDoc task</echo>
-                <taskdef name="xsddoc" classname="net.sf.xframe.xsddoc.Task"/>
                 <mkdir dir="${basedir}/target/site/xsddoc"/>
+
+                <path id="cp">
+                  <path refid="maven.test.classpath"/>
+                  <path refid="maven.compile.classpath"/>
+                  <path refid="maven.dependency.classpath"/>
+                </path>
+                <taskdef name="xsddoc" classname="net.sf.xframe.xsddoc.Task">
+                  <classpath refid="cp"/>
+                </taskdef>
+
                 <xsddoc file="${project.build.directory}/schema/camel-spring.xsd"
                         out="${basedir}/target/site/xsddoc"
                         doctitle="Apache Camel XML Schema Reference"
@@ -191,11 +200,13 @@
             <artifactId>maven-xsddoc-plugin</artifactId>
             <version>1.0</version>
           </dependency>
+<!--
           <dependency>
             <groupId>xsddoc</groupId>
             <artifactId>xsddoc</artifactId>
             <version>1.0</version>
           </dependency>
+-->
         </dependencies>
       </plugin>
 
