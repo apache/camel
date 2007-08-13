@@ -32,9 +32,8 @@ import static org.apache.camel.util.Time.seconds;
 /**
  * @version $Revision: $
  */
-// START SNIPPET: example
+// START SNIPPET: demo
 public class MyActivities extends ProcessBuilder {
-    private static final Log LOG = LogFactory.getLog(MyActivities.class);
 
     protected MyActivities(JpaTemplate jpaTemplate, TransactionTemplate transactionTemplate) {
         super(jpaTemplate, transactionTemplate);
@@ -55,4 +54,4 @@ public class MyActivities extends ProcessBuilder {
                 .errorIfOver(seconds(2)).to("log:org.apache.camel.example.bam.BamFailures?level=error");
     }
 };
-// END SNIPPET: example
+// END SNIPPET: demo
