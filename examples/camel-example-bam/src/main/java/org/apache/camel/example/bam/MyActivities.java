@@ -53,5 +53,5 @@ public class MyActivities extends ProcessBuilder {
                 .expectWithin(seconds(1))
                 .errorIfOver(seconds(2)).to("log:org.apache.camel.example.bam.BamFailures?level=error");
     }
-};
+}
 // END SNIPPET: demo
