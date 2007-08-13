@@ -146,7 +146,9 @@ public class ConverterTest extends TestCase {
         assertNotNull("Cannot find resource!");
         File file = new File(resource.getFile());
         String text = converter.convertTo(String.class, file);
-        assertEquals("file content", "Hello World!", text);
+        assertNotNull("Should have returned a String!", text);
+        text = text.trim();
+        assertTrue("Text not read correctly: " + text, text.endsWith("Hello World!"));
     }
 
     public void testPrimitiveBooleanConversion() throws Exception {
