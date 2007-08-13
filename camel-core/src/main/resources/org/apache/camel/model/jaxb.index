@@ -32,6 +32,7 @@ PolicyRef
 ProceedType
 ProcessorRef
 RecipientListType
+RedeliveryPolicyType
 ResequencerType
 RouteType
 RoutesType

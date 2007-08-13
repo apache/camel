@@ -113,7 +113,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     /**
      * Enables collision avoidence and sets the percentage used
      */
-    public RedeliveryPolicy collisionAvoidancePercent(short collisionAvoidancePercent) {
+    public RedeliveryPolicy collisionAvoidancePercent(double collisionAvoidancePercent) {
         useCollisionAvoidance();
         setCollisionAvoidancePercent(collisionAvoidancePercent);
         return this;
@@ -141,7 +141,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      * Sets the percentage used for collision avoidence if enabled via
      * {@link #setUseCollisionAvoidance(boolean)}
      */
-    public void setCollisionAvoidancePercent(short collisionAvoidancePercent) {
+    public void setCollisionAvoidancePercent(double collisionAvoidancePercent) {
         this.collisionAvoidanceFactor = collisionAvoidancePercent * 0.01d;
     }
 
