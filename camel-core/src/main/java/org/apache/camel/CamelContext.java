@@ -173,6 +173,11 @@ public interface CamelContext extends Service {
     Injector getInjector();
 
     /**
+     * Returns the lifecycle strategy used to handle lifecycle notification
+     */
+    LifecycleStrategy getLifecycleStrategy();
+
+    /**
      * Resolves a language for creating expressions
      */
     Language resolveLanguage(String language);
