@@ -72,6 +72,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jing</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
     </dependency>
     <dependency>
@@ -89,6 +93,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-mina</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-msv</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
