@@ -16,89 +16,170 @@
  */
 package org.apache.camel.builder;
 
-import java.util.List;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LoggingErrorHandler;
+import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @version $Revision$
  */
 public class ErrorHandlerTest extends TestSupport {
-    /*
-     * public void testOverloadingTheDefaultErrorHandler() throws Exception { //
-     * START SNIPPET: e1 RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
-     * public void configure() { errorHandler(loggingErrorHandler("FOO.BAR"));
-     * from("seda:a").to("seda:b"); } }; // END SNIPPET: e1 Map<Endpoint<Exchange>,
-     * Processor> routeMap = builder.getRouteMap(); Set<Map.Entry<Endpoint<Exchange>,
-     * Processor>> routes = routeMap.entrySet(); assertEquals("Number routes
-     * created", 1, routes.size()); for (Map.Entry<Endpoint<Exchange>,
-     * Processor> route : routes) { Endpoint<Exchange> key = route.getKey();
-     * assertEquals("From endpoint", "seda:a", key.getEndpointUri()); Processor
-     * processor = route.getValue(); LoggingErrorHandler loggingProcessor =
-     * assertIsInstanceOf(LoggingErrorHandler.class, processor); } } public void
-     * testOverloadingTheHandlerOnASingleRoute() throws Exception { // START
-     * SNIPPET: e2 RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
-     * public void configure() {
-     * from("seda:a").errorHandler(loggingErrorHandler("FOO.BAR")).to("seda:b"); //
-     * this route will use the default error handler, DeadLetterChannel
-     * from("seda:b").to("seda:c"); } }; // END SNIPPET: e2 Map<Endpoint<Exchange>,
-     * Processor> routeMap = builder.getRouteMap(); log.debug(routeMap); Set<Map.Entry<Endpoint<Exchange>,
-     * Processor>> routes = routeMap.entrySet(); assertEquals("Number routes
-     * created", 2, routes.size()); for (Map.Entry<Endpoint<Exchange>,
-     * Processor> route : routes) { Endpoint<Exchange> key = route.getKey();
-     * String endpointUri = key.getEndpointUri(); Processor processor =
-     * route.getValue(); if (endpointUri.equals("seda:a")) { LoggingErrorHandler
-     * loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class,
-     * processor); Processor outputProcessor = loggingProcessor.getOutput();
-     * SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class,
-     * outputProcessor); } else { assertEquals("From endpoint", "seda:b",
-     * endpointUri); DeadLetterChannel deadLetterChannel =
-     * assertIsInstanceOf(DeadLetterChannel.class, processor); Processor
-     * outputProcessor = deadLetterChannel.getOutput(); SendProcessor
-     * sendProcessor = assertIsInstanceOf(SendProcessor.class, outputProcessor); } } }
-     * public void testConfigureDeadLetterChannel() throws Exception { // START
-     * SNIPPET: e3 RouteBuilder<Exchange> builder = new RouteBuilder<Exchange>() {
-     * public void configure() { errorHandler(deadLetterChannel("seda:errors"));
-     * from("seda:a").to("seda:b"); } }; // END SNIPPET: e3 Map<Endpoint<Exchange>,
-     * Processor> routeMap = builder.getRouteMap(); Set<Map.Entry<Endpoint<Exchange>,
-     * Processor>> routes = routeMap.entrySet(); assertEquals("Number routes
-     * created", 1, routes.size()); for (Map.Entry<Endpoint<Exchange>,
-     * Processor> route : routes) { Endpoint<Exchange> key = route.getKey();
-     * assertEquals("From endpoint", "seda:a", key.getEndpointUri()); Processor
-     * processor = route.getValue(); DeadLetterChannel deadLetterChannel =
-     * assertIsInstanceOf(DeadLetterChannel.class, processor); Endpoint
-     * deadLetterEndpoint = assertIsInstanceOf(Endpoint.class,
-     * deadLetterChannel.getDeadLetter()); assertEndpointUri(deadLetterEndpoint,
-     * "seda:errors"); } } public void
-     * testConfigureDeadLetterChannelWithCustomRedeliveryPolicy() throws
-     * Exception { // START SNIPPET: e4 RouteBuilder<Exchange> builder = new
-     * RouteBuilder<Exchange>() { public void configure() {
-     * errorHandler(deadLetterChannel("seda:errors").maximumRedeliveries(2).useExponentialBackOff());
-     * from("seda:a").to("seda:b"); } }; // END SNIPPET: e4 Map<Endpoint<Exchange>,
-     * Processor> routeMap = builder.getRouteMap(); Set<Map.Entry<Endpoint<Exchange>,
-     * Processor>> routes = routeMap.entrySet(); assertEquals("Number routes
-     * created", 1, routes.size()); for (Map.Entry<Endpoint<Exchange>,
-     * Processor> route : routes) { Endpoint<Exchange> key = route.getKey();
-     * assertEquals("From endpoint", "seda:a", key.getEndpointUri()); Processor
-     * processor = route.getValue(); DeadLetterChannel deadLetterChannel =
-     * assertIsInstanceOf(DeadLetterChannel.class, processor); Endpoint
-     * deadLetterEndpoint = assertIsInstanceOf(Endpoint.class,
-     * deadLetterChannel.getDeadLetter()); assertEndpointUri(deadLetterEndpoint,
-     * "seda:errors"); RedeliveryPolicy redeliveryPolicy =
-     * deadLetterChannel.getRedeliveryPolicy();
-     * assertEquals("getMaximumRedeliveries()", 2,
-     * redeliveryPolicy.getMaximumRedeliveries());
-     * assertEquals("isUseExponentialBackOff()", true,
-     * redeliveryPolicy.isUseExponentialBackOff()); } }
-     */
+    public void testOverloadingTheDefaultErrorHandler() throws Exception {
+        // START SNIPPET: e1
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() {
+                errorHandler(loggingErrorHandler("FOO.BAR"));
+                from("seda:a").to("seda:b");
+            }
+        };
+        // END SNIPPET: e1
+
+        List<Route> list = builder.getRouteList();
+        assertEquals("Number routes created " + list, 1, list.size());
+        for (Route route : list) {
+            log.info("Found: " + route);
+        }
+/*
+        for (Map.Entry<Endpoint<Exchange>, Processor> route : routes) {
+            Endpoint<Exchange> key = route.getKey();
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
+            Processor
+                    processor = route.getValue();
+            LoggingErrorHandler loggingProcessor =
+                    assertIsInstanceOf(LoggingErrorHandler.class, processor);
+        }
+*/
+    }
+
+    public void
+    testOverloadingTheHandlerOnASingleRoute() throws Exception {
+
+        // START SNIPPET: e2
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() {
+                from("seda:a").errorHandler(loggingErrorHandler("FOO.BAR")).to("seda:b");
+                // this route will use the default error handler, DeadLetterChannel
+                from("seda:b").to("seda:c");
+            }
+        };
+        // END SNIPPET: e2
+
+/*
+        Map<Endpoint,
+                Processor> routeMap = builder.getRouteMap();
+        log.debug(routeMap);
+        Set<Map.Entry<Endpoint,
+                Processor>> routes = routeMap.entrySet();
+        assertEquals("Number routes created ", 2, routes.size());
+        for (Map.Entry<Endpoint,
+                Processor> route : routes) {
+            Endpoint key = route.getKey();
+            String endpointUri = key.getEndpointUri();
+            Processor processor =
+                    route.getValue();
+            if (endpointUri.equals("seda:a")) {
+                LoggingErrorHandler
+                        loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class,
+                        processor);
+                Processor outputProcessor = loggingProcessor.getOutput();
+                SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class,
+                        outputProcessor);
+            }
+            else {
+                assertEquals("From endpoint", "seda:b",
+                        endpointUri);
+                DeadLetterChannel deadLetterChannel =
+                        assertIsInstanceOf(DeadLetterChannel.class, processor);
+                Processor
+                        outputProcessor = deadLetterChannel.getOutput();
+                SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, outputProcessor);
+        }
+*/
+    }
+
+    public void testConfigureDeadLetterChannel() throws Exception {
+        // START SNIPPET: e3
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() {
+                errorHandler(deadLetterChannel("seda:errors"));
+                from("seda:a").to("seda:b");
+            }
+        };
+        // END SNIPPET: e3
+/*
+        Map<Endpoint,
+                Processor> routeMap = builder.getRouteMap();
+        Set<Map.Entry<Endpoint,
+                Processor>> routes = routeMap.entrySet();
+        assertEquals("Number routes created ", 1, routes.size());
+        for (Map.Entry<Endpoint,
+                Processor> route : routes) {
+            Endpoint key = route.getKey();
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
+            Processor
+                    processor = route.getValue();
+            DeadLetterChannel deadLetterChannel =
+                    assertIsInstanceOf(DeadLetterChannel.class, processor);
+            Endpoint
+                    deadLetterEndpoint = assertIsInstanceOf(Endpoint.class,
+                    deadLetterChannel.getDeadLetter());
+            assertEndpointUri(deadLetterEndpoint,
+                    "seda:errors");
+        }
+*/
+    }
+
+    public void  testConfigureDeadLetterChannelWithCustomRedeliveryPolicy() throws Exception {
+        // START SNIPPET: e4
+        RouteBuilder builder = new
+                RouteBuilder() {
+                    public void configure() {
+                        errorHandler(deadLetterChannel("seda:errors").maximumRedeliveries(2).useExponentialBackOff());
+                        from("seda:a").to("seda:b");
+                    }
+                };
+        // END SNIPPET: e4
+
+/*
+        Map<Endpoint,
+                Processor> routeMap = builder.getRouteMap();
+        Set<Map.Entry<Endpoint,
+                Processor>> routes = routeMap.entrySet();
+        assertEquals("Number routes created ", 1, routes.size());
+        for (Map.Entry<Endpoint,
+                Processor> route : routes) {
+            Endpoint key = route.getKey();
+            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
+            Processor
+                    processor = route.getValue();
+            DeadLetterChannel deadLetterChannel =
+                    assertIsInstanceOf(DeadLetterChannel.class, processor);
+            Endpoint
+                    deadLetterEndpoint = assertIsInstanceOf(Endpoint.class,
+                    deadLetterChannel.getDeadLetter());
+            assertEndpointUri(deadLetterEndpoint,
+                    "seda:errors");
+            RedeliveryPolicy redeliveryPolicy =
+                    deadLetterChannel.getRedeliveryPolicy();
+            assertEquals("getMaximumRedeliveries()", 2,
+                    redeliveryPolicy.getMaximumRedeliveries());
+            assertEquals("isUseExponentialBackOff()", true,
+                    redeliveryPolicy.isUseExponentialBackOff());
+        }
+*/
+    }
 
     public void testDisablingInheritenceOfErrorHandlers() throws Exception {
 
@@ -113,8 +194,8 @@ public class ErrorHandlerTest extends TestSupport {
 
         List<Route> routes = builder.getRouteList();
         assertEquals("Number routes created", 1, routes.size());
-        for (Route<Exchange> route : routes) {
-            Endpoint<Exchange> key = route.getEndpoint();
+        for (Route route : routes) {
+            Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Processor processor = consumerRoute.getProcessor();
