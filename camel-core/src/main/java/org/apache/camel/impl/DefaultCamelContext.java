@@ -30,6 +30,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.LifecycleStrategy;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
@@ -69,6 +70,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private boolean autoCreateComponents = true;
     private LanguageResolver languageResolver = new DefaultLanguageResolver();
     private Registry registry;
+	private LifecycleStrategy lifecycleStrategy = new DefaultLifecycleStrategy();
 
     public DefaultCamelContext() {
     }
@@ -241,10 +243,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
                     // If it's a singleton then auto register it.
                     if (answer != null && answer.isSingleton()) {
-                        if (answer != null) {
-                            startServices(answer);
-                            endpoints.put(uri, answer);
-                        }
+                        startServices(answer);
+                        endpoints.put(uri, answer);
+                    	lifecycleStrategy.onEndpointAdd(answer);
                     }
                 } catch (Exception e) {
                     throw new ResolveEndpointFailedException(uri, e);
@@ -280,6 +281,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         } else {
             this.routes.addAll(routes);
         }
+        lifecycleStrategy.onRoutesAdd(routes);
         if (isStarted()) {
             startRoutes(routes);
         }
@@ -372,6 +374,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public void setRegistry(Registry registry) {
         this.registry = registry;
+    }
+
+    public LifecycleStrategy getLifecycleStrategy() {
+        return lifecycleStrategy;
+    }
+
+    public void setLifecycleStrategy(LifecycleStrategy lifecycleStrategy) {
+        this.lifecycleStrategy = lifecycleStrategy;
     }
 
     // Implementation methods

@@ -42,6 +42,14 @@
       <artifactId>jaxb-api</artifactId>
     </dependency>
 
+    <!-- to allow Spring annotations to be used; could replace with the micro-jar later -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring</artifactId>
+      <optional>true</optional>
+      <scope>compile</scope>
+    </dependency>
+
     <!-- testing -->
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
