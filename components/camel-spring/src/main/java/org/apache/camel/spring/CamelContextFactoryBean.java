@@ -88,7 +88,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     public void afterPropertiesSet() throws Exception {
 
         // lets force any lazy creation
-        getContext();
+        getContext().addRouteDefinitions(routes);
 
         LOG.debug("Found JAXB created routes: " + getRoutes());
         String[] names = applicationContext.getBeanNamesForType(SpringInstrumentationAgent.class);
@@ -203,9 +203,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
         if (routeBuilder != null) {
             getContext().addRoutes(routeBuilder);
-        }
-        for (RouteType route : routes) {
-            route.addRoutes(getContext());
         }
     }
 

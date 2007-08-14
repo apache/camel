@@ -165,7 +165,8 @@ public abstract class RouteBuilder extends BuilderSupport {
             throw new IllegalArgumentException("No CamelContext has been injected!");
         }
         routeCollection.setCamelContext(camelContext);
-        routeCollection.populateRoutes(routes);
+        //routeCollection.populateRoutes(routes);
+        camelContext.addRouteDefinitions(routeCollection.getRoutes());
     }
 
     /**
