@@ -88,6 +88,7 @@ public class FileProducer extends DefaultProducer {
                 }
                 else {
                     fc.write(byteBuffer);
+                    byteBuffer.clear();
                 }
             }
         }
