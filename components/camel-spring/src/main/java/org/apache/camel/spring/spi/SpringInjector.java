@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * A Spring implementation of {@link Injector} allowing Spring to be used to dependency inject newly created POJOs
@@ -29,12 +30,11 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
  * @version $Revision$
  */
 public class SpringInjector implements Injector {
-    private static final transient Log LOG = LogFactory.getLog(SpringInjector.class);
-    private final AbstractRefreshableApplicationContext applicationContext;
+    private final ConfigurableApplicationContext applicationContext;
     private int autowireMode = AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR;
     private boolean dependencyCheck;
 
-    public SpringInjector(AbstractRefreshableApplicationContext applicationContext) {
+    public SpringInjector(ConfigurableApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
