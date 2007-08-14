@@ -37,6 +37,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.model.RouteType;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.spi.ComponentResolver;
@@ -56,7 +57,6 @@ import static org.apache.camel.util.ServiceHelper.stopServices;
  * Represents the context used to configure routes and the policies to use.
  * 
  * @version $Revision: 520517 $
- * @org.apache.xbean.XBean element="container" rootElement="true"
  */
 public class DefaultCamelContext extends ServiceSupport implements CamelContext, Service {
     private Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
@@ -71,6 +71,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private LanguageResolver languageResolver = new DefaultLanguageResolver();
     private Registry registry;
 	private LifecycleStrategy lifecycleStrategy = new DefaultLifecycleStrategy();
+    private List<RouteType> routeDefinitions = new ArrayList<RouteType>();
 
     public DefaultCamelContext() {
     }
@@ -282,7 +283,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             this.routes.addAll(routes);
         }
         lifecycleStrategy.onRoutesAdd(routes);
-        if (isStarted()) {
+        if (shouldStartRoutes()) {
             startRoutes(routes);
         }
     }
@@ -292,6 +293,15 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         builder.setContext(this);
         addRoutes(builder.getRouteList());
     }
+
+    public void addRouteDefinitions(Collection<RouteType> routeDefinitions) throws Exception {
+        this.routeDefinitions.addAll(routeDefinitions);
+        if (shouldStartRoutes()) {
+        startRouteDefinitions(routeDefinitions);
+        }
+
+    }
+
 
     // Helper methods
     // -----------------------------------------------------------------------
@@ -384,6 +394,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.lifecycleStrategy = lifecycleStrategy;
     }
 
+    public List<RouteType> getRouteDefinitions() {
+        return routeDefinitions;
+    }
+
+
     // Implementation methods
     // -----------------------------------------------------------------------
 
@@ -394,7 +409,16 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 startServices(component);
             }
         }
+        startRouteDefinitions(routeDefinitions);
         startRoutes(routes);
+    }
+
+    protected void startRouteDefinitions(Collection<RouteType> list) throws Exception {
+        if (list != null) {
+            for (RouteType route : list) {
+                route.addRoutes(this);
+            }
+        }
     }
 
     protected void doStop() throws Exception {
@@ -508,6 +532,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     protected Endpoint convertBeanToEndpoint(String uri, Object bean) {
         throw new IllegalArgumentException("uri: " + uri + " bean: " + bean
                                            + " could not be converted to an Endpoint");
+    }
+
+    /**
+     * Should we start newly added routes?
+     */
+    protected boolean shouldStartRoutes() {
+        return isStarted() && !isStarting();
     }
 
 }

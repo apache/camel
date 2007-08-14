@@ -121,4 +121,8 @@ public class ExpressionType {
     public void setId(String value) {
         this.id = value;
     }
+
+    public Predicate getPredicate() {
+        return predicate;
+    }
 }

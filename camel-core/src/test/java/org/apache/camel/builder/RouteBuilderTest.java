@@ -16,9 +16,7 @@
  */
 package org.apache.camel.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -26,6 +24,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.DelegateProcessor;
@@ -36,8 +35,10 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MemoryMessageIdRepository;
-
 import static org.apache.camel.processor.idempotent.MemoryMessageIdRepository.memoryMessageIdRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Revision$
@@ -55,7 +56,7 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e1
-        return builder.getRouteList();
+        return getRouteList(builder);
     }
 
     public void testSimpleRoute() throws Exception {
@@ -80,7 +81,7 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e2
-        return builder.getRouteList();
+        return getRouteList(builder);
     }
 
     public void testSimpleRouteWithHeaderPredicate() throws Exception {
@@ -111,7 +112,7 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e3
-        return builder.getRouteList();
+        return getRouteList(builder);
     }
 
     public void testSimpleRouteWithChoice() throws Exception {
@@ -153,7 +154,7 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e4
-        return builder.getRouteList();
+        return getRouteList(builder);
     }
 
     public void testCustomProcessor() throws Exception {
@@ -177,7 +178,7 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e5
-        return builder.getRouteList();
+        return getRouteList(builder);
     }
 
     public void testCustomProcessorWithFilter() throws Exception {
@@ -205,7 +206,7 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e6
-        return builder.getRouteList();
+        return getRouteList(builder);
     }
 
     public void testWireTap() throws Exception {
@@ -246,7 +247,7 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e7
-        return builder.getRouteList();
+        return getRouteList(builder);
     }
 
     public void testRouteWithInterceptor() throws Exception {
@@ -280,7 +281,7 @@ public class RouteBuilderTest extends TestSupport {
         };
         // END SNIPPET: e7
 
-        List<Route> routes = builder.getRouteList();
+        List<Route> routes = getRouteList(builder);
         log.debug("Created routes: " + routes);
 
         assertEquals("Number routes created", 2, routes.size());
@@ -310,7 +311,7 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e8
-        return builder.getRouteList();
+        return getRouteList(builder);
     }
 
     protected List<Route> buildDynamicRecipientList() throws Exception {
@@ -321,7 +322,7 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: e9
-        return builder.getRouteList();
+        return getRouteList(builder);
     }
 
     public void testRouteDynamicReceipentList() throws Exception {
@@ -348,7 +349,7 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: splitter
-        return builder.getRouteList();
+        return getRouteList(builder);
     }
 
     public void testSplitter() throws Exception {
@@ -376,7 +377,7 @@ public class RouteBuilderTest extends TestSupport {
             }
         };
         // END SNIPPET: idempotent
-        return builder.getRouteList();
+        return getRouteList(builder);
     }
 
     public void testIdempotentConsumer() throws Exception {

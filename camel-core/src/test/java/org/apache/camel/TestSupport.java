@@ -22,7 +22,9 @@ import junit.framework.TestCase;
 
 import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.ValueBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -224,5 +226,17 @@ public abstract class TestSupport extends TestCase {
     protected <T> List<T> assertListSize(List<T> list, int size) {
         assertEquals("List should be of size: " + size + " but is: " + list, size, list.size());
         return list;
+    }
+
+    /**
+     * A helper method to create a list of Route objects for a given route builder
+     */
+    protected List<Route> getRouteList(RouteBuilder builder) throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(builder);
+        context.start();
+        List<Route> answer = context.getRoutes();
+        context.stop();
+        return answer;
     }
 }

@@ -36,16 +36,23 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 public abstract class ServiceSupport implements Service {
     private static int threadCounter;
     private AtomicBoolean started = new AtomicBoolean(false);
+    private AtomicBoolean starting = new AtomicBoolean(false);
     private AtomicBoolean stopping = new AtomicBoolean(false);
     private AtomicBoolean stopped = new AtomicBoolean(false);
     private Collection childServices;
 
     public void start() throws Exception {
         if (started.compareAndSet(false, true)) {
-            if (childServices != null) {
-                ServiceHelper.startServices(childServices);
+            starting.set(true);
+            try {
+                if (childServices != null) {
+                    ServiceHelper.startServices(childServices);
+                }
+                doStart();
             }
-            doStart();
+            finally {
+                starting.set(false);
+            }
         }
     }
 
@@ -70,6 +77,13 @@ public abstract class ServiceSupport implements Service {
      */
     public boolean isStarted() {
         return started.get();
+    }
+
+    /**
+     * @return true if this service is 
+     */
+    public boolean isStarting() {
+        return starting.get();
     }
 
     /**

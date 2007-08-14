@@ -25,6 +25,7 @@ import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.model.RouteType;
 
 /**
  * Interface used to represent the context used to configure routes and the
@@ -118,6 +119,11 @@ public interface CamelContext extends Service {
     //-----------------------------------------------------------------------
 
     /**
+     * Returns a list of the current route definitions
+     */
+    List<RouteType> getRouteDefinitions();
+
+    /**
      * Returns the current routes in this context
      *
      * @return the current routes in this context
@@ -147,6 +153,12 @@ public interface CamelContext extends Service {
      */
     void addRoutes(RouteBuilder builder) throws Exception;
 
+    /**
+     * Adds a collection of route definitions to the context
+     */
+    void addRouteDefinitions(Collection<RouteType> routeDefinitions) throws Exception;
+
+    
     // Properties
     //-----------------------------------------------------------------------
 
