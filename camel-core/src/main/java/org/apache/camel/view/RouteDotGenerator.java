@@ -18,12 +18,9 @@ package org.apache.camel.view;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Predicate;
-import org.apache.camel.model.FilterType;
-import org.apache.camel.model.FromType;
-import org.apache.camel.model.ProcessorType;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.ToType;
+import org.apache.camel.model.*;
 import org.apache.camel.model.language.ExpressionType;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 import org.apache.commons.logging.Log;
@@ -45,6 +42,7 @@ import java.util.Map;
 public class RouteDotGenerator {
     private static final transient Log LOG = LogFactory.getLog(RouteDotGenerator.class);
     private String file = "CamelRoutes.dot";
+    private String imagePrefix = "http://www.enterpriseintegrationpatterns.com/img/";
     private Map<Object, String> idMap = new HashMap<Object, String>();
 
     public String getFile() {
@@ -106,20 +104,12 @@ public class RouteDotGenerator {
         writer.println("];");
         writer.println();
 
+        // TODO we should add a transactional client / event driven consumer / polling client
+
         List<ProcessorType> outputs = route.getOutputs();
         for (ProcessorType output : outputs) {
             printNode(writer, fromID, output);
         }
-
-/*
-        writer.print(r);
-        writer.print(" -> ");
-        if (r instanceof EventDrivenConsumerRoute) {
-            EventDrivenConsumerRoute consumerRoute = (EventDrivenConsumerRoute)r;
-            Processor p = consumerRoute.getProcessor();
-            writer.println(p);
-        }
-*/
     }
 
     protected String printNode(PrintWriter writer, String fromID, ProcessorType node) {
@@ -170,12 +160,7 @@ public class RouteDotGenerator {
     }
 
     protected void configureNodeData(ProcessorType node, NodeData nodeData) {
-        if (node instanceof FilterType) {
-            FilterType filterType = (FilterType) node;
-            nodeData.image = "http://www.enterpriseintegrationpatterns.com/img/MessageFilterIcon.gif";
-            nodeData.label = getLabel(filterType.getExpression());
-        }
-        else if (node instanceof ToType) {
+        if (node instanceof ToType) {
             ToType toType = (ToType) node;
             String ref = toType.getRef();
             if (isNullOrBlank(ref)) {
@@ -183,6 +168,49 @@ public class RouteDotGenerator {
             }
             nodeData.label = ref;
         }
+        else if (node instanceof FilterType) {
+            FilterType filterType = (FilterType) node;
+            nodeData.image = imagePrefix + "MessageFilterIcon.gif";
+            nodeData.label = getLabel(filterType.getExpression());
+        }
+        else if (node instanceof ChoiceType) {
+            ChoiceType choiceType = (ChoiceType) node;
+            nodeData.image = imagePrefix + "ContentBasedRouterIcon.gif";
+            CollectionStringBuffer buffer = new CollectionStringBuffer();
+            List<WhenType> list = choiceType.getWhenClauses();
+            for (WhenType whenType : list) {
+                buffer.append(getLabel(whenType.getExpression()));
+            }
+            nodeData.label = buffer.toString();
+        }
+        else if (node instanceof RecipientListType) {
+            RecipientListType recipientListType = (RecipientListType) node;
+            nodeData.image = imagePrefix + "RecipientListIcon.gif";
+            nodeData.label = getLabel(recipientListType.getExpression());
+        }
+        else if (node instanceof SplitterType) {
+            SplitterType splitterType = (SplitterType) node;
+            nodeData.image = imagePrefix + "SplitterIcon.gif";
+            nodeData.label = getLabel(splitterType.getExpression());
+        }
+        else if (node instanceof AggregatorType) {
+            AggregatorType aggregatorType = (AggregatorType) node;
+            nodeData.image = imagePrefix + "AggregatorIcon.gif";
+            nodeData.label = getLabel(aggregatorType.getExpression());
+        }
+        else if (node instanceof ResequencerType) {
+            ResequencerType resequencerType = (ResequencerType) node;
+            nodeData.image = imagePrefix + "ResequencerIcon.gif";
+            nodeData.label = getLabel(resequencerType.getExpressions());
+        }
+    }
+
+    protected String getLabel(List<ExpressionType> expressions) {
+        CollectionStringBuffer buffer = new CollectionStringBuffer();
+        for (ExpressionType expression : expressions) {
+            buffer.append(getLabel(expression));
+        }
+        return buffer.toString();
     }
 
     protected String getLabel(ExpressionType expression) {
@@ -199,10 +227,6 @@ public class RouteDotGenerator {
             }
         }
         return "";
-    }
-
-    protected String getImageUrl(ProcessorType node) {
-        return null;
     }
 
     protected String getID(Object node) {

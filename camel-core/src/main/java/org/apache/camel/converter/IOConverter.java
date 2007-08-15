@@ -17,6 +17,7 @@
 package org.apache.camel.converter;
 
 import org.apache.camel.Converter;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -126,17 +127,11 @@ public class IOConverter {
             return null;
         }
         try {
-            StringBuilder builder = new StringBuilder();
-            boolean first = true;
+            CollectionStringBuffer builder = new CollectionStringBuffer("\n");
             while (true) {
                 String line = reader.readLine();
                 if (line == null) {
                     return builder.toString();
-                }
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append("\n");
                 }
                 builder.append(line);
             }
