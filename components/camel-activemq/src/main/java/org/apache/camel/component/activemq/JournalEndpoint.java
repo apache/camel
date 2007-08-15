@@ -26,7 +26,6 @@ import org.apache.activemq.kaha.impl.async.Location;
 import org.apache.activemq.util.ByteSequence;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -38,63 +37,27 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class JournalEndpoint extends DefaultEndpoint<DefaultExchange> {
+public class JournalEndpoint extends DefaultEndpoint<Exchange> {
 
     private static final transient Log LOG = LogFactory.getLog(JournalEndpoint.class);
 
-    public final class JournalProducer extends DefaultProducer<DefaultExchange> {
-        private boolean syncWrite = JournalEndpoint.this.syncWrite;
-
-        public JournalProducer(Endpoint<DefaultExchange> endpoint) {
-            super(endpoint);
-        }
-
-        public void process(Exchange exchange) throws Exception {
-            incrementReference();
-            try {
-
-                ByteSequence body = exchange.getIn().getBody(ByteSequence.class);
-                if (body == null) {
-                    byte[] bytes = exchange.getIn().getBody(byte[].class);
-                    if (bytes != null) {
-                        body = new ByteSequence(bytes);
-                    }
-                }
-                if (body == null) {
-                    throw new CamelExchangeException("In body message could not be converted to a ByteSequence or a byte array.", exchange);
-                }
-                dataManager.write(body, true);
-
-            } finally {
-                decrementReference();
-            }
-        }
-
-        public boolean isSyncWrite() {
-            return syncWrite;
-        }
-
-        public void setSyncWrite(boolean syncWrite) {
-            this.syncWrite = syncWrite;
-        }
-    }
-
     private final File directory;
-    private final AtomicReference<DefaultConsumer<DefaultExchange>> consumer = new AtomicReference<DefaultConsumer<DefaultExchange>>();
+    private final AtomicReference<DefaultConsumer<Exchange>> consumer = new AtomicReference<DefaultConsumer<Exchange>>();
     private final Object activationMutex = new Object();
     private int referenceCount;
     private AsyncDataManager dataManager;
     private Thread thread;
     private Location lastReadLocation;
-    private boolean syncWrite = true;
     private long idleDelay = 1000;
+    private boolean syncProduce = true;
+    private boolean syncConsume;
 
     public JournalEndpoint(String uri, JournalComponent journalComponent, File directory) {
         super(uri, journalComponent.getCamelContext());
         this.directory = directory;
     }
 
-    public DefaultExchange createExchange() {
+    public Exchange createExchange() {
         return new DefaultExchange(getContext());
     }
 
@@ -106,8 +69,8 @@ public class JournalEndpoint extends DefaultEndpoint<DefaultExchange> {
         return directory;
     }
 
-    public Consumer<DefaultExchange> createConsumer(Processor processor) throws Exception {
-        return new DefaultConsumer<DefaultExchange>(this, processor) {
+    public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
+        return new DefaultConsumer<Exchange>(this, processor) {
             @Override
             public void start() throws Exception {
                 super.start();
@@ -149,7 +112,7 @@ public class JournalEndpoint extends DefaultEndpoint<DefaultExchange> {
         }
     }
 
-    protected void deactivateConsumer(DefaultConsumer<DefaultExchange> consumer) throws IOException {
+    protected void deactivateConsumer(DefaultConsumer<Exchange> consumer) throws IOException {
         synchronized (activationMutex) {
             if (this.consumer.get() != consumer) {
                 throw new RuntimeCamelException("Consumer was not active.");
@@ -164,7 +127,7 @@ public class JournalEndpoint extends DefaultEndpoint<DefaultExchange> {
         }
     }
 
-    protected void activateConsumer(DefaultConsumer<DefaultExchange> consumer) throws IOException {
+    protected void activateConsumer(DefaultConsumer<Exchange> consumer) throws IOException {
         synchronized (activationMutex) {
             if (this.consumer.get() != null) {
                 throw new RuntimeCamelException("Consumer already active: journal endpoints only support 1 active consumer");
@@ -185,7 +148,7 @@ public class JournalEndpoint extends DefaultEndpoint<DefaultExchange> {
 
     protected void dispatchToConsumer() {
         try {
-            DefaultConsumer<DefaultExchange> consumer;
+            DefaultConsumer<Exchange> consumer;
             while ((consumer = this.consumer.get()) != null) {
                 // See if there is a new record to process
                 Location location = dataManager.getNextLocation(lastReadLocation);
@@ -193,7 +156,7 @@ public class JournalEndpoint extends DefaultEndpoint<DefaultExchange> {
 
                     // Send it on.
                     ByteSequence read = dataManager.read(location);
-                    DefaultExchange exchange = createExchange();
+                    Exchange exchange = createExchange();
                     exchange.getIn().setBody(read);
                     exchange.getIn().setHeader("journal", getEndpointUri());
                     exchange.getIn().setHeader("location", location);
@@ -205,7 +168,7 @@ public class JournalEndpoint extends DefaultEndpoint<DefaultExchange> {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Consumed record at: " + location);
                     }
-                    dataManager.setMark(location, true);
+                    dataManager.setMark(location, syncConsume);
                     lastReadLocation = location;
                 } else {
                     // Avoid a tight CPU loop if there is no new record to read.
@@ -218,16 +181,45 @@ public class JournalEndpoint extends DefaultEndpoint<DefaultExchange> {
         }
     }
 
-    public Producer<DefaultExchange> createProducer() throws Exception {
-        return new JournalProducer(this);
+    public Producer<Exchange> createProducer() throws Exception {
+        return new DefaultProducer<Exchange>(this) {
+            public void process(Exchange exchange) throws Exception {
+                incrementReference();
+                try {
+
+                    ByteSequence body = exchange.getIn().getBody(ByteSequence.class);
+                    if (body == null) {
+                        byte[] bytes = exchange.getIn().getBody(byte[].class);
+                        if (bytes != null) {
+                            body = new ByteSequence(bytes);
+                        }
+                    }
+                    if (body == null) {
+                        throw new CamelExchangeException("In body message could not be converted to a ByteSequence or a byte array.", exchange);
+                    }
+                    dataManager.write(body, syncProduce);
+
+                } finally {
+                    decrementReference();
+                }
+            }
+        };
     }
 
-    public boolean isSyncWrite() {
-        return syncWrite;
+    public boolean isSyncConsume() {
+        return syncConsume;
     }
 
-    public void setSyncWrite(boolean syncWrite) {
-        this.syncWrite = syncWrite;
+    public void setSyncConsume(boolean syncConsume) {
+        this.syncConsume = syncConsume;
+    }
+
+    public boolean isSyncProduce() {
+        return syncProduce;
+    }
+
+    public void setSyncProduce(boolean syncProduce) {
+        this.syncProduce = syncProduce;
     }
 
 }
