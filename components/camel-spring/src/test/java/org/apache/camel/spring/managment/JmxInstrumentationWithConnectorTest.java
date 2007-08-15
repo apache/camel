@@ -17,7 +17,7 @@
  */
 package org.apache.camel.spring.managment;
 
-import org.apache.camel.InstrumentationAgent;
+import org.apache.camel.spi.InstrumentationAgent;
 import org.apache.camel.spring.EndpointReferenceTest;
 import org.apache.camel.spring.SpringInstrumentationAgent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
