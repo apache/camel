@@ -28,6 +28,7 @@ import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -43,9 +44,18 @@ import java.util.Map;
  */
 public class RouteDotGenerator {
     private static final transient Log LOG = LogFactory.getLog(RouteDotGenerator.class);
-    private String file = "CamelRoutes.dot";
+    private String file;
     private String imagePrefix = "http://www.enterpriseintegrationpatterns.com/img/";
     private Map<Object, NodeData> nodeMap = new HashMap<Object, NodeData>();
+    private boolean makeParentDirs = true;
+
+    public RouteDotGenerator() {
+        this("CamelRoutes.dot");
+    }
+
+    public RouteDotGenerator(String file) {
+        this.file = file;
+    }
 
     public String getFile() {
         return file;
@@ -59,7 +69,11 @@ public class RouteDotGenerator {
     }
 
     public void drawRoutes(CamelContext context) throws IOException {
-        PrintWriter writer = new PrintWriter(new FileWriter(file));
+        File fileValue = new File(file);
+        if (makeParentDirs) {
+            fileValue.getParentFile().mkdirs();
+        }
+        PrintWriter writer = new PrintWriter(new FileWriter(fileValue));
         try {
             generateFile(writer, context);
         }
@@ -68,12 +82,23 @@ public class RouteDotGenerator {
         }
     }
 
+    // Implementation methods
+    //-------------------------------------------------------------------------
+
+    protected class NodeData {
+        public String id;
+        public String image;
+        public String label;
+        public String edgeLabel;
+        public String tooltop;
+        public String nodeType;
+        public boolean nodeWritten;
+    }
+
     protected void generateFile(PrintWriter writer, CamelContext context) {
         writer.println("digraph \"Camel Routes\" {");
         writer.println();
-        /*writer.println("label=\"Camel Context: " + context + "\"];");
-        writer.println();
-        */
+
         writer.println("node [style = \"rounded,filled\", fillcolor = yellow, "
                 + "fontname=\"Helvetica-Oblique\"];");
         writer.println();
@@ -92,15 +117,10 @@ public class RouteDotGenerator {
         }
     }
 
-    protected void printRoute(PrintWriter writer, RouteType route, FromType input) {
+    protected void printRoute(PrintWriter writer, final RouteType route, FromType input) {
         NodeData nodeData = getNodeData(input);
 
-        writer.println();
-        writer.print(nodeData.id);
-        writer.println(" [");
-        writer.println("label = \"" + nodeData.label + "\"");
-        writer.println("];");
-        writer.println();
+        printNode(writer, nodeData);
 
         // TODO we should add a transactional client / event driven consumer / polling client
 
@@ -113,23 +133,20 @@ public class RouteDotGenerator {
     protected NodeData printNode(PrintWriter writer, NodeData fromData, ProcessorType node) {
         NodeData toData = getNodeData(node);
 
-        writer.println();
-        writer.print(toData.id);
-        writer.println(" [");
-        RouteDotGenerator.NodeData nodeData = printNodeAttributes(writer, fromData, toData);
-        writer.println("];");
-        writer.println();
+        printNode(writer, toData);
 
-        writer.print(fromData.id);
-        writer.print(" -> ");
-        writer.print(toData.id);
-        writer.println(" [");
+        if (fromData != null) {
+            writer.print(fromData.id);
+            writer.print(" -> ");
+            writer.print(toData.id);
+            writer.println(" [");
 
-        String label = fromData.edgeLabel;
-        if (isNotNullAndNonEmpty(label)) {
-            writer.println("label = \"" + label + "\"");
+            String label = fromData.edgeLabel;
+            if (isNotNullAndNonEmpty(label)) {
+                writer.println("label = \"" + label + "\"");
+            }
+            writer.println("];");
         }
-        writer.println("];");
 
         // now lets write any children
         List<ProcessorType> outputs = node.getOutputs();
@@ -142,26 +159,25 @@ public class RouteDotGenerator {
         return toData;
     }
 
-    protected class NodeData {
-        public String id;
-        public String image;
-        public String label;
-        public String edgeLabel;
-        public String tooltop;
-        public String nodeType;
-    }
+    protected void printNode(PrintWriter writer, NodeData data) {
+        if (!data.nodeWritten) {
+            data.nodeWritten = true;
 
-    protected NodeData printNodeAttributes(PrintWriter writer, NodeData fromData, NodeData nodeData) {
-        writer.println("label = \"" + nodeData.label + "\"");
-        writer.println("tooltip = \"" + nodeData.tooltop + "\"");
+            writer.println();
+            writer.print(data.id);
+            writer.println(" [");
+            writer.println("label = \"" + data.label + "\"");
+            writer.println("tooltip = \"" + data.tooltop + "\"");
 
-        String image = nodeData.image;
-        if (image != null) {
-            writer.println("shapefile = \"" + image + "\"");
-            writer.println("shape = custom");
-            writer.println("peripheries=0");
+            String image = data.image;
+            if (image != null) {
+                writer.println("shapefile = \"" + image + "\"");
+                writer.println("shape = custom");
+                writer.println("peripheries=0");
+            }
+            writer.println("];");
+            writer.println();
         }
-        return nodeData;
     }
 
     protected void configureNodeData(Object node, NodeData nodeData) {
@@ -271,12 +287,21 @@ public class RouteDotGenerator {
     }
 
     protected NodeData getNodeData(Object node) {
-        NodeData answer = nodeMap.get(node);
+        Object key = node;
+        if (node instanceof FromType) {
+            FromType fromType = (FromType) node;
+            key = fromType.getUriOrRef();
+        }
+        else if (node instanceof ToType) {
+            ToType toType = (ToType) node;
+            key = toType.getUriOrRef();
+        }
+        NodeData answer = nodeMap.get(key);
         if (answer == null) {
             answer = new NodeData();
             answer.id = "node" + (nodeMap.size() + 1);
             configureNodeData(node, answer);
-            nodeMap.put(node, answer);
+            nodeMap.put(key, answer);
         }
         return answer;
     }

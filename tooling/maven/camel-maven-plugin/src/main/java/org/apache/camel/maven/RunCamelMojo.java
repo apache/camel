@@ -16,20 +16,6 @@
  */
 package org.apache.camel.maven;
 
-import java.io.File;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -47,10 +33,24 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.artifact.MavenMetadataSource;
-
 import org.codehaus.mojo.exec.AbstractExecMojo;
 import org.codehaus.mojo.exec.ExecutableDependency;
 import org.codehaus.mojo.exec.Property;
+
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Runs a CamelContext using any Spring XML configuration files found in
@@ -77,6 +77,23 @@ public class RunCamelMojo extends AbstractExecMojo {
      * @readonly
      */
     protected MavenProject project;
+
+    /**
+     * The duration to run the application for which by default is in milliseconds.
+     * A value <= 0 will 
+     *
+     * @parameter expression="-1"
+     * @readonly
+     */
+    protected String duration;
+
+    /**
+     * The DOT File name used to generate the DOT diagram of the route definitions
+     *
+     * @parameter expression="${project.build.directory}/site/camel-dot/Routes.dot"
+     * @readonly
+     */
+    protected String dotFile;
 
     /**
      * @component
@@ -268,9 +285,19 @@ public class RunCamelMojo extends AbstractExecMojo {
             getLog().warn("Warning: killAfter is now deprecated. Do you need it ? Please comment on MEXEC-6.");
         }
 
-        if (null == arguments) {
-            arguments = new String[0];
+        // lets create the command line arguments to pass in...
+        List<String> args = new ArrayList<String>();
+        if (dotFile != null) {
+            args.add("-f");
+            args.add(dotFile);
         }
+        args.add("-d");
+        args.add(duration);
+        if (arguments != null) {
+        args.addAll(Arrays.asList(arguments));
+        }
+        arguments = new String[args.size()];
+        args.toArray(arguments);
 
         if (getLog().isDebugEnabled()) {
             StringBuffer msg = new StringBuffer("Invoking : ");
