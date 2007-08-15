@@ -18,6 +18,7 @@ package org.apache.camel.view;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.xml.XPathBuilder;
 
 import java.io.File;
 
@@ -37,7 +38,15 @@ public class DotViewTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").filter(header("foo").isEqualTo("bar")).to("mock:result");
+                from("direct:simpleFilterRoute").
+                        filter(header("foo").isEqualTo("bar")).
+                        to("mock:result");
+
+                from("direct:filterAndRecipientList").
+                        filter(header("foo").isEqualTo("bar")).
+                        recipientList(header("bar")).
+                        splitter(XPathBuilder.xpath("/invoice/lineItems")).
+                        to("mock:result");
             }
         };
     }
