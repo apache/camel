@@ -20,8 +20,8 @@ import java.io.File;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
@@ -29,10 +29,10 @@ import org.apache.camel.util.IntrospectionSupport;
  *
  * @version $Revision$
  */
-public class JournalComponent extends DefaultComponent<DefaultExchange> {
+public class JournalComponent extends DefaultComponent<Exchange> {
 
     @Override
-    protected Endpoint<DefaultExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {        
+    protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {        
         JournalEndpoint endpoint = new JournalEndpoint(uri, this, new File(remaining));
         IntrospectionSupport.setProperties(endpoint, parameters);
         return endpoint;
