@@ -96,6 +96,14 @@ public class RunCamelMojo extends AbstractExecMojo {
     protected String dotFile;
 
     /**
+     * Allows the DOT file generation to be disabled
+     *
+     * @parameter expression="true"
+     * @readonly
+     */
+    protected boolean dotEnabled;
+
+    /**
      * @component
      */
     private ArtifactResolver artifactResolver;
@@ -287,7 +295,7 @@ public class RunCamelMojo extends AbstractExecMojo {
 
         // lets create the command line arguments to pass in...
         List<String> args = new ArrayList<String>();
-        if (dotFile != null) {
+        if (dotFile != null && dotEnabled) {
             args.add("-f");
             args.add(dotFile);
         }
