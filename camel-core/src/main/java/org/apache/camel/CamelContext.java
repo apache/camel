@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.model.RouteType;
 
@@ -158,7 +159,7 @@ public interface CamelContext extends Service {
      */
     void addRouteDefinitions(Collection<RouteType> routeDefinitions) throws Exception;
 
-    
+
     // Properties
     //-----------------------------------------------------------------------
 

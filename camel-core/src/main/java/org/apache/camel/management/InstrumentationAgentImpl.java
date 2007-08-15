@@ -32,7 +32,7 @@ import javax.management.modelmbean.RequiredModelMBean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.InstrumentationAgent;
+import org.apache.camel.spi.InstrumentationAgent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
 import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
