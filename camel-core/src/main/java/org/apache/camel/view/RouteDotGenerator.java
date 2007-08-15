@@ -17,11 +17,13 @@
 package org.apache.camel.view;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.*;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,7 +45,7 @@ public class RouteDotGenerator {
     private static final transient Log LOG = LogFactory.getLog(RouteDotGenerator.class);
     private String file = "CamelRoutes.dot";
     private String imagePrefix = "http://www.enterpriseintegrationpatterns.com/img/";
-    private Map<Object, String> idMap = new HashMap<Object, String>();
+    private Map<Object, NodeData> nodeMap = new HashMap<Object, NodeData>();
 
     public String getFile() {
         return file;
@@ -91,16 +93,12 @@ public class RouteDotGenerator {
     }
 
     protected void printRoute(PrintWriter writer, RouteType route, FromType input) {
-        String ref = input.getRef();
-        if (isNullOrBlank(ref)) {
-            ref = input.getUri();
-        }
-        String fromID = getID(ref);
+        NodeData nodeData = getNodeData(input);
 
         writer.println();
-        writer.print(fromID);
+        writer.print(nodeData.id);
         writer.println(" [");
-        writer.println("label = \"" + ref + "\"");
+        writer.println("label = \"" + nodeData.label + "\"");
         writer.println("];");
         writer.println();
 
@@ -108,59 +106,73 @@ public class RouteDotGenerator {
 
         List<ProcessorType> outputs = route.getOutputs();
         for (ProcessorType output : outputs) {
-            printNode(writer, fromID, output);
+            printNode(writer, nodeData, output);
         }
     }
 
-    protected String printNode(PrintWriter writer, String fromID, ProcessorType node) {
-        String toID = getID(node);
+    protected NodeData printNode(PrintWriter writer, NodeData fromData, ProcessorType node) {
+        NodeData toData = getNodeData(node);
 
         writer.println();
-        writer.print(toID);
+        writer.print(toData.id);
         writer.println(" [");
-        printNodeAttributes(writer, node, fromID);
+        RouteDotGenerator.NodeData nodeData = printNodeAttributes(writer, fromData, toData);
         writer.println("];");
         writer.println();
 
-        writer.print(fromID);
+        writer.print(fromData.id);
         writer.print(" -> ");
-        writer.print(toID);
+        writer.print(toData.id);
         writer.println(" [");
-        // TODO customize the line!
+
+        String label = fromData.edgeLabel;
+        if (isNotNullAndNonEmpty(label)) {
+            writer.println("label = \"" + label + "\"");
+        }
         writer.println("];");
 
         // now lets write any children
         List<ProcessorType> outputs = node.getOutputs();
         for (ProcessorType output : outputs) {
-            printNode(writer, toID, output);
+            NodeData newData = printNode(writer, toData, output);
+            if (!(node instanceof MulticastType)) {
+                toData = newData;
+            }
         }
-        return toID;
+        return toData;
     }
 
     protected class NodeData {
+        public String id;
         public String image;
         public String label;
+        public String edgeLabel;
+        public String tooltop;
+        public String nodeType;
     }
 
-    protected void printNodeAttributes(PrintWriter writer, ProcessorType node, String id) {
-        NodeData nodeData = new NodeData();
-        configureNodeData(node, nodeData);
-
-        String label = nodeData.label;
-        if (label == null) {
-            label = node.toString();
-        }
-        writer.println("label = \"" + label + "\"");
+    protected NodeData printNodeAttributes(PrintWriter writer, NodeData fromData, NodeData nodeData) {
+        writer.println("label = \"" + nodeData.label + "\"");
+        writer.println("tooltip = \"" + nodeData.tooltop + "\"");
 
         String image = nodeData.image;
         if (image != null) {
             writer.println("shapefile = \"" + image + "\"");
             writer.println("shape = custom");
+            writer.println("peripheries=0");
         }
+        return nodeData;
     }
 
-    protected void configureNodeData(ProcessorType node, NodeData nodeData) {
-        if (node instanceof ToType) {
+    protected void configureNodeData(Object node, NodeData nodeData) {
+        if (node instanceof FromType) {
+            FromType fromType = (FromType) node;
+            nodeData.label = fromType.getRef();
+            if (isNullOrBlank(nodeData.label)) {
+                nodeData.label = fromType.getUri();
+            }
+        }
+        else if (node instanceof ToType) {
             ToType toType = (ToType) node;
             String ref = toType.getRef();
             if (isNullOrBlank(ref)) {
@@ -171,7 +183,8 @@ public class RouteDotGenerator {
         else if (node instanceof FilterType) {
             FilterType filterType = (FilterType) node;
             nodeData.image = imagePrefix + "MessageFilterIcon.gif";
-            nodeData.label = getLabel(filterType.getExpression());
+            nodeData.edgeLabel = getLabel(filterType.getExpression());
+            nodeData.nodeType = "Message Filter";
         }
         else if (node instanceof ChoiceType) {
             ChoiceType choiceType = (ChoiceType) node;
@@ -181,27 +194,51 @@ public class RouteDotGenerator {
             for (WhenType whenType : list) {
                 buffer.append(getLabel(whenType.getExpression()));
             }
-            nodeData.label = buffer.toString();
+            nodeData.edgeLabel = buffer.toString();
+            nodeData.nodeType = "Content Based Router";
         }
         else if (node instanceof RecipientListType) {
             RecipientListType recipientListType = (RecipientListType) node;
             nodeData.image = imagePrefix + "RecipientListIcon.gif";
-            nodeData.label = getLabel(recipientListType.getExpression());
+            nodeData.edgeLabel = getLabel(recipientListType.getExpression());
+            nodeData.nodeType = "Recipient List";
         }
         else if (node instanceof SplitterType) {
             SplitterType splitterType = (SplitterType) node;
             nodeData.image = imagePrefix + "SplitterIcon.gif";
-            nodeData.label = getLabel(splitterType.getExpression());
+            nodeData.edgeLabel = getLabel(splitterType.getExpression());
+            nodeData.nodeType = "Splitter";
         }
         else if (node instanceof AggregatorType) {
             AggregatorType aggregatorType = (AggregatorType) node;
             nodeData.image = imagePrefix + "AggregatorIcon.gif";
-            nodeData.label = getLabel(aggregatorType.getExpression());
+            nodeData.edgeLabel = getLabel(aggregatorType.getExpression());
+            nodeData.nodeType = "Aggregator";
         }
         else if (node instanceof ResequencerType) {
             ResequencerType resequencerType = (ResequencerType) node;
             nodeData.image = imagePrefix + "ResequencerIcon.gif";
-            nodeData.label = getLabel(resequencerType.getExpressions());
+            nodeData.edgeLabel = getLabel(resequencerType.getExpressions());
+            nodeData.nodeType = "Resequencer";
+        }
+
+        // lets auto-default as many values as we can
+        if (nodeData.label == null) {
+            if (isNotNullAndNonEmpty(nodeData.edgeLabel)) {
+                nodeData.label = "";
+            }
+            else {
+                nodeData.label = node.toString();
+            }
+        }
+        if (isNullOrBlank(nodeData.tooltop)) {
+            if (isNotNullAndNonEmpty(nodeData.nodeType)) {
+                String description = isNotNullAndNonEmpty(nodeData.edgeLabel) ? nodeData.edgeLabel : nodeData.label;
+                nodeData.tooltop = nodeData.nodeType + ": " + description;
+            }
+            else {
+                nodeData.tooltop = nodeData.label;
+            }
         }
     }
 
@@ -221,6 +258,10 @@ public class RouteDotGenerator {
                 if (predicate != null) {
                     return predicate.toString();
                 }
+                Expression expressionValue = expression.getExpressionValue();
+                if (expressionValue != null) {
+                    return expressionValue.toString();
+                }
             }
             else {
                 return language;
@@ -229,11 +270,13 @@ public class RouteDotGenerator {
         return "";
     }
 
-    protected String getID(Object node) {
-        String answer = idMap.get(node);
+    protected NodeData getNodeData(Object node) {
+        NodeData answer = nodeMap.get(node);
         if (answer == null) {
-            answer = "node" + (idMap.size() + 1);
-            idMap.put(node, answer);
+            answer = new NodeData();
+            answer.id = "node" + (nodeMap.size() + 1);
+            configureNodeData(node, answer);
+            nodeMap.put(node, answer);
         }
         return answer;
     }

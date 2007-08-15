@@ -125,4 +125,8 @@ public class ExpressionType {
     public Predicate getPredicate() {
         return predicate;
     }
+
+    public Expression getExpressionValue() {
+        return expressionValue;
+    }
 }
