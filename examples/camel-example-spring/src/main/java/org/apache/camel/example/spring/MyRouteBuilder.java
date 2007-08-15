@@ -19,6 +19,7 @@ package org.apache.camel.example.spring;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spring.Main;
 
 /**
  * A simple example router from an ActiveMQ queue to a file system
@@ -26,6 +27,15 @@ import org.apache.camel.builder.RouteBuilder;
  * @version $Revision: 1.1 $
  */
 public class MyRouteBuilder extends RouteBuilder {
+
+    /**
+     * Allow this route to be run as an application
+     * @param args
+     */
+    public static void main(String[] args) {
+        new Main().run(args);
+    }
+
     public void configure() {
         from("activemq:test.MyQueue").to("file://test");
 
