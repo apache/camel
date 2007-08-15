@@ -16,14 +16,15 @@
  */
 package org.apache.camel.model;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.util.ObjectHelper;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.RouteContext;
 
 /**
  * Represents an XML &lt;to/&gt; element
@@ -98,6 +99,19 @@ public class FromType {
 
     public void setEndpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
+    }
+
+    /**
+     * Returns the endpoint URI or the name of the reference to it
+     */
+    public Object getUriOrRef() {
+        if (ObjectHelper.isNullOrBlank(uri)) {
+            return uri;
+        }
+        else if (endpoint != null) {
+            return endpoint.getEndpointUri();
+        }
+        return ref;
     }
 
     // Implementation methods

@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.SendProcessor;
 
@@ -126,5 +127,19 @@ public class ToType extends ProcessorType {
 
     public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
+    }
+
+
+    /**
+     * Returns the endpoint URI or the name of the reference to it
+     */
+    public Object getUriOrRef() {
+        if (ObjectHelper.isNullOrBlank(uri)) {
+            return uri;
+        }
+        else if (endpoint != null) {
+            return endpoint.getEndpointUri();
+        }
+        return ref;
     }
 }
