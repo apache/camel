@@ -253,7 +253,9 @@ public class ResolverUtil<T> {
 
         while (urls.hasMoreElements()) {
             try {
-                String urlPath = urls.nextElement().getFile();
+                URL url = urls.nextElement();
+
+                String urlPath = url.getFile();
                 urlPath = URLDecoder.decode(urlPath, "UTF-8");
 
                 // If it's a file in a directory, trim the stupid file: spec
@@ -299,12 +301,16 @@ public class ResolverUtil<T> {
 
         for (File file : files) {
             builder = new StringBuilder(100);
-            builder.append(parent).append("/").append(file.getName());
-            String packageOrClass = parent == null ? file.getName() : builder.toString();
+            String name = file.getName();
+            if (name != null) {
+                name = name.trim();
+            }
+            builder.append(parent).append("/").append(name);
+            String packageOrClass = parent == null ? name : builder.toString();
 
             if (file.isDirectory()) {
                 loadImplementationsInDirectory(test, packageOrClass, file);
-            } else if (file.getName().endsWith(".class")) {
+            } else if (name.endsWith(".class")) {
                 addIfMatching(test, packageOrClass);
             }
         }
@@ -328,6 +334,9 @@ public class ResolverUtil<T> {
 
             while ((entry = jarStream.getNextJarEntry()) != null) {
                 String name = entry.getName();
+                if (name != null) {
+                    name = name.trim();
+                }
                 if (!entry.isDirectory() && name.startsWith(parent) && name.endsWith(".class")) {
                     addIfMatching(test, name);
                 }
