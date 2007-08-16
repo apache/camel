@@ -41,6 +41,8 @@ import org.w3c.tidy.Tidy;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
@@ -105,11 +107,49 @@ public class ConfluenceToPDFMojo extends AbstractMojo {
     private String[] princeArgs;
 
     /**
-     * Whether the build should fail if the prince executable cannot be ran correctly
-     *
+     * If there is an error converting the HTML to PDF should the build fail?
+     * default to false since this requires the prince tool to be installed and
+     * on the PATH of the system.
+     * 
      * @parameter default-value="false"
      */
-    private boolean failOnCommandLineError;
+    private boolean errorOnConverionFailure;
+
+    /**
+     * If there is an error downloading the HTML should the build fail? default
+     * to false since this usually requires the user to be online.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean errorOnDownloadFailure;
+
+    /**
+     * The maven project.
+     * 
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
+
+    /**
+     * @component
+     */
+    private MavenProjectHelper projectHelper;
+
+    /**
+     * The type used when attaching the artifact to the deployment.
+     * 
+     * @parameter default-value="pdf"
+     */
+    private String type;
+
+    /**
+     * Classifier to add to the artifact generated.
+     * 
+     * @parameter
+     */
+    private String classifier;
 
     public void execute() throws MojoExecutionException {
         File outputDir = new File(pdf).getParentFile();
@@ -119,12 +159,18 @@ public class ConfluenceToPDFMojo extends AbstractMojo {
         try {
             // Download
             String content = downloadContent();
+            if (content == null) {
+                return;
+            }
 
             // Store
             storeHTMLFile(content);
 
             // Run Prince
-            convert();
+            if (convert() == 0) {
+                File pdfFile = new File(getPDFFileName());
+                projectHelper.attachArtifact(project, type, classifier, pdfFile);
+            }
 
         } catch (MojoExecutionException e) {
             throw e;
@@ -133,7 +179,7 @@ public class ConfluenceToPDFMojo extends AbstractMojo {
         }
     }
 
-    private void convert() throws CommandLineException, MojoExecutionException {
+    private int convert() throws CommandLineException, MojoExecutionException {
         getLog().info("Converting to PDF with prince...");
         Commandline cl = new Commandline("prince");
         Argument arg;
@@ -155,7 +201,7 @@ public class ConfluenceToPDFMojo extends AbstractMojo {
 
         StreamConsumer out = new StreamConsumer() {
             public void consumeLine(String line) {
-                System.out.println("prince: " + line);
+                getLog().info("[prince] " + line);
             }
         };
 
@@ -163,12 +209,13 @@ public class ConfluenceToPDFMojo extends AbstractMojo {
         if (rc == 0) {
             getLog().info("Stored: " + getPDFFileName());
         } else {
-            if (failOnCommandLineError) {
+            if (errorOnConverionFailure) {
                 throw new MojoExecutionException("PDF Conversion failed rc=" + rc);
             } else {
-                getLog().warn("Failed due to return code: " + rc);
+                getLog().error("PDF Conversion failed due to return code: " + rc);
             }
         }
+        return rc;
     }
 
     private String getPDFFileName() {
@@ -206,7 +253,22 @@ public class ConfluenceToPDFMojo extends AbstractMojo {
 
         getLog().info("Downloading: " + page);
         URL url = new URL(page);
-        Document doc = new Tidy().parseDOM(new BufferedInputStream(url.openStream()), new ByteArrayOutputStream());
+        Tidy tidy = new Tidy();
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        tidy.setErrout(new PrintWriter(result));
+        Document doc;
+        try {
+            doc = tidy.parseDOM(new BufferedInputStream(url.openStream()), new ByteArrayOutputStream());
+        } catch (Throwable e) {
+            if (errorOnDownloadFailure) {
+                getLog().debug(new String(result.toByteArray()), e);
+                throw new MojoExecutionException("Download or validation of '" + page + "' failed: " + e);
+            } else {
+                getLog().debug(new String(result.toByteArray()), e);
+                getLog().error("Download or validation of '" + page + "' failed: " + e);
+                return null;
+            }
+        }
 
         NodeList nodeList = doc.getElementsByTagName("div");
         for (int i = 0; i < nodeList.getLength(); ++i) {
