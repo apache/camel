@@ -34,7 +34,7 @@
   <modules>
     <module>archetypes</module>
     <module>maven</module>
-    <module>camel-book</module>
+    <module>camel-manual</module>
   </modules>
 
 </project>
