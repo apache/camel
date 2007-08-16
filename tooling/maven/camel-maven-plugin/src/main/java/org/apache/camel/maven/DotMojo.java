@@ -17,6 +17,7 @@
  */
 package org.apache.camel.maven;
 
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -42,11 +43,14 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * Converts the DOT files into another format such as PNG
+ * Runs Camel embedded with META-INF/services/*.xml spring files to try create DOT files for the
+ * routing rules, then converts the DOT files into another format such as PNG
  *
  * @version $Revision: 1.1 $
  * @goal dot
+ * @requiresDependencyResolution runtime
  * @phase prepare-package
+ * @execute phase="test-compile"
  * @see <a href="http://www.graphviz.org/">GraphViz</a>
  */
 public class DotMojo extends AbstractMavenReport {
@@ -55,6 +59,7 @@ public class DotMojo extends AbstractMavenReport {
      * Subdirectory for report.
      */
     protected static final String SUBDIRECTORY = "cameldoc";
+    private StringWriter htmlBuffer = new StringWriter();
     /**
      * Reference to Maven 2 Project.
      *
@@ -112,7 +117,31 @@ public class DotMojo extends AbstractMavenReport {
      * @component
      */
     private Renderer renderer;
-    StringWriter htmlBuffer = new StringWriter();
+    //
+    // For running Camel embedded
+    //-------------------------------------------------------------------------
+    //
+    /**
+     * The duration to run the application for which by default is in milliseconds.
+     *
+     * @parameter expression="2s"
+     * @readonly
+     */
+    protected String duration;
+    /**
+     * The DOT File name used to generate the DOT diagram of the route definitions
+     *
+     * @parameter expression="${project.build.directory}/site/cameldoc/routes.dot"
+     * @readonly
+     */
+    protected String dotFile;
+    /**
+     * Whether we should boot up camel with the META-INF/services/*.xml to generate the DOT file
+     *
+     * @parameter expression="true"
+     * @readonly
+     */
+    protected boolean runCamel;
 
     /**
      * @param locale report locale.
@@ -180,6 +209,12 @@ public class DotMojo extends AbstractMavenReport {
      * @throws MojoExecutionException if there were any execution errors.
      */
     protected void execute(final File outputDir, final Locale locale) throws MojoExecutionException {
+        try {
+            runCamelEmbedded(outputDir);
+        }
+        catch (DependencyResolutionRequiredException e) {
+            throw new MojoExecutionException("Failed: " + e, e);
+        }
         outputDir.mkdirs();
 
         List<File> files = new ArrayList<File>();
@@ -219,8 +254,29 @@ public class DotMojo extends AbstractMavenReport {
         }
     }
 
+    protected void runCamelEmbedded(File outputDir) throws DependencyResolutionRequiredException, MojoExecutionException {
+        if (runCamel) {
+            getLog().info("Running Camel embedded to load META-INF/spring/*.xml files");
+
+            List list = project.getTestClasspathElements();
+            getLog().debug("Using classpath: " + list);
+
+            EmbeddedMojo mojo = new EmbeddedMojo();
+            mojo.setClasspathElements(list);
+            mojo.setDotEnabled(true);
+            mojo.setDotFile(dotFile);
+            mojo.setDuration(duration);
+            mojo.setLog(getLog());
+            mojo.setOutputDirectory(outputDir);
+            mojo.setPluginContext(getPluginContext());
+            mojo.execute();
+        }
+    }
+
     protected void writeIndexHtmlFile() throws IOException {
-        File html = new File(new File(outputDirectory, SUBDIRECTORY), "index.html");
+        File dir = new File(outputDirectory, SUBDIRECTORY);
+        dir.mkdirs();
+        File html = new File(dir, "index.html");
         PrintWriter out = null;
         try {
             out = new PrintWriter(new FileWriter(html));
@@ -246,7 +302,7 @@ public class DotMojo extends AbstractMavenReport {
 
     protected void printHtmlFileHeader(PrintWriter out, File file) {
         out.println("<p>");
-        out.println("  <img src='" + removeFileExtension(file.getName()) + ".png' usemap='#G'>");
+        out.println("  <img src='" + removeFileExtension(file.getName()) + ".png' usemap='#CamelRoutes'>");
     }
 
     protected void printHtmlFileFooter(PrintWriter out, File file) {
