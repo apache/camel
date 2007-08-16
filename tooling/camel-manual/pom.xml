@@ -59,7 +59,7 @@
             <goals>
               <goal>confluenceToPDF</goal>
             </goals>
-            <phase>process-sources</phase>
+            <phase>site</phase>
           </execution>
         </executions>        
         <configuration>
