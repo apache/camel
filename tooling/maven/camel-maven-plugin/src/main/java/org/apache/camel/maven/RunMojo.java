@@ -60,7 +60,7 @@ import java.util.Set;
  * @requiresDependencyResolution runtime
  * @execute phase="test-compile"
  */
-public class RunCamelMojo extends AbstractExecMojo {
+public class RunMojo extends AbstractExecMojo {
 
     // TODO
     // this code is based on a copy-and-paste of maven-exec-plugin
