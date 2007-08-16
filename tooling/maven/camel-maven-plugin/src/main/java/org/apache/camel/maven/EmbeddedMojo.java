@@ -80,14 +80,20 @@ public class EmbeddedMojo extends AbstractExecMojo {
      * This method will run the mojo
      */
     public void execute() throws MojoExecutionException {
+        try {
+            executeWithoutWrapping();
+        }
+        catch (Exception e) {
+            throw new MojoExecutionException("Failed: " + e, e);
+        }
+    }
+
+    public void executeWithoutWrapping() throws MalformedURLException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, MojoExecutionException {
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             ClassLoader newLoader = createClassLoader(oldClassLoader);
             Thread.currentThread().setContextClassLoader(newLoader);
             runCamel(newLoader);
-        }
-        catch (Exception e) {
-            throw new MojoExecutionException("Failed: " + e, e);
         }
         finally {
             Thread.currentThread().setContextClassLoader(oldClassLoader);

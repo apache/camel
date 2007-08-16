@@ -254,7 +254,7 @@ public class DotMojo extends AbstractMavenReport {
         }
     }
 
-    protected void runCamelEmbedded(File outputDir) throws DependencyResolutionRequiredException, MojoExecutionException {
+    protected void runCamelEmbedded(File outputDir) throws DependencyResolutionRequiredException {
         if (runCamel) {
             getLog().info("Running Camel embedded to load META-INF/spring/*.xml files");
 
@@ -269,7 +269,12 @@ public class DotMojo extends AbstractMavenReport {
             mojo.setLog(getLog());
             mojo.setOutputDirectory(outputDir);
             mojo.setPluginContext(getPluginContext());
-            mojo.execute();
+            try {
+                mojo.executeWithoutWrapping();
+            }
+            catch (Exception e) {
+                getLog().error("Failed to run Camel embedded: " + e, e);
+            }
         }
     }
 
