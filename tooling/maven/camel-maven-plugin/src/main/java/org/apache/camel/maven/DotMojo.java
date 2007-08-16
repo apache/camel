@@ -17,6 +17,7 @@
  */
 package org.apache.camel.maven;
 
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -111,6 +112,7 @@ public class DotMojo extends AbstractMavenReport {
      * @component
      */
     private Renderer renderer;
+    StringWriter htmlBuffer = new StringWriter();
 
     /**
      * @param locale report locale.
@@ -140,6 +142,12 @@ public class DotMojo extends AbstractMavenReport {
      */
     public void execute() throws MojoExecutionException {
         this.execute(this.buildDirectory, Locale.getDefault());
+        try {
+            writeIndexHtmlFile();
+        }
+        catch (IOException e) {
+            throw new MojoExecutionException("Failed: " + e, e);
+        }
     }
 
     /**
@@ -148,8 +156,16 @@ public class DotMojo extends AbstractMavenReport {
     protected void executeReport(final Locale locale) throws MavenReportException {
         try {
             this.execute(this.outputDirectory, locale);
+
+            Sink kitchenSink = getSink();
+            if (kitchenSink != null) {
+                kitchenSink.rawText(htmlBuffer.toString());
+            }
+            else {
+                writeIndexHtmlFile();
+            }
         }
-        catch (MojoExecutionException e) {
+        catch (Exception e) {
             final MavenReportException ex = new MavenReportException(e.getMessage());
             ex.initCause(e.getCause());
             throw ex;
@@ -177,7 +193,6 @@ public class DotMojo extends AbstractMavenReport {
                 graphvizOutputTypes = new String[]{graphvizOutputType};
             }
         }
-        StringWriter htmlBuffer = new StringWriter();
         try {
             PrintWriter out = new PrintWriter(htmlBuffer);
             printHtmlHeader(out);
@@ -202,27 +217,29 @@ public class DotMojo extends AbstractMavenReport {
         catch (CommandLineException e) {
             throw new MojoExecutionException("Failed: " + e, e);
         }
-        File html = new File(new File(outputDirectory, SUBDIRECTORY), "eip.html");
-        FileWriter htmlOut = null;
+    }
+
+    protected void writeIndexHtmlFile() throws IOException {
+        File html = new File(new File(outputDirectory, SUBDIRECTORY), "index.html");
+        PrintWriter out = null;
         try {
-            htmlOut = new FileWriter(html);
-            htmlOut.write(htmlBuffer.toString());
-        }
-        catch (IOException e) {
-            throw new MojoExecutionException("Failed: " + e, e);
+            out = new PrintWriter(new FileWriter(html));
+            out.println("<html>");
+            out.println("<head>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println();
+            out.write(htmlBuffer.toString());
+            out.println("</body>");
+            out.println("</html>");
         }
         finally {
             String description = "Failed to close html output file";
-            close(htmlOut, description);
+            close(out, description);
         }
     }
 
     protected void printHtmlHeader(PrintWriter out) {
-        out.println("<html>");
-        out.println("<head>");
-        out.println("</head>");
-        out.println("<body>");
-        out.println();
         out.println("<h1>Camel EIP Patterns</h1>");
         out.println();
     }
@@ -240,8 +257,6 @@ public class DotMojo extends AbstractMavenReport {
 
     protected void printHtmlFooter(PrintWriter out) {
         out.println();
-        out.println("</body>");
-        out.println("</html>");
     }
 
     protected void close(Closeable closeable, String description) {
