@@ -74,7 +74,7 @@ public class ConfluenceToPDFMojo extends AbstractMojo {
     /**
      * Location of the work directory.
      * 
-     * @parameter expression="${project.build.directory}/html-to-pdf"
+     * @parameter expression="${project.build.directory}/site/manual"
      */
     private String workDir;
 
@@ -82,7 +82,7 @@ public class ConfluenceToPDFMojo extends AbstractMojo {
      * The output file name for the pdf.
      * 
      * @parameter expression="${pdf}"
-     *            default-value="${project.build.directory}/html-to-pdf/${project.artifactId}-${project.version}.pdf"
+     *            default-value="${project.build.directory}/site/manual/${project.artifactId}-${project.version}.pdf"
      */
     private String pdf;
 
@@ -166,11 +166,15 @@ public class ConfluenceToPDFMojo extends AbstractMojo {
     }
 
     private String getHTMLFileName() {
-        return getPDFFileName() + ".html";
+        String name = getPDFFileName();
+        if (name.endsWith(".pdf")) {
+            name = name.substring(0, name.length() - 4);
+        }
+        return name + ".html";
     }
 
-    private String downloadContent() throws MalformedURLException, IOException, TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException,
-        UnsupportedEncodingException, MojoExecutionException {
+    private String downloadContent() throws IOException, TransformerFactoryConfigurationError, TransformerException,
+        MojoExecutionException {
 
         getLog().info("Downloading: " + page);
         URL url = new URL(page);
