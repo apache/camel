@@ -104,6 +104,13 @@ public class ConfluenceToPDFMojo extends AbstractMojo {
      */
     private String[] princeArgs;
 
+    /**
+     * Whether the build should fail if the prince executable cannot be ran correctly
+     *
+     * @parameter default-value="false"
+     */
+    private boolean failOnCommandLineError;
+
     public void execute() throws MojoExecutionException {
         File outputDir = new File(pdf).getParentFile();
         if (!outputDir.exists()) {
@@ -156,7 +163,11 @@ public class ConfluenceToPDFMojo extends AbstractMojo {
         if (rc == 0) {
             getLog().info("Stored: " + getPDFFileName());
         } else {
-            throw new MojoExecutionException("PDF Conversion failed rc=" + rc);
+            if (failOnCommandLineError) {
+                throw new MojoExecutionException("PDF Conversion failed rc=" + rc);
+            } else {
+                getLog().warn("Failed due to return code: " + rc);
+            }
         }
     }
 
