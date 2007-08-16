@@ -93,6 +93,7 @@ public class RouteDotGenerator {
         public String tooltop;
         public String nodeType;
         public boolean nodeWritten;
+        public String url;
     }
 
     protected void generateFile(PrintWriter writer, CamelContext context) {
@@ -168,6 +169,9 @@ public class RouteDotGenerator {
             writer.println(" [");
             writer.println("label = \"" + data.label + "\"");
             writer.println("tooltip = \"" + data.tooltop + "\"");
+            if (data.url != null) {
+                writer.println("URL = \"" + data.url + "\"");
+            }
 
             String image = data.image;
             if (image != null) {
@@ -180,13 +184,14 @@ public class RouteDotGenerator {
         }
     }
 
-    protected void configureNodeData(Object node, NodeData nodeData) {
+    protected void configureNodeData(Object node, NodeData data) {
         if (node instanceof FromType) {
             FromType fromType = (FromType) node;
-            nodeData.label = fromType.getRef();
-            if (isNullOrBlank(nodeData.label)) {
-                nodeData.label = fromType.getUri();
+            data.label = fromType.getRef();
+            if (isNullOrBlank(data.label)) {
+                data.label = fromType.getUri();
             }
+            data.url = "http://activemq.apache.org/camel/message-endpoint.html";
         }
         else if (node instanceof ToType) {
             ToType toType = (ToType) node;
@@ -194,66 +199,68 @@ public class RouteDotGenerator {
             if (isNullOrBlank(ref)) {
                 ref = toType.getUri();
             }
-            nodeData.label = ref;
+            data.label = ref;
+            data.url = "http://activemq.apache.org/camel/message-endpoint.html";
         }
         else if (node instanceof FilterType) {
             FilterType filterType = (FilterType) node;
-            nodeData.image = imagePrefix + "MessageFilterIcon.gif";
-            nodeData.edgeLabel = getLabel(filterType.getExpression());
-            nodeData.nodeType = "Message Filter";
+            data.image = imagePrefix + "MessageFilterIcon.gif";
+            data.edgeLabel = getLabel(filterType.getExpression());
+            data.nodeType = "Message Filter";
+            data.url = "";
         }
         else if (node instanceof ChoiceType) {
             ChoiceType choiceType = (ChoiceType) node;
-            nodeData.image = imagePrefix + "ContentBasedRouterIcon.gif";
+            data.image = imagePrefix + "ContentBasedRouterIcon.gif";
             CollectionStringBuffer buffer = new CollectionStringBuffer();
             List<WhenType> list = choiceType.getWhenClauses();
             for (WhenType whenType : list) {
                 buffer.append(getLabel(whenType.getExpression()));
             }
-            nodeData.edgeLabel = buffer.toString();
-            nodeData.nodeType = "Content Based Router";
+            data.edgeLabel = buffer.toString();
+            data.nodeType = "Content Based Router";
         }
         else if (node instanceof RecipientListType) {
             RecipientListType recipientListType = (RecipientListType) node;
-            nodeData.image = imagePrefix + "RecipientListIcon.gif";
-            nodeData.edgeLabel = getLabel(recipientListType.getExpression());
-            nodeData.nodeType = "Recipient List";
+            data.image = imagePrefix + "RecipientListIcon.gif";
+            data.edgeLabel = getLabel(recipientListType.getExpression());
+            data.nodeType = "Recipient List";
         }
         else if (node instanceof SplitterType) {
             SplitterType splitterType = (SplitterType) node;
-            nodeData.image = imagePrefix + "SplitterIcon.gif";
-            nodeData.edgeLabel = getLabel(splitterType.getExpression());
-            nodeData.nodeType = "Splitter";
+            data.image = imagePrefix + "SplitterIcon.gif";
+            data.edgeLabel = getLabel(splitterType.getExpression());
+            data.nodeType = "Splitter";
         }
         else if (node instanceof AggregatorType) {
             AggregatorType aggregatorType = (AggregatorType) node;
-            nodeData.image = imagePrefix + "AggregatorIcon.gif";
-            nodeData.edgeLabel = getLabel(aggregatorType.getExpression());
-            nodeData.nodeType = "Aggregator";
+            data.image = imagePrefix + "AggregatorIcon.gif";
+            data.edgeLabel = getLabel(aggregatorType.getExpression());
+            data.nodeType = "Aggregator";
         }
         else if (node instanceof ResequencerType) {
             ResequencerType resequencerType = (ResequencerType) node;
-            nodeData.image = imagePrefix + "ResequencerIcon.gif";
-            nodeData.edgeLabel = getLabel(resequencerType.getExpressions());
-            nodeData.nodeType = "Resequencer";
+            data.image = imagePrefix + "ResequencerIcon.gif";
+            data.edgeLabel = getLabel(resequencerType.getExpressions());
+            data.nodeType = "Resequencer";
         }
 
         // lets auto-default as many values as we can
-        if (nodeData.label == null) {
-            if (isNotNullAndNonEmpty(nodeData.edgeLabel)) {
-                nodeData.label = "";
+        if (data.label == null) {
+            if (isNotNullAndNonEmpty(data.edgeLabel)) {
+                data.label = "";
             }
             else {
-                nodeData.label = node.toString();
+                data.label = node.toString();
             }
         }
-        if (isNullOrBlank(nodeData.tooltop)) {
-            if (isNotNullAndNonEmpty(nodeData.nodeType)) {
-                String description = isNotNullAndNonEmpty(nodeData.edgeLabel) ? nodeData.edgeLabel : nodeData.label;
-                nodeData.tooltop = nodeData.nodeType + ": " + description;
+        if (isNullOrBlank(data.tooltop)) {
+            if (isNotNullAndNonEmpty(data.nodeType)) {
+                String description = isNotNullAndNonEmpty(data.edgeLabel) ? data.edgeLabel : data.label;
+                data.tooltop = data.nodeType + ": " + description;
             }
             else {
-                nodeData.tooltop = nodeData.label;
+                data.tooltop = data.label;
             }
         }
     }
