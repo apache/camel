@@ -16,38 +16,26 @@
  */
 package org.apache.camel.spring;
 
-import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.CamelTemplate;
-import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.MessageDriven;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.*;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.spring.util.ReflectionUtils;
 import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
+import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * A post processor to perform injection of {@link Endpoint} and
@@ -220,16 +208,44 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
             if (type.isInstance(endpoint)) {
                 return endpoint;
             } else if (type.isAssignableFrom(Producer.class)) {
-                try {
-                    return endpoint.createProducer();
-                } catch (Exception e) {
-                    throw new RuntimeCamelException(e);
-                }
+                return createInjectionProducer(endpoint);
             } else if (type.isAssignableFrom(CamelTemplate.class)) {
                 return new CamelTemplate(getCamelContext(), endpoint);
+            } else if (type.isAssignableFrom(PollingConsumer.class)) {
+                return createInjectionPollingConsumer(endpoint);
+            } else {
+                throw new IllegalArgumentException("Invalid type: " + type.getName() + " which cannot be injected via @EndpointInject for " + endpoint);
             }
         }
         return null;
+    }
+
+    /**
+     * Factory method to create a started {@link PollingConsumer} to be injected
+     * into a POJO
+     */
+    protected PollingConsumer createInjectionPollingConsumer(Endpoint endpoint) {
+        try {
+            PollingConsumer pollingConsumer = endpoint.createPollingConsumer();
+            pollingConsumer.start();
+            return pollingConsumer;
+        }
+        catch (Exception e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
+    /**
+     * A Factory method to create a started {@link Producer} to be injected into a POJO
+     */
+    protected Producer createInjectionProducer(Endpoint endpoint) {
+        try {
+            Producer producer = endpoint.createProducer();
+            producer.start();
+            return producer;
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     protected Endpoint getEndpointInjection(String uri, String name, String injectionPointName) {
