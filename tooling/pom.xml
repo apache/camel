@@ -32,8 +32,9 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>archetypes</module>
+    <module>camel-xsddoc</module>
     <module>maven</module>
+    <module>archetypes</module>
     <module>camel-manual</module>
   </modules>
 
