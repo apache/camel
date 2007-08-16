@@ -27,7 +27,14 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
+import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -42,8 +49,7 @@ import java.util.ResourceBundle;
  * @see <a href="http://www.graphviz.org/">GraphViz</a>
  */
 public class DotMojo extends AbstractMavenReport {
-    public static final String[] DEFAULT_GRAPHVIZ_OUTPUT_TYPES = { "png", "svg", "cmapx" };
-
+    public static final String[] DEFAULT_GRAPHVIZ_OUTPUT_TYPES = {"png", "svg", "cmapx"};
     /**
      * Subdirectory for report.
      */
@@ -126,7 +132,7 @@ public class DotMojo extends AbstractMavenReport {
      * @see org.apache.maven.reporting.MavenReport#getOutputName()
      */
     public String getOutputName() {
-        return SUBDIRECTORY + "/index.html";
+        return SUBDIRECTORY + "/index";
     }
 
     /**
@@ -137,13 +143,27 @@ public class DotMojo extends AbstractMavenReport {
     }
 
     /**
+     * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(Locale)
+     */
+    protected void executeReport(final Locale locale) throws MavenReportException {
+        try {
+            this.execute(this.outputDirectory, locale);
+        }
+        catch (MojoExecutionException e) {
+            final MavenReportException ex = new MavenReportException(e.getMessage());
+            ex.initCause(e.getCause());
+            throw ex;
+        }
+    }
+
+    /**
      * Executes DOT generator.
      *
      * @param outputDir report output directory.
      * @param locale    report locale.
      * @throws MojoExecutionException if there were any execution errors.
      */
-    private void execute(final File outputDir, final Locale locale) throws MojoExecutionException {
+    protected void execute(final File outputDir, final Locale locale) throws MojoExecutionException {
         outputDir.mkdirs();
 
         List<File> files = new ArrayList<File>();
@@ -154,32 +174,99 @@ public class DotMojo extends AbstractMavenReport {
                 graphvizOutputTypes = DEFAULT_GRAPHVIZ_OUTPUT_TYPES;
             }
             else {
-            graphvizOutputTypes = new String[]{graphvizOutputType};
+                graphvizOutputTypes = new String[]{graphvizOutputType};
             }
         }
+        StringWriter htmlBuffer = new StringWriter();
         try {
+            PrintWriter out = new PrintWriter(htmlBuffer);
+            printHtmlHeader(out);
+
             for (int i = 0; i < files.size(); i++) {
                 File file = (File) ((List) files).get(i);
+                printHtmlFileHeader(out, file);
                 for (int j = 0; j < graphvizOutputTypes.length; j++) {
                     String format = graphvizOutputTypes[j];
-                    convertFile(file, format, getLog());
+                    String generated = convertFile(file, format);
+
+                    if (format.equals("cmapx")) {
+                        // lets include the generated file inside the html
+                        addFileToBuffer(out, new File(generated));
+                    }
                 }
+                printHtmlFileFooter(out, file);
             }
+
+            printHtmlFooter(out);
         }
         catch (CommandLineException e) {
             throw new MojoExecutionException("Failed: " + e, e);
         }
+        File html = new File(new File(outputDirectory, SUBDIRECTORY), "eip.html");
+        FileWriter htmlOut = null;
+        try {
+            htmlOut = new FileWriter(html);
+            htmlOut.write(htmlBuffer.toString());
+        }
+        catch (IOException e) {
+            throw new MojoExecutionException("Failed: " + e, e);
+        }
+        finally {
+            String description = "Failed to close html output file";
+            close(htmlOut, description);
+        }
     }
 
-    protected int convertFile(File file, String format, Log log1) throws CommandLineException {
+    protected void printHtmlHeader(PrintWriter out) {
+        out.println("<html>");
+        out.println("<head>");
+        out.println("</head>");
+        out.println("<body>");
+        out.println();
+        out.println("<h1>Camel EIP Patterns</h1>");
+        out.println();
+    }
+
+    protected void printHtmlFileHeader(PrintWriter out, File file) {
+        out.println("<p>");
+        out.println("  <img src='" + removeFileExtension(file.getName()) + ".png' usemap='#G'>");
+    }
+
+    protected void printHtmlFileFooter(PrintWriter out, File file) {
+        out.println("  </img>");
+        out.println("</p>");
+        out.println();
+    }
+
+    protected void printHtmlFooter(PrintWriter out) {
+        out.println();
+        out.println("</body>");
+        out.println("</html>");
+    }
+
+    protected void close(Closeable closeable, String description) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            }
+            catch (IOException e) {
+                getLog().warn(description + ": " + e);
+            }
+        }
+    }
+
+    protected String convertFile(File file, String format) throws CommandLineException {
+        String generatedFileName = removeFileExtension(file.getAbsolutePath()) + "." + format;
+        Log log = getLog();
+
         Commandline cl = new Commandline();
         cl.setExecutable(executable);
         cl.createArgument().setValue("-T" + format);
         cl.createArgument().setValue("-o");
-        cl.createArgument().setValue(file.getAbsolutePath().replace(".dot", "." + format));
+        cl.createArgument().setValue(generatedFileName);
         cl.createArgument().setValue(file.getAbsolutePath());
 
-        log1.debug("executing: " + cl.toString());
+        log.debug("executing: " + cl.toString());
 
         CommandLineUtils.StringStreamConsumer stdout = new CommandLineUtils.StringStreamConsumer();
         CommandLineUtils.StringStreamConsumer stderr = new CommandLineUtils.StringStreamConsumer();
@@ -188,13 +275,23 @@ public class DotMojo extends AbstractMavenReport {
 
         String output = stdout.getOutput();
         if (output.length() > 0) {
-            log1.debug(output);
+            log.debug(output);
         }
         String errOutput = stderr.getOutput();
         if (errOutput.length() > 0) {
-            log1.warn(errOutput);
+            log.warn(errOutput);
         }
-        return exitCode;
+        return generatedFileName;
+    }
+
+    protected String removeFileExtension(String name) {
+        int idx = name.lastIndexOf(".");
+        if (idx > 0) {
+            return name.substring(0, idx);
+        }
+        else {
+            return name;
+        }
     }
 
     private void appendFiles(List<File> output, File file) {
@@ -220,17 +317,25 @@ public class DotMojo extends AbstractMavenReport {
         return name.endsWith(".dot");
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(Locale)
-     */
-    protected void executeReport(final Locale locale) throws MavenReportException {
+    private void addFileToBuffer(PrintWriter out, File file) throws MojoExecutionException {
+        BufferedReader reader = null;
         try {
-            this.execute(this.outputDirectory, locale);
+            reader = new BufferedReader(new FileReader(file));
+            while (true) {
+                String line = reader.readLine();
+                if (line == null) {
+                    break;
+                }
+                else {
+                    out.println(line);
+                }
+            }
         }
-        catch (MojoExecutionException e) {
-            final MavenReportException ex = new MavenReportException(e.getMessage());
-            ex.initCause(e.getCause());
-            throw ex;
+        catch (IOException e) {
+            throw new MojoExecutionException("Failed: " + e, e);
+        }
+        finally {
+            close(reader, "cmapx file");
         }
     }
 
@@ -242,7 +347,7 @@ public class DotMojo extends AbstractMavenReport {
      */
     protected ResourceBundle getBundle(final Locale locale) {
         return ResourceBundle.getBundle(
-                "camel-dot-maven-plugin",
+                "camel-maven-plugin",
                 locale,
                 this.getClass().getClassLoader());
     }
