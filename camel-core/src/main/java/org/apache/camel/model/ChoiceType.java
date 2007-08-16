@@ -16,23 +16,23 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.util.CollectionStringBuffer;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @version $Revision: 1.1 $
@@ -110,6 +110,17 @@ public class ChoiceType extends ProcessorType {
 
     // Properties
     // -------------------------------------------------------------------------
+
+    @Override
+    public String getLabel() {
+        CollectionStringBuffer buffer = new CollectionStringBuffer();
+        List<WhenType> list = getWhenClauses();
+        for (WhenType whenType : list) {
+            buffer.append(whenType.getLabel());
+        }
+        return buffer.toString();
+    }
+
     public List<WhenType> getWhenClauses() {
         return whenClauses;
     }
@@ -121,9 +132,11 @@ public class ChoiceType extends ProcessorType {
     public List<ProcessorType> getOutputs() {
         if (otherwise != null) {
             return otherwise.getOutputs();
-        } else if (whenClauses.isEmpty()) {
+        }
+        else if (whenClauses.isEmpty()) {
             return Collections.EMPTY_LIST;
-        } else {
+        }
+        else {
             WhenType when = whenClauses.get(whenClauses.size() - 1);
             return when.getOutputs();
         }

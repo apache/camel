@@ -16,14 +16,14 @@
  */
 package org.apache.camel.model;
 
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.processor.DelegateProcessor;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
-import org.apache.camel.impl.RouteContext;
-import org.apache.camel.processor.DelegateProcessor;
 
 /**
  * @version $Revision: 1.1 $
@@ -49,7 +49,7 @@ public class InterceptorRef extends InterceptorType {
 
     @Override
     public String toString() {
-        return "Interceptor[" + description() + "]";
+        return "Interceptor[" + getLabel() + "]";
     }
 
     public DelegateProcessor createInterceptor(RouteContext routeContext) {
@@ -70,11 +70,15 @@ public class InterceptorRef extends InterceptorType {
         this.ref = ref;
     }
 
-    protected String description() {
-        if (interceptor != null) {
-            return interceptor.toString();
-        } else {
+    public String getLabel() {
+        if (ref != null) {
             return "ref:  " + ref;
+        }
+        else if (interceptor != null) {
+            return interceptor.toString();
+        }
+        else {
+            return "";
         }
     }
 }

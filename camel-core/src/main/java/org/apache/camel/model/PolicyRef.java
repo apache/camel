@@ -49,6 +49,19 @@ public class PolicyRef extends OutputType {
         return "Policy[" + description() + "]";
     }
 
+    @Override
+    public String getLabel() {
+        if (ref != null) {
+            return "ref:  " + ref;
+        }
+        else if (policy != null) {
+            return policy.toString();
+        }
+        else {
+            return "";
+        }
+    }
+
     public String getRef() {
         return ref;
     }

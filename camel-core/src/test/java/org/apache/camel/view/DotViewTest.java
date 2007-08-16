@@ -46,6 +46,7 @@ public class DotViewTest extends ContextTestSupport {
                         filter(header("foo").isEqualTo("bar")).
                         recipientList(header("bar")).
                         splitter(XPathBuilder.xpath("/invoice/lineItems")).
+                        throttler(3).
                         to("mock:result");
             }
         };

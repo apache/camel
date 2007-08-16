@@ -60,6 +60,11 @@ public class ResequencerType extends ProcessorType {
         return "Resequencer[ " + getExpressions() + " -> " + getOutputs() + "]";
     }
 
+    @Override
+    public String getLabel() {
+        return ExpressionType.getLabel(getExpressions());
+    }
+
     public List<ExpressionType> getExpressions() {
         return expressions;
     }

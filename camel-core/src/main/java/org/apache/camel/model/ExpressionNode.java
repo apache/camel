@@ -84,6 +84,14 @@ public class ExpressionNode extends ProcessorType {
         this.outputs = outputs;
     }
 
+    @Override
+    public String getLabel() {
+        if (getExpression() == null) {
+            return "";
+        }
+        return getExpression().getLabel();
+    }
+
     protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
         return new FilterProcessor(getExpression().createPredicate(routeContext), childProcessor);

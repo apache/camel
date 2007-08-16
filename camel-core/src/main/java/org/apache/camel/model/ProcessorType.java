@@ -648,6 +648,16 @@ public abstract class ProcessorType {
         this.inheritErrorHandlerFlag = inheritErrorHandlerFlag;
     }
 
+    /**
+     * Returns a label to describe this node such as the expression if some kind of expression node
+     *
+     * @return
+     */
+    public String getLabel() {
+        return "";
+    }
+    
+
     // Implementation methods
     // -------------------------------------------------------------------------
 

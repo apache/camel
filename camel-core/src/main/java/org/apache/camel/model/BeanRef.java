@@ -16,15 +16,15 @@
  */
 package org.apache.camel.model;
 
+import org.apache.camel.Processor;
+import org.apache.camel.component.bean.BeanProcessor;
+import org.apache.camel.impl.RouteContext;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
-import org.apache.camel.Processor;
-import org.apache.camel.component.bean.BeanProcessor;
-import org.apache.camel.impl.RouteContext;
 
 /**
  * @version $Revision: 1.1 $
@@ -53,7 +53,7 @@ public class BeanRef extends OutputType {
 
     @Override
     public String toString() {
-        return "Bean[" + description() + "]";
+        return "Bean[" + getLabel() + "]";
     }
 
     public String getRef() {
@@ -88,15 +88,20 @@ public class BeanRef extends OutputType {
         return answer;
     }
 
-    protected String description() {
-        if (bean != null) {
-            return bean.toString();
-        } else {
-            String methodText = "";
+    @Override
+    public String getLabel() {
+        if (ref != null) {
+           String methodText = "";
             if (method != null) {
                 methodText = " method: " + method;
             }
             return "ref: " + ref + methodText;
+        }
+        else if (bean != null) {
+            return bean.toString();
+        }
+        else {
+            return "";
         }
     }
 }
