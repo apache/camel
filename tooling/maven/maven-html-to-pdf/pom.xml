@@ -27,22 +27,13 @@
 
   <artifactId>maven-html-to-pdf</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Camel :: Html to Docbook Plugin</name>
+  <name>Camel :: Html to Pdf Plugin</name>
 
   <dependencies>
     <dependency>
       <groupId>jtidy</groupId>
       <artifactId>jtidy</artifactId>
       <version>4aug2000r7-dev</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <scope>test</scope>
-    </dependency>    
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>

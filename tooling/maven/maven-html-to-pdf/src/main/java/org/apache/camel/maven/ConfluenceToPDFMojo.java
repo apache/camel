@@ -24,12 +24,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -42,25 +39,23 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.tidy.Tidy;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
+import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
-import org.codehaus.plexus.util.cli.Commandline.Argument;
 import org.codehaus.plexus.util.cli.StreamConsumer;
+import org.codehaus.plexus.util.cli.Commandline.Argument;
 
 /**
- * Goal which extracts the content html page and converts to PDF using Prince
+ * Goal which extracts the content div from the html page and converts to PDF
+ * using Prince
  * 
- * @goal confluenceToPDF
- * @phase process-sources
+ * @goal compile
+ * @phase compile
  */
 public class ConfluenceToPDFMojo extends AbstractMojo {
-
-    private static final transient Log LOG = LogFactory.getLog(ConfluenceToPDFMojo.class);
 
     /**
      * The URL to the confluence page to convert.
@@ -70,13 +65,6 @@ public class ConfluenceToPDFMojo extends AbstractMojo {
      * @required
      */
     private String page;
-
-    /**
-     * Location of the work directory.
-     * 
-     * @parameter expression="${project.build.directory}/site/manual"
-     */
-    private String workDir;
 
     /**
      * The output file name for the pdf.
@@ -100,45 +88,75 @@ public class ConfluenceToPDFMojo extends AbstractMojo {
      */
     private String head;
 
+    /**
+     * The first div with who's class matches the contentDivClass will be
+     * assumed to be the content section of the HTML and is what will be used as
+     * the content in the PDF.
+     * 
+     * @parameter default-value="wiki-content"
+     */
+    private String contentDivClass = "wiki-content";
+
+    /**
+     * Arguments that should be passed to the prince html to pdf processor.
+     * 
+     * @parameter
+     */
+    private String[] princeArgs;
+
     public void execute() throws MojoExecutionException {
-        File outputDir = new File(workDir);
+        File outputDir = new File(pdf).getParentFile();
         if (!outputDir.exists()) {
             outputDir.mkdirs();
         }
-
         try {
-
             // Download
             String content = downloadContent();
+
             // Store
             storeHTMLFile(content);
+
             // Run Prince
-            getLog().info("Converting to PDF with prince...");
-            Commandline cl = new Commandline("prince");
-            Argument arg = new Argument();
-            arg.setValue(getHTMLFileName());
-            cl.addArg(arg);
-            arg = new Argument();
-            arg.setValue(getPDFFileName());
-            cl.addArg(arg);
-
-            StreamConsumer out = new StreamConsumer() {
-                public void consumeLine(String line) {
-                    System.out.println("prince: " + line);
-                }
-            };
-
-            int rc = CommandLineUtils.executeCommandLine(cl, out, out);
-            if (rc == 0) {
-                getLog().info("Stored: " + getPDFFileName());
-            } else {
-                throw new MojoExecutionException("PDF Conversion failed rc=" + rc);
-            }
+            convert();
 
         } catch (MojoExecutionException e) {
             throw e;
         } catch (Exception e) {
             throw new MojoExecutionException("Download of '" + page + "' failed: " + e.getMessage(), e);
+        }
+    }
+
+    private void convert() throws CommandLineException, MojoExecutionException {
+        getLog().info("Converting to PDF with prince...");
+        Commandline cl = new Commandline("prince");
+        Argument arg;
+
+        if (princeArgs != null) {
+            for (int i = 0; i < princeArgs.length; i++) {
+                arg = new Argument();
+                arg.setValue(princeArgs[i]);
+                cl.addArg(arg);
+            }
+        }
+
+        arg = new Argument();
+        arg.setValue(getHTMLFileName());
+        cl.addArg(arg);
+        arg = new Argument();
+        arg.setValue(getPDFFileName());
+        cl.addArg(arg);
+
+        StreamConsumer out = new StreamConsumer() {
+            public void consumeLine(String line) {
+                System.out.println("prince: " + line);
+            }
+        };
+
+        int rc = CommandLineUtils.executeCommandLine(cl, out, out);
+        if (rc == 0) {
+            getLog().info("Stored: " + getPDFFileName());
+        } else {
+            throw new MojoExecutionException("PDF Conversion failed rc=" + rc);
         }
     }
 
@@ -173,8 +191,7 @@ public class ConfluenceToPDFMojo extends AbstractMojo {
         return name + ".html";
     }
 
-    private String downloadContent() throws IOException, TransformerFactoryConfigurationError, TransformerException,
-        MojoExecutionException {
+    private String downloadContent() throws IOException, TransformerFactoryConfigurationError, TransformerException, MojoExecutionException {
 
         getLog().info("Downloading: " + page);
         URL url = new URL(page);
@@ -185,7 +202,7 @@ public class ConfluenceToPDFMojo extends AbstractMojo {
             Node node = nodeList.item(i);
             NamedNodeMap nm = node.getAttributes();
             Node attr = nm.getNamedItem("class");
-            if (attr != null && attr.getNodeValue().equalsIgnoreCase("wiki-content")) {
+            if (attr != null && attr.getNodeValue().equalsIgnoreCase(contentDivClass)) {
                 // Write the wiki-content div to the content variable.
                 ByteArrayOutputStream contentData = new ByteArrayOutputStream(1024 * 100);
                 TransformerFactory tFactory = TransformerFactory.newInstance();
@@ -196,7 +213,7 @@ public class ConfluenceToPDFMojo extends AbstractMojo {
                 return content;
             }
         }
-        throw new MojoExecutionException("The '" + page + "' page did not have a <div class=\"wiki-content\"> element.");
+        throw new MojoExecutionException("The '" + page + "' page did not have a <div class=\"" + contentDivClass + "\"> element.");
     }
 
 }
