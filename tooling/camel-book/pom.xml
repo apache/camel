@@ -50,7 +50,34 @@
 
   <build>
     <plugins>
+
      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>maven-html-to-docbook</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>confluenceToPDF</goal>
+            </goals>
+            <phase>process-sources</phase>
+          </execution>
+        </executions>        
+        <configuration>
+          <page>http://cwiki.apache.org/confluence/display/CAMEL/Book+In+One+Page</page>
+          <head><![CDATA[ 
+              <link href="file:${basedir}/src/styles/print.css" rel="stylesheet" type="text/css"/>
+              <style type="text/css">
+                @page :left {
+                  @top-left {
+                    content: "Apache Camel ${pom.version} Developer's Manual";
+                  }
+                }
+              </style>
+          ]]></head>
+        </configuration>
+      </plugin>      
+      <!--
+      <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>maven-html-to-docbook</artifactId>
         <executions>
@@ -65,7 +92,6 @@
           <baseURL>http://cwiki.apache.org/CAMEL/</baseURL>
           <title>Camel</title>
           <subtitle>User Guide</subtitle>     
-  		  <!--xslFile>${basedir}/src/styles/docbook1.xsl</xslFile-->   
           <resources>
               <resource>book-introduction.html</resource>
               <resource>book-architecture.html</resource>
@@ -100,7 +126,6 @@
 			<id>execution2</id>
             <goals>
               <goal>generate-pdf</goal>
-              <!--goal>generate-manpages</goal-->
             </goals>
             <phase>site</phase>
             <configuration>
@@ -131,7 +156,6 @@
           <foCustomization>${basedir}/src/styles/docbook-fo.xsl</foCustomization>
           <includes>manual.xml</includes>
 
-          <!-- lets use separate pages per chapter for HTML -->
           <chunkedOutput>true</chunkedOutput>
 
           <entities>
@@ -141,7 +165,6 @@
             </entity>
           </entities>
 
-          <!--<xincludeSupport>true</xincludeSupport>-->
 
           
           <sourceDirectory>${basedir}/target/docbkx/docbkx-source</sourceDirectory>
@@ -153,6 +176,7 @@
           <bodyFontFamily>Helvetica</bodyFontFamily>
         </configuration>
       </plugin>
+      -->
     </plugins>
   </build>
 </project>
