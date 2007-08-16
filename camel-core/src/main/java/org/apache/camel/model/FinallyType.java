@@ -35,6 +35,11 @@ public class FinallyType extends OutputType {
     }
 
     @Override
+    public String getLabel() {
+        return "";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         return routeContext.createProcessor(this);
     }

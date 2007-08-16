@@ -64,6 +64,11 @@ public class CatchType extends ProcessorType {
     }
 
     @Override
+    public String getLabel() {
+        return getExceptionClasses().toString();
+    }
+
+    @Override
     public CatchProcessor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
         return new CatchProcessor(getExceptionClasses(), childProcessor);

@@ -17,12 +17,9 @@
 package org.apache.camel.view;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.model.*;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 import org.apache.commons.logging.Log;
@@ -48,6 +45,31 @@ public class RouteDotGenerator {
     private String imagePrefix = "http://www.enterpriseintegrationpatterns.com/img/";
     private Map<Object, NodeData> nodeMap = new HashMap<Object, NodeData>();
     private boolean makeParentDirs = true;
+
+    /**
+     * lets insert a space before each upper case letter after a lowercase
+     *
+     * @param name
+     * @return
+     */
+    public static String insertSpacesBetweenCamelCase(String name) {
+        boolean lastCharacterLowerCase = false;
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0, size = name.length(); i < size; i++) {
+            char ch = name.charAt(i);
+            if (Character.isUpperCase(ch)) {
+                if (lastCharacterLowerCase) {
+                    buffer.append(' ');
+                }
+                lastCharacterLowerCase = false;
+            }
+            else {
+                lastCharacterLowerCase = true;
+            }
+            buffer.append(ch);
+        }
+        return buffer.toString();
+    }
 
     public RouteDotGenerator() {
         this("CamelRoutes.dot");
@@ -89,6 +111,7 @@ public class RouteDotGenerator {
         public String id;
         public String image;
         public String label;
+        public String shape;
         public String edgeLabel;
         public String tooltop;
         public String nodeType;
@@ -176,8 +199,14 @@ public class RouteDotGenerator {
             String image = data.image;
             if (image != null) {
                 writer.println("shapefile = \"" + image + "\"");
-                writer.println("shape = custom");
                 writer.println("peripheries=0");
+            }
+            String shape = data.shape;
+            if (shape == null && image != null) {
+                shape = "custom";
+            }
+            if (shape != null) {
+                writer.println("shape = \"" + shape + "\"");
             }
             writer.println("];");
             writer.println();
@@ -185,6 +214,10 @@ public class RouteDotGenerator {
     }
 
     protected void configureNodeData(Object node, NodeData data) {
+        if (node instanceof ProcessorType) {
+            ProcessorType processorType = (ProcessorType) node;
+            data.edgeLabel = processorType.getLabel();
+        }
         if (node instanceof FromType) {
             FromType fromType = (FromType) node;
             data.label = fromType.getRef();
@@ -203,50 +236,49 @@ public class RouteDotGenerator {
             data.url = "http://activemq.apache.org/camel/message-endpoint.html";
         }
         else if (node instanceof FilterType) {
-            FilterType filterType = (FilterType) node;
             data.image = imagePrefix + "MessageFilterIcon.gif";
-            data.edgeLabel = getLabel(filterType.getExpression());
             data.nodeType = "Message Filter";
         }
         else if (node instanceof ChoiceType) {
-            ChoiceType choiceType = (ChoiceType) node;
             data.image = imagePrefix + "ContentBasedRouterIcon.gif";
-            CollectionStringBuffer buffer = new CollectionStringBuffer();
-            List<WhenType> list = choiceType.getWhenClauses();
-            for (WhenType whenType : list) {
-                buffer.append(getLabel(whenType.getExpression()));
-            }
-            data.edgeLabel = buffer.toString();
             data.nodeType = "Content Based Router";
         }
         else if (node instanceof RecipientListType) {
-            RecipientListType recipientListType = (RecipientListType) node;
             data.image = imagePrefix + "RecipientListIcon.gif";
-            data.edgeLabel = getLabel(recipientListType.getExpression());
             data.nodeType = "Recipient List";
         }
         else if (node instanceof SplitterType) {
-            SplitterType splitterType = (SplitterType) node;
             data.image = imagePrefix + "SplitterIcon.gif";
-            data.edgeLabel = getLabel(splitterType.getExpression());
             data.nodeType = "Splitter";
         }
         else if (node instanceof AggregatorType) {
-            AggregatorType aggregatorType = (AggregatorType) node;
             data.image = imagePrefix + "AggregatorIcon.gif";
-            data.edgeLabel = getLabel(aggregatorType.getExpression());
             data.nodeType = "Aggregator";
         }
         else if (node instanceof ResequencerType) {
-            ResequencerType resequencerType = (ResequencerType) node;
             data.image = imagePrefix + "ResequencerIcon.gif";
-            data.edgeLabel = getLabel(resequencerType.getExpressions());
             data.nodeType = "Resequencer";
         }
 
         // lets auto-default as many values as we can
+        if (isNullOrBlank(data.nodeType)) {
+            // TODO we could add this to the model?
+            String name = node.getClass().getName();
+            int idx = name.lastIndexOf('.');
+            if (idx > 0) {
+                name = name.substring(idx + 1);
+            }
+            if (name.endsWith("Type")) {
+                name = name.substring(0, name.length() - 4);
+            }
+            data.nodeType = insertSpacesBetweenCamelCase(name);
+        }
         if (data.label == null) {
-            if (isNotNullAndNonEmpty(data.edgeLabel)) {
+            if (isNullOrBlank(data.image)) {
+                data.label = data.nodeType;
+                data.shape = "box";
+            }
+            else if (isNotNullAndNonEmpty(data.edgeLabel)) {
                 data.label = "";
             }
             else {
@@ -277,20 +309,7 @@ public class RouteDotGenerator {
 
     protected String getLabel(ExpressionType expression) {
         if (expression != null) {
-            String language = expression.getExpression();
-            if (ObjectHelper.isNullOrBlank(language)) {
-                Predicate predicate = expression.getPredicate();
-                if (predicate != null) {
-                    return predicate.toString();
-                }
-                Expression expressionValue = expression.getExpressionValue();
-                if (expressionValue != null) {
-                    return expressionValue.toString();
-                }
-            }
-            else {
-                return language;
-            }
+            return expression.getLabel();
         }
         return "";
     }

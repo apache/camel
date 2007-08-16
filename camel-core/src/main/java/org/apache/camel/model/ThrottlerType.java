@@ -59,6 +59,11 @@ public class ThrottlerType extends ProcessorType {
     }
 
     @Override
+    public String getLabel() {
+        return "" + getMaximumRequestsPerPeriod() + " per " + getTimePeriodMillis() + " (ms)";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
         return new Throttler(childProcessor, maximumRequestsPerPeriod, timePeriodMillis);

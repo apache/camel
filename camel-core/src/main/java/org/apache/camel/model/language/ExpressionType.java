@@ -16,6 +16,15 @@
  */
 package org.apache.camel.model.language;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.spi.Language;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.CollectionStringBuffer;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,13 +34,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.impl.RouteContext;
-import org.apache.camel.spi.Language;
+import java.util.List;
 
 /**
  * A useful base class for an expression
@@ -51,6 +54,14 @@ public class ExpressionType {
     private Predicate predicate;
     @XmlTransient
     private Expression expressionValue;
+
+    public static String getLabel(List<ExpressionType> expressions) {
+        CollectionStringBuffer buffer = new CollectionStringBuffer();
+        for (ExpressionType expression : expressions) {
+            buffer.append(expression.getLabel());
+        }
+        return buffer.toString();
+    }
 
     public ExpressionType() {
     }
@@ -128,5 +139,26 @@ public class ExpressionType {
 
     public Expression getExpressionValue() {
         return expressionValue;
+    }
+
+    /**
+     * Returns some descriptive text to describe this node
+     */
+    public String getLabel() {
+        String language = getExpression();
+        if (ObjectHelper.isNullOrBlank(language)) {
+            Predicate predicate = getPredicate();
+            if (predicate != null) {
+                return predicate.toString();
+            }
+            Expression expressionValue = getExpressionValue();
+            if (expressionValue != null) {
+                return expressionValue.toString();
+            }
+        }
+        else {
+            return language;
+        }
+        return "";
     }
 }
