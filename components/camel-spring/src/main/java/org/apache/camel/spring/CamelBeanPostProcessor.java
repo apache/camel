@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring;
 
+import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -115,7 +117,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
                 EndpointInject annotation = field.getAnnotation(EndpointInject.class);
                 if (annotation != null) {
-                    ReflectionUtils.setField(field, bean, getEndpointInjectionValue(annotation, field.getType()));
+                    ReflectionUtils.setField(field, bean, getEndpointInjectionValue(annotation, field.getType(), field.getName()));
                 }
             }
         });
@@ -139,7 +141,8 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
                 if (parameterTypes.length != 1) {
                     LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
                 } else {
-                    Object value = getEndpointInjectionValue(annoation, parameterTypes[0]);
+                    String propertyName = ObjectHelper.getPropertyName(method);
+                    Object value = getEndpointInjectionValue(annoation, parameterTypes[0], propertyName);
                     ObjectHelper.invokeMethod(method, bean, value);
                 }
             }
@@ -177,14 +180,15 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
             LOG.info("Creating a consumer for: " + annotation);
 
             // lets bind this method to a listener
-            Endpoint endpoint = getEndpointInjection(annotation.uri(), annotation.name());
+            String injectionPointName = method.getName();
+            Endpoint endpoint = getEndpointInjection(annotation.uri(), annotation.name(), injectionPointName);
             if (endpoint != null) {
                 try {
                     Processor processor = createConsumerProcessor(bean, method, endpoint);
                     LOG.info("Created processor: " + processor);
                     Consumer consumer = endpoint.createConsumer(processor);
                     consumer.start();
-                    addConsumer(consumer);
+                    onConsumerAdded(consumer);
                 } catch (Exception e) {
                     LOG.warn(e);
                     throw new RuntimeCamelException(e);
@@ -203,16 +207,15 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
         return answer;
     }
 
-    protected void addConsumer(Consumer consumer) {
+    protected void onConsumerAdded(Consumer consumer) {
         LOG.debug("Adding consumer: " + consumer);
-        // consumers.add(consumer);
     }
 
     /**
      * Creates the value for the injection point for the given annotation
      */
-    protected Object getEndpointInjectionValue(EndpointInject annotation, Class<?> type) {
-        Endpoint endpoint = getEndpointInjection(annotation.uri(), annotation.name());
+    protected Object getEndpointInjectionValue(EndpointInject annotation, Class<?> type, String injectionPointName) {
+        Endpoint endpoint = getEndpointInjection(annotation.uri(), annotation.name(), injectionPointName);
         if (endpoint != null) {
             if (type.isInstance(endpoint)) {
                 return endpoint;
@@ -229,18 +232,17 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
         return null;
     }
 
-    protected Endpoint getEndpointInjection(String uri, String name) {
+    protected Endpoint getEndpointInjection(String uri, String name, String injectionPointName) {
         Endpoint endpoint = null;
         if (isNotNullAndNonEmpty(uri)) {
             endpoint = camelContext.getEndpoint(uri);
         } else {
-            if (isNotNullAndNonEmpty(name)) {
-                endpoint = (Endpoint)applicationContext.getBean(name);
-                if (endpoint == null) {
-                    throw new NoSuchBeanDefinitionException(name);
-                }
-            } else {
-                LOG.warn("No uri or name specified on @EndpointInject annotation!");
+            if (isNullOrBlank(name)) {
+                name = injectionPointName;
+            }
+            endpoint = (Endpoint) applicationContext.getBean(name);
+            if (endpoint == null) {
+                throw new NoSuchBeanDefinitionException(name);
             }
         }
         return endpoint;

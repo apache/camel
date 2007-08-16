@@ -365,4 +365,15 @@ public class ObjectHelper {
     public static String getDefaultCharacterSet() {
         return Charset.defaultCharset().name();
     }
+
+    /**
+     * Returns the Java Bean property name of the given method, if it is a setter
+     */
+    public static String getPropertyName(Method method) {
+        String propertyName = method.getName();
+        if (propertyName.startsWith("set") && method.getParameterTypes().length == 1) {
+            propertyName = propertyName.substring(3, 4).toLowerCase() + propertyName.substring(4);
+        }
+        return propertyName;
+    }
 }
