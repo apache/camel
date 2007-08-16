@@ -18,6 +18,8 @@ package org.apache.camel.util;
 
 import junit.framework.TestCase;
 
+import java.lang.reflect.Method;
+
 /**
  * @version $Revision$
  */
@@ -26,5 +28,16 @@ public class ObjectHelperTest extends TestCase {
         assertEquals(ObjectHelper.removeStartingCharacters("foo", '/'), "foo");
         assertEquals(ObjectHelper.removeStartingCharacters("/foo", '/'), "foo");
         assertEquals(ObjectHelper.removeStartingCharacters("//foo", '/'), "foo");
+    }
+
+    public void testGetPropertyName() throws Exception {
+        Method method = getClass().getMethod("setCheese", String.class);
+        assertNotNull("should have found a method!", method);
+
+        String name = ObjectHelper.getPropertyName(method);
+        assertEquals("Property name", "cheese", name);
+    }
+
+    public void setCheese(String cheese) {
     }
 }
