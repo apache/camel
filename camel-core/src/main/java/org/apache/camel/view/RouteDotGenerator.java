@@ -207,7 +207,6 @@ public class RouteDotGenerator {
             data.image = imagePrefix + "MessageFilterIcon.gif";
             data.edgeLabel = getLabel(filterType.getExpression());
             data.nodeType = "Message Filter";
-            data.url = "";
         }
         else if (node instanceof ChoiceType) {
             ChoiceType choiceType = (ChoiceType) node;
@@ -262,6 +261,9 @@ public class RouteDotGenerator {
             else {
                 data.tooltop = data.label;
             }
+        }
+        if (isNullOrBlank(data.url) && isNotNullAndNonEmpty(data.nodeType)) {
+            data.url = "http://activemq.apache.org/camel/" + data.nodeType.toLowerCase().replace(' ', '-') + ".html";
         }
     }
 
