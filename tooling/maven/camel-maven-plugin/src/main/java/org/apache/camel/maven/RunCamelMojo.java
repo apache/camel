@@ -90,7 +90,7 @@ public class RunCamelMojo extends AbstractExecMojo {
     /**
      * The DOT File name used to generate the DOT diagram of the route definitions
      *
-     * @parameter expression="${project.build.directory}/site/cameldoc/Routes.dot"
+     * @parameter expression="${project.build.directory}/site/cameldoc/routes.dot"
      * @readonly
      */
     protected String dotFile;
