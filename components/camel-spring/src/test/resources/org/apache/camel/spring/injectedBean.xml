@@ -25,6 +25,8 @@
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <beanPostProcessor/>
     <endpoint id="namedEndpoint1" uri="direct:namedEndpoint1"/>
+    <endpoint id="injectByFieldName" uri="direct:injectByFieldName"/>
+    <endpoint id="injectByPropertyName" uri="direct:injectByPropertyName"/>
   </camelContext>
 
   <bean id="injectedBean" class="org.apache.camel.spring.InjectedBean"/>

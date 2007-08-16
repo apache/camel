@@ -20,6 +20,7 @@ import org.apache.camel.CamelTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Producer;
+import org.apache.camel.ProducerTemplate;
 
 /**
  * @version $Revision: $
@@ -36,6 +37,10 @@ public class InjectedBean {
     @EndpointInject(uri = "direct:fieldInjectedCamelTemplate")
     private CamelTemplate fieldInjectedCamelTemplate;
     private CamelTemplate propertyInjectedCamelTemplate;
+
+    @EndpointInject
+    private ProducerTemplate injectByFieldName;
+    private ProducerTemplate injectByPropertyName;
 
 
     // Endpoint
@@ -82,5 +87,25 @@ public class InjectedBean {
     @EndpointInject(uri = "direct:propertyInjectedCamelTemplate")
     public void setPropertyInjectedCamelTemplate(CamelTemplate propertyInjectedCamelTemplate) {
         this.propertyInjectedCamelTemplate = propertyInjectedCamelTemplate;
+    }
+
+    // ProducerTemplate
+    //-------------------------------------------------------------------------
+
+    public ProducerTemplate getInjectByFieldName() {
+        return injectByFieldName;
+    }
+
+    public void setInjectByFieldName(ProducerTemplate injectByFieldName) {
+        this.injectByFieldName = injectByFieldName;
+    }
+
+    public ProducerTemplate getInjectByPropertyName() {
+        return injectByPropertyName;
+    }
+
+    @EndpointInject
+    public void setInjectByPropertyName(ProducerTemplate injectByPropertyName) {
+        this.injectByPropertyName = injectByPropertyName;
     }
 }
