@@ -154,6 +154,7 @@
               <tasks>
                 <echo>Deleting unwanted resources from the test-jar</echo>
                 <delete file="${project.build.directory}/test-classes/log4j.properties" verbose="true"/>
+                <delete file="${project.build.directory}/test-classes/META-INF/spring/*" verbose="true"/>
               </tasks>
             </configuration>
             <goals>
@@ -260,4 +261,15 @@
       </plugin>
     </plugins>
   </build>
+
+
+  <reporting>
+    <plugins>
+      <!-- lets generate nice PNG / SVG diagrams from our example routes -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

@@ -29,8 +29,37 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
 
-  <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring"
-                packages="org.apache.camel.builder.RouteBuilder">
+  <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+      <from uri="direct:a.start"/>
+      <choice>
+        <when>
+          <xpath>$foo = 'bar'</xpath>
+          <to uri="mock:x"/>
+        </when>
+        <when>
+          <xpath>$foo = 'cheese'</xpath>
+          <to uri="mock:y"/>
+        </when>
+        <otherwise>
+          <to uri="mock:z"/>
+        </otherwise>
+      </choice>
+    </route>
+    <route>
+      <from uri="direct:b.start"/>
+      <filter>
+        <xpath>/person[@name='James']</xpath>
+        <to uri="mock:b.end"/>
+      </filter>
+    </route>
+    <route>
+      <from uri="direct:c.start"/>
+      <resequencer>
+        <simple>body</simple>
+        <to uri="mock:c.end"/>
+      </resequencer>
+    </route>
   </camelContext>
 
 </beans>
