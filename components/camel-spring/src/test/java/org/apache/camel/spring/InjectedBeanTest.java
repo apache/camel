@@ -42,6 +42,9 @@ public class InjectedBeanTest extends SpringTestSupport {
 
         assertNotNull("No CamelTemplate injected for getFieldInjectedCamelTemplate()", bean.getFieldInjectedCamelTemplate());
         assertNotNull("No CamelTemplate injected for getPropertyInjectedCamelTemplate()", bean.getPropertyInjectedCamelTemplate());
+
+        assertNotNull("No ProducerTemplate injected for getInjectByFieldName()", bean.getInjectByFieldName());
+        assertNotNull("No ProducerTemplate injected for getInjectByPropertyName()", bean.getInjectByPropertyName());
     }
 
     @Override
