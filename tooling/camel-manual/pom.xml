@@ -27,10 +27,10 @@
     <version>1.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-book</artifactId>
+  <artifactId>camel-manual</artifactId>
   <packaging>pom</packaging>
-  <name>Camel User Guide</name>
-  <description>The Camel User Guide which generates HTML, PDF and man pages.</description>
+  <name>Camel Manual</name>
+  <description>The Camel Manual which generates a HTML and PDF representation of the manual.</description>
 
   <repositories>
     <repository>
