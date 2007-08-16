@@ -45,6 +45,14 @@ public class InjectedBeanTest extends SpringTestSupport {
 
         assertNotNull("No ProducerTemplate injected for getInjectByFieldName()", bean.getInjectByFieldName());
         assertNotNull("No ProducerTemplate injected for getInjectByPropertyName()", bean.getInjectByPropertyName());
+
+        assertNotNull("No PollingConsumer injected for getFieldInjectedPollingConsumer()", bean.getFieldInjectedPollingConsumer());
+        assertNotNull("No PollingConsumer injected for getPropertyInjectedPollingConsumer()", bean.getPropertyInjectedPollingConsumer());
+
+    }
+
+    public void testSendAndReceive() throws Exception {
+
     }
 
     @Override

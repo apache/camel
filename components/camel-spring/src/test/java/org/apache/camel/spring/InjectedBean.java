@@ -19,6 +19,7 @@ package org.apache.camel.spring;
 import org.apache.camel.CamelTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 
@@ -29,19 +30,18 @@ public class InjectedBean {
     @EndpointInject(uri = "direct:fieldInjectedEndpoint")
     private Endpoint fieldInjectedEndpoint;
     private Endpoint propertyInjectedEndpoint;
-
     @EndpointInject(uri = "direct:fieldInjectedProducer")
     private Producer fieldInjectedProducer;
     private Producer propertyInjectedProducer;
-    
     @EndpointInject(uri = "direct:fieldInjectedCamelTemplate")
     private CamelTemplate fieldInjectedCamelTemplate;
     private CamelTemplate propertyInjectedCamelTemplate;
-
     @EndpointInject
     private ProducerTemplate injectByFieldName;
     private ProducerTemplate injectByPropertyName;
-
+    @EndpointInject(uri = "direct:fieldInjectedEndpoint")
+    private PollingConsumer fieldInjectedPollingConsumer;
+    private PollingConsumer propertyInjectedPollingConsumer;
 
     // Endpoint
     //-----------------------------------------------------------------------
@@ -107,5 +107,25 @@ public class InjectedBean {
     @EndpointInject
     public void setInjectByPropertyName(ProducerTemplate injectByPropertyName) {
         this.injectByPropertyName = injectByPropertyName;
+    }
+
+    // PollingConsumer
+    //-------------------------------------------------------------------------
+
+    public PollingConsumer getFieldInjectedPollingConsumer() {
+        return fieldInjectedPollingConsumer;
+    }
+
+    public void setFieldInjectedPollingConsumer(PollingConsumer fieldInjectedPollingConsumer) {
+        this.fieldInjectedPollingConsumer = fieldInjectedPollingConsumer;
+    }
+
+    public PollingConsumer getPropertyInjectedPollingConsumer() {
+        return propertyInjectedPollingConsumer;
+    }
+
+    @EndpointInject(uri = "direct:propertyInjectedPollingConsumer")
+    public void setPropertyInjectedPollingConsumer(PollingConsumer propertyInjectedPollingConsumer) {
+        this.propertyInjectedPollingConsumer = propertyInjectedPollingConsumer;
     }
 }
