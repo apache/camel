@@ -32,7 +32,8 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>camel-xsddoc</module>
+    <!-- TODO when this doesn't barf when running 'mvn site' -->
+    <!--<module>camel-xsddoc</module>-->
     <module>maven</module>
     <module>archetypes</module>
     <module>camel-manual</module>
