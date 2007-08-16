@@ -80,7 +80,7 @@ public class Main extends ServiceSupport {
         });
     }
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         Main main = new Main();
         main.run(args);
     }
@@ -302,7 +302,10 @@ public class Main extends ServiceSupport {
         while (!completed.get()) {
             try {
                 if (duration > 0) {
-                    latch.await(duration, getTimeUnit());
+                    TimeUnit unit = getTimeUnit();
+                    LOG.info("Waiting for: " + duration + " " + unit);
+                    latch.await(duration, unit);
+                    completed.set(true);
                 }
                 else {
                     latch.await();
