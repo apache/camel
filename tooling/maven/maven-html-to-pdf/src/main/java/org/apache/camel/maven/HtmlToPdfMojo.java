@@ -57,7 +57,7 @@ import org.codehaus.plexus.util.cli.Commandline.Argument;
  * @goal compile
  * @phase compile
  */
-public class ConfluenceToPDFMojo extends AbstractMojo {
+public class HtmlToPdfMojo extends AbstractMojo {
 
     /**
      * The URL to the confluence page to convert.
