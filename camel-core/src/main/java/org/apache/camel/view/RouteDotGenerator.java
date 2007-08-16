@@ -96,7 +96,7 @@ public class RouteDotGenerator {
     }
 
     protected void generateFile(PrintWriter writer, CamelContext context) {
-        writer.println("digraph \"Camel Routes\" {");
+        writer.println("digraph \"CamelRoutes\" {");
         writer.println();
 
         writer.println("node [style = \"rounded,filled\", fillcolor = yellow, "
