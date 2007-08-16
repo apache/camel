@@ -25,7 +25,7 @@
     <version>1.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>maven-html-to-docbook</artifactId>
+  <artifactId>maven-html-to-pdf</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Camel :: Html to Docbook Plugin</name>
 
