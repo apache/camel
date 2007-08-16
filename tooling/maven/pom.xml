@@ -32,7 +32,7 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>maven-html-to-docbook</module>
+    <module>maven-html-to-pdf</module>
     <module>camel-maven-plugin</module>
   </modules>
 
