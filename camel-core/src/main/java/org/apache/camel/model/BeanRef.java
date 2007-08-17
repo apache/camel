@@ -42,8 +42,8 @@ public class BeanRef extends OutputType {
     public BeanRef() {
     }
 
-    public BeanRef(Object bean) {
-        this.bean = bean;
+    public BeanRef(String ref) {
+        this.ref = ref;
     }
 
     public BeanRef(String ref, String method) {

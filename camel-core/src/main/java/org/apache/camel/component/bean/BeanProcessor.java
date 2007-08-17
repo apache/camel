@@ -16,18 +16,18 @@
  */
 package org.apache.camel.component.bean;
 
-import java.lang.reflect.Method;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * A {@link Processor} which converts the inbound exchange to a method
@@ -96,12 +96,22 @@ public class BeanProcessor implements Processor {
             invocation = beanInfo.createInvocation(pojo, exchange);
         }
         if (invocation == null) {
-            throw new IllegalStateException("No method invocation could be created");
+            throw new IllegalStateException("No method invocation could be created, no maching method could be found on: " + pojo);
         }
         try {
             Object value = invocation.proceed();
             if (value != null) {
                 exchange.getIn().setBody(value);
+            }
+        } catch (InvocationTargetException e) {
+            // lets unwrap the exception
+            Throwable cause = e.getTargetException();
+            if (cause instanceof Exception) {
+                throw (Exception) cause;
+            }
+            else {
+                // TODO deal with errors!
+                throw e;
             }
         } catch (Exception e) {
             throw e;
