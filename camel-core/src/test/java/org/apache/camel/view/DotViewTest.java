@@ -40,9 +40,9 @@ public class DotViewTest extends ContextTestSupport {
             public void configure() {
                 from("file:foo/bar?noop=true").
                         filter(header("foo").isEqualTo("bar")).
-                        to("mock:result");
+                        to("file:xyz?noop=true");
 
-                from("direct:filterAndRecipientList").
+                from("file:xyz?noop=true").
                         filter(header("foo").isEqualTo("bar")).
                         recipientList(header("bar")).
                         splitter(XPathBuilder.xpath("/invoice/lineItems")).

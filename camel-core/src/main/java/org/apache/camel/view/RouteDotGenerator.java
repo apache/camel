@@ -222,25 +222,13 @@ public class RouteDotGenerator {
             FromType fromType = (FromType) node;
             data.tooltop = fromType.getLabel();
             data.label = removeQueryString(data.tooltop);
-/*
-            data.label = fromType.getRef();
-            if (isNullOrBlank(data.label)) {
-                data.label = fromType.getUri();
-            }
-*/
             data.url = "http://activemq.apache.org/camel/message-endpoint.html";
         }
         else if (node instanceof ToType) {
             ToType toType = (ToType) node;
             data.tooltop = toType.getLabel();
             data.label = removeQueryString(data.tooltop);
-/*
-            String ref = toType.getRef();
-            if (isNullOrBlank(ref)) {
-                ref = toType.getUri();
-            }
-            data.label = ref;
-*/
+            data.edgeLabel = null;
             data.url = "http://activemq.apache.org/camel/message-endpoint.html";
         }
         else if (node instanceof FilterType) {
