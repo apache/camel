@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
@@ -59,7 +60,7 @@ public class FileProducer extends DefaultProducer {
 
     public void process(FileExchange exchange) throws Exception {
         InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
-        File file = createFileName(exchange);
+        File file = createFileName(exchange.getIn());
         buildDirectory(file);
         if (LOG.isDebugEnabled()) {
             LOG.debug("About to write to: " + file + " from exchange: " + exchange);
@@ -144,26 +145,23 @@ public class FileProducer extends DefaultProducer {
         */
     }
 
-    protected File createFileName(FileExchange exchange) {
-        String fileName = exchange.getIn().getMessageId();
-
+    protected File createFileName(Message message) {
+        File answer;
         File endpointFile = endpoint.getFile();
-        String name = exchange.getIn().getHeader(FileComponent.HEADER_FILE_NAME, String.class);
-        if (name != null) {
-            File answer = new File(endpointFile, name);
-            if (answer.isDirectory()) {
-                return new File(answer, fileName);
+        String name = message.getHeader(FileComponent.HEADER_FILE_NAME, String.class);
+        if (endpointFile.isDirectory()) {
+            if (name != null) {
+                answer = new File(endpointFile, name);
+                if (answer.isDirectory()) {
+                    answer = new File(answer, message.getMessageId());
+                }
+            } else {
+                answer = new File(endpointFile, message.getMessageId());
             }
-            else {
-                return answer;
-            }
+        } else {
+            answer = endpointFile;
         }
-        if (endpointFile != null && endpointFile.isDirectory()) {
-            return new File(endpointFile, fileName);
-        }
-        else {
-            return new File(fileName);
-        }
+        return answer;
     }
 
     private void buildDirectory(File file) {

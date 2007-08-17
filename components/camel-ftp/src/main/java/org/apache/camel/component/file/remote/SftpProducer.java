@@ -40,19 +40,10 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
     }
 
     public void process(RemoteFileExchange exchange) throws Exception {
-        final String fileName;
         InputStream payload = exchange.getIn().getBody(InputStream.class);
         final String endpointFile = endpoint.getConfiguration().getFile();
         channel.cd(endpointFile);
-        if (endpointFile == null) {
-            throw new NullPointerException("Null Endpoint File");
-        } else {
-            if (endpoint.getConfiguration().isDirectory()) {
-                fileName = endpointFile + "/" + exchange.getIn().getMessageId();
-            } else {
-                fileName = endpointFile;
-            }
-        }
+        String fileName = createFileName(exchange.getIn(), endpoint.getConfiguration());
         buildDirectory(channel, fileName.substring(0, fileName.lastIndexOf('/')));
         try {
             channel.put(payload, fileName);

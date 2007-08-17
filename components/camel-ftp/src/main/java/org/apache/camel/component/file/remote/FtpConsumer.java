@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.FileComponent;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -30,6 +31,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     private long lastPollTime;
     private final FtpEndpoint endpoint;
     private FTPClient client;
+    private boolean setNames = false;
 
     public FtpConsumer(FtpEndpoint endpoint, Processor processor, FTPClient client) {
         super(endpoint, processor);
@@ -76,18 +78,28 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
 
     private void pollFile(FTPFile ftpFile) throws Exception {
         if (ftpFile.getTimestamp().getTimeInMillis() > lastPollTime) { // TODO
-                                                                        // do we
-                                                                        // need
-                                                                        // to
-                                                                        // adjust
-                                                                        // the
-                                                                        // TZ?
-                                                                        // can
-                                                                        // we?
+                                                                       // do we
+                                                                       // need
+                                                                       // to
+                                                                       // adjust
+                                                                       // the
+                                                                       // TZ?
+                                                                       // can
+                                                                       // we?
             if (isMatched(ftpFile)) {
                 final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 client.retrieveFile(ftpFile.getName(), byteArrayOutputStream);
-                getProcessor().process(endpoint.createExchange(getFullFileName(ftpFile), byteArrayOutputStream));
+                RemoteFileExchange exchange = endpoint.createExchange(getFullFileName(ftpFile), byteArrayOutputStream);
+
+                if (isSetNames()) {
+                    String relativePath = getFullFileName(ftpFile).substring(endpoint.getConfiguration().getFile().length());
+                    if (relativePath.startsWith("/")) {
+                        relativePath = relativePath.substring(1);
+                    }
+                    exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, relativePath);
+                }
+
+                getProcessor().process(exchange);
             }
         }
     }
@@ -122,5 +134,13 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
 
     public void setRegexPattern(String regexPattern) {
         this.regexPattern = regexPattern;
+    }
+
+    public boolean isSetNames() {
+        return setNames;
+    }
+
+    public void setSetNames(boolean setNames) {
+        this.setNames = setNames;
     }
 }
