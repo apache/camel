@@ -220,19 +220,27 @@ public class RouteDotGenerator {
         }
         if (node instanceof FromType) {
             FromType fromType = (FromType) node;
+            data.tooltop = fromType.getLabel();
+            data.label = removeQueryString(data.tooltop);
+/*
             data.label = fromType.getRef();
             if (isNullOrBlank(data.label)) {
                 data.label = fromType.getUri();
             }
+*/
             data.url = "http://activemq.apache.org/camel/message-endpoint.html";
         }
         else if (node instanceof ToType) {
             ToType toType = (ToType) node;
+            data.tooltop = toType.getLabel();
+            data.label = removeQueryString(data.tooltop);
+/*
             String ref = toType.getRef();
             if (isNullOrBlank(ref)) {
                 ref = toType.getUri();
             }
             data.label = ref;
+*/
             data.url = "http://activemq.apache.org/camel/message-endpoint.html";
         }
         else if (node instanceof FilterType) {
@@ -296,6 +304,16 @@ public class RouteDotGenerator {
         }
         if (isNullOrBlank(data.url) && isNotNullAndNonEmpty(data.nodeType)) {
             data.url = "http://activemq.apache.org/camel/" + data.nodeType.toLowerCase().replace(' ', '-') + ".html";
+        }
+    }
+
+    protected String removeQueryString(String text) {
+        int idx = text.indexOf("?");
+        if (idx <= 0) {
+            return text;
+        }
+        else {
+            return text.substring(0, idx);
         }
     }
 

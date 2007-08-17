@@ -54,7 +54,11 @@ public class FromType {
 
     @Override
     public String toString() {
-        return "From[" + description(getUri(), getRef(), getEndpoint()) + "]";
+        return "From[" + getLabel() + "]";
+    }
+
+    public String getLabel() {
+        return description(getUri(), getRef(), getEndpoint());
     }
 
     public Endpoint resolveEndpoint(RouteContext context) {
@@ -117,12 +121,12 @@ public class FromType {
     // Implementation methods
     // -----------------------------------------------------------------------
     protected static String description(String uri, String ref, Endpoint endpoint) {
-        if (endpoint != null) {
+        if (ref != null) {
+            return "ref:" + ref;
+        } else if (endpoint != null) {
             return endpoint.getEndpointUri();
         } else if (uri != null) {
             return uri;
-        } else if (ref != null) {
-            return "ref:" + ref;
         } else {
             return "no uri or ref supplied!";
         }
