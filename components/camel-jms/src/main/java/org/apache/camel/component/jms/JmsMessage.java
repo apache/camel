@@ -122,6 +122,10 @@ public class JmsMessage extends DefaultMessage {
                 map.put("JMSReplyTo", jmsMessage.getJMSReplyTo());
                 map.put("JMSTimestamp", jmsMessage.getJMSTimestamp());
                 map.put("JMSType", jmsMessage.getJMSType());
+
+                // TODO this works around a bug in the ActiveMQ property handling
+                map.put("JMSXGroupID", jmsMessage.getStringProperty("JMSXGroupID"));
+
             }
             catch (JMSException e) {
                 throw new MessageJMSPropertyAccessException(e);

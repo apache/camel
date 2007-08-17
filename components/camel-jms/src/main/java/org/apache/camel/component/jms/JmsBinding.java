@@ -95,7 +95,7 @@ public class JmsBinding {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
             
-            if (headerName.startsWith("JMS")) {
+            if (headerName.startsWith("JMS") && !headerName.startsWith("JMSX")) {
                 if (headerName.equals("JMSCorrelationID")) {
                     jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
                 }

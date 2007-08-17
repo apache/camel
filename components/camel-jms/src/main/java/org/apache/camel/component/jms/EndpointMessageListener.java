@@ -37,6 +37,7 @@ public class EndpointMessageListener<E extends Exchange> implements MessageListe
     private Endpoint<E> endpoint;
     private Processor processor;
     private JmsBinding binding;
+    private boolean eagerLoadingOfProperties;
 
     public EndpointMessageListener(Endpoint<E> endpoint, Processor processor) {
         this.endpoint = endpoint;
@@ -50,7 +51,10 @@ public class EndpointMessageListener<E extends Exchange> implements MessageListe
                 LOG.debug(endpoint + " receiving JMS message: " + message);
             }
             JmsExchange exchange = createExchange(message);
-            processor.process((E)exchange);
+            if (eagerLoadingOfProperties) {
+                exchange.getIn().getHeaders();
+            }
+            processor.process(exchange);
 
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
@@ -78,5 +82,13 @@ public class EndpointMessageListener<E extends Exchange> implements MessageListe
      */
     public void setBinding(JmsBinding binding) {
         this.binding = binding;
+    }
+
+    public boolean isEagerLoadingOfProperties() {
+        return eagerLoadingOfProperties;
+    }
+
+    public void setEagerLoadingOfProperties(boolean eagerLoadingOfProperties) {
+        this.eagerLoadingOfProperties = eagerLoadingOfProperties;
     }
 }
