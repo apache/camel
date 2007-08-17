@@ -64,7 +64,12 @@ public class ToType extends ProcessorType {
 
     @Override
     public String toString() {
-        return "To[" + FromType.description(getUri(), getRef(), getEndpoint()) + "]";
+        return "To[" + getLabel() + "]";
+    }
+
+    @Override
+    public String getLabel() {
+        return FromType.description(getUri(), getRef(), getEndpoint());
     }
 
     @Override

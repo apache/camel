@@ -38,7 +38,7 @@ public class DotViewTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:simpleFilterRoute").
+                from("file:foo/bar?noop=true").
                         filter(header("foo").isEqualTo("bar")).
                         to("mock:result");
 
