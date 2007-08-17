@@ -20,6 +20,7 @@ import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComponent;
 import org.apache.camel.component.mock.AssertionClause;
@@ -42,6 +43,7 @@ public class ActiveMQReplyToHeaderUsingConverterTest extends ContextTestSupport 
     protected Object expectedBody = "<time>" + new Date() + "</time>";
     protected String replyQueueName = "queue://test.my.reply.queue";
     protected String correlationID = "ABC-123";
+    protected String groupID = "GROUP-XYZ";
     protected String messageType = getClass().getName();
 
     public void testSendingAMessageFromCamelSetsCustomJmsHeaders() throws Exception {
@@ -53,22 +55,30 @@ public class ActiveMQReplyToHeaderUsingConverterTest extends ContextTestSupport 
         firstMessage.header("JMSCorrelationID").isEqualTo(correlationID);
         firstMessage.header("JMSReplyTo").isEqualTo(ActiveMQConverter.toDestination(replyQueueName));
         firstMessage.header("JMSType").isEqualTo(messageType);
+        firstMessage.header("JMSXGroupID").isEqualTo(groupID);
 
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("cheese", 123);
         headers.put("JMSReplyTo", replyQueueName);
         headers.put("JMSCorrelationID", correlationID);
         headers.put("JMSType", messageType);
+        headers.put("JMSXGroupID", groupID);
         template.sendBodyAndHeaders("activemq:test.a", expectedBody, headers);
 
         resultEndpoint.assertIsSatisfied();
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
-        Object replyTo = exchange.getIn().getHeader("JMSReplyTo");
+        Message in = exchange.getIn();
+        Object replyTo = in.getHeader("JMSReplyTo");
         LOG.info("Reply to is: " + replyTo);
         Destination destination = assertIsInstanceOf(Destination.class, replyTo);
         assertEquals("ReplyTo", replyQueueName, destination.toString());
+
+        assertMessageHeader(in, "cheese", 123);
+        assertMessageHeader(in, "JMSCorrelationID", correlationID);
+        assertMessageHeader(in, "JMSType", messageType);
+        assertMessageHeader(in, "JMSXGroupID", groupID);
     }
 
     protected CamelContext createCamelContext() throws Exception {
