@@ -150,6 +150,6 @@ public class JmsBinding {
      * Strategy to allow filtering of headers which are put on the JMS message
      */
     protected boolean shouldOutputHeader(org.apache.camel.Message camelMessage, String headerName, Object headerValue) {
-        return true;
+        return headerValue != null;
     }
 }
