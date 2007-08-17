@@ -145,12 +145,20 @@
               <packages>org.apache.camel</packages>
             </group>
             <group>
-              <title>Fluent API for building routes</title>
+              <title>Fluent API (DSL) for building EIP rules</title>
               <packages>org.apache.camel.builder:org.apache.camel.builder.*</packages>
+            </group>
+            <group>
+              <title>The bean and JAXB2 model for EIP rule definitions</title>
+              <packages>org.apache.camel.model:org.apache.camel.model.*</packages>
             </group>
             <group>
               <title>Strategy APIs for implementors to extend Camel</title>
               <packages>org.apache.camel.spi</packages>
+            </group>
+            <group>
+              <title>Language APIs and plugins for Expressions and Predicates</title>
+              <packages>org.apache.camel.language:org.apache.camel.language.*</packages>
             </group>
             <group>
               <title>Processors to implement the Enterprise Integration Patterns</title>
@@ -169,8 +177,8 @@
               <packages>org.apache.camel.converter:org.apache.camel.converter.*</packages>
             </group>
             <group>
-              <title>Utility classes for component implementors</title>
-              <packages>org.apache.camel.util:org.apache.camel.view</packages>
+              <title>Utility classes</title>
+              <packages>org.apache.camel.util:org.apache.camel.util.*:org.apache.camel.view</packages>
             </group>
           </groups>
         </configuration>
