@@ -126,7 +126,7 @@ public class BeanInfo {
             Expression expression = createParameterUnmarshalExpression(clazz, method, parameterType,
                                                                        parameterAnnotations);
             if (expression == null) {
-                if (parameterTypes.length == 1 && bodyParameters.isEmpty()) {
+                if (bodyParameters.isEmpty()) {
                     // lets assume its the body
                     expression = ExpressionBuilder.bodyExpression(parameterType);
                 } else {
