@@ -38,22 +38,13 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
     }
 
     public void process(RemoteFileExchange exchange) throws Exception {
-        final String fileName;
         InputStream payload = exchange.getIn().getBody(InputStream.class);
         final String endpointFile = endpoint.getConfiguration().getFile();
         client.changeWorkingDirectory(endpointFile); // TODO this line might
-                                                        // not be needed...
-                                                        // check after finish
-                                                        // writing unit tests
-        if (endpointFile == null) {
-            throw new NullPointerException("Null Endpoint File");
-        } else {
-            if (endpoint.getConfiguration().isDirectory()) {
-                fileName = endpointFile + "/" + exchange.getIn().getMessageId();
-            } else {
-                fileName = endpointFile;
-            }
-        }
+                                                     // not be needed...
+                                                     // check after finish
+                                                     // writing unit tests
+        String fileName = createFileName(exchange.getIn(), endpoint.getConfiguration());
         buildDirectory(client, fileName.substring(0, fileName.lastIndexOf('/')));
         final boolean success = client.storeFile(fileName, payload);
         if (!success) {

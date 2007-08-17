@@ -31,6 +31,13 @@ public class FileConfigureTest extends ContextTestSupport {
         assertFileEndpoint("file://target/foo/bar?delete=true", EXPECT_PATH);
         assertFileEndpoint("file:target/foo/bar?delete=true", EXPECT_PATH);
         assertFileEndpoint("file:target/foo/bar", EXPECT_PATH);
+        assertFileEndpoint("file://target/foo/bar/", EXPECT_PATH);
+        assertFileEndpoint("file://target/foo/bar/?delete=true", EXPECT_PATH);
+        assertFileEndpoint("file:target/foo/bar/?delete=true", EXPECT_PATH);
+        assertFileEndpoint("file:target/foo/bar/", EXPECT_PATH);
+        assertFileEndpoint("file:/target/foo/bar/", File.separator + EXPECT_PATH);        
+        assertFileEndpoint("file:/", File.separator);
+        assertFileEndpoint("file:///", File.separator);
     }
 
     private void assertFileEndpoint(String endpointUri, String expectedPath) {

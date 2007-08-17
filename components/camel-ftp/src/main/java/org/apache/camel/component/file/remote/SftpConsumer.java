@@ -23,6 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import com.jcraft.jsch.ChannelSftp;
 
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.FileComponent;
 
 public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     private boolean recursive = true;
@@ -30,6 +31,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     private long lastPollTime;
     private final SftpEndpoint endpoint;
     private ChannelSftp channel;
+    private boolean setNames = false;
 
     public SftpConsumer(SftpEndpoint endpoint, Processor processor, ChannelSftp channel) {
         super(endpoint, processor);
@@ -82,7 +84,17 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             if (isMatched(sftpFile)) {
                 final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 channel.get(sftpFile.getFilename(), byteArrayOutputStream);
-                getProcessor().process(endpoint.createExchange(getFullFileName(sftpFile), byteArrayOutputStream));
+                RemoteFileExchange exchange = endpoint.createExchange(getFullFileName(sftpFile), byteArrayOutputStream);
+
+                if (isSetNames()) {
+                    String relativePath = getFullFileName(sftpFile).substring(endpoint.getConfiguration().getFile().length());
+                    if (relativePath.startsWith("/")) {
+                        relativePath = relativePath.substring(1);
+                    }
+                    exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, relativePath);
+                }
+
+                getProcessor().process(exchange);
             }
         }
     }
@@ -117,5 +129,13 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
 
     public void setRegexPattern(String regexPattern) {
         this.regexPattern = regexPattern;
+    }
+
+    public boolean isSetNames() {
+        return setNames;
+    }
+
+    public void setSetNames(boolean setNames) {
+        this.setNames = setNames;
     }
 }
