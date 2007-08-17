@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spring;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
@@ -26,9 +24,13 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ClassPathResource;
+
+import java.util.List;
 
 /**
  * @version $Revision$
@@ -46,6 +48,18 @@ public class CamelContextFactoryBeanTest extends TestSupport {
     public void testClassPathRouteLoadingUsingNamespaces() throws Exception {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
 
+        CamelContext context = (CamelContext) applicationContext.getBean("camel3");
+        assertValidContext(context);
+    }
+
+    public void testGenericApplicationContextUsingNamespaces() throws Exception {
+        GenericApplicationContext applicationContext = new GenericApplicationContext();
+        XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(applicationContext);
+        xmlReader.loadBeanDefinitions(new ClassPathResource("org/apache/camel/spring/camelContextFactoryBean.xml"));
+
+        // lets refresh to inject the applicationContext into beans
+        applicationContext.refresh();
+        
         CamelContext context = (CamelContext) applicationContext.getBean("camel3");
         assertValidContext(context);
     }

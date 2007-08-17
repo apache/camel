@@ -91,9 +91,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         getContext().addRouteDefinitions(routes);
 
         LOG.debug("Found JAXB created routes: " + getRoutes());
-        String[] names = applicationContext.getBeanNamesForType(SpringInstrumentationAgent.class);
+        String[] names = getApplicationContext().getBeanNamesForType(SpringInstrumentationAgent.class);
         if (names.length == 1) {
-            applicationContext.getBean(names[0], SpringInstrumentationAgent.class);
+            getApplicationContext().getBean(names[0], SpringInstrumentationAgent.class);
         }
         
         findRouteBuiders();
@@ -168,6 +168,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     public ApplicationContext getApplicationContext() {
+        if (applicationContext == null) {
+            throw new IllegalArgumentException("No applicationContext has been injected!");
+        }
         return applicationContext;
     }
 
