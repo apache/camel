@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
 /**
  * @version $Revision: 1.1 $
  */
-public class DefaultInjectionExpressionFactory implements InjectionExpressionFactory {
+public class DefaultAnnotationExpressionFactory implements AnnotationExpressionFactory {
     public Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class expressionReturnType) {
         String languageName = languageAnnotation.language();
         if (languageName == null) {
