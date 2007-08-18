@@ -49,12 +49,12 @@ public class BeanProcessor implements Processor {
         this.beanInfo = beanInfo;
     }
 
-    public BeanProcessor(Object pojo, ParameterMappingStrategy parameterMappingStrategy) {
-        this(pojo, new BeanInfo(pojo.getClass(), parameterMappingStrategy));
+    public BeanProcessor(Object pojo, CamelContext camelContext, ParameterMappingStrategy parameterMappingStrategy) {
+        this(pojo, new BeanInfo(camelContext, pojo.getClass(), parameterMappingStrategy));
     }
 
     public BeanProcessor(Object pojo, CamelContext camelContext) {
-        this(pojo, createParameterMappingStrategy(camelContext));
+        this(pojo, camelContext, createParameterMappingStrategy(camelContext));
     }
 
     public static ParameterMappingStrategy createParameterMappingStrategy(CamelContext camelContext) {
