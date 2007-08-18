@@ -16,19 +16,21 @@
  */
 package org.apache.camel.language.ognl;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import ognl.Ognl;
 import ognl.OgnlContext;
 import ognl.OgnlException;
-
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.impl.ExpressionSupport;
 import org.apache.camel.language.ExpressionEvaluationException;
 import org.apache.camel.language.IllegalSyntaxException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
+ * An <a href="http://www.ognl.org/">OGNL</a> {@link Expression}
+ *
  * @version $Revision: $
  */
 public class OgnlExpression extends ExpressionSupport<Exchange> {

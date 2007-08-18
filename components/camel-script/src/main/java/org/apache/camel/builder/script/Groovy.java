@@ -15,21 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean;
+package org.apache.camel.builder.script;
 
-import org.apache.camel.Expression;
-import org.apache.camel.CamelContext;
 import org.apache.camel.language.LanguageAnnotation;
 
-import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * A factory which creates an {@link Expression} object from an annotation on a field, property or method parameter
- * of a specified type.
+ * An annotation for injection of <a href="http://groovy.codehaus.org/">Groovy</a> expressions
+ *  into method parameters, fields or properties
  *
  * @version $Revision: 1.1 $
  */
-public interface InjectionExpressionFactory {
-
-    Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class expressionReturnType);
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
+@LanguageAnnotation(language = "groovy")
+public @interface Groovy {
+    public abstract String value();
 }
