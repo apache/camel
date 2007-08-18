@@ -16,6 +16,21 @@
  */
 package org.apache.camel.component.bean;
 
+import org.apache.camel.Body;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Header;
+import org.apache.camel.Message;
+import org.apache.camel.Property;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.CamelContext;
+import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.language.LanguageAnnotation;
+import static org.apache.camel.util.ExchangeHelper.convertToType;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -26,19 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.camel.Body;
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.Header;
-import org.apache.camel.Message;
-import org.apache.camel.Property;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import static org.apache.camel.util.ExchangeHelper.convertToType;
-
 /**
  * Represents the metadata about a bean type created via a combination of
  * introspection and annotations together with some useful sensible defaults
@@ -47,13 +49,15 @@ import static org.apache.camel.util.ExchangeHelper.convertToType;
  */
 public class BeanInfo {
     private static final transient Log LOG = LogFactory.getLog(BeanInfo.class);
+    private final CamelContext camelContext;
     private Class type;
     private ParameterMappingStrategy strategy;
     private Map<String, MethodInfo> operations = new ConcurrentHashMap<String, MethodInfo>();
     private MethodInfo defaultMethod;
     private List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
 
-    public BeanInfo(Class type, ParameterMappingStrategy strategy) {
+    public BeanInfo(CamelContext camelContext, Class type, ParameterMappingStrategy strategy) {
+        this.camelContext = camelContext;
         this.type = type;
         this.strategy = strategy;
         introspect(getType());
@@ -273,7 +277,23 @@ public class BeanInfo {
              * (XPath) annotation; return new
              * JAXPStringXPathExpression(xpathAnnotation.xpath()); }
              */
+        } else {
+            LanguageAnnotation languageAnnotation = annotation.annotationType().getAnnotation(LanguageAnnotation.class);
+            if (languageAnnotation != null) {
+                Class<?> type = languageAnnotation.factory();
+                Object object = camelContext.getInjector().newInstance(type);
+                if (object instanceof InjectionExpressionFactory) {
+                    InjectionExpressionFactory expressionFactory = (InjectionExpressionFactory) object;
+                    return expressionFactory.createExpression(camelContext, annotation, languageAnnotation, parameterType);
+                }
+                else {
+                    LOG.error("Ignoring bad annotation: " + languageAnnotation + "on method: " + method
+                            + " which declares a factory: " + type.getName()
+                            + " which does not implement " + InjectionExpressionFactory.class.getName());
+                }
+            }
         }
+
         return null;
     }
 
