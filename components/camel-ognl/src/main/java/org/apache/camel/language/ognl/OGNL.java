@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -6,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,23 +17,22 @@
  */
 package org.apache.camel.language.ognl;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.spi.Language;
+import org.apache.camel.language.LanguageAnnotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * An <a href="http://www.ognl.org/">OGNL</a> {@link Language} plugin
+ * An annotation for injection of <a href="http://www.ognl.org/">OGNL</a> expressions
+ *  into method parameters, fields or properties
  *
- * @version $Revision: $
+ * @version $Revision: 1.1 $
  */
-public class OgnlLanguage implements Language {
-
-    public Predicate<Exchange> createPredicate(String expression) {
-        return new OgnlExpression(this, expression, Boolean.class);
-    }
-
-    public Expression<Exchange> createExpression(String expression) {
-        return new OgnlExpression(this, expression, Object.class);
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
+@LanguageAnnotation(language = "ognl")
+public @interface OGNL {
+    public abstract String value();
 }
