@@ -33,8 +33,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class BeanInfoTest extends TestCase {
     private static final Log LOG = LogFactory.getLog(BeanInfoTest.class);
-
-    protected Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+    private DefaultCamelContext camelContext = new DefaultCamelContext();
+    protected Exchange exchange = new DefaultExchange(camelContext);
     protected DefaultParameterMappingStrategy strategy = new DefaultParameterMappingStrategy();
     protected ExampleBean bean = new ExampleBean();
     protected BeanInfo info;
@@ -58,6 +58,6 @@ public class BeanInfoTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         exchange.getIn().setBody("James");
-        info = new BeanInfo(bean.getClass(), strategy);
+        info = new BeanInfo(camelContext, bean.getClass(), strategy);
     }
 }
