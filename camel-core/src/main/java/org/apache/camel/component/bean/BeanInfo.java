@@ -27,7 +27,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.LanguageAnnotation;
 import static org.apache.camel.util.ExchangeHelper.convertToType;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -282,14 +281,14 @@ public class BeanInfo {
             if (languageAnnotation != null) {
                 Class<?> type = languageAnnotation.factory();
                 Object object = camelContext.getInjector().newInstance(type);
-                if (object instanceof InjectionExpressionFactory) {
-                    InjectionExpressionFactory expressionFactory = (InjectionExpressionFactory) object;
+                if (object instanceof AnnotationExpressionFactory) {
+                    AnnotationExpressionFactory expressionFactory = (AnnotationExpressionFactory) object;
                     return expressionFactory.createExpression(camelContext, annotation, languageAnnotation, parameterType);
                 }
                 else {
                     LOG.error("Ignoring bad annotation: " + languageAnnotation + "on method: " + method
                             + " which declares a factory: " + type.getName()
-                            + " which does not implement " + InjectionExpressionFactory.class.getName());
+                            + " which does not implement " + AnnotationExpressionFactory.class.getName());
                 }
             }
         }

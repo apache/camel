@@ -15,21 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language;
+package org.apache.camel.component.bean;
 
-import org.apache.camel.component.bean.DefaultAnnotationExpressionFactory;
+import org.apache.camel.Expression;
+import org.apache.camel.CamelContext;
+import org.apache.camel.language.LanguageAnnotation;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.Annotation;
 
 /**
+ * A factory which creates an {@link Expression} object from an annotation on a field, property or method parameter
+ * of a specified type.
+ *
  * @version $Revision: 1.1 $
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.ANNOTATION_TYPE })
-public @interface LanguageAnnotation {
-    public abstract String language();
-    public abstract Class<?> factory() default DefaultAnnotationExpressionFactory.class;
+public interface AnnotationExpressionFactory {
+
+    Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class expressionReturnType);
 }
