@@ -22,9 +22,7 @@ import org.apache.camel.impl.DefaultExchange;
  * A useful base class for testing the language plugins in Camel
  * @version $Revision: $
  */
-public abstract class LanguageTestSupport extends ContextTestSupport {
-    protected Exchange exchange;
-
+public abstract class LanguageTestSupport extends ExchangeTestSupport {
     protected abstract String getLanguageName();
 
 
@@ -61,32 +59,5 @@ public abstract class LanguageTestSupport extends ContextTestSupport {
      */
     protected void assertExpression(String expressionText, Object expectedValue) {
         assertExpression(exchange, expressionText, expectedValue);
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        exchange = createExchange();
-        assertNotNull("No exchange created!", exchange);
-        populateExchange(exchange);
-    }
-
-    /**
-     * A factory method to create an Exchange implementation
-     */
-    protected Exchange createExchange() {
-        return new DefaultExchange(context);
-    }
-
-
-    /**
-     * A strategy method to populate an exchange with some example values for use
-     * by language plugins
-     */
-    protected void populateExchange(Exchange exchange) {
-        Message in = exchange.getIn();
-        in.setHeader("foo", "abc");
-        in.setHeader("bar", 123);
-        in.setBody("<hello id='m123'>world!</hello>");
     }
 }

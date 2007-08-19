@@ -16,17 +16,19 @@
  */
 package org.apache.camel.converter.jaxb;
 
+import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.converter.HasAnnotation;
+import org.apache.camel.converter.jaxp.XmlConverter;
+import org.w3c.dom.Document;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.util.JAXBSource;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-
-import org.apache.camel.converter.HasAnnotation;
-import org.apache.camel.converter.jaxp.XmlConverter;
 
 /**
  * @version $Revision$
@@ -45,18 +47,33 @@ public class JaxbConverter {
         this.jaxbConverter = jaxbConverter;
     }
 
+    @Converter
     public static JAXBSource toSource(@HasAnnotation(XmlRootElement.class)Object value) throws JAXBException {
         JAXBContext context = createJaxbContext(value);
         return new JAXBSource(context, value);
     }
 
-    public Document toDocument(@HasAnnotation(XmlRootElement.class)Object value) throws JAXBException, ParserConfigurationException {
+    @Converter
+    public Document toDocument(
+            @HasAnnotation(XmlRootElement.class)Object value) throws JAXBException, ParserConfigurationException {
         JAXBContext context = createJaxbContext(value);
         Marshaller marshaller = context.createMarshaller();
 
         Document doc = getJaxbConverter().createDocument();
         marshaller.marshal(value, doc);
         return doc;
+    }
+
+    @Converter
+    public static MessageType toMessageType(Exchange exchange) {
+        return toMessageType(exchange.getIn());
+    }
+
+    @Converter
+    public static MessageType toMessageType(Message in) {
+        MessageType answer = new MessageType();
+        answer.copyFrom(in);
+        return answer;
     }
 
     protected static JAXBContext createJaxbContext(Object value) throws JAXBException {
@@ -73,5 +90,4 @@ public class JaxbConverter {
 //        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 //        marshaller.marshal(value, out);
 //    }
-
 }
