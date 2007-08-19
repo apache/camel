@@ -16,14 +16,15 @@
  */
 package org.apache.camel.builder;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Message;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 
 /**
  * @version $Revision: $
@@ -62,6 +63,25 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression for the inbound message headers
+     *
+     * @see Message#getHeaders()
+     * @return an expression object which will return the inbound headers
+     */
+    public static <E extends Exchange> Expression<E> headersExpresion() {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange.getIn().getHeaders();
+            }
+
+            @Override
+            public String toString() {
+                return "headers";
+            }
+        };
+    }
+
+    /**
      * Returns an expression for the out header value with the given name
      * 
      * @param headerName the name of the header the expression will return
@@ -87,7 +107,8 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for the property value with the given name
-     * 
+     *
+     * @see Exchange#getProperty(String)
      * @param propertyName the name of the property the expression will return
      * @return an expression object which will return the property value
      */
@@ -100,6 +121,26 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "property(" + propertyName + ")";
+            }
+        };
+    }
+
+
+    /**
+     * Returns an expression for the property value with the given name
+     *
+     * @see Exchange#getProperties()
+     * @return an expression object which will return the properties
+     */
+    public static <E extends Exchange> Expression<E> propertiesExpresion() {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange.getProperties();
+            }
+
+            @Override
+            public String toString() {
+                return "properties";
             }
         };
     }

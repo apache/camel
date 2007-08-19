@@ -34,13 +34,15 @@ public class MethodInfo {
     private Method method;
     private final List<ParameterInfo> parameters;
     private final List<ParameterInfo> bodyParameters;
+    private final boolean hasCustomAnnotation;
     private Expression parametersExpression;
 
-    public MethodInfo(Class type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters) {
+    public MethodInfo(Class type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters, boolean hasCustomAnnotation) {
         this.type = type;
         this.method = method;
         this.parameters = parameters;
         this.bodyParameters = bodyParameters;
+        this.hasCustomAnnotation = hasCustomAnnotation;
         this.parametersExpression = createParametersExpression();
     }
 
@@ -106,6 +108,10 @@ public class MethodInfo {
 
     public boolean hasBodyParameter() {
         return !bodyParameters.isEmpty();
+    }
+
+    public boolean isHasCustomAnnotation() {
+        return hasCustomAnnotation;
     }
 
     protected Object invoke(Method mth, Object pojo, Object[] arguments, Exchange exchange) throws IllegalAccessException, InvocationTargetException {
