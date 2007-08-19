@@ -17,6 +17,7 @@
 package org.apache.camel.util;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Body;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -375,5 +376,17 @@ public class ObjectHelper {
             propertyName = propertyName.substring(3, 4).toLowerCase() + propertyName.substring(4);
         }
         return propertyName;
+    }
+
+    /**
+     * Returns true if the given collection of annotations matches the given type
+     */
+    public static boolean hasAnnotation(Annotation[] annotations, Class<?> type) {
+        for (Annotation annotation : annotations) {
+            if (type.isInstance(annotation)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

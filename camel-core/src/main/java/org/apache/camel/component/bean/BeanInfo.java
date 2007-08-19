@@ -16,17 +16,11 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.Body;
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.Header;
-import org.apache.camel.Message;
-import org.apache.camel.Property;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.CamelContext;
+import org.apache.camel.*;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.LanguageAnnotation;
 import static org.apache.camel.util.ExchangeHelper.convertToType;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -123,12 +117,16 @@ public class BeanInfo {
         List<ParameterInfo> parameters = new ArrayList<ParameterInfo>();
         List<ParameterInfo> bodyParameters = new ArrayList<ParameterInfo>();
 
+        boolean hasCustomAnnotation = false;
         for (int i = 0; i < parameterTypes.length; i++) {
             Class parameterType = parameterTypes[i];
             Annotation[] parameterAnnotations = parametersAnnotations[i];
             Expression expression = createParameterUnmarshalExpression(clazz, method, parameterType,
                                                                        parameterAnnotations);
+            hasCustomAnnotation |= expression != null;
+
             if (expression == null) {
+                hasCustomAnnotation |= ObjectHelper.hasAnnotation(parameterAnnotations, Body.class);
                 if (bodyParameters.isEmpty()) {
                     // lets assume its the body
                     expression = ExpressionBuilder.bodyExpression(parameterType);
@@ -161,7 +159,7 @@ public class BeanInfo {
          * method.getAnnotation(Operation.class).name(); if (name != null &&
          * name.length() > 0) { opName = name; } }
          */
-        MethodInfo methodInfo = new MethodInfo(clazz, method, parameters, bodyParameters);
+        MethodInfo methodInfo = new MethodInfo(clazz, method, parameters, bodyParameters, hasCustomAnnotation);
         operations.put(opName, methodInfo);
         if (methodInfo.hasBodyParameter()) {
             operationsWithBody.add(methodInfo);
@@ -218,6 +216,22 @@ public class BeanInfo {
                         return matched;
                     }
                 } else {
+                    // if we have only one method with custom annotations lets choose that
+                    MethodInfo chosen = null;
+                    for (MethodInfo possible : possibles) {
+                        if (possible.isHasCustomAnnotation()) {
+                            if (chosen != null) {
+                                chosen = null;
+                                break;
+                            }
+                            else {
+                                chosen = possible;
+                            }
+                        }
+                    }
+                    if (chosen != null) {
+                        return chosen;
+                    }
                     throw new AmbiguousMethodCallException(exchange, possibles);
                 }
             }
@@ -263,19 +277,13 @@ public class BeanInfo {
         if (annotation instanceof Property) {
             Property propertyAnnotation = (Property)annotation;
             return ExpressionBuilder.propertyExpression(propertyAnnotation.name());
+        } else if (annotation instanceof Properties) {
+            return ExpressionBuilder.propertiesExpresion();
         } else if (annotation instanceof Header) {
             Header headerAnnotation = (Header)annotation;
             return ExpressionBuilder.headerExpression(headerAnnotation.name());
-        } else if (annotation instanceof Body) {
-            Body content = (Body)annotation;
-            return ExpressionBuilder.bodyExpression(parameterType);
-
-            // TODO allow annotations to be used to create expressions?
-            /*
-             * } else if (annotation instanceof XPath) { XPath xpathAnnotation =
-             * (XPath) annotation; return new
-             * JAXPStringXPathExpression(xpathAnnotation.xpath()); }
-             */
+        } else if (annotation instanceof Headers) {
+            return ExpressionBuilder.headersExpresion();
         } else {
             LanguageAnnotation languageAnnotation = annotation.annotationType().getAnnotation(LanguageAnnotation.class);
             if (languageAnnotation != null) {
