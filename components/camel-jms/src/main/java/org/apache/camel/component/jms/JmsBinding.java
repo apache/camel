@@ -81,14 +81,14 @@ public class JmsBinding {
      */
     public Message makeJmsMessage(Exchange exchange, Session session) throws JMSException {
         Message answer = createJmsMessage(exchange.getIn().getBody(), session);
-        appendJmsProperties(answer, exchange, session);
+        appendJmsProperties(answer, exchange);
         return answer;
     }
 
     /**
      * Appends the JMS headers from the Camel {@link JmsMessage}
      */
-    protected void appendJmsProperties(Message jmsMessage, Exchange exchange, Session session) throws JMSException {
+    public void appendJmsProperties(Message jmsMessage, Exchange exchange) throws JMSException {
         org.apache.camel.Message in = exchange.getIn();
         Set<Map.Entry<String, Object>> entries = in.getHeaders().entrySet();
         for (Map.Entry<String, Object> entry : entries) {
