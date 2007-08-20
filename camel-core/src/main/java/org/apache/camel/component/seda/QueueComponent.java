@@ -16,16 +16,16 @@
  */
 package org.apache.camel.component.seda;
 
-
 import org.apache.camel.Exchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.concurrent.BlockingQueue;
 
 /**
  * An implementation of the <a href="http://activemq.apache.org/camel/queue.html">Queue components</a>
  * for asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
  *
- * @org.apache.xbean.XBean
  * @version $Revision: 519973 $
  */
 public class QueueComponent<E extends Exchange> extends SedaComponent<E> {

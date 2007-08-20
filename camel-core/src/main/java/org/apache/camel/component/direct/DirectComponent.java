@@ -31,8 +31,7 @@ import org.apache.camel.util.URISupport;
 /**
  * Represents the component that manages {@link DirectEndpoint}. It holds the
  * list of named direct endpoints.
- * 
- * @org.apache.xbean.XBean
+ *
  * @version $Revision: 519973 $
  */
 public class DirectComponent<E extends Exchange> implements Component<E> {

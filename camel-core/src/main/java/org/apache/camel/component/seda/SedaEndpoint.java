@@ -32,7 +32,6 @@ import org.apache.camel.impl.DefaultProducer;
  * href="http://activemq.apache.org/camel/queue.html">Queue components</a> for
  * asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
  * 
- * @org.apache.xbean.XBean
  * @version $Revision: 519973 $
  */
 public class SedaEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
