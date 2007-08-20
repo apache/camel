@@ -101,7 +101,7 @@ public class BeanProcessor implements Processor {
         try {
             Object value = invocation.proceed();
             if (value != null) {
-                exchange.getIn().setBody(value);
+                exchange.getOut().setBody(value);
             }
         } catch (InvocationTargetException e) {
             // lets unwrap the exception
