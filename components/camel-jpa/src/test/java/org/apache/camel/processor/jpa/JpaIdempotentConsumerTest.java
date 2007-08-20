@@ -49,7 +49,7 @@ public class JpaIdempotentConsumerTest extends IdempotentConsumerTest {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/processor/jpa/spring.xml");
-        //cleanupRepository();
+        cleanupRepository();
         return SpringCamelContext.springCamelContext(applicationContext);
     }
 
