@@ -16,12 +16,13 @@
  */
 package org.apache.camel.impl;
 
-import java.util.Map;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.IntrospectionSupport;
+
+import java.util.Map;
 
 /**
  * A base class for {@link Endpoint} which creates a {@link ScheduledPollConsumer}

@@ -41,8 +41,16 @@
         <exclude>**/*.i*</exclude>
         <exclude>**/target/</exclude>
         <exclude>**/target/*</exclude>
+        <exclude>**/*.ser</exclude>
+        <exclude>**/*.log</exclude>
       </excludes>
       <lineEnding>unix</lineEnding>
+    </fileSet>
+
+    <!-- copy the manual docs -->
+    <fileSet>
+      <directory>${basedir}/../tooling/camel-manual/target/site/manual/</directory>
+      <outputDirectory>/doc/manual</outputDirectory>
     </fileSet>
 
     <!-- copy the website docs -->
@@ -69,6 +77,7 @@
       <scope>runtime</scope>
       <includes>
         <include>org.apache.camel:camel-activemq</include>
+        <include>org.apache.camel:camel-atom</include>
         <include>org.apache.camel:camel-bam</include>
         <include>org.apache.camel:camel-core</include>
         <include>org.apache.camel:camel-cxf</include>
