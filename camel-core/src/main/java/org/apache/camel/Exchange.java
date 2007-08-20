@@ -72,6 +72,14 @@ public interface Exchange {
     void setProperty(String name, Object value);
 
     /**
+     * Removes the given property on the exchange
+     *
+     * @param name of the property
+     * @return the old value of the property
+     */
+    Object removeProperty(String name);
+
+    /**
      * Returns all of the properties associated with the exchange
      * 
      * @return all the headers in a Map

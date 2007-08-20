@@ -76,6 +76,14 @@ public interface Message {
     void setHeader(String name, Object value);
 
     /**
+     * Removes the named header from this message
+     *
+     * @param name
+     * @return the old value of the header
+     */
+    Object removeHeader(String name);
+
+    /**
      * Returns all of the headers associated with the message
      * 
      * @return all the headers in a Map

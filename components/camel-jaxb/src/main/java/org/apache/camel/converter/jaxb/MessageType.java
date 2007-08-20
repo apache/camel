@@ -97,7 +97,10 @@ public class MessageType {
         headers.clear();
         Set<Map.Entry<String, Object>> entries = message.getHeaders().entrySet();
         for (Map.Entry<String, Object> entry : entries) {
-            headers.add(createHeader(entry.getKey(), entry.getValue()));
+            Object value = entry.getValue();
+            if (value != null) {
+                headers.add(createHeader(entry.getKey(), value));
+            }
         }
         setBody(message.getBody());
     }
@@ -123,7 +126,10 @@ public class MessageType {
             return new LongHeader(key, (Long) value);
         }
         else {
-            return new ObjectHeader(key, value);
+            // lets convert to a String
+            return new StringHeader(key, value.toString());
+
+            //return new ObjectHeader(key, value);
         }
     }
 }
