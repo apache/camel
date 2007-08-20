@@ -36,6 +36,7 @@ RedeliveryPolicyType
 ResequencerType
 RouteType
 RoutesType
+ServiceActivationType
 SplitterType
 ThrottlerType
 ToType
