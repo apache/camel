@@ -129,6 +129,10 @@ public class DefaultExchange implements Exchange {
         getProperties().put(name, value);
     }
 
+    public Object removeProperty(String name) {
+        return getProperties().remove(name);
+    }
+
     public Map<String, Object> getProperties() {
         if (properties == null) {
             properties = new HashMap<String, Object>();

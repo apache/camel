@@ -117,4 +117,52 @@ public class ProcessorBuilder {
             }
         };
     }
+
+    /**
+     * Removes the header on the IN message
+     */
+    public static Processor removeHeader(final String name) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getIn().removeHeader(name);
+            }
+
+            @Override
+            public String toString() {
+                return "removeHeader(" + name +  ")";
+            }
+        };
+    }
+
+    /**
+     * Removes the header on the OUT message
+     */
+    public static Processor removeOutHeader(final String name) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getOut().removeHeader(name);
+            }
+
+            @Override
+            public String toString() {
+                return "removeOutHeader(" + name +  ")";
+            }
+        };
+    }
+
+    /**
+     * Removes the property on the exchange
+     */
+    public static Processor removeProperty(final String name) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+                exchange.removeProperty(name);
+            }
+
+            @Override
+            public String toString() {
+                return "removeProperty(" + name +  ")";
+            }
+        };
+    }
 }

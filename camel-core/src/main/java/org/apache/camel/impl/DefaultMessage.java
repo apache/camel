@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.Message;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,6 +48,15 @@ public class DefaultMessage extends MessageSupport {
             headers = createHeaders();
         }
         headers.put(name, value);
+    }
+
+    public Object removeHeader(String name) {
+        if (headers != null) {
+            return headers.remove(name);
+        }
+        else {
+            return null;
+        }
     }
 
     public Map<String, Object> getHeaders() {

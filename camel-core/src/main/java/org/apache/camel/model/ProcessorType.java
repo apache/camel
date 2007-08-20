@@ -626,6 +626,27 @@ public abstract class ProcessorType {
     }
 
     /**
+     * Adds a processor which removes the header on the IN message
+     */
+    public ProcessorType removeHeader(String name) {
+        return process(ProcessorBuilder.removeHeader(name));
+    }
+
+    /**
+     * Adds a processor which removes the header on the OUT message
+     */
+    public ProcessorType removeOutHeader(String name) {
+        return process(ProcessorBuilder.removeOutHeader(name));
+    }
+
+    /**
+     * Adds a processor which removes the exchange property
+     */
+    public ProcessorType removeProperty(String name) {
+        return process(ProcessorBuilder.removeProperty(name));
+    }
+
+    /**
      * Converts the IN message body to the specified type
      */
     public ProcessorType convertBodyTo(Class type) {
