@@ -30,6 +30,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.io.OutputStream;
+import java.io.Closeable;
+import java.io.IOException;
 
 /**
  * A number of useful helper methods for working with Objects
@@ -388,5 +391,23 @@ public class ObjectHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * Closes the given resource if it is available, logging any closing exceptions to the given log
+     *
+     * @param closeable the object to close
+     * @param name the name of the resource
+     * @param log the log to use when reporting closure warnings
+     */
+    public static void close(Closeable closeable, String name, Log log) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            }
+            catch (IOException e) {
+                log.warn("Could not close " + name + ". Reason: "+ e, e);
+            }
+        }
     }
 }

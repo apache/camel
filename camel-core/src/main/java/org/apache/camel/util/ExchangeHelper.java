@@ -35,7 +35,27 @@ public class ExchangeHelper {
      */
     private ExchangeHelper() {        
     }
-    
+
+    /**
+     * Extracts the exchange property of the given name and type; if it is not present then the
+     * default value will be used
+     *
+     * @param exchange the message exchange
+     * @param propertyName the name of the property on the exchange
+     * @param type the expected type of the property
+     * @param defaultValue the default value to be used if the property name does not exist or could not be
+     * converted to the given type
+     * @return the property value as the given type or the defaultValue if it could not be found or converted
+     */
+    public static <T> T getExchangeProperty(Exchange exchange, String propertyName, Class<T> type, T defaultValue) {
+        T answer = exchange.getProperty(propertyName, type);
+        if (answer == null) {
+            return defaultValue;
+        }
+        return answer;
+    }
+
+
     /**
      * Attempts to resolve the endpoint for the given value
      * 
