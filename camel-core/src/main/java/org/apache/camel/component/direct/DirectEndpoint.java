@@ -33,7 +33,6 @@ import org.apache.commons.logging.LogFactory;
  * Represents a direct endpoint that synchronously invokes the consumers of the
  * endpoint when a producer sends a message to it.
  * 
- * @org.apache.xbean.XBean
  * @version $Revision: 519973 $
  */
 public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
