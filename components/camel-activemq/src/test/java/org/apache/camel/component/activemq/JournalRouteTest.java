@@ -30,20 +30,20 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class JournalRouteTest extends ContextTestSupport {
 
-    public void testForwardingAMessageAcrossJMSKeepingCustomJMSHeaders() throws Exception {
+    public void testSimpleJournalRoute() throws Exception {
 
         byte[] payload = "Hello World".getBytes();
         
         
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:out", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         
         AssertionClause firstMessageExpectations = resultEndpoint.message(0);
-        firstMessageExpectations.header("journal").isEqualTo("activemq.journal:test.a");
+        firstMessageExpectations.header("journal").isEqualTo("activemq.journal:target/test.a");
         firstMessageExpectations.header("location").isNotNull();
         firstMessageExpectations.body().isInstanceOf(ByteSequence.class);
 
-        template.sendBody("direct:test.a", payload);
+        template.sendBody("direct:in", payload);
 
         resultEndpoint.assertIsSatisfied();
 
@@ -57,8 +57,8 @@ public class JournalRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:test.a").to("activemq.journal:test.a");
-                from("activemq.journal:test.a").to("mock:result");
+                from("direct:in").to("activemq.journal:target/test.a");
+                from("activemq.journal:target/test.a").to("mock:out");
             }
         };
     }
