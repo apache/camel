@@ -222,4 +222,9 @@ public class JournalEndpoint extends DefaultEndpoint<Exchange> {
         this.syncProduce = syncProduce;
     }
 
+    boolean isOpen() {
+        synchronized (activationMutex) {
+            return referenceCount > 0;
+        }
+    }
 }
