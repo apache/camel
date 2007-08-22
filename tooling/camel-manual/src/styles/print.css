@@ -1,42 +1,43 @@
-div.wiki-content {
-	padding:10px 10px 10px 45px;
-}
-
-/* Sample style sheet for boom!, the book microformat              */
+     /* Sample style sheet for boom!, the book microformat              */
 /* written  by Hakon Wium Lie and Bert Bos, November 2005          */
 /* You may reuse this style sheet for any purpose without any fees */
-html, body, p { 
-  margin: 0;
-  font: "Gill Sans", sans-serif;
-  font-size:10pt;
-}
 
-h1 { 
-  page-break-before: always 
-}
 
-h1::before {
-  white-space: pre;
-  margin-left: -2.5cm;
-  font-size: 50%;
-  padding: 1em 0 1em 0;
-  content: "\B0  \B0  \B0  \B0  \B0 \A";  /* ornaments */
+html { 
+  margin: 0; padding: 0;
+  font: 10pt/1.26 "Gill Sans", sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 { 
   font-family: "Gill Sans", sans-serif;
   margin: 2em 0 0.5em 0;
   page-break-after: avoid;
-  background-color:#FFF;
-  border: none;
 } 
 
 h1 { 
-  padding: 1em 0 1em 0;
-  margin: 0;
-  font-size: 2.4em;
+  font-size: 2.0em;
   font-weight: 900;
+
+  margin: 0;
+  margin-left:-2cm;
+  margin-top:-2cm;
+  margin-bottom:1.5cm;
+  top: 0cm;
+  left: 0cm;
+  padding: 2cm;
+  padding-top: 1cm;
+  padding-bottom: 1cm;
+  background: #888;
+  border-bottom-right-radius: 2cm;
+  page-break-inside: avoid;
 }
+
+@media screen, handheld {
+h1 { 
+  margin-top:1cm;
+}
+}
+
 
 h2 { 
   font-size: 1.2em;
@@ -58,7 +59,7 @@ q::after {
 }
 
 p { margin: 0 }
-p + p { text-indent: 1.3em }
+p + p { text-indent: 1.3em ; margin-top: 0.2em; }
 p.sidenote + p, p.caption, p.art { text-indent: 0 }
 
 p.author {
@@ -72,10 +73,12 @@ pre {  margin: 1em 1.3em; }
 a { text-decoration: none; color: black }
 
 /* cross-references */
+
 a.pageref::after { content: " on page " target-counter(attr(href), page); }
 a.chapref::before { content: " Chapter " target-counter(attr(href), chapter) ", "; }
 a.figref { content: " Figure " target-counter(attr(href), figure); }
 a.tableref { content: " Table " target-counter(attr(href), figure); }
+a.listingref { content: " Listing " target-counter(attr(href), listing); }
 
 /* sidenotes */
 
@@ -108,7 +111,7 @@ div.sidebar h2 {
   margin-top: 0;
 }
 
-/* figures and tables*/
+/* figures, tables, and listings */
 
 div.figure {
   margin: 1em 0;
@@ -116,22 +119,20 @@ div.figure {
 }
 
 div.figure .caption, div.table .caption {
-  float: left;
-  clear: left;
-  width: 37%;
-  text-align: right;
   font-size: 0.9em;
-  margin: 0 0 1.2em -40%;
+  font-style: italic;
 }
 
 div.figure .caption::before {
-  content: "Figure " counter(figure) ": ";
+  content: "Figure " counter(figure) ". ";
   font-weight: bold;
+  font-style: normal;
 }
 
 div.table .caption::before {
-  content: "Table " counter(table) ": ";
+  content: "Table " counter(table) ". ";
   font-weight: bold;
+  font-style: normal;
 }
 
 div.table {
@@ -148,109 +149,165 @@ table th, table td {
   padding-right: 1em;
 }
 
-table.lined td, table.lined th {
+table td, table th {
   border-top: none;
   border-bottom: thin dotted;
   padding-top: 0.2em;
   padding-bottom: 0.2em;
 }
 
+/* Weird div.codeHeader a b::before would be a better selection
+   but prince does not properly match it.. Firefox does. */
+div.codeHeader::before {
+  content: "Listing " counter(listing) ". ";
+  font-weight: bold;
+  font-style: normal;
+}
+div.codeHeader a b {
+  font-style: italic;
+  font-weight: normal;
+}
+div.codeHeader {
+  font-size: 0.9em;
+  counter-increment: listing;
+}
+div.code {
+  margin: 1em 0;
+}
+
 
 @page {
-  margin: 27mm 16mm 27mm 16mm;
+  margin: 2cm;
   size: 7in 9.25in;
 
   @footnotes {
     border-top: thin solid black;
     padding-top: 0.3em;
     margin-top: 0.6em;
-    margin-left: 30%;
   }
 }
 
 
 /* define default page and names pages: cover, blank, frontmatter */
+div.page-reset {
+    counter-reset: page 1;
+}
 
 @page :left {
-  @top-left {
-    font: 11pt "Gill Sans", serif;
-    content: "";
-    vertical-align: bottom;
-    padding-bottom: 2em;
-  }
-
-  @bottom-left {
-    font: 11pt "Gill Sans", serif;
+  @top-left-corner {
+    font-weight: 900; font: 9pt "Gill Sans", serif; 
     content: counter(page);
-    padding-top: 2em;
-    vertical-align: top;
+    text-align: left;
+    margin-left: 1cm;
+    visibility: hidden;
+  }
+  @top-left {
+    font-weight: 900;
+    font: 9pt "Gill Sans", serif; white-space: pre; text-transform: uppercase; letter-spacing: 0.1em;
+    content: string(header, first); 
+    visibility: hidden;
+  }
+  @bottom-left-corner {
+    font-weight: 900; font: 9pt "Gill Sans", serif; 
+    content: counter(page);
+    text-align: left;
+    margin-left: 1cm;
+  }
+  @bottom-left {
+    font-weight: 900;
+    font: 9pt "Gill Sans", serif; white-space: pre; text-transform: uppercase; letter-spacing: 0.1em;
+    content: string(header, first); 
   }
 }
 
 @page :right {
-  @top-right {
-    font: 11pt "Gill Sans", serif;
-    content: string(header, first); 
-    vertical-align: bottom;
-    padding-bottom: 2em; 
+  @top-right-corner {
+    font-weight: 900; font: 9pt "Gill Sans", serif; 
+    content: counter(page);
+    text-align: left;
+    margin-left: 1cm;
+    visibility: hidden;
   }
-
-  @bottom-right {
-    font: 11pt "Gill Sans", serif;
+  @top-right {
+    font-weight: 900;
+    font: 9pt "Gill Sans", serif; white-space: pre; text-transform: uppercase; letter-spacing: 0.1em;
+    content: string(header, first)
+    visibility: hidden;
+  }
+  @bottom-right-corner {
+    font-weight: 900; font: 9pt "Gill Sans", serif; 
     content: counter(page);
     text-align: right;
-    vertical-align: top;
-    padding-top: 2em;
+    margin-right: 1cm;
+  }
+  @bottom-right {
+    font-weight: 900; font: 9pt "Gill Sans", serif; 
+    white-space: pre; text-transform: uppercase; letter-spacing: 0.1em;
+    content: string(header, first)
   }
 }
 
-@page frontmatter :left {
+/* 
+  In theory we should be able to use the :first selector so taht 
+  we can put the page numbering on the bottom of the first page of the chapter
+  but have the rest of the pages number at the top.  But this does not seem
+  to work.  See http://www.princexml.com/doc/6.0/page-selectors/
+
+  So for now just always number at the bottom :(
+*/
+/*
+div.chapter { page: bottom-number; }
+@page bottom-number :first {
   @top-left {
-    font: 11pt "Gill Sans", serif;
-    content: string(title);
-    vertical-align: bottom;
-    padding-bottom: 2em;
+    visibility: hidden;
   }
-
   @bottom-left {
-    font: 11pt "Gill Sans", serif;
-    content: counter(page, lower-roman);
-    padding-top: 2em;
-    vertical-align: top;
+    visibility: visible;
+  }
+  @top-right {
+    visibility: hidden;
+  }
+  @bottom-right {
+    visibility: visible;
   }
 }
+*/
 
 @page cover { margin: 0; }
 
-@page frontmatter :right {
-  @top-right {
-    font: 11pt "Gill Sans", serif;
-    content: string(header, first); 
-    vertical-align: bottom;
-    padding-bottom: 2em; 
-  }
-
-  @bottom-right {
-    font: 11pt "Gill Sans", serif;
+@page frontmatter :left {
+  @bottom-left-corner {
     content: counter(page, lower-roman);
-    text-align: right;
-    vertical-align: top;
-    padding-top: 2em;
+  }
+  @bottom-left-corner {
+    content: counter(page, lower-roman);
+  }
+}
+
+@page frontmatter :right {
+  @bottom-right-corner {
+    content: counter(page, lower-roman);
+  }
+  @bottom-right-corner {
+    content: counter(page, lower-roman);
   }
 }
 
 @page blank :left {
-  @top-left { content: normal }
-  @bottom-left { content: normal }
+  @top-left { visibility: hidden; }
+  @bottom-left { visibility: hidden; }
+  @top-left-corner { visibility: hidden; }
+  @bottom-left-corner { visibility: hidden; }
 }
 
 @page blank :right {
-  @top-right { content: normal }
-  @bottom-right { content: normal }
+  @top-right { visibility: hidden; }
+  @bottom-right { visibility: hidden; }
+  @top-right-corner { visibility: hidden; }
+  @bottom-right-corner { visibility: hidden; }
 }
 
 /* footnotes */
-
 .footnote {
   display: none;                   /* default rule */
 
@@ -308,14 +365,15 @@ div.foreword, div.toc, div.preface { page: frontmatter }
 
 
 /* page breaks */
-
 div.frontcover, div.halftitlepage, div.titlepage { page-break-before: right }
-div.imprint { page-break-before: always }
-div.dedication, div.foreword, div.toc, div.preface, div.chapter, div.reference, 
+div.imprint { page-break-before: always; }
+div.chapter { page-break-before: always; }
+div.dedication, div.foreword, div.toc, div.preface, div.reference, 
 div.appendix, div.bibliography, div.glossary, div.index, div.colophon { 
   page-break-before: always 
 }
 div.backcover { page-break-before: left }
+
 
 /* the front cover; this code is probably not very reusable by other books */
 
@@ -382,6 +440,7 @@ div.titlepage p, div.halftitlepage p {
 ul.toc, ul.toc ul { 
   list-style-type: none;
   margin: 0; padding: 0;
+  margin-left: 3cm;
 }
 ul.toc ul {
   margin-left: 1em;
@@ -415,15 +474,20 @@ ul.toc > li.chapter::before {
 /* chapter numbers */
 
 div.chapter { counter-increment: chapter; }
-
-div.chapter h1::before { content: "Chapter " counter(chapter) " \A"; }
+div.chapter h1::before { 
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  content: "Chapter  " counter(chapter) " \A\B0 \B0 \B0 \B0\A"; 
+  white-space: pre;
+  font-size: 50%;
+}
 
 div.frontcover h1::before, div.titlepage h1::before, div.halftitlepage h1::before {
-  content: normal;                  /* that is, none */
+  content: normal; /* that is, none */
 }
 
 h1 { string-set: header content();}
-div.chapter h1 { string-set: header "Chapter " counter(chapter) ": " content(); }
+div.chapter h1 { string-set: header "Chapter " counter(chapter) " - " content(); }
 
 /* index */
 
@@ -448,36 +512,39 @@ code, span.css, span.value, span.declaration {
 }
 
 
-
 @media screen, handheld {
   html { margin: 1em; font: 14px "Gill Sans", sans-serif; }
   h1 { margin-bottom: 0.5em }
   div.frontcover, div.halftitlepage, div.titlepage, div.imprint, 
   div.dedication, div.foreword, div.toc, div.index { display: none }
+  body { margin: 2cm; }
 }
 
 /*
  * Enhancements to the take advantage of some of the style markup that
  * Confluence generates 
  */
-a sup img { visibility: hidden;	position: absolute;}
+a sup img { visibility: hidden; position: absolute;}
+
+img { 
+  prince-image-resolution:150dpi;
+}
 
 table {
   font: "Lucida Console", "Lucida Sans Typewriter", monospace;
 }
 
 table td {
-	 font-size: 80%;
+  font-size: 80%;
 }
 
 pre {  margin: 0.5em; }
-p { text-indent: 1.3em  }
-p + p { margin-top: 1em; }
 
+.codeContent {
+  font-size: 70%; 
+  margin: .5em;
+}
 .code {
- 	border: 2px dashed #AAA;
-    margin: .5em;
-    font-size: 70%; 
 }
 .code-keyword {
   color: #000091;
@@ -530,3 +597,4 @@ table.infoMacro p, table.warningMacro p, table.tipMacro p, table.noteMacro p, ta
     font-size:x-small;
     margin-top: 1em; 
 }
+
