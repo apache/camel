@@ -50,14 +50,18 @@
     <!-- copy the manual docs -->
     <fileSet>
       <directory>${basedir}/../tooling/camel-manual/target/site/manual/</directory>
-      <outputDirectory>/doc/manual</outputDirectory>
+      <outputDirectory>/doc</outputDirectory>
+      <includes>
+        <include>*.pdf</include>
+      </includes>
     </fileSet>
 
-    <!-- copy the website docs -->
+    <!-- copy the website docs
     <fileSet>
       <directory>${basedir}/target/website</directory>
       <outputDirectory>/doc/website</outputDirectory>
     </fileSet>
+    -->
 
     <!-- Copy over jar files -->
     <fileSet>
