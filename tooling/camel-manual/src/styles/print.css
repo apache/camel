@@ -35,6 +35,12 @@ h1 {
 @media screen, handheld {
 h1 { 
   margin-top:1cm;
+  background-image: url("chapter-rounded-bottom.png");
+  background-repeat: no-repeat;
+  background-position: bottom right;
+}
+div.page-reset > h1 {
+  margin-top:0cm;
 }
 }
 
@@ -67,8 +73,6 @@ p.author {
   text-indent: 0;
   text-align: right;
 }
-
-pre {  margin: 1em 1.3em; }
 
 a { text-decoration: none; color: black }
 
@@ -147,9 +151,16 @@ div.table th {
 table th, table td {
   text-align: left;
   padding-right: 1em;
+  page-break-inside: avoid;
 }
 
-table td, table th {
+table th {
+  border-top: thin solid;
+  border-bottom: thin solid;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+}
+table td {
   border-top: none;
   border-bottom: thin dotted;
   padding-top: 0.2em;
@@ -513,11 +524,15 @@ code, span.css, span.value, span.declaration {
 
 
 @media screen, handheld {
-  html { margin: 1em; font: 14px "Gill Sans", sans-serif; }
+  html {font: 14px "Gill Sans", sans-serif; }
   h1 { margin-bottom: 0.5em }
   div.frontcover, div.halftitlepage, div.titlepage, div.imprint, 
   div.dedication, div.foreword, div.toc, div.index { display: none }
-  body { margin: 2cm; }
+  body { 
+      margin: 0cm; 
+      margin-left: 2cm; 
+      margin-right: 2cm; 
+  }
 }
 
 /*
@@ -535,14 +550,15 @@ table {
 }
 
 table td {
-  font-size: 80%;
+  font-size: 10pt;
 }
 
-pre {  margin: 0.5em; }
+pre {  
+   white-space: pre-wrap;
+}
 
 .codeContent {
-  font-size: 70%; 
-  margin: .5em;
+  font-size: 80%;
 }
 .code {
 }
