@@ -260,6 +260,7 @@
     </plugins>
   </build>
   <profiles>
+  <!--
     <profile>
       <id>release</id>
       <build>
@@ -272,7 +273,7 @@
             <executions>
               <execution>
                 <id>download-website</id>
-                <phase>compile</phase> <!-- once maven 2.1 is out we can make this prepare-package -->
+                <phase>compile</phase>
                 <configuration>
                   <tasks>
   
@@ -300,6 +301,7 @@
         </plugins>
       </build>
     </profile>
+    -->
     <profile>
       <id>assembly-src</id>
       <build>
