@@ -32,7 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class HttpRouteTest extends ContextTestSupport {
     protected String expectedBody = "<hello>world!</hello>";
 
-    public void testPojoRoutes() throws Exception {
+    public void testEndpoint() throws Exception {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         mockEndpoint.expectedBodiesReceived(expectedBody);
 
