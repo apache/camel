@@ -33,7 +33,13 @@
   <description>Performs cross component integration tests</description>
 
   <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>apache-camel</artifactId>
+      <version>${camel-version}</version>
+    </dependency>
 
+<!--
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -66,7 +72,7 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
     </dependency>
-
+-->
 <!--
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -77,10 +83,32 @@
     </dependency>
 -->
 
+    <!-- testing -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <type>test-jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+      <type>test-jar</type>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
     </dependency>
 
   </dependencies>
