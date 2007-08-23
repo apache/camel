@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.http;
 
-import java.util.HashMap;
-
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.nio.SelectChannelConnector;
@@ -25,15 +23,17 @@ import org.mortbay.jetty.security.SslSocketConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 
+import java.util.HashMap;
+
 /**
  * An HttpComponent which starts an embedded Jetty for to handle consuming from
  * http endpoints.
- * 
+ *
  * @version $Revision: 525142 $
  */
 public class JettyHttpComponent extends HttpComponent {
-
-    Server server;
+    private Server server;
+    private final HashMap<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
 
     class ConnectorRef {
         Connector connector;
@@ -53,15 +53,75 @@ public class JettyHttpComponent extends HttpComponent {
         }
     }
 
-    final HashMap<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
-
     @Override
-    protected void doStart() throws Exception {
-        server = createServer();
-        super.doStart();
+    public void connect(HttpConsumer consumer) throws Exception {
+
+        // Make sure that there is a connector for the requested endpoint.
+        HttpEndpoint endpoint = (HttpEndpoint) consumer.getEndpoint();
+        String connectorKey = endpoint.getProtocol() + ":" + endpoint.getPort();
+
+        synchronized (connectors) {
+            ConnectorRef connectorRef = connectors.get(connectorKey);
+            if (connectorRef == null) {
+                Connector connector;
+                if ("https".equals(endpoint.getProtocol())) {
+                    connector = new SslSocketConnector();
+                }
+                else {
+                    connector = new SelectChannelConnector();
+                }
+                connector.setPort(endpoint.getPort());
+                getServer().addConnector(connector);
+                connector.start();
+                connectorRef = new ConnectorRef(connector);
+            }
+            else {
+                // ref track the connector
+                connectorRef.increment();
+            }
+        }
+
+        super.connect(consumer);
     }
 
-    private Server createServer() throws Exception {
+    @Override
+    public void disconnect(HttpConsumer consumer) throws Exception {
+        super.disconnect(consumer);
+
+        // If the connector is not needed anymore.. then stop it.
+        HttpEndpoint endpoint = (HttpEndpoint) consumer.getEndpoint();
+        String connectorKey = endpoint.getProtocol() + ":" + endpoint.getPort();
+
+        synchronized (connectors) {
+            ConnectorRef connectorRef = connectors.get(connectorKey);
+            if (connectorRef != null) {
+                if (connectorRef.decrement() == 0) {
+                    getServer().removeConnector(connectorRef.connector);
+                    connectorRef.connector.stop();
+                    connectors.remove(connectorKey);
+                }
+            }
+        }
+    }
+
+    // Properties
+    //-------------------------------------------------------------------------
+
+    public Server getServer() throws Exception {
+        if (server == null) {
+            server = createServer();
+        }
+        return server;
+    }
+
+    public void setServer(Server server) {
+        this.server = server;
+    }
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+
+    protected Server createServer() throws Exception {
         setCamelServlet(new CamelServlet());
 
         Server server = new Server();
@@ -84,56 +144,9 @@ public class JettyHttpComponent extends HttpComponent {
         }
         connectors.clear();
 
-        server.stop();
+        if (server != null) {
+            server.stop();
+        }
         super.doStop();
-    }
-
-    @Override
-    public void connect(HttpConsumer consumer) throws Exception {
-
-        // Make sure that there is a connector for the requested endpoint.
-        HttpEndpoint endpoint = (HttpEndpoint)consumer.getEndpoint();
-        String connectorKey = endpoint.getProtocol() + ":" + endpoint.getPort();
-
-        synchronized (connectors) {
-            ConnectorRef connectorRef = connectors.get(connectorKey);
-            if (connectorRef == null) {
-                Connector connector;
-                if ("https".equals(endpoint.getProtocol())) {
-                    connector = new SslSocketConnector();
-                } else {
-                    connector = new SelectChannelConnector();
-                }
-                connector.setPort(endpoint.getPort());
-                server.addConnector(connector);
-                connector.start();
-                connectorRef = new ConnectorRef(connector);
-            } else {
-                // ref track the connector
-                connectorRef.increment();
-            }
-        }
-
-        super.connect(consumer);
-    }
-
-    @Override
-    public void disconnect(HttpConsumer consumer) throws Exception {
-        super.disconnect(consumer);
-
-        // If the connector is not needed anymore.. then stop it.
-        HttpEndpoint endpoint = (HttpEndpoint)consumer.getEndpoint();
-        String connectorKey = endpoint.getProtocol() + ":" + endpoint.getPort();
-
-        synchronized (connectors) {
-            ConnectorRef connectorRef = connectors.get(connectorKey);
-            if (connectorRef != null) {
-                if (connectorRef.decrement() == 0) {
-                    server.removeConnector(connectorRef.connector);
-                    connectorRef.connector.stop();
-                    connectors.remove(connectorKey);
-                }
-            }
-        }
     }
 }
