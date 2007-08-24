@@ -26,5 +26,7 @@
   <resources>
     <resource>src/main/resources/META-INF/spring/camel-context.xml</resource>
     <resource>src/main/resources/log4j.properties</resource>
+    <resource>src/data/message1.xml</resource>
+    <resource>src/data/message2.xml</resource>
   </resources>
 </archetype>
