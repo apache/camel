@@ -19,6 +19,7 @@ package ${packageName};
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spring.Main;
 
 /**
  * A Camel Router
@@ -27,6 +28,16 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class MyRouteBuilder extends RouteBuilder {
 
+    /**
+     * A main() so we can easily run these routing rules in our IDE
+     */
+    public static void main(String... args) {
+        Main.main(args);
+    }
+
+    /**
+     * Lets configure the Camel routing rules using Java code...
+     */
     public void configure() {
 
         // TODO create Camel routes here. For example:-
