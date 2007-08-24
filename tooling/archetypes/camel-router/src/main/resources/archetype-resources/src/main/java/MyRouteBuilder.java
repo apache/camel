@@ -21,6 +21,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.Main;
 
+import static org.apache.camel.builder.xml.XPathBuilder.xpath;
+
 /**
  * A Camel Router
  *
@@ -40,9 +42,16 @@ public class MyRouteBuilder extends RouteBuilder {
      */
     public void configure() {
 
-        // TODO create Camel routes here. For example:-
-        //
-        // from("activemq:test.MyQueue").to("file://test");
+        // TODO create Camel routes here.
+
+        // here is a sample which processes the input files
+        // (leaving them in place - see the 'noop' flag)
+        // then performs content based routing on the message
+        // using XPath
+        from("file:src/data?noop=true").
+            choice().
+                when(xpath("/person/city = 'London'")).to("file:target/messages/uk").
+                otherwise().to("file:target/messages/others");
 
     }
 }

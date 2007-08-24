@@ -15,17 +15,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
-<!-- Configures the Camel Context-->
-
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-       http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
-
-  <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
-    <package>${package}</package>
-  </camelContext>
-
-</beans>
+<person user="hiram">
+  <firstName>Hiram</firstName>
+  <lastName>Chirino</lastName>
+  <city>Tampa</city>
+</person>

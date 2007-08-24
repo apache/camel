@@ -31,7 +31,7 @@
   <url>http://www.myorganization.org</url>
 
   <properties>
-    <camel-version>1.1.0</camel-version>
+    <camel-version>1.1-SNAPSHOT</camel-version>
   </properties>
 
   <dependencies>
