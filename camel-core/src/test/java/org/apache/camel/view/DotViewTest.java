@@ -21,6 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
 
 import java.io.File;
+import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 /**
  * @version $Revision: 1.1 $
@@ -38,6 +39,11 @@ public class DotViewTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                from("file:foo/xyz?noop=true").
+                    choice().
+                      when(xpath("/person/city = 'London'")).to("file:target/messages/uk").
+                      otherwise().to("file:target/messages/others");
+
                 from("file:foo/bar?noop=true").
                         filter(header("foo").isEqualTo("bar")).
                         to("file:xyz?noop=true");

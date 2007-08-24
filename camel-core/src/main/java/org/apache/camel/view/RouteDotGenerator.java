@@ -32,6 +32,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * A <a href="http://www.graphviz.org/">DOT</a> file creator plugin which
@@ -117,6 +118,7 @@ public class RouteDotGenerator {
         public String nodeType;
         public boolean nodeWritten;
         public String url;
+        public List<ProcessorType> outputs;
     }
 
     protected void generateFile(PrintWriter writer, CamelContext context) {
@@ -173,14 +175,19 @@ public class RouteDotGenerator {
         }
 
         // now lets write any children
-        List<ProcessorType> outputs = node.getOutputs();
+        //List<ProcessorType> outputs = node.getOutputs();
+        List<ProcessorType> outputs = toData.outputs;
         for (ProcessorType output : outputs) {
             NodeData newData = printNode(writer, toData, output);
-            if (!(node instanceof MulticastType)) {
+            if (!isMulticastNode(node)) {
                 toData = newData;
             }
         }
         return toData;
+    }
+
+    protected boolean isMulticastNode(ProcessorType node) {
+        return node instanceof MulticastType || node instanceof ChoiceType;
     }
 
     protected void printNode(PrintWriter writer, NodeData data) {
@@ -228,16 +235,31 @@ public class RouteDotGenerator {
             ToType toType = (ToType) node;
             data.tooltop = toType.getLabel();
             data.label = removeQueryString(data.tooltop);
-            data.edgeLabel = null;
+            data.edgeLabel = "";
             data.url = "http://activemq.apache.org/camel/message-endpoint.html";
         }
         else if (node instanceof FilterType) {
             data.image = imagePrefix + "MessageFilterIcon.gif";
             data.nodeType = "Message Filter";
         }
+        else if (node instanceof WhenType) {
+            data.image = imagePrefix + "MessageFilterIcon.gif";
+            data.nodeType = "When Filter";
+        }
+        else if (node instanceof OtherwiseType) {
+            data.nodeType = "Otherwise";
+            data.edgeLabel = "";
+        }
         else if (node instanceof ChoiceType) {
             data.image = imagePrefix + "ContentBasedRouterIcon.gif";
             data.nodeType = "Content Based Router";
+            data.label = "";
+            data.edgeLabel = "";
+
+            ChoiceType choice = (ChoiceType) node;
+            List<ProcessorType> outputs = new ArrayList<ProcessorType>(choice.getWhenClauses());
+            outputs.add(choice.getOtherwise());
+            data.outputs = outputs;
         }
         else if (node instanceof RecipientListType) {
             data.image = imagePrefix + "RecipientListIcon.gif";
@@ -292,6 +314,10 @@ public class RouteDotGenerator {
         }
         if (isNullOrBlank(data.url) && isNotNullAndNonEmpty(data.nodeType)) {
             data.url = "http://activemq.apache.org/camel/" + data.nodeType.toLowerCase().replace(' ', '-') + ".html";
+        }
+        if (node instanceof ProcessorType && data.outputs == null) {
+            ProcessorType processorType = (ProcessorType) node;
+            data.outputs = processorType.getOutputs();
         }
     }
 
