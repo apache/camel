@@ -18,6 +18,8 @@ package org.apache.camel.processor;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -72,10 +74,15 @@ public class Pipeline extends MulticastProcessor implements Processor {
 
         // now lets set the input of the next exchange to the output of the
         // previous message if it is not null
-        Object output = previousExchange.getOut().getBody();
+        Message previousOut = previousExchange.getOut();
+        Object output = previousOut.getBody();
         Message in = answer.getIn();
         if (output != null) {
             in.setBody(output);
+            Set<Map.Entry<String,Object>> entries = previousOut.getHeaders().entrySet();
+            for (Map.Entry<String, Object> entry : entries) {
+                in.setHeader(entry.getKey(), entry.getValue());
+            }
         }
         else {
             Object previousInBody = previousExchange.getIn().getBody();
