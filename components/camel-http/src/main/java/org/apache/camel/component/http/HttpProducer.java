@@ -78,6 +78,9 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         RequestEntity entity = in.getBody(RequestEntity.class);
         if (entity == null) {
             byte[] data = in.getBody(byte[].class);
+            if (data == null) {
+                return null;
+            }
             String contentType = in.getHeader("Content-Type", String.class);
             if (contentType != null) {
                 return new ByteArrayRequestEntity(data, contentType);
