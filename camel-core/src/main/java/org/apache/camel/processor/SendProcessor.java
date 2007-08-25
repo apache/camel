@@ -40,18 +40,9 @@ public class SendProcessor extends ServiceSupport implements Processor, Service 
         this.destination = destination;
     }
 
-    protected void doStop() throws Exception {
-        if (producer != null) {
-            try {
-                producer.stop();
-            } finally {
-                producer = null;
-            }
-        }
-    }
-
-    protected void doStart() throws Exception {
-        this.producer = destination.createProducer();
+    @Override
+    public String toString() {
+        return "sendTo(" + destination + ")";
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -70,8 +61,19 @@ public class SendProcessor extends ServiceSupport implements Processor, Service 
         return destination;
     }
 
-    @Override
-    public String toString() {
-        return "sendTo(" + destination + ")";
+    protected void doStart() throws Exception {
+        this.producer = destination.createProducer();
+        this.producer.start();
     }
+
+    protected void doStop() throws Exception {
+        if (producer != null) {
+            try {
+                producer.stop();
+            } finally {
+                producer = null;
+            }
+        }
+    }
+
 }
