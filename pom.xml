@@ -779,11 +779,15 @@
               <artifactId>maven-pmd-plugin</artifactId>
             </plugin>
       -->
+<!--
+      TODO temporarily disabled as maven site is failing
+      
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
         <version>2.0</version>
       </plugin>
+-->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>taglist-maven-plugin</artifactId>
