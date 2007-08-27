@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.mina;
 
-import java.net.SocketAddress;
-
 import org.apache.camel.Exchange;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,6 +26,8 @@ import org.apache.mina.common.IoConnector;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
+
+import java.net.SocketAddress;
 
 /**
  * A {@link Producer} implementation for MINA
