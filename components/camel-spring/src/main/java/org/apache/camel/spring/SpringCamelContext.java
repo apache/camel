@@ -24,11 +24,9 @@ import org.apache.camel.component.event.EventComponent;
 import org.apache.camel.component.event.EventEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.ApplicationContextRegistry;
-import org.apache.camel.spring.spi.SpringComponentResolver;
 import org.apache.camel.spring.spi.SpringInjector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,7 +40,6 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -160,12 +157,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             LOG.warn("Cannot use SpringInjector as applicationContext is not a ConfigurableApplicationContext as its: " + applicationContext);
             return super.createInjector();
         }
-    }
-
-    @Override
-    protected ComponentResolver createComponentResolver() {
-        ComponentResolver defaultResolver = super.createComponentResolver();
-        return new SpringComponentResolver(getApplicationContext(), defaultResolver);
     }
 
     protected EventEndpoint createEventEndpoint() {

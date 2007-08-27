@@ -22,6 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 /**
  * The default implementation of {@link ComponentResolver} which tries to find
@@ -32,10 +35,25 @@ import org.apache.camel.util.NoFactoryAvailableException;
  * @version $Revision$
  */
 public class DefaultComponentResolver<E extends Exchange> implements ComponentResolver<E> {
+    private static final transient Log LOG = LogFactory.getLog(DefaultComponentResolver.class);
     protected static final FactoryFinder COMPONENT_FACTORY = 
         new FactoryFinder("META-INF/services/org/apache/camel/component/");
 
     public Component<E> resolveComponent(String name, CamelContext context) {
+        Object bean = null;
+        try {
+            bean = context.getRegistry().lookup(name);
+        }
+        catch (Exception e) {
+            LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
+        }
+        if (bean != null) {
+            if (bean instanceof Component) {
+                return (Component)bean;
+            } else {
+                throw new IllegalArgumentException("Bean with name: " + name + " in registry is not a Component: " + bean);
+            }
+        }
         Class type;
         try {
             type = COMPONENT_FACTORY.findClass(name);

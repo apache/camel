@@ -60,7 +60,7 @@ public class JmsIntegrationTest extends ContextTestSupport {
         answer.bind("myBean", myBean);
 
         // add ActiveMQ with embedded broker
-        answer.bind("activemq", ActiveMQComponent.activeMQComponent("vm://localhost?broker.persistent=false"));
+        answer.bind("jms", ActiveMQComponent.activeMQComponent("vm://localhost?broker.persistent=false"));
         return answer;
     }
 
