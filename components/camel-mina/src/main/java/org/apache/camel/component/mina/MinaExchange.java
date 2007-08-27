@@ -17,6 +17,7 @@
 package org.apache.camel.component.mina;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
