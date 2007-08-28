@@ -17,7 +17,7 @@
 package org.apache.camel.component.cxf;
 
 public class HelloServiceImpl implements HelloService {
-    public String echo(String text) {
+    public String echo(String text) {        
         return text;
     }
 
@@ -29,4 +29,5 @@ public class HelloServiceImpl implements HelloService {
         return "hello";
     }
 }
+
 
