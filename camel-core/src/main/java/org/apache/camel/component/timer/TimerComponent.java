@@ -17,6 +17,7 @@
 package org.apache.camel.component.timer;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.bean.BeanExchange;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
@@ -32,7 +33,7 @@ import java.util.Timer;
  *
  * @version $Revision: 519973 $
  */
-public class TimerComponent extends DefaultComponent<BeanExchange> {
+public class TimerComponent extends DefaultComponent<Exchange> {
     private Map<String, Timer> timers = new HashMap<String, Timer>();
 
     public Timer getTimer(TimerEndpoint endpoint) {
@@ -50,7 +51,7 @@ public class TimerComponent extends DefaultComponent<BeanExchange> {
     }
     
     @Override
-    protected Endpoint<BeanExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         TimerEndpoint answer = new TimerEndpoint(uri, this, remaining);
         IntrospectionSupport.setProperties(answer, parameters);
         return answer;

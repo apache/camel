@@ -17,11 +17,13 @@
 package org.apache.camel.component.timer;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bean.BeanExchange;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultExchange;
 
 import java.util.Date;
 import java.util.Timer;
@@ -31,7 +33,7 @@ import java.util.Timer;
  *
  * @version $Revision: 519973 $
  */
-public class TimerEndpoint extends DefaultEndpoint<BeanExchange> {
+public class TimerEndpoint extends DefaultEndpoint<Exchange> {
 
     private final TimerComponent component;
     private final String timerName;
@@ -48,16 +50,16 @@ public class TimerEndpoint extends DefaultEndpoint<BeanExchange> {
         this.timerName = timerName;
     }
 
-    public Producer<BeanExchange> createProducer() throws Exception {
+    public Exchange createExchange() {
+        return new DefaultExchange(getContext());
+    }
+
+    public Producer<Exchange> createProducer() throws Exception {
         throw new RuntimeCamelException("Cannot produce to a TimerEndpoint: " + getEndpointUri());
     }
 
-    public Consumer<BeanExchange> createConsumer(Processor processor) throws Exception {
+    public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
         return new TimerConsumer(this, processor);
-    }
-
-    public BeanExchange createExchange() {
-        return new BeanExchange(getContext());
     }
 
     public TimerComponent getComponent() {
