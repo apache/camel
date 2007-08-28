@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.timer;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.bean.BeanExchange;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -31,7 +34,8 @@ import java.util.TimerTask;
 /**
  * @version $Revision: 523047 $
  */
-public class TimerConsumer extends DefaultConsumer<BeanExchange> implements InvocationHandler {
+public class TimerConsumer extends DefaultConsumer<Exchange> {
+    private static final transient Log LOG = LogFactory.getLog(TimerConsumer.class);
     private final TimerEndpoint endpoint;
     private TimerTask task;
 
@@ -42,11 +46,10 @@ public class TimerConsumer extends DefaultConsumer<BeanExchange> implements Invo
 
     @Override
     protected void doStart() throws Exception {
-        final Runnable proxy = createProxy();
         task = new TimerTask() {
             @Override
             public void run() {
-                proxy.run();
+                sendTimerExchange();
             }
         };
 
@@ -88,26 +91,16 @@ public class TimerConsumer extends DefaultConsumer<BeanExchange> implements Invo
         }
     }
 
-    /**
-     * Creates a Proxy which generates the inbound PojoExchanges
-     */
-    public Runnable createProxy() {
-        return (Runnable) Proxy.newProxyInstance(Runnable.class.getClassLoader(),
-                new Class[]{Runnable.class}, this);
-    }
-
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (!isStarted()) {
-            throw new IllegalStateException("The endpoint is not active: " + getEndpoint().getEndpointUri());
+    protected void sendTimerExchange() {
+        Exchange exchange = endpoint.createExchange();
+        exchange.setProperty("org.apache.camel.timer.name", endpoint.getTimerName());
+        exchange.setProperty("org.apache.camel.timer.time", endpoint.getTime());
+        exchange.setProperty("org.apache.camel.timer.period", endpoint.getPeriod());
+        try {
+            getProcessor().process(exchange);
         }
-        BeanInvocation invocation = new BeanInvocation(proxy, method, args);
-        BeanExchange exchange = getEndpoint().createExchange();
-        exchange.setInvocation(invocation);
-        getProcessor().process(exchange);
-        Throwable fault = exchange.getException();
-        if (fault != null) {
-            throw new InvocationTargetException(fault);
+        catch (Exception e) {
+            LOG.error("Caught: " + e, e);
         }
-        return exchange.getOut().getBody();
     }
 }
