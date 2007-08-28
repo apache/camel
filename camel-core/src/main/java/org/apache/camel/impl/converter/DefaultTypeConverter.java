@@ -47,6 +47,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     public DefaultTypeConverter(Injector injector) {
         typeConverterLoaders.add(new AnnotationTypeConverterLoader());
         this.injector = injector;
+        addFallbackConverter(new AsyncProcessorTypeConverter());
         addFallbackConverter(new PropertyEditorTypeConverter());
         addFallbackConverter(new ToStringTypeConverter());
         addFallbackConverter(new ArrayTypeConverter());

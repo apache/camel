@@ -17,13 +17,18 @@
 package org.apache.camel.processor;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -33,7 +38,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision$
  */
-public class Pipeline extends MulticastProcessor implements Processor {
+public class Pipeline extends MulticastProcessor implements AsyncProcessor {
     private static final transient Log LOG = LogFactory.getLog(Pipeline.class);
 
     public Pipeline(Collection<Processor> processors) {
@@ -48,7 +53,7 @@ public class Pipeline extends MulticastProcessor implements Processor {
         }
         return new Pipeline(processors);
     }
-
+    
     public void process(Exchange exchange) throws Exception {
         Exchange nextExchange = exchange;
         boolean first = true;
@@ -60,6 +65,77 @@ public class Pipeline extends MulticastProcessor implements Processor {
             }
             producer.process(nextExchange);
         }
+    }
+
+    /**
+     * It would be nice if we could implement the sync process method as follows.. but we
+     * can't since the dead letter handler seem to like to handle the error but still 
+     * set the Exchange.exception field.  When that happens this method throws that
+     * exception but it seem that folks don't expect to get that exception.
+     * 
+     * @param exchange
+     * @throws Exception
+     */
+    public void xprocess(Exchange exchange) throws Exception {
+        // This could become a base class method for an AsyncProcessor
+        final CountDownLatch latch = new CountDownLatch(1);
+        if (!process(exchange, new AsyncCallback() {
+            public void done(boolean sync) {
+                if (sync) {
+                    return;
+                }
+                latch.countDown();
+            }
+        })) {
+            latch.await();
+        }
+        // If there was an exception associated with the exchange, throw it.
+        exchange.throwException();
+    }
+    
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        Iterator<Processor> processors = getProcessors().iterator();
+        Exchange nextExchange = exchange;
+        while (processors.hasNext()) {
+            AsyncProcessor processor = AsyncProcessorTypeConverter.convert(processors.next());
+            boolean sync = process(nextExchange, callback, processors, processor);
+            // Continue processing the pipeline synchronously ...
+            if (sync) {
+                nextExchange = createNextExchange(processor, exchange);
+            } else {
+                // The pipeline will be completed async...
+                return true;
+            }
+        }
+        // If we get here then the pipeline was processed entirely
+        // synchronously.
+        callback.done(true);
+        return true;
+    }
+
+    private boolean process(final Exchange exchange, final AsyncCallback callback, final Iterator<Processor> processors, AsyncProcessor processor) {
+        return processor.process(exchange, new AsyncCallback() {
+            public void done(boolean sync) {
+                
+                // We only have to handle async completion of
+                // the pipeline..  
+                if( sync ) {
+                    return;
+                }
+                
+                // Continue processing the pipeline... 
+                Exchange nextExchange = exchange;
+                while( processors.hasNext() ) {
+                    AsyncProcessor processor = AsyncProcessorTypeConverter.convert(processors.next());
+                    nextExchange = createNextExchange(processor, exchange);
+                    sync = process( nextExchange, callback, processors, processor);
+                    if( !sync ) {
+                        return;
+                    }
+                }
+                callback.done(true);
+            }
+        });
     }
 
     /**
@@ -111,4 +187,5 @@ public class Pipeline extends MulticastProcessor implements Processor {
     public String toString() {
         return "Pipeline" + getProcessors();
     }
+
 }

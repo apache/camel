@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.strategy.FileProcessStrategy;
 import org.apache.camel.impl.ScheduledPollConsumer;
@@ -23,6 +25,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * @version $Revision: 523016 $
@@ -62,8 +67,12 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
             LOG.debug("Skipping directory " + fileOrDirectory);
         }
     }
+    
+    ConcurrentHashMap<File, File> filesBeingProcessed = new ConcurrentHashMap<File, File>();
 
     protected void pollFile(final File file) {
+        
+
         if (!file.exists()) {
             return;
         }
@@ -77,10 +86,15 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                     }
                     return;
                 }
+            } else {
+                if (filesBeingProcessed.contains(file)) {
+                    return;
+                }
+                filesBeingProcessed.put(file, file);
             }
 
-            FileProcessStrategy processStrategy = endpoint.getFileStrategy();
-            FileExchange exchange = endpoint.createExchange(file);
+            final FileProcessStrategy processStrategy = endpoint.getFileStrategy();
+            final FileExchange exchange = endpoint.createExchange(file);
 
             if (isPreserveFileName()) {
                 String relativePath = file.getPath().substring(endpoint.getFile().getPath().length());
@@ -95,8 +109,25 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                     LOG.debug("About to process file:  " + file + " using exchange: " + exchange);
                 }
                 if (processStrategy.begin(endpoint, exchange, file)) {
-                    getProcessor().process(exchange);
-                    processStrategy.commit(endpoint, exchange, file);
+                    
+                    // Use the async processor interface so that processing of
+                    // the
+                    // exchange can happen asynchronously
+                    getAsyncProcessor().process(exchange, new AsyncCallback() {
+                        public void done(boolean sync) {
+                            if (exchange.getException() == null) {
+                                try {
+                                    processStrategy.commit(endpoint, (FileExchange)exchange, file);
+                                } catch (Exception e) {
+                                    handleException(e);
+                                }
+                            } else {
+                                handleException(exchange.getException());
+                            }
+                            filesBeingProcessed.remove(file);
+                        }
+                    });
+                    
                 }
                 else {
                     if (LOG.isDebugEnabled()) {

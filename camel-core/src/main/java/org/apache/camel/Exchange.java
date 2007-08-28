@@ -133,6 +133,11 @@ public interface Exchange {
     void setException(Throwable e);
 
     /**
+     * Throws the exception associated with this exchange.
+     */
+    void throwException() throws Exception;
+
+    /**
      * Returns the container so that a processor can resolve endpoints from URIs
      * 
      * @return the container which owns this exchange
@@ -152,4 +157,5 @@ public interface Exchange {
      * copied
      */
     void copyFrom(Exchange source);
+
 }
