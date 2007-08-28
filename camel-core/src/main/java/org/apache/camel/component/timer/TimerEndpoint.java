@@ -16,19 +16,15 @@
  */
 package org.apache.camel.component.timer;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Date;
-import java.util.Map;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bean.BeanExchange;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.URISupport;
+
+import java.util.Date;
+import java.util.Timer;
 
 /**
  * Represents a timer endpoint that can generate periodic inbound PojoExchanges.
@@ -44,18 +40,12 @@ public class TimerEndpoint extends DefaultEndpoint<BeanExchange> {
     private long delay = -1;
     private boolean fixedRate;
     private boolean daemon = true;
+    private Timer timer;
 
-
-    public TimerEndpoint(String fullURI, TimerComponent component, String timerPartURI) throws URISyntaxException {
+    public TimerEndpoint(String fullURI, TimerComponent component, String timerName) {
         super(fullURI, component);
         this.component = component;
-
-        // Use a URI to extract query so they can be set as properties on the endpoint.
-        URI u = new URI(timerPartURI);
-        Map options = URISupport.parseParamters(u);
-        IntrospectionSupport.setProperties(this, options);
-        this.timerName = u.getPath();
-
+        this.timerName = timerName;
     }
 
     public Producer<BeanExchange> createProducer() throws Exception {
@@ -122,4 +112,10 @@ public class TimerEndpoint extends DefaultEndpoint<BeanExchange> {
         return true;
     }
 
+    public Timer getTimer() {
+        if (timer == null) {
+            timer = component.getTimer(this);
+        }
+        return timer;
+    }
 }

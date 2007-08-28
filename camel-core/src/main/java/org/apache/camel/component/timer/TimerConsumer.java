@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.timer;
 
+import org.apache.camel.Processor;
+import org.apache.camel.component.bean.BeanExchange;
+import org.apache.camel.component.bean.BeanInvocation;
+import org.apache.camel.impl.DefaultConsumer;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,18 +28,12 @@ import java.lang.reflect.Proxy;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.camel.Processor;
-import org.apache.camel.component.bean.BeanExchange;
-import org.apache.camel.component.bean.BeanInvocation;
-import org.apache.camel.impl.DefaultConsumer;
-
 /**
  * @version $Revision: 523047 $
  */
 public class TimerConsumer extends DefaultConsumer<BeanExchange> implements InvocationHandler {
-
     private final TimerEndpoint endpoint;
-    private Timer timer;
+    private TimerTask task;
 
     public TimerConsumer(TimerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -43,61 +42,58 @@ public class TimerConsumer extends DefaultConsumer<BeanExchange> implements Invo
 
     @Override
     protected void doStart() throws Exception {
-        TimerComponent component = endpoint.getComponent();
-        component.addConsumer(this);
-        timer = createTimerAndTask();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        if (timer != null) {
-            timer.cancel();
-        }
-        TimerComponent component = endpoint.getComponent();
-        component.removeConsumer(this);
-    }
-
-    private Timer createTimerAndTask() {
-
         final Runnable proxy = createProxy();
-        TimerTask task = new TimerTask() {
+        task = new TimerTask() {
             @Override
             public void run() {
                 proxy.run();
             }
         };
 
-        Timer result = new Timer(endpoint.getTimerName(), endpoint.isDaemon());
+        Timer timer = endpoint.getTimer();
+        configureTask(task, timer);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        task.cancel();
+    }
+
+    protected void configureTask(TimerTask task, Timer timer) {
         if (endpoint.isFixedRate()) {
             if (endpoint.getTime() != null) {
-                result.scheduleAtFixedRate(task, endpoint.getTime(), endpoint.getPeriod());
-            } else {
-                result.scheduleAtFixedRate(task, endpoint.getDelay(), endpoint.getPeriod());
+                timer.scheduleAtFixedRate(task, endpoint.getTime(), endpoint.getPeriod());
             }
-        } else {
+            else {
+                timer.scheduleAtFixedRate(task, endpoint.getDelay(), endpoint.getPeriod());
+            }
+        }
+        else {
             if (endpoint.getTime() != null) {
                 if (endpoint.getPeriod() >= 0) {
-                    result.schedule(task, endpoint.getTime(), endpoint.getPeriod());
-                } else {
-                    result.schedule(task, endpoint.getTime());
+                    timer.schedule(task, endpoint.getTime(), endpoint.getPeriod());
                 }
-            } else {
+                else {
+                    timer.schedule(task, endpoint.getTime());
+                }
+            }
+            else {
                 if (endpoint.getPeriod() >= 0) {
-                    result.schedule(task, endpoint.getDelay(), endpoint.getPeriod());
-                } else {
-                    result.schedule(task, endpoint.getDelay());
+                    timer.schedule(task, endpoint.getDelay(), endpoint.getPeriod());
+                }
+                else {
+                    timer.schedule(task, endpoint.getDelay());
                 }
             }
         }
-        return result;
     }
 
     /**
      * Creates a Proxy which generates the inbound PojoExchanges
      */
     public Runnable createProxy() {
-        return (Runnable)Proxy.newProxyInstance(Runnable.class.getClassLoader(),
-                                                new Class[] {Runnable.class}, this);
+        return (Runnable) Proxy.newProxyInstance(Runnable.class.getClassLoader(),
+                new Class[]{Runnable.class}, this);
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -114,5 +110,4 @@ public class TimerConsumer extends DefaultConsumer<BeanExchange> implements Invo
         }
         return exchange.getOut().getBody();
     }
-
 }
