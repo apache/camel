@@ -645,13 +645,6 @@
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-eclipse-plugin</artifactId>
-          <configuration>
-            <outputDirectory>${basedir}/eclipse-classes</outputDirectory>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-idea-plugin</artifactId>
           <configuration>
             <downloadSources>true</downloadSources>
@@ -699,6 +692,7 @@
           <artifactId>maven-eclipse-plugin</artifactId>
           <version>2.3</version>
           <configuration>
+            <outputDirectory>${basedir}/eclipse-classes</outputDirectory>
 
             <!-- Eclipse update site for the Checkstyle plugin is http://eclipse-cs.sourceforge.net/update -->
             <!-- Eclipse update site for the PMD plugin is http://pmd.sf.net/eclipse -->
