@@ -43,11 +43,11 @@ public class MailRouteTest extends ContextTestSupport {
         resultEndpoint.expectedBodiesReceived("hello world!");
 
         HashMap<String, Object> headers = new HashMap<String, Object>();
-        headers.put("reply-to", "reply1@localhost");
-        template.sendBodyAndHeaders("smtp://james@localhost", "hello world!", headers);
+        headers.put("reply-to", "route-test-reply@localhost");
+        template.sendBodyAndHeaders("smtp://route-test-james@localhost", "hello world!", headers);
 
         // lets test the first sent worked
-        assertMailboxReceivedMessages("james@localhost");
+        assertMailboxReceivedMessages("route-test-james@localhost");
 
         // lets sleep to check that the mail poll does not redeliver duplicate
         // mails
@@ -59,9 +59,9 @@ public class MailRouteTest extends ContextTestSupport {
         // Validate that the headers were preserved.
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
         String replyTo = (String)exchange.getIn().getHeader("reply-to");
-        assertEquals("reply1@localhost", replyTo);
+        assertEquals("route-test-reply@localhost", replyTo);
 
-        assertMailboxReceivedMessages("copy@localhost");
+        assertMailboxReceivedMessages("route-test-copy@localhost");
     }
 
     protected void assertMailboxReceivedMessages(String name) throws IOException, MessagingException {
@@ -77,9 +77,9 @@ public class MailRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("smtp://james@localhost").to("direct:a");
-                from("direct:a").to("smtp://result@localhost", "smtp://copy@localhost");
-                from("smtp://result@localhost").convertBodyTo(String.class).to("mock:result");
+                from("smtp://route-test-james@localhost").to("direct:a");
+                from("direct:a").to("smtp://route-test-result@localhost", "smtp://route-test-copy@localhost");
+                from("smtp://route-test-result@localhost").convertBodyTo(String.class).to("mock:result");
             }
         };
     }
