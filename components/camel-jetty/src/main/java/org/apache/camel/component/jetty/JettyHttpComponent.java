@@ -14,7 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http;
+package org.apache.camel.component.jetty;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.http.CamelServlet;
+import org.apache.camel.component.http.HttpComponent;
+import org.apache.camel.component.http.HttpConsumer;
+import org.apache.camel.component.http.HttpEndpoint;
+import org.apache.camel.component.http.HttpExchange;
+import org.apache.camel.component.http.HttpProducer;
+import org.apache.camel.util.URISupport;
 
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
@@ -23,17 +37,13 @@ import org.mortbay.jetty.security.SslSocketConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 
-import java.util.HashMap;
-
 /**
  * An HttpComponent which starts an embedded Jetty for to handle consuming from
- * http endpoints.
- *
- * @version $Revision: 525142 $
+ * the http endpoints.
+ * 
+ * @version $Revision$
  */
 public class JettyHttpComponent extends HttpComponent {
-    private Server server;
-    private final HashMap<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
 
     class ConnectorRef {
         Connector connector;
@@ -53,11 +63,30 @@ public class JettyHttpComponent extends HttpComponent {
         }
     }
 
+    private CamelServlet camelServlet;
+    private Server server;
+    private final HashMap<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
+
+    @Override
+    protected Endpoint<HttpExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        return new HttpEndpoint(uri, this, new URI(remaining)) {
+            @Override
+            public HttpProducer createProducer() throws Exception {
+                throw new RuntimeCamelException("Not implemented.  You can only consume from a jetty endpoint.");
+            }
+        };
+    }
+    
+    /**
+     * Connects the URL specified on the endpoint to the specified processor.
+     * 
+     * @throws Exception
+     */
     @Override
     public void connect(HttpConsumer consumer) throws Exception {
 
         // Make sure that there is a connector for the requested endpoint.
-        HttpEndpoint endpoint = (HttpEndpoint) consumer.getEndpoint();
+        HttpEndpoint endpoint = (HttpEndpoint)consumer.getEndpoint();
         String connectorKey = endpoint.getProtocol() + ":" + endpoint.getPort();
 
         synchronized (connectors) {
@@ -66,30 +95,34 @@ public class JettyHttpComponent extends HttpComponent {
                 Connector connector;
                 if ("https".equals(endpoint.getProtocol())) {
                     connector = new SslSocketConnector();
-                }
-                else {
+                } else {
                     connector = new SelectChannelConnector();
                 }
                 connector.setPort(endpoint.getPort());
                 getServer().addConnector(connector);
                 connector.start();
                 connectorRef = new ConnectorRef(connector);
-            }
-            else {
+            } else {
                 // ref track the connector
                 connectorRef.increment();
             }
         }
 
-        super.connect(consumer);
+        camelServlet.connect(consumer);
     }
 
+    /**
+     * Disconnects the URL specified on the endpoint from the specified
+     * processor.
+     * 
+     * @throws Exception
+     */
     @Override
     public void disconnect(HttpConsumer consumer) throws Exception {
-        super.disconnect(consumer);
+        camelServlet.disconnect(consumer);
 
         // If the connector is not needed anymore.. then stop it.
-        HttpEndpoint endpoint = (HttpEndpoint) consumer.getEndpoint();
+        HttpEndpoint endpoint = (HttpEndpoint)consumer.getEndpoint();
         String connectorKey = endpoint.getProtocol() + ":" + endpoint.getPort();
 
         synchronized (connectors) {
@@ -105,7 +138,7 @@ public class JettyHttpComponent extends HttpComponent {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public Server getServer() throws Exception {
         if (server == null) {
@@ -119,17 +152,17 @@ public class JettyHttpComponent extends HttpComponent {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     protected Server createServer() throws Exception {
-        setCamelServlet(new CamelServlet());
+        camelServlet = new CamelServlet();
 
         Server server = new Server();
         Context context = new Context(Context.NO_SECURITY | Context.NO_SESSIONS);
 
         context.setContextPath("/");
         ServletHolder holder = new ServletHolder();
-        holder.setServlet(getCamelServlet());
+        holder.setServlet(camelServlet);
         context.addServlet(holder, "/*");
         server.setHandler(context);
 

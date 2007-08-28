@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http;
+package org.apache.camel.component.jetty;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -26,7 +26,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
- * @version $Revision: 520220 $
+ * @version $Revision$
  */
 public class HttpRouteUsingUrlPostTest extends HttpRouteTest {
 

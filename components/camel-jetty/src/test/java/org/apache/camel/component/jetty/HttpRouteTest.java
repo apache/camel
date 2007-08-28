@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http;
+package org.apache.camel.component.jetty;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 520220 $
+ * @version $Revision$
  */
 public class HttpRouteTest extends ContextTestSupport {
     protected String expectedBody = "<hello>world!</hello>";
@@ -61,7 +61,7 @@ public class HttpRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("http://localhost:8080/test").to("mock:a");
+                from("jetty:http://localhost:8080/test").to("mock:a");
             }
         };
     }
