@@ -73,7 +73,7 @@ public class Builder {
      * exchange
      */
     public static <E extends Exchange> ValueBuilder<E> outBody() {
-        Expression<E> expression = ExpressionBuilder.bodyExpression();
+        Expression<E> expression = ExpressionBuilder.outBodyExpression();
         return new ValueBuilder<E>(expression);
     }
 
@@ -82,7 +82,7 @@ public class Builder {
      * specific type
      */
     public static <E extends Exchange, T> ValueBuilder<E> outBody(Class<T> type) {
-        Expression<E> expression = ExpressionBuilder.<E, T> bodyExpression(type);
+        Expression<E> expression = ExpressionBuilder.<E, T> outBodyExpression(type);
         return new ValueBuilder<E>(expression);
     }
 
