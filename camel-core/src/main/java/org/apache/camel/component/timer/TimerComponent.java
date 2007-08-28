@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.timer;
 
-import java.util.ArrayList;
-import java.util.Map;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.bean.BeanExchange;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.IntrospectionSupport;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
 
 /**
  * Represents the component that manages {@link TimerEndpoint}.  It holds the
@@ -30,18 +33,35 @@ import org.apache.camel.impl.DefaultComponent;
  * @version $Revision: 519973 $
  */
 public class TimerComponent extends DefaultComponent<BeanExchange> {
-    protected final ArrayList<TimerConsumer> timers = new ArrayList<TimerConsumer>();
+    private Map<String, Timer> timers = new HashMap<String, Timer>();
 
-    boolean addConsumer(TimerConsumer consumer) {
-        return timers.add(consumer);
+    public Timer getTimer(TimerEndpoint endpoint) {
+        String key = endpoint.getTimerName();
+        if (! endpoint.isDaemon()) {
+           key = "nonDaemon:" + key;
+        }
+
+        Timer answer = timers.get(key);
+        if (answer == null) {
+            answer = new Timer(endpoint.getTimerName(), endpoint.isDaemon());
+            timers.put(key, answer);
+        }
+        return answer;
     }
-
-    boolean removeConsumer(TimerConsumer consumer) {
-        return timers.remove(consumer);
+    
+    @Override
+    protected Endpoint<BeanExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        TimerEndpoint answer = new TimerEndpoint(uri, this, remaining);
+        IntrospectionSupport.setProperties(answer, parameters);
+        return answer;
     }
 
     @Override
-    protected Endpoint<BeanExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return new TimerEndpoint(uri, this, remaining);
+    protected void doStop() throws Exception {
+        Collection<Timer> collection = timers.values();
+        for (Timer timer : collection) {
+            timer.cancel();
+        }
+        timers.clear();
     }
 }
