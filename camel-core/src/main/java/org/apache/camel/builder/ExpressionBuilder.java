@@ -246,6 +246,22 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns the expression for the exchanges outbound message body converted
+     * to the given type
+     */
+    public static <E extends Exchange, T> Expression<E> outBodyExpression(final Class<T> type) {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange.getOut().getBody(type);
+            }
+
+            @Override
+            public String toString() {
+                return "outBodyAs[" + type.getName() + "]";
+            }
+        };
+    }
+    /**
      * Returns the expression for the exchange
      */
     public static <E extends Exchange> Expression<E> exchangeExpression() {
