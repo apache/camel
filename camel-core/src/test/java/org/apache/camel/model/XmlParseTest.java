@@ -108,6 +108,24 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo("to", splitter, "seda:b");
     }
 
+    public void testParseBatchResequencerXml() throws Exception {
+        RouteType route = assertOneRoute("resequencerBatch.xml");
+        ResequencerType resequencer = assertResequencer(route);
+        assertNull(resequencer.getStreamConfig());
+        assertNotNull(resequencer.getBatchConfig());
+        assertEquals(500, resequencer.getBatchConfig().getBatchSize());
+        assertEquals(2000L, resequencer.getBatchConfig().getBatchTimeout());
+    }
+    
+    public void testParseStreamResequencerXml() throws Exception {
+        RouteType route = assertOneRoute("resequencerStream.xml");
+        ResequencerType resequencer = assertResequencer(route);
+        assertNotNull(resequencer.getStreamConfig());
+        assertNull(resequencer.getBatchConfig());
+        assertEquals(100, resequencer.getStreamConfig().getCapacity());
+        assertEquals(2000L, resequencer.getStreamConfig().getTimeout());
+    }
+    
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -169,6 +187,11 @@ public class XmlParseTest extends XmlTestSupport {
     protected SplitterType assertSplitter(ProcessorType route) {
         ProcessorType processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(SplitterType.class, processor);
+    }
+
+    protected ResequencerType assertResequencer(ProcessorType route) {
+        ProcessorType processor = assertOneElement(route.getOutputs());
+        return assertIsInstanceOf(ResequencerType.class, processor);
     }
 
     protected void assertExpression(ExpressionType expression, String language, String languageExpression) {
