@@ -47,7 +47,7 @@ import org.springframework.util.xml.DomUtils;
 import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
-    public static final String JAXB_PACKAGES = "org.apache.camel.spring:org.apache.camel.model:org.apache.camel.model.language";
+    public static final String JAXB_PACKAGES = "org.apache.camel.spring:org.apache.camel.model:org.apache.camel.model.language:org.apache.camel.model.config";
 
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(EndpointFactoryBean.class);
     protected BeanDefinitionParser proxyParser = new BeanDefinitionParser(CamelProxyFactoryBean.class);
