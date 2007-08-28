@@ -16,11 +16,13 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.ExceptionType;
-import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,13 +35,23 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision$
  */
-public class DeadLetterChannel extends ErrorHandlerSupport {
+public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProcessor {
     public static final String REDELIVERY_COUNTER = "org.apache.camel.RedeliveryCounter";
     public static final String REDELIVERED = "org.apache.camel.Redelivered";
+
+    private class RedeliveryData {
+        int redeliveryCounter;
+        long redeliveryDelay;
+
+        // default behaviour which can be overloaded on a per exception basis
+        RedeliveryPolicy currentRedeliveryPolicy = redeliveryPolicy;
+        Processor failureProcessor = deadLetter;
+    }
 
     private static final transient Log LOG = LogFactory.getLog(DeadLetterChannel.class);
     private Processor output;
     private Processor deadLetter;
+    private AsyncProcessor outputAsync;
     private RedeliveryPolicy redeliveryPolicy;
     private Logger logger;
 
@@ -47,14 +59,15 @@ public class DeadLetterChannel extends ErrorHandlerSupport {
         this(output, deadLetter, new RedeliveryPolicy(), DeadLetterChannel.createDefaultLogger());
     }
 
-    public DeadLetterChannel(Processor output, Processor deadLetter, RedeliveryPolicy redeliveryPolicy,
-                             Logger logger) {
+    public DeadLetterChannel(Processor output, Processor deadLetter, RedeliveryPolicy redeliveryPolicy, Logger logger) {
         this.deadLetter = deadLetter;
-        this.output = output;
+        this.output = output;        
+        this.outputAsync = AsyncProcessorTypeConverter.convert(output);
+        
         this.redeliveryPolicy = redeliveryPolicy;
         this.logger = logger;
     }
-    
+
     public static <E extends Exchange> Logger createDefaultLogger() {
         return new Logger(LOG, LoggingLevel.ERROR);
     }
@@ -64,6 +77,67 @@ public class DeadLetterChannel extends ErrorHandlerSupport {
         return "DeadLetterChannel[" + output + ", " + deadLetter + ", " + redeliveryPolicy + "]";
     }
 
+    public boolean process(Exchange exchange, final AsyncCallback callback) {
+        return process(exchange, callback, new RedeliveryData());
+    }
+
+    public boolean process(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
+
+        while (true) {
+            if (exchange.getException() != null) {
+                Throwable e = exchange.getException();
+                exchange.setException(null); // Reset it since we are handling it.
+                
+                logger.log("On delivery attempt: " + data.redeliveryCounter + " caught: " + e, e);
+                data.redeliveryCounter = incrementRedeliveryCounter(exchange, e);
+
+                ExceptionType exceptionPolicy = getExceptionPolicy(exchange, e);
+                if (exceptionPolicy != null) {
+                    data.currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(data.currentRedeliveryPolicy);
+                    Processor processor = exceptionPolicy.getErrorHandler();
+                    if (processor != null) {
+                        data.failureProcessor = processor;
+                    }
+                }
+            }
+
+            if (!data.currentRedeliveryPolicy.shouldRedeliver(data.redeliveryCounter)) {
+                AsyncProcessor afp = AsyncProcessorTypeConverter.convert(data.failureProcessor);
+                return afp.process(exchange, callback);
+            }
+
+            if (data.redeliveryCounter > 0) {
+                // Figure out how long we should wait to resend this message.
+                data.redeliveryDelay = data.currentRedeliveryPolicy.getRedeliveryDelay(data.redeliveryDelay);
+                sleep(data.redeliveryDelay);
+            }
+
+            boolean sync = outputAsync.process(exchange, new AsyncCallback() {
+                public void done(boolean sync) {
+                    // Only handle the async case...
+                    if (sync) {
+                        return;
+                    }
+                    if (exchange.getException() != null) {
+                        process(exchange, callback, data);
+                    } else {
+                        callback.done(sync);
+                    }
+                }
+            });
+            if (!sync) {
+                // It is going to be processed async..
+                return false;
+            }
+            if (exchange.getException() == null) {
+                // If everything went well.. then we exit here..
+                return true;
+            }
+            // error occured so loop back around.....
+        }
+
+    }
+    
     public void process(Exchange exchange) throws Exception {
         int redeliveryCounter = 0;
         long redeliveryDelay = 0;
@@ -85,7 +159,6 @@ public class DeadLetterChannel extends ErrorHandlerSupport {
             } catch (Throwable e) {
                 logger.log("On delivery attempt: " + redeliveryCounter + " caught: " + e, e);
                 redeliveryCounter = incrementRedeliveryCounter(exchange, e);
-
 
                 ExceptionType exceptionPolicy = getExceptionPolicy(exchange, e);
                 if (exceptionPolicy != null) {
@@ -185,4 +258,5 @@ public class DeadLetterChannel extends ErrorHandlerSupport {
     protected void doStop() throws Exception {
         ServiceHelper.stopServices(deadLetter, output);
     }
+
 }

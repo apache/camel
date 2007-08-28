@@ -18,8 +18,11 @@ package org.apache.camel.component.seda;
 
 import java.util.concurrent.BlockingQueue;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -35,9 +38,47 @@ import org.apache.camel.impl.DefaultProducer;
  * @version $Revision: 519973 $
  */
 public class SedaEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
-    private BlockingQueue<E> queue;
+    
+    static public class Entry<E extends Exchange> {
+        E exchange;
+        AsyncCallback callback;
+        
+        public Entry(E exchange, AsyncCallback callback) {
+            this.exchange = exchange;
+            this.callback = callback;
+        }
+        
+        public E getExchange() {
+            return exchange;
+        }
+        public void setExchange(E exchange) {
+            this.exchange = exchange;
+        }
+        public AsyncCallback getCallback() {
+            return callback;
+        }
+        public void setCallback(AsyncCallback callback) {
+            this.callback = callback;
+        }
+        
+    }
+    
+    private final class SedaProducer extends DefaultProducer implements AsyncProcessor {
+        private SedaProducer(Endpoint endpoint) {
+            super(endpoint);
+        }
+        public void process(Exchange exchange) {
+            queue.add(new Entry<E>(toExchangeType(exchange), null));
+        }
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            queue.add(new Entry<E>(toExchangeType(exchange), callback));
+            return false;
+        }
+    }
 
-    public SedaEndpoint(String endpointUri, Component component, BlockingQueue<E> queue) {
+    private BlockingQueue<Entry<E>> queue;
+
+    public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Entry<E>> queue) {
         super(endpointUri, component);
         this.queue = queue;
     }
@@ -47,11 +88,7 @@ public class SedaEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     }
 
     public Producer<E> createProducer() throws Exception {
-        return new DefaultProducer(this) {
-            public void process(Exchange exchange) {
-                queue.add(toExchangeType(exchange));
-            }
-        };
+        return new SedaProducer(this);
     }
 
     public Consumer<E> createConsumer(Processor processor) throws Exception {
@@ -64,7 +101,7 @@ public class SedaEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
         return (E)new DefaultExchange(getContext());
     }
 
-    public BlockingQueue<E> getQueue() {
+    public BlockingQueue<Entry<E>> getQueue() {
         return queue;
     }
 

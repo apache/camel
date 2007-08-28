@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.UuidGenerator;
 
 /**
@@ -182,6 +183,19 @@ public class DefaultExchange implements Exchange {
         this.exception = exception;
     }
 
+    public void throwException() throws Exception {
+        if (exception == null) {
+            return;
+        }
+        if (exception instanceof Exception) {
+            throw (Exception)exception;
+        }
+        if (exception instanceof RuntimeException) {
+            throw (RuntimeException)exception;
+        }
+        throw new RuntimeCamelException(exception);
+    }
+
     public Message getFault() {
         return fault;
     }
@@ -222,4 +236,5 @@ public class DefaultExchange implements Exchange {
             messageSupport.setExchange(this);
         }
     }
+
 }
