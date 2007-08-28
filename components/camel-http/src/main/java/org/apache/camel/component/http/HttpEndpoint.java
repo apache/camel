@@ -38,10 +38,10 @@ public class HttpEndpoint extends DefaultEndpoint<HttpExchange> {
     private HttpComponent component;
     private URI httpUri;
 
-    protected HttpEndpoint(String uri, HttpComponent component) throws URISyntaxException {
-        super(uri, component);
+    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI) throws URISyntaxException {
+        super(endPointURI, component);
         this.component = component;
-        this.httpUri = new URI(uri);
+        this.httpUri = httpURI;
     }
 
     public HttpProducer createProducer() throws Exception {
