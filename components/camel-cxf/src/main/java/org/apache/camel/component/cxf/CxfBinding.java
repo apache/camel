@@ -20,6 +20,7 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -35,7 +36,7 @@ public class CxfBinding {
 
     protected Object getBody(Message message) {
         Set<Class<?>> contentFormats = message.getContentFormats();
-        for (Class<?> contentFormat : contentFormats) {
+        for (Class<?> contentFormat : contentFormats) {            
             Object answer = message.getContent(contentFormat);
             if (answer != null) {
                 return answer;
@@ -51,21 +52,20 @@ public class CxfBinding {
         // the CXF transport is also based on the stream API.
         // And the interceptors are also based on the stream API,
         // so lets use an InputStream to host the CXF on wire message.
+
         CxfMessage in = exchange.getIn();
         Object body = in.getBody(InputStream.class);
         if (body == null) {
             body = in.getBody();
         }
-        answer.setContent(InputStream.class, body);
-
-        // no need to process headers as we reuse the CXF message
-        /*
-        // set the headers
-        Set<Map.Entry<String, Object>> entries = in.getHeaders().entrySet();
-        for (Map.Entry<String, Object> entry : entries) {
-            answer.put(entry.getKey(), entry.getValue());
+        if (body instanceof InputStream) {
+        	answer.setContent(InputStream.class, body);
+        } else if (body instanceof List) {
+        	//just set the operation's parament
+        	answer.setContent(List.class, body);
         }
-        */
+        
+        
         return answer;
     }
 

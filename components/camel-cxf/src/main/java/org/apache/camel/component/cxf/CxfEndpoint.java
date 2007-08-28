@@ -16,38 +16,44 @@
  */
 package org.apache.camel.component.cxf;
 
+import javax.xml.namespace.QName;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.cxf.BusException;
+import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.message.Message;
-import org.apache.cxf.service.model.EndpointInfo;
-import org.apache.cxf.transport.local.LocalTransportFactory;
+
 
 /**
  * Defines the <a href="http://activemq.apache.org/camel/cxf.html">CXF Endpoint</a>
  * 
  * @version $Revision$
  */
-public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
-    private CxfBinding binding;
+public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {    
     private final CxfComponent component;
-    private final EndpointInfo endpointInfo;
+    private final String address;
+    private String wsdlURL;
+    private String serviceClass;
+    private CxfBinding binding;
+    private QName portName;
+    private QName serviceName;
     private boolean inOut = true;
+    private boolean invoker = true;
 
-    public CxfEndpoint(String uri, CxfComponent component, EndpointInfo endpointInfo) {
+    public CxfEndpoint(String uri, String address, CxfComponent component) {
         super(uri, component);
-        this.component = component;
-        this.endpointInfo = endpointInfo;
+        this.component = component;        
+        this.address = address;
     }
-
+        
     public Producer<CxfExchange> createProducer() throws Exception {
-        return new CxfProducer(this, getLocalTransportFactory());
+        return new CxfProducer(this);
     }
 
     public Consumer<CxfExchange> createConsumer(Processor processor) throws Exception {
-        return new CxfConsumer(this, processor, getLocalTransportFactory());
+        return new CxfConsumer(this, processor);
     }
 
     public CxfExchange createExchange() {
@@ -56,6 +62,50 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
 
     public CxfExchange createExchange(Message inMessage) {
         return new CxfExchange(getContext(), getBinding(), inMessage);
+    }
+    
+    public boolean isInvoker() {
+        return invoker;
+    }
+    
+    public void setInvoker(boolean invoker) {
+        this.invoker = invoker;
+    }
+    
+    public String getAddress() {
+    	return address;
+    }
+    
+    public String getWsdlURL() {
+    	return wsdlURL;
+    }
+    
+    public void setWsdlURL(String url) {
+        wsdlURL = url;
+    }
+    
+    public String getServiceClass() {
+    	return serviceClass;
+    }
+    
+    public void setServiceClass(String className) {        
+        serviceClass = className;
+    }
+    
+    public void setPortName(QName port) {
+        portName = port;
+    }
+    
+    public void setServiceName(QName service) {
+        serviceName = service;
+    }
+    
+    public QName getPortName(){
+        return portName;
+    }
+    
+    public QName getServiceName() {
+        return serviceName;
     }
 
     public CxfBinding getBinding() {
@@ -77,14 +127,7 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
         this.inOut = inOut;
     }
 
-    public LocalTransportFactory getLocalTransportFactory() throws BusException {
-        return component.getLocalTransportFactory();
-    }
-
-    public EndpointInfo getEndpointInfo() {
-        return endpointInfo;
-    }
-
+   
     public CxfComponent getComponent() {
         return component;
     }
@@ -92,5 +135,7 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     public boolean isSingleton() {
         return true;
     }
+    
+    
 
 }

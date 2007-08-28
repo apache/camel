@@ -25,5 +25,11 @@ public interface CxfConstants {
     String METHOD = "method";
     String SEI = "sei";
     String IMPL = "impl";
+    String WSDL_URL = "wsdlURL";
+    String ADDRESS = "address";
+    String SERVICE_NAME = "serviceName";
+    String PORT_NAME = "portName";
+    // service name -- come from the wsdl   
 }
+
 
