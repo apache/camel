@@ -16,14 +16,15 @@
  */
 package org.apache.camel.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.UuidGenerator;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A default implementation of {@link Exchange}
@@ -39,6 +40,7 @@ public class DefaultExchange implements Exchange {
     private Message fault;
     private Throwable exception;
     private String exchangeId = DefaultExchange.DEFAULT_ID_GENERATOR.generateId();
+    private UnitOfWork unitOfWork;
 
     public DefaultExchange(CamelContext context) {
         this.context = context;
@@ -62,7 +64,6 @@ public class DefaultExchange implements Exchange {
         setProperties(safeCopy(exchange.getProperties()));
 
         // this can cause strangeness if we copy, say, a FileMessage onto an FtpExchange with overloaded getExchange() methods etc.
-
         safeCopy(getIn(), exchange, exchange.getIn());
         Message copyOut = exchange.getOut();
         if (copyOut != null) {
@@ -72,13 +73,9 @@ public class DefaultExchange implements Exchange {
         if (copyFault != null) {
             safeCopy(getFault(), exchange, copyFault);
         }
-
-/*
-        setIn(safeCopy(exchange, exchange.getIn()));
-        setOut(safeCopy(exchange, exchange.getOut()));
-        setFault(safeCopy(exchange, exchange.getFault()));
-*/
         setException(exchange.getException());
+
+        unitOfWork = exchange.getUnitOfWork();
     }
 
     private static void safeCopy(Message message, Exchange exchange, Message that) {
@@ -211,6 +208,10 @@ public class DefaultExchange implements Exchange {
 
     public void setExchangeId(String id) {
         this.exchangeId = id;
+    }
+
+    public UnitOfWork getUnitOfWork() {
+        return unitOfWork;
     }
 
     /**

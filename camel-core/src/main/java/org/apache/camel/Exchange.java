@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.spi.UnitOfWork;
+
 import java.util.Map;
 
 /**
@@ -158,4 +160,5 @@ public interface Exchange {
      */
     void copyFrom(Exchange source);
 
+    UnitOfWork getUnitOfWork();
 }
