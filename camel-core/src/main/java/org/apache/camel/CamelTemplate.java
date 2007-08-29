@@ -80,7 +80,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
     public E send(Endpoint<E> endpoint, E exchange) {
         E convertedExchange = endpoint.toExchangeType(exchange);
         producerCache.send(endpoint, convertedExchange);
-        return exchange;
+        return convertedExchange;
     }
 
     /**
