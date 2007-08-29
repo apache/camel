@@ -18,6 +18,11 @@ package org.apache.camel.component.jms;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageProducer;
+import javax.jms.QueueSender;
+import javax.jms.TopicPublisher;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
@@ -85,6 +90,7 @@ public class JmsConfiguration implements Cloneable {
     private PlatformTransactionManager transactionManager;
     private String transactionName;
     private int transactionTimeout = -1;
+    private boolean preserveMessageQos;
 
     public JmsConfiguration() {
     }
@@ -106,7 +112,59 @@ public class JmsConfiguration implements Cloneable {
 
     public JmsOperations createJmsOperations(boolean pubSubDomain, String destination) {
         ConnectionFactory factory = getTemplateConnectionFactory();
-        JmsTemplate template = useVersion102 ? new JmsTemplate102(factory, pubSubDomain) : new JmsTemplate(factory);
+        
+        // I whish the spring templates had built in support for preserving the message
+        // qos when doing a send. :(  
+        JmsTemplate template = useVersion102 ? new JmsTemplate102(factory, pubSubDomain) {
+            /**
+             * Override so we can support preserving the Qos settings that have
+             * been set on the message.
+             */
+            @Override
+            protected void doSend(MessageProducer producer, Message message) throws JMSException {
+                if (preserveMessageQos) {
+                    long ttl = message.getJMSExpiration();
+                    if (ttl != 0) {
+                        ttl = ttl - System.currentTimeMillis();
+                        // Message had expired.. so set the ttl as small as
+                        // possible
+                        if (ttl <= 0) {
+                            ttl = 1;
+                        }
+                    }
+                    if (isPubSubDomain()) {
+                        ((TopicPublisher)producer).publish(message, message.getJMSDeliveryMode(), message.getJMSPriority(), ttl);
+                    } else {
+                        ((QueueSender)producer).send(message, message.getJMSDeliveryMode(), message.getJMSPriority(), ttl);
+                    }
+                } else {
+                    super.doSend(producer, message);
+                }
+            }
+        } : new JmsTemplate(factory) {
+            /**
+             * Override so we can support preserving the Qos settings that have
+             * been set on the message.
+             */
+            @Override
+            protected void doSend(MessageProducer producer, Message message) throws JMSException {
+                if (preserveMessageQos) {
+                    long ttl = message.getJMSExpiration();
+                    if (ttl != 0) {
+                        ttl = ttl - System.currentTimeMillis();
+                        // Message had expired.. so set the ttl as small as
+                        // possible
+                        if (ttl <= 0) {
+                            ttl = 1;
+                        }
+                    }
+                    producer.send(message, message.getJMSDeliveryMode(), message.getJMSPriority(), ttl);
+                } else {
+                    super.doSend(producer, message);
+                }
+            }
+        };
+        
         template.setPubSubDomain(pubSubDomain);
         template.setDefaultDestinationName(destination);
 
@@ -609,5 +667,20 @@ public class JmsConfiguration implements Cloneable {
      */
     protected ConnectionFactory createTemplateConnectionFactory() {
         return getConnectionFactory();
+    }
+
+    public boolean isPreserveMessageQos() {
+        return preserveMessageQos;
+    }
+
+    /**
+     * Set to true if you want to send message using the QoS settings specified 
+     * on the message.  Normally the QoS settings used are the one configured
+     * on this Object.
+     * 
+     * @param preserveMessageQos
+     */
+    public void setPreserveMessageQos(boolean preserveMessageQos) {
+        this.preserveMessageQos = preserveMessageQos;
     }
 }
