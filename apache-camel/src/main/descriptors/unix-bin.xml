@@ -86,14 +86,15 @@
         <include>org.apache.camel:camel-core</include>
         <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-ftp</include>
-        <include>org.apache.camel:camel-juel</include>
         <include>org.apache.camel:camel-http</include>
         <include>org.apache.camel:camel-irc</include>
         <include>org.apache.camel:camel-jaxb</include>
+        <include>org.apache.camel:camel-jdbc</include>
         <include>org.apache.camel:camel-jing</include>
         <include>org.apache.camel:camel-jms</include>
         <include>org.apache.camel:camel-josql</include>
         <include>org.apache.camel:camel-jpa</include>
+        <include>org.apache.camel:camel-juel</include>
         <include>org.apache.camel:camel-mail</include>
         <include>org.apache.camel:camel-msv</include>
         <include>org.apache.camel:camel-ognl</include>

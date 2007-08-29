@@ -60,10 +60,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-juel</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-http</artifactId>
     </dependency>
     <dependency>
@@ -80,6 +76,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
     </dependency>
     <dependency>
@@ -89,6 +89,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-juel</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -191,7 +195,7 @@
             </goals>
             <configuration>
               <includes>camel-activemq,camel-bam,camel-core,camel-cxf,camel-ftp,camel-juel,
-                camel-http,camel-irc,camel-jaxb,camel-jing,camel-jms,camel-josql,
+                camel-http,camel-irc,camel-jaxb,camel-jdbc,camel-jing,camel-jms,camel-josql,
                 camel-jpa,camel-mail,camel-mina,camel-msv,camel-ognl,camel-quartz,camel-rmi,
                 camel-saxon,camel-script,camel-spring,camel-xmpp,commons-logging</includes>
             </configuration>
