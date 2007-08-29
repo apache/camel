@@ -116,6 +116,14 @@
           </excludes>
         </configuration>
       </plugin>
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>pertest</forkMode>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 
