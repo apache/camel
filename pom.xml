@@ -214,12 +214,12 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-juel</artifactId>
+        <artifactId>camel-http</artifactId>
         <version>${camel-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-http</artifactId>
+        <artifactId>camel-irc</artifactId>
         <version>${camel-version}</version>
       </dependency>
       <dependency>
@@ -229,7 +229,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-irc</artifactId>
+        <artifactId>camel-jdbc</artifactId>
         <version>${camel-version}</version>
       </dependency>
       <dependency>
@@ -250,6 +250,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-josql</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-juel</artifactId>
         <version>${camel-version}</version>
       </dependency>
       <dependency>
