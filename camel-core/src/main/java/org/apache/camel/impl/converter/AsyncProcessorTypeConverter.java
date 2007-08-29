@@ -45,7 +45,8 @@ public class AsyncProcessorTypeConverter implements TypeConverter {
             } catch (Throwable e) {
                 exchange.setException(e);
             }
-            callback.done(true);
+            // false means processing of the exchange asynchronously,
+            callback.done(false);
             return true;
         }
 
