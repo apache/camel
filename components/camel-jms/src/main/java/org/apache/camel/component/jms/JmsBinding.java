@@ -80,8 +80,15 @@ public class JmsBinding {
      * @throws JMSException if the message could not be created
      */
     public Message makeJmsMessage(Exchange exchange, Session session) throws JMSException {
-        Message answer = createJmsMessage(exchange.getIn().getBody(), session);
-        appendJmsProperties(answer, exchange);
+        Message answer = null;
+        if( exchange instanceof JmsExchange  ) {
+            JmsExchange jmsExchange = (JmsExchange)exchange;
+            answer = jmsExchange.getIn().getJmsMessage();
+        }
+        if( answer == null ) {
+            answer = createJmsMessage(exchange.getIn().getBody(), session);
+            appendJmsProperties(answer, exchange);
+        }
         return answer;
     }
 
