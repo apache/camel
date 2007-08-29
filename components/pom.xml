@@ -43,6 +43,7 @@
     <module>camel-http</module>
     <module>camel-irc</module>
     <module>camel-jaxb</module>
+    <module>camel-jdbc</module>
     <module>camel-jetty</module>
     <module>camel-jing</module>
     <module>camel-jms</module>
