@@ -74,6 +74,7 @@ public class JdbcRouteTest extends TestCase {
         assertNotNull(out);
         assertNotNull(out.getOut());
         ArrayList<HashMap<String, Object>> data = out.getOut().getBody(ArrayList.class);
+        assertNotNull("out body could not be converted to an ArrayList - was: " + out.getOut().getBody(), data);
         assertEquals(2, data.size());
         // END SNIPPET: invoke
 
