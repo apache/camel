@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 
 /**
@@ -44,7 +45,7 @@ public class HttpEndpoint extends DefaultEndpoint<HttpExchange> {
         this.httpUri = httpURI;
     }
 
-    public HttpProducer createProducer() throws Exception {
+    public Producer<HttpExchange> createProducer() throws Exception {
         return new HttpProducer(this);
     }
 
@@ -100,5 +101,9 @@ public class HttpEndpoint extends DefaultEndpoint<HttpExchange> {
 
     public String getProtocol() {
         return httpUri.getScheme();
+    }
+
+    public URI getHttpUri() {
+        return httpUri;
     }
 }

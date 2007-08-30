@@ -49,7 +49,10 @@
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
       <artifactId>jetty</artifactId>
-      <optional>false</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty-client</artifactId>
     </dependency>
 
     <!-- testing -->

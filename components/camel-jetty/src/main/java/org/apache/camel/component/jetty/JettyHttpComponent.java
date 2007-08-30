@@ -27,11 +27,10 @@ import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpExchange;
-import org.apache.camel.component.http.HttpProducer;
-import org.apache.camel.util.URISupport;
 
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
+import org.mortbay.jetty.client.HttpClient;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.security.SslSocketConnector;
 import org.mortbay.jetty.servlet.Context;
@@ -66,17 +65,19 @@ public class JettyHttpComponent extends HttpComponent {
     private CamelServlet camelServlet;
     private Server server;
     private final HashMap<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
+    private HttpClient httpClient;
 
     @Override
     protected Endpoint<HttpExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return new HttpEndpoint(uri, this, new URI(remaining)) {
+        URI httpURL = uri.startsWith("jetty:") ? new URI(remaining) : new URI(uri);
+        return new HttpEndpoint(uri, this, httpURL) {
             @Override
-            public HttpProducer createProducer() throws Exception {
-                throw new RuntimeCamelException("Not implemented.  You can only consume from a jetty endpoint.");
+            public JettyHttpProducer createProducer() throws Exception {
+                return new JettyHttpProducer(this);
             }
         };
     }
-    
+
     /**
      * Connects the URL specified on the endpoint to the specified processor.
      * 
@@ -155,7 +156,7 @@ public class JettyHttpComponent extends HttpComponent {
     // -------------------------------------------------------------------------
 
     protected Server createServer() throws Exception {
-        camelServlet = new CamelServlet();
+        camelServlet = new CamelContinuationServlet();
 
         Server server = new Server();
         Context context = new Context(Context.NO_SECURITY | Context.NO_SESSIONS);
@@ -180,6 +181,31 @@ public class JettyHttpComponent extends HttpComponent {
         if (server != null) {
             server.stop();
         }
+        httpClient.stop();
         super.doStop();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (httpClient == null) {
+            httpClient = createHttpClient();
+        }
+        httpClient.start();
+    }
+
+    protected HttpClient createHttpClient() throws Exception {
+        HttpClient httpClient = new HttpClient();
+        httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
+        httpClient.setMaxConnectionsPerAddress(2);
+        return httpClient;
+    }
+
+    public HttpClient getHttpClient() {
+        return httpClient;
+    }
+
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 }
