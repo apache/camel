@@ -18,7 +18,9 @@ package org.apache.camel.util;
 
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URI;
@@ -86,6 +88,19 @@ public class IntrospectionSupport {
         return rc;
     }
 
+    public static Object getProperty(Object target, String prop) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        if (target == null) {
+            throw new IllegalArgumentException("target was null.");
+        }
+        if (prop == null) {
+            throw new IllegalArgumentException("prop was null.");
+        }
+        prop = prop.substring(0, 1).toUpperCase() + prop.substring(1);
+
+        Class clazz = target.getClass();
+        Method method = clazz.getMethod("get" + prop, new Class[] {});
+        return method.invoke(target, new Object[] {});
+    }
     public static boolean setProperties(Object target, Map props, String optionPrefix) {
         boolean rc = false;
         if (target == null) {
