@@ -16,12 +16,15 @@
  */
 package org.apache.camel.converter;
 
+import org.apache.camel.Converter;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-
-import org.apache.camel.Converter;
+import java.util.List;
 
 /**
  * Some core java.lang based <a
@@ -57,7 +60,26 @@ public class ObjectConverter {
             return collection.iterator();
         } else if (value.getClass().isArray()) {
             // TODO we should handle primitive array types?
-            return Arrays.asList(value).iterator();
+            List<Object> list = Arrays.asList((Object[]) value);
+            return list.iterator();
+        } else if (value instanceof NodeList) {
+            // lets iterate through DOM results after performing XPaths
+            final NodeList nodeList = (NodeList) value;
+            return new Iterator<Node>() {
+                int idx = -1;
+
+                public boolean hasNext() {
+                    return ++idx < nodeList.getLength();
+                }
+
+                public Node next() {
+                    return nodeList.item(idx);
+                }
+
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+            };
         } else {
             return Collections.singletonList(value).iterator();
         }

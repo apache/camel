@@ -48,7 +48,10 @@ import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmpty
 import static org.apache.camel.converter.ObjectConverter.toBoolean;
 
 /**
- * Creates an XPath expression builder
+ * Creates an XPath expression builder which creates a nodeset result by default.
+ * If you want to evaluate a String expression then call {@link #stringResult()}
+ *
+ * @see XPathConstants#NODESET
  * 
  * @version $Revision: 531854 $
  */
@@ -56,7 +59,11 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     private final String text;
     private XPathFactory xpathFactory;
     private Class documentType = Document.class;
-    private QName resultType;
+    // For some reason the default expression of "a/b" on a document such as
+    // <a><b>1</b><b>2</b></a>
+    // will evaluate as just "1" by default which is bizarre. So by default
+    // lets assume XPath expressions result in nodesets.
+    private QName resultType = XPathConstants.NODESET;
     private String objectModelUri;
     private DefaultNamespaceContext namespaceContext;
     private XPathFunctionResolver functionResolver;
@@ -224,6 +231,10 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
 
     public QName getResultType() {
         return resultType;
+    }
+
+    public void setResultType(QName resultType) {
+        this.resultType = resultType;
     }
 
     public DefaultNamespaceContext getNamespaceContext() {

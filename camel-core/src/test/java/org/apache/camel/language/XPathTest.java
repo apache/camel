@@ -17,6 +17,10 @@
 package org.apache.camel.language;
 
 import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.builder.xml.XPathLanguage;
+import org.apache.camel.spi.Language;
+
+import javax.xml.xpath.XPathConstants;
 
 /**
  * @version $Revision: $
@@ -36,5 +40,12 @@ public class XPathTest extends LanguageTestSupport {
 
     protected String getLanguageName() {
         return "xpath";
+    }
+
+    @Override
+    protected Language assertResolveLanguage(String languageName) {
+        XPathLanguage answer = new XPathLanguage();
+        answer.setResultType(XPathConstants.STRING);
+        return answer;
     }
 }

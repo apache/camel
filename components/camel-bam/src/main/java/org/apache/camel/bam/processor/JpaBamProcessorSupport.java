@@ -28,6 +28,7 @@ import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
+import java.lang.reflect.Method;
 
 /**
  * A base class for JPA based BAM which can use any entity to store the process
@@ -134,6 +135,16 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
         }
     }
 
+    protected Class getKeyType() {
+        try {
+            Method getter = IntrospectionSupport.getPropertyGetter(getEntityType(), getKeyPropertyName());
+            return getter.getReturnType();
+        }
+        catch (NoSuchMethodException e) {
+            LOG.warn("no such getter for: " + getKeyPropertyName() + " on " + getEntityType() + ". Reason: " + e, e);
+            return null;
+        }
+    }
     /**
      * Sets the key property on the new entity
      */

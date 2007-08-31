@@ -48,12 +48,12 @@ public class JaxpTest extends TestCase {
         String text = converter.convertTo(String.class, document);
         // The preamble changes a little under Java 1.6 it adds a
         // standalone="no" attribute.
-        assertTrue("Converted to String", text.endsWith("?><hello>world!</hello>"));
+        assertTrue("Converted to String", text.endsWith("<hello>world!</hello>"));
     }
 
     public void testConvertToSource() throws Exception {
         Source source = converter
-            .convertTo(Source.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
+            .convertTo(Source.class, "<hello>world!</hello>");
         assertNotNull(source);
 
         LOG.debug("Found document: " + source);
