@@ -61,9 +61,8 @@ public class ObjectHelper {
     /**
      * Returns true if the given object is equal to any of the expected value
      * 
-     * @param expression
-     * @param s
-     * @param s1
+     * @param object
+     * @param values
      * @return
      */
     public static boolean isEqualToAny(Object object, Object... values) {
@@ -139,6 +138,18 @@ public class ObjectHelper {
             return text.substring(idx);
         }
         return text;
+    }
+
+    public static String capitalize(String text) {
+        int length = text.length();
+        if (text == null || length == 0) {
+            return text;
+        }
+        String answer = text.substring(0, 1).toUpperCase();
+        if (length > 1) {
+            answer += text.substring(1, length);
+        }
+        return answer;
     }
 
     /**

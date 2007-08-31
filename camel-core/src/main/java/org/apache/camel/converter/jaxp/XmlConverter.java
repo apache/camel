@@ -23,6 +23,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -105,6 +106,7 @@ public class XmlConverter {
             throw new TransformerException("Could not create a transformer - JAXP is misconfigured!");
         }
         transformer.setOutputProperty(OutputKeys.ENCODING, defaultCharset);
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.transform(source, result);
     }
 
@@ -149,6 +151,20 @@ public class XmlConverter {
             toResult(source, new StreamResult(buffer));
             return buffer.toString();
         }
+    }
+
+    /**
+     * Converts the given input Node into text
+     */
+    @Converter
+    public String toString(NodeList nodeList) throws TransformerException {
+        StringWriter buffer = new StringWriter();
+        for (int i = 0, size = nodeList.getLength(); i < size; i++) {
+            Node node = nodeList.item(i);
+            Source source = new DOMSource(node);
+            toResult(source, new StreamResult(buffer));
+        }
+        return buffer.toString();
     }
 
     /**

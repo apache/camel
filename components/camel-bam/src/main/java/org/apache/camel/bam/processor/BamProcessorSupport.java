@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -42,6 +43,7 @@ import java.lang.reflect.Type;
 public abstract class BamProcessorSupport<T> implements Processor {
     private static final transient Log LOG = LogFactory.getLog(BamProcessorSupport.class);
     private Class<T> entityType;
+    private Class primaryKeyType = String.class;
     private Expression<Exchange> correlationKeyExpression;
     private TransactionTemplate transactionTemplate;
     private int maximumRetries = 30;
@@ -139,13 +141,20 @@ public abstract class BamProcessorSupport<T> implements Processor {
 
     protected abstract T loadEntity(Exchange exchange, Object key);
 
+    protected abstract Class getKeyType();
+
     protected Object getCorrelationKey(Exchange exchange) throws NoCorrelationKeyException {
         Object value = correlationKeyExpression.evaluate(exchange);
+        Class keyType = getKeyType();
+        if (keyType != null) {
+            value = ExchangeHelper.convertToType(exchange, keyType, value);
+        }
         if (value == null) {
             throw new NoCorrelationKeyException(this, exchange);
         }
         return value;
     }
+
 
     protected Object retryDueToDuplicate(TransactionStatus status) {
         status.setRollbackOnly();

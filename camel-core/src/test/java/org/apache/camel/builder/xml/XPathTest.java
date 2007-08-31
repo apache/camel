@@ -39,6 +39,7 @@ public class XPathTest extends TestSupport {
         assertExpression("$name", "<foo><bar xyz='cheese'/></foo>", "James");
         assertExpression("foo/bar", "<foo><bar>cheese</bar></foo>", "cheese");
         assertExpression("foo/bar/text()", "<foo><bar>cheese</bar></foo>", "cheese");
+        assertExpression("/foo/@id", "<foo id='cheese'>hey</foo>", "cheese");
     }
 
     public void testXPathPredicates() throws Exception {
@@ -49,7 +50,7 @@ public class XPathTest extends TestSupport {
     }
 
     public void testXPathWithCustomVariable() throws Exception {
-        assertExpression(xpath("$name").variable("name", "Hiram"), "<foo/>", "Hiram");
+        assertExpression(xpath("$name").stringResult().variable("name", "Hiram"), "<foo/>", "Hiram");
     }
 
     public void testUsingJavaExtensions() throws Exception {
@@ -78,7 +79,7 @@ public class XPathTest extends TestSupport {
     }
 
     protected Object assertExpression(String xpath, String xml, String expected) {
-        Expression expression = XPathBuilder.xpath(xpath);
+        Expression expression = XPathBuilder.xpath(xpath).stringResult();
         return assertExpression(expression, xml, expected);
     }
 

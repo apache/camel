@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ExchangeHelper;
 
 /**
  * @version $Revision: $
@@ -129,7 +130,10 @@ public class MethodInfo {
             public Object evaluate(Exchange exchange) {
                 Object[] answer = new Object[size];
                 for (int i = 0; i < size; i++) {
-                    answer[i] = expressions[i].evaluate(exchange);
+                    Object value = expressions[i].evaluate(exchange);
+                    // now lets try to coerce the value to the required type
+                    value = ExchangeHelper.convertToType(exchange, parameters.get(i).getType(), value);
+                    answer[i] = value;
                 }
                 return answer;
             }

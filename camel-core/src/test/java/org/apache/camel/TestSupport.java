@@ -25,6 +25,7 @@ import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -139,6 +140,11 @@ public abstract class TestSupport extends TestCase {
      */
     protected Object assertExpression(Expression expression, Exchange exchange, Object expected) {
         Object value = expression.evaluate(exchange);
+
+        // lets try convert to the type of the expected
+        if (expected != null) {
+            value = ExchangeHelper.convertToType(exchange, expected.getClass(), value);
+        }
 
         log.debug("Evaluated expression: " + expression + " on exchange: " + exchange + " result: " + value);
 

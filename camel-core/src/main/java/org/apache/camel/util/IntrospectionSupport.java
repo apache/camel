@@ -16,9 +16,9 @@
  */
 package org.apache.camel.util;
 
+import java.beans.Introspector;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -98,9 +98,15 @@ public class IntrospectionSupport {
         prop = prop.substring(0, 1).toUpperCase() + prop.substring(1);
 
         Class clazz = target.getClass();
-        Method method = clazz.getMethod("get" + prop, new Class[] {});
+        Method method = getPropertyGetter(clazz, prop);
         return method.invoke(target, new Object[] {});
     }
+
+    public static Method getPropertyGetter(Class type, String propertyName) throws NoSuchMethodException {
+        Method method = type.getMethod("get" + ObjectHelper.capitalize(propertyName), new Class[] {});
+        return method;
+    }
+
     public static boolean setProperties(Object target, Map props, String optionPrefix) {
         boolean rc = false;
         if (target == null) {
