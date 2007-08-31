@@ -53,14 +53,7 @@ public class HttpComponent extends DefaultComponent<HttpExchange> {
 
     @Override
     protected Endpoint<HttpExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return new HttpEndpoint(uri, this, new URI(uri)) {
-            
-            // TODO: we should implement this using a polling http client.
-            @Override
-            public Consumer<HttpExchange> createConsumer(Processor processor) throws Exception {
-                throw new RuntimeCamelException("Not implemented.  You can only produce to a http endpoint.");
-            }
-        };
+        return new HttpEndpoint(uri, this, new URI(uri));
     }
 
 }

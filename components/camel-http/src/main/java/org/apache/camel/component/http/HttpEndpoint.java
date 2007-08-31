@@ -16,24 +16,21 @@
  */
 package org.apache.camel.component.http;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import org.apache.camel.PollingConsumer;
+import org.apache.camel.impl.DefaultPollingEndpoint;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Represents a <a href="http://activemq.apache.org/camel/http.html">HTTP
  * endpoint</a>
- * 
+ *
  * @version $Revision$
  */
-public class HttpEndpoint extends DefaultEndpoint<HttpExchange> {
+public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
 
     private HttpBinding binding;
     private HttpComponent component;
@@ -45,12 +42,13 @@ public class HttpEndpoint extends DefaultEndpoint<HttpExchange> {
         this.httpUri = httpURI;
     }
 
-    public Producer<HttpExchange> createProducer() throws Exception {
+    public HttpProducer createProducer() throws Exception {
         return new HttpProducer(this);
     }
 
-    public Consumer<HttpExchange> createConsumer(Processor processor) throws Exception {
-        return new HttpConsumer(this, processor);
+    @Override
+    public PollingConsumer<HttpExchange> createPollingConsumer() throws Exception {
+        return new HttpPollingConsumer(this);
     }
 
     public HttpExchange createExchange() {
