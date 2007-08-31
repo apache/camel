@@ -17,6 +17,7 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +43,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
         this.httpUri = httpURI;
     }
 
-    public HttpProducer createProducer() throws Exception {
+    public Producer<HttpExchange> createProducer() throws Exception {
         return new HttpProducer(this);
     }
 
