@@ -54,7 +54,8 @@ public class HttpGetTest extends ContextTestSupport {
 
         log.debug("Body: " + body);
         assertNotNull("Should have a body!", body);
-        assertTrue("body should contain: " + expectedText, body.contains(expectedText));
+        body = body.toLowerCase();
+        assertTrue("body should contain: " + expectedText + " but was: " + body, body.contains(expectedText));
     }
 
     @Override
