@@ -43,6 +43,9 @@ public class DefaultComponentResolver<E extends Exchange> implements ComponentRe
         Object bean = null;
         try {
             bean = context.getRegistry().lookup(name);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Found component: " + name + " in registry: " + bean);
+            }
         }
         catch (Exception e) {
             LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
@@ -62,6 +65,9 @@ public class DefaultComponentResolver<E extends Exchange> implements ComponentRe
         } catch (Throwable e) {
             throw new IllegalArgumentException("Invalid URI, no Component registered for scheme : " 
                                                + name, e);
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Found component: " + name + " via type: " + type.getName() + " via " + COMPONENT_FACTORY.getPath());
         }
         if (type == null) {
             return null;
