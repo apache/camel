@@ -29,9 +29,14 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.model.RouteType;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
-	InstrumentationAgent agent;
+    private static final transient Log LOG = LogFactory.getLog(InstrumentationProcessor.class);
+
+    InstrumentationAgent agent;
 	CamelNamingStrategy naming;
 	
 	public InstrumentationLifecycleStrategy(InstrumentationAgent agent) {
@@ -47,7 +52,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 				agent.register(ms, naming.getObjectName(dc));
 			}
 			catch(JMException e) {
-				// log a WARN
+				LOG.warn("Could not register CamelContext MBean", e);
 			}
 		}
 	}
@@ -58,7 +63,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 			agent.register(me, naming.getObjectName(me));
 		}
 		catch(JMException e) {
-			// log a WARN
+			LOG.warn("Could not register Endpoint MBean", e);
 		}
 	}
 
@@ -69,7 +74,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 				agent.register(mr, naming.getObjectName(mr));
 			}
 			catch(JMException e) {
-				// log a WARN
+				LOG.warn("Could not register Route MBean", e);
 			}
 		}
 	}
@@ -81,8 +86,20 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 				agent.register(ms, naming.getObjectName(context, ms));
 			}
 			catch(JMException e) {
-				// log a WARN
+				LOG.warn("Could not register Service MBean", e);
 			}
+		}
+	}
+
+	public void beforeStartRouteType(CamelContext context, RouteType routeType) {
+		PerformanceCounter mc = new PerformanceCounter();
+		routeType.intercept(new InstrumentationProcessor(mc));
+
+		try {
+			agent.register(mc, naming.getObjectName(context, mc));
+		}
+		catch(JMException e) {
+			LOG.warn("Could not register Counter MBean", e);
 		}
 	}
 }

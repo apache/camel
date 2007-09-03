@@ -19,7 +19,6 @@ package org.apache.camel.management;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Hashtable;
 
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -31,13 +30,13 @@ public class CamelNamingStrategy {
 
 	public static final String VALUE_UNKNOWN = "unknown";
 	public static final String KEY_CONTEXT = "context";
-	public static final String KEY_ENDPOINT = "endpoint";
-	public static final String KEY_ROUTE = "route";
+	public static final String KEY_CLASS = "class";
 	public static final String KEY_TYPE = "type";
 	public static final String KEY_NAME = "name";
-	public static final String TYPE_ENDPOINTS = "Endpoints";
-	public static final String TYPE_SERVICES = "Services";
-	public static final String TYPE_ROUTES = "Routes";
+	public static final String KEY_ROUTE = "route";
+	public static final String CLASS_ENDPOINTS = "endpoints";
+	public static final String CLASS_SERVICES = "services";
+	public static final String CLASS_ROUTES = "routes";
 	
 	protected String domainName = "org.apache.camel";
 	protected String hostName = "locahost";
@@ -50,7 +49,7 @@ public class CamelNamingStrategy {
 			hostName = InetAddress.getLocalHost().getHostName();
 		}
 		catch (UnknownHostException ex) {
-			// ignore
+			// ignore, use the default "locahost"
 		}
 	}
 
@@ -64,10 +63,11 @@ public class CamelNamingStrategy {
 	 * @throws MalformedObjectNameException
 	 */
 	public ObjectName getObjectName(CamelContext context) throws MalformedObjectNameException {
-		Hashtable<String, String> keys = new Hashtable<String, String>();
-		keys.put(KEY_CONTEXT, getContextId(context));
-		keys.put(KEY_NAME, "camel");
-		return new ObjectName(domainName, keys);
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(domainName + ":");
+		buffer.append(KEY_CONTEXT + "=" + getContextId(context) + ",");
+		buffer.append(KEY_NAME + "=" + "context");
+		return new ObjectName(buffer.toString());
 	}
 
 	/**
@@ -81,11 +81,13 @@ public class CamelNamingStrategy {
 	 */
 	public ObjectName getObjectName(ManagedEndpoint mbean) throws MalformedObjectNameException {
 		Endpoint ep = mbean.getEndpoint();
-		Hashtable<String, String> keys = new Hashtable<String, String>();
-		keys.put(KEY_CONTEXT, getContextId(ep.getContext()));
-		keys.put(KEY_TYPE, TYPE_ENDPOINTS);
-		keys.put(KEY_ENDPOINT, getEndpointId(ep));
-		return new ObjectName(domainName, keys);
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(domainName + ":");
+		buffer.append(KEY_CONTEXT + "=" + getContextId(ep.getContext()) + ",");
+		buffer.append(KEY_CLASS + "=" + CLASS_ENDPOINTS + ",");
+		buffer.append(KEY_NAME + "=" + getEndpointId(ep));
+		return new ObjectName(buffer.toString());
 	}
 
 	/**
@@ -98,11 +100,12 @@ public class CamelNamingStrategy {
 	 * @throws MalformedObjectNameException
 	 */
 	public ObjectName getObjectName(CamelContext context, ManagedService mbean) throws MalformedObjectNameException {
-		Hashtable<String, String> keys = new Hashtable<String, String>();
-		keys.put(KEY_CONTEXT, getContextId(context));
-		keys.put(KEY_TYPE, TYPE_SERVICES);
-		keys.put(KEY_ENDPOINT, Integer.toHexString(mbean.getService().hashCode()));
-		return new ObjectName(domainName, keys);
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(domainName + ":");
+		buffer.append(KEY_CONTEXT + "=" + getContextId(context) + ",");
+		buffer.append(KEY_CLASS + "=" + CLASS_SERVICES + ",");
+		buffer.append(KEY_NAME + "=" + Integer.toHexString(mbean.getService().hashCode()));
+		return new ObjectName(buffer.toString());
 	}
 
 	/**
@@ -115,13 +118,34 @@ public class CamelNamingStrategy {
 	 * @throws MalformedObjectNameException
 	 */
 	public ObjectName getObjectName(ManagedRoute mbean) throws MalformedObjectNameException {
-		Hashtable<String, String> keys = new Hashtable<String, String>();
 		Endpoint ep = mbean.getRoute().getEndpoint();
 		String ctxid = ep != null ? getContextId(ep.getContext()) : VALUE_UNKNOWN;
-		keys.put(KEY_CONTEXT, ctxid);
-		keys.put(KEY_TYPE, TYPE_ROUTES);
-		keys.put(KEY_ENDPOINT, getEndpointId(ep));
-		return new ObjectName(domainName, keys);
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(domainName + ":");
+		buffer.append(KEY_CONTEXT + "=" + ctxid + ",");
+		buffer.append(KEY_CLASS + "=" + CLASS_ROUTES + ",");
+		buffer.append(KEY_ROUTE + "=" + getEndpointId(ep));
+		return new ObjectName(buffer.toString());
+	}
+	
+	/**
+	 * Implements the naming strategy for a {@see PerformanceCounter}.
+	 * The convention used for a {@see ManagedEndpoint} ObjectName is
+	 * "<domain>:context=<context>,type=Routes,endpoint=[urlPrefix]localPart".
+	 * 
+	 * @param mbean
+	 * @return generated ObjectName
+	 * @throws MalformedObjectNameException
+	 */
+	public ObjectName getObjectName(CamelContext context, PerformanceCounter mbean) throws MalformedObjectNameException {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(domainName + ":");
+		buffer.append(KEY_CONTEXT + "=" + getContextId(context) + ",");
+		buffer.append(KEY_CLASS + "=" + CLASS_ROUTES + ",");
+		buffer.append(KEY_ROUTE + "=" + "Route.Counter" + ",");     // TODO: figure out the route id
+		buffer.append(KEY_NAME + "=" + "Stats");
+		return new ObjectName(buffer.toString());
 	}
 	
 	protected String getContextId(CamelContext context) {
