@@ -119,6 +119,10 @@ public class FactoryFinder {
         return Collections.singletonList(type);
     }
 
+    public String getPath() {
+        return path;
+    }
+
     private Class newInstance(Properties properties, String propertyPrefix) throws ClassNotFoundException,
         IOException {
 
