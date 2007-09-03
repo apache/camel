@@ -52,6 +52,8 @@ import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.util.ServiceHelper.startServices;
 import static org.apache.camel.util.ServiceHelper.stopServices;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -59,6 +61,8 @@ import static org.apache.camel.util.ServiceHelper.stopServices;
  * @version $Revision: 520517 $
  */
 public class DefaultCamelContext extends ServiceSupport implements CamelContext, Service {
+    private static final transient Log LOG = LogFactory.getLog(DefaultCamelContext.class);
+
     private Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
     private Map<String, Component> components = new HashMap<String, Component>();
     private List<Route> routes;
@@ -236,6 +240,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                         if (component != null) {
                             // Have the component create the endpoint if it can.
                             answer = component.createEndpoint(uri);
+
+                            if (answer != null && LOG.isDebugEnabled()) {
+                                LOG.debug(uri + " converted to endpoint: " + answer + " by component: "+ component);
+                            }
                         }
                     }
                     if (answer == null) {
