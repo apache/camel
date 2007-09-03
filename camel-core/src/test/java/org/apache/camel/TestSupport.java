@@ -45,7 +45,7 @@ public abstract class TestSupport extends TestCase {
      * Returns a value builder for the given header
      */
 
-    public ValueBuilder header(String name) {
+    public <E extends Exchange> ValueBuilder<E> header(String name) {
         return Builder.header(name);
     }
 
