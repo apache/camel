@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
@@ -70,12 +69,7 @@ public class JettyHttpComponent extends HttpComponent {
     @Override
     protected Endpoint<HttpExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         URI httpURL = uri.startsWith("jetty:") ? new URI(remaining) : new URI(uri);
-        return new HttpEndpoint(uri, this, httpURL) {
-            @Override
-            public JettyHttpProducer createProducer() throws Exception {
-                return new JettyHttpProducer(this);
-            }
-        };
+        return new JettyHttpEndpoint(this, uri, httpURL);
     }
 
     /**
