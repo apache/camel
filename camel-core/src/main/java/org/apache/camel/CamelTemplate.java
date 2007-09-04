@@ -72,6 +72,21 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
     }
 
     /**
+     * Sends an exchange to an endpoint using a supplied
+     *
+     * @{link Processor} to populate the exchange
+     *
+     * @param endpointUri the endpoint URI to send the exchange to
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param processor the transformer used to populate the new exchange
+     */
+    public E send(String endpointUri, ExchangePattern pattern, Processor processor) {
+        Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
+        return send(endpoint, pattern, processor);
+    }
+
+    /**
      * Sends the exchange to the given endpoint
      * 
      * @param endpoint the endpoint to send the exchange to
@@ -93,6 +108,20 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
      */
     public E send(Endpoint<E> endpoint, Processor processor) {
         return producerCache.send(endpoint, processor);
+    }
+
+    /**
+     * Sends an exchange to an endpoint using a supplied
+     *
+     * @{link Processor} to populate the exchange
+     *
+     * @param endpoint the endpoint to send the exchange to
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param processor the transformer used to populate the new exchange
+     */
+    public E send(Endpoint<E> endpoint, ExchangePattern pattern, Processor processor) {
+        return producerCache.send(endpoint, pattern, processor);
     }
 
     /**
@@ -119,14 +148,9 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
      * @param body = the payload
      * @return the result
      */
-    public Object sendBody(String endpointUri, final Object body) {
-        E result = send(endpointUri, new Processor() {
-            public void process(Exchange exchange) {
-                Message in = exchange.getIn();
-                in.setBody(body);
-            }
-        });
-        return extractResultBody(result);
+    public Object sendBody(String endpointUri, Object body) {
+        Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
+        return sendBody(endpoint, body);
     }
 
     /**

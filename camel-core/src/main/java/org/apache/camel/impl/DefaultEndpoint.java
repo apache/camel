@@ -155,7 +155,7 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
     }
 
     public E createExchange(ExchangePattern pattern) {
-        return (E) new DefaultExchange(getContext(), getDefaultPattern());
+        return (E) new DefaultExchange(getContext(), pattern);
     }
 
     public ExchangePattern getDefaultPattern() {
