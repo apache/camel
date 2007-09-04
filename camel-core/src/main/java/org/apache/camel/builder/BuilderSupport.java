@@ -71,7 +71,7 @@ public abstract class BuilderSupport {
      * Returns a predicate and value builder for the inbound message body as a
      * specific type
      */
-    public <T> ValueBuilder bodyAs(Class<T> type) {
+    public <T> ValueBuilder body(Class<T> type) {
         return Builder.bodyAs(type);
     }
 
@@ -88,8 +88,25 @@ public abstract class BuilderSupport {
      * specific type
      */
     public <T> ValueBuilder outBody(Class<T> type) {
-        return Builder.outBody(type);
+        return Builder.outBodyAs(type);
     }
+
+    /**
+     * Returns a predicate and value builder for the fault body on an
+     * exchange
+     */
+    public ValueBuilder faultBody() {
+        return Builder.faultBody();
+    }
+
+    /**
+     * Returns a predicate and value builder for the fault message body as a
+     * specific type
+     */
+    public <T> ValueBuilder faultBodyAs(Class<T> type) {
+        return Builder.faultBodyAs(type);
+    }
+
 
     /**
      * Returns a value builder for the given system property

@@ -261,6 +261,40 @@ public class ExpressionBuilder {
             }
         };
     }
+
+    /**
+     * Returns the expression for the fault messages body
+     */
+    public static <E extends Exchange> Expression<E> faultBodyExpression() {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange.getFault().getBody();
+            }
+
+            @Override
+            public String toString() {
+                return "faultBody";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the exchanges fault message body converted
+     * to the given type
+     */
+    public static <E extends Exchange, T> Expression<E> faultBodyExpression(final Class<T> type) {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange.getFault().getBody(type);
+            }
+
+            @Override
+            public String toString() {
+                return "faultBodyAs[" + type.getName() + "]";
+            }
+        };
+    }
+
     /**
      * Returns the expression for the exchange
      */

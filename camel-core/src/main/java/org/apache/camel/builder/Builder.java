@@ -81,8 +81,26 @@ public class Builder {
      * Returns a predicate and value builder for the outbound message body as a
      * specific type
      */
-    public static <E extends Exchange, T> ValueBuilder<E> outBody(Class<T> type) {
+    public static <E extends Exchange, T> ValueBuilder<E> outBodyAs(Class<T> type) {
         Expression<E> expression = ExpressionBuilder.<E, T> outBodyExpression(type);
+        return new ValueBuilder<E>(expression);
+    }
+
+    /**
+     * Returns a predicate and value builder for the fault body on an
+     * exchange
+     */
+    public static <E extends Exchange> ValueBuilder<E> faultBody() {
+        Expression<E> expression = ExpressionBuilder.faultBodyExpression();
+        return new ValueBuilder<E>(expression);
+    }
+
+    /**
+     * Returns a predicate and value builder for the fault message body as a
+     * specific type
+     */
+    public static <E extends Exchange, T> ValueBuilder<E> faultBodyAs(Class<T> type) {
+        Expression<E> expression = ExpressionBuilder.<E, T> faultBodyExpression(type);
         return new ValueBuilder<E>(expression);
     }
 

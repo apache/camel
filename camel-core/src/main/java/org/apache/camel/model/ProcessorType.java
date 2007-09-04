@@ -660,6 +660,13 @@ public abstract class ProcessorType {
         return process(ProcessorBuilder.setOutBody(Builder.outBody().convertTo(type)));
     }
 
+    /**
+     * Converts the FAULT message body to the specified type
+     */
+    public ProcessorType convertFaultBodyTo(Class type) {
+        return process(ProcessorBuilder.setFaultBody(Builder.faultBody().convertTo(type)));
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
