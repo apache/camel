@@ -35,7 +35,7 @@ public interface Exchange {
      *
      * @return the message exchange pattern of this exchange
      */
-    ExchangePattern getExchangePattern();
+    ExchangePattern getPattern();
 
     /**
      * Returns a property associated with this exchange by name

@@ -42,15 +42,15 @@ public class DefaultExchange implements Exchange {
     private Throwable exception;
     private String exchangeId = DefaultExchange.DEFAULT_ID_GENERATOR.generateId();
     private UnitOfWork unitOfWork;
-    private ExchangePattern exchangePattern;
+    private ExchangePattern pattern;
 
     public DefaultExchange(CamelContext context) {
         this(context, ExchangePattern.InOnly);
     }
 
-    public DefaultExchange(CamelContext context, ExchangePattern exchangePattern) {
+    public DefaultExchange(CamelContext context, ExchangePattern pattern) {
         this.context = context;
-        this.exchangePattern = exchangePattern;
+        this.pattern = pattern;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class DefaultExchange implements Exchange {
         setException(exchange.getException());
 
         unitOfWork = exchange.getUnitOfWork();
-        exchangePattern = exchange.getExchangePattern();
+        pattern = exchange.getPattern();
     }
 
     private static void safeCopy(Message message, Exchange exchange, Message that) {
@@ -188,12 +188,12 @@ public class DefaultExchange implements Exchange {
         this.exception = exception;
     }
 
-    public ExchangePattern getExchangePattern() {
-        return exchangePattern;
+    public ExchangePattern getPattern() {
+        return pattern;
     }
 
-    public void setExchangePattern(ExchangePattern exchangePattern) {
-        this.exchangePattern = exchangePattern;
+    public void setPattern(ExchangePattern pattern) {
+        this.pattern = pattern;
     }
 
     public void throwException() throws Exception {
