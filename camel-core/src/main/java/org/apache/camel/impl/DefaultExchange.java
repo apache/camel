@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UnitOfWork;
@@ -41,9 +42,15 @@ public class DefaultExchange implements Exchange {
     private Throwable exception;
     private String exchangeId = DefaultExchange.DEFAULT_ID_GENERATOR.generateId();
     private UnitOfWork unitOfWork;
+    private ExchangePattern exchangePattern;
 
     public DefaultExchange(CamelContext context) {
+        this(context, ExchangePattern.InOnly);
+    }
+
+    public DefaultExchange(CamelContext context, ExchangePattern exchangePattern) {
         this.context = context;
+        this.exchangePattern = exchangePattern;
     }
 
     @Override
@@ -76,6 +83,7 @@ public class DefaultExchange implements Exchange {
         setException(exchange.getException());
 
         unitOfWork = exchange.getUnitOfWork();
+        exchangePattern = exchange.getExchangePattern();
     }
 
     private static void safeCopy(Message message, Exchange exchange, Message that) {
@@ -178,6 +186,14 @@ public class DefaultExchange implements Exchange {
 
     public void setException(Throwable exception) {
         this.exception = exception;
+    }
+
+    public ExchangePattern getExchangePattern() {
+        return exchangePattern;
+    }
+
+    public void setExchangePattern(ExchangePattern exchangePattern) {
+        this.exchangePattern = exchangePattern;
     }
 
     public void throwException() throws Exception {

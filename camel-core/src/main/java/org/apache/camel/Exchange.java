@@ -31,18 +31,11 @@ import java.util.Map;
 public interface Exchange {
 
     /**
-     * Returns the exchange id
-     * 
-     * @return the unique id of the exchange
+     * Returns the {@link ExchangePattern} (MEP) of this exchange.
+     *
+     * @return the message exchange pattern of this exchange
      */
-    String getExchangeId();
-
-    /**
-     * Set the exchange id
-     * 
-     * @param id
-     */
-    void setExchangeId(String id);
+    ExchangePattern getExchangePattern();
 
     /**
      * Returns a property associated with this exchange by name
@@ -160,5 +153,24 @@ public interface Exchange {
      */
     void copyFrom(Exchange source);
 
+    /**
+     * Returns the unit of work that this exchange belongs to; which may map to
+     * zero, one or more physical transactions
+     */
     UnitOfWork getUnitOfWork();
+
+    /**
+     * Returns the exchange id
+     *
+     * @return the unique id of the exchange
+     */
+    String getExchangeId();
+
+    /**
+     * Set the exchange id
+     *
+     * @param id
+     */
+    void setExchangeId(String id);
+
 }

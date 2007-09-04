@@ -34,18 +34,18 @@ import org.apache.camel.component.seda.SedaEndpoint.Entry;
  *
  * @version $Revision: 1.1 $
  */
-public class VmComponent<E extends Exchange> extends SedaComponent<E> {
+public class VmComponent extends SedaComponent {
     protected static Map<String, BlockingQueue> queues = new HashMap<String, BlockingQueue>();
 
     @Override
-    protected Endpoint<E> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        BlockingQueue<SedaEndpoint.Entry<E>> blockingQueue = (BlockingQueue<SedaEndpoint.Entry<E>>) getBlockingQueue(uri);
-        return new SedaEndpoint<E>(uri, this, blockingQueue);
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        BlockingQueue<SedaEndpoint.Entry> blockingQueue = getBlockingQueue(uri);
+        return new SedaEndpoint(uri, this, blockingQueue);
     }
 
-    protected BlockingQueue<Entry<E>> getBlockingQueue(String uri) {
+    protected BlockingQueue<Entry> getBlockingQueue(String uri) {
         synchronized (queues) {
-            BlockingQueue<Entry<E>> answer = queues.get(uri);
+            BlockingQueue<Entry> answer = queues.get(uri);
             if (answer == null) {
                 answer = createQueue();
                 queues.put(uri, answer);

@@ -32,26 +32,26 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @version $Revision$
  */
-public class SedaConsumer<E extends Exchange> extends ServiceSupport implements Consumer<E>, Runnable {
+public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
     private static final Log LOG = LogFactory.getLog(SedaConsumer.class);
 
-    private SedaEndpoint<E> endpoint;
+    private SedaEndpoint endpoint;
     private AsyncProcessor processor;
     private Thread thread;
 
-    public SedaConsumer(SedaEndpoint<E> endpoint, Processor processor) {
+    public SedaConsumer(SedaEndpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
         this.processor = AsyncProcessorTypeConverter.convert(processor);
     }
 
     @Override
     public String toString() {
-        return "QueueConsumer: " + endpoint.getEndpointUri();
+        return "SedaConsumer: " + endpoint.getEndpointUri();
     }
 
     public void run() {
         while (!isStopping()) {
-            final SedaEndpoint.Entry<E> entry;
+            final SedaEndpoint.Entry entry;
             try {
                 entry = endpoint.getQueue().poll(1000, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {

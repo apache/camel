@@ -71,12 +71,12 @@ public class ProducerTest extends TestSupport {
         Class type = endpoint.getExchangeType();
         assertEquals("exchange type", MyExchange.class, type);
 
-        MyExchange actual = endpoint.toExchangeType(exchange);
+        MyExchange actual = endpoint.createExchange(exchange);
         assertNotNull(actual);
         assertTrue("Not same exchange", actual != exchange);
 
         MyExchange expected = new MyExchange(context);
-        actual = endpoint.toExchangeType(expected);
+        actual = endpoint.createExchange(expected);
 
         assertSame("Should not copy an exchange when of the correct type", expected, actual);
 

@@ -37,21 +37,21 @@ import org.apache.camel.impl.DefaultProducer;
  * 
  * @version $Revision: 519973 $
  */
-public class SedaEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
+public class SedaEndpoint extends DefaultEndpoint<Exchange> {
     
-    static public class Entry<E extends Exchange> {
-        E exchange;
+    static public class Entry {
+        Exchange exchange;
         AsyncCallback callback;
         
-        public Entry(E exchange, AsyncCallback callback) {
+        public Entry(Exchange exchange, AsyncCallback callback) {
             this.exchange = exchange;
             this.callback = callback;
         }
         
-        public E getExchange() {
+        public Exchange getExchange() {
             return exchange;
         }
-        public void setExchange(E exchange) {
+        public void setExchange(Exchange exchange) {
             this.exchange = exchange;
         }
         public AsyncCallback getCallback() {
@@ -68,40 +68,38 @@ public class SedaEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
             super(endpoint);
         }
         public void process(Exchange exchange) {
-            queue.add(new Entry<E>(toExchangeType(exchange), null));
+            queue.add(new Entry(createExchange(exchange), null));
         }
         public boolean process(Exchange exchange, AsyncCallback callback) {
-            queue.add(new Entry<E>(toExchangeType(exchange), callback));
+            queue.add(new Entry(createExchange(exchange), callback));
             return false;
         }
     }
 
-    private BlockingQueue<Entry<E>> queue;
+    private BlockingQueue<Entry> queue;
 
-    public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Entry<E>> queue) {
+    public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Entry> queue) {
         super(endpointUri, component);
         this.queue = queue;
     }
 
-    public SedaEndpoint(String uri, SedaComponent<E> component) {
+    public SedaEndpoint(String uri, SedaComponent component) {
         this(uri, component, component.createQueue());
     }
 
-    public Producer<E> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         return new SedaProducer(this);
     }
 
-    public Consumer<E> createConsumer(Processor processor) throws Exception {
-        return new SedaConsumer<E>(this, processor);
+    public Consumer createConsumer(Processor processor) throws Exception {
+        return new SedaConsumer(this, processor);
     }
 
-    public E createExchange() {
-        // How can we create a specific Exchange if we are generic??
-        // perhaps it would be better if we did not implement this.
-        return (E)new DefaultExchange(getContext());
+    public Exchange createExchange() {
+        return new DefaultExchange(getContext());
     }
 
-    public BlockingQueue<Entry<E>> getQueue() {
+    public BlockingQueue<Entry> getQueue() {
         return queue;
     }
 
