@@ -113,4 +113,9 @@ public class JmsExchange extends DefaultExchange {
     protected JmsMessage createOutMessage() {
         return new JmsMessage();
     }
+
+    @Override
+    protected org.apache.camel.Message createFaultMessage() {
+        return new JmsMessage();
+    }
 }

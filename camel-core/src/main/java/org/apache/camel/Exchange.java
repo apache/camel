@@ -141,6 +141,15 @@ public interface Exchange {
     void throwException() throws Exception;
 
     /**
+     * Returns true if this exchange failed due to either an exception or fault
+     *
+     * @see Exchange#getException()
+     * @see Exchange#getFault()
+     * @return true if this exchange failed due to either an exception or fault
+     */
+    boolean isFailed();
+
+    /**
      * Returns the container so that a processor can resolve endpoints from URIs
      * 
      * @return the container which owns this exchange

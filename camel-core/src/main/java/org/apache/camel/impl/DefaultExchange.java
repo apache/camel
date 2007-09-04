@@ -72,13 +72,13 @@ public class DefaultExchange implements Exchange {
 
         // this can cause strangeness if we copy, say, a FileMessage onto an FtpExchange with overloaded getExchange() methods etc.
         safeCopy(getIn(), exchange, exchange.getIn());
-        Message copyOut = exchange.getOut();
+        Message copyOut = exchange.getOut(false);
         if (copyOut != null) {
             safeCopy(getOut(true), exchange, copyOut);
         }
-        Message copyFault = exchange.getFault();
+        Message copyFault = exchange.getFault(false);
         if (copyFault != null) {
-            safeCopy(getFault(), exchange, copyFault);
+            safeCopy(getFault(true), exchange, copyFault);
         }
         setException(exchange.getException());
 
@@ -232,6 +232,24 @@ public class DefaultExchange implements Exchange {
 
     public void setExchangeId(String id) {
         this.exchangeId = id;
+    }
+
+    /**
+     * Returns true if this exchange failed due to either an exception or fault
+     *
+     * @see Exchange#getException()
+     * @see Exchange#getFault()
+     * @return true if this exchange failed due to either an exception or fault
+     */
+    public boolean isFailed() {
+        Message faultMessage = getFault(false);
+        if (faultMessage != null) {
+            Object faultBody = faultMessage.getBody();
+            if (faultBody != null) {
+                return true;
+            }
+        }
+        return getException() != null;
     }
 
     public UnitOfWork getUnitOfWork() {

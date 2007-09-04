@@ -32,7 +32,7 @@ public class PipelineTest extends ContextTestSupport {
     public void testSendMessageThroughAPipeline() throws Exception {
         resultEndpoint.expectedBodiesReceived(4);
 
-        template.send("direct:a", new Processor() {
+        Exchange results = template.send("direct:a", new Processor() {
             public void process(Exchange exchange) {
                 // now lets fire in a message
                 Message in = exchange.getIn();
@@ -42,6 +42,8 @@ public class PipelineTest extends ContextTestSupport {
         });
 
         resultEndpoint.assertIsSatisfied();
+
+        assertEquals("Result body", 4, results.getOut().getBody());
     }
 
     @Override
