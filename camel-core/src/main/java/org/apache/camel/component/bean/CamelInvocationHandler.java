@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
+import org.apache.camel.ExchangePattern;
 
 /**
  * An {@link java.lang.reflect.InvocationHandler} which invokes a
@@ -40,7 +41,7 @@ public class CamelInvocationHandler implements InvocationHandler {
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         BeanInvocation invocation = new BeanInvocation(proxy, method, args);
-        BeanExchange exchange = new BeanExchange(endpoint.getContext());
+        BeanExchange exchange = new BeanExchange(endpoint.getContext(), ExchangePattern.InOut);
         exchange.setInvocation(invocation);
 
         producer.process(exchange);

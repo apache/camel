@@ -18,6 +18,7 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
@@ -25,8 +26,8 @@ import org.apache.camel.impl.DefaultExchange;
  */
 public class BeanExchange extends DefaultExchange {
 
-    public BeanExchange(CamelContext context) {
-        super(context);
+    public BeanExchange(CamelContext context, ExchangePattern pattern) {
+        super(context, pattern);
     }
 
     public BeanInvocation getInvocation() {
@@ -39,6 +40,6 @@ public class BeanExchange extends DefaultExchange {
 
     @Override
     public Exchange newInstance() {
-        return new BeanExchange(getContext());
+        return new BeanExchange(getContext(), getPattern());
     }
 }

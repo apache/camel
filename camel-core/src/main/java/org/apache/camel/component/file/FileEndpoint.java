@@ -19,6 +19,7 @@ package org.apache.camel.component.file;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.file.strategy.DefaultFileRenamer;
 import org.apache.camel.component.file.strategy.DeleteFileProcessStrategy;
 import org.apache.camel.component.file.strategy.FileProcessStrategy;
@@ -85,7 +86,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      * @see org.apache.camel.Endpoint#createExchange()
      */
     public FileExchange createExchange(File file) {
-        return new FileExchange(getContext(), file);
+        return new FileExchange(getContext(), getDefaultPattern(), file);
     }
 
     /**
@@ -94,6 +95,10 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      */
     public FileExchange createExchange() {
         return createExchange(getFile());
+    }
+
+    public FileExchange createExchange(ExchangePattern pattern) {
+        return new FileExchange(getContext(), pattern, file);
     }
 
     public File getFile() {

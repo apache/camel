@@ -17,13 +17,14 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class MyExchange extends DefaultExchange {
 
-    public MyExchange(CamelContext context) {
-        super(context);
+    public MyExchange(CamelContext context, ExchangePattern pattern) {
+        super(context, pattern);
     }
 }

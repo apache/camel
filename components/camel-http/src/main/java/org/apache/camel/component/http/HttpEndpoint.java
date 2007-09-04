@@ -18,6 +18,7 @@ package org.apache.camel.component.http;
 
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,8 +53,8 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
         return new HttpPollingConsumer(this);
     }
 
-    public HttpExchange createExchange() {
-        return new HttpExchange(this);
+    public HttpExchange createExchange(ExchangePattern pattern) {
+        return new HttpExchange(this, pattern);
     }
 
     public HttpExchange createExchange(HttpServletRequest request, HttpServletResponse response) {

@@ -28,6 +28,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.bean.BeanExchange;
 import org.apache.camel.impl.DefaultEndpoint;
 
@@ -50,8 +51,9 @@ public class RmiEndpoint extends DefaultEndpoint<BeanExchange> {
         return false;
     }
 
-    public BeanExchange createExchange() {
-        return new BeanExchange(getContext());
+    @Override
+    public BeanExchange createExchange(ExchangePattern pattern) {
+        return new BeanExchange(getContext(), pattern);
     }
 
     public Consumer<BeanExchange> createConsumer(Processor processor) throws Exception {

@@ -47,6 +47,15 @@ public interface Endpoint<E extends Exchange> {
     E createExchange();
 
     /**
+     * Create a new exchange for communicating with this endpoint
+     * with the specified {@link ExchangePattern} such as whether its going
+     * to be an {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut} exchange
+     *
+     * @param pattern the message exchange pattern for the exchange
+     */
+    E createExchange(ExchangePattern pattern);
+
+    /**
      * Creates a new exchange for communicating with this exchange using the
      * given exchange to pre-populate the values of the headers and messages
      */

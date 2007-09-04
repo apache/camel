@@ -22,6 +22,7 @@ import javax.mail.Message;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 
 import org.springframework.mail.javamail.JavaMailSender;
@@ -78,12 +79,13 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
         return answer;
     }
 
-    public MailExchange createExchange() {
-        return new MailExchange(getContext(), getBinding());
+    @Override
+    public MailExchange createExchange(ExchangePattern pattern) {
+        return new MailExchange(getContext(), pattern, getBinding());
     }
 
     public MailExchange createExchange(Message message) {
-        return new MailExchange(getContext(), getBinding(), message);
+        return new MailExchange(getContext(), getDefaultPattern(), getBinding(), message);
     }
 
     // Properties

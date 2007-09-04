@@ -17,6 +17,7 @@
 package org.apache.camel.component.quartz;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 import org.quartz.JobExecutionContext;
 
@@ -24,8 +25,8 @@ import org.quartz.JobExecutionContext;
  * @version $Revision: 1.1 $
  */
 public class QuartzExchange extends DefaultExchange {
-    public QuartzExchange(CamelContext context, JobExecutionContext jobExecutionContext) {
-        super(context);
+    public QuartzExchange(CamelContext context, ExchangePattern pattern, JobExecutionContext jobExecutionContext) {
+        super(context, pattern);
         setIn(new QuartzMessage(this, jobExecutionContext));
     }
 

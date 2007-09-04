@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
@@ -81,12 +82,6 @@ public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
                 consumers.remove(this);
             }
         };
-    }
-
-    public E createExchange() {
-        // How can we create a specific Exchange if we are generic??
-        // perhaps it would be better if we did not implement this.
-        return (E)new DefaultExchange(getContext());
     }
 
     public boolean isAllowMultipleConsumers() {

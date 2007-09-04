@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.http;
 
+import org.apache.camel.ExchangePattern;
+
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 

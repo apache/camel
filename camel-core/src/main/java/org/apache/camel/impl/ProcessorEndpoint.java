@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ExchangePattern;
 
 /**
  * An endpoint which allows exchanges to be sent into it which just invokes a
@@ -43,9 +44,6 @@ public class ProcessorEndpoint extends DefaultEndpoint<Exchange> {
         this.processor = processor;
     }
 
-    public Exchange createExchange() {
-        return new DefaultExchange(getContext());
-    }
 
     public Producer<Exchange> createProducer() throws Exception {
         return new DefaultProducer<Exchange>(this) {

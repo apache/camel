@@ -54,10 +54,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint<Exchange> {
         entityManagerFactory = component.getEntityManagerFactory();
     }
 
-    public Exchange createExchange() {
-        return new DefaultExchange(getContext());
-    }
-
     public Producer<Exchange> createProducer() throws Exception {
         return new JpaProducer(this, getProducerExpression());
     }

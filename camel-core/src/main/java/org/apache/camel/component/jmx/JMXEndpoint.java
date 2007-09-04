@@ -23,6 +23,7 @@ import javax.management.monitor.CounterMonitor;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -91,11 +92,15 @@ public class JMXEndpoint extends DefaultEndpoint<JMXExchange> {
     }
 
     public JMXExchange createExchange(Notification notification) {
-        return new JMXExchange(getContext(), notification);
+        return new JMXExchange(getContext(), getDefaultPattern(), notification);
     }
 
     public JMXExchange createExchange() {
-        return new JMXExchange(getContext(), null);
+        return new JMXExchange(getContext(), getDefaultPattern(), null);
+    }
+
+    public JMXExchange createExchange(ExchangePattern pattern) {
+        return new JMXExchange(getContext(), pattern, null);
     }
 
     public String getAttributeName() {

@@ -31,6 +31,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
@@ -96,10 +97,6 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         for (MockEndpoint endpoint : endpoints) {
             endpoint.expectsMessageCount(count);
         }
-    }
-
-    public Exchange createExchange() {
-        return new DefaultExchange(getContext());
     }
 
     public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
