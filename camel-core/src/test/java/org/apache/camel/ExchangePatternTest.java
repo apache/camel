@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -6,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,24 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.seda;
+package org.apache.camel;
 
-import org.apache.camel.Exchange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.util.concurrent.BlockingQueue;
+import junit.framework.TestCase;
 
 /**
- * An implementation of the <a href="http://activemq.apache.org/camel/queue.html">Queue components</a>
- * for asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
- *
- * @version $Revision: 519973 $
+ * @version $Revision: 1.1 $
  */
-public class QueueComponent extends SedaComponent {
-    private static final transient Log LOG = LogFactory.getLog(QueueComponent.class);
+public class ExchangePatternTest extends TestCase {
+    public void testExchangePattern() throws Exception {
+        ExchangePattern mep = ExchangePattern.InOut;
+        assertEquals("WSDL Uri", "http://www.w3.org/ns/wsdl/in-out", mep.getWsdlUri());
+    }
 
-    public QueueComponent() {
-        LOG.warn("This component has been deprecated; please use the seda: URI format instead of queue:");
+    public void testStringToMEP() throws Exception {
+        ExchangePattern mep = ExchangePattern.fromWsdlUri("http://www.w3.org/ns/wsdl/in-only");
+        assertEquals("MEP", ExchangePattern.InOnly, mep);
     }
 }

@@ -55,7 +55,7 @@ public class FileProducer extends DefaultProducer {
      * @see org.apache.camel.Processor#process(Exchange)
      */
     public void process(Exchange exchange) throws Exception {
-        process(endpoint.toExchangeType(exchange));
+        process(endpoint.createExchange(exchange));
     }
 
     public void process(FileExchange exchange) throws Exception {

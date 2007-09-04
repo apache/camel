@@ -36,7 +36,7 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
     }
 
     public void process(Exchange exchange) throws Exception {
-        process(endpoint.toExchangeType(exchange));
+        process(endpoint.createExchange(exchange));
     }
 
     public void process(RemoteFileExchange exchange) throws Exception {

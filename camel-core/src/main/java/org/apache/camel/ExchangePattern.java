@@ -1,0 +1,107 @@
+/**
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Represents the kind of message exchange pattern
+ *
+ * @version $Revision: 1.1 $
+ */
+public enum ExchangePattern {
+    InOnly,
+    RobustInOnly,
+    InOut,
+    InOptionalOut,
+    OutOnly,
+    RobustOutOnly,
+    OutIn,
+    OutOptionalIn;
+    
+    protected static final Map<String, ExchangePattern> map = new HashMap<String, ExchangePattern>();
+
+    /**
+     * Returns the WSDL URI for this message exchange pattern
+     *
+     * @return the WSDL URI for this message exchange pattern
+     */
+    public String getWsdlUri() {
+        switch (this) {
+            case InOnly:
+                return "http://www.w3.org/ns/wsdl/in-only";
+            case InOptionalOut:
+                return "http://www.w3.org/ns/wsdl/in-optional-out";
+            case InOut:
+                return "http://www.w3.org/ns/wsdl/in-out";
+            case OutIn:
+                return "http://www.w3.org/ns/wsdl/out-in";
+            case OutOnly:
+                return "http://www.w3.org/ns/wsdl/out-only";
+            case OutOptionalIn:
+                return "http://www.w3.org/ns/wsdl/out-optional_in";
+            case RobustInOnly:
+                return "http://www.w3.org/ns/wsdl/robust-in-only";
+            case RobustOutOnly:
+                return "http://www.w3.org/ns/wsdl/robust-out-only";
+            default:
+                throw new IllegalArgumentException("Unknown message exchange pattern: " + this);
+        }
+    }
+
+    /**
+     * Return true if there can be an IN message
+     */
+    public boolean isInCapable() {
+        switch (this) {
+            case OutOnly:
+            case RobustOutOnly:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Return true if there can be an OUT message
+     */
+    public boolean isOutCapable() {
+        switch (this) {
+            case InOnly:
+            case RobustInOnly:
+                return false;
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Converts the WSDL URI into a {@link ExchangePattern} instance
+     */
+    public static ExchangePattern fromWsdlUri(String wsdlUri) {
+        return map.get(wsdlUri);
+    }
+
+    static {
+        for (ExchangePattern mep : values()) {
+            String uri = mep.getWsdlUri();
+            map.put(uri, mep);
+        }
+    }
+}

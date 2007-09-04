@@ -16,12 +16,7 @@
  */
 package org.apache.camel.component.cxf;
 
-import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -30,28 +25,12 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.frontend.ClientFactoryBean;
-import org.apache.cxf.frontend.ClientProxyFactoryBean;
-import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
-import org.apache.cxf.service.Service;
-import org.apache.cxf.service.model.BindingInfo;
-import org.apache.cxf.service.model.EndpointInfo;
-import org.apache.cxf.service.model.ServiceInfo;
 import org.apache.cxf.transport.Conduit;
-import org.apache.cxf.transport.Destination;
-import org.apache.cxf.transport.MessageObserver;
-import org.apache.cxf.wsdl11.WSDLServiceFactory;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.CountDownLatch;
-
-import javax.xml.namespace.QName;
-
 
 /**
  * Sends messages from Camel into the CXF endpoint
@@ -88,7 +67,7 @@ public class CxfProducer extends DefaultProducer {
     }
    
     public void process(Exchange exchange) {
-        CxfExchange cxfExchange = endpoint.toExchangeType(exchange);
+        CxfExchange cxfExchange = endpoint.createExchange(exchange);
         process(cxfExchange);
     }
 

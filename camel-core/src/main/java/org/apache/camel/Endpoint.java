@@ -53,11 +53,6 @@ public interface Endpoint<E extends Exchange> {
     E createExchange(Exchange exchange);
 
     /**
-     * Converts the given exchange to this endpoints required type
-     */
-    E toExchangeType(Exchange exchange);
-
-    /**
      * Returns the context which created the endpoint
      * 
      * @return the context which created the endpoint

@@ -30,13 +30,13 @@ import org.apache.camel.impl.DefaultComponent;
  *
  * @version $Revision: 1.1 $
  */
-public class SedaComponent<E extends Exchange> extends DefaultComponent<E> {
-    public BlockingQueue<SedaEndpoint.Entry<E>> createQueue() {
-        return new LinkedBlockingQueue<SedaEndpoint.Entry<E>>(1000);
+public class SedaComponent extends DefaultComponent {
+    public BlockingQueue<SedaEndpoint.Entry> createQueue() {
+        return new LinkedBlockingQueue<SedaEndpoint.Entry>(1000);
     }
 
     @Override
-    protected Endpoint<E> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return new SedaEndpoint<E>(uri, this);
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        return new SedaEndpoint(uri, this);
     }
 }
