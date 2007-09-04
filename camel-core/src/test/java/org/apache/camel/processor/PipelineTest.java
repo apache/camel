@@ -27,6 +27,37 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision: 1.1 $
  */
 public class PipelineTest extends ContextTestSupport {
+    
+    /**
+     * Simple processor the copies the in to the out and increments a counter.
+     * Used to verify that the pipeline actually takes the output of one stage of 
+     * the pipe and feeds it in as input into the next stage.
+     */
+    private final class InToOut implements Processor {
+        public void process(Exchange exchange) throws Exception {            
+            exchange.getOut(true).copyFrom(exchange.getIn());
+            Integer counter = exchange.getIn().getHeader("copy-counter", Integer.class);
+            if (counter == null) {
+                counter = 0;
+            }
+            exchange.getOut().setHeader("copy-counter", counter + 1);
+        }
+    }
+
+    /**
+     * Simple processor the copies the in to the fault and increments a counter.
+     */
+    private final class InToFault implements Processor {
+        public void process(Exchange exchange) throws Exception {
+            exchange.getFault(true).setBody(exchange.getIn().getBody());
+            Integer counter = exchange.getIn().getHeader("copy-counter", Integer.class);
+            if (counter == null) {
+                counter = 0;
+            }
+            exchange.getFault().setHeader("copy-counter", counter + 1);
+        }
+    }
+
     protected MockEndpoint resultEndpoint;
 
     public void testSendMessageThroughAPipeline() throws Exception {
@@ -44,6 +75,39 @@ public class PipelineTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         assertEquals("Result body", 4, results.getOut().getBody());
+    }
+
+    
+    public void testResultsReturned() throws Exception {
+        Exchange exchange = template.send("direct:b", new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getIn().setBody("Hello World");
+            }
+        });
+        
+        assertEquals("Hello World", exchange.getOut().getBody());
+        assertEquals(3, exchange.getOut().getHeader("copy-counter"));        
+    }
+
+    /**
+     * Disabled for now until we figure out fault processing in the pipeline.
+     * 
+     * @throws Exception
+     */
+    public void testFaultStopsPipeline() throws Exception {
+        Exchange exchange = template.send("direct:c", new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getIn().setBody("Fault Message");
+            }
+        });
+        
+        // Check the fault..
+        assertEquals("Fault Message", exchange.getFault().getBody());
+        assertEquals(2, exchange.getFault().getHeader("copy-counter"));        
+        
+        // Check the out Message.. It should have only been processed once.
+        // since the fault should stop it from going to the next process.
+        assertEquals(1, exchange.getOut().getHeader("copy-counter"));                
     }
 
     @Override
@@ -76,6 +140,11 @@ public class PipelineTest extends ContextTestSupport {
                 from("direct:x").process(processor);
                 from("direct:y").process(processor);
                 from("direct:z").process(processor);
+                
+                // Create a route that uses the  InToOut processor 3 times. the copy-counter header should be == 3
+                from("direct:b").process(new InToOut()).process(new InToOut()).process(new InToOut());
+                // Create a route that uses the  InToFault processor.. the last InToOut will not be called since the Fault occurs before.
+                from("direct:c").process(new InToOut()).process(new InToFault()).process(new InToOut());
             }
         };
     }
