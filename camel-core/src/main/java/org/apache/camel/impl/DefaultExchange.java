@@ -210,6 +210,14 @@ public class DefaultExchange implements Exchange {
     }
 
     public Message getFault() {
+        return getFault(true);
+    }
+
+    public Message getFault(boolean lazyCreate) {
+        if (fault == null && lazyCreate) {
+            fault = createFaultMessage();
+            configureMessage(fault);
+        }
         return fault;
     }
 
@@ -241,6 +249,13 @@ public class DefaultExchange implements Exchange {
      * Factory method to lazily create the OUT message
      */
     protected Message createOutMessage() {
+        return new DefaultMessage();
+    }
+
+    /**
+     * Factory method to lazily create the FAULT message
+     */
+    protected Message createFaultMessage() {
         return new DefaultMessage();
     }
 

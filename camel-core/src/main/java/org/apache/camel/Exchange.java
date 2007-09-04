@@ -114,6 +114,14 @@ public interface Exchange {
     Message getFault();
 
     /**
+     * Returns the fault message; optionally lazily creating one if one has
+     * not been associated with this exchange
+     *
+     * @return the response
+     */
+    Message getFault(boolean lazyCreate);
+
+    /**
      * Returns the exception associated with this exchange
      * 
      * @return the exception (or null if no faults)
