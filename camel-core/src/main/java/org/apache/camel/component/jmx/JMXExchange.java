@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.jmx;
 
-import javax.management.Notification;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
+
+import javax.management.Notification;
 
 /**
  * A {@link Exchange} for a jmx notification
@@ -31,10 +34,10 @@ public class JMXExchange extends DefaultExchange {
      * Constructor
      * 
      * @param camelContext
-     * @param file
+     * @param pattern
      */
-    public JMXExchange(CamelContext camelContext, Notification notification) {
-        super(camelContext);
+    public JMXExchange(CamelContext camelContext, ExchangePattern pattern, Notification notification) {
+        super(camelContext, pattern);
         setIn(new JMXMessage(notification));
     }
 }

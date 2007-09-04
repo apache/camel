@@ -16,17 +16,18 @@
  */
 package org.apache.camel.impl;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.util.ObjectHelper;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * A default endpoint useful for implementation inheritance
@@ -38,6 +39,7 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
     private CamelContext context;
     private Component component;
     private ScheduledExecutorService executorService;
+    private ExchangePattern defaultPattern = ExchangePattern.InOnly;
 
     protected DefaultEndpoint(String endpointUri, Component component) {
         this(endpointUri, component.getCamelContext());
@@ -146,6 +148,22 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
             }
         }
         return null;
+    }
+
+    public E createExchange() {
+        return createExchange(getDefaultPattern());
+    }
+
+    public E createExchange(ExchangePattern pattern) {
+        return (E) new DefaultExchange(getContext(), getDefaultPattern());
+    }
+
+    public ExchangePattern getDefaultPattern() {
+        return defaultPattern;
+    }
+
+    public void setDefaultPattern(ExchangePattern defaultPattern) {
+        this.defaultPattern = defaultPattern;
     }
 
     protected ScheduledThreadPoolExecutor createExecutorService() {

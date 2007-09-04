@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
@@ -55,10 +56,6 @@ public class JournalEndpoint extends DefaultEndpoint<Exchange> {
     public JournalEndpoint(String uri, JournalComponent journalComponent, File directory) {
         super(uri, journalComponent.getCamelContext());
         this.directory = directory;
-    }
-
-    public Exchange createExchange() {
-        return new DefaultExchange(getContext());
     }
 
     public boolean isSingleton() {

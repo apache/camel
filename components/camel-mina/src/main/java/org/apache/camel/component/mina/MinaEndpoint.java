@@ -21,6 +21,7 @@ import java.net.SocketAddress;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.IoConnector;
@@ -52,12 +53,13 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
         return new MinaConsumer(this, processor);
     }
 
-    public MinaExchange createExchange() {
-        return new MinaExchange(getContext());
+    @Override
+    public MinaExchange createExchange(ExchangePattern pattern) {
+        return new MinaExchange(getContext(), pattern);
     }
 
     public MinaExchange createExchange(IoSession session, Object object) {
-        MinaExchange exchange = new MinaExchange(getContext());
+        MinaExchange exchange = new MinaExchange(getContext(), getDefaultPattern());
         exchange.getIn().setBody(object);
         // TODO store session in exchange?
         return exchange;

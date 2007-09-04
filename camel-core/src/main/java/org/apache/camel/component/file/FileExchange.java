@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 
 import java.io.File;
@@ -30,8 +31,8 @@ import java.io.File;
 public class FileExchange extends DefaultExchange {
     private File file;
 
-    public FileExchange(CamelContext camelContext, File file) {
-        super(camelContext);
+    public FileExchange(CamelContext camelContext, ExchangePattern pattern, File file) {
+        super(camelContext, pattern);
         setIn(new FileMessage(file));
         this.file = file;
     }
@@ -51,6 +52,6 @@ public class FileExchange extends DefaultExchange {
     }
 
     public Exchange newInstance() {
-        return new FileExchange(getContext(), getFile());
+        return new FileExchange(getContext(), getPattern(), getFile());
     }
 }

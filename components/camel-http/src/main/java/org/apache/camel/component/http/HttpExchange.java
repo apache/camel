@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.ExchangePattern;
 
 /**
  * Represents a HTTP exchange which exposes the underlying HTTP abtractions via
@@ -32,18 +33,17 @@ public class HttpExchange extends DefaultExchange {
     private HttpServletRequest request;
     private HttpServletResponse response;
 
-    public HttpExchange(HttpEndpoint endpoint) {
-        super(endpoint.getContext());
+    public HttpExchange(HttpEndpoint endpoint, ExchangePattern pattern) {
+        super(endpoint.getContext(), pattern);
         this.endpoint = endpoint;
     }
 
     public HttpExchange(HttpEndpoint endpoint, HttpServletRequest request, HttpServletResponse response) {
-        this(endpoint);
+        this(endpoint, getPatternFromRequest(request));
         this.request = request;
         this.response = response;
         setIn(new HttpMessage(this, request));
     }
-
 
     /**
      * Returns the underlying Servlet request for inbound HTTP requests
@@ -65,5 +65,10 @@ public class HttpExchange extends DefaultExchange {
 
     public HttpEndpoint getEndpoint() {
         return endpoint;
+    }
+
+    protected static ExchangePattern getPatternFromRequest(HttpServletRequest request) {
+        // TODO for now just default to InOut?
+        return ExchangePattern.InOut;
     }
 }

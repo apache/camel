@@ -17,18 +17,19 @@
 package org.apache.camel.component.irc;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 
 public class IrcExchange extends DefaultExchange {
     private IrcBinding binding;
 
-    public IrcExchange(CamelContext context, IrcBinding binding) {
-        super(context);
+    public IrcExchange(CamelContext context, ExchangePattern pattern, IrcBinding binding) {
+        super(context, pattern);
         this.binding = binding;
     }
 
-    public IrcExchange(CamelContext context, IrcBinding binding, IrcMessage inMessage) {
-        this(context, binding);
+    public IrcExchange(CamelContext context, ExchangePattern pattern, IrcBinding binding, IrcMessage inMessage) {
+        this(context, pattern, binding);
         setIn(inMessage);
     }
 
@@ -62,7 +63,7 @@ public class IrcExchange extends DefaultExchange {
 
     @Override
     public IrcExchange newInstance() {
-        return new IrcExchange(getContext(), getBinding());
+        return new IrcExchange(getContext(), getPattern(), getBinding());
     }
 
     @Override

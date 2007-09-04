@@ -34,12 +34,12 @@ import org.apache.commons.logging.LogFactory;
  */
 public class EndpointMessageListener<E extends Exchange> implements MessageListener {
     private static final transient Log LOG = LogFactory.getLog(EndpointMessageListener.class);
-    private Endpoint<E> endpoint;
+    private JmsEndpoint endpoint;
     private Processor processor;
     private JmsBinding binding;
     private boolean eagerLoadingOfProperties;
 
-    public EndpointMessageListener(Endpoint<E> endpoint, Processor processor) {
+    public EndpointMessageListener(JmsEndpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
         this.processor = processor;
     }
@@ -62,7 +62,7 @@ public class EndpointMessageListener<E extends Exchange> implements MessageListe
     }
 
     public JmsExchange createExchange(Message message) {
-        return new JmsExchange(endpoint.getContext(), getBinding(), message);
+        return new JmsExchange(endpoint.getContext(), endpoint.getDefaultPattern(), getBinding(), message);
     }
 
     // Properties

@@ -57,10 +57,6 @@ public class EventEndpoint extends DefaultEndpoint<Exchange> {
         return true;
     }
 
-    public Exchange createExchange() {
-        return new DefaultExchange(getContext());
-    }
-
     public Producer<Exchange> createProducer() throws Exception {
         return new DefaultProducer<Exchange>(this) {
             public void process(Exchange exchange) throws Exception {

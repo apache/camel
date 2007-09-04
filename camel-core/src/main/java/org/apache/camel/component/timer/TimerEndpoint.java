@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.bean.BeanExchange;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
@@ -48,10 +49,6 @@ public class TimerEndpoint extends DefaultEndpoint<Exchange> {
         super(fullURI, component);
         this.component = component;
         this.timerName = timerName;
-    }
-
-    public Exchange createExchange() {
-        return new DefaultExchange(getContext());
     }
 
     public Producer<Exchange> createProducer() throws Exception {

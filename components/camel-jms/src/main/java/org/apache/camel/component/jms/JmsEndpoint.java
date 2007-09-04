@@ -20,6 +20,7 @@ import javax.jms.Message;
 
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultEndpoint;
 
 import org.springframework.jms.core.JmsOperations;
@@ -90,12 +91,13 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
         return new JmsPollingConsumer(this, template);
     }
 
-    public JmsExchange createExchange() {
-        return new JmsExchange(getContext(), getBinding());
+    @Override
+    public JmsExchange createExchange(ExchangePattern pattern) {
+        return new JmsExchange(getContext(), pattern, getBinding());
     }
 
     public JmsExchange createExchange(Message message) {
-        return new JmsExchange(getContext(), getBinding(), message);
+        return new JmsExchange(getContext(), getDefaultPattern(), getBinding(), message);
     }
 
     // Properties

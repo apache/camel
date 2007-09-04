@@ -20,6 +20,7 @@ package org.apache.camel.component.file;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.processor.Pipeline;
 
 import java.io.File;
@@ -30,9 +31,10 @@ import java.util.Collections;
  */
 public class FileExchangeTest extends ContextTestSupport {
     protected File file;
+    protected ExchangePattern pattern = ExchangePattern.InOnly;
 
     public void testCopy() {
-        FileExchange fileExchange = new FileExchange(context, file);
+        FileExchange fileExchange = new FileExchange(context, pattern, file);
         Exchange exchange = fileExchange.copy();
         FileExchange copy = assertIsInstanceOf(FileExchange.class, exchange);
         assertEquals("File", file, copy.getFile());
@@ -41,7 +43,7 @@ public class FileExchangeTest extends ContextTestSupport {
     }
 
     public void testCopyAfterBodyChanged() throws Exception {
-        FileExchange original = new FileExchange(context, file);
+        FileExchange original = new FileExchange(context, pattern, file);
         Object expectedBody = 1234;
         original.getIn().setBody(expectedBody);
         Exchange exchange = original.copy();
@@ -61,7 +63,7 @@ public class FileExchangeTest extends ContextTestSupport {
         };
 
         Pipeline pipeline = new Pipeline(Collections.singletonList(myProcessor));
-        FileExchange exchange = new FileExchange(context, file);
+        FileExchange exchange = new FileExchange(context, pattern, file);
         pipeline.process(exchange.copy());            
     }
 

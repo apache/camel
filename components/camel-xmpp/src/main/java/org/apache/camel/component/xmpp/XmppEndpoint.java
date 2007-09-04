@@ -19,6 +19,7 @@ package org.apache.camel.component.xmpp;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -77,12 +78,13 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
         return new XmppConsumer(this, processor);
     }
 
-    public XmppExchange createExchange() {
-        return new XmppExchange(getContext(), getBinding());
+    @Override
+    public XmppExchange createExchange(ExchangePattern pattern) {
+        return new XmppExchange(getContext(), pattern, getBinding());
     }
 
     public XmppExchange createExchange(Message message) {
-        return new XmppExchange(getContext(), getBinding(), message);
+        return new XmppExchange(getContext(), getDefaultPattern(), getBinding(), message);
     }
 
     // Properties

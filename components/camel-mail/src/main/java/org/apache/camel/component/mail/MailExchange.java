@@ -20,6 +20,7 @@ import javax.mail.Message;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
@@ -30,13 +31,13 @@ import org.apache.camel.impl.DefaultExchange;
 public class MailExchange extends DefaultExchange {
     private MailBinding binding;
 
-    public MailExchange(CamelContext context, MailBinding binding) {
-        super(context);
+    public MailExchange(CamelContext context, ExchangePattern pattern, MailBinding binding) {
+        super(context, pattern);
         this.binding = binding;
     }
 
-    public MailExchange(CamelContext context, MailBinding binding, Message message) {
-        this(context, binding);
+    public MailExchange(CamelContext context, ExchangePattern pattern, MailBinding binding, Message message) {
+        this(context, pattern, binding);
         setIn(new MailMessage(message));
     }
 
@@ -66,7 +67,7 @@ public class MailExchange extends DefaultExchange {
 
     @Override
     public Exchange newInstance() {
-        return new MailExchange(getContext(), binding);
+        return new MailExchange(getContext(), getPattern(), binding);
     }
 
     // Expose Email APIs

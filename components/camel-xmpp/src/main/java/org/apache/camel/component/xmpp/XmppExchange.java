@@ -18,6 +18,7 @@ package org.apache.camel.component.xmpp;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 
 import org.jivesoftware.smack.packet.Message;
@@ -30,13 +31,13 @@ import org.jivesoftware.smack.packet.Message;
 public class XmppExchange extends DefaultExchange {
     private XmppBinding binding;
 
-    public XmppExchange(CamelContext context, XmppBinding binding) {
-        super(context);
+    public XmppExchange(CamelContext context, ExchangePattern pattern, XmppBinding binding) {
+        super(context, pattern);
         this.binding = binding;
     }
 
-    public XmppExchange(CamelContext context, XmppBinding binding, Message message) {
-        this(context, binding);
+    public XmppExchange(CamelContext context, ExchangePattern pattern, XmppBinding binding, Message message) {
+        this(context, pattern, binding);
         setIn(new XmppMessage(message));
     }
 
@@ -66,7 +67,7 @@ public class XmppExchange extends DefaultExchange {
 
     @Override
     public Exchange newInstance() {
-        return new XmppExchange(getContext(), binding);
+        return new XmppExchange(getContext(), getPattern(), binding);
     }
 
     // Expose the underlying XMPP APIs

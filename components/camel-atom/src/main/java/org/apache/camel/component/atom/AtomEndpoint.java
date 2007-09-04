@@ -26,6 +26,7 @@ import org.apache.abdera.util.iri.IRISyntaxException;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 
@@ -53,10 +54,6 @@ public class AtomEndpoint extends DefaultPollingEndpoint {
 
     public boolean isSingleton() {
         return true;
-    }
-
-    public Exchange createExchange() {
-        return new DefaultExchange(getContext());
     }
 
     public Producer createProducer() throws Exception {

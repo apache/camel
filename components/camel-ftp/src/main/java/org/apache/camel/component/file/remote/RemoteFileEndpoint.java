@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.io.ByteArrayOutputStream;
 
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.ExchangePattern;
 
 public abstract class RemoteFileEndpoint<T extends RemoteFileExchange> extends ScheduledPollEndpoint<T> {
     private RemoteFileBinding binding;
@@ -34,11 +35,15 @@ public abstract class RemoteFileEndpoint<T extends RemoteFileExchange> extends S
     }
 
     public T createExchange() {
-        return (T) new RemoteFileExchange(getContext(), getBinding());
+        return (T) new RemoteFileExchange(getContext(), getDefaultPattern(), getBinding());
+    }
+
+    public T createExchange(ExchangePattern pattern) {
+        return (T) new RemoteFileExchange(getContext(), pattern, getBinding());
     }
 
     public T createExchange(String fullFileName, ByteArrayOutputStream outputStream) {
-        return (T) new RemoteFileExchange(getContext(), getBinding(), getConfiguration().getHost(), fullFileName, outputStream);
+        return (T) new RemoteFileExchange(getContext(), getDefaultPattern(), getBinding(), getConfiguration().getHost(), fullFileName, outputStream);
     }
 
     public RemoteFileBinding getBinding() {

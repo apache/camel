@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
@@ -117,12 +118,13 @@ public class QuartzEndpoint extends DefaultEndpoint<QuartzExchange> {
         }
     }
 
-    public QuartzExchange createExchange() {
-        return new QuartzExchange(getContext(), null);
+    @Override
+    public QuartzExchange createExchange(ExchangePattern pattern) {
+        return new QuartzExchange(getContext(), pattern, null);
     }
 
     public QuartzExchange createExchange(JobExecutionContext jobExecutionContext) {
-        return new QuartzExchange(getContext(), jobExecutionContext);
+        return new QuartzExchange(getContext(), getDefaultPattern(), jobExecutionContext);
     }
 
     public Producer<QuartzExchange> createProducer() throws Exception {

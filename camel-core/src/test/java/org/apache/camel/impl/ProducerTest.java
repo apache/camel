@@ -25,12 +25,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.TestSupport;
+import org.apache.camel.ExchangePattern;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class ProducerTest extends TestSupport {
-    private CamelContext context = new DefaultCamelContext();
+    protected CamelContext context = new DefaultCamelContext();
+    protected ExchangePattern pattern = ExchangePattern.InOnly;
 
     public void testUsingADerivedExchange() throws Exception {
         DefaultEndpoint<MyExchange> endpoint = new DefaultEndpoint<MyExchange>("foo", new DefaultComponent() {
@@ -44,8 +46,9 @@ public class ProducerTest extends TestSupport {
                 return null;
             }
 
-            public MyExchange createExchange() {
-                return new MyExchange(getContext());
+
+            public MyExchange createExchange(ExchangePattern pattern) {
+                return new MyExchange(getContext(), pattern);
             }
 
             public Producer<MyExchange> createProducer() throws Exception {
@@ -75,7 +78,7 @@ public class ProducerTest extends TestSupport {
         assertNotNull(actual);
         assertTrue("Not same exchange", actual != exchange);
 
-        MyExchange expected = new MyExchange(context);
+        MyExchange expected = new MyExchange(context, pattern);
         actual = endpoint.createExchange(expected);
 
         assertSame("Should not copy an exchange when of the correct type", expected, actual);
