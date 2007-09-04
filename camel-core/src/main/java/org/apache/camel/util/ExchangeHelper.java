@@ -22,6 +22,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.InvalidTypeException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchPropertyException;
+import org.apache.camel.Message;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
@@ -119,5 +120,27 @@ public class ExchangeHelper {
      */
     public static <T> T convertToType(Exchange exchange, Class<T> type, Object value) {
         return exchange.getContext().getTypeConverter().convertTo(type, value);
+    }
+
+    /**
+     * Copies the results of a message exchange from the source exchange to the result exchange
+     * which will copy the out and fault message contents and the exception
+     *
+     * @param result the result exchange which will have the output and error state added
+     * @param source the source exchange which is not modified
+     */
+    public static void copyResults(Exchange result, Exchange source) {
+        if (result != source) {
+            result.setException(source.getException());
+            Message fault = source.getFault(false);
+            if (fault != null) {
+                result.getFault(true).copyFrom(fault);
+            }
+
+            Message out = source.getOut(false);
+            if (out != null) {
+                result.getOut(true).copyFrom(out);
+            }
+        }
     }
 }
