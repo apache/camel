@@ -35,6 +35,7 @@
 
   <modules>
     <module>camel-itest</module>
+    <module>camel-partial-classpath-test</module>
   </modules>
 
 </project>
