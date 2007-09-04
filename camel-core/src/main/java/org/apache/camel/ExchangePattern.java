@@ -92,6 +92,19 @@ public enum ExchangePattern {
     }
 
     /**
+     * Return true if there can be a FAULT message
+     */
+    public boolean isFaultCapable() {
+        switch (this) {
+            case InOnly:
+            case OutOnly:
+                return false;
+            default:
+                return true;
+        }
+    }
+
+    /**
      * Converts the WSDL URI into a {@link ExchangePattern} instance
      */
     public static ExchangePattern fromWsdlUri(String wsdlUri) {
@@ -102,6 +115,9 @@ public enum ExchangePattern {
         for (ExchangePattern mep : values()) {
             String uri = mep.getWsdlUri();
             map.put(uri, mep);
+            String name = uri.substring(uri.lastIndexOf('/'));
+            map.put("http://www.w3.org/2004/08/wsdl/" + name, mep);
+            map.put("http://www.w3.org/2006/01/wsdl/" + name, mep);
         }
     }
 }

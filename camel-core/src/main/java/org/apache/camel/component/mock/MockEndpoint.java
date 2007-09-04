@@ -115,6 +115,17 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     // -------------------------------------------------------------------------
 
     /**
+     * Set the processor that will be invoked when the index
+     * message is received.
+     *
+     * @param index
+     * @param processor
+     */
+    public void whenExchangeReceived(int index, Processor processor) {
+        this.processors.put(index, processor);
+    }
+
+    /**
      * Validates that all the available expectations on this endpoint are
      * satisfied; or throw an exception
      */
