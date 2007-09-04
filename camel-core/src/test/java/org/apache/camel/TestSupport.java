@@ -76,12 +76,12 @@ public abstract class TestSupport extends TestCase {
     }
 
     /**
-     * Returns a predicate and value builder for the fault message body as a
+     * Returns a predicate and value builder for the outbound message body as a
      * specific type
      */
 
-    public <T> ValueBuilder faultBodyAs(Class<T> type) {
-        return Builder.faultBodyAs(type);
+    public <T> ValueBuilder outBodyAs(Class<T> type) {
+        return Builder.outBodyAs(type);
     }
 
     /**
@@ -94,12 +94,12 @@ public abstract class TestSupport extends TestCase {
     }
 
     /**
-     * Returns a predicate and value builder for the outbound message body as a
+     * Returns a predicate and value builder for the fault message body as a
      * specific type
      */
 
-    public <T> ValueBuilder outBodyAs(Class<T> type) {
-        return Builder.outBodyAs(type);
+    public <T> ValueBuilder faultBodyAs(Class<T> type) {
+        return Builder.faultBodyAs(type);
     }
 
     /**
