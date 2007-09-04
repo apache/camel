@@ -22,26 +22,24 @@ import java.util.Map;
  * @version $Revision: $
  */
 public interface ProducerTemplate<E extends Exchange> extends Service {
-
     /**
      * Sends the exchange to the default endpoint
-     * 
+     *
      * @param exchange the exchange to send
      */
     E send(E exchange);
 
     /**
      * Sends an exchange to the default endpoint using a supplied
-     * 
-     * @{link Processor} to populate the exchange
-     * 
+     *
      * @param processor the transformer used to populate the new exchange
+     * @{link Processor} to populate the exchange
      */
     E send(Processor processor);
 
     /**
      * Sends the body to the default endpoint and returns the result content
-     * 
+     *
      * @param body the body to send
      * @return the returned message body
      */
@@ -50,9 +48,9 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
     /**
      * Sends the body to the default endpoint with a specified header and header
      * value
-     * 
-     * @param body the payload send
-     * @param header the header name
+     *
+     * @param body        the payload send
+     * @param header      the header name
      * @param headerValue the header value
      * @return the result
      */
@@ -61,7 +59,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
     /**
      * Sends the body to the default endpoint with the specified headers and
      * header values
-     * 
+     *
      * @param body the payload send
      * @return the result
      */
@@ -72,25 +70,35 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
 
     /**
      * Sends the exchange to the given endpoint
-     * 
+     *
      * @param endpointUri the endpoint URI to send the exchange to
-     * @param exchange the exchange to send
+     * @param exchange    the exchange to send
      */
     E send(String endpointUri, E exchange);
 
     /**
      * Sends an exchange to an endpoint using a supplied
-     * 
-     * @{link Processor} to populate the exchange
-     * 
+     *
      * @param endpointUri the endpoint URI to send the exchange to
-     * @param processor the transformer used to populate the new exchange
+     * @param processor   the transformer used to populate the new exchange
+     * @{link Processor} to populate the exchange
      */
     E send(String endpointUri, Processor processor);
 
     /**
+     * Sends an exchange to an endpoint using a supplied
+     *
+     * @param endpointUri the endpoint URI to send the exchange to
+     * @param pattern     the message {@link ExchangePattern} such as
+     *                    {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param processor   the transformer used to populate the new exchange
+     * @{link Processor} to populate the exchange
+     */
+    E send(String endpointUri, ExchangePattern pattern, Processor processor);
+
+    /**
      * Sends the exchange to the given endpoint
-     * 
+     *
      * @param endpoint the endpoint to send the exchange to
      * @param exchange the exchange to send
      */
@@ -98,30 +106,39 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
 
     /**
      * Sends an exchange to an endpoint using a supplied
-     * 
-     * @{link Processor} to populate the exchange
-     * 
-     * @param endpoint the endpoint to send the exchange to
+     *
+     * @param endpoint  the endpoint to send the exchange to
      * @param processor the transformer used to populate the new exchange
+     * @{link Processor} to populate the exchange
      */
     E send(Endpoint<E> endpoint, Processor processor);
 
     /**
+     * Sends an exchange to an endpoint using a supplied
+     *
+     * @param endpoint  the endpoint to send the exchange to
+     * @param pattern   the message {@link ExchangePattern} such as
+     *                  {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param processor the transformer used to populate the new exchange
+     * @{link Processor} to populate the exchange
+     */
+    E send(Endpoint<E> endpoint, ExchangePattern pattern, Processor processor);
+
+    /**
      * Send the body to an endpoint
-     * 
+     *
      * @param endpoint
-     * @param body = the payload
+     * @param body     = the payload
      * @return the result
      */
     Object sendBody(Endpoint<E> endpoint, Object body);
 
     /**
      * Send the body to an endpoint
-     * 
+     *
      * @param endpointUri
-     * @param body = the payload
+     * @param body        = the payload
      * @return the result
      */
     Object sendBody(String endpointUri, Object body);
-
 }

@@ -25,6 +25,7 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,7 +70,6 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
 
     /**
      * Sends an exchange to an endpoint using a supplied
-     * 
      * @{link Processor} to populate the exchange
      * 
      * @param endpoint the endpoint to send the exchange to
@@ -79,19 +79,42 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
         try {
             Producer<E> producer = getProducer(endpoint);
             E exchange = producer.createExchange();
-
-            // lets populate using the processor callback
-            processor.process(exchange);
-
-            // now lets dispatch
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(">>>> " + endpoint + " " + exchange);
-            }
-            producer.process(exchange);
-            return exchange;
+            return sendExchange(endpoint, producer, processor, exchange);
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    /**
+     * Sends an exchange to an endpoint using a supplied
+     * @{link Processor} to populate the exchange
+     *
+     * @param endpoint the endpoint to send the exchange to
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param processor the transformer used to populate the new exchange
+     */
+    public E send(Endpoint<E> endpoint, ExchangePattern pattern, Processor processor) {
+         try {
+            Producer<E> producer = getProducer(endpoint);
+            E exchange = producer.createExchange(pattern);
+            return sendExchange(endpoint, producer, processor, exchange);
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
+
+    protected E sendExchange(Endpoint<E> endpoint, Producer<E> producer, Processor processor, E exchange) throws Exception {
+        // lets populate using the processor callback
+        processor.process(exchange);
+
+        // now lets dispatch
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(">>>> " + endpoint + " " + exchange);
+        }
+        producer.process(exchange);
+        return exchange;
     }
 
     protected void doStop() throws Exception {
