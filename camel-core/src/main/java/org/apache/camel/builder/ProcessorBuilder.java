@@ -51,7 +51,7 @@ public class ProcessorBuilder {
     }
 
     /**
-     * Creates a processor which sets the body of the IN message to the value of the expression
+     * Creates a processor which sets the body of the OUT message to the value of the expression
      */
     public static Processor setOutBody(final Expression expression) {
         return new Processor() {
@@ -63,6 +63,23 @@ public class ProcessorBuilder {
             @Override
             public String toString() {
                 return "setOutBody(" + expression + ")";
+            }
+        };
+    }
+
+    /**
+     * Creates a processor which sets the body of the FAULT message to the value of the expression
+     */
+    public static Processor setFaultBody(final Expression expression) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+                Object newBody = expression.evaluate(exchange);
+                exchange.getFault().setBody(newBody);
+            }
+
+            @Override
+            public String toString() {
+                return "setFaultBody(" + expression + ")";
             }
         };
     }
@@ -97,6 +114,23 @@ public class ProcessorBuilder {
             @Override
             public String toString() {
                 return "setOutHeader(" + name + ", " + expression + ")";
+            }
+        };
+    }
+
+    /**
+     * Sets the header on the FAULT message
+     */
+    public static Processor setFaultHeader(final String name, final Expression expression) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+                Object value = expression.evaluate(exchange);
+                exchange.getFault().setHeader(name, value);
+            }
+
+            @Override
+            public String toString() {
+                return "setFaultHeader(" + name + ", " + expression + ")";
             }
         };
     }
@@ -146,6 +180,22 @@ public class ProcessorBuilder {
             @Override
             public String toString() {
                 return "removeOutHeader(" + name +  ")";
+            }
+        };
+    }
+
+    /**
+     * Removes the header on the FAULT message
+     */
+    public static Processor removeFaultHeader(final String name) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getFault().removeHeader(name);
+            }
+
+            @Override
+            public String toString() {
+                return "removeFaultHeader(" + name +  ")";
             }
         };
     }
