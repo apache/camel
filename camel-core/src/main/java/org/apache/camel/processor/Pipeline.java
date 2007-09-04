@@ -102,27 +102,40 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
         exchange.throwException();
     }
 
-    public boolean process(Exchange exchange, AsyncCallback callback) {
+    public boolean process(Exchange original, AsyncCallback callback) {
         Iterator<Processor> processors = getProcessors().iterator();
-        Exchange nextExchange = exchange;
+        Exchange nextExchange = original;
+        boolean first = true;
         while (processors.hasNext()) {
             AsyncProcessor processor = AsyncProcessorTypeConverter.convert(processors.next());
-            boolean sync = process(nextExchange, callback, processors, processor);
-            // Continue processing the pipeline synchronously ...
-            if (sync) {
-                nextExchange = createNextExchange(processor, exchange);
+            
+            if (nextExchange.isFailed()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Mesage exchange has failed so breaking out of pipeline: " + nextExchange + " exception: " + nextExchange.getException() + " fault: " + nextExchange.getFault(false));
+                }
+                break;
+            }
+            if (first) {
+                first = false;
             } else {
+                nextExchange = createNextExchange(processor, original);
+            }
+            boolean sync = process(original, nextExchange, callback, processors, processor);
+            // Continue processing the pipeline synchronously ...
+            if (!sync) {
                 // The pipeline will be completed async...
-                return true;
+                return false;
             }
         }
+        
         // If we get here then the pipeline was processed entirely
         // synchronously.
+        ExchangeHelper.copyResults(original, nextExchange);
         callback.done(true);
         return true;
     }
 
-    private boolean process(final Exchange exchange, final AsyncCallback callback, final Iterator<Processor> processors, AsyncProcessor processor) {
+    private boolean process(final Exchange original, final Exchange exchange, final AsyncCallback callback, final Iterator<Processor> processors, AsyncProcessor processor) {
         return processor.process(exchange, new AsyncCallback() {
             public void done(boolean sync) {
 
@@ -136,12 +149,22 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
                 Exchange nextExchange = exchange;
                 while( processors.hasNext() ) {
                     AsyncProcessor processor = AsyncProcessorTypeConverter.convert(processors.next());
+                    
+                    if (nextExchange.isFailed()) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Mesage exchange has failed so breaking out of pipeline: " + nextExchange + " exception: " + nextExchange.getException() + " fault: " + nextExchange.getFault(false));
+                        }
+                        break;
+                    }
+
                     nextExchange = createNextExchange(processor, exchange);
-                    sync = process( nextExchange, callback, processors, processor);
+                    sync = process( original, nextExchange, callback, processors, processor);
                     if( !sync ) {
                         return;
                     }
                 }
+                
+                ExchangeHelper.copyResults(original, nextExchange);
                 callback.done(true);
             }
         });
