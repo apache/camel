@@ -63,11 +63,11 @@ public class JndiContext implements Context, Serializable {
     private boolean frozen;
     private String nameInNamespace = "";
 
-    public JndiContext() {
+    public JndiContext() throws Exception {
         this(new Hashtable());
     }
 
-    public JndiContext(Hashtable env) {
+    public JndiContext(Hashtable env) throws Exception {
         this(env, createBindingsMapFromEnvironment(env));
     }
 
@@ -102,7 +102,7 @@ public class JndiContext implements Context, Serializable {
      * properties using $foo.class to point to a class name with $foo.* being
      * properties set on the injected bean
      */
-    public static Map createBindingsMapFromEnvironment(Hashtable env) {
+    public static Map createBindingsMapFromEnvironment(Hashtable env) throws Exception {
         Map answer = new HashMap(env);
 
         for (Object object : env.entrySet()) {
@@ -192,7 +192,12 @@ public class JndiContext implements Context, Serializable {
     }
 
     protected JndiContext newContext() {
-        return new JndiContext();
+        try {
+            return new JndiContext();
+        }
+        catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     public Object addToEnvironment(String propName, Object propVal) throws NamingException {
@@ -436,7 +441,7 @@ public class JndiContext implements Context, Serializable {
         }
     }
 
-    protected static Object createBean(Class<?> type, Map properties, String prefix) {
+    protected static Object createBean(Class<?> type, Map properties, String prefix) throws Exception {
         Object value = INJETOR.newInstance(type);
         IntrospectionSupport.setProperties(value, properties, prefix);
         return value;

@@ -16,18 +16,16 @@
  */
 package org.apache.camel.component.irc;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.schwering.irc.lib.IRCConnection;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Defines the <a href="http://activemq.apache.org/camel/irc.html">IRC Component</a>
@@ -64,7 +62,7 @@ public class IrcComponent extends DefaultComponent<IrcExchange> {
         // customize its own version
         final IrcEndpoint endpoint = new IrcEndpoint(uri, this, config);
 
-        IntrospectionSupport.setProperties(endpoint.getConfiguration(), parameters);
+        setProperties(endpoint.getConfiguration(), parameters);
         return endpoint;
     }
 

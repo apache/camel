@@ -39,7 +39,7 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
     private CamelContext context;
     private Component component;
     private ScheduledExecutorService executorService;
-    private ExchangePattern defaultPattern = ExchangePattern.InOnly;
+    private ExchangePattern exchangePattern = ExchangePattern.InOnly;
 
     protected DefaultEndpoint(String endpointUri, Component component) {
         this(endpointUri, component.getCamelContext());
@@ -151,19 +151,19 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
     }
 
     public E createExchange() {
-        return createExchange(getDefaultPattern());
+        return createExchange(getExchangePattern());
     }
 
     public E createExchange(ExchangePattern pattern) {
         return (E) new DefaultExchange(getContext(), pattern);
     }
 
-    public ExchangePattern getDefaultPattern() {
-        return defaultPattern;
+    public ExchangePattern getExchangePattern() {
+        return exchangePattern;
     }
 
-    public void setDefaultPattern(ExchangePattern defaultPattern) {
-        this.defaultPattern = defaultPattern;
+    public void setExchangePattern(ExchangePattern exchangePattern) {
+        this.exchangePattern = exchangePattern;
     }
 
     protected ScheduledThreadPoolExecutor createExecutorService() {

@@ -44,9 +44,10 @@ public abstract class ScheduledPollEndpoint<E extends Exchange> extends DefaultE
         this.consumerProperties = consumerProperties;
     }
 
-    protected void configureConsumer(Consumer<E> consumer) {
+    protected void configureConsumer(Consumer<E> consumer) throws Exception {
         if (consumerProperties != null) {
-            IntrospectionSupport.setProperties(consumer, consumerProperties);
+            // TODO pass in type converter
+            IntrospectionSupport.setProperties(getContext().getTypeConverter(), consumer, consumerProperties);
         }
     }
 

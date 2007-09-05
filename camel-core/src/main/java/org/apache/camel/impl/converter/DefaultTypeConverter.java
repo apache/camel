@@ -51,16 +51,12 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         addFallbackConverter(new PropertyEditorTypeConverter());
         addFallbackConverter(new ToStringTypeConverter());
         addFallbackConverter(new ArrayTypeConverter());
+        addFallbackConverter(new EnumTypeConverter());
     }
 
     public <T> T convertTo(Class<T> toType, Object value) {
         if (toType.isInstance(value)) {
             return toType.cast(value);
-        } else if (toType.isPrimitive()) {
-            Class primitiveType = ObjectHelper.convertPrimitiveTypeToWrapperType(toType);
-            if (primitiveType != toType) {
-                return (T)convertTo(primitiveType, value);
-            }
         }
         checkLoaded();
         TypeConverter converter = getOrFindTypeConverter(toType, value);
@@ -78,9 +74,14 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         // lets avoid NullPointerException when converting to boolean for null
         // values
         if (boolean.class.isAssignableFrom(toType)) {
-            return (T)Boolean.FALSE;
+            return (T) Boolean.FALSE;
         }
-
+        if (toType.isPrimitive()) {
+            Class primitiveType = ObjectHelper.convertPrimitiveTypeToWrapperType(toType);
+            if (primitiveType != toType) {
+                return (T) convertTo(primitiveType, value);
+            }
+        }
         return null;
     }
 

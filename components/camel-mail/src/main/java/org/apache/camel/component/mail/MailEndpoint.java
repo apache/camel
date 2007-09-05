@@ -85,7 +85,7 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
     }
 
     public MailExchange createExchange(Message message) {
-        return new MailExchange(getContext(), getDefaultPattern(), getBinding(), message);
+        return new MailExchange(getContext(), getExchangePattern(), getBinding(), message);
     }
 
     // Properties

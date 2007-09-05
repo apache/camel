@@ -16,7 +16,8 @@
  */
 package org.apache.camel.util;
 
-import java.beans.Introspector;
+import org.apache.camel.TypeConverter;
+
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.lang.reflect.Field;
@@ -107,7 +108,7 @@ public class IntrospectionSupport {
         return method;
     }
 
-    public static boolean setProperties(Object target, Map props, String optionPrefix) {
+    public static boolean setProperties(Object target, Map props, String optionPrefix) throws Exception {
         boolean rc = false;
         if (target == null) {
             throw new IllegalArgumentException("target was null.");
@@ -150,7 +151,7 @@ public class IntrospectionSupport {
         return rc;
     }
 
-    public static boolean setProperties(Object target, Map props) {
+    public static boolean setProperties(TypeConverter typeConverter, Object target, Map props) throws Exception {
         boolean rc = false;
 
         if (target == null) {
@@ -162,7 +163,7 @@ public class IntrospectionSupport {
 
         for (Iterator iter = props.entrySet().iterator(); iter.hasNext();) {
             Map.Entry entry = (Entry)iter.next();
-            if (setProperty(target, (String)entry.getKey(), entry.getValue())) {
+            if (setProperty(typeConverter, target, (String)entry.getKey(), entry.getValue())) {
                 iter.remove();
                 rc = true;
             }
@@ -171,10 +172,14 @@ public class IntrospectionSupport {
         return rc;
     }
 
-    public static boolean setProperty(Object target, String name, Object value) {
+    public static boolean setProperties(Object target, Map props) throws Exception {
+        return setProperties(null, target, props);
+    }
+
+    public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
         try {
             Class clazz = target.getClass();
-            Method setter = findSetterMethod(clazz, name);
+            Method setter = findSetterMethod(typeConverter, clazz, name);
             if (setter == null) {
                 return false;
             }
@@ -185,15 +190,37 @@ public class IntrospectionSupport {
                 setter.invoke(target, new Object[] {value});
             } else {
                 // We need to convert it
-                setter.invoke(target, new Object[] {convert(value, setter.getParameterTypes()[0])});
+                Object convertedValue = convert(typeConverter, setter.getParameterTypes()[0], value);
+                setter.invoke(target, new Object[] {convertedValue});
             }
             return true;
-        } catch (Throwable ignore) {
-            return false;
+        }
+        catch (InvocationTargetException e) {
+            Throwable throwable = e.getTargetException();
+            if (throwable instanceof Exception) {
+                Exception exception = (Exception) throwable;
+                throw exception;
+            }
+            else {
+                Error error = (Error) throwable;
+                throw error;
+            }
         }
     }
 
-    private static Object convert(Object value, Class type) throws URISyntaxException {
+
+    public static boolean setProperty(Object target, String name, Object value) throws Exception {
+        return setProperty(null, target, name, value);
+    }
+
+    private static Object convert(TypeConverter typeConverter, Class type, Object value) throws URISyntaxException {
+        if (typeConverter != null) {
+            Object answer = typeConverter.convertTo(type, value);
+            if (answer == null) {
+                throw new IllegalArgumentException("Could not convert \"" + value + "\" to " + type.getName());
+            }
+            return answer;
+        }
         PropertyEditor editor = PropertyEditorManager.findEditor(type);
         if (editor != null) {
             editor.setAsText(value.toString());
@@ -217,16 +244,21 @@ public class IntrospectionSupport {
         return null;
     }
 
-    private static Method findSetterMethod(Class clazz, String name) {
+    private static Method findSetterMethod(TypeConverter typeConverter, Class clazz, String name) {
         // Build the method name.
-        name = "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
-        Method[] methods = clazz.getMethods();
-        for (int i = 0; i < methods.length; i++) {
-            Method method = methods[i];
-            Class params[] = method.getParameterTypes();
-            if (method.getName().equals(name) && params.length == 1 && isSettableType(params[0])) {
-                return method;
+        name = "set" + ObjectHelper.capitalize(name);
+        while (clazz != Object.class) {
+            Method[] methods = clazz.getMethods();
+            for (int i = 0; i < methods.length; i++) {
+                Method method = methods[i];
+                Class params[] = method.getParameterTypes();
+                if (method.getName().equals(name) && params.length == 1) {
+                    if (typeConverter != null || isSettableType(params[0])) {
+                        return method;
+                    }
+                }
             }
+            clazz = clazz.getSuperclass();
         }
         return null;
     }
@@ -318,5 +350,4 @@ public class IntrospectionSupport {
         }
 
     }
-
 }

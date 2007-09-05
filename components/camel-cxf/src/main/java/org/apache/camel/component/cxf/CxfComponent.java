@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.IntrospectionSupport;
+
+import java.util.Map;
 
 
 /**
@@ -43,7 +42,7 @@ public class CxfComponent extends DefaultComponent<CxfExchange> {
     protected Endpoint<CxfExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         // now we need to add the address, endpoint name, wsdl url or the SEI to build up a endpoint
         CxfEndpoint result = new CxfEndpoint(uri, remaining, this);        
-        IntrospectionSupport.setProperties(result, parameters);
+        setProperties(result, parameters);
         return result;
     }
 

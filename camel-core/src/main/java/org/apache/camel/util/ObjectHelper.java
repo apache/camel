@@ -369,6 +369,10 @@ public class ObjectHelper {
                 rc = Short.class;
             } else if (type == byte.class) {
                 rc = Byte.class;
+/*
+            } else if (type == boolean.class) {
+                rc = Boolean.class;
+*/
             }
         }
         return rc;
@@ -419,6 +423,27 @@ public class ObjectHelper {
             catch (IOException e) {
                 log.warn("Could not close " + name + ". Reason: "+ e, e);
             }
+        }
+    }
+
+    /**
+     * Converts the given value to the required type or throw a meaningful exception
+     */
+    public static <T> T cast(Class<T> toType, Object value) {
+        if (toType == boolean.class) {
+            return (T) cast(Boolean.class, value);
+        }
+        else if (toType.isPrimitive()) {
+            Class newType = convertPrimitiveTypeToWrapperType(toType);
+            if (newType != toType) {
+                return (T) cast(newType, value);
+            }
+        }
+        try {
+            return toType.cast(value);
+        }
+        catch (ClassCastException e) {
+            throw new IllegalArgumentException("Failed to convert: " + value + " to type: " + toType.getName() + " due to: " + e, e);
         }
     }
 }

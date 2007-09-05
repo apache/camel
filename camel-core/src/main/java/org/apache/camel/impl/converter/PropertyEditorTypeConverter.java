@@ -16,10 +16,11 @@
  */
 package org.apache.camel.impl.converter;
 
+import org.apache.camel.TypeConverter;
+import org.apache.camel.util.ObjectHelper;
+
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
-
-import org.apache.camel.TypeConverter;
 
 /**
  * Uses the java.beans.PropertyEditor conversion system to convert Objects to
@@ -37,17 +38,18 @@ public class PropertyEditorTypeConverter implements TypeConverter {
             return null;
         }
 
+
         if (value.getClass() == String.class) {
 
             // No conversion needed.
             if (toType == String.class) {
-                return toType.cast(value);
+                return ObjectHelper.cast(toType, value);
             }
 
             PropertyEditor editor = PropertyEditorManager.findEditor(toType);
             if (editor != null) {
                 editor.setAsText(value.toString());
-                return toType.cast(editor.getValue());
+                return ObjectHelper.cast(toType, editor.getValue());
             }
 
         } else if (toType == String.class) {
@@ -55,9 +57,8 @@ public class PropertyEditorTypeConverter implements TypeConverter {
             PropertyEditor editor = PropertyEditorManager.findEditor(value.getClass());
             if (editor != null) {
                 editor.setValue(value);
-                return toType.cast(editor.getAsText());
+                return ObjectHelper.cast(toType, editor.getAsText());
             }
-
         }
         return null;
     }

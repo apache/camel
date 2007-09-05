@@ -23,7 +23,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.message.Message;
 
 
@@ -58,7 +57,7 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     }
 
     public CxfExchange createExchange() {
-        return new CxfExchange(getContext(), getDefaultPattern(), getBinding());
+        return new CxfExchange(getContext(), getExchangePattern(), getBinding());
     }
 
     public CxfExchange createExchange(ExchangePattern pattern) {
@@ -66,7 +65,7 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     }
 
     public CxfExchange createExchange(Message inMessage) {
-        return new CxfExchange(getContext(), getDefaultPattern(), getBinding(), inMessage);
+        return new CxfExchange(getContext(), getExchangePattern(), getBinding(), inMessage);
     }
     
     public boolean isInvoker() {

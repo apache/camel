@@ -124,7 +124,7 @@ public class QuartzEndpoint extends DefaultEndpoint<QuartzExchange> {
     }
 
     public QuartzExchange createExchange(JobExecutionContext jobExecutionContext) {
-        return new QuartzExchange(getContext(), getDefaultPattern(), jobExecutionContext);
+        return new QuartzExchange(getContext(), getExchangePattern(), jobExecutionContext);
     }
 
     public Producer<QuartzExchange> createProducer() throws Exception {

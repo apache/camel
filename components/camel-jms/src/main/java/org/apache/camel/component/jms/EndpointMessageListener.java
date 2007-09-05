@@ -19,7 +19,6 @@ package org.apache.camel.component.jms;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -62,7 +61,7 @@ public class EndpointMessageListener<E extends Exchange> implements MessageListe
     }
 
     public JmsExchange createExchange(Message message) {
-        return new JmsExchange(endpoint.getContext(), endpoint.getDefaultPattern(), getBinding(), message);
+        return new JmsExchange(endpoint.getContext(), endpoint.getExchangePattern(), getBinding(), message);
     }
 
     // Properties

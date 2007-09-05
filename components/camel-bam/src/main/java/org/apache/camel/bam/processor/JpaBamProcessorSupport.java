@@ -103,7 +103,7 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
 
     // Implementatiom methods
     // -----------------------------------------------------------------------
-    protected T loadEntity(Exchange exchange, Object key) {
+    protected T loadEntity(Exchange exchange, Object key) throws Exception {
         T entity = findEntityByCorrelationKey(key);
         if (entity == null) {
             entity = createEntity(exchange, key);
@@ -148,11 +148,11 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     /**
      * Sets the key property on the new entity
      */
-    protected void setKeyProperty(T entity, Object key) {
+    protected void setKeyProperty(T entity, Object key) throws Exception {
         IntrospectionSupport.setProperty(entity, getKeyPropertyName(), key);
     }
 
-    protected void setProcessDefinitionProperty(T entity, ProcessDefinition processDefinition) {
+    protected void setProcessDefinitionProperty(T entity, ProcessDefinition processDefinition) throws Exception {
         IntrospectionSupport.setProperty(entity, "processDefinition", processDefinition);
     }
 

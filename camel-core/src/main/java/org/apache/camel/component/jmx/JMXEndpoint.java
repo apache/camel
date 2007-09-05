@@ -92,11 +92,11 @@ public class JMXEndpoint extends DefaultEndpoint<JMXExchange> {
     }
 
     public JMXExchange createExchange(Notification notification) {
-        return new JMXExchange(getContext(), getDefaultPattern(), notification);
+        return new JMXExchange(getContext(), getExchangePattern(), notification);
     }
 
     public JMXExchange createExchange() {
-        return new JMXExchange(getContext(), getDefaultPattern(), null);
+        return new JMXExchange(getContext(), getExchangePattern(), null);
     }
 
     public JMXExchange createExchange(ExchangePattern pattern) {

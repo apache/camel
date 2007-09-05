@@ -59,7 +59,7 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
     }
 
     public MinaExchange createExchange(IoSession session, Object object) {
-        MinaExchange exchange = new MinaExchange(getContext(), getDefaultPattern());
+        MinaExchange exchange = new MinaExchange(getContext(), getExchangePattern());
         exchange.getIn().setBody(object);
         // TODO store session in exchange?
         return exchange;
