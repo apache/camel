@@ -57,7 +57,7 @@ public class BeanComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         Object bean = getBean(remaining);
         BeanProcessor processor = new BeanProcessor(bean, getCamelContext(), getParameterMappingStrategy());
-        IntrospectionSupport.setProperties(processor, parameters);
+        setProperties(processor, parameters);
         return new ProcessorEndpoint(uri, this, processor);
     }
 

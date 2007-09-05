@@ -19,7 +19,6 @@ package org.apache.camel.component.atom;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.IntrospectionSupport;
 
 import java.util.Map;
 
@@ -31,7 +30,7 @@ import java.util.Map;
 public class AtomComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         AtomEndpoint answer = new AtomEndpoint(uri, this, remaining);
-        IntrospectionSupport.setProperties(answer, parameters);
+        setProperties(answer, parameters);
         return answer;
     }
 }

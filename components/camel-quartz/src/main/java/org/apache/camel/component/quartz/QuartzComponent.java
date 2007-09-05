@@ -16,15 +16,11 @@
  */
 package org.apache.camel.component.quartz;
 
-import java.net.URI;
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -32,6 +28,9 @@ import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
+
+import java.net.URI;
+import java.util.Map;
 
 /**
  * A <a href="http://activemq.apache.org/camel/quartz.html">Quartz Component</a>
@@ -98,8 +97,8 @@ public class QuartzComponent extends DefaultComponent<QuartzExchange> {
         Map triggerParameters = IntrospectionSupport.extractProperties(parameters, "trigger.");
         Map jobParameters = IntrospectionSupport.extractProperties(parameters, "job.");
 
-        IntrospectionSupport.setProperties(trigger, triggerParameters);
-        IntrospectionSupport.setProperties(answer.getJobDetail(), jobParameters);
+        setProperties(trigger, triggerParameters);
+        setProperties(answer.getJobDetail(), jobParameters);
 
         return answer;
     }

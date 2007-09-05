@@ -84,7 +84,7 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     }
 
     public XmppExchange createExchange(Message message) {
-        return new XmppExchange(getContext(), getDefaultPattern(), getBinding(), message);
+        return new XmppExchange(getContext(), getExchangePattern(), getBinding(), message);
     }
 
     // Properties

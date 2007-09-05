@@ -139,7 +139,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
     // -----------------------------------------------------------------------
     protected abstract void processEntity(Exchange exchange, T entity) throws Exception;
 
-    protected abstract T loadEntity(Exchange exchange, Object key);
+    protected abstract T loadEntity(Exchange exchange, Object key) throws Exception;
 
     protected abstract Class getKeyType();
 

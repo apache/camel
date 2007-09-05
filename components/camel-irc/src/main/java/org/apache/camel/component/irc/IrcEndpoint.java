@@ -47,35 +47,35 @@ public class IrcEndpoint extends DefaultEndpoint<IrcExchange> {
     }
 
     public IrcExchange createOnPrivmsgExchange(String target, IRCUser user, String msg) {
-        return new IrcExchange(getContext(), getDefaultPattern(), getBinding(), new IrcMessage("PRIVMSG", target, user, msg));
+        return new IrcExchange(getContext(), getExchangePattern(), getBinding(), new IrcMessage("PRIVMSG", target, user, msg));
     }
 
     public IrcExchange createOnNickExchange(IRCUser user, String newNick) {
-        return new IrcExchange(getContext(), getDefaultPattern(), getBinding(), new IrcMessage("NICK", user, newNick));
+        return new IrcExchange(getContext(), getExchangePattern(), getBinding(), new IrcMessage("NICK", user, newNick));
     }
 
     public IrcExchange createOnQuitExchange(IRCUser user, String msg) {
-        return new IrcExchange(getContext(), getDefaultPattern(), getBinding(), new IrcMessage("QUIT", user, msg));
+        return new IrcExchange(getContext(), getExchangePattern(), getBinding(), new IrcMessage("QUIT", user, msg));
     }
 
     public IrcExchange createOnJoinExchange(String channel, IRCUser user) {
-        return new IrcExchange(getContext(), getDefaultPattern(), getBinding(), new IrcMessage("JOIN", channel, user));
+        return new IrcExchange(getContext(), getExchangePattern(), getBinding(), new IrcMessage("JOIN", channel, user));
     }
 
     public IrcExchange createOnKickExchange(String channel, IRCUser user, String whoWasKickedNick, String msg) {
-        return new IrcExchange(getContext(), getDefaultPattern(), getBinding(), new IrcMessage("KICK", channel, user, whoWasKickedNick, msg));
+        return new IrcExchange(getContext(), getExchangePattern(), getBinding(), new IrcMessage("KICK", channel, user, whoWasKickedNick, msg));
     }
 
     public IrcExchange createOnModeExchange(String channel, IRCUser user, IRCModeParser modeParser) {
-        return new IrcExchange(getContext(), getDefaultPattern(), getBinding(), new IrcMessage("MODE", channel, user, modeParser.getLine()));
+        return new IrcExchange(getContext(), getExchangePattern(), getBinding(), new IrcMessage("MODE", channel, user, modeParser.getLine()));
     }
 
     public IrcExchange createOnPartExchange(String channel, IRCUser user, String msg) {
-        return new IrcExchange(getContext(), getDefaultPattern(), getBinding(), new IrcMessage("PART", channel, user, msg));
+        return new IrcExchange(getContext(), getExchangePattern(), getBinding(), new IrcMessage("PART", channel, user, msg));
     }
 
     public IrcExchange createOnTopicExchange(String channel, IRCUser user, String topic) {
-        return new IrcExchange(getContext(), getDefaultPattern(), getBinding(), new IrcMessage("TOPIC", channel, user, topic));
+        return new IrcExchange(getContext(), getExchangePattern(), getBinding(), new IrcMessage("TOPIC", channel, user, topic));
     }
 
     public IrcProducer createProducer() throws Exception {

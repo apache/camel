@@ -29,6 +29,7 @@ import java.net.URL;
 import junit.framework.TestCase;
 
 import org.apache.camel.TypeConverter;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.impl.ReflectionInjector;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.commons.logging.Log;
@@ -51,12 +52,6 @@ public class ConverterTest extends TestCase {
             Integer value = (Integer) getValue();
             return value != null ? value.toString() : "";
         }
-    }
-
-
-    @Override
-    protected void setUp() throws Exception {
-        PropertyEditorManager.registerEditor(Integer.class, IntegerPropertyEditor.class);
     }
 
     public void testIntegerPropertyEditorConversion() throws Exception {
@@ -160,4 +155,28 @@ public class ConverterTest extends TestCase {
         int value = converter.convertTo(int.class, 4);
         assertEquals("value", 4, value);
     }
+
+    public void testPrimitiveIntPropertySetter() throws Exception {
+        MyBean bean = new MyBean();
+        IntrospectionSupport.setProperty(converter, bean, "foo", "4");
+        assertEquals("bean.foo", 4, bean.getFoo());
+    }
+
+    public static class MyBean {
+        private int foo;
+
+        public int getFoo() {
+            return foo;
+        }
+
+        public void setFoo(int foo) {
+            this.foo = foo;
+        }
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        PropertyEditorManager.registerEditor(Integer.class, IntegerPropertyEditor.class);
+    }
+
 }

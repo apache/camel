@@ -18,9 +18,7 @@ package org.apache.camel.component.timer;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.bean.BeanExchange;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.IntrospectionSupport;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,7 +51,7 @@ public class TimerComponent extends DefaultComponent<Exchange> {
     @Override
     protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         TimerEndpoint answer = new TimerEndpoint(uri, this, remaining);
-        IntrospectionSupport.setProperties(answer, parameters);
+        setProperties(answer, parameters);
         return answer;
     }
 

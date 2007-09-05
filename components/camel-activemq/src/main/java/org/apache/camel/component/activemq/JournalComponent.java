@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.activemq;
 
-import java.io.File;
-import java.util.Map;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.IntrospectionSupport;
+
+import java.io.File;
+import java.util.Map;
 
 /**
  * The <a href="http://activemq.apache.org/camel/activemq.html">ActiveMQ Component</a>
@@ -34,7 +33,7 @@ public class JournalComponent extends DefaultComponent<Exchange> {
     @Override
     protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {        
         JournalEndpoint endpoint = new JournalEndpoint(uri, this, new File(remaining));
-        IntrospectionSupport.setProperties(endpoint, parameters);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 }

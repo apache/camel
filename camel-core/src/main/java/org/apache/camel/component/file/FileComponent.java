@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.IntrospectionSupport;
+
+import java.io.File;
+import java.util.Map;
 
 /**
  * The <a href="http://activemq.apache.org/camel/file.html">File Component</a>
@@ -43,7 +42,7 @@ public class FileComponent extends DefaultComponent<FileExchange> {
     protected Endpoint<FileExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         File file = new File(remaining);
         FileEndpoint result = new FileEndpoint(file, uri, this);
-        IntrospectionSupport.setProperties(result, parameters);
+        setProperties(result, parameters);
         return result;
     }
 }

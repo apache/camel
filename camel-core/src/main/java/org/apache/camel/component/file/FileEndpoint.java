@@ -86,7 +86,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      * @see org.apache.camel.Endpoint#createExchange()
      */
     public FileExchange createExchange(File file) {
-        return new FileExchange(getContext(), getDefaultPattern(), file);
+        return new FileExchange(getContext(), getExchangePattern(), file);
     }
 
     /**

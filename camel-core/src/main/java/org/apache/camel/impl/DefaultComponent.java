@@ -70,7 +70,7 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
                 ScheduledPollEndpoint scheduledPollEndpoint = (ScheduledPollEndpoint)endpoint;
                 scheduledPollEndpoint.configureProperties(parameters);
             }
-            IntrospectionSupport.setProperties(endpoint, parameters);
+            setProperties(endpoint, parameters);
         }
         return endpoint;
     }
@@ -131,4 +131,11 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
      */
     protected abstract Endpoint<E> createEndpoint(String uri, String remaining, Map parameters)
         throws Exception;
+
+    /**
+     * Sets the bean properties on the given bean
+     */
+    protected void setProperties(Object bean, Map parameters) throws Exception {
+        IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), bean, parameters);
+    }
 }

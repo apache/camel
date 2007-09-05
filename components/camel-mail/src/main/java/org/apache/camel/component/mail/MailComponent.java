@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.mail;
 
-import java.net.URI;
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.IntrospectionSupport;
+
+import java.net.URI;
+import java.util.Map;
 
 /**
  * @version $Revision:520964 $
@@ -66,7 +65,7 @@ public class MailComponent extends DefaultComponent<MailExchange> {
         // lets make sure we copy the configuration as each endpoint can customize its own version
         MailEndpoint endpoint = new MailEndpoint(uri, this, config);
 
-        IntrospectionSupport.setProperties(endpoint.getConfiguration(), parameters);
+        setProperties(endpoint.getConfiguration(), parameters);
         return endpoint;
     }
 

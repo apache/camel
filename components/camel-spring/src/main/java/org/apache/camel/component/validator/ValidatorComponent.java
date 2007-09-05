@@ -16,15 +16,13 @@
  */
 package org.apache.camel.component.validator;
 
-import java.util.Map;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.ResourceBasedComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.camel.util.IntrospectionSupport;
-
 import org.springframework.core.io.Resource;
+
+import java.util.Map;
 
 /**
  * The <a href="http://activemq.apache.org/camel/validator.html">Validator Component</a>
@@ -46,6 +44,6 @@ public class ValidatorComponent extends ResourceBasedComponent {
     }
 
     protected void configureValidator(SpringValidator validator, String uri, String remaining, Map parameters) throws Exception {
-        IntrospectionSupport.setProperties(validator, parameters);
+        setProperties(validator, parameters);
     }
 }

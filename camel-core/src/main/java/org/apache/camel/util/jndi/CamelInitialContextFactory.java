@@ -32,6 +32,16 @@ import javax.naming.spi.InitialContextFactory;
 public class CamelInitialContextFactory implements InitialContextFactory {
 
     public Context getInitialContext(Hashtable environment) throws NamingException {
-        return new JndiContext(environment);
+        try {
+            return new JndiContext(environment);
+        }
+        catch (NamingException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            NamingException exception = new NamingException(e.getMessage());
+            exception.initCause(e);
+            throw exception;
+        }
     }
 }

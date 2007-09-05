@@ -58,6 +58,20 @@ public class CustomExchangePatternTest extends ContextTestSupport {
         assertReceivedExpectedPattern(expectedPattern);
     }
 
+    public void testInOutViaUri() throws Exception {
+        final ExchangePattern expectedPattern = ExchangePattern.InOut;
+
+        template.send("direct:start?exchangePattern=InOut", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                assertEquals("MEP", expectedPattern, exchange.getPattern());
+                exchange.getIn().setBody("<hello>world!</hello>");
+            }
+        });
+
+        resultEndpoint.assertIsSatisfied();
+        assertReceivedExpectedPattern(expectedPattern);
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -75,6 +89,7 @@ public class CustomExchangePatternTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").to("mock:result");
+                from("direct:start?exchangePattern=InOut").to("mock:result");
             }
         };
     }

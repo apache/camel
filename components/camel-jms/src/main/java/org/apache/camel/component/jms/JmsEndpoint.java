@@ -97,7 +97,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     }
 
     public JmsExchange createExchange(Message message) {
-        return new JmsExchange(getContext(), getDefaultPattern(), getBinding(), message);
+        return new JmsExchange(getContext(), getExchangePattern(), getBinding(), message);
     }
 
     // Properties
