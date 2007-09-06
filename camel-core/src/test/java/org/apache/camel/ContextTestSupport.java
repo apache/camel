@@ -16,19 +16,19 @@
  */
 package org.apache.camel;
 
+import javax.naming.Context;
+
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.jndi.JndiTest;
-import org.apache.camel.component.mock.MockEndpoint;
-
-import javax.naming.Context;
 
 /**
  * A useful base class which creates a {@link CamelContext} with some routes
  * along with a {@link CamelTemplate} for use in the test case
- * 
+ *
  * @version $Revision: 1.1 $
  */
 public abstract class ContextTestSupport extends TestSupport {
@@ -61,21 +61,20 @@ public abstract class ContextTestSupport extends TestSupport {
     @Override
     protected void setUp() throws Exception {
         context = createCamelContext();
+        assertValidContext(context);
+
         template = new CamelTemplate<Exchange>(context);
 
         if (useRouteBuilder) {
             RouteBuilder builder = createRouteBuilder();
             log.debug("Using created route builder: " + builder);
             context.addRoutes(builder);
-        } else {
+        }
+        else {
             log.debug("Using route builder from the created context: " + context);
         }
 
-        if (camelContextService != null) {
-            camelContextService.start();
-        } else {
-            context.start();
-        }
+        startCamelContext();
 
         log.debug("Routing Rules are: " + context.getRoutes());
     }
@@ -84,10 +83,32 @@ public abstract class ContextTestSupport extends TestSupport {
     protected void tearDown() throws Exception {
         log.debug("tearDown test: " + getName());
         template.stop();
+        stopCamelContext();
+    }
+
+    protected void stopCamelContext() throws Exception {
         if (camelContextService != null) {
             camelContextService.stop();
-        } else {
+        }
+        else {
             context.stop();
+        }
+    }
+
+    protected void startCamelContext() throws Exception {
+        if (camelContextService != null) {
+            camelContextService.start();
+        }
+        else {
+            if (context instanceof DefaultCamelContext) {
+                DefaultCamelContext defaultCamelContext = (DefaultCamelContext) context;
+                if (!defaultCamelContext.isStarted()) {
+                    defaultCamelContext.start();
+                }
+            }
+            else {
+                context.start();
+            }
         }
     }
 
@@ -145,12 +166,11 @@ public abstract class ContextTestSupport extends TestSupport {
         return resolveMandatoryEndpoint(uri, MockEndpoint.class);
     }
 
-
     /**
      * Sends a message to the given endpoint URI with the body value
-     * 
+     *
      * @param endpointUri the URI of the endpoint to send to
-     * @param body the body for the message
+     * @param body        the body for the message
      */
     protected void sendBody(String endpointUri, final Object body) {
         template.send(endpointUri, new Processor() {
@@ -164,9 +184,9 @@ public abstract class ContextTestSupport extends TestSupport {
 
     /**
      * Sends messages to the given endpoint for each of the specified bodies
-     * 
+     *
      * @param endpointUri the endpoint URI to send to
-     * @param bodies the bodies to send, one per message
+     * @param bodies      the bodies to send, one per message
      */
     protected void sendBodies(String endpointUri, Object... bodies) {
         for (Object body : bodies) {
@@ -221,5 +241,9 @@ public abstract class ContextTestSupport extends TestSupport {
      */
     protected void assertMockEndpointsSatisifed() throws InterruptedException {
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    protected void assertValidContext(CamelContext context) {
+        assertNotNull("No context found!", context);
     }
 }

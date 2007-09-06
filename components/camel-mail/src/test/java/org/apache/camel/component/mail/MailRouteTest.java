@@ -39,7 +39,7 @@ public class MailRouteTest extends ContextTestSupport {
     private MockEndpoint resultEndpoint;
 
     public void testSendAndReceiveMails() throws Exception {
-        resultEndpoint = (MockEndpoint)resolveMandatoryEndpoint("mock:result");
+        resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("hello world!");
 
         HashMap<String, Object> headers = new HashMap<String, Object>();

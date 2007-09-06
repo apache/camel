@@ -44,7 +44,7 @@ public class ProcessorAsEndpointTest extends SpringTestSupport {
 
     public void testSendingToNonExistentEndpoint() throws Exception {
         String uri = "unknownEndpoint";
-        Endpoint endpoint = camelContext.getEndpoint(uri);
+        Endpoint endpoint = context.getEndpoint(uri);
         assertNull("Should not have found an endpoint! Was: " + endpoint, endpoint);
         try {
             template.sendBody(uri, body);

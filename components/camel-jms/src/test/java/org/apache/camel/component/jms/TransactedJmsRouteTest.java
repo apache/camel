@@ -195,10 +195,10 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
         // System.out.println(route);
         // }
 
-        mockEndpointA = (MockEndpoint)resolveMandatoryEndpoint("mock:a");
-        mockEndpointB = (MockEndpoint)resolveMandatoryEndpoint("mock:b");
-        mockEndpointC = (MockEndpoint)resolveMandatoryEndpoint("mock:c");
-        mockEndpointD = (MockEndpoint)resolveMandatoryEndpoint("mock:d");
+        mockEndpointA = getMockEndpoint("mock:a");
+        mockEndpointB = getMockEndpoint("mock:b");
+        mockEndpointC = getMockEndpoint("mock:c");
+        mockEndpointD = getMockEndpoint("mock:d");
     }
 
     @Override

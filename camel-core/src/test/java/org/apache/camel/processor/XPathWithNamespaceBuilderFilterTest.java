@@ -55,7 +55,7 @@ public class XPathWithNamespaceBuilderFilterTest extends ContextTestSupport {
         super.setUp();
 
         startEndpoint = resolveMandatoryEndpoint("direct:start");
-        resultEndpoint = (MockEndpoint)resolveMandatoryEndpoint("mock:result");
+        resultEndpoint = getMockEndpoint("mock:result");
     }
 
     protected RouteBuilder createRouteBuilder() {

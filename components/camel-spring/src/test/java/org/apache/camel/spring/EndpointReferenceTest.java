@@ -48,7 +48,6 @@ public class EndpointReferenceTest extends SpringTestSupport {
         resultEndpoint.expectedBodiesReceived(body);
 
         // now lets send a message
-        CamelTemplate<Exchange> template = new CamelTemplate<Exchange>(camelContext);
         template.sendBody("direct:start", body);
 
         resultEndpoint.assertIsSatisfied();
