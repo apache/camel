@@ -19,6 +19,7 @@ package org.apache.camel.component.bean;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.Registry;
@@ -40,6 +41,22 @@ public class BeanComponent extends DefaultComponent {
     public BeanComponent() {
     }
 
+    /**
+     * A helper method to create a new endpoint from a bean with a generated URI
+     */
+    public ProcessorEndpoint createEndpoint(Object bean) {
+        String uri = "bean:generated:" + bean;
+        return createEndpoint(bean, uri);
+    }
+
+    /**
+     * A helper method to create a new endpoint from a bean with a given URI
+     */
+    public ProcessorEndpoint createEndpoint(Object bean, String uri) {
+        BeanProcessor processor = new BeanProcessor(bean, getCamelContext(), getParameterMappingStrategy());
+        return createEndpoint(uri, processor);
+    }
+
     public ParameterMappingStrategy getParameterMappingStrategy() {
         if (parameterMappingStrategy == null) {
             parameterMappingStrategy = createParameterMappingStrategy();
@@ -58,7 +75,7 @@ public class BeanComponent extends DefaultComponent {
         Object bean = getBean(remaining);
         BeanProcessor processor = new BeanProcessor(bean, getCamelContext(), getParameterMappingStrategy());
         setProperties(processor, parameters);
-        return new ProcessorEndpoint(uri, this, processor);
+        return createEndpoint(uri, processor);
     }
 
     public Object getBean(String remaining) throws NoBeanAvailableException {
@@ -70,6 +87,12 @@ public class BeanComponent extends DefaultComponent {
         return bean;
     }
 
+    protected ProcessorEndpoint createEndpoint(String uri, BeanProcessor processor) {
+        ProcessorEndpoint answer = new ProcessorEndpoint(uri, this, processor);
+        answer.setExchangePattern(ExchangePattern.InOut);
+        return answer;
+    }
+               
     protected ParameterMappingStrategy createParameterMappingStrategy() {
         return BeanProcessor.createParameterMappingStrategy(getCamelContext());
     }
