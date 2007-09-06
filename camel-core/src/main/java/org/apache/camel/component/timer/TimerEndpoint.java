@@ -39,8 +39,8 @@ public class TimerEndpoint extends DefaultEndpoint<Exchange> {
     private final TimerComponent component;
     private final String timerName;
     private Date time;
-    private long period = -1;
-    private long delay = -1;
+    private long period = 1000;
+    private long delay = 0;
     private boolean fixedRate;
     private boolean daemon = true;
     private Timer timer;
