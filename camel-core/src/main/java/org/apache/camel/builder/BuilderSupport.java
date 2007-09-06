@@ -123,6 +123,13 @@ public abstract class BuilderSupport {
     }
 
     /**
+     * Returns a constant expression value builder
+     */
+    public ValueBuilder constant(Object value) {
+        return Builder.constant(value);
+    }
+    
+    /**
      * Resolves the given URI to an endpoint
      * 
      * @throws NoSuchEndpointException if the endpoint URI could not be resolved
