@@ -48,4 +48,13 @@ public class TestDataSource implements DataSource{
         DriverManager.setLogWriter(out);
     }
 
+	public boolean isWrapperFor(Class<?> iface) throws SQLException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public <T> T unwrap(Class<T> iface) throws SQLException {
+		return null;
+	}
+
 }
