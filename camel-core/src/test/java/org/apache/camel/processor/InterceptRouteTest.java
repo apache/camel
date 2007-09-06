@@ -33,7 +33,7 @@ public class InterceptRouteTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:start", "<matched/>", "foo", "bar");
 
-        assertIsSatisfied(a, b);
+        assertMockEndpointsSatisifed();
     }
 
     public void testSendNotMatchingMessage() throws Exception {
@@ -41,14 +41,14 @@ public class InterceptRouteTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
 
-        assertIsSatisfied(a, b);
+        assertMockEndpointsSatisifed();
     }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        a = (MockEndpoint) resolveMandatoryEndpoint("mock:a");
-        b = (MockEndpoint) resolveMandatoryEndpoint("mock:b");
+        a = getMockEndpoint("mock:a");
+        b = getMockEndpoint("mock:b");
     }
 
     protected RouteBuilder createRouteBuilder() {

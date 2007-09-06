@@ -46,7 +46,7 @@ public class ActiveMQJmsHeaderRouteTest extends ContextTestSupport {
     protected String messageType = getClass().getName();
 
     public void testForwardingAMessageAcrossJMSKeepingCustomJMSHeaders() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
 
         resultEndpoint.expectedBodiesReceived(expectedBody);
         AssertionClause firstMessageExpectations = resultEndpoint.message(0);

@@ -57,7 +57,7 @@ public class JoinRoutesTest extends ContextTestSupport {
         super.setUp();
 
         startEndpoint = resolveMandatoryEndpoint("direct:a");
-        resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:result");
+        resultEndpoint = getMockEndpoint("mock:result");
     }
 
     protected RouteBuilder createRouteBuilder() {

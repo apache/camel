@@ -35,7 +35,7 @@ public class JournalRouteTest extends ContextTestSupport {
         byte[] payload = "Hello World".getBytes();
         
         
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:out", MockEndpoint.class);
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:out");
         resultEndpoint.expectedMessageCount(1);
         
         AssertionClause firstMessageExpectations = resultEndpoint.message(0);

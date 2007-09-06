@@ -39,7 +39,7 @@ public class PojoConsumerTest extends SpringTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
-        resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:result");
+        resultEndpoint = getMockEndpoint("mock:result");
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {

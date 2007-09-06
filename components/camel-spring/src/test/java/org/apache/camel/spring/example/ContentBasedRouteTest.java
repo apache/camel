@@ -54,8 +54,8 @@ public class ContentBasedRouteTest extends SpringTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
-        matchedEndpoint = (MockEndpoint) resolveMandatoryEndpoint(camelContext, "mock:matched");
-        notMatchedEndpoint = (MockEndpoint) resolveMandatoryEndpoint(camelContext, "mock:notMatched");
+        matchedEndpoint = getMockEndpoint("mock:matched");
+        notMatchedEndpoint = getMockEndpoint("mock:notMatched");
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {

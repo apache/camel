@@ -38,7 +38,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
     private ProcessorFactory deadLetterFactory;
     private Processor defaultDeadLetterEndpoint;
     private Expression defaultDeadLetterEndpointExpression;
-    private String defaultDeadLetterEndpointUri = "log:org.apache.camel.DeadLetterChannel:error";
+    private String defaultDeadLetterEndpointUri = "log:org.apache.camel.DeadLetterChannel?level=error";
     private Logger logger = DeadLetterChannel.createDefaultLogger();
 
     public DeadLetterChannelBuilder() {

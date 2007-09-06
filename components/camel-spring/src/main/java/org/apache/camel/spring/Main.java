@@ -81,9 +81,9 @@ public class Main extends ServiceSupport {
     }
 
     public static void main(String... args) {
-        Main main = new Main();
-        main.run(args);
+        new Main().run(args);
     }
+
 
     /**
      * Parses the command line arguments then runs the program
@@ -287,7 +287,8 @@ public class Main extends ServiceSupport {
     }
 
     protected AbstractApplicationContext createDefaultApplicationContext() {
-        return new ClassPathXmlApplicationContext(getApplicationContextUri());
+        String[] args = getApplicationContextUri().split(";");
+        return new ClassPathXmlApplicationContext(args);
     }
 
     protected void doStop() throws Exception {

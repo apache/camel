@@ -47,7 +47,7 @@ public class ActiveMQReplyToHeaderUsingConverterTest extends ContextTestSupport 
     protected String messageType = getClass().getName();
 
     public void testSendingAMessageFromCamelSetsCustomJmsHeaders() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
 
         resultEndpoint.expectedBodiesReceived(expectedBody);
         AssertionClause firstMessage = resultEndpoint.message(0);

@@ -21,6 +21,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.jndi.JndiTest;
+import org.apache.camel.component.mock.MockEndpoint;
 
 import javax.naming.Context;
 
@@ -102,6 +103,10 @@ public abstract class ContextTestSupport extends TestSupport {
         return JndiTest.createInitialContext();
     }
 
+    /**
+     * Factory method which derived classes can use to create a {@link RouteBuilder}
+     * to define the routes for testing
+     */
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
@@ -110,13 +115,36 @@ public abstract class ContextTestSupport extends TestSupport {
         };
     }
 
+    /**
+     * Resolves a mandatory endpoint for the given URI or an exception is thrown
+     *
+     * @param uri the Camel <a href="">URI</a> to use to create or resolve an endpoint
+     * @return the endpoint
+     */
     protected Endpoint resolveMandatoryEndpoint(String uri) {
         return resolveMandatoryEndpoint(context, uri);
     }
 
+    /**
+     * Resolves a mandatory endpoint for the given URI and expected type or an exception is thrown
+     *
+     * @param uri the Camel <a href="">URI</a> to use to create or resolve an endpoint
+     * @return the endpoint
+     */
     protected <T extends Endpoint> T resolveMandatoryEndpoint(String uri, Class<T> endpointType) {
         return resolveMandatoryEndpoint(context, uri, endpointType);
     }
+
+    /**
+     * Resolves the mandatory Mock endpoint using a URI of the form <code>mock:someName</code>
+     *
+     * @param uri the URI which typically starts with "mock:" and has some name
+     * @return the mandatory mock endpoint or an exception is thrown if it could not be resolved
+     */
+    protected MockEndpoint getMockEndpoint(String uri) {
+        return resolveMandatoryEndpoint(uri, MockEndpoint.class);
+    }
+
 
     /**
      * Sends a message to the given endpoint URI with the body value
@@ -186,5 +214,12 @@ public abstract class ContextTestSupport extends TestSupport {
         Language language = context.resolveLanguage(languageName);
         assertNotNull("No language found for name: " + languageName, language);
         return language;
+    }
+
+    /**
+     * Asserts that all the expectations of the Mock endpoints are valid
+     */
+    protected void assertMockEndpointsSatisifed() throws InterruptedException {
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

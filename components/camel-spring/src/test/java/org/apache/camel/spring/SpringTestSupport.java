@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -40,10 +41,10 @@ public abstract class SpringTestSupport extends TestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
-
         applicationContext = createApplicationContext();
         assertNotNull("Should have created a valid spring context", applicationContext);
+
+        super.setUp();
 
         camelContext = createCamelContext();
         assertValidContext(camelContext);
@@ -85,6 +86,16 @@ public abstract class SpringTestSupport extends TestSupport {
         return resolveMandatoryEndpoint(camelContext, uri, endpointType);
     }
 
+    /**
+     * Resolves the mandatory Mock endpoint using a URI of the form <code>mock:someName</code>
+     *
+     * @param uri the URI which typically starts with "mock:" and has some name
+     * @return the mandatory mock endpoint or an exception is thrown if it could not be resolved
+     */
+    protected MockEndpoint getMockEndpoint(String uri) {
+        return resolveMandatoryEndpoint(uri, MockEndpoint.class);
+    }
+        
     protected void assertValidContext(SpringCamelContext context) {
         assertNotNull("No context found!", context);
 

@@ -40,7 +40,7 @@ public class MimeMessageConsumeTest extends ContextTestSupport {
     protected String body = "hello world!";
 
     public void testSendAndReceiveMails() throws Exception {
-        resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:result");
+        resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
 
         Properties properties = new Properties();

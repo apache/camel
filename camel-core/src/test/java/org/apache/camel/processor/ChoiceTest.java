@@ -37,7 +37,7 @@ public class ChoiceTest extends ContextTestSupport {
 
         sendMessage("bar", body);
 
-        assertIsSatisfied(x, y, z);
+        assertMockEndpointsSatisifed();
     }
 
     public void testSendToSecondWhen() throws Exception {
@@ -47,7 +47,7 @@ public class ChoiceTest extends ContextTestSupport {
 
         sendMessage("cheese", body);
 
-        assertIsSatisfied(x, y, z);
+        assertMockEndpointsSatisifed();
     }
 
     public void testSendToOtherwiseClause() throws Exception {
@@ -57,7 +57,7 @@ public class ChoiceTest extends ContextTestSupport {
 
         sendMessage("somethingUndefined", body);
 
-        assertIsSatisfied(x, y, z);
+        assertMockEndpointsSatisifed();
     }
 
     protected void sendMessage(final Object headerValue, final Object body) throws Exception {
@@ -68,9 +68,9 @@ public class ChoiceTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
-        x = (MockEndpoint) resolveMandatoryEndpoint("mock:x");
-        y = (MockEndpoint) resolveMandatoryEndpoint("mock:y");
-        z = (MockEndpoint) resolveMandatoryEndpoint("mock:z");
+        x = getMockEndpoint("mock:x");
+        y = getMockEndpoint("mock:y");
+        z = getMockEndpoint("mock:z");
     }
 
     protected RouteBuilder createRouteBuilder() {
