@@ -23,7 +23,8 @@ import java.util.Set;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ResolverUtil;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -32,15 +33,28 @@ import org.springframework.context.ApplicationContext;
  * @version $Revision$
  */
 public class RouteBuilderFinder {
+    private static final transient Log LOG = LogFactory.getLog(RouteBuilderFinder.class);
     private final SpringCamelContext camelContext;
     private final String[] packages;
     private ApplicationContext applicationContext;
     private ResolverUtil resolver = new ResolverUtil();
 
-    public RouteBuilderFinder(SpringCamelContext camelContext, String[] packages) {
+    public RouteBuilderFinder(SpringCamelContext camelContext, String[] packages, ClassLoader classLoader) {
         this.camelContext = camelContext;
         this.applicationContext = camelContext.getApplicationContext();
         this.packages = packages;
+
+        // lets add all the available class loaders just in case of wierdness
+        // we could make this more strict once we've worked out all the gremlins
+        // in servicemix-camel
+        Set set = resolver.getClassLoaders();
+        set.clear();
+        set.add(classLoader);
+/*
+        set.add(classLoader);
+        set.add(applicationContext.getClassLoader());
+        set.add(getClass().getClassLoader());
+*/
     }
 
     public String[] getPackages() {
@@ -57,7 +71,6 @@ public class RouteBuilderFinder {
      */
     public void appendBuilders(List<RouteBuilder> list) throws IllegalAccessException, InstantiationException {
         resolver.findImplementations(RouteBuilder.class, packages);
-        //resolver.findAnnotated(Endpoint.class, packages);
         Set<Class> classes = resolver.getClasses();
         for (Class aClass : classes) {
             if (shouldIgnoreBean(aClass)) {

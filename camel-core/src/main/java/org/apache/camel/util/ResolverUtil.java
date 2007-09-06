@@ -16,20 +16,21 @@
  */
 package org.apache.camel.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * <p>
@@ -45,7 +46,7 @@ import org.apache.commons.logging.LogFactory;
  * the class path that contain classes within certain packages, and then to load
  * those classes and check them. By default the ClassLoader returned by
  * {@code Thread.currentThread().getContextClassLoader()} is used, but this can
- * be overridden by calling {@link #setClassLoader(ClassLoader)} prior to
+ * be overridden by calling {@link #setClassLoaders(Set)} prior to
  * invoking any of the {@code find()} methods.
  * </p>
  * 
@@ -152,7 +153,7 @@ public class ResolverUtil<T> {
      * ClassLoader returned by Thread.currentThread().getContextClassLoader()
      * will be used.
      */
-    private ClassLoader classloader;
+    private Set<ClassLoader> classLoaders;
 
     /**
      * Provides access to the classes discovered so far. If no calls have been
@@ -164,25 +165,30 @@ public class ResolverUtil<T> {
         return matches;
     }
 
+
     /**
-     * Returns the classloader that will be used for scanning for classes. If no
+     * Returns the classloaders that will be used for scanning for classes. If no
      * explicit ClassLoader has been set by the calling, the context class
      * loader will be used.
-     * 
-     * @return the ClassLoader that will be used to scan for classes
+     *
+     * @return the ClassLoader instances that will be used to scan for classes
      */
-    public ClassLoader getClassLoader() {
-        return classloader == null ? Thread.currentThread().getContextClassLoader() : classloader;
+    public Set<ClassLoader> getClassLoaders() {
+        if (classLoaders == null) {
+            classLoaders = new HashSet<ClassLoader>();
+            classLoaders.add(Thread.currentThread().getContextClassLoader());
+        }
+        return classLoaders;
     }
 
     /**
-     * Sets an explicit ClassLoader that should be used when scanning for
+     * Sets the ClassLoader instances that should be used when scanning for
      * classes. If none is set then the context classloader will be used.
-     * 
-     * @param classloader a ClassLoader to use when scanning for classes
+     *
+     * @param classLoaders a ClassLoader to use when scanning for classes
      */
-    public void setClassLoader(ClassLoader classloader) {
-        this.classloader = classloader;
+    public void setClassLoaders(Set<ClassLoader> classLoaders) {
+        this.classLoaders = classLoaders;
     }
 
     /**
@@ -202,10 +208,14 @@ public class ResolverUtil<T> {
             return;
         }
 
+        LOG.debug("Searching for implementations of " + parent.getName() + " in packages: " + Arrays.asList(packageNames));
+
         Test test = new IsA(parent);
         for (String pkg : packageNames) {
             find(test, pkg);
         }
+
+        LOG.debug("Found: " + getClasses());
     }
 
     /**
@@ -241,7 +251,16 @@ public class ResolverUtil<T> {
      */
     public void find(Test test, String packageName) {
         packageName = packageName.replace('.', '/');
-        ClassLoader loader = getClassLoader();
+
+        Set<ClassLoader> set = getClassLoaders();
+        for (ClassLoader classLoader : set) {
+            LOG.trace("Searching: " + classLoader);
+
+            find(test, packageName, classLoader);
+        }
+    }
+
+    protected void find(Test test, String packageName, ClassLoader loader) {
         Enumeration<URL> urls;
 
         try {
@@ -358,12 +377,25 @@ public class ResolverUtil<T> {
     protected void addIfMatching(Test test, String fqn) {
         try {
             String externalName = fqn.substring(0, fqn.indexOf('.')).replace('/', '.');
-            ClassLoader loader = getClassLoader();
-            LOG.trace("Checking to see if class " + externalName + " matches criteria [" + test + "]");
+            Set<ClassLoader> set = getClassLoaders();
+            boolean found = false;
+            for (ClassLoader classLoader : set) {
+                LOG.trace("Checking to see if class " + externalName + " matches criteria [" + test + "]");
 
-            Class type = loader.loadClass(externalName);
-            if (test.matches(type)) {
-                matches.add((Class<T>)type);
+                try {
+                    Class type = classLoader.loadClass(externalName);
+                    if (test.matches(type)) {
+                        matches.add((Class<T>)type);
+                    }
+                    found = true;
+                    break;
+                }
+                catch (ClassNotFoundException e) {
+                    LOG.debug("Could not find class '" + fqn + "' in class loader: " + classLoader + ". Reason: " + e, e);
+                }
+            }
+            if (!found) {
+                LOG.warn("Could not find class '" + fqn + "' in any class loaders: " + set);
             }
         } catch (Throwable t) {
             LOG.warn("Could not examine class '" + fqn + "' due to a " + t.getClass().getName()

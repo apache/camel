@@ -299,13 +299,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     public void addRoutes(RouteBuilder builder) throws Exception {
         // lets now add the routes from the builder
         builder.setContext(this);
+        LOG.debug("Adding routes from: " + builder);
         addRoutes(builder.getRouteList());
     }
 
     public void addRouteDefinitions(Collection<RouteType> routeDefinitions) throws Exception {
         this.routeDefinitions.addAll(routeDefinitions);
         if (shouldStartRoutes()) {
-        startRouteDefinitions(routeDefinitions);
+            startRouteDefinitions(routeDefinitions);
         }
 
     }
