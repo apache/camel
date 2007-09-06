@@ -20,18 +20,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.Component;
-import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.ExchangePattern;
+import org.apache.camel.*;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
@@ -93,6 +87,24 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         }
     }
 
+
+    /**
+     * Asserts that all the expectations on any {@link MockEndpoint} instances registered
+     * in the given context are valid
+     *
+     * @param context the camel context used to find all the available endpoints to be asserted
+     */
+    public static void assertIsSatisfied(CamelContext context) throws InterruptedException {
+        Collection<Endpoint> endpoints = context.getSingletonEndpoints();
+        for (Endpoint endpoint : endpoints) {
+            if (endpoint instanceof MockEndpoint) {
+                MockEndpoint mockEndpoint = (MockEndpoint) endpoint;
+                mockEndpoint.assertIsSatisfied();
+            }
+        }
+    }
+
+
     public static void expectsMessageCount(int count, MockEndpoint... endpoints) throws InterruptedException {
         for (MockEndpoint endpoint : endpoints) {
             endpoint.expectsMessageCount(count);
@@ -141,6 +153,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
      *                should wait for the test to be true
      */
     public void assertIsSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {
+        LOG.info("Asserting: " + this + " is satisfied");
         if (expectedCount >= 0) {
             if (expectedCount != getReceivedCounter()) {
                 if (expectedCount == 0) {
@@ -539,5 +552,4 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     public boolean isSingleton() {
         return true;
     }
-
 }

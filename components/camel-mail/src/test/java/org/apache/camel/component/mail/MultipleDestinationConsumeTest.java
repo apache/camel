@@ -42,7 +42,7 @@ public class MultipleDestinationConsumeTest extends ContextTestSupport {
     protected Session mailSession;
 
     public void testSendAndReceiveMails() throws Exception {
-        resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:result");
+        resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
 
         MimeMessage message = new MimeMessage(mailSession);

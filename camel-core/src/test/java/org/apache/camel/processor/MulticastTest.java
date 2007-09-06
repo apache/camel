@@ -48,16 +48,16 @@ public class MulticastTest extends ContextTestSupport {
             }
         });
 
-        assertIsSatisfied(x, y, z);
+        assertMockEndpointsSatisifed();
     }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
 
-        x = (MockEndpoint) resolveMandatoryEndpoint("mock:x");
-        y = (MockEndpoint) resolveMandatoryEndpoint("mock:y");
-        z = (MockEndpoint) resolveMandatoryEndpoint("mock:z");
+        x = getMockEndpoint("mock:x");
+        y = getMockEndpoint("mock:y");
+        z = getMockEndpoint("mock:z");
     }
 
     protected RouteBuilder createRouteBuilder() {

@@ -44,7 +44,7 @@ public class EndpointReferenceTest extends SpringTestSupport {
 
         log.debug("Found dummy bean: " + dummyBean);
 
-        MockEndpoint resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint(camelContext, "mock:end");
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:end");
         resultEndpoint.expectedBodiesReceived(body);
 
         // now lets send a message

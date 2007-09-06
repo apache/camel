@@ -53,8 +53,8 @@ public class PojoSenderTest extends SpringTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
-        matchedEndpoint = (MockEndpoint) resolveMandatoryEndpoint(camelContext, "mock:a");
-        notMatchedEndpoint = (MockEndpoint) resolveMandatoryEndpoint(camelContext, "mock:b");
+        matchedEndpoint = getMockEndpoint("mock:a");
+        notMatchedEndpoint = getMockEndpoint("mock:b");
 
         mySender = getMandatoryBean(MySender.class, "mySender");
     }

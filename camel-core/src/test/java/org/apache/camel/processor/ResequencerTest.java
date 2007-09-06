@@ -47,7 +47,7 @@ public class ResequencerTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
-        resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:result");
+        resultEndpoint = getMockEndpoint("mock:result");
     }
 
     protected RouteBuilder createRouteBuilder() {

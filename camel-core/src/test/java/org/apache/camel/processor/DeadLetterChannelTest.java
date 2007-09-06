@@ -45,7 +45,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
 
         sendBody("direct:start", body);
 
-        assertIsSatisfied(deadEndpoint, successEndpoint);
+        assertMockEndpointsSatisifed();
     }
 
     public void testLotsOfAttemptsFail() throws Exception {
@@ -59,7 +59,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
 
         sendBody("direct:start", body);
 
-        assertIsSatisfied(deadEndpoint, successEndpoint);
+        assertMockEndpointsSatisifed();
     }
 
     @Override

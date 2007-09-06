@@ -31,7 +31,7 @@ public class QuartzRouteTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
 
     public void testSendAndReceiveMails() throws Exception {
-        resultEndpoint = (MockEndpoint) resolveMandatoryEndpoint("mock:result");
+        resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(2);
         resultEndpoint.message(0).header("triggerName").isEqualTo("myTimerName");
         resultEndpoint.message(0).header("triggerGroup").isEqualTo("myGroup");

@@ -30,7 +30,8 @@ import java.util.List;
 
 /**
  * Runs a CamelContext using any Spring XML configuration files found in
- * <code>META-INF/spring/*.xml</code> and starting up the context; then generating
+ * <code>META-INF/spring/*.xml</code> and <code>camel-*.xml</code>
+ * and starting up the context; then generating
  * the DOT file before closing the context down.
  *
  * @goal embedded
