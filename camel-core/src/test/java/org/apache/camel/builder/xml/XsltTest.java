@@ -30,7 +30,7 @@ import static org.apache.camel.builder.xml.XsltBuilder.xslt;
 public class XsltTest extends ContextTestSupport {
 
     public void testXslt() throws Exception {
-        MockEndpoint resultEndpoint = (MockEndpoint)resolveMandatoryEndpoint("mock:result");
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint
             .expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
 

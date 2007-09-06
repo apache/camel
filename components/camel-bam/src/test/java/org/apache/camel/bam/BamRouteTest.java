@@ -48,9 +48,7 @@ public class BamRouteTest extends SpringTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
-        camelContext.addRoutes(createRouteBuilder());
-
-        overdueEndpoint = resolveMandatoryEndpoint("mock:overdue", MockEndpoint.class);
+        overdueEndpoint = getMockEndpoint("mock:overdue");
         overdueEndpoint.setDefaulResultWaitMillis(8000);
     }
 

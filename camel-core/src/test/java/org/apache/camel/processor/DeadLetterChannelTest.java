@@ -66,8 +66,8 @@ public class DeadLetterChannelTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
-        deadEndpoint = (MockEndpoint)resolveMandatoryEndpoint("mock:failed");
-        successEndpoint = (MockEndpoint)resolveMandatoryEndpoint("mock:success");
+        deadEndpoint = getMockEndpoint("mock:failed");
+        successEndpoint = getMockEndpoint("mock:success");
     }
 
     protected RouteBuilder createRouteBuilder() {

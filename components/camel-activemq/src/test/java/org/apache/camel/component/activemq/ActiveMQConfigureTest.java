@@ -19,7 +19,6 @@ package org.apache.camel.component.activemq;
 import org.apache.activemq.pool.PooledConnectionFactory;
 import org.apache.activemq.spring.ActiveMQConnectionFactory;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Endpoint;
 import org.apache.camel.component.jms.JmsConsumer;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsProducer;
@@ -33,7 +32,7 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
 public class ActiveMQConfigureTest extends ContextTestSupport {
     
     public void testJmsTemplateUsesPoolingConnectionFactory() throws Exception {
-        JmsEndpoint endpoint = resolveMandatoryEndpoint("activemq:test.foo");
+        JmsEndpoint endpoint = getJmsEndpoint("activemq:test.foo");
         JmsProducer producer = endpoint.createProducer();
 
         JmsTemplate template = assertIsInstanceOf(JmsTemplate.class, producer.getTemplate());
@@ -42,7 +41,7 @@ public class ActiveMQConfigureTest extends ContextTestSupport {
     }
 
     public void testListenerContainerUsesSpringConnectionFactory() throws Exception {
-        JmsEndpoint endpoint = resolveMandatoryEndpoint("activemq:topic:test.foo");
+        JmsEndpoint endpoint = getJmsEndpoint("activemq:topic:test.foo");
         JmsConsumer consumer = endpoint.createConsumer(new Logger());
 
         AbstractMessageListenerContainer listenerContainer = consumer.getListenerContainer();
@@ -51,9 +50,7 @@ public class ActiveMQConfigureTest extends ContextTestSupport {
 
     }
 
-    @Override
-    protected JmsEndpoint resolveMandatoryEndpoint(String uri) {
-        Endpoint endpoint = super.resolveMandatoryEndpoint(uri);
-        return assertIsInstanceOf(JmsEndpoint.class, endpoint);
+    protected JmsEndpoint getJmsEndpoint(String uri) {
+        return resolveMandatoryEndpoint(uri, JmsEndpoint.class);
     }
 }

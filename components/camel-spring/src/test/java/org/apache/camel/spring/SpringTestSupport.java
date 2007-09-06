@@ -23,6 +23,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
@@ -32,10 +35,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * @version $Revision: 1.1 $
  */
-public abstract class SpringTestSupport extends TestSupport {
+public abstract class SpringTestSupport extends ContextTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
-    protected SpringCamelContext camelContext;
-    protected CamelTemplate<Exchange> template;
 
     protected abstract ClassPathXmlApplicationContext createApplicationContext();
 
@@ -45,14 +46,6 @@ public abstract class SpringTestSupport extends TestSupport {
         assertNotNull("Should have created a valid spring context", applicationContext);
 
         super.setUp();
-
-        camelContext = createCamelContext();
-        assertValidContext(camelContext);
-        if (!camelContext.isStarted()) {
-            camelContext.start();
-        }
-
-        template = new CamelTemplate<Exchange>(camelContext);
     }
 
     @Override
@@ -63,6 +56,7 @@ public abstract class SpringTestSupport extends TestSupport {
         }
     }
 
+        
     /**
      * Looks up the mandatory spring bean of the given name and type, failing if
      * it is not present or the correct type
@@ -78,26 +72,9 @@ public abstract class SpringTestSupport extends TestSupport {
         }
     }
 
-    protected Endpoint resolveMandatoryEndpoint(String uri) {
-        return resolveMandatoryEndpoint(camelContext, uri);
-    }
-
-    protected <T extends Endpoint> T resolveMandatoryEndpoint(String uri, Class<T> endpointType) {
-        return resolveMandatoryEndpoint(camelContext, uri, endpointType);
-    }
-
-    /**
-     * Resolves the mandatory Mock endpoint using a URI of the form <code>mock:someName</code>
-     *
-     * @param uri the URI which typically starts with "mock:" and has some name
-     * @return the mandatory mock endpoint or an exception is thrown if it could not be resolved
-     */
-    protected MockEndpoint getMockEndpoint(String uri) {
-        return resolveMandatoryEndpoint(uri, MockEndpoint.class);
-    }
-        
-    protected void assertValidContext(SpringCamelContext context) {
-        assertNotNull("No context found!", context);
+    @Override
+    protected void assertValidContext(CamelContext context) {
+        super.assertValidContext(context);
 
         List<Route> routes = context.getRoutes();
         int routeCount = getExpectedRouteCount();
@@ -112,7 +89,8 @@ public abstract class SpringTestSupport extends TestSupport {
         return 1;
     }
 
-    protected SpringCamelContext createCamelContext() throws Exception {
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext);
     }
 }

@@ -27,22 +27,20 @@ import org.apache.camel.Endpoint;
 public class JournalConfigureTest extends ContextTestSupport {
 
     public void testDefaltConfig() throws Exception {
-        JournalEndpoint endpoint = resolveMandatoryEndpoint("activemq.journal:target/test");
+        JournalEndpoint endpoint = getJournalEndpoint("activemq.journal:target/test");
         assertEquals("directory", new File("target", "test"), endpoint.getDirectory());
         assertEquals("syncConsume", false, endpoint.isSyncConsume());
         assertEquals("syncProduce", true, endpoint.isSyncProduce());
     }
 
     public void testConfigViaOptions() throws Exception {
-        JournalEndpoint endpoint = resolveMandatoryEndpoint("activemq.journal:target/test?syncConsume=true&syncProduce=false");
+        JournalEndpoint endpoint = getJournalEndpoint("activemq.journal:target/test?syncConsume=true&syncProduce=false");
         assertEquals("directory", new File("target", "test"), endpoint.getDirectory());
         assertEquals("syncConsume", true, endpoint.isSyncConsume());
         assertEquals("syncProduce", false, endpoint.isSyncProduce());
     }
 
-    @Override
-    protected JournalEndpoint resolveMandatoryEndpoint(String uri) {
-        Endpoint endpoint = super.resolveMandatoryEndpoint(uri);
-        return assertIsInstanceOf(JournalEndpoint.class, endpoint);
+    protected JournalEndpoint getJournalEndpoint(String uri) {
+        return resolveMandatoryEndpoint(uri, JournalEndpoint.class);
     }
 }
