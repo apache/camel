@@ -72,6 +72,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private List<RouteBuilder> additionalBuilders = new ArrayList<RouteBuilder>();
     @XmlTransient
     private ApplicationContext applicationContext;
+    @XmlTransient
+    private ClassLoader contextClassLoaderOnStart;
+
+    public CamelContextFactoryBean() {
+
+        // Lets keep track of the class loader for when we actually do start things up
+        contextClassLoaderOnStart = Thread.currentThread().getContextClassLoader();
+    }
 
     public Object getObject() throws Exception {
         return getContext();
@@ -86,7 +94,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     public void afterPropertiesSet() throws Exception {
-
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
 
@@ -215,7 +222,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      */
     protected void findRouteBuiders() throws Exception, InstantiationException {
         if (packages != null && packages.length > 0) {
-            RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), packages);
+            RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), packages, contextClassLoaderOnStart);
             finder.appendBuilders(additionalBuilders);
         }
     }
