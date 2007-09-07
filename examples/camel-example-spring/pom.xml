@@ -37,10 +37,15 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
     </dependency>
-
+    
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-activemq</artifactId>
+      <artifactId>camel-jms</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>apache-activemq</artifactId>
     </dependency>
 
     <!-- for testing -->

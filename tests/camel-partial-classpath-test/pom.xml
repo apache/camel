@@ -39,20 +39,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-activemq</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>activemq-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>activemq-all</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
       <exclusions>
         <exclusion>
