@@ -48,7 +48,7 @@ public class Main extends ServiceSupport {
     private AtomicBoolean completed = new AtomicBoolean(false);
     private long duration = -1;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
-    private String dotFileName;
+    private String dotOutputDir;
 
     public Main() {
         addOption(new Option("h", "help", "Displays the help screen") {
@@ -63,9 +63,9 @@ public class Main extends ServiceSupport {
                 setApplicationContextUri(parameter);
             }
         });
-        addOption(new ParameterOption("f", "file", "Sets the DOT file name which is generated to show a visual representation of the routes", "dot") {
+        addOption(new ParameterOption("o", "outdir", "Sets the DOT output directory where the visual representations of the routes are generated", "dot") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                setDotFileName(parameter);
+                setDotOutputDir(parameter);
             }
         });
         addOption(new ParameterOption("d", "duration", "Sets the time duration that the applicaiton will run for, by default in milliseconds. You can use '10s' for 10 seconds etc", "duration") {
@@ -264,16 +264,17 @@ public class Main extends ServiceSupport {
         this.timeUnit = timeUnit;
     }
 
-    public String getDotFileName() {
-        return dotFileName;
+    public String getDotOutputDir() {
+        return dotOutputDir;
     }
 
     /**
-     * Sets the file name of the DOT file generated to show the visual representation of the routes.
+     * Sets the output directory of the generated DOT Files
+     * to show the visual representation of the routes.
      * A null value disables the dot file generation
      */
-    public void setDotFileName(String dotFileName) {
-        this.dotFileName = dotFileName;
+    public void setDotOutputDir(String dotOutputDir) {
+        this.dotOutputDir = dotOutputDir;
     }
 
     // Implementation methods
@@ -319,10 +320,10 @@ public class Main extends ServiceSupport {
     }
 
     protected void postProcessContext() throws Exception {
-        if (ObjectHelper.isNotNullAndNonEmpty(dotFileName)) {
-            RouteDotGenerator generator = new RouteDotGenerator(dotFileName);
+        if (ObjectHelper.isNotNullAndNonEmpty(dotOutputDir)) {
+            RouteDotGenerator generator = new RouteDotGenerator(dotOutputDir);
             CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext);
-            LOG.info("Generating DOT file for routes: " + dotFileName + " for: " + camelContext);
+            LOG.info("Generating DOT file for routes: " + dotOutputDir + " for: " + camelContext);
             generator.drawRoutes(camelContext);
         }
     }

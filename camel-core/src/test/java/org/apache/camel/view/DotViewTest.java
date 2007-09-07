@@ -18,10 +18,8 @@ package org.apache.camel.view;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.xml.XPathBuilder;
 
 import java.io.File;
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 /**
  * @version $Revision: 1.1 $
@@ -32,17 +30,40 @@ public class DotViewTest extends ContextTestSupport {
     public void testDotFile() throws Exception {
         new File("target").mkdirs();
         
-        generator.setFile("target/Example.dot");
+        generator.setDir("target/site/cameldoc");
         generator.drawRoutes(context);
     }
 
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        context.addRoutes(new MulticastRoute());
+        context.addRoutes(new PipelineRoute());
+    }
+
+    static class MulticastRoute extends RouteBuilder {
+        public void configure() throws Exception {
+            from("seda:multicast.in").
+                    multicast().to("seda:multicast.out1", "seda:multicast.out2", "seda:multicast.out3");
+        }
+    }
+    static class PipelineRoute extends RouteBuilder {
+        public void configure() throws Exception {
+            from("seda:pipeline.in").
+                    to("seda:pipeline.out1", "seda:pipeline.out2", "seda:pipeline.out3");
+        }
+    }
+
+/*
                 from("file:foo/xyz?noop=true").
                     choice().
                       when(xpath("/person/city = 'London'")).to("file:target/messages/uk").
                       otherwise().to("file:target/messages/others");
+*/
+
+/*
+
 
                 from("file:foo/bar?noop=true").
                         filter(header("foo").isEqualTo("bar")).
@@ -54,8 +75,6 @@ public class DotViewTest extends ContextTestSupport {
                         splitter(XPathBuilder.xpath("/invoice/lineItems")).
                         throttler(3).
                         to("mock:result");
-            }
-        };
-    }
+*/
 
 }
