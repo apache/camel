@@ -21,8 +21,9 @@ import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.JmsComponent;
+
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
-import org.apache.camel.component.activemq.ActiveMQComponent;
 import org.apache.camel.util.jndi.JndiContext;
 
 import javax.jms.ConnectionFactory;
@@ -60,7 +61,8 @@ public class JmsIntegrationTest extends ContextTestSupport {
         answer.bind("myBean", myBean);
 
         // add ActiveMQ with embedded broker
-        answer.bind("jms", ActiveMQComponent.activeMQComponent("vm://localhost?broker.persistent=false"));
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
+        answer.bind("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
         return answer;
     }
 

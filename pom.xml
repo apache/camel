@@ -185,11 +185,6 @@
       <!-- Camel jars -->
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-activemq</artifactId>
-        <version>${camel-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-atom</artifactId>
         <version>${camel-version}</version>
       </dependency>
@@ -419,22 +414,11 @@
         <version>1.2.12</version>
       </dependency>
 
-
       <!-- optional dependencies for JMS -->
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>apache-activemq</artifactId>
-        <version>5.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-core</artifactId>
-        <version>5.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-web</artifactId>
-        <version>5.0-SNAPSHOT</version>
+        <version>4.1.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
