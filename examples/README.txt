@@ -1,7 +1,12 @@
 Welcome to the Apache Camel Examples!
 =====================================
 
-For the latest & greatest documentation on how to use the examples see
+This directory contains the various examples for working with Apache Camel.
+
+They are described in detail here
+  http://activemq.apache.org/camel/examples.html
+
+For details of how to rn these examples see
   http://activemq.apache.org/camel/running-examples.html
 
 Before you start we recommend you install a recent distribution of Maven which we use to run our examples
