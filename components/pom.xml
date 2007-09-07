@@ -58,6 +58,7 @@
     <module>camel-saxon</module>
     <module>camel-script</module>
     <module>camel-spring</module>
+    <module>camel-xmlbeans</module>
     <module>camel-xmpp</module>
   </modules>
 

@@ -94,6 +94,18 @@ public class ExchangeHelper {
      * Returns the mandatory inbound message body of the correct type or throws
      * an exception if it is not present
      */
+    public static Object getMandatoryInBody(Exchange exchange) throws InvalidPayloadException {
+        Object answer = exchange.getIn().getBody();
+        if (answer == null) {
+            throw new InvalidPayloadException(exchange, Object.class);
+        }
+        return answer;
+    }
+
+    /**
+     * Returns the mandatory inbound message body of the correct type or throws
+     * an exception if it is not present
+     */
     public static <T> T getMandatoryInBody(Exchange exchange, Class<T> type) throws InvalidPayloadException {
         T answer = exchange.getIn().getBody(type);
         if (answer == null) {
