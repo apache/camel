@@ -93,6 +93,7 @@
         <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-ftp</include>
         <include>org.apache.camel:camel-http</include>
+        <include>org.apache.camel:camel-ibatis</include>
         <include>org.apache.camel:camel-irc</include>
         <include>org.apache.camel:camel-jaxb</include>
         <include>org.apache.camel:camel-jdbc</include>
@@ -111,6 +112,7 @@
         <include>org.apache.camel:camel-saxon</include>
         <include>org.apache.camel:camel-script</include>
         <include>org.apache.camel:camel-spring</include>
+        <include>org.apache.camel:camel-xmlbeans</include>
         <include>org.apache.camel:camel-xmpp</include>
         <include>commons-logging:commons-logging</include>
       </includes>

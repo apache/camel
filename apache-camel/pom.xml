@@ -59,6 +59,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-ibatis</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-irc</artifactId>
     </dependency>
     <dependency>
@@ -135,6 +139,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-xmlbeans</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-xmpp</artifactId>
     </dependency>
 
@@ -202,9 +210,9 @@
             </goals>
             <configuration>
               <includes>camel-bam,camel-core,camel-cxf,camel-ftp,camel-juel,
-                camel-http,camel-irc,camel-jaxb,camel-jdbc,camel-jing,camel-jms,camel-josql,
+                camel-http,camel-ibatis,camel-irc,camel-jaxb,camel-jdbc,camel-jing,camel-jms,camel-josql,
                 camel-jpa,camel-mail,camel-mina,camel-msv,camel-ognl,camel-quartz,camel-rmi,
-                camel-saxon,camel-script,camel-spring,camel-xmpp,commons-logging</includes>
+                camel-saxon,camel-script,camel-spring,camel-xmlbeans,camel-xmpp,commons-logging</includes>
             </configuration>
           </execution>
         </executions>
