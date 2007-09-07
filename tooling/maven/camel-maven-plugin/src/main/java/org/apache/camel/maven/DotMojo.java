@@ -59,7 +59,7 @@ public class DotMojo extends AbstractMavenReport {
      * Subdirectory for report.
      */
     protected static final String SUBDIRECTORY = "cameldoc";
-    private StringWriter htmlBuffer = new StringWriter();
+    private String indexHtmlContent;
     /**
      * Reference to Maven 2 Project.
      *
@@ -129,13 +129,6 @@ public class DotMojo extends AbstractMavenReport {
      */
     protected String duration;
     /**
-     * The DOT File name used to generate the DOT diagram of the route definitions
-     *
-     * @parameter expression="${project.build.directory}/site/cameldoc/routes.dot"
-     * @readonly
-     */
-    protected String dotFile;
-    /**
      * Whether we should boot up camel with the META-INF/services/*.xml to generate the DOT file
      *
      * @parameter expression="true"
@@ -172,7 +165,7 @@ public class DotMojo extends AbstractMavenReport {
     public void execute() throws MojoExecutionException {
         this.execute(this.buildDirectory, Locale.getDefault());
         try {
-            writeIndexHtmlFile();
+            writeIndexHtmlFile("index.html", indexHtmlContent);
         }
         catch (IOException e) {
             throw new MojoExecutionException("Failed: " + e, e);
@@ -188,10 +181,10 @@ public class DotMojo extends AbstractMavenReport {
 
             Sink kitchenSink = getSink();
             if (kitchenSink != null) {
-                kitchenSink.rawText(htmlBuffer.toString());
+                kitchenSink.rawText(indexHtmlContent);
             }
             else {
-                writeIndexHtmlFile();
+                writeIndexHtmlFile("index.html", indexHtmlContent);
             }
         }
         catch (Exception e) {
@@ -229,11 +222,12 @@ public class DotMojo extends AbstractMavenReport {
             }
         }
         try {
-            PrintWriter out = new PrintWriter(htmlBuffer);
-            printHtmlHeader(out);
-
             for (int i = 0; i < files.size(); i++) {
                 File file = (File) ((List) files).get(i);
+
+                StringWriter buffer = new StringWriter();
+                PrintWriter out = new PrintWriter(buffer);
+                printHtmlHeader(out);
                 printHtmlFileHeader(out, file);
                 for (int j = 0; j < graphvizOutputTypes.length; j++) {
                     String format = graphvizOutputTypes[j];
@@ -245,11 +239,25 @@ public class DotMojo extends AbstractMavenReport {
                     }
                 }
                 printHtmlFileFooter(out, file);
-            }
+                printHtmlFooter(out);
 
-            printHtmlFooter(out);
+                String content = buffer.toString();
+                String name = file.getName();
+                if (name.equalsIgnoreCase("routes.dot") || i == 0) {
+                    indexHtmlContent = content;
+                }
+                int idx = name.lastIndexOf(".");
+                if (idx >= 0) {
+                    name = name.substring(0, idx);
+                    name += ".html";
+                }
+                writeIndexHtmlFile(name, content);
+            }
         }
         catch (CommandLineException e) {
+            throw new MojoExecutionException("Failed: " + e, e);
+        }
+        catch (IOException e) {
             throw new MojoExecutionException("Failed: " + e, e);
         }
     }
@@ -264,7 +272,7 @@ public class DotMojo extends AbstractMavenReport {
             EmbeddedMojo mojo = new EmbeddedMojo();
             mojo.setClasspathElements(list);
             mojo.setDotEnabled(true);
-            mojo.setDotFile(dotFile);
+            mojo.setDotOutputDir(resources.getAbsolutePath());
             mojo.setDuration(duration);
             mojo.setLog(getLog());
             mojo.setOutputDirectory(outputDir);
@@ -278,10 +286,10 @@ public class DotMojo extends AbstractMavenReport {
         }
     }
 
-    protected void writeIndexHtmlFile() throws IOException {
+    protected void writeIndexHtmlFile(String fileName, String content) throws IOException {
         File dir = new File(outputDirectory, SUBDIRECTORY);
         dir.mkdirs();
-        File html = new File(dir, "index.html");
+        File html = new File(dir, fileName);
         PrintWriter out = null;
         try {
             out = new PrintWriter(new FileWriter(html));
@@ -290,7 +298,7 @@ public class DotMojo extends AbstractMavenReport {
             out.println("</head>");
             out.println("<body>");
             out.println();
-            out.write(htmlBuffer.toString());
+            out.write(content);
             out.println("</body>");
             out.println("</html>");
         }

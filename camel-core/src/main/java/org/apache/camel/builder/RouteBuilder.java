@@ -63,14 +63,18 @@ public abstract class RouteBuilder extends BuilderSupport {
      * Creates a new route from the given URI input
      */
     public RouteType from(String uri) {
-        return routeCollection.from(uri);
+        RouteType answer = routeCollection.from(uri);
+        configureRoute(answer);
+        return answer;
     }
 
     /**
      * Creates a new route from the given endpoint
      */
     public RouteType from(Endpoint endpoint) {
-        return routeCollection.from(endpoint);
+        RouteType answer = routeCollection.from(endpoint);
+        configureRoute(answer);
+        return answer;
     }
 
     /**
@@ -165,7 +169,6 @@ public abstract class RouteBuilder extends BuilderSupport {
             throw new IllegalArgumentException("No CamelContext has been injected!");
         }
         routeCollection.setCamelContext(camelContext);
-        //routeCollection.populateRoutes(routes);
         camelContext.addRouteDefinitions(routeCollection.getRoutes());
     }
 
@@ -174,5 +177,9 @@ public abstract class RouteBuilder extends BuilderSupport {
      */
     protected CamelContext createContainer() {
         return new DefaultCamelContext();
+    }
+
+    protected void configureRoute(RouteType route) {
+        route.setGroup(getClass().getName());
     }
 }

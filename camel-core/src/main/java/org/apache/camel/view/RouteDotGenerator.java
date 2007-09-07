@@ -16,6 +16,16 @@
  */
 package org.apache.camel.view;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.*;
 import org.apache.camel.model.language.ExpressionType;
@@ -25,15 +35,6 @@ import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-
 /**
  * A <a href="http://www.graphviz.org/">DOT</a> file creator plugin which
  * creates a DOT file showing the current routes
@@ -42,10 +43,12 @@ import java.util.ArrayList;
  */
 public class RouteDotGenerator {
     private static final transient Log LOG = LogFactory.getLog(RouteDotGenerator.class);
-    private String file;
+    private String dir;
     private String imagePrefix = "http://www.enterpriseintegrationpatterns.com/img/";
     private Map<Object, NodeData> nodeMap = new HashMap<Object, NodeData>();
     private boolean makeParentDirs = true;
+    private int clusterCounter;
+    private Map<String, List<RouteType>> routeGroupMap;
 
     /**
      * lets insert a space before each upper case letter after a lowercase
@@ -76,29 +79,53 @@ public class RouteDotGenerator {
         this("CamelRoutes.dot");
     }
 
-    public RouteDotGenerator(String file) {
-        this.file = file;
+    public RouteDotGenerator(String dir) {
+        this.dir = dir;
     }
 
-    public String getFile() {
-        return file;
+    public String getDir() {
+        return dir;
     }
 
     /**
-     * Sets the destination file name to create the destination diagram
+     * Sets the destination directory in which to create the diagrams
      */
-    public void setFile(String file) {
-        this.file = file;
+    public void setDir(String dir) {
+        this.dir = dir;
     }
 
     public void drawRoutes(CamelContext context) throws IOException {
-        File fileValue = new File(file);
+        File parent = new File(dir);
         if (makeParentDirs) {
-            fileValue.getParentFile().mkdirs();
+            parent.mkdirs();
         }
-        PrintWriter writer = new PrintWriter(new FileWriter(fileValue));
+        List<RouteType> routes = context.getRouteDefinitions();
+        routeGroupMap = createRouteGroupMap(routes);
+
+        // generate the global file
+        generateFile(parent, "routes.dot", routeGroupMap);
+
+        if (routeGroupMap.size() >= 1) {
+            Set<Map.Entry<String, List<RouteType>>> entries = routeGroupMap.entrySet();
+            for (Map.Entry<String, List<RouteType>> entry : entries) {
+
+                Map<String, List<RouteType>> map = new HashMap<String, List<RouteType>>();
+                String group = entry.getKey();
+                map.put(group, entry.getValue());
+
+                // generate the file containing just the routes in this group
+                generateFile(parent, group + ".dot", map);
+            }
+        }
+    }
+
+    private void generateFile(File parent, String fileName, Map<String, List<RouteType>> map) throws IOException {
+        nodeMap.clear();
+        clusterCounter = 0;
+                     
+        PrintWriter writer = new PrintWriter(new FileWriter(new File(parent, fileName)));
         try {
-            generateFile(writer, context);
+            generateFile(writer, map);
         }
         finally {
             writer.close();
@@ -121,19 +148,36 @@ public class RouteDotGenerator {
         public List<ProcessorType> outputs;
     }
 
-    protected void generateFile(PrintWriter writer, CamelContext context) {
-        writer.println("digraph \"CamelRoutes\" {");
+    protected void generateFile(PrintWriter writer, Map<String, List<RouteType>> map) {
+        writer.println("digraph CamelRoutes {");
         writer.println();
 
         writer.println("node [style = \"rounded,filled\", fillcolor = yellow, "
                 + "fontname=\"Helvetica-Oblique\"];");
         writer.println();
-        printRoutes(writer, context.getRouteDefinitions());
+        printRoutes(writer, map);
 
         writer.println("}");
     }
 
-    protected void printRoutes(PrintWriter writer, List<RouteType> routes) {
+    protected void printRoutes(PrintWriter writer, Map<String, List<RouteType>> map) {
+
+            Set<Map.Entry<String, List<RouteType>>> entries = map.entrySet();
+            for (Map.Entry<String, List<RouteType>> entry : entries) {
+                String group = entry.getKey();
+                printRoutes(writer, group, entry.getValue());
+            }
+    }
+
+    protected void printRoutes(PrintWriter writer, String group, List<RouteType> routes) {
+        if (group != null) {
+            writer.println("subgraph cluster_" + (clusterCounter++) + " {");
+            writer.println("label = \"" + group + "\";");
+            writer.println("color = grey;");
+            writer.println("style = \"dashed\";");
+            writer.println("URL = \"" + group + ".html\";");
+            writer.println();
+        }
         for (RouteType route : routes) {
             List<FromType> inputs = route.getInputs();
             for (FromType input : inputs) {
@@ -141,6 +185,14 @@ public class RouteDotGenerator {
             }
             writer.println();
         }
+        if (group != null) {
+            writer.println("}");
+            writer.println();
+        }
+    }
+
+    protected String escapeNodeId(String text) {
+        return text.replace('.', '_').replace("$", "_");
     }
 
     protected void printRoute(PrintWriter writer, final RouteType route, FromType input) {
@@ -151,12 +203,22 @@ public class RouteDotGenerator {
         // TODO we should add a transactional client / event driven consumer / polling client
 
         List<ProcessorType> outputs = route.getOutputs();
+        NodeData from = nodeData;
         for (ProcessorType output : outputs) {
-            printNode(writer, nodeData, output);
+            NodeData newData = printNode(writer, from, output);
+            from = newData;
         }
     }
 
     protected NodeData printNode(PrintWriter writer, NodeData fromData, ProcessorType node) {
+        if (node instanceof MulticastType) {
+            // no need for a multicast node
+            List<ProcessorType> outputs = node.getOutputs();
+            for (ProcessorType output : outputs) {
+                printNode(writer, fromData, output);
+            }
+            return fromData;
+        }
         NodeData toData = getNodeData(node);
 
         printNode(writer, toData);
@@ -245,10 +307,13 @@ public class RouteDotGenerator {
         else if (node instanceof WhenType) {
             data.image = imagePrefix + "MessageFilterIcon.gif";
             data.nodeType = "When Filter";
+            data.url = "http://activemq.apache.org/camel/content-based-router.html";
         }
         else if (node instanceof OtherwiseType) {
             data.nodeType = "Otherwise";
             data.edgeLabel = "";
+            data.url = "http://activemq.apache.org/camel/content-based-router.html";
+            data.tooltop = "Otherwise";
         }
         else if (node instanceof ChoiceType) {
             data.image = imagePrefix + "ContentBasedRouterIcon.gif";
@@ -364,5 +429,24 @@ public class RouteDotGenerator {
             nodeMap.put(key, answer);
         }
         return answer;
+    }
+
+
+
+    protected Map<String, List<RouteType>> createRouteGroupMap(List<RouteType> routes) {
+        Map<String, List<RouteType>> map = new HashMap<String, List<RouteType>>();
+        for (RouteType route : routes) {
+            String group = route.getGroup();
+            if (group == null) {
+                group = "Camel Routes";
+            }
+            List<RouteType> list = map.get(group);
+            if (list == null) {
+                list = new ArrayList<RouteType>();
+                map.put(group, list);
+            }
+            list.add(route);
+        }
+        return map;
     }
 }

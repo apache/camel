@@ -68,7 +68,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
      * @parameter expression="${project.build.directory}/site/cameldoc/routes.dot"
      * @readonly
      */
-    protected String dotFile;
+    protected String dotOutputDir;
     /**
      * Allows the DOT file generation to be disabled
      *
@@ -138,12 +138,12 @@ public class EmbeddedMojo extends AbstractExecMojo {
         this.dotEnabled = dotEnabled;
     }
 
-    public String getDotFile() {
-        return dotFile;
+    public String getDotOutputDir() {
+        return dotOutputDir;
     }
 
-    public void setDotFile(String dotFile) {
-        this.dotFile = dotFile;
+    public void setDotOutputDir(String dotOutputDir) {
+        this.dotOutputDir = dotOutputDir;
     }
 
     public String getDuration() {
@@ -174,7 +174,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
 
     protected String[] createArguments() {
         if (dotEnabled) {
-            return new String[]{"-duration", duration, "-file", dotFile};
+            return new String[]{"-duration", duration, "-outdir", dotOutputDir};
         }
         else {
             return new String[]{"-duration", duration};

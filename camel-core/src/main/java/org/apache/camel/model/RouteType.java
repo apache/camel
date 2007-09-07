@@ -22,7 +22,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -54,6 +54,8 @@ public class RouteType extends ProcessorType implements CamelContextAware {
     private List<FromType> inputs = new ArrayList<FromType>();
     @XmlElementRef
     private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
+    @XmlAttribute
+    private String group;
     @XmlTransient
     private CamelContext camelContext;
 
@@ -148,6 +150,20 @@ public class RouteType extends ProcessorType implements CamelContextAware {
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    /**
+     * The group that this route belongs to; could be the name of the RouteBuilder class
+     * or be explicitly configured in the XML.
+     *
+     * May be null.
+     */
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
     }
 
     // Implementation methods

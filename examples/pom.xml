@@ -62,6 +62,7 @@
     <module>camel-example-spring</module>
     <module>camel-example-etl</module>
     <module>camel-example-bam</module>
+    <module>camel-example-docs</module>
   </modules>
 
   <profiles>
