@@ -32,7 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class IBatisRouteTest extends ContextTestSupport {
     public void testSendAccountBean() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:results");
-        endpoint.expectedMessageCount(1);
+        endpoint.expectedMinimumMessageCount(1);
 
         Account account = new Account();
         account.setId(123);
