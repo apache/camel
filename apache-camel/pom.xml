@@ -276,6 +276,18 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>maven-camel-converters</artifactId>
+        <executions>
+          <execution>
+            <id>camel-converters</id>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <profiles>
