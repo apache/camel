@@ -17,6 +17,7 @@
 package org.apache.camel.impl.converter;
 
 import org.apache.camel.Converter;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.CachingInjector;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResolverUtil;
@@ -153,14 +154,14 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                             else {
                                 Class fromType = parameterTypes[0];
                                 if (isStatic(modifiers)) {
-                                    registry.addTypeConverter(toType, fromType,
+                                	registerTypeConverter(registry, method, toType, fromType,
                                             new StaticMethodTypeConverter(method));
                                 }
                                 else {
                                     if (injector == null) {
                                         injector = new CachingInjector(registry, type);
                                     }
-                                    registry.addTypeConverter(toType, fromType,
+                                    registerTypeConverter(registry, method, toType, fromType,
                                             new InstanceMethodTypeConverter(injector, method));
                                 }
                             }
@@ -176,5 +177,11 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         catch (NoClassDefFoundError e) {
             LOG.debug("Ignoring converter type: " + type.getName() + " as a dependent class could not be found: " + e, e);
         }
+    }
+    
+    protected void registerTypeConverter(TypeConverterRegistry registry, Method method, 
+    		Class toType, Class fromType, TypeConverter typeConverter) {
+    	
+        registry.addTypeConverter(toType, fromType, typeConverter);
     }
 }
