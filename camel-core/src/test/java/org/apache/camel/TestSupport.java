@@ -263,4 +263,15 @@ public abstract class TestSupport extends TestCase {
         context.stop();
         return answer;
     }
+
+    /**
+     * Asserts that the text contains the given string
+     *
+     * @param text the text to compare
+     * @param containedText the text which must be contained inside the other text parameter
+     */
+    protected void assertStringContains(String text, String containedText) {
+        assertNotNull("Text should not be null!", text);
+        assertTrue("Text: " + text + " does not contain: " + containedText, text.contains(containedText));
+    }
 }

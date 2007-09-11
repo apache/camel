@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.Collection;
 import java.util.regex.Pattern;
 
 /**
@@ -35,12 +36,12 @@ public class ExpressionBuilder {
     /**
      * Utility classes should not have a public constructor.
      */
-    private ExpressionBuilder() {        
+    private ExpressionBuilder() {
     }
-    
+
     /**
      * Returns an expression for the header value with the given name
-     * 
+     *
      * @param headerName the name of the header the expression will return
      * @return an expression object which will return the header value
      */
@@ -83,7 +84,7 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for the out header value with the given name
-     * 
+     *
      * @param headerName the name of the header the expression will return
      * @return an expression object which will return the header value
      */
@@ -147,7 +148,7 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for a system property value with the given name
-     * 
+     *
      * @param propertyName the name of the system property the expression will
      *                return
      * @return an expression object which will return the system property value
@@ -158,7 +159,7 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for a system property value with the given name
-     * 
+     *
      * @param propertyName the name of the system property the expression will
      *                return
      * @return an expression object which will return the system property value
@@ -179,7 +180,7 @@ public class ExpressionBuilder {
 
     /**
      * Returns an expression for the contant value
-     * 
+     *
      * @param value the value the expression will return
      * @return an expression object which will return the constant value
      */
@@ -463,7 +464,7 @@ public class ExpressionBuilder {
     /**
      * Evaluates the expression on the given exchange and returns the String
      * representation
-     * 
+     *
      * @param expression the expression to evaluate
      * @param exchange the exchange to use to evaluate the expression
      * @return the String representation of the expression or null if it could
@@ -489,6 +490,50 @@ public class ExpressionBuilder {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
                 return System.getProperty(name, defaultValue);
+            }
+        };
+    }
+
+    /**
+     * Returns an expression which returns the string concatenation value of the various
+     * expressions
+     *
+     * @param expressions the expression to be concatenated dynamically
+     * @return an expression which when evaluated will return the concatenated values
+     */
+    public static <E extends Exchange> Expression<E> concatExpression(final Collection<Expression> expressions) {
+        return concatExpression(expressions, null);
+    }
+
+    /**
+     * Returns an expression which returns the string concatenation value of the various
+     * expressions
+     *
+     * @param expressions the expression to be concatenated dynamically
+     * @param expression the text description of the expression
+     * @return an expression which when evaluated will return the concatenated values
+     */
+    public static <E extends Exchange> Expression<E> concatExpression(final Collection<Expression> expressions, final String expression) {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                StringBuffer buffer = new StringBuffer();
+                for (Expression<E> expression : expressions) {
+                    String text = evaluateStringExpression(expression, exchange);
+                    if (text != null) {
+                        buffer.append(text);
+                    }
+                }
+                return buffer.toString();
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return expression;
+                }
+                else {
+                return "concat" + expressions;
+                }
             }
         };
     }

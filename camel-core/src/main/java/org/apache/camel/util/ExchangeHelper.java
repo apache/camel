@@ -18,11 +18,12 @@ package org.apache.camel.util;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.InvalidTypeException;
+import org.apache.camel.Message;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchPropertyException;
-import org.apache.camel.Message;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
@@ -115,6 +116,30 @@ public class ExchangeHelper {
     }
 
     /**
+     * Returns the mandatory outbound message body of the correct type or throws
+     * an exception if it is not present
+     */
+    public static Object getMandatoryOutBody(Exchange exchange) throws InvalidPayloadException {
+        Object answer = exchange.getOut().getBody();
+        if (answer == null) {
+            throw new InvalidPayloadException(exchange, Object.class);
+        }
+        return answer;
+    }
+
+    /**
+     * Returns the mandatory outbound message body of the correct type or throws
+     * an exception if it is not present
+     */
+    public static <T> T getMandatoryOutBody(Exchange exchange, Class<T> type) throws InvalidPayloadException {
+        T answer = exchange.getOut().getBody(type);
+        if (answer == null) {
+            throw new InvalidPayloadException(exchange, type);
+        }
+        return answer;
+    }
+
+    /**
      * Converts the value to the given expected type or throws an exception
      */
     public static <T> T convertToMandatoryType(Exchange exchange, Class<T> type, Object value)
@@ -154,5 +179,29 @@ public class ExchangeHelper {
                 result.getOut(true).copyFrom(out);
             }
         }
+    }
+
+    /**
+     * Returns true if the given exchange pattern (if defined) can support IN messagea
+     *
+     * @param exchange the exchange to interrogate
+     * @return true if the exchange is defined as an {@link ExchangePattern} which supports
+     * IN messages
+     */
+    public static boolean isInCapable(Exchange exchange) {
+        ExchangePattern pattern = exchange.getPattern();
+        return pattern != null && pattern.isInCapable();
+    }
+
+    /**
+     * Returns true if the given exchange pattern (if defined) can support OUT messagea
+     *
+     * @param exchange the exchange to interrogate
+     * @return true if the exchange is defined as an {@link ExchangePattern} which supports
+     * OUT messages
+     */
+    public static boolean isOutCapable(Exchange exchange) {
+        ExchangePattern pattern = exchange.getPattern();
+        return pattern != null && pattern.isOutCapable();
     }
 }
