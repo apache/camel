@@ -23,6 +23,7 @@ import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.listener.serversession.ServerSessionFactory;
 import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.jms.ConnectionFactory;
@@ -92,9 +93,9 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
     }
 
     public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory) {
-        JmsConfiguration template = new JmsConfiguration(connectionFactory);
-        template.setTransacted(true);
-        return jmsComponent(template);
+        JmsTransactionManager transactionManager = new JmsTransactionManager();
+        transactionManager.setConnectionFactory(connectionFactory);
+        return jmsComponentTransacted(connectionFactory, transactionManager);
     }
 
     public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory, PlatformTransactionManager transactionManager) {
