@@ -125,19 +125,29 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
     }
 
     /**
-     * Send the body to an endpoint
+     * Send the body to an endpoint with the given {@link ExchangePattern}
+     * returning any result output body
      * 
+     * @param endpoint
+     * @param body = the payload
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @return the result
+     */
+    public Object sendBody(Endpoint<E> endpoint, ExchangePattern pattern, Object body) {
+        E result = send(endpoint, pattern, createSetBodyProcessor(body));
+        return extractResultBody(result);
+    }
+
+    /**
+     * Send the body to an endpoint returning any result output body
+     *
      * @param endpoint
      * @param body = the payload
      * @return the result
      */
-    public Object sendBody(Endpoint<E> endpoint, final Object body) {
-        E result = send(endpoint, new Processor() {
-            public void process(Exchange exchange) {
-                Message in = exchange.getIn();
-                in.setBody(body);
-            }
-        });
+    public Object sendBody(Endpoint<E> endpoint, Object body) {
+        E result = send(endpoint, createSetBodyProcessor(body));
         return extractResultBody(result);
     }
 
@@ -151,6 +161,20 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
     public Object sendBody(String endpointUri, Object body) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         return sendBody(endpoint, body);
+    }
+
+    /**
+     * Send the body to an endpoint
+     *
+     * @param endpointUri
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param body = the payload
+     * @return the result
+     */
+    public Object sendBody(String endpointUri, ExchangePattern pattern, Object body) {
+        Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
+        return sendBody(endpoint, pattern, body);
     }
 
     /**
@@ -178,15 +202,45 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
      */
     public Object sendBodyAndHeader(Endpoint endpoint, final Object body, final String header,
                                     final Object headerValue) {
-        E result = send(endpoint, new Processor() {
-            public void process(Exchange exchange) {
-                Message in = exchange.getIn();
-                in.setHeader(header, headerValue);
-                in.setBody(body);
-            }
-        });
+        E result = send(endpoint, createBodyAndHeaderProcessor(body, header, headerValue));
         return extractResultBody(result);
     }
+
+    /**
+     * Sends the body to an endpoint with a specified header and header value
+     *
+     * @param endpoint the Endpoint to send to
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param body the payload send
+     * @param header the header name
+     * @param headerValue the header value
+     * @return the result
+     */
+    public Object sendBodyAndHeader(Endpoint endpoint, ExchangePattern pattern, final Object body, final String header,
+                                    final Object headerValue) {
+        E result = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
+        return extractResultBody(result);
+    }
+
+
+    /**
+     * Sends the body to an endpoint with a specified header and header value
+     *
+     * @param endpoint the Endpoint URI to send to
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param body the payload send
+     * @param header the header name
+     * @param headerValue the header value
+     * @return the result
+     */
+    public Object sendBodyAndHeader(String endpoint, ExchangePattern pattern, final Object body, final String header,
+                                    final Object headerValue) {
+        E result = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
+        return extractResultBody(result);
+    }
+
 
     /**
      * Sends the body to an endpoint with the specified headers and header
@@ -219,6 +273,79 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
             }
         });
         return extractResultBody(result);
+    }
+
+    // Methods using an InOut ExchangePattern
+    // -----------------------------------------------------------------------
+
+    /**
+     * Send the body to an endpoint returning any result output body
+     *
+     * @param endpoint
+     * @param processor the processor which will populate the exchange before sending
+     * @return the result
+     */
+    public E request(Endpoint<E> endpoint, Processor processor) {
+        return send(endpoint, ExchangePattern.InOut, processor);
+    }
+
+    /**
+     * Send the body to an endpoint returning any result output body
+     *
+     * @param endpoint
+     * @param body     = the payload
+     * @return the result
+     */
+    public Object requestBody(Endpoint<E> endpoint, Object body) {
+        return sendBody(endpoint, ExchangePattern.InOut, body);
+    }
+
+    /**
+     * Send the body to an endpoint returning any result output body
+     *
+     * @param endpoint
+     * @param body     = the payload
+     * @param header
+     * @param headerValue
+     * @return the result
+     */
+    public Object requestBodyAndHeader(Endpoint<E> endpoint, Object body, String header, Object headerValue) {
+        return sendBodyAndHeader(endpoint, ExchangePattern.InOut, body, header, headerValue);
+    }
+
+    /**
+     * Send the body to an endpoint returning any result output body
+     *
+     * @param endpoint
+     * @param processor the processor which will populate the exchange before sending
+     * @return the result
+     */
+    public E request(String endpoint, Processor processor) {
+        return send(endpoint, ExchangePattern.InOut, processor);
+    }
+
+    /**
+     * Send the body to an endpoint returning any result output body
+     *
+     * @param endpoint
+     * @param body     = the payload
+     * @return the result
+     */
+    public Object requestBody(String endpoint, Object body) {
+        return sendBody(endpoint, ExchangePattern.InOut, body);
+    }
+
+    /**
+     * Send the body to an endpoint returning any result output body
+     *
+     * @param endpoint
+     * @param body     = the payload
+     * @param header
+     * @param headerValue
+     * @return the result
+     */
+    public Object requestBodyAndHeader(String endpoint, Object body, String header, Object headerValue) {
+        return sendBodyAndHeader(endpoint, ExchangePattern.InOut, body, header, headerValue);
     }
 
     // Methods using the default endpoint
@@ -298,6 +425,27 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
     // Implementation methods
     // -----------------------------------------------------------------------
 
+
+    protected Processor createBodyAndHeaderProcessor(final Object body, final String header, final Object headerValue) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                in.setHeader(header, headerValue);
+                in.setBody(body);
+            }
+        };
+    }
+
+
+
+    protected Processor createSetBodyProcessor(final Object body) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                in.setBody(body);
+            }
+        };
+    }
     protected Endpoint resolveMandatoryEndpoint(String endpointUri) {
         Endpoint endpoint = null;
 

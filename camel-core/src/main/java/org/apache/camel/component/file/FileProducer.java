@@ -55,10 +55,19 @@ public class FileProducer extends DefaultProducer {
      * @see org.apache.camel.Processor#process(Exchange)
      */
     public void process(Exchange exchange) throws Exception {
-        process(endpoint.createExchange(exchange));
+        // TODO is it really worth using a FileExchange as the core type?
+        FileExchange fileExchange = endpoint.createExchange(exchange);
+        process(fileExchange);
+        ExchangeHelper.copyResults(exchange, fileExchange);
     }
 
     public void process(FileExchange exchange) throws Exception {
+        if (ExchangeHelper.isOutCapable(exchange)) {
+            // lets poll the file
+            Message out = exchange.getOut(true);
+            endpoint.configureMessage(endpoint.getFile(), out);
+            return;
+        }
         InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
         File file = createFileName(exchange.getIn());
         buildDirectory(file);
@@ -148,7 +157,10 @@ public class FileProducer extends DefaultProducer {
     protected File createFileName(Message message) {
         File answer;
         File endpointFile = endpoint.getFile();
-        String name = message.getHeader(FileComponent.HEADER_FILE_NAME, String.class);
+        String name = null;
+        if (!endpoint.isIgnoreFileNameHeader()) {
+            name = message.getHeader(FileComponent.HEADER_FILE_NAME, String.class);
+        }
         if (endpointFile.isDirectory()) {
             if (name != null) {
                 answer = new File(endpointFile, name);

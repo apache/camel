@@ -20,6 +20,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.component.file.strategy.DefaultFileRenamer;
 import org.apache.camel.component.file.strategy.DeleteFileProcessStrategy;
 import org.apache.camel.component.file.strategy.FileProcessStrategy;
@@ -52,6 +53,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     private String[] excludedNamePrefixes = {"."};
     private String[] excludedNamePostfixes = { FileProcessStrategySupport.DEFAULT_LOCK_FILE_POSTFIX };
     private int bufferSize = 128 * 1024;
+    private boolean ignoreFileNameHeader;
 
     protected FileEndpoint(File file, String endpointUri, FileComponent component) {
         super(endpointUri, component);
@@ -99,6 +101,20 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
 
     public FileExchange createExchange(ExchangePattern pattern) {
         return new FileExchange(getContext(), pattern, file);
+    }
+
+    /**
+     * Configures the given message with the file which sets the body to the file object
+     * and sets the {@link FileComponent#HEADER_FILE_NAME} header.
+     */
+    public void configureMessage(File file, Message message) {
+        message.setBody(file);
+        String path = file.getPath();
+        String relativePath = path.substring(path.length());
+        if (relativePath.startsWith(File.separator) || relativePath.startsWith("/")) {
+            relativePath = relativePath.substring(1);
+        }
+        message.setHeader(FileComponent.HEADER_FILE_NAME, relativePath);
     }
 
     public File getFile() {
@@ -252,6 +268,19 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     public void setBufferSize(int bufferSize) {
         this.bufferSize = bufferSize;
     }
+
+    public boolean isIgnoreFileNameHeader() {
+        return ignoreFileNameHeader;
+    }
+
+    /**
+     * If this flag is enabled then producers will ignore the {@link FileComponent#HEADER_FILE_NAME}
+     * header and generate a new dynamic file
+     */
+    public void setIgnoreFileNameHeader(boolean ignoreFileNameHeader) {
+        this.ignoreFileNameHeader = ignoreFileNameHeader;
+    }
+
 
     /**
      * A strategy method to lazily create the file strategy
