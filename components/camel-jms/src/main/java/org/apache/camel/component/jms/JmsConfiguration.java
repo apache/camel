@@ -22,11 +22,11 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.QueueSender;
+import javax.jms.Session;
 import javax.jms.TopicPublisher;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
-
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
@@ -55,7 +55,7 @@ public class JmsConfiguration implements Cloneable {
     private ConnectionFactory templateConnectionFactory;
     private ConnectionFactory listenerConnectionFactory;
     private int acknowledgementMode = -1;
-    private String acknowledgementModeName = AUTO_ACKNOWLEDGE;
+    private String acknowledgementModeName = null;
     // Used to configure the spring Container
     private ExceptionListener exceptionListener;
     private ConsumerType consumerType = ConsumerType.Default;
@@ -187,13 +187,17 @@ public class JmsConfiguration implements Cloneable {
         }
 
         template.setSessionTransacted(transacted);
-
-        // This is here for completeness, but the template should not get used
-        // for receiving messages.
-        if (acknowledgementMode >= 0) {
-            template.setSessionAcknowledgeMode(acknowledgementMode);
-        } else if (acknowledgementModeName != null) {
-            template.setSessionAcknowledgeModeName(acknowledgementModeName);
+        if (transacted) {
+            template.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
+        }
+        else {
+            // This is here for completeness, but the template should not get used
+            // for receiving messages.
+            if (acknowledgementMode >= 0) {
+                template.setSessionAcknowledgeMode(acknowledgementMode);
+            } else if (acknowledgementModeName != null) {
+                template.setSessionAcknowledgeModeName(acknowledgementModeName);
+            }
         }
         return template;
     }
@@ -231,11 +235,15 @@ public class JmsConfiguration implements Cloneable {
         container.setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);
         container.setExposeListenerSession(exposeListenerSession);
         container.setSessionTransacted(transacted);
-
-        if (acknowledgementMode >= 0) {
-            container.setSessionAcknowledgeMode(acknowledgementMode);
-        } else if (acknowledgementModeName != null) {
-            container.setSessionAcknowledgeModeName(acknowledgementModeName);
+        if (transacted) {
+            container.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
+        }
+        else {
+            if (acknowledgementMode >= 0) {
+                container.setSessionAcknowledgeMode(acknowledgementMode);
+            } else if (acknowledgementModeName != null) {
+                container.setSessionAcknowledgeModeName(acknowledgementModeName);
+            }
         }
 
         if (container instanceof DefaultMessageListenerContainer) {
@@ -276,6 +284,9 @@ public class JmsConfiguration implements Cloneable {
             }
             if (transactionManager != null) {
                 listenerContainer.setTransactionManager(transactionManager);
+            }
+            else if (transacted) {
+                throw new IllegalArgumentException("Property transacted is enabled but a transactionManager was not injected!");
             }
             if (transactionName != null) {
                 listenerContainer.setTransactionName(transactionName);

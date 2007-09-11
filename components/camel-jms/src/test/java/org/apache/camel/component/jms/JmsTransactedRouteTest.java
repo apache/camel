@@ -22,68 +22,38 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 import org.apache.camel.component.mock.MockEndpoint;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * @version $Revision$
  */
-public class JmsRouteTest extends ContextTestSupport {
-    protected MockEndpoint resultEndpoint;
-    protected String componentName = "activemq";
-    protected String startEndpointUri;
-
+public class JmsTransactedRouteTest extends ContextTestSupport {
     public void testJmsRouteWithTextMessage() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         String expectedBody = "Hello there!";
 
         resultEndpoint.expectedBodiesReceived(expectedBody);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
 
-        sendExchange(expectedBody);
+        template.sendBodyAndHeader("activemq:test.a", expectedBody, "cheese", 123);
 
         resultEndpoint.assertIsSatisfied();
-    }
-
-    public void testJmsRouteWithObjectMessage() throws Exception {
-        PurchaseOrder expectedBody = new PurchaseOrder("Beer", 10);
-
-        resultEndpoint.expectedBodiesReceived(expectedBody);
-        resultEndpoint.message(0).header("cheese").isEqualTo(123);
-
-        sendExchange(expectedBody);
-
-        resultEndpoint.assertIsSatisfied();
-    }
-
-    protected void sendExchange(final Object expectedBody) {
-        template.sendBodyAndHeader(startEndpointUri, expectedBody, "cheese", 123);
-    }
-
-
-    @Override
-    protected void setUp() throws Exception {
-        startEndpointUri = componentName + ":queue:test.a";
-
-        super.setUp();
-
-        resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
     }
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
-        camelContext.addComponent(componentName, jmsComponentClientAcknowledge(connectionFactory));
-
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
+        camelContext.addComponent("activemq", jmsComponentTransacted(connectionFactory));
         return camelContext;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(startEndpointUri).to(componentName + ":queue:test.b");
-                from(componentName + ":queue:test.b").to("mock:result");
+                from("activemq:test.a").to("activemq:test.b");
+                from("activemq:test.b").to("mock:result");
             }
         };
     }
