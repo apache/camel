@@ -38,7 +38,6 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private boolean recursive = true;
     private String regexPattern = "";
     private long lastPollTime;
-    private boolean preserveFileName = true;
 
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -96,14 +95,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
             final FileProcessStrategy processStrategy = endpoint.getFileStrategy();
             final FileExchange exchange = endpoint.createExchange(file);
 
-            if (isPreserveFileName()) {
-                String relativePath = file.getPath().substring(endpoint.getFile().getPath().length());
-                if (relativePath.startsWith(File.separator)) {
-                	relativePath = relativePath.substring(1);
-                }
-                exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, relativePath);
-            }
-            
+            endpoint.configureMessage(file, exchange.getIn());
             try {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("About to process file:  " + file + " using exchange: " + exchange);
@@ -205,11 +197,4 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         this.regexPattern = regexPattern;
     }
 
-	public boolean isPreserveFileName() {
-		return preserveFileName;
-	}
-
-	public void setPreserveFileName(boolean preserveFileName) {
-		this.preserveFileName = preserveFileName;
-	}
 }

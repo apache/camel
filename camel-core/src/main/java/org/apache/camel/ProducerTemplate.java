@@ -141,4 +141,161 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * @return the result
      */
     Object sendBody(String endpointUri, Object body);
+
+    /**
+     * Send the body to an endpoint with the given {@link ExchangePattern}
+     * returning any result output body
+     *
+     * @param endpoint
+     * @param body = the payload
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @return the result
+     */
+    Object sendBody(Endpoint<E> endpoint, ExchangePattern pattern, Object body);
+
+    /**
+     * Send the body to an endpoint
+     *
+     * @param endpointUri
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param body = the payload
+     * @return the result
+     */
+    Object sendBody(String endpointUri, ExchangePattern pattern, Object body);
+
+    /**
+     * Sends the body to an endpoint with a specified header and header value
+     *
+     * @param endpointUri the endpoint URI to send to
+     * @param body the payload send
+     * @param header the header name
+     * @param headerValue the header value
+     * @return the result
+     */
+    Object sendBodyAndHeader(String endpointUri, Object body, String header,
+                                    Object headerValue);
+
+    /**
+     * Sends the body to an endpoint with a specified header and header value
+     *
+     * @param endpoint the Endpoint to send to
+     * @param body the payload send
+     * @param header the header name
+     * @param headerValue the header value
+     * @return the result
+     */
+    Object sendBodyAndHeader(Endpoint endpoint, Object body, String header,
+                                    Object headerValue);
+
+    /**
+     * Sends the body to an endpoint with a specified header and header value
+     *
+     * @param endpoint the Endpoint to send to
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param body the payload send
+     * @param header the header name
+     * @param headerValue the header value
+     * @return the result
+     */
+    Object sendBodyAndHeader(Endpoint endpoint, ExchangePattern pattern, Object body, String header,
+                                    Object headerValue);
+
+    /**
+     * Sends the body to an endpoint with a specified header and header value
+     *
+     * @param endpoint the Endpoint URI to send to
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param body the payload send
+     * @param header the header name
+     * @param headerValue the header value
+     * @return the result
+     */
+    Object sendBodyAndHeader(String endpoint, ExchangePattern pattern, Object body, String header,
+                                    Object headerValue);
+
+    /**
+     * Sends the body to an endpoint with the specified headers and header
+     * values
+     *
+     * @param endpointUri the endpoint URI to send to
+     * @param body the payload send
+     * @return the result
+     */
+    Object sendBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers);
+
+    /**
+     * Sends the body to an endpoint with the specified headers and header
+     * values
+     *
+     * @param endpoint the endpoint URI to send to
+     * @param body the payload send
+     * @return the result
+     */
+    Object sendBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers);
+
+
+    // Methods using an InOut ExchangePattern
+    // -----------------------------------------------------------------------
+
+    /**
+     * Send the body to an endpoint returning any result output body
+     *
+     * @param endpoint
+     * @param processor the processor which will populate the exchange before sending
+     * @return the result
+     */
+    E request(Endpoint<E> endpoint, Processor processor);
+
+    /**
+     * Send the body to an endpoint returning any result output body
+     *
+     * @param endpoint
+     * @param body     = the payload
+     * @return the result
+     */
+    Object requestBody(Endpoint<E> endpoint, Object body);
+
+    /**
+     * Send the body to an endpoint returning any result output body
+     *
+     * @param endpoint
+     * @param body     = the payload
+     * @param header
+     * @param headerValue
+     * @return the result
+     */
+    Object requestBodyAndHeader(Endpoint<E> endpoint, Object body, String header, Object headerValue);
+
+    /**
+     * Send the body to an endpoint returning any result output body
+     *
+     * @param endpoint
+     * @param processor the processor which will populate the exchange before sending
+     * @return the result
+     */
+    E request(String endpoint, Processor processor);
+
+    /**
+     * Send the body to an endpoint returning any result output body
+     *
+     * @param endpoint
+     * @param body     = the payload
+     * @return the result
+     */
+    Object requestBody(String endpoint, Object body);
+
+    /**
+     * Send the body to an endpoint returning any result output body
+     *
+     * @param endpoint
+     * @param body     = the payload
+     * @param header
+     * @param headerValue
+     * @return the result
+     */
+    Object requestBodyAndHeader(String endpoint, Object body, String header, Object headerValue);
 }

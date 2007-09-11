@@ -18,39 +18,50 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
+import static org.apache.camel.language.simple.SimpleLanguage.simple;
+import org.apache.camel.util.ExchangeHelper;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class RecipientListTest extends ContextTestSupport {
+public class SimulatorTest extends ContextTestSupport {
 
-    public void testSendingAMessageUsingMulticastReceivesItsOwnExchange() throws Exception {
-        MockEndpoint x = getMockEndpoint("mock:x");
-        MockEndpoint y = getMockEndpoint("mock:y");
-        MockEndpoint z = getMockEndpoint("mock:z");
+    public void testReceivesFooResponse() throws Exception {
+        assertRespondsWith("foo", "<hello>foo</hello>");
+    }
 
-        x.expectedBodiesReceived("answer");
-        y.expectedBodiesReceived("answer");
-        z.expectedBodiesReceived("answer");
+    public void testReceivesBarResponse() throws Exception {
+        assertRespondsWith("bar", "<hello>bar</hello>");
+    }
 
-        template.sendBodyAndHeader("direct:a", "answer", "recipientListHeader", "mock:x,mock:y,mock:z");
+    protected void assertRespondsWith(final String value, String containedText) throws InvalidPayloadException {
+        Exchange response = template.request("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                Message in = exchange.getIn();
+                in.setBody("answer");
+                in.setHeader("cheese", value);
+            }
+        });
 
-        assertMockEndpointsSatisifed();
+        assertNotNull("Should receive a response!", response);
+
+        String text = ExchangeHelper.getMandatoryOutBody(response, String.class);
+        log.info("Received: " + text);
+        assertStringContains(text, containedText);
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").recipientList(header("recipientListHeader").tokenize(","));
+                from("direct:a").
+                    recipientList(simple("file:src/main/data/${in.headers.cheese}.xml"));
                 // END SNIPPET: example
             }
         };
-
     }
-
 }
