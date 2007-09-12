@@ -58,6 +58,7 @@ public abstract class ProcessorType {
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Boolean inheritErrorHandlerFlag = Boolean.TRUE; // TODO not sure how
     private DelegateProcessor lastInterceptor;
+    private NodeFactory nodeFactory;
     // else to use an
                                                             // optional
                                                             // attribute in
@@ -453,7 +454,7 @@ public abstract class ProcessorType {
     }
 
     public FilterType filter(ExpressionType expression) {
-        FilterType filter = new FilterType();
+        FilterType filter = getNodeFactory().createFilter();
         filter.setExpression(expression);
         addOutput(filter);
         return filter;
@@ -699,6 +700,18 @@ public abstract class ProcessorType {
         this.inheritErrorHandlerFlag = inheritErrorHandlerFlag;
     }
 
+    @XmlTransient
+    public NodeFactory getNodeFactory() {
+        if (nodeFactory == null) {
+            nodeFactory = new NodeFactory();
+        }
+        return nodeFactory;
+    }
+
+    public void setNodeFactory(NodeFactory nodeFactory) {
+        this.nodeFactory = nodeFactory;
+    }
+
     /**
      * Returns a label to describe this node such as the expression if some kind of expression node
      *
@@ -780,6 +793,7 @@ public abstract class ProcessorType {
     }
 
     protected void configureChild(ProcessorType output) {
+        output.setNodeFactory(getNodeFactory());
     }
 
     protected void addOutput(ProcessorType processorType) {

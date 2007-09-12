@@ -63,11 +63,11 @@ public class RouteType extends ProcessorType implements CamelContextAware {
     }
 
     public RouteType(String uri) {
-        getInputs().add(new FromType(uri));
+        from(uri);
     }
 
     public RouteType(Endpoint endpoint) {
-        getInputs().add(new FromType(endpoint));
+        from(endpoint);
     }
 
     @Override
@@ -108,6 +108,14 @@ public class RouteType extends ProcessorType implements CamelContextAware {
      */
     public RouteType from(String uri) {
         getInputs().add(new FromType(uri));
+        return this;
+    }
+
+    /**
+     * Creates an input to the route
+     */
+    public RouteType from(Endpoint endpoint) {
+        getInputs().add(new FromType(endpoint));
         return this;
     }
 
@@ -182,6 +190,8 @@ public class RouteType extends ProcessorType implements CamelContextAware {
 
     @Override
     protected void configureChild(ProcessorType output) {
+        super.configureChild(output);
+
         if (isInheritErrorHandler()) {
             output.setErrorHandlerBuilder(getErrorHandlerBuilder());
         }

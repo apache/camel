@@ -125,7 +125,7 @@ public class RoutesType implements RouteContainer {
      * Creates a new route
      */
     public RouteType route() {
-        RouteType route = new RouteType();
+        RouteType route = createRoute();
         return route(route);
     }
 
@@ -133,7 +133,8 @@ public class RoutesType implements RouteContainer {
      * Creates a new route from the given URI input
      */
     public RouteType from(String uri) {
-        RouteType route = new RouteType(uri);
+        RouteType route = createRoute();
+        route.from(uri);
         return route(route);
     }
 
@@ -141,7 +142,8 @@ public class RoutesType implements RouteContainer {
      * Creates a new route from the given endpoint
      */
     public RouteType from(Endpoint endpoint) {
-        RouteType route = new RouteType(endpoint);
+        RouteType route = createRoute();
+        route.from(endpoint);
         return route(route);
     }
 
@@ -178,4 +180,12 @@ public class RoutesType implements RouteContainer {
         getExceptions().add(answer);
         return answer;
     }
+
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+    protected RouteType createRoute() {
+        return new RouteType();
+    }
+
 }

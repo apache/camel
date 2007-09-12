@@ -38,7 +38,7 @@
     <module>camel-bam</module>
     <module>camel-cxf</module>
     <module>camel-ftp</module>
-    <module>camel-juel</module>
+    <module>camel-groovy</module>
     <module>camel-http</module>
     <module>camel-ibatis</module>
     <module>camel-irc</module>
@@ -49,12 +49,14 @@
     <module>camel-jms</module>
     <module>camel-josql</module>
     <module>camel-jpa</module>
+    <module>camel-juel</module>
     <module>camel-mail</module>
     <module>camel-mina</module>
     <module>camel-msv</module>
     <module>camel-ognl</module>
     <module>camel-quartz</module>
     <module>camel-rmi</module>
+    <!--<module>camel-ruby</module>-->
     <module>camel-saxon</module>
     <module>camel-script</module>
     <module>camel-spring</module>

@@ -46,12 +46,18 @@ public abstract class RouteBuilder extends BuilderSupport {
     private RoutesType routeCollection = new RoutesType();
     private List<Route> routes = new ArrayList<Route>();
 
-    protected RouteBuilder() {
+    public RouteBuilder() {
         this(null);
     }
 
-    protected RouteBuilder(CamelContext context) {
+    public RouteBuilder(CamelContext context) {
         super(context);
+    }
+
+
+    @Override
+    public String toString() {
+        return routeCollection.toString();
     }
 
     /**
@@ -170,6 +176,10 @@ public abstract class RouteBuilder extends BuilderSupport {
         }
         routeCollection.setCamelContext(camelContext);
         camelContext.addRouteDefinitions(routeCollection.getRoutes());
+    }
+
+    public void setRouteCollection(RoutesType routeCollection) {
+        this.routeCollection = routeCollection;
     }
 
     /**
