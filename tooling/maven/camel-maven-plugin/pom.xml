@@ -30,12 +30,10 @@
   <name>Camel :: Maven Camel Plugin</name>
 
   <dependencies>
-<!--
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
     </dependency>
--->
 
     <dependency>
       <groupId>org.codehaus.mojo</groupId>
