@@ -251,6 +251,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jhc</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jms</artifactId>
         <version>${camel-version}</version>
       </dependency>
@@ -554,6 +559,23 @@
         <version>${jetty-version}</version>
       </dependency>
 
+
+      <!-- optional jakarta http core support -->
+      <dependency>
+	    <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>4.0-alpha5</version>
+	  </dependency>
+      <dependency>
+	    <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore-nio</artifactId>
+        <version>4.0-alpha5</version>
+	  </dependency>
+      <dependency>
+	    <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore-niossl</artifactId>
+        <version>4.0-alpha5</version>
+	  </dependency>
 
       <!-- optional scripting support -->
       <dependency>
