@@ -99,6 +99,7 @@ public class ExpressionNode extends ProcessorType {
 
     @Override
     protected void configureChild(ProcessorType output) {
+        super.configureChild(output);
         if (isInheritErrorHandler()) {
             output.setErrorHandlerBuilder(getErrorHandlerBuilder());
         }
