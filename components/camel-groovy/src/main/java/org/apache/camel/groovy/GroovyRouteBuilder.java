@@ -19,28 +19,15 @@ package org.apache.camel.groovy;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.RoutesType;
 
 /**
  * @version $Revision: 1.1 $
  */
 public abstract class GroovyRouteBuilder extends RouteBuilder {
     public GroovyRouteBuilder() {
-        init();
     }
 
     public GroovyRouteBuilder(CamelContext context) {
         super(context);
-        init();
-    }
-
-    private void init() {
-        setRouteCollection(new RoutesType() {
-            @Override
-            protected RouteType createRoute() {
-                return new GroovyRouteType();
-            }
-        });
     }
 }
