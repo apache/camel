@@ -18,10 +18,15 @@
 package org.apache.camel.groovy;
 
 import groovy.lang.GroovyClassLoader;
+import groovy.lang.MetaClassRegistry;
+import groovy.lang.MetaClass;
+import groovy.lang.Closure;
+import groovy.lang.ProxyMetaClass;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.ProcessorType;
 
 /**
  * @version $Revision: 1.1 $
@@ -52,6 +57,14 @@ public class GroovyTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext answer = super.createCamelContext();
+
+/*
+        MetaClassRegistry metaClassRegistry = MetaClassRegistry.getInstance(MetaClassRegistry.LOAD_DEFAULT);
+        MetaClass metaClass = metaClassRegistry.getMetaClass(ProcessorType.class);
+        metaClass = new ProxyMetaClass(metaClassRegistry, ProcessorType.class, metaClass);
+        metaClass.addNewInstanceMethod(CamelGroovyMethods.class.getMethod("filter", ProcessorType.class, Closure.class));
+        metaClassRegistry.setMetaClass(ProcessorType.class, metaClass);
+*/
 
         GroovyClassLoader classLoader = new GroovyClassLoader();
         Class<?> type = classLoader.loadClass(groovyBuilderClass);
