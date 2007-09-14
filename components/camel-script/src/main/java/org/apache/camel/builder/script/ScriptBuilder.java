@@ -394,6 +394,9 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     // -------------------------------------------------------------------------
     public ScriptEngine getEngine() {
         checkInitialised();
+        if (engine == null) {
+            throw new IllegalArgumentException("No script engine could be created for: " + getScriptEngineName());
+        }
         return engine;
     }
 
