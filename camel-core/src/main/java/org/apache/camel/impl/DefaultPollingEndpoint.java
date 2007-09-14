@@ -35,6 +35,10 @@ public abstract class DefaultPollingEndpoint<E extends Exchange> extends Schedul
         super(endpointUri, component);
     }
 
+    protected DefaultPollingEndpoint(String endpointUri, CamelContext context) {
+        super(endpointUri, context);
+    }
+
     public Consumer<E> createConsumer(Processor processor) throws Exception {
         DefaultScheduledPollConsumer result = new DefaultScheduledPollConsumer(this, processor);
         configureConsumer(result);

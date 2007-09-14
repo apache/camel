@@ -37,18 +37,18 @@ import java.util.concurrent.TimeUnit;
  * 
  * @version $Revision: 1.1 $
  */
-public class DefaultPollingConsumer<E extends Exchange> extends PollingConsumerSupport<E> implements
+public class EventDrivenPollingConsumer<E extends Exchange> extends PollingConsumerSupport<E> implements
     Processor {
-    private static final transient Log LOG = LogFactory.getLog(DefaultPollingConsumer.class);
+    private static final transient Log LOG = LogFactory.getLog(EventDrivenPollingConsumer.class);
     private BlockingQueue<E> queue;
     private ExceptionHandler interuptedExceptionHandler = new LoggingExceptionHandler(new Logger(LOG));
     private Consumer<E> consumer;
 
-    public DefaultPollingConsumer(Endpoint<E> endpoint) {
+    public EventDrivenPollingConsumer(Endpoint<E> endpoint) {
         this(endpoint, new ArrayBlockingQueue<E>(1000));
     }
 
-    public DefaultPollingConsumer(Endpoint<E> endpoint, BlockingQueue<E> queue) {
+    public EventDrivenPollingConsumer(Endpoint<E> endpoint, BlockingQueue<E> queue) {
         super(endpoint);
         this.queue = queue;
     }

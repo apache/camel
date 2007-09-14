@@ -17,16 +17,16 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpExchange;
-import org.apache.camel.impl.DefaultPollingConsumer;
-
-import java.net.URI;
-import java.net.URISyntaxException;
+import org.apache.camel.impl.EventDrivenPollingConsumer;
 
 /**
  * @version $Revision: 1.1 $
@@ -51,7 +51,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     @Override
     public PollingConsumer<HttpExchange> createPollingConsumer() throws Exception {
-        return new DefaultPollingConsumer(this);
+        return new EventDrivenPollingConsumer(this);
     }
 
     @Override

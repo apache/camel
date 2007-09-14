@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.PollingConsumer;
 
 /**
  * An endpoint which allows exchanges to be sent into it which just invokes a
@@ -31,7 +32,7 @@ import org.apache.camel.ExchangePattern;
  * 
  * @version $Revision: 1.1 $
  */
-public class ProcessorEndpoint extends DefaultEndpoint<Exchange> {
+public class ProcessorEndpoint extends DefaultPollingEndpoint<Exchange> {
     private final Processor processor;
 
     public ProcessorEndpoint(String endpointUri, CamelContext context, Processor processor) {
@@ -53,11 +54,19 @@ public class ProcessorEndpoint extends DefaultEndpoint<Exchange> {
         };
     }
 
-    public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("You cannot consume from this endpoint!");
+    @Override
+    public PollingConsumer<Exchange> createPollingConsumer() throws Exception {
+        return new ProcessorPollingConsumer(this, getProcessor());
     }
 
     public Processor getProcessor() {
+        if (processor == null) {
+            return new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                    onExchange(exchange);
+                }
+            };
+        }
         return processor;
     }
 

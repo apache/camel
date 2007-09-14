@@ -38,7 +38,7 @@
     <module>camel-bam</module>
     <module>camel-cxf</module>
     <module>camel-ftp</module>
-    <!--<module>camel-groovy</module>-->
+    <module>camel-groovy</module>
     <module>camel-http</module>
     <module>camel-ibatis</module>
     <module>camel-irc</module>
@@ -61,6 +61,7 @@
     <module>camel-saxon</module>
     <module>camel-script</module>
     <module>camel-spring</module>
+    <!-- <module>camel-velocity</module> -->
     <module>camel-xmlbeans</module>
     <module>camel-xmpp</module>
   </modules>
