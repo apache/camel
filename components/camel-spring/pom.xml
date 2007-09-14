@@ -245,6 +245,7 @@
       </plugin>
 
 
+<!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -259,17 +260,19 @@
           <mainClass>org.apache.camel.spring.Main</mainClass>
         </configuration>
       </plugin>
+-->
     </plugins>
   </build>
 
 
+<!--
   <reporting>
     <plugins>
-      <!-- lets generate nice PNG / SVG diagrams from our example routes -->
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </reporting>
+-->
 </project>

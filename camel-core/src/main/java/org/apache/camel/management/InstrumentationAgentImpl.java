@@ -25,6 +25,7 @@ import java.rmi.registry.LocateRegistry;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.lang.management.ManagementFactory;
 
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.JMException;
@@ -85,7 +86,10 @@ public class InstrumentationAgentImpl implements InstrumentationAgent, CamelCont
 	}
 	
 	public MBeanServer getMBeanServer() {
-		return server;
+        if (server == null) {
+            server = ManagementFactory.getPlatformMBeanServer();
+        }
+        return server;
 	}
 
 	public void register(Object obj, ObjectName name) throws JMException {

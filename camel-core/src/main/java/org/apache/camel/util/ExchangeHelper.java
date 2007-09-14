@@ -16,6 +16,9 @@
  */
 package org.apache.camel.util;
 
+import java.util.Map;
+import java.util.HashMap;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -203,5 +206,47 @@ public class ExchangeHelper {
     public static boolean isOutCapable(Exchange exchange) {
         ExchangePattern pattern = exchange.getPattern();
         return pattern != null && pattern.isOutCapable();
+    }
+
+    /**
+     * Creates a new instance of the given type from the injector
+     */
+    public static <T> T newInstance(Exchange exchange, Class<T> type) {
+        return exchange.getContext().getInjector().newInstance(type);
+    }
+
+    /**
+     * Creates a Map of the variables which are made available to a script or template
+     *
+     * @param exchange the exchange to make available
+     * @return a Map populated with the require dvariables
+     */
+    public static Map createVariableMap(Exchange exchange) {
+        Map answer = new HashMap();
+        populateVariableMap(exchange, answer);
+        return answer;
+    }
+
+    /**
+     * Populates the Map with the variables which are made available to a script or template
+     *
+     * @param exchange the exchange to make available
+     * @param map      the map to populate
+     * @return a Map populated with the require dvariables
+     */
+    public static void populateVariableMap(Exchange exchange, Map map) {
+        map.put("exchange", exchange);
+        Message in = exchange.getIn();
+        map.put("in", in);
+        map.put("request", in);
+        map.put("headers", in.getHeaders());
+        map.put("body", in.getBody())
+                ;
+        if (isOutCapable(exchange)) {
+            Message out = exchange.getOut(true);
+            map.put("out", out);
+            map.put("response", out);
+        }
+        map.put("camelContext", exchange.getContext());
     }
 }
