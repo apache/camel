@@ -1,6 +1,6 @@
-package org.apache.camel.groovy.example
+package org.apache.camel.language.groovy.example
 
-import org.apache.camel.groovy.GroovyRouteBuilder;
+import org.apache.camel.language.groovy.GroovyRouteBuilder;
 
 class GroovyRoutes extends GroovyRouteBuilder {
 
