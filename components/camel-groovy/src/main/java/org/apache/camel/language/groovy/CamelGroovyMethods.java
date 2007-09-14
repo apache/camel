@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.groovy;
+package org.apache.camel.language.groovy;
 
 import groovy.lang.Closure;
 import org.apache.camel.Exchange;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.script;
+package org.apache.camel.language.groovy;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.TestSupport;
@@ -23,44 +23,38 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import static org.apache.camel.builder.script.ScriptBuilder.groovy;
-
 /**
  * @version $Revision$
  */
-public class GroovyTest extends TestSupport {
+public class GroovyExpressionTest extends TestSupport {
     private static final transient Log LOG = LogFactory.getLog(GroovyTest.class);
 
     protected Exchange exchange;
 
     public void testExpressionReturnsTheCorrectValue() throws Exception {
-        assertExpression(groovy("exchange.in.headers['foo.bar']"), exchange, "cheese");
-        assertExpression(groovy("exchange.in.headers.name"), exchange, "James");
-        assertExpression(groovy("exchange.in.headers['doesNotExist']"), exchange, null);
+        assertExpression(GroovyLanguage.groovy("exchange.in.headers['foo.bar']"), exchange, "cheese");
+        assertExpression(GroovyLanguage.groovy("exchange.in.headers.name"), exchange, "James");
+        assertExpression(GroovyLanguage.groovy("exchange.in.headers['doesNotExist']"), exchange, null);
     }
 
     public void testPredicateEvaluation() throws Exception {
-        assertPredicate(groovy("exchange.in.headers.name == 'James'"), exchange, true);
-        assertPredicate(groovy("exchange.in.headers.name == 'Hiram'"), exchange, false);
+        assertPredicate(GroovyLanguage.groovy("exchange.in.headers.name == 'James'"), exchange, true);
+        assertPredicate(GroovyLanguage.groovy("exchange.in.headers.name == 'Hiram'"), exchange, false);
 
-        assertPredicate(groovy("request.headers.name == 'James'"), exchange, true);
+        assertPredicate(GroovyLanguage.groovy("request.headers.name == 'James'"), exchange, true);
     }
 
     public void testProcessorMutatesTheExchange() throws Exception {
-        groovy("request.headers.myNewHeader = 'ABC'").process(exchange);
+        GroovyLanguage.groovy("request.headers.myNewHeader = 'ABC'").evaluate(exchange);
 
         assertInMessageHeader(exchange, "myNewHeader", "ABC");
     }
 
-    public void testPredicateUsingScriptAttribute() throws Exception {
-        assertPredicate(groovy("request.headers.name == hacker").attribute("hacker", "James"), exchange, true);
-    }
-
     public void testInvalidExpressionFailsWithMeaningfulException() throws Exception {
         try {
-            groovy("exchange.doesNotExist").evaluate(exchange);
+            GroovyLanguage.groovy("exchange.doesNotExist").evaluate(exchange);
             fail("This test case should have thrown an exception!");
-        } catch (ScriptEvaluationException e) {
+        } catch (Exception e) {
             LOG.debug("Caught expected exception: " + e, e);
             String message = e.getMessage();
             assertTrue("The message should include 'doesNotExist' but was: " + message, message.contains("doesNotExist"));

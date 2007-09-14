@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-org.apache.camel.language.groovy.CamelGroovyMethods
+class=org.apache.camel.language.groovy.GroovyLanguage

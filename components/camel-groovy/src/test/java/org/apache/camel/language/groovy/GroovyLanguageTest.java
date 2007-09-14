@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,19 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.groovy;
+package org.apache.camel.language.groovy;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.LanguageTestSupport;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision: $
  */
-public abstract class GroovyRouteBuilder extends RouteBuilder {
-    public GroovyRouteBuilder() {
+public class GroovyLanguageTest extends LanguageTestSupport {
+    public void testGroovyExpressions() throws Exception {
+        assertExpression("exchange.in.headers.foo", "abc");
+        assertExpression("request.headers.foo", "abc");
+        //assertExpression("headers.foo", "abc");
     }
 
-    public GroovyRouteBuilder(CamelContext context) {
-        super(context);
+    protected String getLanguageName() {
+        return "groovy";
     }
 }

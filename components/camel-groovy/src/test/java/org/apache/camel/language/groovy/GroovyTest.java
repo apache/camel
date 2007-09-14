@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.groovy;
+package org.apache.camel.language.groovy;
 
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.MetaClassRegistry;
@@ -33,9 +33,11 @@ import org.apache.camel.model.ProcessorType;
  */
 public class GroovyTest extends ContextTestSupport {
     protected String expected = "<hello>world!</hello>";
-    protected String groovyBuilderClass = "org.apache.camel.groovy.example.GroovyRoutes";
+    protected String groovyBuilderClass = "org.apache.camel.language.groovy.example.GroovyRoutes";
 
     public void testSendMatchingMessage() throws Exception {
+        System.out.println(">>>>> " + ProcessorType.class.getName());
+        
         MockEndpoint resultEndpoint = getMockEndpoint("mock:results");
         resultEndpoint.expectedBodiesReceived(expected);
 
