@@ -96,14 +96,4 @@
     </profile>
   </profiles>
 
-
-  <reporting>
-    <plugins>
-      <!-- lets generate nice PNG / SVG diagrams from our routes -->
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </reporting>
 </project>

@@ -27,6 +27,6 @@ public class IntegrationTest extends TestCase {
 
     public void testCamelRulesDeployCorrectlyInSpring() throws Exception {
         // lets boot up the Spring application context for 2 seconds to check it works OK
-        Main.main("-duration", "2s", "-file", "target/site/cameldoc/routes.dot");
+        Main.main("-duration", "2s", "-o", "target/site/cameldoc");
     }
 }
