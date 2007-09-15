@@ -37,8 +37,11 @@
   <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
     <property name="connectionFactory">
        <bean class="org.apache.activemq.ActiveMQConnectionFactory">
-         <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+         <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
        </bean>
     </property>
   </bean>
+
+  <bean id="jmxAgent" class="org.apache.camel.spring.SpringInstrumentationAgent"/>
+
 </beans>

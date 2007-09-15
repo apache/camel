@@ -40,7 +40,7 @@ public class MyRouteBuilder extends RouteBuilder {
     public void configure() {
         // lets populate the message queue with some messages
         from("file:src/data?noop=true").
-                to("activemq:test.MyQueue");
+                to("jms:test.MyQueue");
 
         from("jms:test.MyQueue").
                 to("file://target/test?noop=true");
