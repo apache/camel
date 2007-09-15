@@ -106,6 +106,8 @@
         <include>org.apache.camel:camel-saxon</include>
         <include>org.apache.camel:camel-script</include>
         <include>org.apache.camel:camel-spring</include>
+        <include>org.apache.camel:camel-stringtemplate</include>
+        <include>org.apache.camel:camel-velocity</include>
         <include>org.apache.camel:camel-xmlbeans</include>
         <include>org.apache.camel:camel-xmpp</include>
         <include>commons-logging:commons-logging</include>
