@@ -17,18 +17,6 @@
  */
 package org.apache.camel.maven;
 
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
-import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.util.cli.CommandLineException;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
-import org.codehaus.plexus.util.cli.Commandline;
-
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
@@ -41,6 +29,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.AbstractMavenReport;
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.cli.CommandLineException;
+import org.codehaus.plexus.util.cli.CommandLineUtils;
+import org.codehaus.plexus.util.cli.Commandline;
 
 /**
  * Runs Camel embedded with META-INF/services/*.xml spring files to try create DOT files for the
@@ -79,18 +79,11 @@ public class DotMojo extends AbstractMavenReport {
     /**
      * Base output directory for reports.
      *
-     * @parameter expression="${project.reporting.outputDirectory}"
+     * @parameter default-value="${project.build.directory}/site/cameldoc"
      * @readonly
      * @required
      */
     private File outputDirectory;
-    /**
-     * The input directory used to find the dot files
-     *
-     * @parameter default-value="${project.build.directory}/site/cameldoc"
-     * @required
-     */
-    private File resources;
     /**
      * GraphViz executable location; visualization (images) will be
      * generated only if you install this program and set this property to the
@@ -211,7 +204,7 @@ public class DotMojo extends AbstractMavenReport {
         outputDir.mkdirs();
 
         List<File> files = new ArrayList<File>();
-        appendFiles(files, resources);
+        appendFiles(files, outputDirectory);
 
         if (graphvizOutputTypes == null) {
             if (graphvizOutputType == null) {
@@ -272,10 +265,9 @@ public class DotMojo extends AbstractMavenReport {
             EmbeddedMojo mojo = new EmbeddedMojo();
             mojo.setClasspathElements(list);
             mojo.setDotEnabled(true);
-            mojo.setDotOutputDir(resources.getAbsolutePath());
+            mojo.setOutputDirectory(outputDirectory.getAbsolutePath());
             mojo.setDuration(duration);
             mojo.setLog(getLog());
-            mojo.setOutputDirectory(outputDir);
             mojo.setPluginContext(getPluginContext());
             try {
                 mojo.executeWithoutWrapping();
@@ -287,7 +279,8 @@ public class DotMojo extends AbstractMavenReport {
     }
 
     protected void writeIndexHtmlFile(String fileName, String content) throws IOException {
-        File dir = new File(outputDirectory, SUBDIRECTORY);
+        //File dir = new File(outputDirectory, SUBDIRECTORY);
+        File dir = outputDirectory;
         dir.mkdirs();
         File html = new File(dir, fileName);
         PrintWriter out = null;
@@ -298,7 +291,12 @@ public class DotMojo extends AbstractMavenReport {
             out.println("</head>");
             out.println("<body>");
             out.println();
-            out.write(content);
+            if (content == null) {
+                out.write("<p>No EIP diagrams available</p>");
+            }
+            else {
+                out.write(content);
+            }
             out.println("</body>");
             out.println("</html>");
         }

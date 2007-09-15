@@ -48,14 +48,6 @@ public class EmbeddedMojo extends AbstractExecMojo {
      */
     private List classpathElements;
     /**
-     * The path where the generated artifacts will be placed.
-     *
-     * @parameter expression="${basedir}/target/site/cameldoc"
-     * @required
-     * @readonly
-     */
-    private File outputDirectory;
-    /**
      * The duration to run the application for which by default is in milliseconds.
      *
      * @parameter expression="-1"
@@ -68,7 +60,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
      * @parameter expression="${project.build.directory}/site/cameldoc/routes.dot"
      * @readonly
      */
-    protected String dotOutputDir;
+    protected String outputDirectory;
     /**
      * Allows the DOT file generation to be disabled
      *
@@ -109,7 +101,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
      *
      * @return The value of output directory.
      */
-    public File getOutputDirectory() {
+    public String getOutputDirectory() {
         return outputDirectory;
     }
 
@@ -118,7 +110,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
      *
      * @param inOutputDirectory The value of output directory.
      */
-    public void setOutputDirectory(final File inOutputDirectory) {
+    public void setOutputDirectory(String inOutputDirectory) {
         this.outputDirectory = inOutputDirectory;
     }
 
@@ -138,14 +130,6 @@ public class EmbeddedMojo extends AbstractExecMojo {
         this.dotEnabled = dotEnabled;
     }
 
-    public String getDotOutputDir() {
-        return dotOutputDir;
-    }
-
-    public void setDotOutputDir(String dotOutputDir) {
-        this.dotOutputDir = dotOutputDir;
-    }
-
     public String getDuration() {
         return duration;
     }
@@ -158,6 +142,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
     //-------------------------------------------------------------------------
 
     protected void runCamel(ClassLoader newLoader) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, MojoExecutionException {
+        getLog().debug("Running Camel in: " + newLoader);
         Class<?> type = newLoader.loadClass("org.apache.camel.spring.Main");
         Method method = type.getMethod("main", String[].class);
         String[] arguments = createArguments();
@@ -174,7 +159,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
 
     protected String[] createArguments() {
         if (dotEnabled) {
-            return new String[]{"-duration", duration, "-outdir", dotOutputDir};
+            return new String[]{"-duration", duration, "-outdir", outputDirectory};
         }
         else {
             return new String[]{"-duration", duration};
@@ -190,7 +175,9 @@ public class EmbeddedMojo extends AbstractExecMojo {
             String name = (String) classpathElements.get(i);
             File file = new File(name);
             urls[i] = file.toURL();
+            getLog().debug("URL: " + urls[i]);
         }
-        return new URLClassLoader(urls, parent);
+        URLClassLoader loader = new URLClassLoader(urls, parent);
+        return loader;
     }
 }

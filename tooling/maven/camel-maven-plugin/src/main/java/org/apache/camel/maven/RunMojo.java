@@ -88,12 +88,12 @@ public class RunMojo extends AbstractExecMojo {
     protected String duration;
 
     /**
-     * The DOT File name used to generate the DOT diagram of the route definitions
+     * The DOT outputd irectory name used to generate the DOT diagram of the route definitions
      *
-     * @parameter expression="${project.build.directory}/site/cameldoc/routes.dot"
+     * @parameter expression="${project.build.directory}/site/cameldoc"
      * @readonly
      */
-    protected String dotFile;
+    protected String dotDir;
 
     /**
      * Allows the DOT file generation to be disabled
@@ -295,9 +295,9 @@ public class RunMojo extends AbstractExecMojo {
 
         // lets create the command line arguments to pass in...
         List<String> args = new ArrayList<String>();
-        if (dotFile != null && dotEnabled) {
-            args.add("-f");
-            args.add(dotFile);
+        if (dotDir != null && dotEnabled) {
+            args.add("-o");
+            args.add(dotDir);
         }
         args.add("-d");
         args.add(duration);
@@ -584,7 +584,10 @@ public class RunMojo extends AbstractExecMojo {
                 while (iter.hasNext()) {
                     Artifact classPathElement = (Artifact)iter.next();
                     getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId() + " to classpath");
-                    path.add(classPathElement.getFile().toURL());
+                    File file = classPathElement.getFile();
+                    if (file != null) {
+                        path.add(file.toURL());
+                    }
                 }
 
             } catch (MalformedURLException e) {
@@ -602,9 +605,9 @@ public class RunMojo extends AbstractExecMojo {
         for (Iterator artifacts = getAllDependencies().iterator(); artifacts.hasNext();) {
             Artifact artifact = (Artifact)artifacts.next();
 
-            if (artifact.getScope().equals(Artifact.SCOPE_SYSTEM)) {
+            //if (artifact.getScope().equals(Artifact.SCOPE_SYSTEM)) {
                 systemScopeArtifacts.add(artifact);
-            }
+            //}
         }
         return systemScopeArtifacts;
     }
