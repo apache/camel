@@ -17,29 +17,19 @@
  */
 package org.apache.camel.component.velocity;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.PollingConsumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.component.ResourceBasedEndpoint;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.impl.PollingConsumerSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
-import org.apache.velocity.exception.MethodInvocationException;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
 
 /**
  * @version $Revision: 1.1 $
@@ -62,9 +52,10 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         return ExchangePattern.InOut;
     }
 
-    public VelocityEngine getVelocityEngine() {
+    public VelocityEngine getVelocityEngine() throws Exception {
         if (velocityEngine == null) {
             velocityEngine = component.getVelocityEngine();
+            velocityEngine.init();
         }
         return velocityEngine;
     }
@@ -75,11 +66,14 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
 
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
-        Reader   reader = new InputStreamReader(getResource().getInputStream());
+        // TODO we might wanna add some kinda resource caching of the template
+        Reader reader = new InputStreamReader(getResource().getInputStream());
         StringWriter buffer = new StringWriter();
         String logTag = getClass().getName();
-        Context velocityContext = new VelocityContext(ExchangeHelper.createVariableMap(exchange));
-        getVelocityEngine().evaluate(velocityContext, buffer, logTag, reader);
+        Map variableMap = ExchangeHelper.createVariableMap(exchange);
+        Context velocityContext = new VelocityContext(variableMap);
+        VelocityEngine engine = getVelocityEngine();
+        engine.evaluate(velocityContext, buffer, logTag, reader);
 
         // now lets output the results to the exchange
         Message out = exchange.getOut(true);

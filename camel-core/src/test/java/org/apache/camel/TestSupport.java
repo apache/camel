@@ -147,6 +147,27 @@ public abstract class TestSupport extends TestCase {
         return assertMessageHeader(exchange.getOut(), name, expected);
     }
 
+    /**
+     * Asserts that the given exchange has an OUT message of the given body value
+     * @param exchange the exchange which should have an OUT message
+     * @param expected the expected value of the OUT message
+     * @throws InvalidPayloadException
+     */
+    protected void assertOutMessageBodyEquals(Exchange exchange, Object expected) throws InvalidPayloadException {
+        assertNotNull("Should have a response exchange!", exchange);
+
+        Object actual;
+        if (expected == null) {
+            actual = ExchangeHelper.getMandatoryOutBody(exchange);
+            assertEquals("output body of: " + exchange, expected, actual);
+        }
+        else {
+            actual = ExchangeHelper.getMandatoryOutBody(exchange, expected.getClass());
+        }
+        assertEquals("output body of: " + exchange, expected, actual);
+
+        log.debug("Received response: " + exchange + " with out: " + exchange.getOut());
+    }
     protected Object assertMessageHeader(Message message, String name, Object expected) {
         Object value = message.getHeader(name);
         assertEquals("Header: " + name + " on Message: " + message, expected, value);
@@ -274,4 +295,5 @@ public abstract class TestSupport extends TestCase {
         assertNotNull("Text should not be null!", text);
         assertTrue("Text: " + text + " does not contain: " + containedText, text.contains(containedText));
     }
+
 }

@@ -22,14 +22,11 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
-import org.apache.camel.util.ExchangeHelper;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class VelocityTest extends ContextTestSupport {
-
     public void testReceivesFooResponse() throws Exception {
         assertRespondsWith("foo", "<hello>foo</hello>");
     }
@@ -38,7 +35,7 @@ public class VelocityTest extends ContextTestSupport {
         assertRespondsWith("bar", "<hello>bar</hello>");
     }
 
-    protected void assertRespondsWith(final String value, String containedText) throws InvalidPayloadException {
+    protected void assertRespondsWith(final String value, String expectedBody) throws InvalidPayloadException {
         Exchange response = template.request("direct:a", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Message in = exchange.getIn();
@@ -46,14 +43,7 @@ public class VelocityTest extends ContextTestSupport {
                 in.setHeader("cheese", value);
             }
         });
-
-        assertNotNull("Should receive a response!", response);
-
-        System.out.println("Received response: " + response + " with out: " + response.getOut());
-        
-        String text = ExchangeHelper.getMandatoryOutBody(response, String.class);
-        log.info("Received: " + text);
-        assertStringContains(text, containedText);
+        assertOutMessageBodyEquals(response, expectedBody);
     }
 
     protected RouteBuilder createRouteBuilder() {
