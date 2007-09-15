@@ -48,6 +48,13 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
     </dependency>
+
+    <!-- for testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 
