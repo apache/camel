@@ -139,6 +139,14 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-stringtemplate</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-velocity</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-xmlbeans</artifactId>
     </dependency>
     <dependency>
@@ -212,7 +220,8 @@
               <includes>camel-bam,camel-core,camel-cxf,camel-ftp,camel-juel,
                 camel-http,camel-ibatis,camel-irc,camel-jaxb,camel-jdbc,camel-jing,camel-jms,camel-josql,
                 camel-jpa,camel-mail,camel-mina,camel-msv,camel-ognl,camel-quartz,camel-rmi,
-                camel-saxon,camel-script,camel-spring,camel-xmlbeans,camel-xmpp,commons-logging</includes>
+                camel-saxon,camel-script,camel-spring,camel-stringtemplate,camel-velocity,
+                camel-xmlbeans,camel-xmpp,commons-logging</includes>
             </configuration>
           </execution>
         </executions>
