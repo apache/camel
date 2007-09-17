@@ -61,7 +61,7 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
     }
 
     protected HttpMethod createMethod(Exchange exchange) {
-        String uri = getEndpoint().getEndpointUri();
+        String uri = ((HttpEndpoint)getEndpoint()).getHttpUri().toString();
         RequestEntity requestEntity = createRequestEntity(exchange);
         if (requestEntity == null) {
             return new GetMethod(uri);
