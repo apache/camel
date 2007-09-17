@@ -140,8 +140,8 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("From URI", uri, from.getUri());
     }
 
-    protected void assertChildTo(String message, ProcessorType route, String uri) {
-        ProcessorType processor = assertOneElement(route.getOutputs());
+    protected void assertChildTo(String message, ProcessorType<?> route, String uri) {
+        ProcessorType<?> processor = assertOneElement(route.getOutputs());
         ToType value = assertIsInstanceOf(ToType.class, processor);
         String text = message + "To URI";
         log.info("Testing: " + text + " is equal to: " + uri + " for processor: " + processor);
@@ -156,41 +156,41 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     protected void assertChildTo(ProcessorType route, String... uris) {
-        List<ProcessorType> list = assertListSize(route.getOutputs(), uris.length);
+        List<ProcessorType<?>> list = assertListSize(route.getOutputs(), uris.length);
         int idx = 0;
         for (String uri : uris) {
             assertTo("output[" + idx + "] ", list.get(idx++), uri);
         }
     }
 
-    protected void assertProcessor(ProcessorType route, String processorRef) {
-        ProcessorType processor = assertOneElement(route.getOutputs());
+    protected void assertProcessor(ProcessorType<?> route, String processorRef) {
+        ProcessorType<?> processor = assertOneElement(route.getOutputs());
         ProcessorRef to = assertIsInstanceOf(ProcessorRef.class, processor);
         assertEquals("Processor ref", processorRef, to.getRef());
     }
 
-    protected FilterType assertFilter(ProcessorType route) {
-        ProcessorType processor = assertOneElement(route.getOutputs());
+    protected FilterType assertFilter(ProcessorType<?> route) {
+        ProcessorType<?> processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(FilterType.class, processor);
     }
 
-    protected RecipientListType assertRecipientList(ProcessorType route) {
-        ProcessorType processor = assertOneElement(route.getOutputs());
+    protected RecipientListType assertRecipientList(ProcessorType<?> route) {
+        ProcessorType<?> processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(RecipientListType.class, processor);
     }
 
-    protected ChoiceType assertChoice(ProcessorType route) {
-        ProcessorType processor = assertOneElement(route.getOutputs());
+    protected ChoiceType assertChoice(ProcessorType<?> route) {
+        ProcessorType<?> processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(ChoiceType.class, processor);
     }
 
-    protected SplitterType assertSplitter(ProcessorType route) {
-        ProcessorType processor = assertOneElement(route.getOutputs());
+    protected SplitterType assertSplitter(ProcessorType<?> route) {
+        ProcessorType<?> processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(SplitterType.class, processor);
     }
 
-    protected ResequencerType assertResequencer(ProcessorType route) {
-        ProcessorType processor = assertOneElement(route.getOutputs());
+    protected ResequencerType assertResequencer(ProcessorType<?> route) {
+        ProcessorType<?> processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(ResequencerType.class, processor);
     }
 

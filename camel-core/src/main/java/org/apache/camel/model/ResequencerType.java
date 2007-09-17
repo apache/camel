@@ -40,13 +40,13 @@ import org.apache.camel.processor.StreamResequencer;
  * @version $Revision: 1.1 $
  */
 @XmlRootElement(name = "resequencer")
-public class ResequencerType extends ProcessorType {
+public class ResequencerType extends ProcessorType<ProcessorType> {
     @XmlElementRef
     private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     @XmlElementRef
     private List<ExpressionType> expressions = new ArrayList<ExpressionType>();
     @XmlElementRef
-    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
+    private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
     // Binding annotation at setter 
     private BatchResequencerConfig batchConfig;
     // Binding annotation at setter 
@@ -129,11 +129,11 @@ public class ResequencerType extends ProcessorType {
         this.interceptors = interceptors;
     }
 
-    public List<ProcessorType> getOutputs() {
+    public List<ProcessorType<?>> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorType> outputs) {
+    public void setOutputs(List<ProcessorType<?>> outputs) {
         this.outputs = outputs;
     }
 

@@ -33,7 +33,8 @@ import java.util.Collection;
  */
 @XmlRootElement(name = "intercept")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InterceptType extends OutputType {
+public class InterceptType extends OutputType<ProcessorType> {
+
     @Override
     public String toString() {
         return "Intercept[" + getOutputs() + "]";

@@ -53,7 +53,7 @@ import java.util.List;
 /**
  * @version $Revision: 1.1 $
  */
-public abstract class ProcessorType {
+public abstract class ProcessorType<Type extends ProcessorType> {
     public static final String DEFAULT_TRACE_CATEGORY = "org.apache.camel.TRACE";
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Boolean inheritErrorHandlerFlag = Boolean.TRUE; // TODO not sure how
@@ -64,7 +64,7 @@ public abstract class ProcessorType {
                                                             // attribute in
                                                             // JAXB2
 
-    public abstract List<ProcessorType> getOutputs();
+    public abstract List<ProcessorType<?>> getOutputs();
 
     public abstract List<InterceptorType> getInterceptors();
 
@@ -73,7 +73,7 @@ public abstract class ProcessorType {
     }
 
     public Processor createOutputsProcessor(RouteContext routeContext) throws Exception {
-        Collection<ProcessorType> outputs = getOutputs();
+        Collection<ProcessorType<?>> outputs = getOutputs();
         return createOutputsProcessor(routeContext, outputs);
     }
 
@@ -97,50 +97,50 @@ public abstract class ProcessorType {
     /**
      * Sends the exchange to the given endpoint URI
      */
-    public ProcessorType to(String uri) {
+    public Type to(String uri) {
         addOutput(new ToType(uri));
-        return this;
+        return (Type) this;
     }
 
     /**
      * Sends the exchange to the given endpoint
      */
-    public ProcessorType to(Endpoint endpoint) {
+    public Type to(Endpoint endpoint) {
         addOutput(new ToType(endpoint));
-        return this;
+        return (Type) this;
     }
 
     /**
      * Sends the exchange to a list of endpoints using the
      * {@link MulticastProcessor} pattern
      */
-    public ProcessorType to(String... uris) {
+    public Type to(String... uris) {
         for (String uri : uris) {
             addOutput(new ToType(uri));
         }
-        return this;
+        return (Type) this;
     }
 
     /**
      * Sends the exchange to a list of endpoints using the
      * {@link MulticastProcessor} pattern
      */
-    public ProcessorType to(Endpoint... endpoints) {
+    public Type to(Endpoint... endpoints) {
         for (Endpoint endpoint : endpoints) {
             addOutput(new ToType(endpoint));
         }
-        return this;
+        return (Type) this;
     }
 
     /**
      * Sends the exchange to a list of endpoint using the
      * {@link MulticastProcessor} pattern
      */
-    public ProcessorType to(Collection<Endpoint> endpoints) {
+    public Type to(Collection<Endpoint> endpoints) {
         for (Endpoint endpoint : endpoints) {
             addOutput(new ToType(endpoint));
         }
-        return this;
+        return (Type) this;
     }
 
     /**
@@ -159,7 +159,7 @@ public abstract class ProcessorType {
      * will get processed by each endpoint in turn and for request/response the
      * output of one endpoint will be the input of the next endpoint
      */
-    public ProcessorType pipeline(String... uris) {
+    public Type pipeline(String... uris) {
         // TODO pipeline v mulicast
         return to(uris);
     }
@@ -169,7 +169,7 @@ public abstract class ProcessorType {
      * will get processed by each endpoint in turn and for request/response the
      * output of one endpoint will be the input of the next endpoint
      */
-    public ProcessorType pipeline(Endpoint... endpoints) {
+    public Type pipeline(Endpoint... endpoints) {
         // TODO pipeline v mulicast
         return to(endpoints);
     }
@@ -179,7 +179,7 @@ public abstract class ProcessorType {
      * will get processed by each endpoint in turn and for request/response the
      * output of one endpoint will be the input of the next endpoint
      */
-    public ProcessorType pipeline(Collection<Endpoint> endpoints) {
+    public Type pipeline(Collection<Endpoint> endpoints) {
         // TODO pipeline v mulicast
         return to(endpoints);
     }
@@ -236,10 +236,10 @@ public abstract class ProcessorType {
      * @param receipients is the builder of the expression used in the
      *                {@link RecipientList} to decide the destinations
      */
-    public ProcessorType recipientList(Expression receipients) {
+    public Type recipientList(Expression receipients) {
         RecipientListType answer = new RecipientListType(receipients);
         addOutput(answer);
-        return this;
+        return (Type) this;
     }
 
     /**
@@ -415,9 +415,9 @@ public abstract class ProcessorType {
         return answer;
     }
 
-    public ProcessorType interceptor(String ref) {
+    public Type interceptor(String ref) {
         getInterceptors().add(new InterceptorRef(ref));
-        return this;
+        return (Type) this;
     }
 
     public InterceptType intercept() {
@@ -426,9 +426,9 @@ public abstract class ProcessorType {
         return answer;
     }
 
-    public ProcessorType proceed() {
+    public Type proceed() {
         addOutput(new ProceedType());
-        return this;
+        return (Type) this;
     }
 
     public ExceptionType exception(Class exceptionType) {
@@ -446,11 +446,11 @@ public abstract class ProcessorType {
         return answer.when(predicate);
     }
 
-    public ProcessorType interceptors(String... refs) {
+    public Type interceptors(String... refs) {
         for (String ref : refs) {
             interceptor(ref);
         }
-        return this;
+        return (Type) this;
     }
 
     public FilterType filter(ExpressionType expression) {
@@ -470,7 +470,7 @@ public abstract class ProcessorType {
      * 
      * @return
      */
-    public ProcessorType trace() {
+    public Type trace() {
         return trace(DEFAULT_TRACE_CATEGORY);
     }
 
@@ -481,7 +481,7 @@ public abstract class ProcessorType {
      * @param category the logging category trace messages will sent to.
      * @return
      */
-    public ProcessorType trace(String category) {
+    public Type trace(String category) {
         final Log log = LogFactory.getLog(category);
         return intercept(new DelegateProcessor() {
             @Override
@@ -504,10 +504,10 @@ public abstract class ProcessorType {
         return answer;
     }
 
-    public ProcessorType intercept(DelegateProcessor interceptor) {
+    public Type intercept(DelegateProcessor interceptor) {
         getInterceptors().add(new InterceptorRef(interceptor));
         lastInterceptor = interceptor;
-        return this;
+        return (Type) this;
     }
 
     /**
@@ -517,9 +517,9 @@ public abstract class ProcessorType {
      *                all child routes
      * @return the current builder with the error handler configured
      */
-    public ProcessorType errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
+    public Type errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
         setErrorHandlerBuilder(errorHandlerBuilder);
-        return this;
+        return (Type) this;
     }
 
     /**
@@ -530,9 +530,9 @@ public abstract class ProcessorType {
      *                inherited or not
      * @return the current builder
      */
-    public ProcessorType inheritErrorHandler(boolean condition) {
+    public Type inheritErrorHandler(boolean condition) {
         setInheritErrorHandlerFlag(condition);
-        return this;
+        return (Type) this;
     }
 
     // Transformers
@@ -542,129 +542,150 @@ public abstract class ProcessorType {
      * Adds the custom processor to this destination which could be a final
      * destination, or could be a transformation in a pipeline
      */
-    public ProcessorType process(Processor processor) {
+    public Type process(Processor processor) {
         ProcessorRef answer = new ProcessorRef(processor);
         addOutput(answer);
-        return this;
+        return (Type) this;
     }
 
     /**
      * Adds a bean which is invoked which could be a final destination, or could
      * be a transformation in a pipeline
      */
-    public ProcessorType bean(Object bean) {
+    public Type bean(Object bean) {
         BeanRef answer = new BeanRef();
         answer.setBean(bean);
         addOutput(answer);
-        return this;
+        return (Type) this;
     }
 
     /**
      * Adds a bean and method which is invoked which could be a final
      * destination, or could be a transformation in a pipeline
      */
-    public ProcessorType bean(Object bean, String method) {
+    public Type bean(Object bean, String method) {
         BeanRef answer = new BeanRef();
         answer.setBean(bean);
         answer.setMethod(method);
         addOutput(answer);
-        return this;
+        return (Type) this;
     }
 
     /**
      * Adds a bean which is invoked which could be a final destination, or could
      * be a transformation in a pipeline
      */
-    public ProcessorType beanRef(String ref) {
+    public Type beanRef(String ref) {
         BeanRef answer = new BeanRef(ref);
         addOutput(answer);
-        return this;
+        return (Type) this;
     }
 
     /**
      * Adds a bean and method which is invoked which could be a final
      * destination, or could be a transformation in a pipeline
      */
-    public ProcessorType beanRef(String ref, String method) {
+    public Type beanRef(String ref, String method) {
         BeanRef answer = new BeanRef(ref, method);
         addOutput(answer);
-        return this;
+        return (Type) this;
     }
 
     /**
      * Adds a processor which sets the body on the IN message
      */
-    public ProcessorType setBody(Expression expression) {
+    public Type setBody(Expression expression) {
         return process(ProcessorBuilder.setBody(expression));
     }
 
     /**
      * Adds a processor which sets the body on the OUT message
      */
-    public ProcessorType setOutBody(Expression expression) {
+    public Type setOutBody(Expression expression) {
         return process(ProcessorBuilder.setOutBody(expression));
+    }
+
+    /**
+     * Adds a processor which sets the body on the FAULT message
+     */
+    public Type setFaultBody(Expression expression) {
+        return process(ProcessorBuilder.setFaultBody(expression));
     }
 
     /**
      * Adds a processor which sets the header on the IN message
      */
-    public ProcessorType setHeader(String name, Expression expression) {
+    public Type setHeader(String name, Expression expression) {
         return process(ProcessorBuilder.setHeader(name, expression));
     }
 
     /**
      * Adds a processor which sets the header on the OUT message
      */
-    public ProcessorType setOutHeader(String name, Expression expression) {
+    public Type setOutHeader(String name, Expression expression) {
         return process(ProcessorBuilder.setOutHeader(name, expression));
+    }
+
+    /**
+     * Adds a processor which sets the header on the FAULT message
+     */
+    public Type setFaultHeader(String name, Expression expression) {
+        return process(ProcessorBuilder.setFaultHeader(name, expression));
     }
 
     /**
      * Adds a processor which sets the exchange property
      */
-    public ProcessorType setProperty(String name, Expression expression) {
+    public Type setProperty(String name, Expression expression) {
         return process(ProcessorBuilder.setProperty(name, expression));
     }
 
     /**
      * Adds a processor which removes the header on the IN message
      */
-    public ProcessorType removeHeader(String name) {
+    public Type removeHeader(String name) {
         return process(ProcessorBuilder.removeHeader(name));
     }
 
     /**
      * Adds a processor which removes the header on the OUT message
      */
-    public ProcessorType removeOutHeader(String name) {
+    public Type removeOutHeader(String name) {
         return process(ProcessorBuilder.removeOutHeader(name));
+    }
+
+    /**
+     * Adds a processor which removes the header on the FAULT message
+     */
+    public Type removeFaultHeader(String name) {
+        return process(ProcessorBuilder.removeFaultHeader(name));
     }
 
     /**
      * Adds a processor which removes the exchange property
      */
-    public ProcessorType removeProperty(String name) {
+    public Type removeProperty(String name) {
         return process(ProcessorBuilder.removeProperty(name));
     }
 
     /**
      * Converts the IN message body to the specified type
      */
-    public ProcessorType convertBodyTo(Class type) {
+    public Type convertBodyTo(Class type) {
         return process(ProcessorBuilder.setBody(Builder.body().convertTo(type)));
     }
 
     /**
      * Converts the OUT message body to the specified type
      */
-    public ProcessorType convertOutBodyTo(Class type) {
+    public Type convertOutBodyTo(Class type) {
         return process(ProcessorBuilder.setOutBody(Builder.outBody().convertTo(type)));
     }
 
     /**
      * Converts the FAULT message body to the specified type
      */
-    public ProcessorType convertFaultBodyTo(Class type) {
+    public Type convertFaultBodyTo(Class type) {
         return process(ProcessorBuilder.setFaultBody(Builder.faultBody().convertTo(type)));
     }
 
@@ -811,7 +832,7 @@ public abstract class ProcessorType {
         return new Pipeline(list);
     }
 
-    protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorType> outputs)
+    protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorType<?>> outputs)
         throws Exception {
         List<Processor> list = new ArrayList<Processor>();
         for (ProcessorType output : outputs) {
