@@ -31,6 +31,9 @@
 
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <package>org.apache.camel.example.spring</package>
+
+    <!-- lets enable JMX -->
+    <jmxAgent id="camelJmxAgent"/>
   </camelContext>
 
   <!-- lets configure the default ActiveMQ broker URL -->
@@ -41,7 +44,5 @@
        </bean>
     </property>
   </bean>
-
-  <bean id="jmxAgent" class="org.apache.camel.spring.SpringInstrumentationAgent"/>
 
 </beans>

@@ -17,28 +17,49 @@
  */
 package org.apache.camel.spring;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.management.MBeanServer;
 
 import org.apache.camel.management.InstrumentationAgentImpl;
-import org.apache.camel.CamelContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.spi.InstrumentationAgent;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
-public class SpringInstrumentationAgent extends InstrumentationAgentImpl
-        implements InitializingBean, DisposableBean {
-    private static final transient Log LOG = LogFactory.getLog(SpringInstrumentationAgent.class);
+@XmlRootElement(name = "jmxAgent")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class CamelInstrumentationAgentFactoryBean
+        implements FactoryBean, InitializingBean, DisposableBean {
+
+    @XmlTransient
+    private InstrumentationAgent jmxAgent;
+
+    public Object getObject() throws Exception {
+        return getJmxAgent();
+    }
+
+    public Class getObjectType() {
+        return InstrumentationAgent.class;
+    }
+
+    public boolean isSingleton() {
+        return true;
+    }
+
+    public InstrumentationAgent getJmxAgent() {
+        if (jmxAgent == null) {
+            jmxAgent = new InstrumentationAgentImpl();
+        }
+        return jmxAgent;
+    }
 
     public void afterPropertiesSet() throws Exception {
-		LOG.debug("Starting JMX agent on server: " + getMBeanServer());
-        start();
-	}
+        getJmxAgent().start();
+    }
 
-	public void destroy() throws Exception {
-	}
+    public void destroy() throws Exception {
+        getJmxAgent().stop();
+    }
 }
