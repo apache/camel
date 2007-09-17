@@ -45,7 +45,7 @@ public class IBatisRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisifed();
 
         List<Exchange> list = endpoint.getReceivedExchanges();
-        Exchange exchange = list.get(0);
+        Exchange exchange = list.get(list.size() - 1);
         List body = exchange.getIn().getBody(List.class);
         assertNotNull("Should have returned a List!", body);
         assertEquals("Wrong size: " + body, 1, body.size());
