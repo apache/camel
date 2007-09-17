@@ -108,6 +108,14 @@ public class RouteType extends ProcessorType implements CamelContextAware {
         return this;
     }
 
+    /**
+     * Set the group name for this route
+     */
+    public RouteType group(String name) {
+        setGroup(name);
+        return this;
+    }
+
     // Properties
     // -----------------------------------------------------------------------
 
