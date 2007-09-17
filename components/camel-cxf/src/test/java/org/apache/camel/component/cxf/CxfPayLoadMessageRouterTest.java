@@ -16,22 +16,16 @@
  */
 package org.apache.camel.component.cxf;
 
-/**
- * Constants used in this module
- *
- * @version $Revision$
- */
-public interface CxfConstants {
-    String METHOD = "method";
-    String SEI = "sei";
-    String IMPL = "impl";
-    String WSDL_URL = "wsdlURL";
-    String ADDRESS = "address";
-    String SERVICE_NAME = "serviceName";
-    String PORT_NAME = "portName";
-    String PROTOCOL_NAME_RES = "res";
-    String OPERATION_NAME = "operationName";
-    // service name -- come from the wsdl   
+import org.apache.camel.builder.RouteBuilder;
+
+public class CxfPayLoadMessageRouterTest extends CxfRouterTest {
+    private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";
+    private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from(routerEndpointURI).to(serviceEndpointURI);              
+            }
+        };
+    }
 }
-
-

@@ -38,12 +38,12 @@ import org.springframework.core.CollectionFactory;
 import junit.framework.TestCase;
 
 public class CxfRouterTest extends ContextTestSupport {
-    private static final String ROUTER_ADDRESS = "http://localhost:9000/router";
-    private static final String SERVICE_ADDRESS = "http://localhost:9002/helloworld";
-    private static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
+    protected static final String ROUTER_ADDRESS = "http://localhost:9000/router";
+    protected static final String SERVICE_ADDRESS = "http://localhost:9002/helloworld";
+    protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
     
-    private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&invoker=true";
-    private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&invoker=true";
+    private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
+    private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
     //private Endpoint routerEndpoint;
     //private Endpoint resultEndpoint;
     private ServerImpl server;
@@ -52,9 +52,7 @@ public class CxfRouterTest extends ContextTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();        
-        //routerEndpoint = resolveMandatoryEndpoint(routerEndpointURI);        
-        //resultEndpoint = resolveMandatoryEndpoint(serviceEndpointURI);
-        
+                
         startService();
     }
     
@@ -103,6 +101,8 @@ public class CxfRouterTest extends ContextTestSupport {
         HelloService client = (HelloService) proxyFactory.create();
         String result = client.echo("hello world");
         assertEquals("we should get the right answer from router", "hello world", result);
+        
+        //Thread.sleep(200000);
         
     }
 }

@@ -14,21 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf;
+package org.apache.camel.component.cxf.invoker;
 
-public class HelloServiceImpl implements HelloService {
-    public String echo(String text) {        
-        System.out.println("call for echo with " + text);
-        return text;
+import org.apache.camel.component.cxf.DataFormat;
+
+public final class InvokingContextFactory {
+    
+    private InvokingContextFactory() {
+        // not constructed
     }
+    
+    /**
+     * Static method that creates a routing context object from a given data format
+     * @param dataFormat
+     * @return routing context
+     */
+    public static InvokingContext createContext(DataFormat dataFormat) {
+            
+        if (dataFormat == DataFormat.MESSAGE) {
+            return new RawMessageInvokingContext();
+        }
 
-    public void ping() {
+        if (dataFormat == DataFormat.PAYLOAD) {
+            return new PayloadInvokingContext();
+        }
 
-    }
-
-    public String sayHello() {
-        return "hello";
+        //Default is DataFormat.MESSAGE, we do not set the POJO context
+        return new RawMessageInvokingContext();
     }
 }
-
-

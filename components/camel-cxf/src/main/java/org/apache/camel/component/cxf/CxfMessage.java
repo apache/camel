@@ -36,6 +36,9 @@ public class CxfMessage extends DefaultMessage {
     }
 
     public CxfMessage(Message cxfMessage) {
+        if (cxfMessage == null) {
+            this.cxfMessage = new MessageImpl();
+        }
         this.cxfMessage = cxfMessage;
     }
 

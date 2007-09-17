@@ -16,9 +16,17 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.net.URI;
+
 import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.util.CxfEndpointUtils;
+import org.apache.camel.component.cxf.util.UriUtils;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
+import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.Destination;
@@ -33,25 +41,39 @@ import org.apache.cxf.transport.MessageObserver;
 public class CxfConsumer extends DefaultConsumer<CxfExchange> {
     private CxfEndpoint endpoint;    
     private Server server;
-    private Destination destination;
+    
 
-    public CxfConsumer(CxfEndpoint endpoint, Processor processor) throws ClassNotFoundException {
+    public CxfConsumer(CxfEndpoint endpoint, Processor processor) throws Exception {
        
-        super(endpoint, processor);
-        System.out.println(processor.toString());
+        super(endpoint, processor);        
         this.endpoint = endpoint;
-        //we setup the interceptors by the endpoint configuration
-        //create server here, now we just use the simple front-end        
-        ServerFactoryBean svrBean = new ServerFactoryBean();
-        Class serviceClass = Class.forName(endpoint.getServiceClass());        
-        svrBean.setAddress(endpoint.getAddress());
-        svrBean.setServiceClass(serviceClass);
-        if (endpoint.isInvoker()) {
-            System.out.println("setup the invoker ");
-            svrBean.setInvoker(new CamelInvoker(this));
-        }    
-        svrBean.setStart(false);
-        server = svrBean.create();
+        try {
+            // now we just use the default bus here   
+            Bus bus = BusFactory.getDefaultBus();
+            Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass()); 
+            ServerFactoryBean svrBean = CxfEndpointUtils.getServerFactoryBean(serviceClass);                           
+            svrBean.setAddress(endpoint.getAddress());
+            svrBean.setServiceClass(serviceClass);
+            if (endpoint.getWsdlURL() != null) {                
+                svrBean.setWsdlURL(endpoint.getWsdlURL());
+            }
+            DataFormat dataFormat = CxfEndpointUtils.getDataFormat(endpoint);
+            if (dataFormat.equals(DataFormat.POJO)) {
+                svrBean.setInvoker(new CamelInvoker(this));
+            }
+            svrBean.setBus(bus);
+            svrBean.setStart(false);
+            server = svrBean.create();            
+            if (!dataFormat.equals(DataFormat.POJO)) {
+                CxfMessageObserver observer = new CxfMessageObserver(this, server.getEndpoint(), bus , dataFormat);
+                //set the message observer for the Message and PayLoad mode message 
+                ServerImpl serverImpl = (ServerImpl)server;
+                serverImpl.setMessageObserver(observer);
+            } 
+            
+        } catch (Exception ex) {
+            
+        }
     }
 
     @Override
@@ -65,6 +87,10 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
     protected void doStop() throws Exception {
         server.stop();
         super.doStop();
+    }
+    
+    public CxfEndpoint getEndpoint() {
+        return endpoint;
     }
 
     

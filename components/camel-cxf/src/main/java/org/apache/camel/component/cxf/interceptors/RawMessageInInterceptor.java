@@ -14,24 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf;
+package org.apache.camel.component.cxf.interceptors;
 
-/**
- * Constants used in this module
- *
- * @version $Revision$
- */
-public interface CxfConstants {
-    String METHOD = "method";
-    String SEI = "sei";
-    String IMPL = "impl";
-    String WSDL_URL = "wsdlURL";
-    String ADDRESS = "address";
-    String SERVICE_NAME = "serviceName";
-    String PORT_NAME = "portName";
-    String PROTOCOL_NAME_RES = "res";
-    String OPERATION_NAME = "operationName";
-    // service name -- come from the wsdl   
+import java.util.logging.Logger;
+
+import org.apache.cxf.common.logging.LogUtils;
+import org.apache.cxf.phase.Phase;
+
+public class RawMessageInInterceptor extends AbstractInvokerInterceptor {
+
+    private static final Logger LOG = LogUtils.getL7dLogger(RawMessageInInterceptor.class); 
+
+    public RawMessageInInterceptor() {
+        super(Phase.RECEIVE);
+        
+    }
+    
+    @Override
+    protected Logger getLogger() {
+        return LOG;
+    }
 }
-
-
