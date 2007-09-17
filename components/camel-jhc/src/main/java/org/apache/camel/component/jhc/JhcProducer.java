@@ -5,6 +5,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.*;
@@ -102,15 +103,7 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
         if (LOG.isDebugEnabled()) {
             LOG.debug("process: " + exchange);
         }
-        AsyncCallback callback = new AsyncCallback() {
-            public synchronized void done(boolean doneSynchronously) {
-                notify();
-            }
-        };
-        synchronized (callback) {
-            process(exchange, callback);
-            callback.wait();
-        }
+        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
