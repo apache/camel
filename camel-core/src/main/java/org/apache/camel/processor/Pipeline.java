@@ -130,7 +130,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
                 }
 
                 ExchangeHelper.copyResults(original, nextExchange);
-                callback.done(true);
+                callback.done(false);
             }
         });
     }
