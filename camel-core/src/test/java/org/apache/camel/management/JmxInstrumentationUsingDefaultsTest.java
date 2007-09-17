@@ -36,12 +36,69 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 	
 	public static final int DEFAULT_PORT = 1099;
 
-	protected InstrumentationAgentImpl iAgent;
-	protected String domainName;
+    protected InstrumentationAgentImpl iAgent;
+    protected String domainName = InstrumentationAgentImpl.DEFAULT_DOMAIN;
+    protected boolean sleepSoYouCanBrowseInJConsole = false;
 
-	protected void enableJmx() {
+    public void testMBeansRegistered() throws Exception {
+        assertNotNull(iAgent.getMBeanServer());
+        //assertEquals(domainName, iAgent.getMBeanServer().getDefaultDomain());
+
+    	resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
+
+        ObjectName name = new ObjectName(domainName + ":class=endpoints,*");
+        Set s = iAgent.getMBeanServer().queryNames(name, null);
+
+        if (sleepSoYouCanBrowseInJConsole) {
+            Thread.sleep(100000);
+        }
+        assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
+    }
+
+    public void testCounters() throws Exception {
+    	MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
+        resultEndpoint.expectedBodiesReceived("<hello>world!</hello>");
+        sendBody("direct:start", "<hello>world!</hello>");
+
+        resultEndpoint.assertIsSatisfied();
+
+        MBeanServer mbs = iAgent.getMBeanServer();
+        ObjectName name = new ObjectName(domainName + ":name=Stats,*");
+        Set s = mbs.queryNames(name, null);
+        assertEquals("Found mbeans: " + s, 1, s.size());
+
+        Iterator iter = s.iterator();
+        ObjectName pcob = (ObjectName)iter.next();
+
+        Long valueofNumExchanges = (Long)mbs.getAttribute(pcob, "NumExchanges");
+        assertNotNull("Expected attribute not found. MBean registerred under a " +
+        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofNumExchanges);
+        assertTrue(valueofNumExchanges == 1);
+        Long valueofNumCompleted = (Long)mbs.getAttribute(pcob, "NumCompleted");
+        assertNotNull("Expected attribute not found. MBean registerred under a " +
+        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofNumCompleted);
+        assertTrue(valueofNumCompleted == 1);
+        Long valueofNumFailed = (Long)mbs.getAttribute(pcob, "NumFailed");
+        assertNotNull("Expected attribute not found. MBean registerred under a " +
+        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofNumFailed);
+        assertTrue(valueofNumFailed == 0);
+        Long valueofMinProcessingTime = (Long)mbs.getAttribute(pcob, "MinProcessingTime");
+        assertNotNull("Expected attribute not found. MBean registerred under a " +
+        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofMinProcessingTime);
+        assertTrue(valueofMinProcessingTime > 0);
+        Long valueofMaxProcessingTime = (Long)mbs.getAttribute(pcob, "MaxProcessingTime");
+        assertNotNull("Expected attribute not found. MBean registerred under a " +
+        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofMaxProcessingTime);
+        assertTrue(valueofMaxProcessingTime > 0);
+        Long valueofMeanProcessingTime = (Long)mbs.getAttribute(pcob, "MeanProcessingTime");
+        assertNotNull("Expected attribute not found. MBean registerred under a " +
+        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofMeanProcessingTime);
+        assertTrue(valueofMeanProcessingTime >= valueofMinProcessingTime &&
+        		valueofMeanProcessingTime <= valueofMaxProcessingTime);
+    }
+
+    protected void enableJmx() {
 		iAgent.enableJmx(null, 0);
-		domainName = InstrumentationAgentImpl.DEFAULT_DOMAIN;
 	}
 	
     protected CamelContext createCamelContext() throws Exception {
@@ -52,7 +109,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     	return context;
     }
 
-    protected void createInstrumentationAgent(CamelContext context, int port) throws IOException {
+    protected void createInstrumentationAgent(CamelContext context, int port) throws Exception {
     	iAgent = new InstrumentationAgentImpl();
     	iAgent.setCamelContext(context);
     	enableJmx();
@@ -67,58 +124,10 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         };
     }
 
-    public void testAgentConfiguration() throws Exception {
-    	assertNotNull(iAgent.getMBeanServer()); 
-    	assertEquals(domainName, iAgent.getMBeanServer().getDefaultDomain()); 
-    }
-    
-    public void testMBeansRegistered() throws Exception {
-    	resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
-        ObjectName name = new ObjectName(domainName + ":class=endpoints,*");
-        Set s = iAgent.getMBeanServer().queryNames(name, null);
-        assertTrue(s.size() == 2);
-    }
-    
-    public void testCounters() throws Exception {
-    	MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
-        resultEndpoint.expectedBodiesReceived("<hello>world!</hello>");
-        sendBody("direct:start", "<hello>world!</hello>");
-
-        resultEndpoint.assertIsSatisfied();
-        
-        MBeanServer mbs = iAgent.getMBeanServer(); 
-        ObjectName name = new ObjectName(domainName + ":name=Stats,*");
-        Set s = mbs.queryNames(name, null);
-        assertTrue(s.size() == 1);
-        
-        Iterator iter = s.iterator();
-        ObjectName pcob = (ObjectName)iter.next();
-        
-        Long valueofNumExchanges = (Long)mbs.getAttribute(pcob, "NumExchanges");
-        assertNotNull("Expected attribute not found. MBean registerred under a " + 
-        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofNumExchanges); 
-        assertTrue(valueofNumExchanges == 1); 
-        Long valueofNumCompleted = (Long)mbs.getAttribute(pcob, "NumCompleted");
-        assertNotNull("Expected attribute not found. MBean registerred under a " + 
-        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofNumCompleted); 
-        assertTrue(valueofNumCompleted == 1); 
-        Long valueofNumFailed = (Long)mbs.getAttribute(pcob, "NumFailed");
-        assertNotNull("Expected attribute not found. MBean registerred under a " + 
-        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofNumFailed); 
-        assertTrue(valueofNumFailed == 0); 
-        Long valueofMinProcessingTime = (Long)mbs.getAttribute(pcob, "MinProcessingTime");
-        assertNotNull("Expected attribute not found. MBean registerred under a " + 
-        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofMinProcessingTime); 
-        assertTrue(valueofMinProcessingTime > 0); 
-        Long valueofMaxProcessingTime = (Long)mbs.getAttribute(pcob, "MaxProcessingTime");
-        assertNotNull("Expected attribute not found. MBean registerred under a " + 
-        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofMaxProcessingTime); 
-        assertTrue(valueofMaxProcessingTime > 0); 
-        Long valueofMeanProcessingTime = (Long)mbs.getAttribute(pcob, "MeanProcessingTime");
-        assertNotNull("Expected attribute not found. MBean registerred under a " + 
-        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofMeanProcessingTime); 
-        assertTrue(valueofMeanProcessingTime >= valueofMinProcessingTime && 
-        		valueofMeanProcessingTime <= valueofMaxProcessingTime); 
+    @Override
+    protected void tearDown() throws Exception {
+        iAgent.stop();
+        super.tearDown();
     }
 }
