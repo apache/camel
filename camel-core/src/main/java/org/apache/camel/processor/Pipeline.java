@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,71 +56,34 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
         return new Pipeline(processors);
     }
 
-    public void process(Exchange exchange) throws Exception {
-        Exchange nextExchange = exchange;
-        boolean first = true;
-        for (Processor producer : getProcessors()) {
-            // lets break out of the pipeline if we have a failure
-            if (nextExchange.isFailed()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Mesage exchange has failed so breaking out of pipeline: " + nextExchange + " exception: " + nextExchange.getException() + " fault: " + nextExchange.getFault(false));
-                }
-                break;
-            }
-            if (first) {
-                first = false;
-            } else {
-                nextExchange = createNextExchange(producer, nextExchange);
-            }
-            producer.process(nextExchange);
-        }
-        ExchangeHelper.copyResults(exchange, nextExchange);
-    }
 
-    /**
-     * It would be nice if we could implement the sync process method as follows.. but we
-     * can't since the dead letter handler seem to like to handle the error but still
-     * set the Exchange.exception field.  When that happens this method throws that
-     * exception but it seem that folks don't expect to get that exception.
-     *
-     * @param exchange
-     * @throws Exception             thx
-     */
-    public void xprocess(Exchange exchange) throws Exception {
-        // This could become a base class method for an AsyncProcessor
-        final CountDownLatch latch = new CountDownLatch(1);
-        if (!process(exchange, new AsyncCallback() {
-            public void done(boolean sync) {
-                if (sync) {
-                    return;
-                }
-                latch.countDown();
-            }
-        })) {
-            latch.await();
-        }
-        // If there was an exception associated with the exchange, throw it.
-        exchange.throwException();
+    public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange original, AsyncCallback callback) {
         Iterator<Processor> processors = getProcessors().iterator();
         Exchange nextExchange = original;
         boolean first = true;
-        while (processors.hasNext()) {
-            AsyncProcessor processor = AsyncProcessorTypeConverter.convert(processors.next());
-            
+        while (true) {
             if (nextExchange.isFailed()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Mesage exchange has failed so breaking out of pipeline: " + nextExchange + " exception: " + nextExchange.getException() + " fault: " + nextExchange.getFault(false));
                 }
                 break;
             }
+            if (!processors.hasNext()) {
+                break;
+            }
+
+            AsyncProcessor processor = AsyncProcessorTypeConverter.convert(processors.next());
+
             if (first) {
                 first = false;
             } else {
-                nextExchange = createNextExchange(processor, original);
+                nextExchange = createNextExchange(processor, nextExchange);
             }
+
             boolean sync = process(original, nextExchange, callback, processors, processor);
             // Continue processing the pipeline synchronously ...
             if (!sync) {
@@ -140,30 +104,31 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
             public void done(boolean sync) {
 
                 // We only have to handle async completion of
-                // the pipeline..  
-                if( sync ) {
+                // the pipeline..
+                if (sync) {
                     return;
                 }
 
-                // Continue processing the pipeline... 
+                // Continue processing the pipeline...
                 Exchange nextExchange = exchange;
-                while( processors.hasNext() ) {
+                while (processors.hasNext()) {
                     AsyncProcessor processor = AsyncProcessorTypeConverter.convert(processors.next());
-                    
+
                     if (nextExchange.isFailed()) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Mesage exchange has failed so breaking out of pipeline: " + nextExchange + " exception: " + nextExchange.getException() + " fault: " + nextExchange.getFault(false));
+                            LOG.debug("Mesage exchange has failed so breaking out of pipeline: " + nextExchange + " exception: " + nextExchange.getException() + " fault: "
+                                      + nextExchange.getFault(false));
                         }
                         break;
                     }
 
                     nextExchange = createNextExchange(processor, exchange);
-                    sync = process( original, nextExchange, callback, processors, processor);
-                    if( !sync ) {
+                    sync = process(original, nextExchange, callback, processors, processor);
+                    if (!sync) {
                         return;
                     }
                 }
-                
+
                 ExchangeHelper.copyResults(original, nextExchange);
                 callback.done(true);
             }

@@ -49,6 +49,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     }
 
     private static final transient Log LOG = LogFactory.getLog(DeadLetterChannel.class);
+    private static final String FAILURE_HANDLED_PROPERTY = DeadLetterChannel.class.getName()+".FAILURE_HANDLED";
     private Processor output;
     private Processor deadLetter;
     private AsyncProcessor outputAsync;
@@ -102,6 +103,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
             }
 
             if (!data.currentRedeliveryPolicy.shouldRedeliver(data.redeliveryCounter)) {
+                setFailureHandled(exchange, true);
                 AsyncProcessor afp = AsyncProcessorTypeConverter.convert(data.failureProcessor);
                 return afp.process(exchange, callback);
             }
@@ -129,8 +131,9 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 // It is going to be processed async..
                 return false;
             }
-            if (exchange.getException() == null) {
+            if (exchange.getException() == null || isFailureHandled(exchange) ) {
                 // If everything went well.. then we exit here..
+                callback.done(true);
                 return true;
             }
             // error occured so loop back around.....
@@ -138,6 +141,15 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
     }
     
+    private boolean isFailureHandled(Exchange exchange) {
+        Boolean rc = exchange.getProperty(FAILURE_HANDLED_PROPERTY, Boolean.class);
+        return rc == null ? false : rc;
+    }
+
+    private void setFailureHandled(Exchange exchange, boolean b) {
+        exchange.setProperty(FAILURE_HANDLED_PROPERTY, b ? Boolean.TRUE : Boolean.FALSE );
+    }
+
     public void process(Exchange exchange) throws Exception {
         int redeliveryCounter = 0;
         long redeliveryDelay = 0;
