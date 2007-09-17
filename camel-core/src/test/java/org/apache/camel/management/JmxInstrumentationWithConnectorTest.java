@@ -19,6 +19,7 @@ package org.apache.camel.management;
 
 public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsingDefaultsTest {
 
+    
     @Override
 	protected void enableJmx() {
 		domainName = "org.apache.camel-explicit";

@@ -36,20 +36,20 @@ import org.apache.commons.logging.LogFactory;
 public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     private static final transient Log LOG = LogFactory.getLog(InstrumentationProcessor.class);
 
-    InstrumentationAgent agent;
-	CamelNamingStrategy naming;
-	
-	public InstrumentationLifecycleStrategy(InstrumentationAgent agent) {
+    private InstrumentationAgent agent;
+    private CamelNamingStrategy namingStrategy;
+
+    public InstrumentationLifecycleStrategy(InstrumentationAgent agent) {
 		this.agent = agent;
-		naming = new CamelNamingStrategy(agent.getMBeanServer().getDefaultDomain()); 
-	}
+        setNamingStrategy(agent.getNamingStrategy());
+    }
 	
 	public void onContextCreate(CamelContext context) {
 		if (context instanceof DefaultCamelContext) {
 			try {	
 				DefaultCamelContext dc = (DefaultCamelContext)context;
 				ManagedService ms = new ManagedService(dc);
-				agent.register(ms, naming.getObjectName(dc));
+                agent.register(ms, getNamingStrategy().getObjectName(dc));
 			}
 			catch(JMException e) {
 				LOG.warn("Could not register CamelContext MBean", e);
@@ -60,7 +60,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 	public void onEndpointAdd(Endpoint endpoint) {
 		try {
 			ManagedEndpoint me = new ManagedEndpoint(endpoint);
-			agent.register(me, naming.getObjectName(me));
+			agent.register(me, getNamingStrategy().getObjectName(me));
 		}
 		catch(JMException e) {
 			LOG.warn("Could not register Endpoint MBean", e);
@@ -71,7 +71,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 		for (Route route: routes) {
 			try {
 				ManagedRoute mr = new ManagedRoute(route);
-				agent.register(mr, naming.getObjectName(mr));
+				agent.register(mr, getNamingStrategy().getObjectName(mr));
 			}
 			catch(JMException e) {
 				LOG.warn("Could not register Route MBean", e);
@@ -83,7 +83,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 		if (service instanceof ServiceSupport) {
 			try {
 				ManagedService ms = new ManagedService((ServiceSupport)service);
-				agent.register(ms, naming.getObjectName(context, ms));
+				agent.register(ms, getNamingStrategy().getObjectName(context, ms));
 			}
 			catch(JMException e) {
 				LOG.warn("Could not register Service MBean", e);
@@ -96,10 +96,18 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 		routeType.intercept(new InstrumentationProcessor(mc));
 
 		try {
-			agent.register(mc, naming.getObjectName(context, mc));
+			agent.register(mc, getNamingStrategy().getObjectName(context, mc));
 		}
 		catch(JMException e) {
 			LOG.warn("Could not register Counter MBean", e);
 		}
 	}
+
+    public CamelNamingStrategy getNamingStrategy() {
+        return namingStrategy;
+    }
+
+    public void setNamingStrategy(CamelNamingStrategy namingStrategy) {
+        this.namingStrategy = namingStrategy;
+    }
 }

@@ -18,6 +18,7 @@
 package org.apache.camel.management;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
@@ -25,7 +26,6 @@ import java.rmi.registry.LocateRegistry;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.lang.management.ManagementFactory;
 
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.JMException;
@@ -43,14 +43,16 @@ import javax.management.remote.JMXServiceURL;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.spi.InstrumentationAgent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.spi.InstrumentationAgent;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
 import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
 
-public class InstrumentationAgentImpl implements InstrumentationAgent, CamelContextAware {
+public class InstrumentationAgentImpl extends ServiceSupport implements InstrumentationAgent, CamelContextAware {
 
     private static final transient Log LOG = LogFactory.getLog(InstrumentationAgentImpl.class);
     
@@ -67,12 +69,16 @@ public class InstrumentationAgentImpl implements InstrumentationAgent, CamelCont
 	private boolean jmxEnabled = false;
 	private String jmxDomainName = null;
 	private int jmxConnectorPort = 0;
-	
+    private CamelNamingStrategy namingStrategy;
+
     public InstrumentationAgentImpl() {
     	assembler = new MetadataMBeanInfoAssembler();
     	assembler.setAttributeSource(new AnnotationJmxAttributeSource());
+            //naming = new CamelNamingStrategy(agent.getMBeanServer().getDefaultDomain());
+        namingStrategy = new CamelNamingStrategy();
     }
-	public CamelContext getCamelContext() {
+
+    public CamelContext getCamelContext() {
 		return context;
 	}
 
@@ -82,7 +88,7 @@ public class InstrumentationAgentImpl implements InstrumentationAgent, CamelCont
 
 	public void setMBeanServer(MBeanServer server) {
 		this.server = server;
-		jmxEnabled = true;
+        jmxEnabled = true;
 	}
 	
 	public MBeanServer getMBeanServer() {
@@ -115,28 +121,44 @@ public class InstrumentationAgentImpl implements InstrumentationAgent, CamelCont
 	}
 
 	public void unregister(ObjectName name) throws JMException {
-	}
+        server.unregisterMBean(name);
+    }
 
-	public void start() {
-		if (context == null) {
-            LOG.warn("Cannot start InstrumentationAgent: CamelContext not set");
-			return;
-		}
-		
-		if (server == null) {
+    public CamelNamingStrategy getNamingStrategy() {
+        return namingStrategy;
+    }
+
+    public void setNamingStrategy(CamelNamingStrategy namingStrategy) {
+        this.namingStrategy = namingStrategy;
+    }
+
+    protected void doStart() throws Exception {
+        ObjectHelper.notNull(context, "camelContext");
+
+        if (getMBeanServer() == null) {
 			// The MBeanServer was not injected
 			createMBeanServer();
 		}
 
+        if (jmxDomainName == null) {
+            jmxDomainName = System.getProperty(SYSTEM_PROPERTY_JMX + ".domain");
+            if (jmxDomainName == null || jmxDomainName.length() == 0) {
+                jmxDomainName = DEFAULT_DOMAIN;
+            }
+        }
+        configureDomainName();
+        
+        LOG.debug("Starting JMX agent on server: " + getMBeanServer());
+
 		if (context instanceof DefaultCamelContext) {
 			DefaultCamelContext dc = (DefaultCamelContext)context;
-			InstrumentationLifecycleStrategy ls = new InstrumentationLifecycleStrategy(this); 
+			InstrumentationLifecycleStrategy ls = new InstrumentationLifecycleStrategy(this);
 			dc.setLifecycleStrategy(ls);
 			ls.onContextCreate(context);
 		}
-	}
-	
-    public void stop() {
+    }
+
+    protected void doStop() throws Exception {
         //Using the array to hold the busMBeans to avoid the CurrentModificationException
         Object[] mBeans = mbeans.toArray();
         int caught = 0;
@@ -178,9 +200,16 @@ public class InstrumentationAgentImpl implements InstrumentationAgent, CamelCont
 
 	public void enableJmx(String domainName, int port) {
 		jmxEnabled = true;
-		jmxDomainName = domainName;
-		jmxConnectorPort = port;
+        jmxDomainName = domainName;
+        configureDomainName();
+        jmxConnectorPort = port;
 	}
+
+    protected void configureDomainName() {
+        if (jmxDomainName != null) {
+            namingStrategy.setDomainName(jmxDomainName);
+        }
+    }
 
     protected void createMBeanServer() {
         String hostName = DEFAULT_HOST;
@@ -203,13 +232,6 @@ public class InstrumentationAgentImpl implements InstrumentationAgent, CamelCont
     				// we're done here
     				return;
     			}
-    		}
-    		
-    		if (jmxDomainName == null) {
-            	jmxDomainName = System.getProperty(SYSTEM_PROPERTY_JMX + ".domain");
-            	if (jmxDomainName == null || jmxDomainName.length() == 0) {
-            		jmxDomainName = DEFAULT_DOMAIN;
-            	}
     		}
     		
         	if (jmxConnectorPort <= 0) {

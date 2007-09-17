@@ -20,7 +20,10 @@ import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-public interface InstrumentationAgent {
+import org.apache.camel.Service;
+import org.apache.camel.management.CamelNamingStrategy;
+
+public interface InstrumentationAgent extends Service {
 
     /**
      * Registers object with management infrastructure with a specific name. Object must be annotated or 
@@ -56,4 +59,5 @@ public interface InstrumentationAgent {
      */
     MBeanServer getMBeanServer();
 
+    CamelNamingStrategy getNamingStrategy();
 }
