@@ -84,7 +84,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
     public void executeWithoutWrapping() throws MalformedURLException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, MojoExecutionException {
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            ClassLoader newLoader = createClassLoader(oldClassLoader);
+            ClassLoader newLoader = createClassLoader(null);
             Thread.currentThread().setContextClassLoader(newLoader);
             runCamel(newLoader);
         }
