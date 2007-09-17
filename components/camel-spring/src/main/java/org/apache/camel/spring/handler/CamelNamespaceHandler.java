@@ -53,7 +53,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(EndpointFactoryBean.class);
     protected BeanDefinitionParser proxyParser = new BeanDefinitionParser(CamelProxyFactoryBean.class);
     protected BeanDefinitionParser exportParser = new BeanDefinitionParser(CamelServiceExporter.class);
-    protected BeanDefinitionParser jmxAgentParser = new BeanDefinitionParser(SpringInstrumentationAgent.class);
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
 
     protected Set<String> parserElementNames = new HashSet<String>();
@@ -63,7 +62,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         registerParser("endpoint", endpointParser);
         registerParser("proxy", proxyParser);
         registerParser("export", exportParser);
-        registerParser("jmxAgent", jmxAgentParser);
 
         registerParser("camelContext", new BeanDefinitionParser(CamelContextFactoryBean.class) {
             @Override
@@ -123,13 +121,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                             if (isNotNullAndNonEmpty(id)) {
                                 parserContext.registerComponent(new BeanComponentDefinition(definition, id));
                             }
-                        } else if (localName.equals("jmxAgent")) {
-                            BeanDefinition definition = jmxAgentParser.parse(childElement, parserContext);
-                            String id = childElement.getAttribute("id");
-                            if (isNotNullAndNonEmpty(id)) {
-                                id = "camelContextJmxAgent";
-                            }
-                            parserContext.registerComponent(new BeanComponentDefinition(definition, id));
                         }
                     }
                 }
