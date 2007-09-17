@@ -33,7 +33,6 @@ import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -48,7 +47,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
  * {@link SpringCamelContext} and install routes either explicitly configured in
  * Spring XML or found by searching the classpath for Java classes which extend
  * {@link RouteBuilder} using the nested {@link #setPackages(String[])}.
- * 
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "camelContext")
@@ -58,7 +57,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     @XmlElement(name = "package", required = false)
     private String[] packages = {};
     @XmlElements({@XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false), @XmlElement(name = "proxy", type = CamelProxyFactoryType.class, required = false),
-                   @XmlElement(name = "export", type = CamelServiceExporterType.class, required = false) })
+    @XmlElement(name = "export", type = CamelServiceExporterType.class, required = false), @XmlElement(name = "jmxAgent", required = false)})
     private List beans;
     @XmlElement(name = "endpoint", required = false)
     private List<EndpointFactoryBean> endpoints;
@@ -98,11 +97,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         getContext().addRouteDefinitions(routes);
 
         LOG.debug("Found JAXB created routes: " + getRoutes());
-        String[] names = getApplicationContext().getBeanNamesForType(SpringInstrumentationAgent.class);
-        if (names.length == 1) {
-            getApplicationContext().getBean(names[0], SpringInstrumentationAgent.class);
-        }
-        
+
         findRouteBuiders();
         installRoutes();
     }
@@ -122,7 +117,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             try {
                 LOG.debug("Starting the context now!");
                 getContext().start();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 throw new RuntimeCamelException(e);
             }
         }
@@ -194,7 +190,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      * extend {@link RouteBuilder} to be auto-wired up to the
      * {@link SpringCamelContext} as a route. Note that classes are excluded if
      * they are specifically configured in the spring.xml
-     * 
+     *
      * @param packages the package names which are recursively searched
      */
     public void setPackages(String[] packages) {
@@ -226,5 +222,4 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             finder.appendBuilders(additionalBuilders);
         }
     }
-
 }
