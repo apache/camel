@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpExchange;
@@ -40,8 +41,9 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     }
 
     @Override
-    public JettyHttpProducer createProducer() throws Exception {
-        return new JettyHttpProducer(this);
+    public Producer<HttpExchange> createProducer() throws Exception {
+        return super.createProducer();
+    	// return new JettyHttpProducer(this);
     }
 
     @Override
