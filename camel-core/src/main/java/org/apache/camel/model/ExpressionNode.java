@@ -21,7 +21,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 
 import org.apache.camel.Expression;
@@ -37,13 +36,13 @@ import org.apache.camel.processor.FilterProcessor;
  * @version $Revision: $
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExpressionNode extends ProcessorType {
+public class ExpressionNode extends ProcessorType<ProcessorType> {
     @XmlElementRef
     private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     @XmlElementRef
     private ExpressionType expression;
     @XmlElementRef
-    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
+    private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
 
     public ExpressionNode() {
     }
@@ -76,11 +75,11 @@ public class ExpressionNode extends ProcessorType {
         this.expression = expression;
     }
 
-    public List<ProcessorType> getOutputs() {
+    public List<ProcessorType<?>> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorType> outputs) {
+    public void setOutputs(List<ProcessorType<?>> outputs) {
         this.outputs = outputs;
     }
 

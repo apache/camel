@@ -83,7 +83,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
      * exception but it seem that folks don't expect to get that exception.
      *
      * @param exchange
-     * @throws Exception
+     * @throws Exception             thx
      */
     public void xprocess(Exchange exchange) throws Exception {
         // This could become a base class method for an AsyncProcessor
@@ -182,8 +182,8 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
 
         // now lets set the input of the next exchange to the output of the
         // previous message if it is not null
-        Message previousOut = previousExchange.getOut();
-        Object output = previousOut.getBody();
+        Message previousOut = previousExchange.getOut(false);
+        Object output = previousOut != null ? previousOut.getBody() : null;
         Message in = answer.getIn();
         if (output != null) {
             in.setBody(output);

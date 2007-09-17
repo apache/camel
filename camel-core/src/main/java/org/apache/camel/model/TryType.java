@@ -17,7 +17,6 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -25,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.CatchProcessor;
@@ -36,7 +34,7 @@ import org.apache.camel.processor.TryProcessor;
  */
 @XmlRootElement(name = "try")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TryType extends OutputType {
+public class TryType extends OutputType<TryType> {
     @XmlTransient
     private List<CatchType> catchClauses;
     @XmlTransient
@@ -44,7 +42,7 @@ public class TryType extends OutputType {
     @XmlTransient
     private boolean initialized;
     @XmlTransient
-    private List<ProcessorType> outputsWithoutCatches;
+    private List<ProcessorType<?>> outputsWithoutCatches;
 
     @Override
     public String toString() {
@@ -82,36 +80,6 @@ public class TryType extends OutputType {
         return answer;
     }
 
-    public TryType process(Processor processor) {
-        super.process(processor);
-        return this;
-    }
-
-    public TryType to(Endpoint endpoint) {
-        super.to(endpoint);
-        return this;
-    }
-
-    public TryType to(Collection<Endpoint> endpoints) {
-        super.to(endpoints);
-        return this;
-    }
-
-    public TryType to(Endpoint... endpoints) {
-        super.to(endpoints);
-        return this;
-    }
-
-    public TryType to(String uri) {
-        super.to(uri);
-        return this;
-    }
-
-    public TryType to(String... uris) {
-        super.to(uris);
-        return this;
-    }
-
     // Properties
     // -------------------------------------------------------------------------
 
@@ -129,14 +97,14 @@ public class TryType extends OutputType {
         return finallyClause;
     }
 
-    public List<ProcessorType> getOutputsWithoutCatches() {
+    public List<ProcessorType<?>> getOutputsWithoutCatches() {
         if (outputsWithoutCatches == null) {
             checkInitialized();
         }
         return outputsWithoutCatches;
     }
 
-    public void setOutputs(List<ProcessorType> outputs) {
+    public void setOutputs(List<ProcessorType<?>> outputs) {
         initialized = false;
         super.setOutputs(outputs);
     }
@@ -152,7 +120,7 @@ public class TryType extends OutputType {
     protected void checkInitialized() {
         if (!initialized) {
             initialized = true;
-            outputsWithoutCatches = new ArrayList<ProcessorType>();
+            outputsWithoutCatches = new ArrayList<ProcessorType<?>>();
             catchClauses = new ArrayList<CatchType>();
             finallyClause = null;
 

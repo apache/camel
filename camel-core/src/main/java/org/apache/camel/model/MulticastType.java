@@ -31,7 +31,7 @@ import org.apache.camel.processor.MulticastProcessor;
  */
 @XmlRootElement(name = "multicast")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MulticastType extends OutputType {
+public class MulticastType extends OutputType<ProcessorType> {
     @Override
     public String toString() {
         return "Multicast[" + getOutputs() + "]";

@@ -39,7 +39,8 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "onException")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExceptionType extends ProcessorType {
+public class ExceptionType extends ProcessorType<ProcessorType> {
+    
     @XmlElementRef
     private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     @XmlElement(name = "exception")
@@ -47,7 +48,7 @@ public class ExceptionType extends ProcessorType {
     @XmlElement(name = "redeliveryPolicy", required = false)
     private RedeliveryPolicyType redeliveryPolicy;
     @XmlElementRef
-    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
+    private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
     @XmlTransient
     private List<Class> exceptionClasses;
     @XmlTransient
@@ -151,11 +152,11 @@ public class ExceptionType extends ProcessorType {
         this.interceptors = interceptors;
     }
 
-    public List<ProcessorType> getOutputs() {
+    public List<ProcessorType<?>> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorType> outputs) {
+    public void setOutputs(List<ProcessorType<?>> outputs) {
         this.outputs = outputs;
     }
 

@@ -77,7 +77,7 @@ public class ChoiceTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").choice()
-                        .when(header("foo").isEqualTo("bar")).to("mock:x")
+                        .when(header("foo").isEqualTo("bar")).setHeader("name", constant("a")).to("mock:x")
                         .when(header("foo").isEqualTo("cheese")).to("mock:y")
                         .otherwise().to("mock:z");
             }
