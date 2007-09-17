@@ -32,6 +32,9 @@ import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.CollectionFactory;
+
 import junit.framework.TestCase;
 
 public class CxfRouterTest extends ContextTestSupport {

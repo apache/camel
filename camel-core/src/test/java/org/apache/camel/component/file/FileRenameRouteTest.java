@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
+
 /**
  * @version $Revision: 1.1 $
  */
 public class FileRenameRouteTest extends FileRouteTest {
     @Override
     protected void setUp() throws Exception {
+        recursiveDelete(new File("target/test-rename-inbox"));
         uri = "file:target/test-rename-inbox?moveNamePrefix=foo/";
         super.setUp();
     }

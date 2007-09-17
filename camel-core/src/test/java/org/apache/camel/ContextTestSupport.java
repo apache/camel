@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.io.File;
+
 import javax.naming.Context;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -245,5 +247,15 @@ public abstract class ContextTestSupport extends TestSupport {
 
     protected void assertValidContext(CamelContext context) {
         assertNotNull("No context found!", context);
+    }
+    
+    protected static void recursiveDelete(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                recursiveDelete(files[i]);
+            }
+        }
+        file.delete();
     }
 }

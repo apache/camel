@@ -102,7 +102,6 @@ public class JettyHttpProducer extends DefaultProducer<HttpExchange> implements 
             }
         });
         latch.await();
-        exchange.throwException();
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {

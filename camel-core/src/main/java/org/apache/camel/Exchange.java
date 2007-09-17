@@ -136,11 +136,6 @@ public interface Exchange {
     void setException(Throwable e);
 
     /**
-     * Throws the exception associated with this exchange.
-     */
-    void throwException() throws Exception;
-
-    /**
      * Returns true if this exchange failed due to either an exception or fault
      *
      * @see Exchange#getException()

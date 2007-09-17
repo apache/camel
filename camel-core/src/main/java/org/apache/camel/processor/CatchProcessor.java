@@ -36,7 +36,7 @@ public class CatchProcessor extends DelegateProcessor {
         return "Catch[" + exceptions + " -> " + getProcessor() + "]";
     }
 
-    public boolean catches(Exception e) {
+    public boolean catches(Throwable e) {
         for (Class type : exceptions) {
             if (type.isInstance(e)) {
                 return true;
