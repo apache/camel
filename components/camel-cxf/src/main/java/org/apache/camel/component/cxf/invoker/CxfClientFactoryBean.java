@@ -14,24 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf;
+package org.apache.camel.component.cxf.invoker;
 
-/**
- * Constants used in this module
- *
- * @version $Revision$
- */
-public interface CxfConstants {
-    String METHOD = "method";
-    String SEI = "sei";
-    String IMPL = "impl";
-    String WSDL_URL = "wsdlURL";
-    String ADDRESS = "address";
-    String SERVICE_NAME = "serviceName";
-    String PORT_NAME = "portName";
-    String PROTOCOL_NAME_RES = "res";
-    String OPERATION_NAME = "operationName";
-    // service name -- come from the wsdl   
+import org.apache.cxf.BusException;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.endpoint.ClientImpl;
+import org.apache.cxf.endpoint.Endpoint;
+import org.apache.cxf.endpoint.EndpointException;
+import org.apache.cxf.frontend.ClientFactoryBean;
+import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
+import org.apache.cxf.service.factory.ServiceConstructionException;
+
+
+
+public class CxfClientFactoryBean extends ClientFactoryBean {
+    
+    
+    public CxfClientFactoryBean() {
+        super();        
+    }
+            
+    protected void createClient(Endpoint ep) {
+        CxfClient client = new CxfClient(getBus(), ep);
+        setClient(client);
+    }
+    
+    
+
 }
-
-

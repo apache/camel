@@ -18,18 +18,30 @@ package org.apache.camel.component.cxf;
 
 import java.util.List;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.cxf.invoker.CxfClient;
+import org.apache.camel.component.cxf.invoker.CxfClientFactoryBean;
+import org.apache.camel.component.cxf.invoker.InvokingContext;
+import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.binding.Binding;
+import org.apache.cxf.binding.BindingFactory;
+import org.apache.cxf.binding.BindingFactoryManager;
+import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
+import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.transport.Conduit;
 
+import java.io.InputStream;
 import java.net.MalformedURLException;
 
 /**
@@ -37,32 +49,65 @@ import java.net.MalformedURLException;
  * 
  * @version $Revision$
  */
-public class CxfProducer extends DefaultProducer {
+public class CxfProducer extends DefaultProducer <CxfExchange> {
     private CxfEndpoint endpoint;
-    private Client client;    
-    private Conduit conduit;
+    private Client client;
+    private DataFormat dataFormat;
+    
     
 
-    public CxfProducer(CxfEndpoint endpoint) throws MalformedURLException {
+    public CxfProducer(CxfEndpoint endpoint) throws CamelException {
         super(endpoint);
         this.endpoint = endpoint;
-        client = createClient();
+        dataFormat = CxfEndpointUtils.getDataFormat(endpoint);
+        
+        if (dataFormat.equals(DataFormat.POJO)) {
+            client = createClientFormClientFactoryBean(null);
+        } else {
+            // create CxfClient for message
+            client = createClientForStreamMessge();           
+        }
     }
     
-    private Client createClient() throws MalformedURLException {
+    private Client createClientForStreamMessge() throws CamelException {
+        ClientFactoryBean cfb = new CxfClientFactoryBean();
+        return createClientFormClientFactoryBean(cfb);
+    }
+   
+    //If cfb is null ,we will try to find a right cfb to use.    
+    private Client createClientFormClientFactoryBean(ClientFactoryBean cfb) throws CamelException {
+        //TODO we can get also the client from spring context       
         Bus bus = BusFactory.getDefaultBus();
-        // setup the ClientFactoryBean with endpoint
-        ClientFactoryBean cfb = new ClientFactoryBean();
-        cfb.setBus(bus);
-        cfb.setAddress(endpoint.getAddress());
-        if (null != endpoint.getServiceClass()) {            
-            cfb.setServiceClass(ObjectHelper.loadClass(endpoint.getServiceClass()));
+        // setup the ClientFactoryBean with endpoint, 
+        // we need to choice the right front end to create the clientFactoryBean
+        
+        if (null != endpoint.getServiceClass()) {
+            try {
+                Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
+                if (cfb == null) {
+                    cfb = CxfEndpointUtils.getClientFactoryBean(serviceClass);
+                }                            
+                cfb.setAddress(endpoint.getAddress());
+                if (null != endpoint.getServiceClass()) {            
+                    cfb.setServiceClass(ObjectHelper.loadClass(endpoint.getServiceClass()));
+                } 
+                if (null != endpoint.getWsdlURL()) {
+                    cfb.setWsdlURL(endpoint.getWsdlURL());
+                }
+            } catch (Exception ex) {
+                // rethrow the exception out
+            }
+        } else { 
+            if (cfb == null) {
+                cfb = new ClientFactoryBean();
+            }    
+            if (null != endpoint.getWsdlURL()) {
+                cfb.setWsdlURL(endpoint.getWsdlURL());
+            } else {
+                // throw the exception for insufficiency of the endpoint info
+            }
         }
-        if (null != endpoint.getWsdlURL()) {
-            cfb.setWsdlURL(endpoint.getWsdlURL());
-        }       
-        // there may other setting work
-        // create client 
+        cfb.setBus(bus);        
         return cfb.create();
     }
    
@@ -72,38 +117,60 @@ public class CxfProducer extends DefaultProducer {
     }
 
     public void process(CxfExchange exchange) {
+        CxfBinding cxfBinding = endpoint.getBinding();
+        Message inMessage = cxfBinding.createCxfMessage(exchange);
         try {
-            CxfBinding binding = endpoint.getBinding();
-            MessageImpl m = binding.createCxfMessage(exchange);
-            //InputStream is = m.getContent(InputStream.class);
-            // now we just deal with the POJO invocations 
-            List paraments = m.getContent(List.class);
-            Message response = new MessageImpl();            
-            if (paraments != null) {
-            	String operation = (String)paraments.get(0);
-            	Object[] args = new Object[paraments.size()-1];
-            	for(int i = 0 ; i < paraments.size()-1 ; i++) {            		
-            		args[i] = paraments.get(i+1);
-            	}
-            	// now we just deal with the invoking the paraments
-            	Object[] result = client.invoke(operation, args);                
-            	response.setContent(Object[].class, result);
-                binding.storeCxfResponse(exchange, response);
-            }          	
-            
+            if (dataFormat.equals(DataFormat.POJO)) {
+                //InputStream is = m.getContent(InputStream.class);
+                // now we just deal with the POJO invocations 
+                List paraments = inMessage.getContent(List.class);
+                String operation = inMessage.getContent(String.class);
+                Message response = new MessageImpl();            
+                if (operation != null && paraments != null) {                
+                  	// now we just deal with the invoking the paraments
+                  	Object[] result = client.invoke(operation, paraments.toArray());                
+                   	response.setContent(Object[].class, result);
+                    cxfBinding.storeCxfResponse(exchange, response);
+                }  
+            } else {
+                // get the invocation context
+                org.apache.cxf.message.Exchange ex = exchange.getExchange();
+                InvokingContext invokingContext = ex.get(InvokingContext.class);
+                Object params = invokingContext.getRequestContent(inMessage);
+                // invoke the stream message with the exchange context
+                CxfClient cxfClient = (CxfClient) client;
+                // invoke the message
+                //TODO need setup the call context here
+                //TODO need to handle the one way message
+                Object result = cxfClient.dispatch(params, null, ex);
+                System.out.println("the result object is " + result);
+                // need to get the binding object to create the message
+                BindingOperationInfo boi = ex.get(BindingOperationInfo.class);
+                Message response = null;
+                System.out.println("the boi is " + boi);
+                if (boi == null) {
+                    // it should be the raw message                    
+                    response = new MessageImpl(); 
+                } else {
+                    // create the message here
+                    Endpoint ep = ex.get(Endpoint.class);                    
+                    response = ep.getBinding().createMessage();
+                }                
+                response.setExchange(ex);
+                ex.setOutMessage(response);                
+                invokingContext.setResponseContent(response, result);
+                cxfBinding.storeCxfResponse(exchange, response);
+            }
         } catch (Exception e) {
+            //TODO add the falut message handling work
             throw new RuntimeCamelException(e);
-        }   
+        }     
                 
     }
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-                
-        client = createClient();
-        conduit = client.getConduit();
-        
+        super.doStart(); 
     }
 
     @Override

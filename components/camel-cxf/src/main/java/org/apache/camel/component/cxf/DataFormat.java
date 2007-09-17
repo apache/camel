@@ -17,21 +17,29 @@
 package org.apache.camel.component.cxf;
 
 /**
- * Constants used in this module
- *
- * @version $Revision$
+ * The data format the user expoects to see at the camel cxf components.  It can be
+ * configured as a property (DataFormat) in the Camel cxf endpoint.
  */
-public interface CxfConstants {
-    String METHOD = "method";
-    String SEI = "sei";
-    String IMPL = "impl";
-    String WSDL_URL = "wsdlURL";
-    String ADDRESS = "address";
-    String SERVICE_NAME = "serviceName";
-    String PORT_NAME = "portName";
-    String PROTOCOL_NAME_RES = "res";
-    String OPERATION_NAME = "operationName";
-    // service name -- come from the wsdl   
+public enum DataFormat {
+
+    /**
+     * PAYLOAD is the message payload of the message after message configured in
+     * the CXF endpoint is applied.  Streaming and non-streaming are both
+     * supported.
+     */
+    PAYLOAD,
+
+    /**
+     * MESSAGE is the raw message that is received from the transport layer.
+     * Streaming and non-streaming are both supported.
+     */
+    MESSAGE,
+
+    /**
+     * POJOs (Plain old Java objects) are the Java parameters to the method
+     * it is invoking on the target server.  The "serviceClass" property
+     * must be included in the endpoint.  Streaming is not available for this
+     * data format.
+     */
+    POJO
 }
-
-

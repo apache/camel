@@ -36,17 +36,19 @@ public class CxfBinding {
 
     protected Object getBody(Message message) {
         Set<Class<?>> contentFormats = message.getContentFormats();
-        for (Class<?> contentFormat : contentFormats) {            
-            Object answer = message.getContent(contentFormat);
-            if (answer != null) {
-                return answer;
+        if (contentFormats != null) {
+            for (Class<?> contentFormat : contentFormats) {            
+                Object answer = message.getContent(contentFormat);
+                if (answer != null) {
+                    return answer;
+                }
             }
-        }
+        }    
         return null;
     }
 
-    public MessageImpl createCxfMessage(CxfExchange exchange) {
-        MessageImpl answer = (MessageImpl) exchange.getInMessage();
+    public Message createCxfMessage(CxfExchange exchange) {
+        Message answer = exchange.getInMessage();
 
         // CXF uses the stax which is based on the stream API to parser the XML, so
         // the CXF transport is also based on the stream API.
@@ -60,15 +62,19 @@ public class CxfBinding {
         }
         if (body instanceof InputStream) {
         	answer.setContent(InputStream.class, body);
+                // we need copy context 
         } else if (body instanceof List) {
         	//just set the operation's parament
         	answer.setContent(List.class, body);
+                //just set the method name
+                answer.setContent(String.class, in.getHeader(CxfConstants.OPERATION_NAME));
         }
         
         
         return answer;
     }
-
+    
+   
     public void storeCxfResponse(CxfExchange exchange, Message response) {
         // no need to process headers as we use the CXF message
         CxfMessage out = exchange.getOut();

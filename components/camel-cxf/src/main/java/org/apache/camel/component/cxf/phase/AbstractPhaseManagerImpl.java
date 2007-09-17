@@ -14,24 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf;
+package org.apache.camel.component.cxf.phase;
 
-/**
- * Constants used in this module
- *
- * @version $Revision$
- */
-public interface CxfConstants {
-    String METHOD = "method";
-    String SEI = "sei";
-    String IMPL = "impl";
-    String WSDL_URL = "wsdlURL";
-    String ADDRESS = "address";
-    String SERVICE_NAME = "serviceName";
-    String PORT_NAME = "portName";
-    String PROTOCOL_NAME_RES = "res";
-    String OPERATION_NAME = "operationName";
-    // service name -- come from the wsdl   
+import java.util.List;
+import java.util.SortedSet;
+
+import org.apache.cxf.phase.Phase;
+import org.apache.cxf.phase.PhaseManager;
+
+public abstract class AbstractPhaseManagerImpl implements PhaseManager {
+    private SortedSet<Phase> inPhases;
+    private SortedSet<Phase> outPhases;
+    
+    public AbstractPhaseManagerImpl() {
+        inPhases = createInPhases();
+        outPhases = createOutPhases();
+    }
+    
+    public SortedSet<Phase> getInPhases() {
+        return inPhases;
+    }
+
+    public SortedSet<Phase> getOutPhases() {
+        return outPhases;
+    }
+
+    protected abstract SortedSet<Phase> createInPhases();
+    
+    protected abstract SortedSet<Phase> createOutPhases();
 }
-
-

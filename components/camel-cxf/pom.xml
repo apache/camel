@@ -51,6 +51,13 @@
     </dependency>
 
     <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons-io-version}</version>
+    </dependency>
+    
+
+    <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-core</artifactId>
       <version>${cxf-version}</version>
@@ -75,6 +82,11 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-simple</artifactId>
+      <version>${cxf-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-frontend-jaxws</artifactId>
       <version>${cxf-version}</version>
     </dependency>
     <dependency>
@@ -144,6 +156,35 @@
     </dependency>
 
     <dependency>
+       <groupId>org.springframework</groupId>
+       <artifactId>spring-core</artifactId>
+       <version>2.0.5</version>
+       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+       <groupId>org.springframework</groupId>
+       <artifactId>spring-beans</artifactId>
+       <version>2.0.5</version>
+       <scope>test</scope>
+     </dependency>
+    
+    <dependency>
+       <groupId>org.springframework</groupId>
+       <artifactId>spring-context</artifactId>
+       <version>2.0.5</version>
+       <scope>test</scope>
+     </dependency>
+
+
+    <dependency>
+       <groupId>org.springframework</groupId>
+       <artifactId>spring-web</artifactId>
+       <version>2.0.5</version>
+       <scope>test</scope>
+     </dependency>
+
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
@@ -172,7 +213,7 @@
           </includes>
           <excludes>
             <!-- TODO re-enable ASAP! -->
-            <exclude>**/CxfTest.*</exclude>
+            <exclude>**/CxfEndpointUtilsTest.*</exclude>
             <exclude>**/transport/*Test.*</exclude>
           </excludes>
         </configuration>

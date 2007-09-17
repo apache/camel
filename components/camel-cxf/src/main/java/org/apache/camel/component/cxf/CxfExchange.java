@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.DefaultMessage;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.Conduit;
@@ -42,7 +43,9 @@ public class CxfExchange extends DefaultExchange {
 
         setIn(new CxfMessage(exchange.getInMessage()));
         setOut(new CxfMessage(exchange.getOutMessage()));
-        setFault(new CxfMessage(exchange.getInFaultMessage()));
+        if (exchange.getInFaultMessage() != null) {
+            setFault(new CxfMessage(exchange.getInFaultMessage()));
+        }    
     }
 
     public CxfExchange(CamelContext context, ExchangePattern pattern, CxfBinding binding) {
@@ -57,7 +60,9 @@ public class CxfExchange extends DefaultExchange {
         setIn(new CxfMessage(inMessage));
         if (exchange != null) {
             setOut(new CxfMessage(exchange.getOutMessage()));
-            setFault(new CxfMessage(exchange.getInFaultMessage()));
+            if (exchange.getInFaultMessage() != null) {
+                setFault(new CxfMessage(exchange.getInFaultMessage()));
+            }    
         }
     }
 
@@ -80,6 +85,12 @@ public class CxfExchange extends DefaultExchange {
     public CxfMessage getFault() {
         return (CxfMessage) super.getFault();
     }
+    
+    @Override
+    protected org.apache.camel.Message createFaultMessage() {
+        return new CxfMessage();
+    }
+
 
     /**
      * @return the Camel <-> JBI binding

@@ -37,10 +37,11 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     private String wsdlURL;
     private String serviceClass;
     private CxfBinding binding;
-    private QName portName;
-    private QName serviceName;
+    private String portName;
+    private String serviceName;
+    private String dataFormat;
     private boolean inOut = true;
-    private boolean invoker = true;
+    
 
     public CxfEndpoint(String uri, String address, CxfComponent component) {
         super(uri, component);
@@ -67,15 +68,16 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     public CxfExchange createExchange(Message inMessage) {
         return new CxfExchange(getContext(), getExchangePattern(), getBinding(), inMessage);
     }
-    
-    public boolean isInvoker() {
-        return invoker;
+           
+    public String getDataFormat() {
+        return dataFormat;
     }
     
-    public void setInvoker(boolean invoker) {
-        this.invoker = invoker;
+    public void setDataFormat(String format) {
+        dataFormat = format;
     }
     
+        
     public String getAddress() {
     	return address;
     }
@@ -96,19 +98,19 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
         serviceClass = className;
     }
     
-    public void setPortName(QName port) {
+    public void setPortName(String port) {
         portName = port;
     }
     
-    public void setServiceName(QName service) {
+    public void setServiceName(String service) {
         serviceName = service;
     }
     
-    public QName getPortName(){
+    public String getPortName(){
         return portName;
     }
     
-    public QName getServiceName() {
+    public String getServiceName() {
         return serviceName;
     }
 
