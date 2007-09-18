@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-quartz</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Quartz</name>
   <description>Camel Quartz support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.component.quartz*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 

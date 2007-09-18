@@ -46,6 +46,13 @@
     <slf4j-version>1.3.0</slf4j-version>
     <snapshot-repo-url>scp://people.apache.org/www/people.apache.org/repo/m2-snapshot-repository</snapshot-repo-url>
     <commons-io-version>1.3.1</commons-io-version>
+    <felix-version>1.0.0</felix-version>
+    <!-- OSGi bundles properties -->
+    <camel.osgi.import.pkg>*</camel.osgi.import.pkg>
+    <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>
+    <camel.osgi.export>${camel.osgi.export.pkg}*;version=${camel.osgi.export.version}</camel.osgi.export>
+    <camel.osgi.import>${camel.osgi.import.pkg}</camel.osgi.import>
+    <camel.osgi.symbolic.name>${groupId}.${artifactId}</camel.osgi.symbolic.name>
   </properties>
 
   <url>http://apache.apache.org/camel/</url>
@@ -687,6 +694,7 @@
 
     <pluginManagement>
       <plugins>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -778,6 +786,24 @@
     </pluginManagement>
 
     <plugins>
+	  <plugin>
+        <groupId>org.apache.felix</groupId>
+	    <artifactId>maven-bundle-plugin</artifactId>
+	    <version>${felix-version}</version>
+	    <extensions>true</extensions>
+	    <configuration>
+	      <instructions>
+	        <Bundle-Name>${artifactId}</Bundle-Name>
+	        <Bundle-SymbolicName>${camel.osgi.symbolic.name}</Bundle-SymbolicName>
+	        <Export-Package>${camel.osgi.export}</Export-Package>
+	        <Import-Package>${camel.osgi.import}</Import-Package>
+	        <Private-Package>${camel.osgi.private.pkg}</Private-Package>
+	        <Implementation-Title>Apache Camel</Implementation-Title>
+	        <Implementation-Version>${project.version}</Implementation-Version>
+	      </instructions>
+	    </configuration>
+      </plugin>
+	  <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-one-plugin</artifactId>
@@ -795,7 +821,7 @@
           </execution>
         </executions>
       </plugin>
-
+      -->
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>

@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-velocity</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Velocity</name>
   <description>Camel Velocity support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.component.velocity*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 

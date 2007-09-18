@@ -29,8 +29,14 @@
   </parent>
 
   <artifactId>camel-core</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Core</name>
   <description>The Core Camel POJO based router</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel*</camel.osgi.export.pkg>
+	<camel.osgi.import.pkg>*</camel.osgi.import.pkg>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -77,7 +83,6 @@
 
   <build>
     <plugins>
-
       <!-- lets delete the log4j.properties from the test-jar -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

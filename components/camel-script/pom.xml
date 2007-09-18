@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-script</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Script</name>
   <description>Camel Script support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.builder.script*</camel.osgi.export.pkg>
+  </properties>
 
   <repositories>
     <repository>

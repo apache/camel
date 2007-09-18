@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-ognl</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: OGNL</name>
   <description>Camel OGNL support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.language.ongl*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 

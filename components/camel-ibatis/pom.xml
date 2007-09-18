@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-ibatis</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: iBatis</name>
   <description>Camel iBatis support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.component.ibatis*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 

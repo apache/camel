@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-jms</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: JMS</name>
   <description>Camel JMS support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.component.jms*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 

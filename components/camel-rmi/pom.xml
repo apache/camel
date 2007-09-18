@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-rmi</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: RMI</name>
   <description>Camel RMI support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.component.rmi*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 

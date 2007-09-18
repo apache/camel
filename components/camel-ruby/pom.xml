@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-ruby</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Ruby</name>
   <description>Camel Ruby support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.ruby*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 

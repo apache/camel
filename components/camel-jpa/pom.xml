@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-jpa</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: JPA</name>
   <description>Camel JPA support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.component.jpa*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 
