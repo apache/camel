@@ -19,6 +19,7 @@ package org.apache.camel.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateProducerException;
@@ -27,6 +28,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -87,6 +89,35 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
 
     /**
      * Sends an exchange to an endpoint using a supplied
+     * @{link Processor} to populate the exchange.  The callback 
+     * will be called when the exchange is completed.
+     * 
+     * @param endpoint the endpoint to send the exchange to
+     * @param processor the transformer used to populate the new exchange
+     */
+    public E send(Endpoint<E> endpoint, Processor processor, AsyncCallback callback) {
+        try {
+            Producer<E> producer = getProducer(endpoint);
+            E exchange = producer.createExchange();
+            boolean sync = sendExchange(endpoint, producer, processor, exchange, callback);
+            setProcessedSync(exchange, sync);
+            return exchange;
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+    
+    public static boolean isProcessedSync(Exchange exchange) {
+        Boolean rc = exchange.getProperty(ProducerCache.class.getName() + ".SYNC", Boolean.class);
+        return rc == null ? false : rc;
+    }
+
+    public static void setProcessedSync(Exchange exchange, boolean b) {
+        exchange.setProperty(ProducerCache.class.getName() + ".SYNC", b ? Boolean.TRUE : Boolean.FALSE );
+    }
+
+    /**
+     * Sends an exchange to an endpoint using a supplied
      * @{link Processor} to populate the exchange
      *
      * @param endpoint the endpoint to send the exchange to
@@ -115,6 +146,17 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
         }
         producer.process(exchange);
         return exchange;
+    }
+
+    protected boolean sendExchange(Endpoint<E> endpoint, Producer<E> producer, Processor processor, E exchange, AsyncCallback callback) throws Exception {
+        // lets populate using the processor callback
+        processor.process(exchange);
+
+        // now lets dispatch
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(">>>> " + endpoint + " " + exchange);
+        }
+        return AsyncProcessorTypeConverter.convert(producer).process(exchange, callback);
     }
 
     protected void doStop() throws Exception {

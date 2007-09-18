@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.RejectedExecutionException;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
@@ -23,6 +25,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.ExceptionType;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,6 +45,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     private class RedeliveryData {
         int redeliveryCounter;
         long redeliveryDelay;
+        boolean sync = true;
 
         // default behaviour which can be overloaded on a per exception basis
         RedeliveryPolicy currentRedeliveryPolicy = redeliveryPolicy;
@@ -85,6 +89,16 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     public boolean process(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
 
         while (true) {
+            
+            // We can't keep retrying if the route is being shutdown.
+            if (isStopping() || isStopped()) {
+                if (exchange.getException() == null) {
+                    exchange.setException(new RejectedExecutionException());
+                }
+                callback.done(data.sync);
+                return data.sync;
+            }
+            
             if (exchange.getException() != null) {
                 Throwable e = exchange.getException();
                 exchange.setException(null); // Reset it since we are handling it.
@@ -105,7 +119,11 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
             if (!data.currentRedeliveryPolicy.shouldRedeliver(data.redeliveryCounter)) {
                 setFailureHandled(exchange, true);
                 AsyncProcessor afp = AsyncProcessorTypeConverter.convert(data.failureProcessor);
-                return afp.process(exchange, callback);
+                return afp.process(exchange, new AsyncCallback() {
+                    public void done(boolean sync) {
+                        callback.done(data.sync);
+                    }
+                });
             }
 
             if (data.redeliveryCounter > 0) {
@@ -113,13 +131,15 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 data.redeliveryDelay = data.currentRedeliveryPolicy.getRedeliveryDelay(data.redeliveryDelay);
                 sleep(data.redeliveryDelay);
             }
-
+            
+            exchange.setException(null);
             boolean sync = outputAsync.process(exchange, new AsyncCallback() {
                 public void done(boolean sync) {
                     // Only handle the async case...
                     if (sync) {
                         return;
                     }
+                    data.sync = false;
                     if (exchange.getException() != null) {
                         process(exchange, callback, data);
                     } else {
@@ -131,7 +151,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 // It is going to be processed async..
                 return false;
             }
-            if (exchange.getException() == null || isFailureHandled(exchange) ) {
+            if (exchange.getException() == null || isFailureHandled(exchange)) {
                 // If everything went well.. then we exit here..
                 callback.done(true);
                 return true;
@@ -141,50 +161,17 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
     }
     
-    private boolean isFailureHandled(Exchange exchange) {
+    public static boolean isFailureHandled(Exchange exchange) {
         Boolean rc = exchange.getProperty(FAILURE_HANDLED_PROPERTY, Boolean.class);
         return rc == null ? false : rc;
     }
 
-    private void setFailureHandled(Exchange exchange, boolean b) {
+    public static void setFailureHandled(Exchange exchange, boolean b) {
         exchange.setProperty(FAILURE_HANDLED_PROPERTY, b ? Boolean.TRUE : Boolean.FALSE );
     }
 
     public void process(Exchange exchange) throws Exception {
-        int redeliveryCounter = 0;
-        long redeliveryDelay = 0;
-
-        // default behaviour which can be overloaded on a per exception basis
-        RedeliveryPolicy currentRedeliveryPolicy = redeliveryPolicy;
-        Processor failureProcessor = deadLetter;
-
-        do {
-            if (redeliveryCounter > 0) {
-                // Figure out how long we should wait to resend this message.
-                redeliveryDelay = currentRedeliveryPolicy.getRedeliveryDelay(redeliveryDelay);
-                sleep(redeliveryDelay);
-            }
-
-            try {
-                output.process(exchange);
-                return;
-            } catch (Throwable e) {
-                logger.log("On delivery attempt: " + redeliveryCounter + " caught: " + e, e);
-                redeliveryCounter = incrementRedeliveryCounter(exchange, e);
-
-                ExceptionType exceptionPolicy = getExceptionPolicy(exchange, e);
-                if (exceptionPolicy != null) {
-                    currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(currentRedeliveryPolicy);
-                    Processor processor = exceptionPolicy.getErrorHandler();
-                    if (processor != null) {
-                        failureProcessor = processor;
-                    }
-                }
-            }
-        } while (currentRedeliveryPolicy.shouldRedeliver(redeliveryCounter));
-
-        // now lets send to the dead letter queue
-        failureProcessor.process(exchange);
+        AsyncProcessorHelper.process(this, exchange);
     }
 
     // Properties
