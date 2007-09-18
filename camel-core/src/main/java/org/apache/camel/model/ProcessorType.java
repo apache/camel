@@ -16,6 +16,15 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -42,13 +51,6 @@ import org.apache.camel.processor.idempotent.MessageIdRepository;
 import org.apache.camel.spi.Policy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @version $Revision: 1.1 $
@@ -848,5 +850,33 @@ public abstract class ProcessorType<Type extends ProcessorType> {
             }
         }
         return processor;
+    }
+    
+    /**
+     * Causes subsequent processors to be called asynchronously 
+     * 
+     * @param coreSize the number of threads that will be used to process
+     *          messages in subsequent processors.
+     * @return a ThreadType builder that can be used to futher configure the
+     *         the thread pool.
+     */
+    public ThreadType thread(int coreSize) {
+        ThreadType answer = new ThreadType(coreSize);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * Causes subsequent processors to be called asynchronously 
+     * 
+     * @param executor the executor that will be used to process
+     *          messages in subsequent processors.
+     * @return a ThreadType builder that can be used to further configure the
+     *         the thread pool.
+     */
+    public ProcessorType<Type> thread(ThreadPoolExecutor executor) {
+        ThreadType answer = new ThreadType(executor);
+        addOutput(answer);
+        return this;
     }
 }
