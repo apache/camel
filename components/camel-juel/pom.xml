@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-juel</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: JUEL</name>
   <description>Camel JUEL support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.language.juel*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 

@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-bam</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: BAM</name>
   <description>Camel BAM support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.bam*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 

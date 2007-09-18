@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-spring</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Spring</name>
   <description>Camel Spring support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.spring*,org.apache.camel.component*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 

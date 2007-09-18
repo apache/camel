@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-jetty</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Jetty</name>
   <description>Camel Jetty support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.component.jetty*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 

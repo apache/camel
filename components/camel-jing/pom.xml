@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-jing</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Jing</name>
   <description>Camel Jing support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.component.validator.jing*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 

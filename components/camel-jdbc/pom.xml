@@ -24,8 +24,14 @@
 		<version>1.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>camel-jdbc</artifactId>
+    <packaging>bundle</packaging>
 	<name>Camel :: JDBC</name>
 	<description>Camel JDBC support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.component.jdbc*</camel.osgi.export.pkg>
+  </properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.camel</groupId>

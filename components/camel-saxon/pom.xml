@@ -29,8 +29,14 @@
   </parent>
 
   <artifactId>camel-saxon</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: SAXON</name>
   <description>Camel SAXON support</description>
+
+  <properties>
+    <saxon-version>8.7</saxon-version>
+	<camel.osgi.export.pkg>org.apache.camel.builder.saxon*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 
@@ -80,8 +86,4 @@
     </dependency>
   </dependencies>
 
-
-  <properties>
-    <saxon-version>8.7</saxon-version>
-  </properties>
 </project>

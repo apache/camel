@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-jhc</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Jakarta Http Components</name>
   <description>Camel Jakarta Http Components support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.component.jhc*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 

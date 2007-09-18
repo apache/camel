@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-xmpp</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: XMPP</name>
   <description>Camel XMPP support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.component.xmpp*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 

@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-irc</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: IRC</name>
   <description>Camel IRC support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.component.irc*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 

@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-mail</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Mail</name>
   <description>Camel Mail support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.component.mail*</camel.osgi.export.pkg>
+  </properties>
 
   <repositories>
     <repository>

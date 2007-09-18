@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-xmlbeans</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: XMLBeans</name>
   <description>Camel XMLBeans support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.converter.xmlbeans*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 

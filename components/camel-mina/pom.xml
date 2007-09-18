@@ -29,8 +29,13 @@
   </parent>
 
   <artifactId>camel-mina</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: MINA</name>
   <description>Camel MINA support</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel.component.mina*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 
