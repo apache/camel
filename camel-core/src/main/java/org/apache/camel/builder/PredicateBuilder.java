@@ -199,7 +199,7 @@ public class PredicateBuilder {
         return new BinaryPredicateSupport<E>(left, right) {
 
             protected boolean matches(E exchange, Object leftValue, Object rightValue) {
-                return compare(leftValue, rightValue) < 0;
+                return compare(leftValue, rightValue) >= 0;
             }
 
             protected String getOperationText() {
