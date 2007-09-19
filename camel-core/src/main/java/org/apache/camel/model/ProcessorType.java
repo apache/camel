@@ -551,6 +551,17 @@ public abstract class ProcessorType<Type extends ProcessorType> {
     }
 
     /**
+     * Adds the custom processor reference to this destination which could be a final
+     * destination, or could be a transformation in a pipeline
+     */
+    public Type processRef(String ref) {
+        ProcessorRef answer = new ProcessorRef();
+        answer.setRef(ref);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
      * Adds a bean which is invoked which could be a final destination, or could
      * be a transformation in a pipeline
      */
