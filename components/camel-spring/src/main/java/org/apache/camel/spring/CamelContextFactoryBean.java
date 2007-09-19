@@ -16,18 +16,6 @@
  */
 package org.apache.camel.spring;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.management.MBeanServer;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.IdentifiedType;
@@ -44,6 +32,12 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+
+import javax.management.MBeanServer;
+import javax.xml.bind.annotation.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A Spring {@link FactoryBean} to create and initialize a
@@ -245,6 +239,12 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      * Strategy to install all available routes into the context
      */
     protected void installRoutes() throws Exception {
+        Map builders = getApplicationContext().getBeansOfType(RouteBuilder.class, true, true);
+        if (builders != null) {
+            for (Object builder : builders.values()) {
+                getContext().addRoutes((RouteBuilder) builder);
+            }
+        }
         for (RouteBuilder routeBuilder : additionalBuilders) {
             getContext().addRoutes(routeBuilder);
         }

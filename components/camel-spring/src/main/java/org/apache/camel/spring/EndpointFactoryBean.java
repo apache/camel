@@ -16,19 +16,15 @@
  */
 package org.apache.camel.spring;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.model.IdentifiedType;
-
+import static org.apache.camel.util.ObjectHelper.notNull;
 import org.springframework.beans.factory.FactoryBean;
 
-import static org.apache.camel.util.ObjectHelper.notNull;
+import javax.xml.bind.annotation.*;
 
 /**
  * A {@link FactoryBean} which instantiates {@link Endpoint} objects
@@ -37,7 +33,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 @XmlRootElement(name = "endpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EndpointFactoryBean extends IdentifiedType implements FactoryBean {
+public class EndpointFactoryBean extends IdentifiedType implements FactoryBean, CamelContextAware {
     @XmlAttribute
     private String uri;
     @XmlTransient
@@ -62,7 +58,7 @@ public class EndpointFactoryBean extends IdentifiedType implements FactoryBean {
         return singleton;
     }
 
-    public CamelContext getContext() {
+    public CamelContext getCamelContext() {
         return context;
     }
 
@@ -71,7 +67,7 @@ public class EndpointFactoryBean extends IdentifiedType implements FactoryBean {
      *
      * @param context the context used to resolve endpoints
      */
-    public void setContext(CamelContext context) {
+    public void setCamelContext(CamelContext context) {
         this.context = context;
     }
 
@@ -103,6 +99,10 @@ public class EndpointFactoryBean extends IdentifiedType implements FactoryBean {
     protected Endpoint createEndpoint() {
         notNull(context, "context");
         notNull(uri, "uri");
-        return context.getEndpoint(uri);
+        Endpoint endpoint = context.getEndpoint(uri);
+        if (endpoint == null) {
+            throw new NoSuchEndpointException(uri);
+        }
+        return endpoint;
     }
 }
