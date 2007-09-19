@@ -30,20 +30,15 @@ import org.apache.camel.spring.spi.ApplicationContextRegistry;
 import org.apache.camel.spring.spi.SpringInjector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.*;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * A Spring aware implementation of {@link CamelContext} which will
+ * A Spring aware implementation of {@link org.apache.camel.CamelContext} which will
  * automatically register itself with Springs lifecycle methods plus allows
  * spring to be used to customize a any <a
  * href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>

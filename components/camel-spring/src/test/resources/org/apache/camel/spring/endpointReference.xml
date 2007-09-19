@@ -33,7 +33,7 @@
 
     <route>
       <from ref="endpoint1"/>
-      <to ref="endpoint2"/>
+      <to uri="ref:endpoint2"/>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->

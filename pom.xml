@@ -51,6 +51,7 @@
     <camel.osgi.import.pkg>*</camel.osgi.import.pkg>
     <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>
     <camel.osgi.export>${camel.osgi.export.pkg}*;version=${camel.osgi.export.version}</camel.osgi.export>
+    <camel.osgi.export.version>${project.version}</camel.osgi.export.version>
     <camel.osgi.import>${camel.osgi.import.pkg}</camel.osgi.import>
     <camel.osgi.symbolic.name>${groupId}.${artifactId}</camel.osgi.symbolic.name>
   </properties>

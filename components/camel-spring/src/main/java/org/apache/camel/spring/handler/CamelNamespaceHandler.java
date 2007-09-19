@@ -100,7 +100,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                             String id = childElement.getAttribute("id");
                             if (isNotNullAndNonEmpty(id)) {
                                 // TODO we can zap this?
-                                definition.getPropertyValues().addPropertyValue("context", new RuntimeBeanReference(contextId));
+                                definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
                                 // definition.getPropertyValues().addPropertyValue("context",
                                 // builder.getBeanDefinition());
                                 parserContext.registerComponent(new BeanComponentDefinition(definition, id));
