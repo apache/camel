@@ -32,11 +32,14 @@ import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
  * @version $Revision: 1.1 $
  */
 public class XmlGraphGenerator extends GraphGeneratorSupport {
+    private boolean addUrl = true;
+
     public XmlGraphGenerator(String dir) {
         super(dir, ".xml");
     }
 
     protected void generateFile(PrintWriter writer, Map<String, List<RouteType>> map) {
+        writer.println("<?xml version='1.0' encoding='UTF-8'?>");
         writer.println("<Graph>");
         writer.println();
 
@@ -96,13 +99,16 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
         printNode(writer, toData);
 
         if (fromData != null) {
-            writer.print("<Edge fromID='");
-            writer.print(fromData.id);
-            writer.print("' toID='");
-            writer.print(toData.id);
-            writer.print("' association='");
-            writer.print(toData.association);
-            writer.println("'/>");
+            writer.print("<Edge fromID=\"");
+            writer.print(encode(fromData.id));
+            writer.print("\" toID=\"");
+            writer.print(encode(toData.id));
+            String association = toData.edgeLabel;
+            if (isNullOrBlank(association)) {
+                writer.print("\" association=\"");
+                writer.print(encode(association));
+            }
+            writer.println("\"/>");
         }
 
         // now lets write any children
@@ -122,13 +128,16 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
         if (!data.nodeWritten) {
             data.nodeWritten = true;
 
-            // <Node id="iedge" name="IEdge" nodeType="PrimitiveCircle" description=""   />
             writer.println();
-            writer.print("<Node id='");
-            writer.print(data.id);
-            writer.print("' name='");
-            writer.print(data.label);
-            writer.print("' nodeType='");
+            writer.print("<Node id=\"");
+            writer.print(encode(data.id));
+            writer.print("\" name=\"");
+            String name = data.label;
+            if (isNullOrBlank(name)) {
+                name = data.tooltop;
+            }
+            writer.print(encode(name));
+            writer.print("\" nodeType=\"");
             String nodeType = data.image;
             if (isNullOrBlank(nodeType)) {
                 nodeType = data.shape;
@@ -136,12 +145,22 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
                     nodeType = "PrimitiveReverseBurst";
                 }
             }
-            writer.print(nodeType);
-            writer.print("' description='");
-            writer.print(data.tooltop);
-            writer.print("' url='");
-            writer.print(data.url);
-            writer.println("'/>");
+            writer.print(encode(nodeType));
+            writer.print("\" description=\"");
+            writer.print(encode(data.tooltop));
+            if (addUrl) {
+                writer.print("\" url=\"");
+                writer.print(encode(data.url));
+            }
+            writer.println("\"/>");
         }
+    }
+
+    protected String encode(String text) {
+        if (text == null) {
+            return "";
+        }
+        return text.replaceAll("\"", "&quot;").replaceAll("<", "&lt;").
+                replaceAll(">", "&gt;").replaceAll("&", "&amp;");
     }
 }
