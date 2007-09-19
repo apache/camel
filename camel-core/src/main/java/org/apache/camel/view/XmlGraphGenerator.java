@@ -26,7 +26,6 @@ import org.apache.camel.model.FromType;
 import org.apache.camel.model.MulticastType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
-import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 
 /**
@@ -68,8 +67,6 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
         }
     }
 
-
-
     protected void printRoute(PrintWriter writer, final RouteType route, FromType input) {
         NodeData nodeData = getNodeData(input);
 
@@ -110,10 +107,12 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
 
         // now lets write any children
         List<ProcessorType> outputs = toData.outputs;
-        for (ProcessorType output : outputs) {
-            NodeData newData = printNode(writer, toData, output);
-            if (!isMulticastNode(node)) {
-                toData = newData;
+        if (outputs != null) {
+            for (ProcessorType output : outputs) {
+                NodeData newData = printNode(writer, toData, output);
+                if (!isMulticastNode(node)) {
+                    toData = newData;
+                }
             }
         }
         return toData;
@@ -135,7 +134,8 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
                 nodeType = data.shape;
                 if (isNullOrBlank(nodeType)) {
                     nodeType = "PrimitiveReverseBurst";
-                }            }
+                }
+            }
             writer.print(nodeType);
             writer.print("' description='");
             writer.print(data.tooltop);
@@ -144,5 +144,4 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
             writer.println("'/>");
         }
     }
-
 }
