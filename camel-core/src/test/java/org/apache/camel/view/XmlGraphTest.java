@@ -17,15 +17,13 @@
  */
 package org.apache.camel.view;
 
-import junit.framework.TestCase;
-
 /**
  * @version $Revision: 1.1 $
  */
-public class RouteDotGeneratorTest extends TestCase {
-    
-    public void testInsertSpacesBetweenCamelCase() throws Exception {
-        String value = NodeData.insertSpacesBetweenCamelCase("FooBarType");
-        assertEquals("Converted value", "Foo Bar Type", value);
+public class XmlGraphTest extends DotViewTest {
+    @Override
+    public void testGenerateFiles() throws Exception {
+        XmlGraphGenerator generator = new XmlGraphGenerator(outputDirectory);
+        generator.drawRoutes(context);
     }
 }

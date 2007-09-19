@@ -16,21 +16,21 @@
  */
 package org.apache.camel.view;
 
+import java.io.File;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-
-import java.io.File;
+import org.apache.camel.builder.xml.XPathBuilder;
+import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class DotViewTest extends ContextTestSupport {
-    protected RouteDotGenerator generator = new RouteDotGenerator();
+    protected String outputDirectory = "target/site/cameldoc";
 
-    public void testDotFile() throws Exception {
-        new File("target").mkdirs();
-        
-        generator.setDir("target/site/cameldoc");
+    public void testGenerateFiles() throws Exception {
+        RouteDotGenerator generator = new RouteDotGenerator(outputDirectory);
         generator.drawRoutes(context);
     }
 
@@ -40,6 +40,9 @@ public class DotViewTest extends ContextTestSupport {
 
         context.addRoutes(new MulticastRoute());
         context.addRoutes(new PipelineRoute());
+        context.addRoutes(new ChoiceRoute());
+        context.addRoutes(new FilterRoute());
+        context.addRoutes(new ComplexRoute());
     }
 
     static class MulticastRoute extends RouteBuilder {
@@ -48,6 +51,7 @@ public class DotViewTest extends ContextTestSupport {
                     multicast().to("seda:multicast.out1", "seda:multicast.out2", "seda:multicast.out3");
         }
     }
+
     static class PipelineRoute extends RouteBuilder {
         public void configure() throws Exception {
             from("seda:pipeline.in").
@@ -55,26 +59,31 @@ public class DotViewTest extends ContextTestSupport {
         }
     }
 
-/*
-                from("file:foo/xyz?noop=true").
-                    choice().
-                      when(xpath("/person/city = 'London'")).to("file:target/messages/uk").
-                      otherwise().to("file:target/messages/others");
-*/
+    static class ChoiceRoute extends RouteBuilder {
+        public void configure() throws Exception {
+            from("file:foo/xyz?noop=true").
+                choice().
+                  when(xpath("/person/city = 'London'")).to("file:target/messages/uk").
+                  otherwise().to("file:target/messages/others");
+        }
+    }
 
-/*
-
-
+    static class FilterRoute extends RouteBuilder {
+        public void configure() throws Exception {
                 from("file:foo/bar?noop=true").
                         filter(header("foo").isEqualTo("bar")).
                         to("file:xyz?noop=true");
+        }
+    }
 
-                from("file:xyz?noop=true").
-                        filter(header("foo").isEqualTo("bar")).
-                        recipientList(header("bar")).
-                        splitter(XPathBuilder.xpath("/invoice/lineItems")).
-                        throttler(3).
-                        to("mock:result");
-*/
-
+    static class ComplexRoute extends RouteBuilder {
+        public void configure() throws Exception {
+            from("file:xyz?noop=true").
+                    filter(header("foo").isEqualTo("bar")).
+                    recipientList(header("bar")).
+                    splitter(XPathBuilder.xpath("/invoice/lineItems")).
+                    throttler(3).
+                    to("mock:result");
+        }
+    }
 }
