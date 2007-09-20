@@ -16,19 +16,13 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.impl.DefaultExchange;
-
 /**
- * A {@link Exchange} for MINA
- * 
- * @version $Revision$
+ * @version $Revision: 563665 $
  */
-public class MinaExchange extends DefaultExchange {
-
-    public MinaExchange(CamelContext camelContext, ExchangePattern pattern) {
-        super(camelContext, pattern);
+public class MinaTcpTextlineProtocolTest extends MinaVmTest {
+    @Override
+    protected void setUp() throws Exception {
+        uri = "mina:tcp://localhost:6123?codec=textline";
+        super.setUp();
     }
 }
