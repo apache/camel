@@ -19,3 +19,7 @@ http\://activemq.apache.org/camel/schema/spring/camel-spring.xsd=camel-spring.xs
 
 http\://activemq.apache.org/camel/schema/spring/camel-spring-1.0.xsd=camel-spring.xsd
 http\://activemq.apache.org/camel/schema/spring/camel-spring-1.0-SNAPSHOT.xsd=camel-spring.xsd
+http\://activemq.apache.org/camel/schema/spring/camel-spring-1.1.xsd=camel-spring.xsd
+http\://activemq.apache.org/camel/schema/spring/camel-spring-1.1-SNAPSHOT.xsd=camel-spring.xsd
+http\://activemq.apache.org/camel/schema/spring/camel-spring-1.2.xsd=camel-spring.xsd
+http\://activemq.apache.org/camel/schema/spring/camel-spring-1.2-SNAPSHOT.xsd=camel-spring.xsd
