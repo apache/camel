@@ -146,7 +146,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     // -------------------------------------------------------------------------
     public SpringCamelContext getContext() throws Exception {
         if (context == null) {
-            context = new SpringCamelContext(getApplicationContext());
+            context = createContext();
         }
         return context;
     }
@@ -234,6 +234,13 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     // Implementation methods
     // -------------------------------------------------------------------------
+
+    /**
+     * Create the context
+     */
+    protected SpringCamelContext createContext() {
+        return new SpringCamelContext(getApplicationContext());
+    }
 
     /**
      * Strategy to install all available routes into the context
