@@ -59,75 +59,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         registerParser("proxy", proxyParser);
         registerParser("export", exportParser);
 
-        registerParser("camelContext", new BeanDefinitionParser(CamelContextFactoryBean.class) {
-            @Override
-            protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-                super.doParse(element, parserContext, builder);
-
-                String contextId = element.getAttribute("id");
-
-                // lets avoid folks having to explicitly give an ID to a camel
-                // context
-                if (ObjectHelper.isNullOrBlank(contextId)) {
-                    contextId = "camelContext";
-                    element.setAttribute("id", contextId);
-                }
-
-                // now lets parse the routes
-                Object value = parseUsingJaxb(element, parserContext);
-                if (value instanceof CamelContextFactoryBean) {
-                    CamelContextFactoryBean factoryBean = (CamelContextFactoryBean)value;
-                    builder.addPropertyValue("routes", factoryBean.getRoutes());
-
-                    if (factoryBean.getPackages().length > 0) {
-                        builder.addPropertyValue("packages", factoryBean.getPackages());
-                    }
-                }
-
-                boolean createdBeanPostProcessor = false;
-                NodeList list = element.getChildNodes();
-                int size = list.getLength();
-                for (int i = 0; i < size; i++) {
-                    Node child = list.item(i);
-                    if (child instanceof Element) {
-                        Element childElement = (Element)child;
-                        String localName = child.getLocalName();
-                        if (localName.equals("beanPostProcessor")) {
-                            createBeanPostProcessor(parserContext, contextId, childElement);
-                            createdBeanPostProcessor = true;
-                        } else if (localName.equals("endpoint")) {
-                            BeanDefinition definition = endpointParser.parse(childElement, parserContext);
-                            String id = childElement.getAttribute("id");
-                            if (isNotNullAndNonEmpty(id)) {
-                                // TODO we can zap this?
-                                definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
-                                // definition.getPropertyValues().addPropertyValue("context",
-                                // builder.getBeanDefinition());
-                                parserContext.registerComponent(new BeanComponentDefinition(definition, id));
-                            }
-                        } else if (localName.equals("proxy")) {
-                            BeanDefinition definition = proxyParser.parse(childElement, parserContext);
-                            String id = childElement.getAttribute("id");
-                            if (isNotNullAndNonEmpty(id)) {
-                                parserContext.registerComponent(new BeanComponentDefinition(definition, id));
-                            }
-                        } else if (localName.equals("export")) {
-                            BeanDefinition definition = exportParser.parse(childElement, parserContext);
-                            String id = childElement.getAttribute("id");
-                            if (isNotNullAndNonEmpty(id)) {
-                                parserContext.registerComponent(new BeanComponentDefinition(definition, id));
-                            }
-                        }
-                    }
-                }
-                if (!createdBeanPostProcessor) {
-                    // no bean processor element so lets add a fake one
-                    Element childElement = element.getOwnerDocument().createElement("beanPostProcessor");
-                    element.appendChild(childElement);
-                    createBeanPostProcessor(parserContext, contextId, childElement);
-                }
-            }
-        });
+        registerParser("camelContext", new CamelContextBeanDefinitionParser(CamelContextFactoryBean.class));
 
         registerParser("xpath", new BeanDefinitionParser(XPathBuilder.class) {
             @Override
@@ -172,8 +104,86 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
     protected JAXBContext getJaxbContext() throws JAXBException {
         if (jaxbContext == null) {
-            jaxbContext = JAXBContext.newInstance(JAXB_PACKAGES);
+            jaxbContext = createJaxbContext();
         }
         return jaxbContext;
+    }
+
+    protected JAXBContext createJaxbContext() throws JAXBException {
+        return JAXBContext.newInstance(JAXB_PACKAGES);
+    }
+
+    protected class CamelContextBeanDefinitionParser extends BeanDefinitionParser {
+        public CamelContextBeanDefinitionParser(Class type) {
+            super(type);
+        }
+
+        @Override
+            protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+            super.doParse(element, parserContext, builder);
+
+            String contextId = element.getAttribute("id");
+
+            // lets avoid folks having to explicitly give an ID to a camel
+            // context
+            if (ObjectHelper.isNullOrBlank(contextId)) {
+                contextId = "camelContext";
+                element.setAttribute("id", contextId);
+            }
+
+            // now lets parse the routes
+            Object value = parseUsingJaxb(element, parserContext);
+            if (value instanceof CamelContextFactoryBean) {
+                CamelContextFactoryBean factoryBean = (CamelContextFactoryBean)value;
+                builder.addPropertyValue("routes", factoryBean.getRoutes());
+
+                if (factoryBean.getPackages().length > 0) {
+                    builder.addPropertyValue("packages", factoryBean.getPackages());
+                }
+            }
+
+            boolean createdBeanPostProcessor = false;
+            NodeList list = element.getChildNodes();
+            int size = list.getLength();
+            for (int i = 0; i < size; i++) {
+                Node child = list.item(i);
+                if (child instanceof Element) {
+                    Element childElement = (Element)child;
+                    String localName = child.getLocalName();
+                    if (localName.equals("beanPostProcessor")) {
+                        createBeanPostProcessor(parserContext, contextId, childElement);
+                        createdBeanPostProcessor = true;
+                    } else if (localName.equals("endpoint")) {
+                        BeanDefinition definition = endpointParser.parse(childElement, parserContext);
+                        String id = childElement.getAttribute("id");
+                        if (ObjectHelper.isNotNullAndNonEmpty(id)) {
+                            // TODO we can zap this?
+                            definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
+                            // definition.getPropertyValues().addPropertyValue("context",
+                            // builder.getBeanDefinition());
+                            parserContext.registerComponent(new BeanComponentDefinition(definition, id));
+                        }
+                    } else if (localName.equals("proxy")) {
+                        BeanDefinition definition = proxyParser.parse(childElement, parserContext);
+                        String id = childElement.getAttribute("id");
+                        if (ObjectHelper.isNotNullAndNonEmpty(id)) {
+                            parserContext.registerComponent(new BeanComponentDefinition(definition, id));
+                        }
+                    } else if (localName.equals("export")) {
+                        BeanDefinition definition = exportParser.parse(childElement, parserContext);
+                        String id = childElement.getAttribute("id");
+                        if (ObjectHelper.isNotNullAndNonEmpty(id)) {
+                            parserContext.registerComponent(new BeanComponentDefinition(definition, id));
+                        }
+                    }
+                }
+            }
+            if (!createdBeanPostProcessor) {
+                // no bean processor element so lets add a fake one
+                Element childElement = element.getOwnerDocument().createElement("beanPostProcessor");
+                element.appendChild(childElement);
+                createBeanPostProcessor(parserContext, contextId, childElement);
+            }
+        }
     }
 }
