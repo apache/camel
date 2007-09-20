@@ -20,6 +20,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.listener.serversession.ServerSessionFactory;
 import org.springframework.jms.support.converter.MessageConverter;
@@ -36,11 +40,12 @@ import java.util.Map;
  * 
  * @version $Revision:520964 $
  */
-public class JmsComponent extends DefaultComponent<JmsExchange> {
+public class JmsComponent extends DefaultComponent<JmsExchange> implements ApplicationContextAware {
     public static final String QUEUE_PREFIX = "queue:";
     public static final String TOPIC_PREFIX = "topic:";
 
     private JmsConfiguration configuration;
+	private ApplicationContext applicationContext;
 
     public JmsComponent() {
     }
@@ -134,6 +139,15 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
     public JmsConfiguration getConfiguration() {
         if (configuration == null) {
             configuration = createConfiguration();
+            
+            // If we are being configured with spring... 
+            if( applicationContext !=null ) {
+            	Map beansOfType = applicationContext.getBeansOfType(ConnectionFactory.class);
+            	if( !beansOfType.isEmpty() ) { 
+            		ConnectionFactory cf = (ConnectionFactory) beansOfType.values().iterator().next();
+            		configuration.setConnectionFactory(cf);
+            	}
+            }
         }
         return configuration;
     }
@@ -300,5 +314,9 @@ public class JmsComponent extends DefaultComponent<JmsExchange> {
     protected JmsConfiguration createConfiguration() {
         return new JmsConfiguration();
     }
+
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
+	}
 
 }
