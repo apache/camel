@@ -55,6 +55,7 @@
     <module>camel-mina</module>
     <module>camel-msv</module>
     <module>camel-ognl</module>
+    <module>camel-osgi</module>
     <module>camel-quartz</module>
     <module>camel-rmi</module>
     <!--<module>camel-ruby</module>-->
