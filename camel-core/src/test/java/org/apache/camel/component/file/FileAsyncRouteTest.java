@@ -76,8 +76,8 @@ public class FileAsyncRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(uri).to("seda:a");
-                from("seda:a").process(new Processor() {
+                from(uri).thread(1).to("direct:a");
+                from("direct:a").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         file.set((File)exchange.getIn().getBody());
                         // Simulate a processing delay..

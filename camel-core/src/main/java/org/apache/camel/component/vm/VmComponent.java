@@ -24,7 +24,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.component.seda.SedaEndpoint;
-import org.apache.camel.component.seda.SedaEndpoint.Entry;
 
 /**
  * An implementation of the <a href="http://activemq.apache.org/camel/vm.html">VM components</a>
@@ -39,13 +38,13 @@ public class VmComponent extends SedaComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        BlockingQueue<SedaEndpoint.Entry> blockingQueue = getBlockingQueue(uri);
+        BlockingQueue<Exchange> blockingQueue = getBlockingQueue(uri);
         return new SedaEndpoint(uri, this, blockingQueue);
     }
 
-    protected BlockingQueue<Entry> getBlockingQueue(String uri) {
+    protected BlockingQueue<Exchange> getBlockingQueue(String uri) {
         synchronized (queues) {
-            BlockingQueue<Entry> answer = queues.get(uri);
+            BlockingQueue<Exchange> answer = queues.get(uri);
             if (answer == null) {
                 answer = createQueue();
                 queues.put(uri, answer);

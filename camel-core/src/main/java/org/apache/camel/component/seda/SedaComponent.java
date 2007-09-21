@@ -31,8 +31,8 @@ import org.apache.camel.impl.DefaultComponent;
  * @version $Revision: 1.1 $
  */
 public class SedaComponent extends DefaultComponent {
-    public BlockingQueue<SedaEndpoint.Entry> createQueue() {
-        return new LinkedBlockingQueue<SedaEndpoint.Entry>(1000);
+    public BlockingQueue<Exchange> createQueue() {
+        return new LinkedBlockingQueue<Exchange>(1000);
     }
 
     @Override
