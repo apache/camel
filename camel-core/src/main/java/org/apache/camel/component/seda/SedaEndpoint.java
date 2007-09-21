@@ -39,47 +39,24 @@ import org.apache.camel.impl.DefaultProducer;
  * @version $Revision: 519973 $
  */
 public class SedaEndpoint extends DefaultEndpoint<Exchange> {
-    
-    static public class Entry {
-        Exchange exchange;
-        AsyncCallback callback;
         
-        public Entry(Exchange exchange, AsyncCallback callback) {
-            this.exchange = exchange;
-            this.callback = callback;
-        }
-        
-        public Exchange getExchange() {
-            return exchange;
-        }
-        public void setExchange(Exchange exchange) {
-            this.exchange = exchange;
-        }
-        public AsyncCallback getCallback() {
-            return callback;
-        }
-        public void setCallback(AsyncCallback callback) {
-            this.callback = callback;
-        }
-        
-    }
-    
     private final class SedaProducer extends DefaultProducer implements AsyncProcessor {
         private SedaProducer(Endpoint endpoint) {
             super(endpoint);
         }
         public void process(Exchange exchange) {
-            queue.add(new Entry(createExchange(exchange), null));
+            queue.add(exchange.copy());
         }
         public boolean process(Exchange exchange, AsyncCallback callback) {
-            queue.add(new Entry(createExchange(exchange), callback));
-            return false;
+            queue.add(exchange.copy());
+            callback.done(true);
+            return true;
         }
     }
 
-    private BlockingQueue<Entry> queue;
+    private BlockingQueue<Exchange> queue;
 
-    public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Entry> queue) {
+    public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {
         super(endpointUri, component);
         this.queue = queue;
     }
@@ -96,7 +73,7 @@ public class SedaEndpoint extends DefaultEndpoint<Exchange> {
         return new SedaConsumer(this, processor);
     }
 
-    public BlockingQueue<Entry> getQueue() {
+    public BlockingQueue<Exchange> getQueue() {
         return queue;
     }
 

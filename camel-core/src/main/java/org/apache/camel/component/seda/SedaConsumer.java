@@ -51,30 +51,17 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
 
     public void run() {
         while (!isStopping()) {
-            final SedaEndpoint.Entry entry;
+            final Exchange exchange;
             try {
-                entry = endpoint.getQueue().poll(1000, TimeUnit.MILLISECONDS);
+                exchange = endpoint.getQueue().poll(1000, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
                 break;
             }
-            if (entry != null && !isStopping()) {
-                processor.process(entry.getExchange(), new AsyncCallback() {
+            if (exchange != null && !isStopping()) {
+                processor.process(exchange, new AsyncCallback() {
                     public void done(boolean sync) {
-                        if (entry.getCallback() != null) {
-                            entry.getCallback().done(false);
-                        } else {
-                            Throwable e = entry.getExchange().getException();
-                            if (e != null) {
-                                if (e instanceof AlreadyStoppedException) {
-                                    LOG.debug("Ignoring failed message due to shutdown: " + e, e);
-                                } else {
-                                    LOG.error(e);
-                                }
-                            }
-                        }
                     }
                 });
-
             }
         }
     }
