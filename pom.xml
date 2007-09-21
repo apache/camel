@@ -783,6 +783,20 @@
           <artifactId>maven-jetty-plugin</artifactId>
           <version>${jetty-version}</version>
         </plugin>
+        
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-release-plugin</artifactId>
+            <configuration>
+                <tagBase>https://svn.apache.org/repos/asf/activemq/camel/tags</tagBase>
+                <useReleaseProfile>false</useReleaseProfile>
+                <preparationGoals>clean install</preparationGoals>
+                <goals>deploy</goals>
+                <arguments>-Prelease,deploy</arguments>
+                <autoVersionSubmodules>true</autoVersionSubmodules>
+            </configuration>
+        </plugin>
+        
       </plugins>
     </pluginManagement>
 
@@ -1138,5 +1152,37 @@
         </plugins>
       </build>
     </profile>
+    
+    
+    <profile>
+        <id>release</id>
+        <build>
+            <plugins>
+                <!-- We want to deploy the artifact to a staging location for perusal -->
+                <plugin>
+                    <inherited>true</inherited>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.3</version>
+                    <configuration>
+                        <updateReleaseInfo>true</updateReleaseInfo>
+                    </configuration>
+                </plugin>
+                <!-- We want to sign the artifact, the POM, and all attached artifacts -->
+                <plugin>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.0-alpha-3</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+    
+    
   </profiles>
 </project>
