@@ -43,6 +43,9 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
         writer.println("<Graph>");
         writer.println();
 
+        if (map.size() > 0) {
+            writer.println("<Node id='root' name='Camel Routes' description='Collection of Camel Routes' nodeType='root'/>");
+        }
         printRoutes(writer, map);
 
         writer.println();
@@ -58,21 +61,34 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
     }
 
     protected void printRoutes(PrintWriter writer, String group, List<RouteType> routes) {
+        group = encode(group);
         if (group != null) {
-            // TODO
+            int idx = group.lastIndexOf('.');
+            String name =group;
+            if (idx > 0 && idx < group.length() -1 ) {
+                name = group.substring(idx + 1);
+            }
+            writer.println("<Node id='" + group + "' name='" + name + "' description='" + group + "' nodeType='group'/>");
+            writer.println("<Edge fromID='root' toID='" + group + "'/>");
         }
         for (RouteType route : routes) {
             List<FromType> inputs = route.getInputs();
+            boolean first = true;
             for (FromType input : inputs) {
-                printRoute(writer, route, input);
+                NodeData nodeData = getNodeData(input);
+                if (first) {
+                    first = false;
+                    if (group != null) {
+                        writer.println("<Edge fromID='" + group + "' toID='" + encode(nodeData.id) + "'/>");
+                    }
+                }
+                printRoute(writer, route, nodeData);
             }
             writer.println();
         }
     }
 
-    protected void printRoute(PrintWriter writer, final RouteType route, FromType input) {
-        NodeData nodeData = getNodeData(input);
-
+    protected void printRoute(PrintWriter writer, final RouteType route, NodeData nodeData) {
         printNode(writer, nodeData);
 
         // TODO we should add a transactional client / event driven consumer / polling client
@@ -142,7 +158,7 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
             if (isNullOrBlank(nodeType)) {
                 nodeType = data.shape;
                 if (isNullOrBlank(nodeType)) {
-                    nodeType = "PrimitiveReverseBurst";
+                    nodeType = "node";
                 }
             }
             writer.print(encode(nodeType));
