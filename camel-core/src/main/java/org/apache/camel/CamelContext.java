@@ -36,6 +36,11 @@ import org.apache.camel.model.RouteType;
  */
 public interface CamelContext extends Service {
 
+    /**
+     * Gets the name of the this context.
+     */
+    String getName();
+
     // Component Management Methods
     //-----------------------------------------------------------------------
 

@@ -62,7 +62,10 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DefaultCamelContext extends ServiceSupport implements CamelContext, Service {
     private static final transient Log LOG = LogFactory.getLog(DefaultCamelContext.class);
+    private static final String NAME_PREFIX = "camel-";
+    private static int NAME_SUFFIX = 0;
 
+    private String name;
     private Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
     private Map<String, Component> components = new HashMap<String, Component>();
     private List<Route> routes;
@@ -78,6 +81,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private List<RouteType> routeDefinitions = new ArrayList<RouteType>();
 
     public DefaultCamelContext() {
+    	name = NAME_PREFIX + ++NAME_SUFFIX;
     }
 
     /**
@@ -94,7 +98,22 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * Creates the {@link CamelContext} using the given registry
      */
     public DefaultCamelContext(Registry registry) {
+    	this();
         this.registry = registry;
+    }
+
+    /**
+     * Gets the name of the this context.
+     */
+    public String getName() {
+    	return name;
+    }
+
+    /**
+     * Sets the name of the this context.
+     */
+    public void setName(String name) {
+    	this.name = name;
     }
 
     /**

@@ -22,8 +22,6 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
-import org.apache.camel.util.ExchangeHelper;
 
 /**
  * @version $Revision: 1.1 $

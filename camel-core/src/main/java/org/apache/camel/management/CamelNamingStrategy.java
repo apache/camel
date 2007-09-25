@@ -28,14 +28,18 @@ import org.apache.camel.Endpoint;
 
 public class CamelNamingStrategy {
     public static final String VALUE_UNKNOWN = "unknown";
-    public static final String KEY_CONTEXT = "context";
-    public static final String KEY_CLASS = "class";
-    public static final String KEY_TYPE = "type";
+    public static final String VALUE_ROUTE = "route";
     public static final String KEY_NAME = "name";
+    public static final String KEY_TYPE = "type";
+    public static final String KEY_CONTEXT = "context";
+    public static final String KEY_GROUP = "group";
+    public static final String KEY_COMPONENT = "component";
+    public static final String KEY_ROUTE_TYPE = "routeType";
     public static final String KEY_ROUTE = "route";
-    public static final String CLASS_ENDPOINTS = "endpoints";
-    public static final String CLASS_SERVICES = "services";
-    public static final String CLASS_ROUTES = "routes";
+    public static final String GROUP_ENDPOINTS = "endpoints";
+    public static final String GROUP_SERVICES = "services";
+    public static final String GROUP_ROUTE_BUILDER = "routeBuilder";
+    public static final String GROUP_ROUTE_TYPE = "routeType";
     protected String domainName;
     protected String hostName = "locahost";
 
@@ -87,7 +91,8 @@ public class CamelNamingStrategy {
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName + ":");
         buffer.append(KEY_CONTEXT + "=" + getContextId(ep.getContext()) + ",");
-        buffer.append(KEY_CLASS + "=" + CLASS_ENDPOINTS + ",");
+        buffer.append(KEY_GROUP + "=" + GROUP_ENDPOINTS + ",");
+        buffer.append(KEY_COMPONENT + "=" + getComponentId(ep) + ",");
         buffer.append(KEY_NAME + "=" + getEndpointId(ep));
         return createObjectName(buffer);
     }
@@ -105,7 +110,7 @@ public class CamelNamingStrategy {
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName + ":");
         buffer.append(KEY_CONTEXT + "=" + getContextId(context) + ",");
-        buffer.append(KEY_CLASS + "=" + CLASS_SERVICES + ",");
+        buffer.append(KEY_GROUP + "=" + GROUP_SERVICES + ",");
         buffer.append(KEY_NAME + "=" + Integer.toHexString(mbean.getService().hashCode()));
         return createObjectName(buffer);
     }
@@ -123,12 +128,17 @@ public class CamelNamingStrategy {
     public ObjectName getObjectName(ManagedRoute mbean) throws MalformedObjectNameException {
         Endpoint ep = mbean.getRoute().getEndpoint();
         String ctxid = ep != null ? getContextId(ep.getContext()) : VALUE_UNKNOWN;
-
+        String cid = getComponentId(ep);
+        String id = VALUE_UNKNOWN.equals(cid) ? getEndpointId(ep) : 
+        	"[" + cid + "]" + getEndpointId(ep);
+        
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName + ":");
         buffer.append(KEY_CONTEXT + "=" + ctxid + ",");
-        buffer.append(KEY_CLASS + "=" + CLASS_ROUTES + ",");
-        buffer.append(KEY_ROUTE + "=" + getEndpointId(ep));
+        buffer.append(KEY_GROUP + "=" + GROUP_ROUTE_BUILDER + ",");
+        buffer.append(KEY_ROUTE_TYPE + "=" + GROUP_ROUTE_TYPE + ",");
+        buffer.append(KEY_ROUTE + "=" + id + ",");
+        buffer.append(KEY_NAME + "=" + VALUE_ROUTE);
         return createObjectName(buffer);
     }
 
@@ -145,8 +155,8 @@ public class CamelNamingStrategy {
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName + ":");
         buffer.append(KEY_CONTEXT + "=" + getContextId(context) + ",");
-        buffer.append(KEY_CLASS + "=" + CLASS_ROUTES + ",");
-        buffer.append(KEY_ROUTE + "=" + "Route.Counter" + ",");     // TODO: figure out the route id
+        buffer.append(KEY_GROUP + "=" + GROUP_ENDPOINTS + ",");
+        buffer.append(KEY_ROUTE + "=" + "Route.Counter" + ",");
         buffer.append(KEY_NAME + "=" + "Stats");
         return createObjectName(buffer);
     }
@@ -168,15 +178,20 @@ public class CamelNamingStrategy {
     }
 
     protected String getContextId(CamelContext context) {
-        String id = context != null ? Integer.toString(context.hashCode()) : VALUE_UNKNOWN;
+        String id = context != null ? context.getName() : VALUE_UNKNOWN;
         return hostName + "/" + id;
     }
 
+    protected String getComponentId(Endpoint ep) {
+        String uri = ep.getEndpointUri();
+        int pos = uri.indexOf(':');
+        return (pos == -1) ? VALUE_UNKNOWN : uri.substring(0, pos);
+    }
+    
     protected String getEndpointId(Endpoint ep) {
         String uri = ep.getEndpointUri();
         int pos = uri.indexOf(':');
-        String id = (pos == -1) ? uri :
-                "[" + uri.substring(0, pos) + "]" + uri.substring(pos + 1);
+        String id = (pos == -1) ? uri : uri.substring(pos + 1);
 		if (!ep.isSingleton()) { 
 			id += "." + Integer.toString(ep.hashCode());
 		}

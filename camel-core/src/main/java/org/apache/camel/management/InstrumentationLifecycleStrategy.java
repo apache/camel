@@ -95,12 +95,16 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 		PerformanceCounter mc = new PerformanceCounter();
 		routeType.intercept(new InstrumentationProcessor(mc));
 
+		/*
+		 *  Merge performance counter with the MBean it represents instead 
+		 *  of registering a new MBean
 		try {
 			agent.register(mc, getNamingStrategy().getObjectName(context, mc));
 		}
 		catch(JMException e) {
 			LOG.warn("Could not register Counter MBean", e);
 		}
+		*/
 	}
 
     public CamelNamingStrategy getNamingStrategy() {
