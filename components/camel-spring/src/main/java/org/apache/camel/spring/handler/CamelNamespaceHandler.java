@@ -135,6 +135,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             Object value = parseUsingJaxb(element, parserContext);
             if (value instanceof CamelContextFactoryBean) {
                 CamelContextFactoryBean factoryBean = (CamelContextFactoryBean)value;
+                builder.addPropertyValue("id", contextId);
                 builder.addPropertyValue("routes", factoryBean.getRoutes());
 
                 if (factoryBean.getPackages().length > 0) {

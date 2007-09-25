@@ -239,7 +239,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      * Create the context
      */
     protected SpringCamelContext createContext() {
-        return new SpringCamelContext(getApplicationContext());
+    	SpringCamelContext ctx = new SpringCamelContext(getApplicationContext());
+    	ctx.setName(getId());
+    	return ctx;
     }
 
     /**

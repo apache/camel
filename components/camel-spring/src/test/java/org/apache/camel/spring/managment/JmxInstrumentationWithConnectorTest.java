@@ -34,4 +34,8 @@ public class JmxInstrumentationWithConnectorTest extends EndpointReferenceTest {
 	protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/jmxInstrumentationWithConnector.xml");
 	}
+    
+    public void testGetContext() {
+        assertNotNull(this.applicationContext.getBean("camel"));        
+    }
 }

@@ -41,7 +41,7 @@ public class ManagedService {
 	}
 	
 	@ManagedAttribute(description = "Service running state")
-    private boolean isStarted() throws IOException {
+    public boolean isStarted() throws IOException {
     	return service.isStarted();
     }
 
