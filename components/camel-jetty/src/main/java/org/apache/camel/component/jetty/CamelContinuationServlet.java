@@ -88,14 +88,14 @@ public class CamelContinuationServlet extends CamelServlet {
                 // protocol exchanges.
 
                 // now lets output to the response
-                consumer.getBinding().writeResponse(exchange);
+                consumer.getBinding().writeResponse(exchange, response);
                 return;
             }
             
             if (continuation.isResumed() ) {
                 HttpExchange exchange = (HttpExchange)continuation.getObject();
                 // now lets output to the response
-                consumer.getBinding().writeResponse(exchange);
+                consumer.getBinding().writeResponse(exchange, response);
                 return;
             }
 

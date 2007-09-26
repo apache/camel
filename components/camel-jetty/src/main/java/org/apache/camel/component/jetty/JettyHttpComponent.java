@@ -97,6 +97,7 @@ public class JettyHttpComponent extends HttpComponent {
                 getServer().addConnector(connector);
                 connector.start();
                 connectorRef = new ConnectorRef(connector);
+                connectors.put(connectorKey, connectorRef);
             } else {
                 // ref track the connector
                 connectorRef.increment();
