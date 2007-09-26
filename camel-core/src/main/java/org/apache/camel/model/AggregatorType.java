@@ -42,7 +42,8 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 public class AggregatorType extends ExpressionNode {
     @XmlTransient
     private AggregationStrategy aggregationStrategy = new UseLatestAggregationStrategy();
-
+    private int batchSize;
+    private long batchTimeout;
     public AggregatorType() {
     }
 
@@ -70,6 +71,8 @@ public class AggregatorType extends ExpressionNode {
         final Processor processor = routeContext.createProcessor(this);
         final Aggregator service = new Aggregator(from, processor, getExpression()
             .createExpression(routeContext), aggregationStrategy);
+        service.setBatchSize(batchSize);
+        service.setBatchTimeout(batchTimeout);
 
         Route route = new Route<Exchange>(from, service) {
             @Override
@@ -87,5 +90,33 @@ public class AggregatorType extends ExpressionNode {
 
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
+    }
+
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
+
+    public long getBatchTimeout() {
+        return batchTimeout;
+    }
+
+    public void setBatchTimeout(long batchTimeout) {
+        this.batchTimeout = batchTimeout;
+    }
+
+    // Fluent API
+    //-------------------------------------------------------------------------
+    public AggregatorType batchSize(int batchSize){
+        this.batchSize=batchSize;
+        return this;
+    }
+    
+    public AggregatorType batchTimeout(long batchTimeout){
+        this.batchTimeout = batchTimeout;
+        return this;
     }
 }
