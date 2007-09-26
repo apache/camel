@@ -16,13 +16,17 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -53,6 +57,20 @@ public class HttpRouteTest extends ContextTestSupport {
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
     }
 
+    public void testHelloEndpoint() throws Exception {
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        InputStream is = new URL("http://localhost:8080/hello").openStream();
+        int c;
+        while ((c = is.read()) >= 0) {
+            os.write(c);
+        }
+
+        String data = new String(os.toByteArray());
+        assertEquals("<b>Hello World</b>", data);
+        
+    }
+    
     protected void invokeHttpEndpoint() throws IOException {
         template.sendBodyAndHeader("http://localhost:8080/test", expectedBody, "Content-Type", "application/xml");
     }
@@ -62,6 +80,13 @@ public class HttpRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("jetty:http://localhost:8080/test").to("mock:a");
+
+                Processor proc = new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getOut(true).setBody("<b>Hello World</b>");
+                    }
+                };
+                from("jetty:http://localhost:8080/hello").process(proc);
             }
         };
     }

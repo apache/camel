@@ -57,7 +57,7 @@ public class CamelServlet extends HttpServlet {
             // protocol exchanges.
 
             // now lets output to the response
-            consumer.getBinding().writeResponse(exchange);
+            consumer.getBinding().writeResponse(exchange, response);
 
         } catch (Exception e) {
             throw new ServletException(e);
