@@ -43,10 +43,10 @@ public class MyActivities extends ProcessBuilder {
 
         // lets define some activities, correlating on an XPath on the message bodies
         ActivityBuilder purchaseOrder = activity("file:src/data/purchaseOrders?noop=true")
-                .correlate(xpath("/purchaseOrder/@id"));
+                .correlate(xpath("/purchaseOrder/@id").stringResult());
 
         ActivityBuilder invoice = activity("file:src/data/invoices?noop=true")
-                .correlate(xpath("/invoice/@purchaseOrderId"));
+                .correlate(xpath("/invoice/@purchaseOrderId").stringResult());
 
         // now lets add some BAM rules
         invoice.starts().after(purchaseOrder.completes())
