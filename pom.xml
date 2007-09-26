@@ -37,6 +37,7 @@
     <camel-version>1.1-SNAPSHOT</camel-version>
     <compiler.fork>false</compiler.fork>
     <cxf-version>2.0.1-incubator</cxf-version>
+    <spring-version>2.0.6</spring-version>
     <jetty-version>6.1.5</jetty-version>
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
     <openjpa-version>0.9.6-incubating</openjpa-version>
@@ -512,7 +513,7 @@
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring</artifactId>
-        <version>2.0.5</version>
+        <version>${spring-version}</version>
         <exclusions>
           <exclusion>
             <groupId>javax.mail</groupId>
@@ -542,10 +543,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-remoting</artifactId>
           </exclusion>
-          <!--exclusion>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-          </exclusion-->
         </exclusions>
       </dependency>
 
