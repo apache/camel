@@ -34,6 +34,7 @@ import org.apache.commons.httpclient.methods.RequestEntity;
  * @version $Revision: 1.1 $
  */
 public class HttpProducer extends DefaultProducer<HttpExchange> implements Producer<HttpExchange> {
+    public static final String QUERY = "org.apache.camel.component.http.query";
     private HttpClient httpClient = new HttpClient();
 
     public HttpProducer(HttpEndpoint endpoint) {
@@ -64,7 +65,11 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         String uri = ((HttpEndpoint)getEndpoint()).getHttpUri().toString();
         RequestEntity requestEntity = createRequestEntity(exchange);
         if (requestEntity == null) {
-            return new GetMethod(uri);
+            GetMethod method = new GetMethod(uri);
+            if (exchange.getIn().getHeader(QUERY) != null){
+                method.setQueryString(exchange.getIn().getHeader(QUERY, String.class));
+            }
+            return method;
         }
         // TODO we might be PUT? - have some better way to explicitly choose
         // method
