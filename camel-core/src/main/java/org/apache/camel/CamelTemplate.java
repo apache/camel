@@ -54,8 +54,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
      */
     public E send(String endpointUri, E exchange) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
-        send(endpoint, exchange);
-        return exchange;
+        return send(endpoint, exchange);
     }
 
     /**
