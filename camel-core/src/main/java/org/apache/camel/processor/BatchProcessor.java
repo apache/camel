@@ -37,12 +37,15 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision: 1.1 $
  */
 public class BatchProcessor extends ServiceSupport implements Runnable {
+    public static final long DEFAULT_BATCH_TIMEOUT = 1000L;
+    public static final int DEFAULT_BATCH_SIZE = 100;
+
     private static final transient Log LOG = LogFactory.getLog(Resequencer.class);
     private Endpoint endpoint;
     private Processor processor;
     private Collection<Exchange> collection;
-    private long batchTimeout = 1000L;
-    private int batchSize = 100;
+    private long batchTimeout = DEFAULT_BATCH_TIMEOUT;
+    private int batchSize = DEFAULT_BATCH_SIZE;
     private PollingConsumer consumer;
     private ExceptionHandler exceptionHandler;
 

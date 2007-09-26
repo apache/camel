@@ -71,8 +71,13 @@ public class AggregatorType extends ExpressionNode {
         final Processor processor = routeContext.createProcessor(this);
         final Aggregator service = new Aggregator(from, processor, getExpression()
             .createExpression(routeContext), aggregationStrategy);
-        service.setBatchSize(batchSize);
-        service.setBatchTimeout(batchTimeout);
+
+        if (batchSize != 0) {
+            service.setBatchSize(batchSize);
+        }
+        if (batchSize != 0) {
+            service.setBatchTimeout(batchTimeout);
+        }
 
         Route route = new Route<Exchange>(from, service) {
             @Override
@@ -111,12 +116,12 @@ public class AggregatorType extends ExpressionNode {
     // Fluent API
     //-------------------------------------------------------------------------
     public AggregatorType batchSize(int batchSize){
-        this.batchSize=batchSize;
+        setBatchSize(batchSize);
         return this;
     }
     
     public AggregatorType batchTimeout(long batchTimeout){
-        this.batchTimeout = batchTimeout;
+        setBatchTimeout(batchTimeout);
         return this;
     }
 }
