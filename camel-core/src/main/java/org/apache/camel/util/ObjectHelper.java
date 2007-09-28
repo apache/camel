@@ -446,4 +446,17 @@ public class ObjectHelper {
             throw new IllegalArgumentException("Failed to convert: " + value + " to type: " + toType.getName() + " due to: " + e, e);
         }
     }
+
+    /**
+     * A helper method to create a new instance of a type using the default constructor arguments.
+     */
+    public static <T> T newInstance(Class<T> type) {
+        try {
+            return type.newInstance();
+        } catch (InstantiationException e) {
+            throw new RuntimeCamelException(e.getCause());
+        } catch (IllegalAccessException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
 }
