@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A simple implementation of {@link Injector} which just uses reflection to
@@ -29,12 +30,6 @@ import org.apache.camel.spi.Injector;
 public class ReflectionInjector implements Injector {
 
     public <T> T newInstance(Class<T> type) {
-        try {
-            return type.newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeCamelException(e.getCause());
-        } catch (IllegalAccessException e) {
-            throw new RuntimeCamelException(e);
-        }
+        return ObjectHelper.newInstance(type);
     }
 }
