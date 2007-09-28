@@ -23,6 +23,9 @@ import java.io.File;
  * @version $Revision: 1.1 $
  */
 public class DefaultFileRenamer implements FileRenamer {
+	
+	private static final boolean ON_WINDOWS = System.getProperty("os.name").startsWith("Windows");
+	
     private String namePrefix;
     private String namePostfix;
 
@@ -37,6 +40,10 @@ public class DefaultFileRenamer implements FileRenamer {
     public File renameFile(File file) {
         File parent = file.getParentFile();
         String name = renameFileName(file);
+        
+        if( ON_WINDOWS && ( name.indexOf(":")>=0 || name.startsWith("//") )) {
+            return new File(name);
+        }        
         return new File(parent, name);
     }
 
