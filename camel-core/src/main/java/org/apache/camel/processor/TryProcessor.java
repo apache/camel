@@ -35,7 +35,9 @@ public class TryProcessor extends ServiceSupport implements Processor {
     private static final Log LOG = LogFactory.getLog(TryProcessor.class);
 
     private final Processor tryProcessor;
+
     private final List<CatchProcessor> catchClauses;
+
     private final Processor finallyProcessor;
 
     public TryProcessor(Processor tryProcessor, List<CatchProcessor> catchClauses, Processor finallyProcessor) {
@@ -54,7 +56,7 @@ public class TryProcessor extends ServiceSupport implements Processor {
         try {
             tryProcessor.process(exchange);
             e = exchange.getException();
-            
+
             // Ignore it if it was handled by the dead letter channel.
             if (e != null && DeadLetterChannel.isFailureHandled(exchange)) {
                 e = null;
@@ -63,7 +65,7 @@ public class TryProcessor extends ServiceSupport implements Processor {
             e = ex;
             exchange.setException(e);
         }
-        
+
         if (e != null) {
             try {
                 DeadLetterChannel.setFailureHandled(exchange, true);
@@ -72,13 +74,23 @@ public class TryProcessor extends ServiceSupport implements Processor {
                 throw ex;
             } catch (Throwable ex) {
                 throw new RuntimeCamelException(ex);
+            } finally {
+                handleAll(exchange);
             }
+        } else {
+            handleAll(exchange);
         }
-        
-        try {
-            finallyProcessor.process(exchange);
-        } catch (Exception e2) {
-            LOG.warn("Caught exception in finally block while handling other exception: " + e2, e2);
+
+    }
+
+    private void handleAll(Exchange exchange) {
+        if (finallyProcessor != null) {
+            DeadLetterChannel.setFailureHandled(exchange, true);
+            try {
+                finallyProcessor.process(exchange);
+            } catch (Exception e2) {
+                LOG.warn("Caught exception in finally block while handling other exception: " + e2, e2);
+            }
         }
     }
 
@@ -106,6 +118,8 @@ public class TryProcessor extends ServiceSupport implements Processor {
         }
 
         // unhandled exception
-        throw e;
+        if (finallyProcessor == null) {
+            throw e;
+        }
     }
 }
