@@ -50,7 +50,7 @@ public class XsltBuilder implements Processor {
     private Map<String, Object> parameters = new HashMap<String, Object>();
     private XmlConverter converter = new XmlConverter();
     private Transformer transformer;
-    private ResultHandler resultHandler = new StringResultHandler();
+    private ResultHandlerFactory resultHandlerFactory = new StringResultHandlerFactory();
     private boolean failOnNullBody = true;
 
     public XsltBuilder() {
@@ -72,6 +72,7 @@ public class XsltBuilder implements Processor {
         }
         configureTransformer(transformer, exchange);
         Source source = getSource(exchange);
+        ResultHandler resultHandler = resultHandlerFactory.createResult();
         Result result = resultHandler.getResult();
         transformer.transform(source, result);
         resultHandler.setBody(exchange.getIn());
@@ -125,7 +126,7 @@ public class XsltBuilder implements Processor {
      * Sets the output as being a byte[]
      */
     public XsltBuilder outputBytes() {
-        setResultHandler(new StreamResultHandler());
+        setResultHandlerFactory(new StreamResultHandlerFactory());
         return this;
     }
 
@@ -133,7 +134,7 @@ public class XsltBuilder implements Processor {
      * Sets the output as being a String
      */
     public XsltBuilder outputString() {
-        setResultHandler(new StringResultHandler());
+        setResultHandlerFactory(new StringResultHandlerFactory());
         return this;
     }
 
@@ -141,7 +142,7 @@ public class XsltBuilder implements Processor {
      * Sets the output as being a DOM
      */
     public XsltBuilder outputDOM() {
-        setResultHandler(new DomResultHandler());
+        setResultHandlerFactory(new DomResultHandlerFactory());
         return this;
     }
 
@@ -177,12 +178,12 @@ public class XsltBuilder implements Processor {
         this.failOnNullBody = failOnNullBody;
     }
 
-    public ResultHandler getResultHandler() {
-        return resultHandler;
+    public ResultHandlerFactory getResultHandlerFactory() {
+        return resultHandlerFactory;
     }
 
-    public void setResultHandler(ResultHandler resultHandler) {
-        this.resultHandler = resultHandler;
+    public void setResultHandlerFactory(ResultHandlerFactory resultHandlerFactory) {
+        this.resultHandlerFactory = resultHandlerFactory;
     }
 
     public void setTransformerSource(Source source) throws TransformerConfigurationException {
