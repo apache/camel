@@ -34,7 +34,8 @@ public class JdbcEndpoint extends DefaultEndpoint<DefaultExchange> {
 
     private URI uri;
     private String remaining;
-    private int readSize;
+    /** The maximum size for reading a result set <code>readSize</code> */
+    private int readSize = 20000;
 
     protected JdbcEndpoint(String endpointUri, String remaining, JdbcComponent component) throws URISyntaxException {
         super(endpointUri, component);
