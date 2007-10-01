@@ -21,8 +21,8 @@ package org.apache.camel;
  * used to implement the <a
  * href="http://activemq.apache.org/camel/event-driven-consumer.html">Event
  * Driven Consumer</a> and <a
- * href="http://activemq.apache.org/camel/message-transformer.html">Message
- * Transformer</a> patterns and to process message exchanges.
+ * href="http://activemq.apache.org/camel/message-translator.html">Message
+ * Translater</a> patterns and to process message exchanges.
  * 
  * @version $Revision$
  */
