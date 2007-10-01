@@ -26,11 +26,13 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.invoker.InvokingContext;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.MethodDispatcher;
 import org.apache.cxf.helpers.CastUtils;
+import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
@@ -162,9 +164,15 @@ public class CamelInvoker implements Invoker  {
             e.printStackTrace();
         }
         //System.out.println(cxfExchange.getOut().getBody());
-        //TODO deal with the paraments that contains holders
         //TODO deal with the fault message
-        Object[] result = (Object[])cxfExchange.getOut().getBody();
+        Object[] result;
+        if (cxfExchange.isFailed()) {
+            Exception ex= (Exception)cxfExchange.getFault().getBody();
+            throw new Fault(ex);
+        } else {
+            result = (Object[])cxfExchange.getOut().getBody();
+        }
+        
         return result;
         
     }
