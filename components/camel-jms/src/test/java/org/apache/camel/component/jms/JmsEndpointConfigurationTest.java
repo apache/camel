@@ -23,16 +23,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-
-import org.springframework.jms.listener.AbstractMessageListenerContainer;
-
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+import org.springframework.jms.listener.AbstractMessageListenerContainer;
 
 /**
  * @version $Revision: $
  */
 public class JmsEndpointConfigurationTest extends ContextTestSupport {
-
     public void testDurableSubscriberConfiguredWithDoubleSlash() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms://topic:Foo.Bar?durableSubscriptionName=James&clientId=ABC");
         assertDurableSubscriberEndpointIsValid(endpoint);
@@ -41,6 +38,17 @@ public class JmsEndpointConfigurationTest extends ContextTestSupport {
     public void testDurableSubscriberConfiguredWithNoSlashes() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:topic:Foo.Bar?durableSubscriptionName=James&clientId=ABC");
         assertDurableSubscriberEndpointIsValid(endpoint);
+    }
+
+    public void testSelector() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:Foo.Bar?selector=foo%3D'ABC'");
+        JmsConsumer consumer = endpoint.createConsumer(new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                log.info("Received: " + exchange);
+            }
+        });
+        AbstractMessageListenerContainer container = consumer.getListenerContainer();
+        assertEquals("selector", "foo='ABC'", container.getMessageSelector());
     }
 
     protected void assertDurableSubscriberEndpointIsValid(JmsEndpoint endpoint) throws Exception {
