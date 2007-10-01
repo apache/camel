@@ -48,6 +48,8 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
 
     public Endpoint<E> createEndpoint(String uri) throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
+        //TODO endcode uri sting to the unsafe URI string
+        
         URI u = new URI(uri);
         String path = u.getSchemeSpecificPart();
 

@@ -90,4 +90,11 @@ public class CxfBinding {
             out.setBody(response);
         }
     }
+    
+    public void storeCxfFault(CxfExchange exchange, Message message) {
+        CxfMessage fault = exchange.getFault();
+        if (fault != null) {
+            fault.setBody(getBody(message));
+        }
+    }
 }

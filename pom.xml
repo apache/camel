@@ -36,7 +36,7 @@
   <properties>
     <camel-version>1.1-SNAPSHOT</camel-version>
     <compiler.fork>false</compiler.fork>
-    <cxf-version>2.0.1-incubator</cxf-version>
+    <cxf-version>2.0.2-incubator</cxf-version>
     <spring-version>2.0.6</spring-version>
     <jetty-version>6.1.5</jetty-version>
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
@@ -837,7 +837,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkMode>pertest</forkMode> 
+          <!--forkMode>pertest</forkMode--> 
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
           <includes>

@@ -81,8 +81,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http-jetty</artifactId>
-      <version>${cxf-version}</version>
-      <scope>test</scope>
+      <version>${cxf-version}</version>      
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
@@ -160,8 +159,7 @@
 
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jetty</artifactId>
-      <version>6.1.1</version>
+      <artifactId>jetty</artifactId>      
       <scope>test</scope>
     </dependency>
 
@@ -221,8 +219,7 @@
             <include>**/*Test.*</include>
           </includes>
           <excludes>
-            <!-- TODO re-enable ASAP! -->
-            <exclude>**/CxfEndpointUtilsTest.*</exclude>
+            <!-- TODO re-enable ASAP! -->            
             <exclude>**/transport/*Test.*</exclude>
           </excludes>
         </configuration>

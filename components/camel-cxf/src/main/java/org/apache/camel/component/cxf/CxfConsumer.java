@@ -54,6 +54,12 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
             ServerFactoryBean svrBean = CxfEndpointUtils.getServerFactoryBean(serviceClass);                           
             svrBean.setAddress(endpoint.getAddress());
             svrBean.setServiceClass(serviceClass);
+            if (endpoint.getServiceName() != null) {
+                svrBean.getServiceFactory().setServiceName(CxfEndpointUtils.getServiceName(endpoint));                
+            }
+            if (endpoint.getPortName() != null) {
+                svrBean.getServiceFactory().setEndpointName(CxfEndpointUtils.getPortName(endpoint));
+            }    
             if (endpoint.getWsdlURL() != null) {                
                 svrBean.setWsdlURL(endpoint.getWsdlURL());
             }
@@ -72,7 +78,7 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
             } 
             
         } catch (Exception ex) {
-            
+            ex.printStackTrace();
         }
     }
 

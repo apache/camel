@@ -70,7 +70,16 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
     }
     
     private Client createClientForStreamMessge() throws CamelException {
-        ClientFactoryBean cfb = new CxfClientFactoryBean();
+        CxfClientFactoryBean cfb = new CxfClientFactoryBean();
+        if (null != endpoint.getServiceClass()) {
+            try {
+                Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
+                boolean jsr181Enabled = CxfEndpointUtils.hasWebServiceAnnotation(serviceClass);
+                cfb.setJSR181Enabled(jsr181Enabled);
+            } catch (ClassNotFoundException e) {
+                throw new CamelException(e);
+            }
+        }
         return createClientFormClientFactoryBean(cfb);
     }
    
@@ -86,18 +95,18 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                 Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
                 if (cfb == null) {
                     cfb = CxfEndpointUtils.getClientFactoryBean(serviceClass);
-                }                            
+                } 
                 cfb.setAddress(endpoint.getAddress());
                 if (null != endpoint.getServiceClass()) {            
                     cfb.setServiceClass(ObjectHelper.loadClass(endpoint.getServiceClass()));
                 } 
                 if (null != endpoint.getWsdlURL()) {
                     cfb.setWsdlURL(endpoint.getWsdlURL());
-                }
-            } catch (Exception ex) {
-                // rethrow the exception out
+                }                
+            } catch (ClassNotFoundException e) {
+                throw new CamelException(e);
             }
-        } else { 
+        } else { // we can't see any service class from the endpoint
             if (cfb == null) {
                 cfb = new ClientFactoryBean();
             }    
@@ -105,7 +114,18 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                 cfb.setWsdlURL(endpoint.getWsdlURL());
             } else {
                 // throw the exception for insufficiency of the endpoint info
+                throw new CamelException("Insufficiency of the endpoint info");
             }
+        }
+        if (endpoint.getServiceName() != null) {
+            cfb.getServiceFactory().setServiceName(CxfEndpointUtils.getServiceName(endpoint));
+        }
+        if (endpoint.getPortName() != null) {
+            cfb.getServiceFactory().setEndpointName(CxfEndpointUtils.getPortName(endpoint));
+           
+        }    
+        if (endpoint.getWsdlURL() != null) {                
+            cfb.setWsdlURL(endpoint.getWsdlURL());
         }
         cfb.setBus(bus);        
         return cfb.create();
@@ -127,10 +147,15 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                 String operation = inMessage.getContent(String.class);
                 Message response = new MessageImpl();            
                 if (operation != null && paraments != null) {                
-                  	// now we just deal with the invoking the paraments
-                  	Object[] result = client.invoke(operation, paraments.toArray());                
-                   	response.setContent(Object[].class, result);
-                    cxfBinding.storeCxfResponse(exchange, response);
+                    // now we just deal with the invoking the paraments
+                    try {
+                        Object[] result = client.invoke(operation, paraments.toArray());                
+                        response.setContent(Object[].class, result);
+                        cxfBinding.storeCxfResponse(exchange, response);
+                    } catch (Exception ex) {
+                        response.setContent(Exception.class, ex);
+                        cxfBinding.storeCxfFault(exchange, response);                        
+                    }
                 }  
             } else {
                 // get the invocation context
@@ -143,7 +168,6 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                 //TODO need setup the call context here
                 //TODO need to handle the one way message
                 Object result = cxfClient.dispatch(params, null, ex);
-                System.out.println("the result object is " + result);
                 // need to get the binding object to create the message
                 BindingOperationInfo boi = ex.get(BindingOperationInfo.class);
                 Message response = null;

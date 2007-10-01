@@ -59,7 +59,7 @@ public final class CxfEndpointUtils {
         // not constructed
     }
 
-    public static QName getQName(final String name) {      
+    static QName getQName(final String name) {      
         QName qName = null;
         if (name != null) {
             try {
@@ -71,8 +71,12 @@ public final class CxfEndpointUtils {
         return qName;
     }
     
-    public static String getServiceName(final CxfEndpoint endpoint) {
-        return endpoint.getServiceName();
+    public static QName getPortName(final CxfEndpoint endpoint) {
+        return getQName(endpoint.getPortName());
+    }
+    
+    public static QName getServiceName(final CxfEndpoint endpoint) {
+        return getQName(endpoint.getServiceName());
     }
 
     public static EndpointInfo getEndpointInfo(final Service service, final CxfEndpoint endpoint) {
