@@ -71,7 +71,7 @@ public class JmsConfiguration implements Cloneable {
     private int maxMessagesPerTask = 1;
     private ServerSessionFactory serverSessionFactory;
     private int cacheLevel = -1;
-    private String cacheLevelName = "CACHE_CONSUMER";
+    private String cacheLevelName = "CACHE_CONNECTION";
     private long recoveryInterval = -1;
     private long receiveTimeout = -1;
     private int idleTaskExecutionLimit = 1;

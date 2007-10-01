@@ -24,6 +24,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
 /**
  * @version $Revision$
@@ -32,11 +33,14 @@ public class JmsTransactedRouteTest extends ContextTestSupport {
     public void testJmsRouteWithTextMessage() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         String expectedBody = "Hello there!";
+        String expectedBody2 = "Goodbye!";
 
-        resultEndpoint.expectedBodiesReceived(expectedBody);
+
+        resultEndpoint.expectedBodiesReceived(expectedBody, expectedBody2);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
 
         template.sendBodyAndHeader("activemq:test.a", expectedBody, "cheese", 123);
+        template.sendBodyAndHeader("activemq:test.a", expectedBody2, "cheese", 124);
 
         resultEndpoint.assertIsSatisfied();
     }
@@ -45,7 +49,10 @@ public class JmsTransactedRouteTest extends ContextTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
-        camelContext.addComponent("activemq", jmsComponentTransacted(connectionFactory));
+        JmsComponent component = jmsComponentTransacted(connectionFactory);
+        //component.getConfiguration().setCacheLevelName("CACHE_CONNECTION");
+        //component.getConfiguration().setCacheLevel(DefaultMessageListenerContainer.CACHE_CONNECTION);
+        camelContext.addComponent("activemq", component);
         return camelContext;
     }
 
