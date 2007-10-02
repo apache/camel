@@ -75,6 +75,9 @@ public class ThreadProcessor implements AsyncProcessor, Service {
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        if( shutdown.get() ) {
+            throw new IllegalStateException("ThreadProcessor is not running.");
+        }
         ProcessCall call = new ProcessCall(exchange, callback);
         executor.execute(call);
         return false;
