@@ -38,6 +38,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private boolean recursive = true;
     private String regexPattern = "";
     private long lastPollTime;
+    boolean generateEmptyExchangeWhenIdle;
 
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -45,92 +46,114 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     }
 
     protected void poll() throws Exception {
-        pollFileOrDirectory(endpoint.getFile(), isRecursive());
+        int rc = pollFileOrDirectory(endpoint.getFile(), isRecursive());
+        if( rc == 0 && generateEmptyExchangeWhenIdle ) {
+            final FileExchange exchange = endpoint.createExchange((File)null);
+            getAsyncProcessor().process(exchange, new AsyncCallback() {
+                public void done(boolean sync) {
+                }
+            });
+        }
         lastPollTime = System.currentTimeMillis();
     }
 
-    protected void pollFileOrDirectory(File fileOrDirectory, boolean processDir) {
+    /**
+     * 
+     * @param fileOrDirectory
+     * @param processDir
+     * @return the number of files processed or being processed async.
+     */
+    protected int pollFileOrDirectory(File fileOrDirectory, boolean processDir) {
         if (!fileOrDirectory.isDirectory()) {
-            pollFile(fileOrDirectory); // process the file
+            return pollFile(fileOrDirectory); // process the file
         }
         else if (processDir) {
+            int rc = 0;
             if (isValidFile(fileOrDirectory)) {
                 LOG.debug("Polling directory " + fileOrDirectory);
                 File[] files = fileOrDirectory.listFiles();
                 for (int i = 0; i < files.length; i++) {
-                    pollFileOrDirectory(files[i], isRecursive()); // self-recursion
+                    rc += pollFileOrDirectory(files[i], isRecursive()); // self-recursion
                 }
             }
+            return rc; 
         }
         else {
             LOG.debug("Skipping directory " + fileOrDirectory);
+            return 0;
         }
     }
     
     ConcurrentHashMap<File, File> filesBeingProcessed = new ConcurrentHashMap<File, File>();
 
-    protected void pollFile(final File file) {
+    /**
+     * @param file
+     * @return the number of files processed or being processed async.
+     */
+    protected int pollFile(final File file) {
         
 
         if (!file.exists()) {
-            return;
+            return 0;
         }
-        if (isValidFile(file)) {
-            // we only care about file modified times if we are not deleting/moving files
-            if (endpoint.isNoop()) {
-                long fileModified = file.lastModified();
-                if (fileModified <= lastPollTime) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Ignoring file: " + file + " as modified time: " + fileModified + " less than last poll time: " + lastPollTime);
-                    }
-                    return;
-                }
-            } else {
-                if (filesBeingProcessed.contains(file)) {
-                    return;
-                }
-                filesBeingProcessed.put(file, file);
-            }
-
-            final FileProcessStrategy processStrategy = endpoint.getFileStrategy();
-            final FileExchange exchange = endpoint.createExchange(file);
-
-            endpoint.configureMessage(file, exchange.getIn());
-            try {
+        if( !isValidFile(file) ) {
+            return 0;
+        }
+        // we only care about file modified times if we are not deleting/moving files
+        if (endpoint.isNoop()) {
+            long fileModified = file.lastModified();
+            if (fileModified <= lastPollTime) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("About to process file:  " + file + " using exchange: " + exchange);
+                    LOG.debug("Ignoring file: " + file + " as modified time: " + fileModified + " less than last poll time: " + lastPollTime);
                 }
-                if (processStrategy.begin(endpoint, exchange, file)) {
-                    
-                    // Use the async processor interface so that processing of
-                    // the
-                    // exchange can happen asynchronously
-                    getAsyncProcessor().process(exchange, new AsyncCallback() {
-                        public void done(boolean sync) {
-                            if (exchange.getException() == null) {
-                                try {
-                                    processStrategy.commit(endpoint, (FileExchange)exchange, file);
-                                } catch (Exception e) {
-                                    handleException(e);
-                                }
-                            } else {
-                                handleException(exchange.getException());
-                            }
-                            filesBeingProcessed.remove(file);
-                        }
-                    });
-                    
-                }
-                else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(endpoint + " cannot process file: " + file);
-                    }
-                }
+                return 0;
             }
-            catch (Throwable e) {
-                handleException(e);
+        } else {
+            if (filesBeingProcessed.contains(file)) {
+                return 1;
+            }
+            filesBeingProcessed.put(file, file);
+        }
+
+        final FileProcessStrategy processStrategy = endpoint.getFileStrategy();
+        final FileExchange exchange = endpoint.createExchange(file);
+
+        endpoint.configureMessage(file, exchange.getIn());
+        try {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("About to process file:  " + file + " using exchange: " + exchange);
+            }
+            if (processStrategy.begin(endpoint, exchange, file)) {
+                
+                // Use the async processor interface so that processing of
+                // the
+                // exchange can happen asynchronously
+                getAsyncProcessor().process(exchange, new AsyncCallback() {
+                    public void done(boolean sync) {
+                        if (exchange.getException() == null) {
+                            try {
+                                processStrategy.commit(endpoint, (FileExchange)exchange, file);
+                            } catch (Exception e) {
+                                handleException(e);
+                            }
+                        } else {
+                            handleException(exchange.getException());
+                        }
+                        filesBeingProcessed.remove(file);
+                    }
+                });
+                
+            }
+            else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(endpoint + " cannot process file: " + file);
+                }
             }
         }
+        catch (Throwable e) {
+            handleException(e);
+        }
+        return 1;
     }
 
     protected boolean isValidFile(File file) {
@@ -195,6 +218,14 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
      */
     public void setRegexPattern(String regexPattern) {
         this.regexPattern = regexPattern;
+    }
+
+    public boolean isGenerateEmptyExchangeWhenIdle() {
+        return generateEmptyExchangeWhenIdle;
+    }
+
+    public void setGenerateEmptyExchangeWhenIdle(boolean generateEmptyExchangeWhenIdle) {
+        this.generateEmptyExchangeWhenIdle = generateEmptyExchangeWhenIdle;
     }
 
 }
