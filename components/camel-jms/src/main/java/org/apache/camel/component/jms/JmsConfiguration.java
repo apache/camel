@@ -40,6 +40,7 @@ import org.springframework.jms.listener.serversession.ServerSessionFactory;
 import org.springframework.jms.listener.serversession.ServerSessionMessageListenerContainer;
 import org.springframework.jms.listener.serversession.ServerSessionMessageListenerContainer102;
 import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
@@ -51,6 +52,8 @@ public class JmsConfiguration implements Cloneable {
     protected static final String AUTO_ACKNOWLEDGE = "AUTO_ACKNOWLEDGE";
     protected static final String DUPS_OK_ACKNOWLEDGE = "DUPS_OK_ACKNOWLEDGE";
 
+    private JmsOperations jmsOperations;
+    private DestinationResolver destinationResolver;
     private ConnectionFactory connectionFactory;
     private ConnectionFactory templateConnectionFactory;
     private ConnectionFactory listenerConnectionFactory;
@@ -111,8 +114,13 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public JmsOperations createJmsOperations(boolean pubSubDomain, String destination) {
-        ConnectionFactory factory = getTemplateConnectionFactory();
         
+        if ( jmsOperations !=null ) {
+            return jmsOperations;
+        }
+        
+        ConnectionFactory factory = getTemplateConnectionFactory();
+
         // I whish the spring templates had built in support for preserving the message
         // qos when doing a send. :(  
         JmsTemplate template = useVersion102 ? new JmsTemplate102(factory, pubSubDomain) {
@@ -166,8 +174,11 @@ public class JmsConfiguration implements Cloneable {
         };
         
         template.setPubSubDomain(pubSubDomain);
+        if( destinationResolver!=null ) {
+            template.setDestinationResolver(destinationResolver);
+        }
         template.setDefaultDestinationName(destination);
-
+        
         template.setExplicitQosEnabled(explicitQosEnabled);
         template.setDeliveryPersistent(deliveryPersistent);
         if (messageConverter != null) {
@@ -210,6 +221,9 @@ public class JmsConfiguration implements Cloneable {
 
     protected void configureMessageListenerContainer(AbstractMessageListenerContainer container) {
         container.setConnectionFactory(getListenerConnectionFactory());
+        if( destinationResolver!=null ) {
+            container.setDestinationResolver(destinationResolver);
+        }
         if (autoStartup) {
             container.setAutoStartup(true);
         }
@@ -693,5 +707,21 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setPreserveMessageQos(boolean preserveMessageQos) {
         this.preserveMessageQos = preserveMessageQos;
+    }
+
+    public JmsOperations getJmsOperations() {
+        return jmsOperations;
+    }
+
+    public void setJmsOperations(JmsOperations jmsOperations) {
+        this.jmsOperations = jmsOperations;
+    }
+
+    public DestinationResolver getDestinationResolver() {
+        return destinationResolver;
+    }
+
+    public void setDestinationResolver(DestinationResolver destinationResolver) {
+        this.destinationResolver = destinationResolver;
     }
 }
