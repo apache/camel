@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.processor.DelegateProcessor;
 
 /**
  * A simple converter that can convert any Processor to an AsyncProcessor.
@@ -32,11 +33,10 @@ import org.apache.camel.TypeConverter;
  */
 public class AsyncProcessorTypeConverter implements TypeConverter {
 
-    public static final class ProcessorToAsynProcessorBridge implements AsyncProcessor, Service {
-        private final Processor processor;
+    public static final class ProcessorToAsynProcessorBridge extends DelegateProcessor implements AsyncProcessor {
 
         private ProcessorToAsynProcessorBridge(Processor processor) {
-            this.processor = processor;
+            super(processor);
         }
 
         public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -48,22 +48,6 @@ public class AsyncProcessorTypeConverter implements TypeConverter {
             // false means processing of the exchange asynchronously,
             callback.done(true);
             return true;
-        }
-
-        public void process(Exchange exchange) throws Exception {
-            processor.process(exchange);
-        }
-
-        public void start() throws Exception {
-            if (processor instanceof Service) {
-                ((Service)processor).start();
-            }
-        }
-
-        public void stop() throws Exception {
-            if (processor instanceof Service) {
-                ((Service)processor).stop();
-            }
         }
     }
 

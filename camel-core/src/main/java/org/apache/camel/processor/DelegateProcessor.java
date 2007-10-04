@@ -29,7 +29,7 @@ import org.apache.camel.util.ServiceHelper;
  * @version $Revision: 519941 $
  */
 public class DelegateProcessor extends ServiceSupport implements Processor {
-    private Processor processor;
+    protected Processor processor;
 
     public DelegateProcessor() {
     }

@@ -22,6 +22,8 @@ import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.DeadLetterChannel;
+import org.apache.camel.processor.DelegateAsyncProcessor;
+import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
@@ -78,7 +80,7 @@ public class ErrorHandlerTest extends TestSupport {
             Endpoint key = route.getEndpoint();
             String endpointUri = key.getEndpointUri();
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
-            Processor processor = consumerRoute.getProcessor();
+            Processor processor = unwrap(consumerRoute.getProcessor());
 
             SendProcessor sendProcessor = null;
             if (endpointUri.equals("seda:a")) {
@@ -118,7 +120,7 @@ public class ErrorHandlerTest extends TestSupport {
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
-            Processor processor = consumerRoute.getProcessor();
+            Processor processor = unwrap(consumerRoute.getProcessor());
 
             assertIsInstanceOf(DeadLetterChannel.class, processor);
         }
@@ -171,7 +173,7 @@ public class ErrorHandlerTest extends TestSupport {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
-            Processor processor = consumerRoute.getProcessor();
+            Processor processor = unwrap(consumerRoute.getProcessor());
 
             LoggingErrorHandler loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class, processor);
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, loggingProcessor.getOutput());

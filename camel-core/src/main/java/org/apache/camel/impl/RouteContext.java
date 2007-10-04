@@ -16,17 +16,24 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.FromType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.processor.Interceptor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.ProceedProcessor;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import org.apache.camel.processor.UnitOfWorkProcessor;
 
 /**
  * The context used to activate new routing rules
@@ -114,7 +121,13 @@ public class RouteContext {
         // single route
         if (!eventDrivenProcessors.isEmpty()) {
             Processor processor = Pipeline.newInstance(eventDrivenProcessors);
-            routes.add(new EventDrivenConsumerRoute(getEndpoint(), processor));
+
+            // lets create the async processor
+            final AsyncProcessor asyncProcessor = AsyncProcessorTypeConverter.convert(processor);
+            Processor unitOfWorkProcessor = new UnitOfWorkProcessor(asyncProcessor);
+
+            routes.add(new EventDrivenConsumerRoute(getEndpoint(), unitOfWorkProcessor));
+            //routes.add(new EventDrivenConsumerRoute(getEndpoint(), processor));
         }
     }
 
