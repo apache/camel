@@ -81,7 +81,6 @@ public class UnitOfWorkTest extends ContextTestSupport {
         template.send(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("<hello>world!</hello>");
-                exchange.getUnitOfWork().addSynchronization(synchronization);
             }
         });
     }
@@ -93,6 +92,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
                 from("direct:foo").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         log.info("Received: " + exchange);
+                        exchange.getUnitOfWork().addSynchronization(synchronization);
 
                         String name = getName();
                         if (name.equals("testFail")) {

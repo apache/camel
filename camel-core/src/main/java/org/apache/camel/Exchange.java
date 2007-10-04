@@ -172,6 +172,12 @@ public interface Exchange {
     UnitOfWork getUnitOfWork();
 
     /**
+     * Sets the unit of work that this exchange belongs to; which may map to
+     * zero, one or more physical transactions
+     */
+    void setUnitOfWork(UnitOfWork unitOfWork);
+
+    /**
      * Returns the exchange id
      *
      * @return the unique id of the exchange
