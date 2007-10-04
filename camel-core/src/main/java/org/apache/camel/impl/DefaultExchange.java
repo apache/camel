@@ -253,10 +253,11 @@ public class DefaultExchange implements Exchange {
     }
 
     public UnitOfWork getUnitOfWork() {
-        if (unitOfWork == null) {
-            unitOfWork = new DefaultUnitOfWork();
-        }
         return unitOfWork;
+    }
+
+    public void setUnitOfWork(UnitOfWork unitOfWork) {
+        this.unitOfWork = unitOfWork;
     }
 
     /**
