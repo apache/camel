@@ -15,35 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
-
-import org.apache.camel.Exchange;
+package org.apache.camel.processor;
 
 /**
- * An object representing the unit of work processing an {@link Exchange}
- * which allows the use of {@link Synchronization} hooks. This object might map one-to-one with
- * a transaction in JPA or Spring; or might not.
- *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
-public interface UnitOfWork {
-
-    /**
-     * Adds a synchronization hook
-     *
-     * @param synchronization
-     */
-    void addSynchronization(Synchronization synchronization);
-
-    /**
-     * Removes a synchronization hook
-     *
-     * @param synchronization
-     */
-    void removeSynchronization(Synchronization synchronization);
-
-    /**
-     * Invoked when this unit of work has been completed, whether it has failed or completed
-     */
-    void done(Exchange exchange);
+public class UnitOfWorkWithAsyncFlowTest extends UnitOfWorkTest {
+    @Override
+    protected void setUp() throws Exception {
+        uri = "direct:async";
+        super.setUp();
+    }
 }

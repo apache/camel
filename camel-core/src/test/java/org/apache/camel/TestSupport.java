@@ -25,6 +25,8 @@ import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.processor.DelegateAsyncProcessor;
+import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -294,6 +296,25 @@ public abstract class TestSupport extends TestCase {
     protected void assertStringContains(String text, String containedText) {
         assertNotNull("Text should not be null!", text);
         assertTrue("Text: " + text + " does not contain: " + containedText, text.contains(containedText));
+    }
+
+    /**
+     * If a processor is wrapped with a bunch of DelegateProcessor or DelegateAsyncProcessor objects
+     * this call will drill through them and return the wrapped Processor.
+     * 
+     * @param processor
+     * @return
+     */
+    protected Processor unwrap(Processor processor) {
+        while( true ) {
+            if( processor instanceof DelegateAsyncProcessor ) {
+                processor = ((DelegateAsyncProcessor)processor).getProcessor();
+            } else if( processor instanceof DelegateProcessor ) {
+                processor = ((DelegateProcessor)processor).getProcessor();
+            } else {
+                return processor;
+            }
+        }
     }
 
 }

@@ -17,14 +17,14 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * The default implementation of {@link UnitOfWork}
@@ -33,12 +33,10 @@ import java.util.concurrent.CountDownLatch;
  */
 public class DefaultUnitOfWork implements UnitOfWork {
     private List<Synchronization> synchronizations;
-    private final Exchange exchange;
     private List<AsyncCallback> asyncCallbacks;
     private CountDownLatch latch;
 
-    public DefaultUnitOfWork(Exchange exchange) {
-        this.exchange = exchange;
+    public DefaultUnitOfWork() {
     }
 
     public synchronized void addSynchronization(Synchronization synchronization) {
@@ -54,14 +52,21 @@ public class DefaultUnitOfWork implements UnitOfWork {
         }
     }
 
-
     public void reset() {
 
     }
 
-    public void doneSynchronous() {
-        if (isSynchronous()) {
-            onComplete();
+    public void done(Exchange exchange) {
+        if (synchronizations != null) {
+            boolean failed = exchange.isFailed();
+            for (Synchronization synchronization : synchronizations) {
+                if (failed) {
+                    synchronization.onFailure(exchange);
+                }
+                else {
+                    synchronization.onComplete(exchange);
+                }
+            }
         }
     }
 
@@ -72,10 +77,11 @@ public class DefaultUnitOfWork implements UnitOfWork {
     /**
      * Register some asynchronous processing step
      */
+    /*
     public synchronized AsyncCallback addAsyncStep() {
         AsyncCallback answer = new AsyncCallback() {
             public void done(boolean doneSynchronously) {
-                latch.countDown();    
+                latch.countDown();
             }
         };
         if (latch == null) {
@@ -90,11 +96,5 @@ public class DefaultUnitOfWork implements UnitOfWork {
         asyncCallbacks.add(answer);
         return answer;
     }
-    protected synchronized void onComplete() {
-        if (synchronizations != null) {
-            for (Synchronization synchronization : synchronizations) {
-                synchronization.onComplete(exchange);
-            }
-        }
-    }
+    */
 }

@@ -433,7 +433,7 @@ public class RouteBuilderTest extends TestSupport {
      */
     protected Processor getProcessorWithoutErrorHandler(Route route) {
         EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
-        Processor processor = consumerRoute.getProcessor();
+        Processor processor = unwrap(consumerRoute.getProcessor());
         return unwrapErrorHandler(processor);
     }
 
