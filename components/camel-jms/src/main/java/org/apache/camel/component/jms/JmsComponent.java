@@ -27,7 +27,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.listener.serversession.ServerSessionFactory;
 import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.jms.connection.JmsTransactionManager;
+import org.springframework.jms.core.JmsOperations;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.jms.ConnectionFactory;
@@ -295,6 +297,14 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
 
     public void setUseVersion102(boolean useVersion102) {
         getConfiguration().setUseVersion102(useVersion102);
+    }
+    
+    public void setJmsOperations(JmsOperations jmsOperations) {
+        getConfiguration().setJmsOperations(jmsOperations);
+    }
+
+    public void setDestinationResolver(DestinationResolver destinationResolver) {
+        getConfiguration().setDestinationResolver(destinationResolver);
     }
 
     /**
