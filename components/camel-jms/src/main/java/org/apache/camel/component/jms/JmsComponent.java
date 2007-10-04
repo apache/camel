@@ -149,6 +149,11 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
             		ConnectionFactory cf = (ConnectionFactory) beansOfType.values().iterator().next();
             		configuration.setConnectionFactory(cf);
             	}
+                beansOfType = applicationContext.getBeansOfType(DestinationResolver.class);
+                if( !beansOfType.isEmpty() ) { 
+                    DestinationResolver destinationResolver = (DestinationResolver) beansOfType.values().iterator().next();
+                        configuration.setDestinationResolver(destinationResolver);
+                }
             }
         }
         return configuration;
