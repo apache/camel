@@ -35,8 +35,6 @@ public class HttpPollingGetTest extends ContextTestSupport {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedMinimumMessageCount(1);
 
-        template.sendBody("direct:start", null);
-
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
