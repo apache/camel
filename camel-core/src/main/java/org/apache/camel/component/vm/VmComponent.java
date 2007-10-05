@@ -19,6 +19,7 @@ package org.apache.camel.component.vm;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -34,6 +35,8 @@ import org.apache.camel.component.seda.SedaEndpoint;
  * @version $Revision: 1.1 $
  */
 public class VmComponent extends SedaComponent {
+    
+    private static final AtomicInteger START_COUNTER = new AtomicInteger();
     protected static Map<String, BlockingQueue> queues = new HashMap<String, BlockingQueue>();
 
     @Override
@@ -52,4 +55,24 @@ public class VmComponent extends SedaComponent {
             return answer;
         }
     }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        START_COUNTER.incrementAndGet();
+    }
+    
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (START_COUNTER.decrementAndGet() == 0) {
+            synchronized (queues) {
+                for (BlockingQueue q : queues.values()) {
+                    q.clear();
+                }
+                queues.clear();
+            }
+        }
+    }
+
 }

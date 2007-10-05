@@ -50,7 +50,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
     }
 
     public void run() {
-        while (!isStopping()) {
+        while (!isStopping() && !isStopped()) {
             final Exchange exchange;
             try {
                 exchange = endpoint.getQueue().poll(1000, TimeUnit.MILLISECONDS);
