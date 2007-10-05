@@ -36,14 +36,14 @@ public class GroovyTest extends ContextTestSupport {
     protected String groovyBuilderClass = "org.apache.camel.language.groovy.example.GroovyRoutes";
 
     public void testSendMatchingMessage() throws Exception {
-        System.out.println(">>>>> " + ProcessorType.class.getName());
-        
         MockEndpoint resultEndpoint = getMockEndpoint("mock:results");
         resultEndpoint.expectedBodiesReceived(expected);
 
         template.sendBodyAndHeader("direct:a", expected, "foo", "bar");
 
         assertMockEndpointsSatisifed();
+
+        log.debug("Should have received one exchange: " + resultEndpoint.getReceivedExchanges());
     }
 
     public void testSendNotMatchingMessage() throws Exception {
@@ -53,20 +53,14 @@ public class GroovyTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:a", expected, "foo", "123");
 
         assertMockEndpointsSatisifed();
+
+        log.debug("Should not have received any messages: " + resultEndpoint.getReceivedExchanges());
     }
 
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext answer = super.createCamelContext();
-
-/*
-        MetaClassRegistry metaClassRegistry = MetaClassRegistry.getInstance(MetaClassRegistry.LOAD_DEFAULT);
-        MetaClass metaClass = metaClassRegistry.getMetaClass(ProcessorType.class);
-        metaClass = new ProxyMetaClass(metaClassRegistry, ProcessorType.class, metaClass);
-        metaClass.addNewInstanceMethod(CamelGroovyMethods.class.getMethod("filter", ProcessorType.class, Closure.class));
-        metaClassRegistry.setMetaClass(ProcessorType.class, metaClass);
-*/
 
         GroovyClassLoader classLoader = new GroovyClassLoader();
         Class<?> type = classLoader.loadClass(groovyBuilderClass);

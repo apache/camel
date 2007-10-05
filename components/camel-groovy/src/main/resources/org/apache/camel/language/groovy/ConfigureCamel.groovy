@@ -15,31 +15,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.groovy;
+package org.apache.camel.language.groovy
 
-import groovy.lang.GroovyShell;
-import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.ChoiceType;
+import org.apache.camel.model.ProcessorType;
 
 /**
  * @version $Revision: 1.1 $
  */
-public abstract class GroovyRouteBuilder extends RouteBuilder {
-    public GroovyRouteBuilder() {
-        init();
+class ConfigureCamel implements Runnable {
+
+    static void main(String[] args) {
+        new ConfigureCamel().run();
     }
 
-    public GroovyRouteBuilder(CamelContext context) {
-        super(context);
-        init();
-    }
+    void run() {
+        ExpandoMetaClass.enableGlobally();
 
-    private void init() {
-        ClassLoader loader = getClass().getClassLoader();
-        GroovyShell shell = new GroovyShell(loader);
-        shell.evaluate(loader.getResourceAsStream("org/apache/camel/language/groovy/ConfigureCamel.groovy"));
+        ProcessorType.metaClass.filter = { filter ->
+            if (filter instanceof Closure) {
+                filter = CamelGroovyMethods.toExpression(filter)
+            }
+            delegate.filter(filter);
+        }
 
-        // TODO compile Groovy as part of build!
-        //new ConfigureCamel().run();
+        ChoiceType.metaClass.when = { filter ->
+            if (filter instanceof Closure) {
+                filter = CamelGroovyMethods.toExpression(filter)
+            }
+            delegate.when(filter);
+        }
     }
 }
