@@ -62,7 +62,7 @@ public class BatchProcessor extends ServiceSupport implements Runnable {
 
     public void run() {
         LOG.debug("Starting thread for " + this);
-        while (!isStopped() && !isStopping()) {
+        while (isRunAllowed()) {
             try {
                 processBatch();
             } catch (Exception e) {

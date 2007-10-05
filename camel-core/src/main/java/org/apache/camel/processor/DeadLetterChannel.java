@@ -91,7 +91,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         while (true) {
             
             // We can't keep retrying if the route is being shutdown.
-            if (isStopping() || isStopped()) {
+            if (!isRunAllowed()) {
                 if (exchange.getException() == null) {
                     exchange.setException(new RejectedExecutionException());
                 }

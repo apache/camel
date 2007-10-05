@@ -50,14 +50,14 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
     }
 
     public void run() {
-        while (!isStopping() && !isStopped()) {
+        while (isRunAllowed()) {
             final Exchange exchange;
             try {
                 exchange = endpoint.getQueue().poll(1000, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
                 break;
             }
-            if (exchange != null && !isStopping()) {
+            if (exchange != null && isRunAllowed()) {
                 processor.process(exchange, new AsyncCallback() {
                     public void done(boolean sync) {
                     }

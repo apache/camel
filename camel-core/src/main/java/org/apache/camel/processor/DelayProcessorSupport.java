@@ -78,7 +78,7 @@ public abstract class DelayProcessorSupport extends DelegateProcessor {
             if (delay < 0) {
                 return;
             } else {
-                if (isFastStop() && (isStopped() || isStopping())) {
+                if (isFastStop() && !isRunAllowed()) {
                     throw new AlreadyStoppedException();
                 }
                 try {
