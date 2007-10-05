@@ -94,6 +94,16 @@ public abstract class ServiceSupport implements Service {
     }
 
     /**
+     * Helper methods so the service knows if it should keep running.  Returns
+     * false if the service is being stopped or is stopped.
+     *  
+     * @return true if the service should continue to run.
+     */
+    protected boolean isRunAllowed() {
+        return !(stopping.get() || stopped.get());
+    }
+
+    /**
      * @return true if this service is closed
      */
     public boolean isStopped() {

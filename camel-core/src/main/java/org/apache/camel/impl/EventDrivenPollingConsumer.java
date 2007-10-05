@@ -58,7 +58,7 @@ public class EventDrivenPollingConsumer<E extends Exchange> extends PollingConsu
     }
 
     public E receive() {
-        while (!isStopping() && !isStopped()) {
+        while (isRunAllowed()) {
             try {
                 return queue.take();
             } catch (InterruptedException e) {
