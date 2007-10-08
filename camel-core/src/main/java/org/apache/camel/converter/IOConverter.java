@@ -154,4 +154,23 @@ public class IOConverter {
         return new ByteArrayInputStream(data);
     }
 
+    @Converter
+    public static ObjectOutput toObjectOutput(OutputStream stream) throws IOException {
+        if (stream instanceof ObjectOutput) {
+            return (ObjectOutput) stream;
+        }
+        else {
+            return new ObjectOutputStream(stream);
+        }
+    }
+
+    @Converter
+    public static ObjectInput toObjectInput(InputStream stream) throws IOException {
+        if (stream instanceof ObjectInput) {
+            return (ObjectInput) stream;
+        }
+        else {
+            return new ObjectInputStream(stream);
+        }
+    }
 }
