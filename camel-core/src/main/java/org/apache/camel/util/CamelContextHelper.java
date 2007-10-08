@@ -19,6 +19,7 @@ package org.apache.camel.util;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A number of helper methods
@@ -49,6 +50,25 @@ public class CamelContextHelper {
         } else {
             return endpoint;
         }
+    }
 
+    /**
+     * Converts the given value to the requested type
+     */
+    public static <T> T convertTo(CamelContext context, Class<T> type, Object value) {
+        notNull(context, "camelContext");
+        return context.getTypeConverter().convertTo(type, value);
+    }
+
+    /**
+     * Converts the given value to the specified type throwing an {@link IllegalArgumentException}
+     * if the value could not be converted to a non null value
+     */
+    public static <T> T mandatoryConvertTo(CamelContext context, Class<T> type, Object value) {
+        T answer = convertTo(context, type, value);
+        if (answer == null) {
+            throw new IllegalArgumentException("Value " + value + " converted to " + type.getName() + " cannot be null");
+        }
+        return answer;
     }
 }
