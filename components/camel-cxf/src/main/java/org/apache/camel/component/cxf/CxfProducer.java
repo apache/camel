@@ -24,6 +24,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.invoker.CxfClient;
 import org.apache.camel.component.cxf.invoker.CxfClientFactoryBean;
 import org.apache.camel.component.cxf.invoker.InvokingContext;
+import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -60,7 +61,6 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
         super(endpoint);
         this.endpoint = endpoint;
         dataFormat = CxfEndpointUtils.getDataFormat(endpoint);
-        
         if (dataFormat.equals(DataFormat.POJO)) {
             client = createClientFormClientFactoryBean(null);
         } else {
@@ -84,49 +84,63 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
     }
    
     //If cfb is null ,we will try to find a right cfb to use.    
-    private Client createClientFormClientFactoryBean(ClientFactoryBean cfb) throws CamelException {
-        //TODO we can get also the client from spring context       
+    private Client createClientFormClientFactoryBean(ClientFactoryBean cfb) throws CamelException {              
         Bus bus = BusFactory.getDefaultBus();
-        // setup the ClientFactoryBean with endpoint, 
-        // we need to choice the right front end to create the clientFactoryBean
-        
-        if (null != endpoint.getServiceClass()) {
-            try {
-                Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
+        if (endpoint.isSpringContextEndpoint()) {
+            CxfEndpointBean endpointBean = endpoint.getCxfEndpointBean();
+            if (cfb == null) {
+                cfb = CxfEndpointUtils.getClientFactoryBean(endpointBean.getServiceClass());
+            }    
+            endpoint.configure(cfb);
+            // Need to set the service name and endpoint name to the ClientFactoryBean's service factory
+            // to walk around the issue of setting EndpointName and ServiceName
+            CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
+            if (cxfEndpointBean.getServiceName() != null) {
+                cfb.getServiceFactory().setServiceName(cxfEndpointBean.getServiceName());
+            } 
+            if (cxfEndpointBean.getEndpointName() != null) {
+                cfb.getServiceFactory().setEndpointName(cxfEndpointBean.getEndpointName());
+            } 
+        } else { // set up the clientFactoryBean by using URI information
+            if (null != endpoint.getServiceClass()) {
+                try {
+                    //we need to choice the right front end to create the clientFactoryBean
+                    Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
+                    if (cfb == null) {
+                        cfb = CxfEndpointUtils.getClientFactoryBean(serviceClass);
+                    } 
+                    cfb.setAddress(endpoint.getAddress());
+                    if (null != endpoint.getServiceClass()) {            
+                        cfb.setServiceClass(ObjectHelper.loadClass(endpoint.getServiceClass()));
+                    } 
+                    if (null != endpoint.getWsdlURL()) {
+                        cfb.setWsdlURL(endpoint.getWsdlURL());
+                    }                
+                } catch (ClassNotFoundException e) {
+                    throw new CamelException(e);
+                }
+            } else { // we can't see any service class from the endpoint
                 if (cfb == null) {
-                    cfb = CxfEndpointUtils.getClientFactoryBean(serviceClass);
-                } 
-                cfb.setAddress(endpoint.getAddress());
-                if (null != endpoint.getServiceClass()) {            
-                    cfb.setServiceClass(ObjectHelper.loadClass(endpoint.getServiceClass()));
-                } 
+                    cfb = new ClientFactoryBean();
+                }    
                 if (null != endpoint.getWsdlURL()) {
                     cfb.setWsdlURL(endpoint.getWsdlURL());
-                }                
-            } catch (ClassNotFoundException e) {
-                throw new CamelException(e);
+                } else {
+                    // throw the exception for insufficiency of the endpoint info
+                    throw new CamelException("Insufficiency of the endpoint info");
+                }
             }
-        } else { // we can't see any service class from the endpoint
-            if (cfb == null) {
-                cfb = new ClientFactoryBean();
+            if (endpoint.getServiceName() != null) {
+                cfb.getServiceFactory().setServiceName(CxfEndpointUtils.getServiceName(endpoint));
+            }
+            if (endpoint.getPortName() != null) {
+                cfb.getServiceFactory().setEndpointName(CxfEndpointUtils.getPortName(endpoint));
+               
             }    
-            if (null != endpoint.getWsdlURL()) {
+            if (endpoint.getWsdlURL() != null) {                
                 cfb.setWsdlURL(endpoint.getWsdlURL());
-            } else {
-                // throw the exception for insufficiency of the endpoint info
-                throw new CamelException("Insufficiency of the endpoint info");
             }
-        }
-        if (endpoint.getServiceName() != null) {
-            cfb.getServiceFactory().setServiceName(CxfEndpointUtils.getServiceName(endpoint));
-        }
-        if (endpoint.getPortName() != null) {
-            cfb.getServiceFactory().setEndpointName(CxfEndpointUtils.getPortName(endpoint));
-           
         }    
-        if (endpoint.getWsdlURL() != null) {                
-            cfb.setWsdlURL(endpoint.getWsdlURL());
-        }
         cfb.setBus(bus);        
         return cfb.create();
     }
@@ -170,8 +184,7 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                 Object result = cxfClient.dispatch(params, null, ex);
                 // need to get the binding object to create the message
                 BindingOperationInfo boi = ex.get(BindingOperationInfo.class);
-                Message response = null;
-                System.out.println("the boi is " + boi);
+                Message response = null;                
                 if (boi == null) {
                     // it should be the raw message                    
                     response = new MessageImpl(); 

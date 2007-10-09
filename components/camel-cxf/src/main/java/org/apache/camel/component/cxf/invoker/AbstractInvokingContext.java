@@ -125,9 +125,7 @@ public abstract class AbstractInvokingContext implements InvokingContext {
     }
 
     protected <T> T getResponseObject(Message inMessage, Map<String, Object> responseContext,
-            Class <T> clazz) {
-        System.out.println("get the in message is " + inMessage);
-        System.out.println("*** responseContext is" + responseContext);
+            Class <T> clazz) {        
         T retval = null;
         if (inMessage != null) {
             if (null != responseContext) {

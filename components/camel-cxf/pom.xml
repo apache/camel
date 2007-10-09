@@ -51,6 +51,17 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>      
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+      <type>test-jar</type>      
+    </dependency>
+
+    <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging-api</artifactId>
     </dependency>
@@ -172,15 +183,13 @@
     <dependency>
        <groupId>org.springframework</groupId>
        <artifactId>spring-beans</artifactId>
-       <version>${spring-version}</version>
-       <scope>test</scope>
+       <version>${spring-version}</version>       
      </dependency>
     
     <dependency>
        <groupId>org.springframework</groupId>
        <artifactId>spring-context</artifactId>
-       <version>${spring-version}</version>
-       <scope>test</scope>
+       <version>${spring-version}</version>       
      </dependency>
 
 

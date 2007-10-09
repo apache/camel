@@ -16,13 +16,19 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import javax.xml.namespace.QName;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spring.SpringCamelContext;
+import org.apache.cxf.configuration.spring.ConfigurerImpl;
 import org.apache.cxf.message.Message;
 
 
@@ -40,13 +46,29 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     private String portName;
     private String serviceName;
     private String dataFormat;
+    private String beanId;
+    private boolean isSpringContextEndpoint;
     private boolean inOut = true;
+    private ConfigurerImpl configurer;
+    private CxfEndpointBean cxfEndpointBean;
     
 
     public CxfEndpoint(String uri, String address, CxfComponent component) {
         super(uri, component);
         this.component = component;        
         this.address = address;
+        if (address.startsWith(CxfConstants.SPRING_CONTEXT_ENDPOINT)) {
+            isSpringContextEndpoint = true;
+            //get the bean from spring context
+            beanId = address.substring(CxfConstants.SPRING_CONTEXT_ENDPOINT.length());
+            if (beanId.startsWith("//")) {
+               beanId = beanId.substring(2);     
+            }
+            SpringCamelContext context = (SpringCamelContext) this.getContext();
+            configurer = new ConfigurerImpl(context.getApplicationContext()); 
+            cxfEndpointBean = (CxfEndpointBean) context.getApplicationContext().getBean(beanId);
+            assert(cxfEndpointBean != null);
+        }
     }
         
     public Producer<CxfExchange> createProducer() throws Exception {
@@ -77,6 +99,9 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
         dataFormat = format;
     }
     
+    public boolean isSpringContextEndpoint() {
+        return isSpringContextEndpoint;
+    }
         
     public String getAddress() {
     	return address;
@@ -91,7 +116,8 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     }
     
     public String getServiceClass() {
-    	return serviceClass;
+        return serviceClass;
+    	
     }
     
     public void setServiceClass(String className) {        
@@ -142,6 +168,17 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
         return true;
     }
     
+    public String getBeanId() {
+        return beanId;
+    }
+    
+    public CxfEndpointBean getCxfEndpointBean() {
+        return cxfEndpointBean;
+    }
+    
+    public void configure(Object beanInstance) {
+        configurer.configureBean(beanId, beanInstance);
+    }
     
 
 }
