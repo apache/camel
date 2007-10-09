@@ -14,33 +14,8 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-AggregatorType
-BeanRef
-CatchType
-ChoiceType
-DelayerType
-ExceptionType
-FilterType
-FinallyType
-FromType
-IdempotentConsumerType
-InterceptType
-InterceptorRef
-MarshalType
-MulticastType
-OtherwiseType
-PolicyRef
-ProceedType
-ProcessorRef
-RecipientListType
-RedeliveryPolicyType
-ResequencerType
-RouteType
-RoutesType
-ServiceActivationType
-SplitterType
-ThrottlerType
-ToType
-TryType
-UnmarshalType
-WhenType
+ArtixDSDataFormat
+DataFormatType
+JaxbDataFormat
+SerializationDataFormat
+XMLBeansDataFormat
