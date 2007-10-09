@@ -30,14 +30,14 @@
 
   <artifactId>camel-example-cxf</artifactId>
   <name>Camel :: Example :: CXF</name>
-  <description>An example which demonstrates the use of the Camel CXF component 
+  <description>An example which demonstrates the use of the Camel CXF component
   </description>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
-    </dependency>    
+    </dependency>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -48,14 +48,14 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-soap</artifactId>
       <version>${cxf-version}</version>
-    </dependency>  
-    
+    </dependency>
+
 
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-jms</artifactId>
       <version>${cxf-version}</version>
-    </dependency> 
+    </dependency>
 
     <dependency>
       <groupId>org.apache.activemq</groupId>
@@ -103,28 +103,27 @@
     <plugins>
 
       <plugin>
-	<groupId>org.apache.cxf</groupId>
-	<artifactId>cxf-codegen-plugin</artifactId>
-	<version>2.0.2-incubator</version>
-	<executions>
-		<execution>
-			<id>generate-sources</id>
-			<phase>generate-sources</phase>
-			<configuration>
-				<sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
-				<wsdlOptions>
-					<wsdlOption>
-						<wsdl>${basedir}/src/main/resources/wsdl/hello_world.wsdl</wsdl>
-					</wsdlOption>
-				</wsdlOptions>
-			</configuration>
-			<goals>
-				<goal>wsdl2java</goal>
-			</goals>
-		</execution>
-	</executions>
-    </plugin>
-
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-codegen-plugin</artifactId>
+        <version>2.0.2-incubator</version>
+        <executions>
+          <execution>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
+              <wsdlOptions>
+                <wsdlOption>
+                  <wsdl>${basedir}/src/main/resources/wsdl/hello_world.wsdl</wsdl>
+                </wsdlOption>
+              </wsdlOptions>
+            </configuration>
+            <goals>
+              <goal>wsdl2java</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
 
       <!-- allows the example to be ran via 'mvn compile exec:java' -->
@@ -139,5 +138,5 @@
     </plugins>
   </build>
 
-  
+
 </project>
