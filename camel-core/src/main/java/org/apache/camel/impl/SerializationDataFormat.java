@@ -15,34 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.jaxb;
+package org.apache.camel.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.io.OutputStream;
 
-import javax.xml.bind.JAXBException;
-
-import org.apache.camel.spi.Unmarshaller;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.Exchange;
+import org.apache.camel.converter.IOConverter;
+import org.apache.camel.spi.DataFormat;
 
 /**
- * An {@link Unmarshaller} which uses JAXB2
- * 
  * @version $Revision: 1.1 $
  */
-public class JaxbUnmarshaller implements Unmarshaller {
-    javax.xml.bind.Unmarshaller unmarshaller;
-
-    public JaxbUnmarshaller(javax.xml.bind.Unmarshaller unmarshaller) {
-        this.unmarshaller = unmarshaller;
+public class SerializationDataFormat implements DataFormat {
+    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException {
+        ObjectOutput out = IOConverter.toObjectOutput(stream);
+        out.writeObject(graph);
+        out.flush();
     }
 
-    public Object unmarshal(InputStream stream) throws IOException, ClassNotFoundException {
-        try {
-            return unmarshaller.unmarshal(stream);
-        }
-        catch (JAXBException e) {
-            throw IOHelper.createIOException(e);
-        }
+    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, ClassNotFoundException {
+        ObjectInput in = IOConverter.toObjectInput(stream);
+        return in.readObject();
     }
 }

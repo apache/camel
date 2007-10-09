@@ -15,22 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.spi;
 
-import org.apache.camel.spi.Binding;
-import org.apache.camel.spi.Marshaller;
-import org.apache.camel.spi.Unmarshaller;
+import java.io.OutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.camel.Exchange;
 
 /**
+ * Represents a data format used to marshal objects to and from streams
+ * such as Java Serialization or using JAXB2 to encode/decode objects using XML
+ * or using SOAP encoding.
+ *
  * @version $Revision: 1.1 $
  */
-public class SerializationBinding implements Binding {
-    
-    public Marshaller createMarshaller() {
-        return new SerializationMarshaller();
-    }
+public interface DataFormat {
 
-    public Unmarshaller createUnmarshaller() {
-        return new SerializationUnmarshaller();
-    }
+    /**
+     * Marshals the object to the given Stream.
+     */
+    void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception;
+
+    /**
+     * Unmarshals the given stream into an object.
+     */
+    Object unmarshal(Exchange exchange, InputStream stream) throws Exception;
 }
