@@ -585,6 +585,29 @@ public abstract class ProcessorType<Type extends ProcessorType> {
     }
 
     /**
+     * Adds a bean by type which is invoked which could be a final destination, or could
+     * be a transformation in a pipeline
+     */
+    public Type bean(Class beanType) {
+        BeanRef answer = new BeanRef();
+        answer.setBeanType(beanType);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Adds a bean type and method which is invoked which could be a final
+     * destination, or could be a transformation in a pipeline
+     */
+    public Type bean(Class beanType, String method) {
+        BeanRef answer = new BeanRef();
+        answer.setBeanType(beanType);
+        answer.setMethod(method);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
      * Adds a bean which is invoked which could be a final destination, or could
      * be a transformation in a pipeline
      */

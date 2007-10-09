@@ -16,15 +16,17 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.Processor;
-import org.apache.camel.component.bean.BeanProcessor;
-import org.apache.camel.impl.RouteContext;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import org.apache.camel.Processor;
+import org.apache.camel.component.bean.BeanProcessor;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version $Revision: 1.1 $
@@ -36,6 +38,8 @@ public class BeanRef extends OutputType {
     private String ref;
     @XmlAttribute(required = false)
     private String method;
+    @XmlAttribute(required = false)
+    private Class beanType;
     @XmlTransient
     private Object bean;
 
@@ -76,10 +80,25 @@ public class BeanRef extends OutputType {
         this.bean = bean;
     }
 
+    public Class getBeanType() {
+        return beanType;
+    }
+
+    public void setBeanType(Class beanType) {
+        this.beanType = beanType;
+    }
+
     @Override
     public Processor createProcessor(RouteContext routeContext) {
         if (bean == null) {
-            bean = routeContext.lookup(getRef(), Object.class);
+            String reference = getRef();
+            if (reference != null) {
+                bean = routeContext.lookup(reference, Object.class);
+            }
+            else {
+                ObjectHelper.notNull(beanType, "bean, ref or beanType");
+                bean = CamelContextHelper.newInstance(routeContext.getCamelContext(), beanType);
+            }
         }
         BeanProcessor answer = new BeanProcessor(bean, routeContext.getCamelContext());
         if (method != null) {
@@ -99,6 +118,9 @@ public class BeanRef extends OutputType {
         }
         else if (bean != null) {
             return bean.toString();
+        }
+        else if (beanType != null) {
+            return beanType.getName();
         }
         else {
             return "";
