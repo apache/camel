@@ -102,7 +102,7 @@ public class ObjectHelper {
 
     public static void notNull(Object value, String name) {
         if (value == null) {
-            throw new IllegalArgumentException("No " + name + " specified");
+            throw new IllegalArgumentException(name + " must be specified");
         }
     }
 

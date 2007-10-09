@@ -16,18 +16,21 @@
  */
 package org.apache.camel.component.bean;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * A {@link Processor} which converts the inbound exchange to a method
@@ -35,7 +38,7 @@ import java.lang.reflect.Method;
  * 
  * @version $Revision: $
  */
-public class BeanProcessor implements Processor {
+public class BeanProcessor extends ServiceSupport implements Processor {
     public static final String METHOD_NAME = "org.apache.camel.MethodName";
     private static final Log LOG = LogFactory.getLog(BeanProcessor.class);
 
@@ -43,10 +46,12 @@ public class BeanProcessor implements Processor {
     private final BeanInfo beanInfo;
     private Method method;
     private String methodName;
+    private final Processor processor;
 
     public BeanProcessor(Object pojo, BeanInfo beanInfo) {
         this.pojo = pojo;
         this.beanInfo = beanInfo;
+        this.processor = CamelContextHelper.convertTo(beanInfo.getCamelContext(), Processor.class, pojo);
     }
 
     public BeanProcessor(Object pojo, CamelContext camelContext, ParameterMappingStrategy parameterMappingStrategy) {
@@ -75,6 +80,12 @@ public class BeanProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         if (LOG.isDebugEnabled()) {
             LOG.debug(">>>> invoking method for: " + exchange);
+        }
+
+        // do we have a custom adapter for this POJO to a Processor
+        if (processor != null) {
+            processor.process(exchange);
+            return;
         }
         Message in = exchange.getIn();
         BeanInvocation beanInvoke = in.getBody(BeanInvocation.class);
@@ -137,5 +148,15 @@ public class BeanProcessor implements Processor {
 
     public void setMethodName(String methodName) {
         this.methodName = methodName;
+    }
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(processor);
+    }
+
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(processor);
     }
 }

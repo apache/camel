@@ -66,6 +66,10 @@ public class BeanInfo {
         return type;
     }
 
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
     public MethodInvocation createInvocation(Method method, Object pojo, Exchange exchange)
         throws RuntimeCamelException {
         MethodInfo methodInfo = introspect(type, method);

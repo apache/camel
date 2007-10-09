@@ -19,6 +19,7 @@ package org.apache.camel.util;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.spi.Injector;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -70,5 +71,13 @@ public class CamelContextHelper {
             throw new IllegalArgumentException("Value " + value + " converted to " + type.getName() + " cannot be null");
         }
         return answer;
+    }
+
+    /**
+     * Creates a new instance of the given type using the {@link Injector} on the given
+     * {@link CamelContext}
+     */
+    public static <T> T newInstance(CamelContext context, Class<T> beanType) {
+        return context.getInjector().newInstance(beanType);
     }
 }
