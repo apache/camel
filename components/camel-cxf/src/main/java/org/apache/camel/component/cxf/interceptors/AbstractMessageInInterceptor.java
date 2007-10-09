@@ -101,7 +101,7 @@ public abstract class AbstractMessageInInterceptor<T extends Message>
 
             if (boi == null) {
                 QName startQName = new QName(payloadEl.getNamespaceURI(), payloadEl.getLocalName());
-                System.out.println("StartQName " + startQName);
+                
                 throw new Fault(new org.apache.cxf.common.i18n.Message(
                                 "REQ_NOT_UNDERSTOOD", LOG, startQName));
             }

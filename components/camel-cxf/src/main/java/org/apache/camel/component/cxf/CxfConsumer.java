@@ -19,9 +19,11 @@ package org.apache.camel.component.cxf;
 import java.net.URI;
 
 import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.component.cxf.util.UriUtils;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.spring.SpringCamelContext;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
@@ -46,22 +48,40 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
     public CxfConsumer(CxfEndpoint endpoint, Processor processor) throws Exception {
        
         super(endpoint, processor);        
-        this.endpoint = endpoint;
+        this.endpoint = endpoint;        
+        
         try {
             // now we just use the default bus here   
             Bus bus = BusFactory.getDefaultBus();
-            Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass()); 
-            ServerFactoryBean svrBean = CxfEndpointUtils.getServerFactoryBean(serviceClass);                           
-            svrBean.setAddress(endpoint.getAddress());
-            svrBean.setServiceClass(serviceClass);
-            if (endpoint.getServiceName() != null) {
-                svrBean.getServiceFactory().setServiceName(CxfEndpointUtils.getServiceName(endpoint));                
-            }
-            if (endpoint.getPortName() != null) {
-                svrBean.getServiceFactory().setEndpointName(CxfEndpointUtils.getPortName(endpoint));
-            }    
-            if (endpoint.getWsdlURL() != null) {                
-                svrBean.setWsdlURL(endpoint.getWsdlURL());
+            ServerFactoryBean svrBean = null;
+            if (endpoint.isSpringContextEndpoint()) {
+                CxfEndpointBean endpointBean = endpoint.getCxfEndpointBean();
+                svrBean = CxfEndpointUtils.getServerFactoryBean(endpointBean.getServiceClass());
+                endpoint.configure(svrBean);
+                //Need to set the service name and endpoint name to the ClientFactoryBean's service factory
+                // to walk around the issue of setting EndpointName and ServiceName
+                CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
+                if (cxfEndpointBean.getServiceName() != null) {
+                    svrBean.getServiceFactory().setServiceName(cxfEndpointBean.getServiceName());
+                } 
+                if (cxfEndpointBean.getEndpointName() != null) {
+                    svrBean.getServiceFactory().setEndpointName(cxfEndpointBean.getEndpointName());
+                } 
+                
+            } else { // setup the serverFactoryBean with the URI paraments           
+                Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass()); 
+                svrBean = CxfEndpointUtils.getServerFactoryBean(serviceClass);                           
+                svrBean.setAddress(endpoint.getAddress());
+                svrBean.setServiceClass(serviceClass);
+                if (endpoint.getServiceName() != null) {
+                    svrBean.getServiceFactory().setServiceName(CxfEndpointUtils.getServiceName(endpoint));                
+                }
+                if (endpoint.getPortName() != null) {
+                    svrBean.getServiceFactory().setEndpointName(CxfEndpointUtils.getPortName(endpoint));
+                }    
+                if (endpoint.getWsdlURL() != null) {                
+                    svrBean.setWsdlURL(endpoint.getWsdlURL());
+                }
             }
             DataFormat dataFormat = CxfEndpointUtils.getDataFormat(endpoint);
             if (dataFormat.equals(DataFormat.POJO)) {
@@ -78,6 +98,7 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
             } 
             
         } catch (Exception ex) {
+            // create Consumer endpoint failed
             ex.printStackTrace();
         }
     }

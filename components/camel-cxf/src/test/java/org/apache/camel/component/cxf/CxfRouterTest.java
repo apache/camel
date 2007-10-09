@@ -44,8 +44,7 @@ public class CxfRouterTest extends ContextTestSupport {
     
     private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
     private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
-    //private Endpoint routerEndpoint;
-    //private Endpoint resultEndpoint;
+    
     private ServerImpl server;
     
     
@@ -56,7 +55,7 @@ public class CxfRouterTest extends ContextTestSupport {
         startService();
     }
     
-    private void startService() {
+    protected void startService() {
         //start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
 
@@ -89,7 +88,7 @@ public class CxfRouterTest extends ContextTestSupport {
     }
 
     
-    public void testInvokingServerFromCXFClient() throws Exception {  
+    public void testInvokingServiceFromCXFClient() throws Exception {  
         Bus bus = BusFactory.getDefaultBus();
         
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
@@ -102,7 +101,6 @@ public class CxfRouterTest extends ContextTestSupport {
         String result = client.echo("hello world");
         assertEquals("we should get the right answer from router", "hello world", result);
         
-        //Thread.sleep(200000);
-        
+                
     }
 }

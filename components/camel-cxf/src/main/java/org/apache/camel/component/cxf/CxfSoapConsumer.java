@@ -67,6 +67,7 @@ public class CxfSoapConsumer implements Consumer {
         this.consumer = endpoint.getInnerEndpoint().createConsumer(soapProcessor);
         WSDLServiceFactory factory = new WSDLServiceFactory(getBus(), endpoint.getDefinition(), endpoint.getService());
         Service cxfService = factory.create();
+        // need to find with the endpoint and service Qname
         EndpointInfo ei = cxfService.getServiceInfos().iterator().next().getEndpoints().iterator().next();
         ei.setAddress("local://" + ei.getService().getName().toString() + "/" + ei.getName().getLocalPart());
         ei.getBinding().setProperty(AbstractBindingFactory.DATABINDING_DISABLED, Boolean.TRUE);

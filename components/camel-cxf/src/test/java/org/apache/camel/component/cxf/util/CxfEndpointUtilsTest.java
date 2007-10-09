@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.cxf.util;
 
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
@@ -23,18 +27,19 @@ import org.apache.camel.component.cxf.CxfComponent;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.easymock.classextension.EasyMock;
+import sun.nio.cs.ThreadLocalCoders;
+import sun.text.Normalizer;
 import junit.framework.TestCase;
 
 public class CxfEndpointUtilsTest extends TestCase {
-    // setup the
+    // set up the port name and service name
     private static final QName SERVICE_NAME =
         new QName("http://www.example.com/test", "ServiceName");
-    //private static final QName PORT_NAME =
-    //    new QName("http://www.example.com/test", "PortName");
+   
     static final String CXF_BASE_URI = "cxf://http://www.example.com/testaddress"
         + "?serviceClass=org.apache.camel.component.cxf.HelloService"
-        + "&portName=%7bhttp://www.example.com/test%7dPortName" 
-        + "&serviceName=%7bhttp://www.example.com/test%7dServiceName";
+        + "&portName={http://www.example.com/test}PortName" 
+        + "&serviceName={http://www.example.com/test}ServiceName";
         
     
     CxfEndpoint cxfEndpoint;
@@ -50,5 +55,6 @@ public class CxfEndpointUtilsTest extends TestCase {
         assertEquals("We should get the right service name", service, SERVICE_NAME);        
     }
     
+   
       
 }

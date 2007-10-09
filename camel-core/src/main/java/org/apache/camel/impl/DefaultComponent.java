@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
  * @version $Revision$
@@ -48,9 +49,8 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
 
     public Endpoint<E> createEndpoint(String uri) throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
-        //TODO endcode uri sting to the unsafe URI string
-        
-        URI u = new URI(uri);
+        //endcode uri sting to the unsafe URI characters        
+        URI u = new URI(UnsafeUriCharactersEncoder.encode(uri));
         String path = u.getSchemeSpecificPart();
 
         // lets trim off any query arguments

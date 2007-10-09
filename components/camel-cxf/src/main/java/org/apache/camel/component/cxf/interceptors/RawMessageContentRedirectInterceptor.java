@@ -35,8 +35,7 @@ public class RawMessageContentRedirectInterceptor extends AbstractPhaseIntercept
         InputStream is = message.getContent(InputStream.class);
         OutputStream os = message.getContent(OutputStream.class);
         
-        try {
-            System.out.println("the input stream is " + is);
+        try {            
             IOUtils.copy(is, os);
             is.close();
             os.flush();

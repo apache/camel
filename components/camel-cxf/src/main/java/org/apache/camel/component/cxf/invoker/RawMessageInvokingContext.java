@@ -109,15 +109,7 @@ public class RawMessageInvokingContext extends AbstractInvokingContext {
     }
 
     public Object getResponseObject(Exchange exchange, Map<String, Object> responseContext) {
-        /*CachedOutputStream bos = exchange.getInMessage().getContent(CachedOutputStream.class);
-        InputStream in = null;
-        try {
-            in = bos.getInputStream();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return in;*/
+        
         return getResponseObject(exchange.getInMessage(), responseContext, InputStream.class);
     }
     

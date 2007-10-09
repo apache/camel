@@ -14,25 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf;
+package org.apache.camel.util;
 
-/**
- * Constants used in this module
- *
- * @version $Revision$
- */
-public interface CxfConstants {
-    String METHOD = "method";
-    String SEI = "sei";
-    String IMPL = "impl";
-    String WSDL_URL = "wsdlURL";
-    String ADDRESS = "address";
-    String SERVICE_NAME = "serviceName";
-    String PORT_NAME = "portName";
-    String PROTOCOL_NAME_RES = "res";
-    String OPERATION_NAME = "operationName";
-    String SPRING_CONTEXT_ENDPOINT = "bean:";
-    // service name -- come from the wsdl   
+import junit.framework.TestCase;
+
+public class UnsafeCharactersEncoderTest extends TestCase {
+     public void testQnameEncoder() {
+         String afterEncoding = "%7Bhttp://www.example.com/test%7DServiceName";
+         String beforeEncoding = "{http://www.example.com/test}ServiceName";
+         
+         String result = UnsafeUriCharactersEncoder.encode(beforeEncoding);
+         System.out.println("result " + result);
+         assertEquals("Get the wrong encoding result", result, afterEncoding);
+     }
+    
 }
-
-
