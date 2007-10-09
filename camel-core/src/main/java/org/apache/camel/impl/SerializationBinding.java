@@ -15,34 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.jaxb;
+package org.apache.camel.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.xml.bind.JAXBException;
-
+import org.apache.camel.spi.Binding;
+import org.apache.camel.spi.Marshaller;
 import org.apache.camel.spi.Unmarshaller;
-import org.apache.camel.util.IOHelper;
 
 /**
- * An {@link Unmarshaller} which uses JAXB2
- * 
  * @version $Revision: 1.1 $
  */
-public class JaxbUnmarshaller implements Unmarshaller {
-    javax.xml.bind.Unmarshaller unmarshaller;
-
-    public JaxbUnmarshaller(javax.xml.bind.Unmarshaller unmarshaller) {
-        this.unmarshaller = unmarshaller;
+public class SerializationBinding implements Binding {
+    
+    public Marshaller createMarshaller() {
+        return new SerializationMarshaller();
     }
 
-    public Object unmarshal(InputStream stream) throws IOException, ClassNotFoundException {
-        try {
-            return unmarshaller.unmarshal(stream);
-        }
-        catch (JAXBException e) {
-            throw IOHelper.createIOException(e);
-        }
+    public Unmarshaller createUnmarshaller() {
+        return new SerializationUnmarshaller();
     }
 }
