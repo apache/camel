@@ -162,6 +162,17 @@ public class ConverterTest extends TestCase {
         assertEquals("bean.foo", 4, bean.getFoo());
     }
 
+    public void testStringToBoolean() throws Exception {
+        Boolean value = converter.convertTo(Boolean.class, "true");
+        assertEquals("converted boolean value", Boolean.TRUE, value);
+
+        value = converter.convertTo(Boolean.class, "false");
+        assertEquals("converted boolean value", Boolean.FALSE, value);
+
+        value = converter.convertTo(Boolean.class, null);
+        assertEquals("converted boolean value", null, value);
+    }
+
     public static class MyBean {
         private int foo;
 
