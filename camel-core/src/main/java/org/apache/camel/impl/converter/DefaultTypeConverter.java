@@ -178,6 +178,14 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
                     }
                 }
             }
+
+            // lets test for Object based converters
+            if (!fromType.equals(Object.class)) {
+                TypeConverter converter = getTypeConverter(toType, Object.class);
+                if (converter != null) {
+                    return converter;
+                }
+            }
         }
 
         // lets try classes derived from this toType
