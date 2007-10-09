@@ -27,6 +27,7 @@ import org.apache.camel.InvalidTypeException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchPropertyException;
+import org.apache.camel.CamelContext;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
