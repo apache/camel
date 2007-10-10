@@ -23,9 +23,12 @@ public class UnsafeCharactersEncoderTest extends TestCase {
          String afterEncoding = "%7Bhttp://www.example.com/test%7DServiceName";
          String beforeEncoding = "{http://www.example.com/test}ServiceName";
          
-         String result = UnsafeUriCharactersEncoder.encode(beforeEncoding);
-         System.out.println("result " + result);
+         String result = UnsafeUriCharactersEncoder.encode(beforeEncoding);         
          assertEquals("Get the wrong encoding result", result, afterEncoding);
      }
-    
+     public void testNoEncoding() {
+         String noEncoding= "http://www.example.com";
+         String result = UnsafeUriCharactersEncoder.encode(noEncoding);         
+         assertEquals("Get the wrong encoding result", result, noEncoding);
+     }
 }
