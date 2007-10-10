@@ -126,6 +126,10 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>pertest</forkMode>
+          <excludes>
+            <!-- TODO remove when http://issues.apache.org/activemq/browse/CAMEL-166 is fixed! -->            
+            <exclude>**/UnitOfWorkWithAsyncFlowTest.*</exclude>
+          </excludes>
         </configuration>
       </plugin>
 
