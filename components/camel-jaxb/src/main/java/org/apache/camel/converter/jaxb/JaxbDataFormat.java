@@ -32,11 +32,12 @@ import org.apache.camel.util.IOHelper;
 
 /**
  * A {@link DataFormat} using JAXB2 to marshal to and from XML
- * 
+ *
  * @version $Revision: 1.1 $
  */
 public class JaxbDataFormat implements DataFormat {
     private JAXBContext context;
+    private String contextPath;
     private boolean prettyPrint = true;
     private Marshaller marshaller;
     private Unmarshaller unmarshaller;
@@ -48,9 +49,13 @@ public class JaxbDataFormat implements DataFormat {
         this.context = context;
     }
 
+    public JaxbDataFormat(String contextPath) {
+        this.contextPath = contextPath;
+    }
+
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException {
         try {
-            marshaller.marshal(graph, stream);
+            getMarshaller().marshal(graph, stream);
         }
         catch (JAXBException e) {
             throw IOHelper.createIOException(e);
@@ -59,7 +64,7 @@ public class JaxbDataFormat implements DataFormat {
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, ClassNotFoundException {
         try {
-            return unmarshaller.unmarshal(stream);
+            return getUnmarshaller().unmarshal(stream);
         }
         catch (JAXBException e) {
             throw IOHelper.createIOException(e);
@@ -110,6 +115,11 @@ public class JaxbDataFormat implements DataFormat {
     }
 
     protected JAXBContext createContext() throws JAXBException {
-        return JAXBContext.newInstance();
+        if (contextPath != null) {
+            return JAXBContext.newInstance(contextPath);
+        }
+        else {
+            return JAXBContext.newInstance();
+        }
     }
 }

@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.util.ObjectHelper;
+
 /**
  * @version $Revision$
  */
@@ -37,6 +39,17 @@ public class PurchaseOrder {
     @Override
     public String toString() {
         return "PurchaseOrder[name: " + name + " amount: " + amount + " price: " + price + "]";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof PurchaseOrder) {
+            PurchaseOrder that = (PurchaseOrder) o;
+            return ObjectHelper.equals(this.name, that.name) &&
+                    ObjectHelper.equals(this.amount, that.amount) &&
+                    ObjectHelper.equals(this.price, that.price);
+        }
+        return false;
     }
 
     public double getAmount() {
@@ -62,5 +75,4 @@ public class PurchaseOrder {
     public void setPrice(double price) {
         this.price = price;
     }
-
 }
