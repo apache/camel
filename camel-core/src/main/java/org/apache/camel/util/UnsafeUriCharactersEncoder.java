@@ -16,15 +16,18 @@
  */
 package org.apache.camel.util;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.util.BitSet;
 
-import sun.nio.cs.ThreadLocalCoders;
-import sun.text.Normalizer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 public class UnsafeUriCharactersEncoder {
+    private static final transient Log LOG = LogFactory.getLog(UnsafeUriCharactersEncoder.class);
     static BitSet unsafeCharacters;
     static {
         unsafeCharacters = new BitSet(256);
@@ -56,33 +59,29 @@ public class UnsafeUriCharactersEncoder {
             return s;
         
         // First check whether we actually need to encode
-        byte[] bytes = s.getBytes();
-        for (int i = 0;;) {
-            if (unsafeCharacters.get(bytes[i]))
-                break;
-            if (++i >= bytes.length)
-                return s;
-        }
         
-        String ns = Normalizer.normalize(s, Normalizer.COMPOSE, 0);        
-        ByteBuffer bb = null;
         try {
-            bb = ThreadLocalCoders.encoderFor("UTF-8")
-                .encode(CharBuffer.wrap(ns));
-        } catch (CharacterCodingException x) {
-            assert false;
-        }
-
-        StringBuffer sb = new StringBuffer();
-        while (bb.hasRemaining()) {
-            int b = bb.get() & 0xff;
-            if (unsafeCharacters.get(b)) {
-                appendEscape(sb, (byte)b);
-            }    
-            else
-                sb.append((char)b);
-        }
-        return sb.toString();
+            byte[] bytes = s.getBytes("UTF8");        
+            for (int i = 0;;) {
+                if (unsafeCharacters.get(bytes[i]))
+                    break;
+                if (++i >= bytes.length)
+                    return s;
+            }
+            
+            StringBuffer sb = new StringBuffer();
+            for (byte b : bytes) {            
+                if (unsafeCharacters.get(b)) {
+                    appendEscape(sb, (byte)b);
+                }    
+                else
+                    sb.append((char)b);
+            }
+            return sb.toString();
+        } catch (UnsupportedEncodingException e) {
+            LOG.error("Can't encoding the uri: ", e);            
+            return null;
+        }    
     }
     
     private static void appendEscape(StringBuffer sb, byte b) {
