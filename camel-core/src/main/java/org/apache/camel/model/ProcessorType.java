@@ -33,11 +33,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.Builder;
+import org.apache.camel.builder.DataTypeExpression;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.ProcessorBuilder;
-import org.apache.camel.builder.DataTypeExpression;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.dataformat.DataFormatType;
@@ -52,6 +52,7 @@ import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MessageIdRepository;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Policy;
+import org.apache.camel.spi.Registry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -730,30 +731,89 @@ public abstract class ProcessorType<Type extends ProcessorType> {
 
     // DataFormat support
     // -------------------------------------------------------------------------
+
+    /**
+     * Unmarshals the in body using a {@link DataFormat} expression to define
+     * the format of the input message and the output will be set on the out message body.
+     *
+     * @return the expression to create the {@link DataFormat}
+     */
     public DataTypeExpression<Type> unmarshal() {
         return new DataTypeExpression<Type>(this, DataTypeExpression.Operation.Unmarshal);
     }
 
+    /**
+     * Unmarshals the in body using the specified {@link DataFormat}
+     * and sets the output on the out message body.
+     *
+     * @return this object
+     */
     public Type unmarshal(DataFormatType dataFormatType) {
         addOutput(new UnmarshalType(dataFormatType));
         return (Type) this;
     }
 
+    /**
+     * Unmarshals the in body using the specified {@link DataFormat}
+     * and sets the output on the out message body.
+     *
+     * @return this object
+     */
     public Type unmarshal(DataFormat dataFormat) {
         return unmarshal(new DataFormatType(dataFormat));
     }
 
+    /**
+     * Unmarshals the in body using the specified {@link DataFormat}
+     * reference in the {@link Registry} and sets the output on the out message body.
+     *
+     * @return this object
+     */
+    public Type unmarshal(String dataTypeRef) {
+        addOutput(new UnmarshalType(dataTypeRef));
+        return (Type) this;
+    }
+
+    /**
+     * Marshals the in body using a {@link DataFormat} expression to define
+     * the format of the output which will be added to the out body.
+     *
+     * @return the expression to create the {@link DataFormat}
+     */
     public DataTypeExpression<Type> marshal() {
         return new DataTypeExpression<Type>(this, DataTypeExpression.Operation.Marshal);
     }
 
+    /**
+     * Marshals the in body using the specified {@link DataFormat}
+     * and sets the output on the out message body.
+     *
+     * @return this object
+     */
     public Type marshal(DataFormatType dataFormatType) {
         addOutput(new MarshalType(dataFormatType));
         return (Type) this;
     }
 
+    /**
+     * Marshals the in body using the specified {@link DataFormat}
+     * and sets the output on the out message body.
+     *
+     * @return this object
+     */
     public Type marshal(DataFormat dataFormat) {
         return marshal(new DataFormatType(dataFormat));
+    }
+
+    /**
+     * Marshals the in body the specified {@link DataFormat}
+     * reference in the {@link Registry} and sets the output on the out message body.
+     *
+     * @return this object
+     */
+    public Type marshal(String dataTypeRef) {
+        addOutput(new MarshalType(dataTypeRef));
+        return (Type) this;
     }
 
 

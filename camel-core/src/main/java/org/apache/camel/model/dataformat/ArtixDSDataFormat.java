@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.DataFormat;
 
 /**
- * Represents the <a href="http://www.iona.com/artix/ds">Artix Data Services</a>
+ * Represents the <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>
  * {@link DataFormat}
  *
  * @version $Revision: 1.1 $
