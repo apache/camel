@@ -24,7 +24,7 @@
 
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-parent</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.2.0</version>
   <packaging>pom</packaging>
   <name>Camel</name>
   <description>Camel Parent POM</description>
@@ -34,7 +34,7 @@
   </prerequisites>
 
   <properties>
-    <camel-version>1.1-SNAPSHOT</camel-version>
+    <camel-version>1.2.0</camel-version>
     <compiler.fork>false</compiler.fork>
     <cxf-version>2.0.2-incubator</cxf-version>
     <spring-version>2.0.6</spring-version>
