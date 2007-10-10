@@ -179,7 +179,7 @@ public class IntrospectionSupport {
     public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
         try {
             Class clazz = target.getClass();
-            Method setter = findSetterMethod(typeConverter, clazz, name);
+            Method setter = findSetterMethod(typeConverter, clazz, name, value);
             if (setter == null) {
                 return false;
             }
@@ -244,7 +244,7 @@ public class IntrospectionSupport {
         return null;
     }
 
-    private static Method findSetterMethod(TypeConverter typeConverter, Class clazz, String name) {
+    private static Method findSetterMethod(TypeConverter typeConverter, Class clazz, String name, Object value) {
         // Build the method name.
         name = "set" + ObjectHelper.capitalize(name);
         while (clazz != Object.class) {
@@ -253,7 +253,8 @@ public class IntrospectionSupport {
                 Method method = methods[i];
                 Class params[] = method.getParameterTypes();
                 if (method.getName().equals(name) && params.length == 1) {
-                    if (typeConverter != null || isSettableType(params[0])) {
+                    Class paramType = params[0];
+                    if (typeConverter != null || isSettableType(paramType) || paramType.isInstance(value)) {
                         return method;
                     }
                 }

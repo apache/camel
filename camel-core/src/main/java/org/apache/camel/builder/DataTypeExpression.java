@@ -18,11 +18,12 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.model.ProcessorType;
-import org.apache.camel.model.dataformat.JaxbDataFormat;
+import org.apache.camel.model.dataformat.ArtixDSContentType;
+import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.DataFormatType;
+import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
-import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.spi.DataFormat;
 
 /**
@@ -79,6 +80,37 @@ public class DataTypeExpression<T extends ProcessorType> {
      */
     public T artixDS() {
         return dataFormat(new ArtixDSDataFormat());
+    }
+
+    /**
+     * Uses the
+     * <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>
+     * data format with the specified type of ComplexDataObject
+     * for marshalling and unmarshalling messages using the dataObject's default Source and Sink.
+     */
+    public T artixDS(Class<?> dataObjectType) {
+        return dataFormat(new ArtixDSDataFormat(dataObjectType));
+    }
+
+
+    /**
+     * Uses the
+     * <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>
+     * data format with the specified type of ComplexDataObject
+     * for marshalling and unmarshalling messages using the dataObject's default Source and Sink.
+     */
+    public T artixDS(Class<?> elementType, ArtixDSContentType contentType) {
+        return dataFormat(new ArtixDSDataFormat(elementType, contentType));
+    }
+
+    /**
+     * Uses the
+     * <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>
+     * data format with the specified content type
+     * for marshalling and unmarshalling messages
+     */
+    public T artixDS(ArtixDSContentType contentType) {
+        return dataFormat(new ArtixDSDataFormat(contentType));
     }
 
     private T dataFormat(DataFormatType dataFormatType) {

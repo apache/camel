@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>
@@ -33,20 +34,87 @@ import org.apache.camel.spi.DataFormat;
 @XmlRootElement(name = "artixDS")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ArtixDSDataFormat extends DataFormatType {
-    @XmlAttribute
-    private String element;
-    @XmlAttribute
+    @XmlAttribute(required = false)
+    private String elementTypeName;
+    @XmlAttribute(required = false)
     private String format;
+    @XmlAttribute(required = false)
+    private Class<?> elementType;
+    @XmlAttribute(required = false)
+    private ArtixDSContentType contentType;
 
     public ArtixDSDataFormat() {
-        super("org.apache.camel.artix.ds.ArtixDSDataFormat");
+        super("org.apache.camel.artix.ds.ArtixDSFormat");
     }
 
-    public String getElement() {
-        return element;
+    public ArtixDSDataFormat(Class<?> elementType) {
+        this();
+        this.elementType = elementType;
     }
 
-    public void setElement(String element) {
-        this.element = element;
+    public ArtixDSDataFormat(Class<?> elementType, ArtixDSContentType contentType) {
+        this();
+        this.elementType = elementType;
+        this.contentType = contentType;
+    }
+
+    public ArtixDSDataFormat(ArtixDSContentType contentType) {
+        this();
+        this.contentType = contentType;
+    }
+
+    // Properties
+    //-------------------------------------------------------------------------
+
+    public String getElementTypeName() {
+        return elementTypeName;
+    }
+
+    public void setElementTypeName(String elementTypeName) {
+        this.elementTypeName = elementTypeName;
+    }
+
+    public ArtixDSContentType getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(ArtixDSContentType contentType) {
+        this.contentType = contentType;
+    }
+
+    public Class<?> getElementType() {
+        if (elementType == null) {
+            if (elementTypeName != null) {
+                elementType = ObjectHelper.loadClass(elementTypeName, getClass().getClassLoader());
+            }
+        }
+        return elementType;
+    }
+
+    public void setElementType(Class<?> elementType) {
+        this.elementType = elementType;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+
+    @Override
+    protected void configureDataFormat(DataFormat dataFormat) {
+        Class<?> type = getElementType();
+        if (type != null) {
+            setProperty(dataFormat, "elementType", type);
+        }
+        ArtixDSContentType content = getContentType();
+        if (content != null) {
+            setProperty(dataFormat, "contentType", content);
+        }
     }
 }

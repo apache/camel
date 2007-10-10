@@ -250,4 +250,11 @@ public class ExchangeHelper {
         }
         map.put("camelContext", exchange.getContext());
     }
+
+    /**
+     * Returns the MIME content type on the input message or null if one is not defined
+     */
+    public static String getContentType(Exchange exchange) {
+       return exchange.getIn().getHeader("Content-Type", String.class);
+    }
 }

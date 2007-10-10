@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.spi.DataFormat;
 
 /**
@@ -50,5 +51,12 @@ public class JaxbDataFormat extends DataFormatType {
 
     public void setPrettyPrint(Boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
+    }
+
+    @Override
+    protected void configureDataFormat(DataFormat dataFormat) {
+        if (ObjectConverter.toBool(getPrettyPrint())) {
+            setProperty(dataFormat, "prettyPrint", Boolean.TRUE);
+        }
     }
 }
