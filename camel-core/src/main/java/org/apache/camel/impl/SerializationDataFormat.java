@@ -28,6 +28,9 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
 
 /**
+ * The <a href="http://activemq.apache.org/camel/data-format.html">data format</a>
+ * using Java Serialiation.
+ *
  * @version $Revision: 1.1 $
  */
 public class SerializationDataFormat implements DataFormat {

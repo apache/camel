@@ -49,6 +49,10 @@ public class MarshalType extends OutputType {
         this.dataFormatType = dataFormatType;
     }
 
+    public MarshalType(String ref) {
+        this.ref = ref;
+    }
+
     @Override
     public String toString() {
         if (dataFormatType != null) {

@@ -49,6 +49,10 @@ public class UnmarshalType extends OutputType {
         this.dataFormatType = dataFormatType;
     }
 
+    public UnmarshalType(String ref) {
+        this.ref = ref;
+    }
+
     @Override
     public String toString() {
         if (dataFormatType != null) {

@@ -15,32 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.converter.xmlbeans;
 
-import java.io.OutputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.ExchangeHelper;
+import org.apache.xmlbeans.XmlObject;
 
 /**
- * Represents a
- * <a href="http://activemq.apache.org/camel/data-format.html">data format</a>
- * used to marshal objects to and from streams
- * such as Java Serialization or using JAXB2 to encode/decode objects using XML
- * or using SOAP encoding.
+ * A <a href="http://activemq.apache.org/camel/data-format.html">data format</a>
+ * ({@link DataFormat}) using XmlBeans to marshal to and from XML
  *
  * @version $Revision: 1.1 $
  */
-public interface DataFormat {
+public class XmlBeansDataFormat implements DataFormat{
 
-    /**
-     * Marshals the object to the given Stream.
-     */
-    void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception;
+    public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
+        XmlObject object = ExchangeHelper.convertToMandatoryType(exchange, XmlObject.class, body);
+        object.save(stream);
+    }
 
-    /**
-     * Unmarshals the given stream into an object.
-     */
-    Object unmarshal(Exchange exchange, InputStream stream) throws Exception;
+    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        return XmlObject.Factory.parse(stream);
+    }
 }

@@ -26,7 +26,8 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
- * Unmarshals the body of the incoming message using the given data format
+ * Unmarshals the body of the incoming message using the given
+ * <a href="http://activemq.apache.org/camel/data-format.html">data format</a>
  *
  * @version $Revision: 1.1 $
  */
@@ -39,9 +40,13 @@ public class UnmarshalProcessor implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         InputStream stream = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
-        Object result = dataFormat.unmarshal(exchange, stream);
+
+        // lets setup the out message before we invoke the dataFormat
+        // so that it can mutate it if necessary
         Message out = exchange.getOut(true);
         out.copyFrom(exchange.getIn());
+
+        Object result = dataFormat.unmarshal(exchange, stream);
         out.setBody(result);
     }
 }
