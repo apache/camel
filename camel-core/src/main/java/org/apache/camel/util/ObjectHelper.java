@@ -459,4 +459,18 @@ public class ObjectHelper {
             throw new RuntimeCamelException(e);
         }
     }
+
+    /**
+     * A helper method to create a new instance of a type using the default constructor arguments.
+     */
+    public static <T> T newInstance(Class<?> actualType, Class<T> expectedType) {
+        try {
+            Object value = actualType.newInstance();
+            return cast(expectedType, value);
+        } catch (InstantiationException e) {
+            throw new RuntimeCamelException(e.getCause());
+        } catch (IllegalAccessException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
 }

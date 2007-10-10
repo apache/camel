@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.IntrospectionSupport;
 
 /**
  * @version $Revision: 1.1 $
@@ -52,10 +53,14 @@ public class DataFormatType {
         if (dataFormat == null) {
             dataFormat = createDataFormat(routeContext);
             ObjectHelper.notNull(dataFormat, "dataFormat");
+            configureDataFormat(dataFormat);
         }
         return dataFormat;
     }
 
+    /**
+     * Factory method to create the data format instance
+     */
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (dataFormatTypeName != null) {
             Class type = ObjectHelper.loadClass(dataFormatTypeName, getClass().getClassLoader());
@@ -67,4 +72,22 @@ public class DataFormatType {
         return null;
     }
 
+    /**
+     * Allows derived classes to customize the data format
+     */
+    protected void configureDataFormat(DataFormat dataFormat) {
+    }
+
+    /**
+     * Sets a named property on the data format instance using introspection
+     */
+    protected void setProperty(DataFormat dataFormat, String name, Object value) {
+        try {
+            IntrospectionSupport.setProperty(dataFormat,name, value);
+        }
+        catch (Exception e) {
+            throw new IllegalArgumentException("Failed to set property " + name + " on " + dataFormat + ". Reason: " + e, e);
+        }
+
+    }
 }
