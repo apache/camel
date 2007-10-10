@@ -33,10 +33,12 @@ public class UnitOfWorkTest extends ContextTestSupport {
     protected Exchange completed;
     protected Exchange failed;
     protected String uri = "direct:foo";
+    protected CountDownLatch doneLatch = new CountDownLatch(1);
 
     public void testSuccess() throws Exception {
         sendMessage();
 
+        assertTrue("Exchange did not complete.", doneLatch.await(5, TimeUnit.SECONDS));
         assertNull("Should not have failed", failed);
         assertNotNull("Should have received completed notification", completed);
 
@@ -46,6 +48,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
     public void testFail() throws Exception {
         sendMessage();
 
+        assertTrue("Exchange did not complete.", doneLatch.await(5, TimeUnit.SECONDS));
         assertNull("Should not have completed", completed);
         assertNotNull("Should have received failed notification", failed);
 
@@ -55,6 +58,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
     public void testException() throws Exception {
         sendMessage();
 
+        assertTrue("Exchange did not complete.", doneLatch.await(5, TimeUnit.SECONDS));
         assertNull("Should not have completed", completed);
         assertNotNull("Should have received failed notification", failed);
 
@@ -66,10 +70,12 @@ public class UnitOfWorkTest extends ContextTestSupport {
         synchronization = new Synchronization() {
             public void onComplete(Exchange exchange) {
                 completed = exchange;
+                doneLatch.countDown();
             }
 
             public void onFailure(Exchange exchange) {
                 failed = exchange;
+                doneLatch.countDown();
             }
         };
 
