@@ -15,40 +15,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.dataformat;
+package org.apache.camel.processor;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.io.ByteArrayOutputStream;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.Message;
 import org.apache.camel.spi.DataFormat;
 
 /**
- * Represents the JAXB2 XML {@link DataFormat}
+ * Marshals the body of the incoming message using the given data format
  *
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "jaxb")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class JaxbDataFormat extends DataFormatType {
-    @XmlAttribute(required = false)
-    private Boolean prettyPrint;
+public class MarshalProcessor implements Processor {
+    private final DataFormat dataFormat;
 
-    public JaxbDataFormat() {
-        super("org.apache.camel.converter.jaxb.JaxbDataFormat");
+    public MarshalProcessor(DataFormat dataFormat) {
+        this.dataFormat = dataFormat;
     }
 
-    public JaxbDataFormat(boolean prettyPrint) {
-        this();
-        setPrettyPrint(prettyPrint);
-    }
-
-    public Boolean getPrettyPrint() {
-        return prettyPrint;
-    }
-
-    public void setPrettyPrint(Boolean prettyPrint) {
-        this.prettyPrint = prettyPrint;
+    public void process(Exchange exchange) throws Exception {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        Message in = exchange.getIn();
+        Object body = in.getBody();
+        dataFormat.marshal(exchange, body, buffer);
+        byte[] data = buffer.toByteArray();
+        Message out = exchange.getOut(true);
+        out.copyFrom(in);
+        out.setBody(data);
     }
 }

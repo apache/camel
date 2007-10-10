@@ -19,12 +19,52 @@ package org.apache.camel.model.dataformat;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version $Revision: 1.1 $
  */
 @XmlType(name = "dataFormatType")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class DataFormatType {
+public class DataFormatType {
+    @XmlTransient
+    private DataFormat dataFormat;
+    @XmlTransient
+    private String dataFormatTypeName;
+
+    public DataFormatType() {
+    }
+
+    public DataFormatType(DataFormat dataFormat) {
+        this.dataFormat = dataFormat;
+    }
+
+    protected DataFormatType(String dataFormatTypeName) {
+        this.dataFormatTypeName = dataFormatTypeName;
+    }
+
+    public DataFormat getDataFormat(RouteContext routeContext) {
+        if (dataFormat == null) {
+            dataFormat = createDataFormat(routeContext);
+            ObjectHelper.notNull(dataFormat, "dataFormat");
+        }
+        return dataFormat;
+    }
+
+    protected DataFormat createDataFormat(RouteContext routeContext) {
+        if (dataFormatTypeName != null) {
+            Class type = ObjectHelper.loadClass(dataFormatTypeName, getClass().getClassLoader());
+            if (type == null) {
+                throw new IllegalArgumentException("The class " + dataFormatTypeName + " is not on the classpath! Cannot use the dataFormat " + this);
+            }
+            return (DataFormat) ObjectHelper.newInstance(type);
+        }
+        return null;
+    }
+
 }

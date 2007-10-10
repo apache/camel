@@ -37,8 +37,10 @@ import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.builder.DataTypeExpression;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.RouteContext;
+import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.processor.DelegateProcessor;
@@ -48,6 +50,7 @@ import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MessageIdRepository;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Policy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -724,6 +727,35 @@ public abstract class ProcessorType<Type extends ProcessorType> {
     public Type convertFaultBodyTo(Class type) {
         return process(ProcessorBuilder.setFaultBody(Builder.faultBody().convertTo(type)));
     }
+
+    // DataFormat support
+    // -------------------------------------------------------------------------
+    public DataTypeExpression<Type> unmarshal() {
+        return new DataTypeExpression<Type>(this, DataTypeExpression.Operation.Unmarshal);
+    }
+
+    public Type unmarshal(DataFormatType dataFormatType) {
+        addOutput(new UnmarshalType(dataFormatType));
+        return (Type) this;
+    }
+
+    public Type unmarshal(DataFormat dataFormat) {
+        return unmarshal(new DataFormatType(dataFormat));
+    }
+
+    public DataTypeExpression<Type> marshal() {
+        return new DataTypeExpression<Type>(this, DataTypeExpression.Operation.Marshal);
+    }
+
+    public Type marshal(DataFormatType dataFormatType) {
+        addOutput(new MarshalType(dataFormatType));
+        return (Type) this;
+    }
+
+    public Type marshal(DataFormat dataFormat) {
+        return marshal(new DataFormatType(dataFormat));
+    }
+
 
     // Properties
     // -------------------------------------------------------------------------

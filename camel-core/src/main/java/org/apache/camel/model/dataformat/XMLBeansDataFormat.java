@@ -35,6 +35,10 @@ public class XMLBeansDataFormat extends DataFormatType {
     @XmlAttribute(required = false)
     private Boolean prettyPrint;
 
+    public XMLBeansDataFormat() {
+        super("org.apache.camel.dataformat.converter.XmlBeansDataType");
+    }
+
     public Boolean getPrettyPrint() {
         return prettyPrint;
     }

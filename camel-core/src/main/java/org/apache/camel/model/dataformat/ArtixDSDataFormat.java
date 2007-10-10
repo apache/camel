@@ -25,7 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.DataFormat;
 
 /**
- * Represents the Artix Data Services {@link DataFormat}
+ * Represents the <a href="http://www.iona.com/artix/ds">Artix Data Services</a>
+ * {@link DataFormat}
  *
  * @version $Revision: 1.1 $
  */
@@ -36,6 +37,10 @@ public class ArtixDSDataFormat extends DataFormatType {
     private String element;
     @XmlAttribute
     private String format;
+
+    public ArtixDSDataFormat() {
+        super("org.apache.camel.artix.ds.ArtixDSDataFormat");
+    }
 
     public String getElement() {
         return element;

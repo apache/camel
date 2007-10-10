@@ -15,40 +15,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.dataformat;
+package org.apache.camel.processor;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.io.InputStream;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.Message;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.ExchangeHelper;
 
 /**
- * Represents the JAXB2 XML {@link DataFormat}
+ * Unmarshals the body of the incoming message using the given data format
  *
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "jaxb")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class JaxbDataFormat extends DataFormatType {
-    @XmlAttribute(required = false)
-    private Boolean prettyPrint;
+public class UnmarshalProcessor implements Processor {
+    private final DataFormat dataFormat;
 
-    public JaxbDataFormat() {
-        super("org.apache.camel.converter.jaxb.JaxbDataFormat");
+    public UnmarshalProcessor(DataFormat dataFormat) {
+        this.dataFormat = dataFormat;
     }
 
-    public JaxbDataFormat(boolean prettyPrint) {
-        this();
-        setPrettyPrint(prettyPrint);
-    }
-
-    public Boolean getPrettyPrint() {
-        return prettyPrint;
-    }
-
-    public void setPrettyPrint(Boolean prettyPrint) {
-        this.prettyPrint = prettyPrint;
+    public void process(Exchange exchange) throws Exception {
+        InputStream stream = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
+        Object result = dataFormat.unmarshal(exchange, stream);
+        Message out = exchange.getOut(true);
+        out.copyFrom(exchange.getIn());
+        out.setBody(result);
     }
 }

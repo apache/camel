@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.dataformat.DataFormatType;
+import org.apache.camel.processor.UnmarshalProcessor;
+import org.apache.camel.spi.DataFormat;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -41,6 +43,10 @@ public class UnmarshalType extends OutputType {
     private DataFormatType dataFormatType;
 
     public UnmarshalType() {
+    }
+
+    public UnmarshalType(DataFormatType dataFormatType) {
+        this.dataFormatType = dataFormatType;
     }
 
     @Override
@@ -76,6 +82,7 @@ public class UnmarshalType extends OutputType {
             notNull(ref, "ref or dataFormatType");
             type = routeContext.lookup(ref, DataFormatType.class);
         }
-        throw new UnsupportedOperationException("Not implemented yet!");
+        DataFormat dataFormat = type.getDataFormat(routeContext);
+        return new UnmarshalProcessor(dataFormat);
     }
 }
