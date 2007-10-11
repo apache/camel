@@ -23,16 +23,17 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.impl.RouteContext;
+import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version $Revision: 1.1 $
  */
 @XmlType(name = "dataFormatType")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DataFormatType {
+public class DataFormatType extends IdentifiedType {
     @XmlTransient
     private DataFormat dataFormat;
     @XmlTransient

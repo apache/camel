@@ -19,14 +19,19 @@ package org.apache.camel.model;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.model.dataformat.ArtixDSDataFormat;
+import org.apache.camel.model.dataformat.DataFormatType;
+import org.apache.camel.model.dataformat.JaxbDataFormat;
+import org.apache.camel.model.dataformat.SerializationDataFormat;
+import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.impl.RouteContext;
-import org.apache.camel.model.dataformat.DataFormatType;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -39,7 +44,14 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 public class MarshalType extends OutputType {
     @XmlAttribute(required = false)
     private String ref;
-    @XmlElementRef
+    // TODO cannot use @XmlElementRef as it doesn't allow optional properties
+    // @XmlElementRef
+    @XmlElements({
+    @XmlElement(required = false, name = "artixDS", type = ArtixDSDataFormat.class),
+    @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
+    @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),
+    @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class)}
+    )
     private DataFormatType dataFormatType;
 
     public MarshalType() {

@@ -16,11 +16,26 @@
  */
 package org.apache.camel.spring;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.management.MBeanServer;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.spi.InstrumentationAgent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,12 +47,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-
-import javax.management.MBeanServer;
-import javax.xml.bind.annotation.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A Spring {@link FactoryBean} to create and initialize a
@@ -60,6 +69,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private List<EndpointFactoryBean> endpoints;
     @XmlElement(name = "route", required = false)
     private List<RouteType> routes = new ArrayList<RouteType>();
+    @XmlElementRef
+    private List<DataFormatType> dataFormats;
     @XmlAttribute(required = false)
     private Boolean useJmx;
     @XmlAttribute(required = false)

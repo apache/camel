@@ -16,7 +16,9 @@
  */
 package org.apache.camel.spring.handler;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
@@ -24,13 +26,16 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.builder.xml.XPathBuilder;
+import org.apache.camel.model.dataformat.ArtixDSDataFormat;
+import org.apache.camel.model.dataformat.JaxbDataFormat;
+import org.apache.camel.model.dataformat.SerializationDataFormat;
+import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.EndpointFactoryBean;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.camel.spring.remoting.CamelServiceExporter;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -47,17 +52,24 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     public static final String JAXB_PACKAGES = "org.apache.camel.spring:org.apache.camel.model:org.apache.camel.model.config:org.apache.camel.model.dataformat:org.apache.camel.model.language";
 
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(EndpointFactoryBean.class);
-    protected BeanDefinitionParser proxyParser = new BeanDefinitionParser(CamelProxyFactoryBean.class);
-    protected BeanDefinitionParser exportParser = new BeanDefinitionParser(CamelServiceExporter.class);
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
 
     protected Set<String> parserElementNames = new HashSet<String>();
     private JAXBContext jaxbContext;
+    private Map<String, BeanDefinitionParser> parserMap =new HashMap<String, BeanDefinitionParser>();
 
     public void init() {
+        // remoting
+        addBeanDefinitionParser("proxy", CamelProxyFactoryBean.class);
+        addBeanDefinitionParser("export", CamelServiceExporter.class);
+
+        // data types
+        addBeanDefinitionParser("artixDS", ArtixDSDataFormat.class);
+        addBeanDefinitionParser("jaxb", JaxbDataFormat.class);
+        addBeanDefinitionParser("serialization", SerializationDataFormat.class);
+        addBeanDefinitionParser("xmlBeans", XMLBeansDataFormat.class);
+
         registerParser("endpoint", endpointParser);
-        registerParser("proxy", proxyParser);
-        registerParser("export", exportParser);
 
         registerParser("camelContext", new CamelContextBeanDefinitionParser(CamelContextFactoryBean.class));
 
@@ -71,6 +83,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("namespacesFromDom", element);
             }
         });
+    }
+
+    private void addBeanDefinitionParser(String elementName, Class<?> type) {
+        BeanDefinitionParser parser = new BeanDefinitionParser(type);
+        registerParser(elementName, parser);
+        parserMap.put(elementName, parser);
     }
 
     protected void createBeanPostProcessor(ParserContext parserContext, String contextId, Element childElement) {
@@ -164,17 +182,14 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                             // builder.getBeanDefinition());
                             parserContext.registerComponent(new BeanComponentDefinition(definition, id));
                         }
-                    } else if (localName.equals("proxy")) {
-                        BeanDefinition definition = proxyParser.parse(childElement, parserContext);
-                        String id = childElement.getAttribute("id");
-                        if (ObjectHelper.isNotNullAndNonEmpty(id)) {
-                            parserContext.registerComponent(new BeanComponentDefinition(definition, id));
-                        }
-                    } else if (localName.equals("export")) {
-                        BeanDefinition definition = exportParser.parse(childElement, parserContext);
-                        String id = childElement.getAttribute("id");
-                        if (ObjectHelper.isNotNullAndNonEmpty(id)) {
-                            parserContext.registerComponent(new BeanComponentDefinition(definition, id));
+                    } else {
+                        BeanDefinitionParser parser = parserMap.get(localName);
+                        if (parser != null) {
+                            BeanDefinition definition = parser.parse(childElement, parserContext);
+                            String id = childElement.getAttribute("id");
+                            if (ObjectHelper.isNotNullAndNonEmpty(id)) {
+                                parserContext.registerComponent(new BeanComponentDefinition(definition, id));
+                            }
                         }
                     }
                 }
