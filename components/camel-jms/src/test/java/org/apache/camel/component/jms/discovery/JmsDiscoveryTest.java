@@ -32,20 +32,22 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
  * @version $Revision: 574458 $
  */
 public class JmsDiscoveryTest extends ContextTestSupport {
-
     protected MyRegistry registry = new MyRegistry();
 
     public void testDiscovery() throws Exception {
         // lets wait to see if we get 3 services
-
-        Thread.sleep(3000);
+        for (int i = 0; i < 15; i++) {
+            Thread.sleep(1000);
+            if (registry.getServices().size() == 3) {
+                break;
+            }
+        }
 
         Map<String, Map> map = new HashMap<String, Map>(registry.getServices());
         System.out.println("Received map: " + map);
 
         assertEquals("Size of map: " + map, 3, map.size());
     }
-
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
