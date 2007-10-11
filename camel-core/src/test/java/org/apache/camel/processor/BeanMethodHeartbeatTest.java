@@ -16,17 +16,18 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * This test shows we can poll a bean for a method and send the POJO over some transport
@@ -43,7 +44,7 @@ public class BeanMethodHeartbeatTest extends ContextTestSupport {
 
         resultEndpoint.assertIsSatisfied();
 
-        List<Exchange> list = resultEndpoint.getReceivedExchanges();
+        List<Exchange> list = new ArrayList<Exchange>(resultEndpoint.getReceivedExchanges());
         log.debug("Received: " + list);
         Exchange exchange = list.get(0);
         log.debug("In: " + exchange.getIn());
@@ -63,7 +64,7 @@ public class BeanMethodHeartbeatTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("bean:myService?methodName=status").to("mock:result");
+                from("bean:myService?method=status").to("mock:result");
             }
         };
     }
