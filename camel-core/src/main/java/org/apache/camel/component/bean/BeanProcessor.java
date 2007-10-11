@@ -44,8 +44,8 @@ public class BeanProcessor extends ServiceSupport implements Processor {
 
     private final Object pojo;
     private final BeanInfo beanInfo;
-    private Method method;
-    private String methodName;
+    private Method methodObject;
+    private String method;
     private final Processor processor;
 
     public BeanProcessor(Object pojo, BeanInfo beanInfo) {
@@ -73,7 +73,7 @@ public class BeanProcessor extends ServiceSupport implements Processor {
     }
     @Override
     public String toString() {
-        String description = method != null ? " " + method : "";
+        String description = methodObject != null ? " " + methodObject : "";
         return "BeanProcessor[" + pojo + description + "]";
     }
 
@@ -95,13 +95,13 @@ public class BeanProcessor extends ServiceSupport implements Processor {
         }
 
         MethodInvocation invocation;
-        if (method != null) {
-            invocation = beanInfo.createInvocation(method, pojo, exchange);
+        if (methodObject != null) {
+            invocation = beanInfo.createInvocation(methodObject, pojo, exchange);
         } else {
             // lets pass in the method name to use if its specified
-            if (ObjectHelper.isNotNullAndNonEmpty(methodName)) {
+            if (ObjectHelper.isNotNullAndNonEmpty(method)) {
                 if (isNullOrBlank(in.getHeader(METHOD_NAME, String.class))) {
-                    in.setHeader(METHOD_NAME, methodName);
+                    in.setHeader(METHOD_NAME, method);
                 }
             }
             invocation = beanInfo.createInvocation(pojo, exchange);
@@ -134,20 +134,35 @@ public class BeanProcessor extends ServiceSupport implements Processor {
     // Properties
     // -----------------------------------------------------------------------
 
-    public Method getMethod() {
+    public Method getMethodObject() {
+        return methodObject;
+    }
+
+    public void setMethodObject(Method methodObject) {
+        this.methodObject = methodObject;
+    }
+
+    public String getMethod() {
         return method;
     }
 
-    public void setMethod(Method method) {
+    /**
+     * Sets the method name to use
+     */
+    public void setMethod(String method) {
         this.method = method;
     }
 
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
+    /**
+     * Kept around for backwards compatibility, please use {@link #setMethod(String)}
+     * in future instead.
+     *
+     * @deprecated
+     * @see #setMethod(String)
+     * @param method
+     */
+    public void setMethodName(String method) {
+        setMethod(method);
     }
 
     // Implementation methods

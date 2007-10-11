@@ -102,7 +102,7 @@ public class BeanRef extends OutputType {
         }
         BeanProcessor answer = new BeanProcessor(bean, routeContext.getCamelContext());
         if (method != null) {
-            answer.setMethodName(method);
+            answer.setMethod(method);
         }
         return answer;
     }
