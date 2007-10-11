@@ -33,6 +33,8 @@ import org.apache.camel.spi.DataFormat;
 @XmlRootElement(name = "jaxb")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxbDataFormat extends DataFormatType {
+    @XmlAttribute(required = true)
+    private String contextPath;
     @XmlAttribute(required = false)
     private Boolean prettyPrint;
 
@@ -43,6 +45,14 @@ public class JaxbDataFormat extends DataFormatType {
     public JaxbDataFormat(boolean prettyPrint) {
         this();
         setPrettyPrint(prettyPrint);
+    }
+
+    public String getContextPath() {
+        return contextPath;
+    }
+
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
     }
 
     public Boolean getPrettyPrint() {
@@ -58,5 +68,6 @@ public class JaxbDataFormat extends DataFormatType {
         if (ObjectConverter.toBool(getPrettyPrint())) {
             setProperty(dataFormat, "prettyPrint", Boolean.TRUE);
         }
+        setProperty(dataFormat, "contextPath", contextPath);
     }
 }
