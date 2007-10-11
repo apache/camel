@@ -59,7 +59,7 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
     public boolean equals(Object object) {
         if (object instanceof DefaultEndpoint) {
             DefaultEndpoint that = (DefaultEndpoint) object;
-            return ObjectHelper.equals(this.endpointUri, that.endpointUri);
+            return ObjectHelper.equal(this.endpointUri, that.endpointUri);
         }
         return false;
     }

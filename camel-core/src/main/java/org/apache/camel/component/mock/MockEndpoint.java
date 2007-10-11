@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.*;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExpressionComparator;
 import org.apache.camel.util.ObjectHelper;
@@ -510,7 +509,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     }
 
     protected void assertEquals(String message, Object expectedValue, Object actualValue) {
-        if (!ObjectHelper.equals(expectedValue, actualValue)) {
+        if (!ObjectHelper.equal(expectedValue, actualValue)) {
             fail(message + ". Expected: <" + expectedValue + "> but was: <" + actualValue + ">");
         }
     }

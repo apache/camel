@@ -57,12 +57,6 @@
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
     </dependency>
-<!--
-    <dependency>
-      <groupId>stax</groupId>
-      <artifactId>stax-api</artifactId>
-    </dependency>
--->
 
 
     <!-- for testing -->
@@ -75,6 +69,17 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
       <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

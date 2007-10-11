@@ -82,7 +82,7 @@ public class ActivityState extends TemporalEntity {
      * Returns true if this state is for the given activity
      */
     public boolean isActivity(ActivityRules activityRules) {
-        return ObjectHelper.equals(getActivityDefinition(), activityRules.getActivityDefinition());
+        return ObjectHelper.equal(getActivityDefinition(), activityRules.getActivityDefinition());
     }
 
     // Properties

@@ -17,7 +17,6 @@
 package org.apache.camel.util;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Body;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.io.OutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 
@@ -51,7 +49,7 @@ public class ObjectHelper {
     /**
      * A helper method for comparing objects for equality while handling nulls
      */
-    public static boolean equals(Object a, Object b) {
+    public static boolean equal(Object a, Object b) {
         if (a == b) {
             return true;
         }
@@ -67,7 +65,7 @@ public class ObjectHelper {
      */
     public static boolean isEqualToAny(Object object, Object... values) {
         for (Object value : values) {
-            if (equals(object, value)) {
+            if (equal(object, value)) {
                 return true;
             }
         }
@@ -162,7 +160,7 @@ public class ObjectHelper {
         } else {
             Iterator iter = ObjectConverter.iterator(value);
             while (iter.hasNext()) {
-                if (equals(value, iter.next())) {
+                if (equal(value, iter.next())) {
                     return true;
                 }
             }

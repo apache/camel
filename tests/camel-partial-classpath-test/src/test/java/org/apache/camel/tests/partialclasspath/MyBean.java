@@ -38,7 +38,7 @@ public class MyBean {
     public boolean equals(Object o) {
         if (o instanceof MyBean) {
             MyBean that = (MyBean) o;
-            return ObjectHelper.equals(this.a, that.a) && ObjectHelper.equals(this.b, that.b);
+            return ObjectHelper.equal(this.a, that.a) && ObjectHelper.equal(this.b, that.b);
         }
         return false;
     }
