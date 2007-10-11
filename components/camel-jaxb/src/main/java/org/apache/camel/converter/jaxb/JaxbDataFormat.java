@@ -85,6 +85,14 @@ public class JaxbDataFormat implements DataFormat {
         this.context = context;
     }
 
+    public String getContextPath() {
+        return contextPath;
+    }
+
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
+    }
+
     public Marshaller getMarshaller() throws JAXBException {
         if (marshaller == null) {
             marshaller = getContext().createMarshaller();
