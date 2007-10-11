@@ -45,9 +45,9 @@ public class PurchaseOrder {
     public boolean equals(Object o) {
         if (o instanceof PurchaseOrder) {
             PurchaseOrder that = (PurchaseOrder) o;
-            return ObjectHelper.equals(this.name, that.name) &&
-                    ObjectHelper.equals(this.amount, that.amount) &&
-                    ObjectHelper.equals(this.price, that.price);
+            return ObjectHelper.equal(this.name, that.name) &&
+                    ObjectHelper.equal(this.amount, that.amount) &&
+                    ObjectHelper.equal(this.price, that.price);
         }
         return false;
     }

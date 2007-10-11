@@ -99,7 +99,7 @@ public class SimpleLanguage implements Language {
         if (ObjectHelper.isEqualToAny(expression, "body", "in.body")) {
             return ExpressionBuilder.bodyExpression();
         }
-        else if (ObjectHelper.equals(expression, "out.body")) {
+        else if (ObjectHelper.equal(expression, "out.body")) {
             return ExpressionBuilder.outBodyExpression();
         }
 

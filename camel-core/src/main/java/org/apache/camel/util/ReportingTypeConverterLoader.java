@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.camel.TypeConverter;
+import static org.apache.camel.util.ObjectHelper.equal;
 import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
 import org.apache.camel.impl.converter.TypeConverterRegistry;
 
@@ -32,8 +33,8 @@ public class ReportingTypeConverterLoader extends AnnotationTypeConverterLoader 
 	private static final Comparator<TypeMapping> COMPARE_LAST_LOADED_FIRST =
         new Comparator<TypeMapping>() {
 			public int compare(TypeMapping t1, TypeMapping t2) {
-				if (ObjectHelper.equals(t1.fromType, t2.fromType)) {
-					return ObjectHelper.equals(t1.toType, t2.toType) ? t1.index - t2.index :
+				if (equal(t1.fromType, t2.fromType)) {
+					return equal(t1.toType, t2.toType) ? t1.index - t2.index :
 						ObjectHelper.compare(getTypeName(t1.toType), getTypeName(t2.toType));
 				}
 				return ObjectHelper.compare(getTypeName(t1.fromType), getTypeName(t2.fromType));

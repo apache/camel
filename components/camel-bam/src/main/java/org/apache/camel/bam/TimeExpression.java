@@ -23,6 +23,7 @@ import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.camel.bam.rules.TemporalRule;
 import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ObjectHelper.equal;
 
 /**
  * @version $Revision: $
@@ -39,7 +40,7 @@ public abstract class TimeExpression {
     }
 
     public boolean isActivityLifecycle(ActivityRules activityRules, ActivityLifecycle lifecycle) {
-        return ObjectHelper.equals(activityRules, this.activityRules) && ObjectHelper.equals(lifecycle, this.lifecycle);
+        return equal(activityRules, this.activityRules) && equal(lifecycle, this.lifecycle);
     }
 
     /**

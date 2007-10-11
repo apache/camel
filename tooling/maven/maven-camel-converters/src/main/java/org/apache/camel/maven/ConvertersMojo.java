@@ -105,8 +105,8 @@ public class ConvertersMojo
             	boolean ignored = false;
             	Class from = mapping.getFromType();
             	Class to = mapping.getToType();
-            	if (ObjectHelper.equals(from, prevFrom) &&
-            		ObjectHelper.equals(to, prevTo)) {
+            	if (ObjectHelper.equal(from, prevFrom) &&
+            		ObjectHelper.equal(to, prevTo)) {
             		
             		ignored = true;
             		buffer.append(" ");

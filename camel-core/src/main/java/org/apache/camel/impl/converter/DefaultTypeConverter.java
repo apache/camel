@@ -262,8 +262,8 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         public boolean equals(Object object) {
             if (object instanceof TypeMapping) {
                 TypeMapping that = (TypeMapping)object;
-                return ObjectHelper.equals(this.fromType, that.fromType)
-                       && ObjectHelper.equals(this.toType, that.toType);
+                return ObjectHelper.equal(this.fromType, that.fromType)
+                       && ObjectHelper.equal(this.toType, that.toType);
             }
             return false;
         }

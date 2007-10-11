@@ -129,7 +129,7 @@ public class PredicateBuilder {
         return new BinaryPredicateSupport<E>(left, right) {
 
             protected boolean matches(E exchange, Object leftValue, Object rightValue) {
-                return ObjectHelper.equals(leftValue, rightValue);
+                return ObjectHelper.equal(leftValue, rightValue);
             }
 
             protected String getOperationText() {
@@ -143,7 +143,7 @@ public class PredicateBuilder {
         return new BinaryPredicateSupport<E>(left, right) {
 
             protected boolean matches(E exchange, Object leftValue, Object rightValue) {
-                return !ObjectHelper.equals(leftValue, rightValue);
+                return !ObjectHelper.equal(leftValue, rightValue);
             }
 
             protected String getOperationText() {
