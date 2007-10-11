@@ -191,7 +191,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
      */
     protected Processor createConsumerProcessor(final Object pojo, final Method method, final Endpoint endpoint) {
         BeanProcessor answer = new BeanProcessor(pojo, getCamelContext());
-        answer.setMethod(method);
+        answer.setMethodObject(method);
         return answer;
     }
 
