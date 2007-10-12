@@ -235,8 +235,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     public DefaultNamespaceContext getNamespaceContext() {
         if (namespaceContext == null) {
             try {
-                DefaultNamespaceContext defaultNamespaceContext = new DefaultNamespaceContext(
-                                                                                              getXPathFactory());
+                DefaultNamespaceContext defaultNamespaceContext = new DefaultNamespaceContext(getXPathFactory());
                 populateDefaultNamespaces(defaultNamespaceContext);
                 namespaceContext = defaultNamespaceContext;
             } catch (XPathFactoryConfigurationException e) {

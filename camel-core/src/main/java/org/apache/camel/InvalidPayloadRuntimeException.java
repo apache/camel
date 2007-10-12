@@ -14,25 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.language;
-
-import javax.xml.bind.annotation.XmlRootElement;
+package org.apache.camel;
 
 /**
- * For XQuery expresions and predicates
- *
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "xquery")
-public class XQueryExpression extends ElementAwareExpression {
-    public XQueryExpression() {
+public class InvalidPayloadRuntimeException extends RuntimeExchangeException {
+    private final Class<?> type;
+
+    public InvalidPayloadRuntimeException(Exchange exchange, Class<?> type) {
+        super("No in body available of type: " + type.getName()
+              + NoSuchPropertyException.valueDescription(exchange.getIn().getBody()), exchange);
+        this.type = type;
     }
 
-    public XQueryExpression(String expression) {
-        super(expression);
-    }
-
-    public String getLanguage() {
-        return "xquery";
+    /**
+     * The expected type of the body
+     */
+    public Class<?> getType() {
+        return type;
     }
 }
