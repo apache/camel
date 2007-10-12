@@ -47,6 +47,15 @@ public class ObjectHelper {
     }
     
     /**
+     * @deprecated use the equal method instead
+     *
+     * @see #equal(Object, Object)
+     */
+    public static boolean equals(Object a, Object b) {
+        return equal(a, b);
+    }
+
+    /**
      * A helper method for comparing objects for equality while handling nulls
      */
     public static boolean equal(Object a, Object b) {
