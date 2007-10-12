@@ -16,27 +16,6 @@
  */
 package org.apache.camel.builder.saxon;
 
-import net.sf.saxon.Configuration;
-import net.sf.saxon.om.DocumentInfo;
-import net.sf.saxon.query.DynamicQueryContext;
-import net.sf.saxon.query.StaticQueryContext;
-import net.sf.saxon.query.XQueryExpression;
-import net.sf.saxon.trans.XPathException;
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeExpressionException;
-import org.apache.camel.converter.IOConverter;
-import org.apache.camel.converter.jaxp.BytesSource;
-import org.apache.camel.converter.jaxp.StringSource;
-import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.util.ObjectHelper;
-import org.w3c.dom.Node;
-
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -51,16 +30,50 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.stream.StreamResult;
+
+import net.sf.saxon.Configuration;
+import net.sf.saxon.om.DocumentInfo;
+import net.sf.saxon.om.Item;
+import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.query.DynamicQueryContext;
+import net.sf.saxon.query.StaticQueryContext;
+import net.sf.saxon.query.XQueryExpression;
+import net.sf.saxon.trans.StaticError;
+import net.sf.saxon.trans.XPathException;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Message;
+import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeExpressionException;
+import org.apache.camel.converter.IOConverter;
+import org.apache.camel.converter.jaxp.BytesSource;
+import org.apache.camel.converter.jaxp.StringSource;
+import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.spi.ElementAware;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Attr;
+
 /**
  * Creates an XQuery builder
- * 
+ *
  * @version $Revision$
  */
-public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>, Predicate<E> {
+public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>, Predicate<E>, ElementAware {
+    private static final transient Log LOG = LogFactory.getLog(XQueryBuilder.class);
     private Configuration configuration;
     private XQueryExpression expression;
     private StaticQueryContext staticQueryContext;
     private Map<String, Object> parameters = new HashMap<String, Object>();
+    private Map<String, String> namespacePrefixes = new HashMap<String, String>();
     private XmlConverter converter = new XmlConverter();
     private ResultFormat resultsFormat = ResultFormat.DOM;
     private Properties properties = new Properties();
@@ -73,22 +86,45 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
     public Object evaluate(E exchange) {
         try {
             switch (resultsFormat) {
-            case Bytes:
-                return evaluateAsBytes(exchange);
-            case BytesSource:
-                return evaluateAsBytesSource(exchange);
-            case DOM:
-                return evaluateAsDOM(exchange);
-            case List:
-                return evaluateAsList(exchange);
-            case StringSource:
-                return evaluateAsStringSource(exchange);
-            case String:
-            default:
-                return evaluateAsString(exchange);
+                case Bytes:
+                    return evaluateAsBytes(exchange);
+                case BytesSource:
+                    return evaluateAsBytesSource(exchange);
+                case DOM:
+                    return evaluateAsDOM(exchange);
+                case List:
+                    return evaluateAsList(exchange);
+                case StringSource:
+                    return evaluateAsStringSource(exchange);
+                case String:
+                default:
+                    return evaluateAsString(exchange);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeExpressionException(e);
+        }
+    }
+
+    /**
+     * Configures the namespace context from the given DOM element
+     */
+    public void setElement(Element element) {
+        // lets set the parent first in case we overload a prefix here
+        Node parentNode = element.getParentNode();
+        if (parentNode instanceof Element) {
+            setElement((Element) parentNode);
+        }
+        NamedNodeMap attributes = element.getAttributes();
+        int size = attributes.getLength();
+        for (int i = 0; i < size; i++) {
+            Attr node = (Attr) attributes.item(i);
+            String name = node.getName();
+            if (name.startsWith("xmlns:")) {
+                String prefix = name.substring("xmlns:".length());
+                String uri = node.getValue();
+                namespace(prefix, uri);
+            }
         }
     }
 
@@ -108,7 +144,9 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
 
     public Node evaluateAsDOM(E exchange) throws Exception {
         DOMResult result = new DOMResult();
-        getExpression().pull(createDynamicContext(exchange), result, properties);
+        DynamicQueryContext context = createDynamicContext(exchange);
+        XQueryExpression expression = getExpression();
+        expression.pull(context, result, properties);
         return result.getNode();
     }
 
@@ -122,17 +160,19 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
 
     public String evaluateAsString(E exchange) throws Exception {
         StringWriter buffer = new StringWriter();
-        Result result = new StreamResult(buffer);
-        getExpression().pull(createDynamicContext(exchange), result, properties);
-        String text = buffer.toString();
-        return text;
+        SequenceIterator iter = getExpression().iterator(createDynamicContext(exchange));
+        for (Item item = iter.next(); item != null; item = iter.next()) {
+            buffer.append(item.getStringValueCS());
+        }
+        return buffer.toString();
     }
 
     public boolean matches(E exchange) {
         try {
             List list = evaluateAsList(exchange);
             return matches(exchange, list);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeExpressionException(e);
         }
     }
@@ -143,7 +183,8 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
             if (!matches(exchange, list)) {
                 throw new AssertionError(this + " failed on " + exchange + " as evaluated: " + list);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new AssertionError(e);
         }
     }
@@ -190,7 +231,6 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
         return xquery(IOConverter.toInputStream(url), ObjectHelper.getDefaultCharacterSet());
     }
 
-
     // Fluent API
     // -------------------------------------------------------------------------
     public XQueryBuilder<E> asBytes() {
@@ -233,6 +273,11 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
         return this;
     }
 
+    public XQueryBuilder<E> namespace(String prefix, String uri) {
+        namespacePrefixes.put(prefix, uri);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -256,9 +301,16 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
         this.configuration = configuration;
     }
 
-    public StaticQueryContext getStaticQueryContext() {
+    public StaticQueryContext getStaticQueryContext() throws StaticError {
         if (staticQueryContext == null) {
             staticQueryContext = new StaticQueryContext(getConfiguration());
+            Set<Map.Entry<String, String>> entries = namespacePrefixes.entrySet();
+            for (Map.Entry<String, String> entry : entries) {
+                String prefix = entry.getKey();
+                String uri = entry.getValue();
+                staticQueryContext.declarePassiveNamespace(prefix, uri, false);
+                staticQueryContext.setInheritNamespaces(true);
+            }
         }
         return staticQueryContext;
     }
@@ -306,20 +358,32 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
         Configuration config = getConfiguration();
         DynamicQueryContext dynamicQueryContext = new DynamicQueryContext(config);
 
-        Source source = exchange.getIn().getBody(Source.class);
+        Message in = exchange.getIn();
+        Source source = in.getBody(Source.class);
         if (source == null) {
-            source = converter.toSource(converter.createDocument());
+            Item item = in.getBody(Item.class);
+            if (item != null) {
+                dynamicQueryContext.setContextItem(item);
+            }
+            else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("No body available on exchange so using an empty document: " + exchange);
+                    source = converter.toSource(converter.createDocument());
+                }
+            }
+        }
+        if (source != null) {
+            DocumentInfo doc = getStaticQueryContext().buildDocument(source);
+            dynamicQueryContext.setContextItem(doc);
         }
 
-        DocumentInfo doc = getStaticQueryContext().buildDocument(source);
-        dynamicQueryContext.setContextItem(doc);
         configureQuery(dynamicQueryContext, exchange);
         return dynamicQueryContext;
     }
 
     /**
      * Configures the dynamic context with exchange specific parameters
-     * 
+     *
      * @param dynamicQueryContext
      * @param exchange
      * @throws Exception
