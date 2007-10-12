@@ -33,7 +33,7 @@ public class XPathWithNamespacesFromDomTest extends ContextTestSupport {
         assertNotNull("Could not find element for id 'a'", element);
 
         XPathBuilder builder = XPathBuilder.xpath("//y:foo[@id='z']");
-        builder.setNamespacesFromDom(element);
+        builder.setElement(element);
         DefaultNamespaceContext namespaceContext = builder.getNamespaceContext();
         assertEquals("y namespace", "n3", namespaceContext.getNamespaceURI("y"));
 

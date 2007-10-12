@@ -21,17 +21,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.Binder;
 
-import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
-import org.apache.camel.model.language.XPathExpression;
+import org.apache.camel.spi.ElementAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.EndpointFactoryBean;
@@ -45,20 +43,17 @@ import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     public static final String JAXB_PACKAGES = "org.apache.camel.spring:org.apache.camel.model:org.apache.camel.model.config:org.apache.camel.model.dataformat:org.apache.camel.model.language";
-
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(EndpointFactoryBean.class);
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
-
     protected Set<String> parserElementNames = new HashSet<String>();
     private JAXBContext jaxbContext;
-    private Map<String, BeanDefinitionParser> parserMap =new HashMap<String, BeanDefinitionParser>();
+    private Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
     private Binder<Node> binder;
 
     public void init() {
@@ -124,7 +119,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             Unmarshaller unmarshaller = getJaxbContext().createUnmarshaller();
             return unmarshaller.unmarshal(element);
 */
-        } catch (JAXBException e) {
+        }
+        catch (JAXBException e) {
             throw new BeanDefinitionStoreException("Failed to parse JAXB element: " + e, e);
         }
     }
@@ -146,7 +142,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         }
 
         @Override
-            protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
             super.doParse(element, parserContext, builder);
 
             String contextId = element.getAttribute("id");
@@ -161,7 +157,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             // now lets parse the routes
             Object value = parseUsingJaxb(element, parserContext);
             if (value instanceof CamelContextFactoryBean) {
-                CamelContextFactoryBean factoryBean = (CamelContextFactoryBean)value;
+                CamelContextFactoryBean factoryBean = (CamelContextFactoryBean) value;
                 builder.addPropertyValue("id", contextId);
                 builder.addPropertyValue("routes", factoryBean.getRoutes());
 
@@ -176,12 +172,13 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             for (int i = 0; i < size; i++) {
                 Node child = list.item(i);
                 if (child instanceof Element) {
-                    Element childElement = (Element)child;
+                    Element childElement = (Element) child;
                     String localName = child.getLocalName();
                     if (localName.equals("beanPostProcessor")) {
                         createBeanPostProcessor(parserContext, contextId, childElement);
                         createdBeanPostProcessor = true;
-                    } else if (localName.equals("endpoint")) {
+                    }
+                    else if (localName.equals("endpoint")) {
                         BeanDefinition definition = endpointParser.parse(childElement, parserContext);
                         String id = childElement.getAttribute("id");
                         if (ObjectHelper.isNotNullAndNonEmpty(id)) {
@@ -191,7 +188,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                             // builder.getBeanDefinition());
                             parserContext.registerComponent(new BeanComponentDefinition(definition, id));
                         }
-                    } else {
+                    }
+                    else {
                         BeanDefinitionParser parser = parserMap.get(localName);
                         if (parser != null) {
                             BeanDefinition definition = parser.parse(childElement, parserContext);
@@ -220,18 +218,13 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         for (int i = 0; i < size; i++) {
             Node child = list.item(i);
             if (child instanceof Element) {
-                Element childElement = (Element)child;
-                String localName = child.getLocalName();
-                if (localName.equals("xpath")) {
-                    Object object = binder.getJAXBNode(child);
-                    if (object instanceof XPathExpression) {
-                        XPathExpression xPathExpression = (XPathExpression) object;
-                        xPathExpression.setElement(childElement);
-                    }
+                Element childElement = (Element) child;
+                Object object = binder.getJAXBNode(child);
+                if (object instanceof ElementAware) {
+                    ElementAware elementAware = (ElementAware) object;
+                    elementAware.setElement(childElement);
                 }
-                else {
-                    injectNamespaces(childElement);
-                }
+                injectNamespaces(childElement);
             }
         }
     }
