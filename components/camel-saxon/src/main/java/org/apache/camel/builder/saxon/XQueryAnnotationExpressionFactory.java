@@ -17,6 +17,7 @@
  */
 package org.apache.camel.builder.saxon;
 
+import net.sf.saxon.functions.Collection;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.component.bean.DefaultAnnotationExpressionFactory;
@@ -42,6 +43,12 @@ public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressi
                     //builder = builder.namespace(namespacePrefix.prefix(), namespacePrefix.uri());
                 }
             }
+        }
+        if (expressionReturnType.isAssignableFrom(String.class)) {
+            builder.setResultsFormat(ResultFormat.String);
+        }
+        else if (expressionReturnType.isAssignableFrom(Collection.class)) {
+            builder.setResultsFormat(ResultFormat.List);
         }
         return builder;
     }
