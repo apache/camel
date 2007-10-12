@@ -17,27 +17,46 @@
  */
 package org.apache.camel.model.dataformat;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * @version $Revision: 1.1 $
  */
 @XmlType(name = "dataFormatType")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DataFormatType extends IdentifiedType {
+public class DataFormatType extends IdentifiedType implements DataFormat {
     @XmlTransient
     private DataFormat dataFormat;
     @XmlTransient
     private String dataFormatTypeName;
+
+    public static DataFormat getDataFormat(RouteContext routeContext, DataFormatType type, String ref) {
+        if (type == null) {
+            notNull(ref, "ref or dataFormatType");
+            DataFormat dataFormat = routeContext.lookup(ref, DataFormat.class);
+            if (dataFormat instanceof DataFormatType) {
+                type = (DataFormatType) dataFormat;
+            }
+            else {
+                return dataFormat;
+            }
+        }
+        return type.getDataFormat(routeContext);
+    }
 
     public DataFormatType() {
     }
@@ -46,8 +65,14 @@ public class DataFormatType extends IdentifiedType {
         this.dataFormat = dataFormat;
     }
 
-    protected DataFormatType(String dataFormatTypeName) {
-        this.dataFormatTypeName = dataFormatTypeName;
+    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+        ObjectHelper.notNull(dataFormat, "dataFormat");
+        dataFormat.marshal(exchange, graph, stream);
+    }
+
+    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        ObjectHelper.notNull(dataFormat, "dataFormat");
+        return dataFormat.unmarshal(exchange, stream);
     }
 
     public DataFormat getDataFormat(RouteContext routeContext) {
@@ -84,11 +109,14 @@ public class DataFormatType extends IdentifiedType {
      */
     protected void setProperty(DataFormat dataFormat, String name, Object value) {
         try {
-            IntrospectionSupport.setProperty(dataFormat,name, value);
+            IntrospectionSupport.setProperty(dataFormat, name, value);
         }
         catch (Exception e) {
             throw new IllegalArgumentException("Failed to set property " + name + " on " + dataFormat + ". Reason: " + e, e);
         }
+    }
 
+    protected DataFormatType(String dataFormatTypeName) {
+        this.dataFormatTypeName = dataFormatTypeName;
     }
 }
