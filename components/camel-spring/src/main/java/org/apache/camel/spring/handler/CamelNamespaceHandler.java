@@ -24,12 +24,14 @@ import java.util.Set;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.Binder;
 
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
+import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.EndpointFactoryBean;
@@ -57,6 +59,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected Set<String> parserElementNames = new HashSet<String>();
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinitionParser> parserMap =new HashMap<String, BeanDefinitionParser>();
+    private Binder<Node> binder;
 
     public void init() {
         // remoting
@@ -73,6 +76,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
         registerParser("camelContext", new CamelContextBeanDefinitionParser(CamelContextFactoryBean.class));
 
+        /* TODO dead old code
         registerParser("xpath", new BeanDefinitionParser(XPathBuilder.class) {
             @Override
             protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
@@ -83,6 +87,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("namespacesFromDom", element);
             }
         });
+        */
     }
 
     private void addBeanDefinitionParser(String elementName, Class<?> type) {
@@ -113,8 +118,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
     protected Object parseUsingJaxb(Element element, ParserContext parserContext) {
         try {
+            binder = getJaxbContext().createBinder();
+            return binder.unmarshal(element);
+/*
             Unmarshaller unmarshaller = getJaxbContext().createUnmarshaller();
             return unmarshaller.unmarshal(element);
+*/
         } catch (JAXBException e) {
             throw new BeanDefinitionStoreException("Failed to parse JAXB element: " + e, e);
         }
@@ -194,11 +203,35 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                     }
                 }
             }
+            // lets inject the namespaces into any namespace aware POJOs
+            injectNamespaces(element);
             if (!createdBeanPostProcessor) {
                 // no bean processor element so lets add a fake one
                 Element childElement = element.getOwnerDocument().createElement("beanPostProcessor");
                 element.appendChild(childElement);
                 createBeanPostProcessor(parserContext, contextId, childElement);
+            }
+        }
+    }
+
+    protected void injectNamespaces(Element element) {
+        NodeList list = element.getChildNodes();
+        int size = list.getLength();
+        for (int i = 0; i < size; i++) {
+            Node child = list.item(i);
+            if (child instanceof Element) {
+                Element childElement = (Element)child;
+                String localName = child.getLocalName();
+                if (localName.equals("xpath")) {
+                    Object object = binder.getJAXBNode(child);
+                    if (object instanceof XPathExpression) {
+                        XPathExpression xPathExpression = (XPathExpression) object;
+                        xPathExpression.setElement(childElement);
+                    }
+                }
+                else {
+                    injectNamespaces(childElement);
+                }
             }
         }
     }
