@@ -14,36 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.language;
+package org.apache.camel.spring.processor;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.builder.xml.XPathBuilder;
-import org.apache.camel.impl.RouteContext;
-import org.apache.camel.spi.ElementAware;
-import org.w3c.dom.Element;
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.XPathFilterTest;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * For XPath expresions and predicates
- *
  * @version $Revision: 1.1 $
  */
-@XmlRootElement(name = "xpath")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class XPathExpression extends ElementAwareExpression {
-    public XPathExpression() {
+public class SpringXPathFilterWithNamespaceTest extends XPathFilterTest {
+    @Override
+    protected void setUp() throws Exception {
+        matchingBody = "<person name='James' city='London' xmlns='http://example.com/person'/>";
+        super.setUp();
     }
 
-    public XPathExpression(String expression) {
-        super(expression);
-    }
-
-    public String getLanguage() {
-        return "xpath";
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/xpathFilterWithNamespace.xml");
     }
 }

@@ -30,22 +30,17 @@ import javax.xml.xpath.XPathFunction;
 import javax.xml.xpath.XPathFunctionException;
 import javax.xml.xpath.XPathFunctionResolver;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import org.xml.sax.InputSource;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
-
-import static org.apache.camel.builder.xml.Namespaces.DEFAULT_NAMESPACE;
-import static org.apache.camel.builder.xml.Namespaces.IN_NAMESPACE;
-import static org.apache.camel.builder.xml.Namespaces.OUT_NAMESPACE;
-import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmptyNamespace;
+import static org.apache.camel.builder.xml.Namespaces.*;
 import static org.apache.camel.converter.ObjectConverter.toBoolean;
+import org.apache.camel.spi.ElementAware;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 /**
  * Creates an XPath expression builder which creates a nodeset result by default.
@@ -55,7 +50,7 @@ import static org.apache.camel.converter.ObjectConverter.toBoolean;
  * 
  * @version $Revision: 531854 $
  */
-public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicate<E> {
+public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicate<E>, ElementAware {
     private final String text;
     private XPathFactory xpathFactory;
     private Class documentType = Document.class;
@@ -271,7 +266,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
         return expression;
     }
 
-    public void setNamespacesFromDom(Element node) {
+    public void setElement(Element node) {
         getNamespaceContext().setNamespacesFromDom(node);
     }
 
