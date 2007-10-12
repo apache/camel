@@ -93,12 +93,7 @@ public class MarshalType extends OutputType {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) {
-        DataFormatType type = getDataFormatType();
-        if (type == null) {
-            notNull(ref, "ref or dataFormatType");
-            type = routeContext.lookup(ref, DataFormatType.class);
-        }
-        DataFormat dataFormat = type.getDataFormat(routeContext);
+        DataFormat dataFormat = DataFormatType.getDataFormat(routeContext, getDataFormatType(), ref);
         return new MarshalProcessor(dataFormat);
     }
 }
