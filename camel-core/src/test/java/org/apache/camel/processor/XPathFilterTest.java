@@ -30,11 +30,13 @@ import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 public class XPathFilterTest extends ContextTestSupport {
     protected Endpoint<Exchange> startEndpoint;
     protected MockEndpoint resultEndpoint;
+    protected String matchingBody = "<person name='James' city='London'/>";
+    protected String notMatchingBody = "<person name='Hiram' city='Tampa'/>";
 
     public void testSendMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(1);
 
-        sendBody("direct:start", "<person name='James' city='London'/>");
+        sendBody("direct:start", matchingBody);
 
         resultEndpoint.assertIsSatisfied();
     }
@@ -42,7 +44,7 @@ public class XPathFilterTest extends ContextTestSupport {
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 
-        sendBody("direct:start", "<person name='Hiram' city='Tampa'/>");
+        sendBody("direct:start", notMatchingBody);
 
         resultEndpoint.assertIsSatisfied();
     }

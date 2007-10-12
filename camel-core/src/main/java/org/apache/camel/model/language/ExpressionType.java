@@ -87,11 +87,12 @@ public class ExpressionType {
         return "";
     }
 
-    public Predicate<Exchange> createPredicate(RouteContext route) {
+    public Predicate<Exchange> createPredicate(RouteContext routeContext) {
         if (predicate == null) {
-            CamelContext camelContext = route.getCamelContext();
+            CamelContext camelContext = routeContext.getCamelContext();
             Language language = camelContext.resolveLanguage(getLanguage());
             predicate = language.createPredicate(getExpression());
+            configurePredicate(routeContext, predicate);
         }
         return predicate;
     }
@@ -101,6 +102,7 @@ public class ExpressionType {
             CamelContext camelContext = routeContext.getCamelContext();
             Language language = camelContext.resolveLanguage(getLanguage());
             expressionValue = language.createExpression(getExpression());
+            configureExpresion(routeContext, expressionValue);
         }
         return expressionValue;
     }
@@ -161,4 +163,11 @@ public class ExpressionType {
         }
         return "";
     }
+
+    protected void configurePredicate(RouteContext routeContext, Predicate predicate) {
+    }
+
+    protected void configureExpresion(RouteContext routeContext, Expression expression) {
+    }
+
 }
