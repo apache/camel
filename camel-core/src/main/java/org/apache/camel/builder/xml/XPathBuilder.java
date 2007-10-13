@@ -18,6 +18,7 @@ package org.apache.camel.builder.xml;
 
 import java.io.StringReader;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPath;
@@ -37,9 +38,8 @@ import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
 import static org.apache.camel.builder.xml.Namespaces.*;
 import static org.apache.camel.converter.ObjectConverter.toBoolean;
-import org.apache.camel.spi.ElementAware;
+import org.apache.camel.spi.NamespaceAware;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 /**
@@ -50,7 +50,7 @@ import org.xml.sax.InputSource;
  * 
  * @version $Revision: 531854 $
  */
-public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicate<E>, ElementAware {
+public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicate<E>, NamespaceAware {
     private final String text;
     private XPathFactory xpathFactory;
     private Class documentType = Document.class;
@@ -265,8 +265,8 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
         return expression;
     }
 
-    public void setElement(Element node) {
-        getNamespaceContext().setNamespacesFromDom(node);
+    public void setNamespaces(Map<String,String> namespaces) {
+        getNamespaceContext().setNamespaces(namespaces);
     }
 
     public XPathFunction getBodyFunction() {
