@@ -53,21 +53,18 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.BytesSource;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.spi.ElementAware;
+import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Node;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Attr;
 
 /**
  * Creates an XQuery builder
  *
  * @version $Revision$
  */
-public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>, Predicate<E>, ElementAware {
+public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>, Predicate<E>, NamespaceAware {
     private static final transient Log LOG = LogFactory.getLog(XQueryBuilder.class);
     private Configuration configuration;
     private XQueryExpression expression;
@@ -109,22 +106,10 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
     /**
      * Configures the namespace context from the given DOM element
      */
-    public void setElement(Element element) {
-        // lets set the parent first in case we overload a prefix here
-        Node parentNode = element.getParentNode();
-        if (parentNode instanceof Element) {
-            setElement((Element) parentNode);
-        }
-        NamedNodeMap attributes = element.getAttributes();
-        int size = attributes.getLength();
-        for (int i = 0; i < size; i++) {
-            Attr node = (Attr) attributes.item(i);
-            String name = node.getName();
-            if (name.startsWith("xmlns:")) {
-                String prefix = name.substring("xmlns:".length());
-                String uri = node.getValue();
-                namespace(prefix, uri);
-            }
+    public void setNamespaces(Map<String, String> namespaces) {
+        Set<Map.Entry<String, String>> entries = namespaces.entrySet();
+        for (Map.Entry<String, String> entry : entries) {
+            namespace(entry.getKey(), entry.getValue());
         }
     }
 

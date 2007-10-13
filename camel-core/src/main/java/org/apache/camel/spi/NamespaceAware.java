@@ -17,22 +17,22 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Map;
+
 import org.w3c.dom.Element;
 
 /**
- * If a configuration bean needs to be aware of the point in the XML file
- * in which its defined then it can implement this method to have the
- * XML {@link Element} node injected so that it can grab the namespace context
- * or look at local comments etc.
+ * Represents an object which is aware of the namespaces in which its used such as
+ * XPath and XQuery type expressions so that the current namespace context can be injected
  *
  * @version $Revision: 1.1 $
  */
-public interface ElementAware {
+public interface NamespaceAware {
+    
     /**
-     * Injects the XML Element which defines this bean so that it can
-     * analyse the namespace context or grab the local comments etc.
+     * Injects the XML Namespaces of prefix -> uri mappings
      *
-     * @param element the XML element
+     * @param namespaces the XML namespaces with the key of prefixes and the value the URIs
      */
-    void setElement(Element element);
+    void setNamespaces(Map<String,String> namespaces);
 }

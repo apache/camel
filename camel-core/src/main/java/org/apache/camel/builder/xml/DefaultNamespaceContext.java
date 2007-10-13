@@ -25,10 +25,7 @@ import java.util.Set;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPathFactory;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
+import org.apache.camel.spi.NamespaceAware;
 
 /**
  * An implementation of {@link NamespaceContext} which uses a simple Map where
@@ -36,9 +33,9 @@ import org.w3c.dom.Node;
  *
  * @version $Revision: $
  */
-public class DefaultNamespaceContext implements NamespaceContext {
+public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware {
 
-    private final Map map;
+    private final Map<String,String> map;
     private final NamespaceContext parent;
 
     public DefaultNamespaceContext() {
@@ -47,10 +44,10 @@ public class DefaultNamespaceContext implements NamespaceContext {
 
     public DefaultNamespaceContext(XPathFactory factory) {
         this.parent = factory.newXPath().getNamespaceContext();
-        this.map = new HashMap();
+        this.map = new HashMap<String,String>();
     }
 
-    public DefaultNamespaceContext(NamespaceContext parent, Map map) {
+    public DefaultNamespaceContext(NamespaceContext parent, Map<String,String> map) {
         this.parent = parent;
         this.map = map;
     }
@@ -64,7 +61,7 @@ public class DefaultNamespaceContext implements NamespaceContext {
     }
 
     public String getNamespaceURI(String prefix) {
-        String answer = (String) map.get(prefix);
+        String answer = map.get(prefix);
         if (answer == null && parent != null) {
             return parent.getNamespaceURI(prefix);
         }
@@ -101,22 +98,7 @@ public class DefaultNamespaceContext implements NamespaceContext {
         return set.iterator();
     }
 
-    public void setNamespacesFromDom(Element element) {
-        // lets set the parent first in case we overload a prefix here
-        Node parentNode = element.getParentNode();
-        if (parentNode instanceof Element) {
-            setNamespacesFromDom((Element) parentNode);
-        }
-        NamedNodeMap attributes = element.getAttributes();
-        int size = attributes.getLength();
-        for (int i = 0; i < size; i++) {
-            Attr node = (Attr) attributes.item(i);
-            String name = node.getName();
-            if (name.startsWith("xmlns:")) {
-                String prefix = name.substring("xmlns:".length());
-                String uri = node.getValue();
-                add(prefix, uri);
-            }
-        }
+    public void setNamespaces(Map<String, String> namespaces) {
+        map.putAll(namespaces);
     }
 }

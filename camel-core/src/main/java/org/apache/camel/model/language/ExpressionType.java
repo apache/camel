@@ -16,14 +16,7 @@
  */
 package org.apache.camel.model.language;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.impl.RouteContext;
-import org.apache.camel.spi.Language;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.CollectionStringBuffer;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -34,7 +27,15 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.List;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.spi.Language;
+import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A useful base class for an expression
@@ -43,7 +44,7 @@ import java.util.List;
  */
 @XmlType(name = "expressionType")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExpressionType {
+public class ExpressionType implements Expression<Exchange> {
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -81,6 +82,18 @@ public class ExpressionType {
     @Override
     public String toString() {
         return getLanguage() + "Expression[" + getExpression() + "]";
+    }
+
+    public Object evaluate(Exchange exchange) {
+        if (expressionValue != null) {
+            return expressionValue.evaluate(exchange);
+        }
+        else if (predicate != null) {
+            return predicate.matches(exchange);
+        }
+        else {
+            return null;
+        }
     }
 
     public String getLanguage() {
@@ -169,5 +182,4 @@ public class ExpressionType {
 
     protected void configureExpresion(RouteContext routeContext, Expression expression) {
     }
-
 }

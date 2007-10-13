@@ -16,25 +16,31 @@
  */
 package org.apache.camel.builder.xml;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.camel.model.language.XPathExpression;
+import org.apache.camel.model.language.XQueryExpression;
+import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ObjectHelper;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
+ * A helper class for working with namespaces or creating namespace based expressions
+ *
  * @version $Revision: $
  */
 public class Namespaces {
     public static final String DEFAULT_NAMESPACE = "http://activemq.apache.org/camel/schema/spring";
-
     public static final String IN_NAMESPACE = "http://camel.apache.org/xml/in/";
     public static final String OUT_NAMESPACE = "http://camel.apache.org/xml/out/";
     public static final String SYSTEM_PROPERTIES_NAMESPACE = "http://camel.apache.org/xml/variables/system-properties";
     public static final String ENVIRONMENT_VARIABLES = "http://camel.apache.org/xml/variables/environment-variables";
     public static final String EXCHANGE_PROPERTY = "http://camel.apache.org/xml/variables/exchange-property";
-    
-    /**
-     * Utility classes should not have a public constructor.
-     */
-    private Namespaces() {        
-    }
+    private Map<String, String> namespaces = new HashMap<String, String>();
 
     /**
      * Returns true if the given namespaceURI is empty or if it matches the
@@ -44,4 +50,75 @@ public class Namespaces {
         return ObjectHelper.isNullOrBlank(namespaceURI) || namespaceURI.equals(expectedNamespace);
     }
 
+    /**
+     * Creates a namespaces object from the given XML element
+     *
+     * @param element the XML element representing the XPath namespace context
+     */
+    public Namespaces(Element element) {
+        add(element);
+    }
+
+    /**
+     * Creates a namespace context with a single prefix and URI
+     */
+    public Namespaces(String prefix, String uri) {
+        add(prefix, uri);
+    }
+
+    public Namespaces add(String prefix, String uri) {
+        namespaces.put(prefix, uri);
+        return this;
+    }
+
+    public Namespaces add(Element element) {
+        // lets set the parent first in case we overload a prefix here
+        Node parentNode = element.getParentNode();
+        if (parentNode instanceof org.w3c.dom.Element) {
+            add((Element) parentNode);
+        }
+        NamedNodeMap attributes = element.getAttributes();
+        int size = attributes.getLength();
+        for (int i = 0; i < size; i++) {
+            Attr node = (Attr) attributes.item(i);
+            String name = node.getName();
+            if (name.startsWith("xmlns:")) {
+                String prefix = name.substring("xmlns:".length());
+                String uri = node.getValue();
+                add(prefix, uri);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Creates the XPath expression using the current namespace context
+     */
+    public XPathExpression xpath(String expression) {
+        XPathExpression answer = new XPathExpression(expression);
+        configure(answer);
+        return answer;
+    }
+
+    /**
+     * Creates the XQuery expression using the current namespace context
+     */
+    public XQueryExpression xquery(String expression) {
+        XQueryExpression answer = new XQueryExpression(expression);
+        configure(answer);
+        return answer;
+    }
+
+    public Map<String, String> getNamespaces() {
+        return namespaces;
+    }
+
+
+    /**
+     * Configures the namespace aware object
+     */
+    public void configure(NamespaceAware namespaceAware) {
+        namespaceAware.setNamespaces(getNamespaces());
+
+    }
 }

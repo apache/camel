@@ -25,11 +25,12 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
-import org.apache.camel.spi.ElementAware;
+import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.EndpointFactoryBean;
@@ -67,22 +68,10 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("serialization", SerializationDataFormat.class);
         addBeanDefinitionParser("xmlBeans", XMLBeansDataFormat.class);
 
+        // TODO switch to use the above mechanism?
         registerParser("endpoint", endpointParser);
 
         registerParser("camelContext", new CamelContextBeanDefinitionParser(CamelContextFactoryBean.class));
-
-        /* TODO dead old code
-        registerParser("xpath", new BeanDefinitionParser(XPathBuilder.class) {
-            @Override
-            protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-                // lets create a child context
-                String xpath = DomUtils.getTextValue(element);
-                builder.addConstructorArg(xpath);
-                super.doParse(element, parserContext, builder);
-                builder.addPropertyValue("namespacesFromDom", element);
-            }
-        });
-        */
     }
 
     private void addBeanDefinitionParser(String elementName, Class<?> type) {
@@ -214,15 +203,19 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
     protected void injectNamespaces(Element element) {
         NodeList list = element.getChildNodes();
+        Namespaces namespaces = null;
         int size = list.getLength();
         for (int i = 0; i < size; i++) {
             Node child = list.item(i);
             if (child instanceof Element) {
                 Element childElement = (Element) child;
                 Object object = binder.getJAXBNode(child);
-                if (object instanceof ElementAware) {
-                    ElementAware elementAware = (ElementAware) object;
-                    elementAware.setElement(childElement);
+                if (object instanceof NamespaceAware) {
+                    NamespaceAware namespaceAware = (NamespaceAware) object;
+                    if (namespaces == null) {
+                        namespaces = new Namespaces(element);
+                    }
+                    namespaces.configure(namespaceAware);
                 }
                 injectNamespaces(childElement);
             }

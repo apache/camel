@@ -17,15 +17,16 @@
  */
 package org.apache.camel.model.language;
 
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
+import java.util.Map;
 
-import org.apache.camel.spi.ElementAware;
-import org.apache.camel.impl.RouteContext;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.w3c.dom.Element;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.spi.NamespaceAware;
 
 /**
  * A useful base class for any expression which may be namespace or XML content aware
@@ -34,29 +35,29 @@ import org.w3c.dom.Element;
  * @version $Revision: 1.1 $
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class ElementAwareExpression extends ExpressionType implements ElementAware {
+public abstract class NamespaceAwareExpression extends ExpressionType implements NamespaceAware {
     @XmlTransient
-    private Element element;
+    private Map<String, String> namespaces;
 
-    public ElementAwareExpression() {
+    public NamespaceAwareExpression() {
     }
 
-    public ElementAwareExpression(String expression) {
+    public NamespaceAwareExpression(String expression) {
         super(expression);
     }
 
-    public Element getElement() {
-        return element;
+
+    public Map<String, String> getNamespaces() {
+        return namespaces;
     }
 
     /**
-     * Sets the XML element in which this XPath node is defined so that
-     * the namespace context can be reused by the XPath expression
+     * Injects the XML Namespaces of prefix -> uri mappings
      *
-     * @param element the XML element node which defines this xpath expression
+     * @param namespaces the XML namespaces with the key of prefixes and the value the URIs
      */
-    public void setElement(Element element) {
-        this.element = element;
+    public void setNamespaces(Map<String,String> namespaces) {
+        this.namespaces = namespaces;
     }
 
     @Override
@@ -70,9 +71,9 @@ public abstract class ElementAwareExpression extends ExpressionType implements E
     }
 
     protected void configureXPathBuilder(Object builder) {
-        if (element != null && builder instanceof ElementAware) {
-            ElementAware elementAware = (ElementAware) builder;
-            elementAware.setElement(element);
+        if (namespaces != null && builder instanceof NamespaceAware) {
+            NamespaceAware namespaceAware = (NamespaceAware) builder;
+            namespaceAware.setNamespaces(namespaces);
         }
     }
 }
