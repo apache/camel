@@ -107,12 +107,12 @@ public class DataFormatType extends IdentifiedType implements DataFormat {
     /**
      * Sets a named property on the data format instance using introspection
      */
-    protected void setProperty(DataFormat dataFormat, String name, Object value) {
+    protected void setProperty(Object bean, String name, Object value) {
         try {
-            IntrospectionSupport.setProperty(dataFormat, name, value);
+            IntrospectionSupport.setProperty(bean, name, value);
         }
         catch (Exception e) {
-            throw new IllegalArgumentException("Failed to set property " + name + " on " + dataFormat + ". Reason: " + e, e);
+            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean + ". Reason: " + e, e);
         }
     }
 

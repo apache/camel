@@ -61,16 +61,16 @@ public abstract class NamespaceAwareExpression extends ExpressionType implements
     }
 
     @Override
-    protected void configureExpresion(RouteContext routeContext, Expression expression) {
-        configureXPathBuilder(expression);
+    protected void configureExpression(RouteContext routeContext, Expression expression) {
+        configureNamespaceAware(expression);
     }
 
     @Override
     protected void configurePredicate(RouteContext routeContext, Predicate predicate) {
-        configureXPathBuilder(predicate);
+        configureNamespaceAware(predicate);
     }
 
-    protected void configureXPathBuilder(Object builder) {
+    protected void configureNamespaceAware(Object builder) {
         if (namespaces != null && builder instanceof NamespaceAware) {
             NamespaceAware namespaceAware = (NamespaceAware) builder;
             namespaceAware.setNamespaces(namespaces);
