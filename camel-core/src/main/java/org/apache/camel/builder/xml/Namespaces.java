@@ -40,6 +40,7 @@ public class Namespaces {
     public static final String SYSTEM_PROPERTIES_NAMESPACE = "http://camel.apache.org/xml/variables/system-properties";
     public static final String ENVIRONMENT_VARIABLES = "http://camel.apache.org/xml/variables/environment-variables";
     public static final String EXCHANGE_PROPERTY = "http://camel.apache.org/xml/variables/exchange-property";
+
     private Map<String, String> namespaces = new HashMap<String, String>();
 
     /**
@@ -105,6 +106,17 @@ public class Namespaces {
      */
     public XQueryExpression xquery(String expression) {
         XQueryExpression answer = new XQueryExpression(expression);
+        configure(answer);
+        return answer;
+    }
+
+    /**
+     * Creates the XQuery expression using the current namespace context
+     * and the given expected return type
+     */
+    public XQueryExpression xquery(String expression, Class<?> returnType) {
+        XQueryExpression answer = new XQueryExpression(expression);
+        answer.setResultType(returnType);
         configure(answer);
         return answer;
     }

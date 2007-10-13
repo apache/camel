@@ -36,6 +36,7 @@ import org.apache.camel.impl.RouteContext;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.IntrospectionSupport;
 
 /**
  * A useful base class for an expression
@@ -85,15 +86,12 @@ public class ExpressionType implements Expression<Exchange> {
     }
 
     public Object evaluate(Exchange exchange) {
-        if (expressionValue != null) {
-            return expressionValue.evaluate(exchange);
+        if (expressionValue == null) {
+            RouteContext routeContext = new RouteContext(exchange.getContext());
+            expressionValue = createExpression(routeContext);
         }
-        else if (predicate != null) {
-            return predicate.matches(exchange);
-        }
-        else {
-            return null;
-        }
+        ObjectHelper.notNull(expressionValue, "expressionValue");
+        return expressionValue.evaluate(exchange);
     }
 
     public String getLanguage() {
@@ -115,7 +113,7 @@ public class ExpressionType implements Expression<Exchange> {
             CamelContext camelContext = routeContext.getCamelContext();
             Language language = camelContext.resolveLanguage(getLanguage());
             expressionValue = language.createExpression(getExpression());
-            configureExpresion(routeContext, expressionValue);
+            configureExpression(routeContext, expressionValue);
         }
         return expressionValue;
     }
@@ -180,6 +178,20 @@ public class ExpressionType implements Expression<Exchange> {
     protected void configurePredicate(RouteContext routeContext, Predicate predicate) {
     }
 
-    protected void configureExpresion(RouteContext routeContext, Expression expression) {
+    protected void configureExpression(RouteContext routeContext, Expression expression) {
     }
+
+
+    /**
+     * Sets a named property on the object instance using introspection
+     */
+    protected void setProperty(Object bean, String name, Object value) {
+        try {
+            IntrospectionSupport.setProperty(bean, name, value);
+        }
+        catch (Exception e) {
+            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean + ". Reason: " + e, e);
+        }
+    }
+
 }

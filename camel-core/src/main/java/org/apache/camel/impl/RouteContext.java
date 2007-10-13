@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.FromType;
 import org.apache.camel.model.ProcessorType;
@@ -37,21 +37,31 @@ import org.apache.camel.processor.UnitOfWorkProcessor;
 
 /**
  * The context used to activate new routing rules
- * 
+ *
  * @version $Revision: $
  */
 public class RouteContext {
-    private final RouteType route;
-    private final FromType from;
-    private final Collection<Route> routes;
+    private RouteType route;
+    private FromType from;
+    private Collection<Route> routes;
     private Endpoint endpoint;
     private List<Processor> eventDrivenProcessors = new ArrayList<Processor>();
     private Interceptor lastInterceptor;
+    private CamelContext camelContext;
 
     public RouteContext(RouteType route, FromType from, Collection<Route> routes) {
         this.route = route;
         this.from = from;
         this.routes = routes;
+    }
+
+    /**
+     * Only used for lazy construction from inside ExpressionType
+     */
+    public RouteContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+        routes = new ArrayList<Route>();
+        route = new RouteType("temporary");
     }
 
     public Endpoint getEndpoint() {
@@ -70,7 +80,10 @@ public class RouteContext {
     }
 
     public CamelContext getCamelContext() {
-        return getRoute().getCamelContext();
+        if (camelContext == null) {
+            camelContext = getRoute().getCamelContext();
+        }
+        return camelContext;
     }
 
     public Processor createProcessor(ProcessorType node) throws Exception {
@@ -100,7 +113,8 @@ public class RouteContext {
         }
         if (endpoint == null) {
             throw new IllegalArgumentException("Either 'uri' or 'ref' must be specified on: " + this);
-        } else {
+        }
+        else {
             return endpoint;
         }
     }
