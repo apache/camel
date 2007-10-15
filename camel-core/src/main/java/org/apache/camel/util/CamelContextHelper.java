@@ -18,37 +18,40 @@ package org.apache.camel.util;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.Language;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A number of helper methods
- * 
+ *
  * @version $Revision: $
  */
 public class CamelContextHelper {
-    
     /**
      * Utility classes should not have a public constructor.
      */
-    private CamelContextHelper() {        
+    private CamelContextHelper() {
     }
 
     /**
      * Returns the mandatory endpoint for the given URI or the
      * {@link org.apache.camel.NoSuchEndpointException} is thrown
-     * 
+     *
      * @param camelContext
      * @param uri
      * @return
      */
     public static Endpoint getMandatoryEndpoint(CamelContext camelContext, String uri)
-        throws NoSuchEndpointException {
+            throws NoSuchEndpointException {
         Endpoint endpoint = camelContext.getEndpoint(uri);
         if (endpoint == null) {
             throw new NoSuchEndpointException(uri);
-        } else {
+        }
+        else {
             return endpoint;
         }
     }
@@ -79,5 +82,38 @@ public class CamelContextHelper {
      */
     public static <T> T newInstance(CamelContext context, Class<T> beanType) {
         return context.getInjector().newInstance(beanType);
+    }
+
+    /**
+     * Resolves the given language name into a {@link Language} or throws an exception if it could not be converted
+     *
+     * @param camelContext
+     * @param languageName
+     * @return
+     */
+    public static Language resolveMandatoryLanguage(CamelContext camelContext, String languageName) {
+        notNull(camelContext, "camelContext");
+        notNull(languageName, "languageName");
+
+        Language language = camelContext.resolveLanguage(languageName);
+        if (language == null) {
+            throw new IllegalArgumentException("Could not resolve language: " + languageName);
+        }
+        return language;
+    }
+
+    /**
+     * Resolves the mandatory language name and expression text into a {@link Expression} instance
+     * throwing an exception if it could not be created
+     */
+    public static Expression resolveMandatoryExpression(CamelContext camelContext, String languageName, String expressionText) {
+        notNull(expressionText, "expressionText");
+
+        Language language = resolveMandatoryLanguage(camelContext, languageName);
+        Expression<Exchange> expression = language.createExpression(expressionText);
+        if (expression == null) {
+            throw new IllegalArgumentException("Could not create expression: " + expressionText + " with language: " + language);
+        }
+        return expression;
     }
 }

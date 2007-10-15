@@ -19,8 +19,6 @@ package org.apache.camel.spi;
 
 import java.util.Map;
 
-import org.w3c.dom.Element;
-
 /**
  * Represents an object which is aware of the namespaces in which its used such as
  * XPath and XQuery type expressions so that the current namespace context can be injected

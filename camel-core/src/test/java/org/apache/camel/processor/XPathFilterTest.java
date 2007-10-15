@@ -22,8 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
-
 /**
  * @version $Revision: 1.1 $
  */
@@ -61,9 +59,9 @@ public class XPathFilterTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").filter(
-                        xpath("/person[@name='James']")
-                ).to("mock:result");
+                from("direct:start").
+                        filter().xpath("/person[@name='James']").
+                        to("mock:result");
                 // END SNIPPET: example
             }
         };
