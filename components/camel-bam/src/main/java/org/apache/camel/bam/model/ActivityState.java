@@ -87,7 +87,7 @@ public class ActivityState extends TemporalEntity {
 
     // Properties
     // -----------------------------------------------------------------------
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST })
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
     public ProcessInstance getProcessInstance() {
         return processInstance;
     }
@@ -97,7 +97,7 @@ public class ActivityState extends TemporalEntity {
         processInstance.getActivityStates().add(this);
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST })
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
     public ActivityDefinition getActivityDefinition() {
         return activityDefinition;
     }
