@@ -22,19 +22,20 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.ValueBuilder;
-
 import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
 import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
+import org.apache.camel.builder.ExpressionClause;
+import org.apache.camel.builder.ExpressionClauseSupport;
+import org.apache.camel.builder.ValueBuilder;
 
 /**
  * A builder of assertions on message exchanges
  * 
  * @version $Revision: 1.1 $
  */
-public abstract class AssertionClause<E extends Exchange> implements Runnable {
+public abstract class AssertionClause implements Runnable {
 
-    private List<Predicate<E>> predicates = new ArrayList<Predicate<E>>();
+    private List<Predicate<Exchange>> predicates = new ArrayList<Predicate<Exchange>>();
 
     // Builder methods
     // -------------------------------------------------------------------------
@@ -42,17 +43,23 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
     /**
      * Adds the given predicate to this assertion clause
      */
-    public AssertionClause<E> predicate(Predicate<E> predicate) {
+    public AssertionClause predicate(Predicate<Exchange> predicate) {
         addPredicate(predicate);
         return this;
+    }
+
+    public ExpressionClauseSupport<AssertionClause> predicate() {
+        ExpressionClauseSupport<AssertionClause> clause = new ExpressionClauseSupport<AssertionClause>(this);
+        addPredicate(clause);
+        return clause;
     }
 
     /**
      * Returns a predicate and value builder for headers on an exchange
      */
 
-    public ValueBuilder<E> header(String name) {
-        Expression<E> expression = headerExpression(name);
+    public ValueBuilder<Exchange> header(String name) {
+        Expression<Exchange> expression = headerExpression(name);
         return new PredicateValueBuilder(expression);
     }
 
@@ -61,7 +68,7 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
      */
 
     public PredicateValueBuilder body() {
-        Expression<E> expression = bodyExpression();
+        Expression<Exchange> expression = bodyExpression();
         return new PredicateValueBuilder(expression);
     }
 
@@ -71,7 +78,7 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
      */
 
     public <T> PredicateValueBuilder bodyAs(Class<T> type) {
-        Expression<E> expression = bodyExpression(type);
+        Expression<Exchange> expression = bodyExpression(type);
         return new PredicateValueBuilder(expression);
     }
 
@@ -81,7 +88,7 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
      */
 
     public PredicateValueBuilder outBody() {
-        Expression<E> expression = bodyExpression();
+        Expression<Exchange> expression = bodyExpression();
         return new PredicateValueBuilder(expression);
     }
 
@@ -91,30 +98,32 @@ public abstract class AssertionClause<E extends Exchange> implements Runnable {
      */
 
     public <T> PredicateValueBuilder outBody(Class<T> type) {
-        Expression<E> expression = bodyExpression(type);
+        Expression<Exchange> expression = bodyExpression(type);
         return new PredicateValueBuilder(expression);
     }
 
     /**
      * Performs any assertions on the given exchange
      */
-    protected void applyAssertionOn(MockEndpoint endpoint, int index, E exchange) {
-        for (Predicate<E> predicate : predicates) {
+    protected void applyAssertionOn(MockEndpoint endpoint, int index, Exchange exchange) {
+        for (Predicate<Exchange> predicate : predicates) {
             predicate.assertMatches(endpoint.getEndpointUri() + " ", exchange);
         }
     }
 
-    protected void addPredicate(Predicate<E> predicate) {
+    protected void addPredicate(Predicate<Exchange> predicate) {
         predicates.add(predicate);
     }
 
-    public class PredicateValueBuilder extends ValueBuilder<E> {
+    
 
-        public PredicateValueBuilder(Expression<E> expression) {
+    public class PredicateValueBuilder extends ValueBuilder<Exchange> {
+
+        public PredicateValueBuilder(Expression<Exchange> expression) {
             super(expression);
         }
 
-        protected Predicate<E> onNewPredicate(Predicate<E> predicate) {
+        protected Predicate<Exchange> onNewPredicate(Predicate<Exchange> predicate) {
             addPredicate(predicate);
             return predicate;
         }

@@ -76,7 +76,8 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
 
                 transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
-                        List<ActivityState> list = template.find("select x from " + ActivityState.class.getName() + " x where x.escalationLevel = ?1 and x.timeOverdue < ?2", escalateLevel, timeNow);
+                        //List<ActivityState> list = template.find("select x from " + ActivityState.class.getName() + " x where x.escalationLevel = ?1 and x.timeOverdue < ?2", escalateLevel, timeNow);
+                        List<ActivityState> list = template.find("select x from " + ActivityState.class.getName() + " x where x.timeOverdue < ?1", timeNow);
                         for (ActivityState activityState : list) {
                             fireExpiredEvent(activityState);
                         }
@@ -119,7 +120,8 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
                 } catch (Exception e) {
                     LOG.error("Failed to process expiration of: " + activityState + ". Reason: " + e, e);
                 }
-                activityState.setEscalationLevel(escalateLevel + 1);
+                activityState.setTimeOverdue(null);
+                //activityState.setEscalationLevel(escalateLevel + 1);
                 return null;
             }
         });
