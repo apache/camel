@@ -54,7 +54,7 @@ public class ActivityDefinition extends EntitySupport {
         this.name = name;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST })
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
     public ProcessDefinition getProcessDefinition() {
         return processDefinition;
     }

@@ -56,7 +56,7 @@ public class ProcessInstance  {
         this.correlationKey = correlationKey;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST })
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
     public ProcessDefinition getProcessDefinition() {
         return processDefinition;
     }
