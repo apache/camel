@@ -45,7 +45,7 @@ public class GenerateXmlTest extends XmlTestSupport {
         route.filter(new GroovyExpression("in.headers.any { h -> h.startsWith('foo') }")).
                 to("seda:b");
 
-        List<ProcessorType> list = route.getOutputs();
+        List<ProcessorType<?>> list = route.getOutputs();
         assertEquals("Size of list: " + list, 1, list.size());
 
         dump(context);

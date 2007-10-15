@@ -82,9 +82,8 @@ public class RouteDotGenerator extends GraphGeneratorSupport {
 
         // TODO we should add a transactional client / event driven consumer / polling client
 
-        List<ProcessorType> outputs = route.getOutputs();
         NodeData from = nodeData;
-        for (ProcessorType output : outputs) {
+        for (ProcessorType output : route.getOutputs()) {
             NodeData newData = printNode(writer, from, output);
             from = newData;
         }
