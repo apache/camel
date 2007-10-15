@@ -17,32 +17,43 @@
  */
 package org.apache.camel.bam;
 
-import static org.apache.camel.language.juel.JuelExpression.el;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class MultipleProcessesTest extends BamRouteTest {
-
     @Override
     public void testBam() throws Exception {
         overdueEndpoint.expectedMessageCount(1);
-        overdueEndpoint.message(0).predicate(el("${in.body.correlationKey == '124'}"));
+        //overdueEndpoint.message(0).predicate().el("${in.body.correlationKey == '124'}");
 
         sendAMessages();
         sendBMessages();
 
-        //overdueEndpoint.assertIsSatisfied();
+        overdueEndpoint.assertIsSatisfied();
     }
 
     protected void sendAMessages() {
-        template.sendBody("direct:a", "<hello id='123'>A</hello>");
-        template.sendBody("direct:a", "<hello id='124'>B</hello>");
-        template.sendBody("direct:a", "<hello id='125'>C</hello>");
+        TransactionTemplate transaction = getMandatoryBean(TransactionTemplate.class, "transactionTemplate");
+        transaction.execute(new TransactionCallbackWithoutResult() {
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                template.sendBody("direct:a", "<hello id='123'>A</hello>");
+                template.sendBody("direct:a", "<hello id='124'>B</hello>");
+                template.sendBody("direct:a", "<hello id='125'>C</hello>");
+            }
+        });
     }
 
     protected void sendBMessages() {
-        template.sendBody("direct:b", "<hello id='123'>A</hello>");
-        template.sendBody("direct:b", "<hello id='125'>C</hello>");
+        TransactionTemplate transaction = getMandatoryBean(TransactionTemplate.class, "transactionTemplate");
+        transaction.execute(new TransactionCallbackWithoutResult() {
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                template.sendBody("direct:b", "<hello id='123'>A</hello>");
+                template.sendBody("direct:b", "<hello id='125'>C</hello>");
+            }
+        });
     }
 }

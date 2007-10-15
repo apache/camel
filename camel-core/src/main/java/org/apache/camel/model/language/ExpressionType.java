@@ -32,11 +32,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.impl.ExpressionSupport;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A useful base class for an expression
@@ -45,7 +46,7 @@ import org.apache.camel.util.IntrospectionSupport;
  */
 @XmlType(name = "expressionType")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExpressionType implements Expression<Exchange> {
+public class ExpressionType implements Expression<Exchange>, Predicate<Exchange> {
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -92,6 +93,21 @@ public class ExpressionType implements Expression<Exchange> {
         }
         ObjectHelper.notNull(expressionValue, "expressionValue");
         return expressionValue.evaluate(exchange);
+    }
+
+    public void assertMatches(String text, Exchange exchange) throws AssertionError {
+        if (!matches(exchange)) {
+            throw new AssertionError(text + getExpression() + " for exchange: " + exchange);
+        }
+    }
+
+    public boolean matches(Exchange exchange) {
+        if (predicate == null) {
+            RouteContext routeContext = new RouteContext(exchange.getContext());
+            predicate = createPredicate(routeContext);
+        }
+        ObjectHelper.notNull(predicate, "predicate");
+        return predicate.matches(exchange);
     }
 
     public String getLanguage() {

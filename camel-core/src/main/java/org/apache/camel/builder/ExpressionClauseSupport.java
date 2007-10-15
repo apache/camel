@@ -17,26 +17,28 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.model.ExpressionNode;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.language.ExpressionType;
+
 
 /**
- * Represents an expression clause within the DSL which when the expression is complete
- * the clause continues to another part of the DSL
+ * TODO workaround for a compiler bug. Remove ASAP!
+ * We seem to get compile time errors when creating routes of the form
+ *
+ * <code>from("foo").filter().xpath("//foo").to("bar")</code>
+ * as the type of the return value of xpath(String) is of type {@link Object} rather than
+ * the expected FilterType if we remove the "extends ProcessorType" from the T declaration
+ * so we've split the ExpressionClause class into two; one with the extends and one without
+ * with some cut and paste between them which is not ideal
  *
  * @version $Revision: 1.1 $
  */
-public class ExpressionClause<T extends ProcessorType> extends ExpressionClauseSupport<T> {
-    public static <T extends ExpressionNode> ExpressionClause<T> createAndSetExpression(T result) {
-        ExpressionClause<T> clause = new ExpressionClause<T>(result);
-        result.setExpression(clause);
-        return clause;
-    }
+public class ExpressionClauseSupport<T> extends ExpressionType {
+    private T result;
+    private String language;
 
-    public ExpressionClause(T result) {
-        super(result);
+    public ExpressionClauseSupport(T result) {
+        this.result = result;
     }
-
 
     // Fluent API
     //-------------------------------------------------------------------------
@@ -160,7 +162,18 @@ public class ExpressionClause<T extends ProcessorType> extends ExpressionClauseS
      * @return the builder to continue processing the DSL
      */
     public T language(String language, String expression) {
-        return super.language(language, expression);
+        setLanguage(language);
+        setExpression(expression);
+        return result;
     }
 
+    // Properties
+    //-------------------------------------------------------------------------
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 }
