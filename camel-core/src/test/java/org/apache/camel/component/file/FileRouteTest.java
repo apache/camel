@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -35,6 +37,12 @@ public class FileRouteTest extends ContextTestSupport {
         template.sendBodyAndHeader(uri, expectedBody, "cheese", 123);
 
         result.assertIsSatisfied();
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        recursiveDelete("target/test-default-inbox");
+        super.setUp();
     }
 
     @Override

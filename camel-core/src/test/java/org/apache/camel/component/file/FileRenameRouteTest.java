@@ -24,7 +24,7 @@ import java.io.File;
 public class FileRenameRouteTest extends FileRouteTest {
     @Override
     protected void setUp() throws Exception {
-        recursiveDelete(new File("target/test-rename-inbox"));
+        recursiveDelete("target/test-rename-inbox");
         uri = "file:target/test-rename-inbox?moveNamePrefix=foo/";
         super.setUp();
     }
