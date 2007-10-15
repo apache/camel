@@ -58,7 +58,8 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     // <a><b>1</b><b>2</b></a>
     // will evaluate as just "1" by default which is bizarre. So by default
     // lets assume XPath expressions result in nodesets.
-    private QName resultType = XPathConstants.NODESET;
+    private Class resultType;
+    private QName resultQName = XPathConstants.NODESET;
     private String objectModelUri;
     private DefaultNamespaceContext namespaceContext;
     private XPathFunctionResolver functionResolver;
@@ -96,7 +97,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     }
 
     public Object evaluate(E exchange) {
-        return evaluateAs(exchange, resultType);
+        return evaluateAs(exchange, resultQName);
     }
 
     // Builder methods
@@ -108,7 +109,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      * @return the current builder
      */
     public XPathBuilder<E> booleanResult() {
-        resultType = XPathConstants.BOOLEAN;
+        resultQName = XPathConstants.BOOLEAN;
         return this;
     }
 
@@ -118,7 +119,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      * @return the current builder
      */
     public XPathBuilder<E> nodeResult() {
-        resultType = XPathConstants.NODE;
+        resultQName = XPathConstants.NODE;
         return this;
     }
 
@@ -128,7 +129,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      * @return the current builder
      */
     public XPathBuilder<E> nodeSetResult() {
-        resultType = XPathConstants.NODESET;
+        resultQName = XPathConstants.NODESET;
         return this;
     }
 
@@ -138,7 +139,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      * @return the current builder
      */
     public XPathBuilder<E> numberResult() {
-        resultType = XPathConstants.NUMBER;
+        resultQName = XPathConstants.NUMBER;
         return this;
     }
 
@@ -148,7 +149,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      * @return the current builder
      */
     public XPathBuilder<E> stringResult() {
-        resultType = XPathConstants.STRING;
+        resultQName = XPathConstants.STRING;
         return this;
     }
 
@@ -224,12 +225,12 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
         return text;
     }
 
-    public QName getResultType() {
-        return resultType;
+    public QName getResultQName() {
+        return resultQName;
     }
 
-    public void setResultType(QName resultType) {
-        this.resultType = resultType;
+    public void setResultQName(QName resultQName) {
+        this.resultQName = resultQName;
     }
 
     public DefaultNamespaceContext getNamespaceContext() {
@@ -345,6 +346,14 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
 
     public void setOutHeaderFunction(XPathFunction outHeaderFunction) {
         this.outHeaderFunction = outHeaderFunction;
+    }
+
+    public Class getResultType() {
+        return resultType;
+    }
+
+    public void setResultType(Class resultType) {
+        this.resultType = resultType;
     }
 
     // Implementation methods

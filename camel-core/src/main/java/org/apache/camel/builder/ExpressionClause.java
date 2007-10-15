@@ -18,7 +18,7 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.model.ExpressionNode;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.language.ExpressionType;
 
 /**
  * Represents an expression clause within the DSL which when the expression is complete
@@ -26,7 +26,10 @@ import org.apache.camel.model.ProcessorType;
  *
  * @version $Revision: 1.1 $
  */
-public class ExpressionClause<T extends ProcessorType> extends ExpressionClauseSupport<T> {
+public class ExpressionClause<T> extends ExpressionType {
+    private T result;
+    private String language;
+
     public static <T extends ExpressionNode> ExpressionClause<T> createAndSetExpression(T result) {
         ExpressionClause<T> clause = new ExpressionClause<T>(result);
         result.setExpression(clause);
@@ -34,9 +37,8 @@ public class ExpressionClause<T extends ProcessorType> extends ExpressionClauseS
     }
 
     public ExpressionClause(T result) {
-        super(result);
+        this.result = result;
     }
-
 
     // Fluent API
     //-------------------------------------------------------------------------
@@ -160,7 +162,18 @@ public class ExpressionClause<T extends ProcessorType> extends ExpressionClauseS
      * @return the builder to continue processing the DSL
      */
     public T language(String language, String expression) {
-        return super.language(language, expression);
+        setLanguage(language);
+        setExpression(expression);
+        return result;
     }
 
+    // Properties
+    //-------------------------------------------------------------------------
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 }

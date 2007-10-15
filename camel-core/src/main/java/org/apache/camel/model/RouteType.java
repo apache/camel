@@ -35,14 +35,14 @@ import java.util.List;
 @XmlRootElement(name = "route")
 @XmlType(propOrder = {"interceptors", "inputs", "outputs" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RouteType extends ProcessorType implements CamelContextAware {
+public class RouteType extends ProcessorType<ProcessorType> implements CamelContextAware {
     private static final transient Log LOG = LogFactory.getLog(RouteType.class);
     @XmlElementRef
     private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     @XmlElementRef
     private List<FromType> inputs = new ArrayList<FromType>();
     @XmlElementRef
-    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
+    private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
     @XmlAttribute
     private String group;
     @XmlTransient
@@ -135,11 +135,11 @@ public class RouteType extends ProcessorType implements CamelContextAware {
         this.inputs = inputs;
     }
 
-    public List<ProcessorType> getOutputs() {
+    public List<ProcessorType<?>> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorType> outputs) {
+    public void setOutputs(List<ProcessorType<?>> outputs) {
         this.outputs = outputs;
 
         if (outputs != null) {

@@ -25,7 +25,7 @@ import org.apache.camel.Predicate;
 import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
 import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
 import org.apache.camel.builder.ExpressionClause;
-import org.apache.camel.builder.ExpressionClauseSupport;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ValueBuilder;
 
 /**
@@ -48,8 +48,8 @@ public abstract class AssertionClause implements Runnable {
         return this;
     }
 
-    public ExpressionClauseSupport<AssertionClause> predicate() {
-        ExpressionClauseSupport<AssertionClause> clause = new ExpressionClauseSupport<AssertionClause>(this);
+    public ExpressionClause<AssertionClause> predicate() {
+        ExpressionClause<AssertionClause> clause = new ExpressionClause<AssertionClause>(this);
         addPredicate(clause);
         return clause;
     }

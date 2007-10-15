@@ -51,7 +51,7 @@ public class XPathLanguage implements Language {
 
     protected void configureBuilder(XPathBuilder builder) {
         if (resultType != null) {
-            builder.setResultType(resultType);
+            builder.setResultQName(resultType);
         }
     }
 }
