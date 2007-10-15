@@ -271,10 +271,6 @@ public class JmsConfiguration implements Cloneable {
                 listenerContainer.setCacheLevel(cacheLevel);
             } else if (cacheLevelName != null) {
                 listenerContainer.setCacheLevelName(cacheLevelName);
-            } else {
-                // Default to CACHE_CONSUMER unless specified. This works best
-                // with most JMS providers.
-                listenerContainer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
             }
 
             if (idleTaskExecutionLimit >= 0) {
