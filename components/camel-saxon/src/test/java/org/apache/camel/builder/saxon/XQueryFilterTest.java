@@ -60,9 +60,9 @@ public class XQueryFilterTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").filter(
-                        xquery("/person[@name='James']")
-                ).to("mock:result");
+                from("direct:start").
+                        filter().xquery("/person[@name='James']").
+                to("mock:result");
                 // END SNIPPET: example
             }
         };

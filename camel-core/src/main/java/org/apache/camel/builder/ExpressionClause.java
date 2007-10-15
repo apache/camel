@@ -17,19 +17,34 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.ProcessorType;
-import org.apache.camel.spi.Language;
+import org.apache.camel.model.language.ExpressionType;
 
 /**
  * Represents an expression clause within the DSL
  *
  * @version $Revision: 1.1 $
  */
-public class ExpressionClause<T extends ProcessorType> {
+public class ExpressionClause<T extends ProcessorType> extends ExpressionType {
     private T result;
-    private CamelContext camelContext;
+    private String language;
+    private String expressionText;
+    private Expression expression;
+
+    public static <T extends ExpressionNode> ExpressionClause<T> createAndSetExpression(T result) {
+        ExpressionClause<T> clause = new ExpressionClause<T>(result);
+        result.setExpression(clause);
+        return clause;
+    }
+
+    public ExpressionClause(T result) {
+        this.result = result;
+    }
+
+    // Fluent API
+    //-------------------------------------------------------------------------
 
     /**
      * Evaluates the  <a href="http://activemq.apache.org/camel/el.html">EL Language from JSP and JSF</a>
@@ -43,6 +58,8 @@ public class ExpressionClause<T extends ProcessorType> {
     }
 
     /**
+     * Evaluates a <a href="http://activemq.apache.org/camel/groovy.html">Groovy expression</a>
+     *
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -51,6 +68,8 @@ public class ExpressionClause<T extends ProcessorType> {
     }
 
     /**
+     * Evaluates a <a href="http://activemq.apache.org/camel/java-script.html">JavaScript expression</a>
+     *
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -59,6 +78,8 @@ public class ExpressionClause<T extends ProcessorType> {
     }
 
     /**
+     * Evaluates an <a href="http://activemq.apache.org/camel/ognl.html">OGNL expression</a>
+     *
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -67,6 +88,8 @@ public class ExpressionClause<T extends ProcessorType> {
     }
 
     /**
+     * Evaluates a <a href="http://activemq.apache.org/camel/php.html">PHP expression</a>
+     *
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -75,6 +98,8 @@ public class ExpressionClause<T extends ProcessorType> {
     }
 
     /**
+     * Evaluates a <a href="http://activemq.apache.org/camel/python.html">Python expression</a>
+     *
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -83,6 +108,8 @@ public class ExpressionClause<T extends ProcessorType> {
     }
 
     /**
+     * Evaluates a <a href="http://activemq.apache.org/camel/ruby.html">Ruby expression</a>
+     *
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -91,6 +118,8 @@ public class ExpressionClause<T extends ProcessorType> {
     }
 
     /**
+     * Evaluates an <a href="http://activemq.apache.org/camel/sql.html">SQL expression</a>
+     *
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -99,6 +128,8 @@ public class ExpressionClause<T extends ProcessorType> {
     }
 
     /**
+     * Evaluates a <a href="http://activemq.apache.org/camel/simple.html">Simple expression</a>
+     *
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -107,6 +138,8 @@ public class ExpressionClause<T extends ProcessorType> {
     }
 
     /**
+     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath expression</a>
+     *
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -115,33 +148,35 @@ public class ExpressionClause<T extends ProcessorType> {
     }
 
     /**
+     * Evaluates an <a href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
+     *
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
-    public T xqery(String text) {
-        return language("xqery", text);
+    public T xquery(String text) {
+        return language("xquery", text);
     }
 
     /**
      * Evaluates a given language name with the expression text
      *
-     * @param languageName the name of the language
-     * @param text         the expression in the given language
+     * @param language   the name of the language
+     * @param expression the expression in the given language
      * @return the builder to continue processing the DSL
      */
-    public T language(String languageName, String text) {
-        Expression expression = createExpression("el", text);
-
-        // TODO set the exception!
+    public T language(String language, String expression) {
+        setLanguage(language);
+        setExpression(expression);
         return result;
     }
 
-    protected Expression createExpression(String languageName, String text) {
-        // TODO can we share this code with other places we assert mandatory language names?
-        Language language = camelContext.resolveLanguage(languageName);
-        if (language == null) {
-            throw new IllegalArgumentException("Could not resolve language: " + languageName);
-        }
-        return language.createExpression(text);
+    // Properties
+    //-------------------------------------------------------------------------
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 }

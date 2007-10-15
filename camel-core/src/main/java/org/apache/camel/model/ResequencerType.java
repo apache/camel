@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -106,7 +108,13 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
         this.streamConfig = null;
         return this;
     }
-    
+
+    public ResequencerType expression(ExpressionType expression) {
+        expressions.add(expression);
+        return this;
+    }
+
+
     @Override
     public String toString() {
         return "Resequencer[ " + getExpressions() + " -> " + getOutputs() + "]";

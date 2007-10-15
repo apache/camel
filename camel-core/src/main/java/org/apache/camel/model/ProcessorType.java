@@ -36,6 +36,7 @@ import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.DataTypeExpression;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.converter.ObjectConverter;
@@ -66,9 +67,9 @@ public abstract class ProcessorType<Type extends ProcessorType> {
     private DelegateProcessor lastInterceptor;
     private NodeFactory nodeFactory;
     // else to use an
-                                                            // optional
-                                                            // attribute in
-                                                            // JAXB2
+    // optional
+    // attribute in
+    // JAXB2
 
     public abstract List<ProcessorType<?>> getOutputs();
 
@@ -194,16 +195,40 @@ public abstract class ProcessorType<Type extends ProcessorType> {
      * Creates an {@link IdempotentConsumer} to avoid duplicate messages
      */
     public IdempotentConsumerType idempotentConsumer(Expression messageIdExpression,
-                                                     MessageIdRepository messageIdRepository) {
+            MessageIdRepository messageIdRepository) {
         IdempotentConsumerType answer = new IdempotentConsumerType(messageIdExpression, messageIdRepository);
         addOutput(answer);
         return answer;
     }
 
     /**
+     * Creates an {@link IdempotentConsumer} to avoid duplicate messages
+     *
+     * @return the builder used to create the expression
+     */
+    public ExpressionClause<IdempotentConsumerType> idempotentConsumer(MessageIdRepository messageIdRepository) {
+        IdempotentConsumerType answer = new IdempotentConsumerType();
+        answer.setMessageIdRepository(messageIdRepository);
+        addOutput(answer);
+        return ExpressionClause.createAndSetExpression(answer);
+    }
+
+    /**
+     * Creates a predciate expression which only if it is true then the
+     * exchange is forwarded to the destination
+     *
+     * @return the clause used to create the filter expression
+     */
+    public ExpressionClause<FilterType> filter() {
+        FilterType filter = new FilterType();
+        addOutput(filter);
+        return ExpressionClause.createAndSetExpression(filter);
+    }
+
+    /**
      * Creates a predicate which is applied and only if it is true then the
      * exchange is forwarded to the destination
-     * 
+     *
      * @return the builder for a predicate
      */
     public FilterType filter(Predicate predicate) {
@@ -212,9 +237,21 @@ public abstract class ProcessorType<Type extends ProcessorType> {
         return filter;
     }
 
+    public FilterType filter(ExpressionType expression) {
+        FilterType filter = getNodeFactory().createFilter();
+        filter.setExpression(expression);
+        addOutput(filter);
+        return filter;
+    }
+
+    public FilterType filter(String language, String expression) {
+        return filter(new LanguageExpression(language, expression));
+    }
+
+
     /**
      * Creates a choice of one or more predicates with an otherwise clause
-     * 
+     *
      * @return the builder for a choice expression
      */
     public ChoiceType choice() {
@@ -225,7 +262,7 @@ public abstract class ProcessorType<Type extends ProcessorType> {
 
     /**
      * Creates a try/catch block
-     * 
+     *
      * @return the builder for a tryBlock expression
      */
     public TryType tryBlock() {
@@ -238,9 +275,9 @@ public abstract class ProcessorType<Type extends ProcessorType> {
      * Creates a dynamic <a
      * href="http://activemq.apache.org/camel/recipient-list.html">Recipient
      * List</a> pattern.
-     * 
+     *
      * @param receipients is the builder of the expression used in the
-     *                {@link RecipientList} to decide the destinations
+     *                    {@link RecipientList} to decide the destinations
      */
     public Type recipientList(Expression receipients) {
         RecipientListType answer = new RecipientListType(receipients);
@@ -249,11 +286,27 @@ public abstract class ProcessorType<Type extends ProcessorType> {
     }
 
     /**
+     * Creates a dynamic <a
+     * href="http://activemq.apache.org/camel/recipient-list.html">Recipient
+     * List</a> pattern.
+     *
+     * @return the expression clasue for the expression used in the
+     *                    {@link RecipientList} to decide the destinations
+     */
+    public ExpressionClause<Type> recipientList() {
+        RecipientListType answer = new RecipientListType();
+        addOutput(answer);
+        ExpressionClause<Type> clause = new ExpressionClause<Type>((Type) this);
+        answer.setExpression(clause);
+        return clause;
+    }
+
+    /**
      * A builder for the <a
      * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
      * pattern where an expression is evaluated to iterate through each of the
      * parts of a message and then each part is then send to some endpoint.
-     * 
+     *
      * @param receipients the expression on which to split
      * @return the builder
      */
@@ -265,16 +318,16 @@ public abstract class ProcessorType<Type extends ProcessorType> {
 
     /**
      * A builder for the <a
-     * href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>
-     * pattern where an expression is evaluated to be able to compare the
-     * message exchanges to reorder them. e.g. you may wish to sort by some
-     * header
-     * 
-     * @param expression the expression on which to compare messages in order
-     * @return the builder
+     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
+     * pattern where an expression is evaluated to iterate through each of the
+     * parts of a message and then each part is then send to some endpoint.
+     *
+     * @return the expression clause for the expression on which to split
      */
-    public ResequencerType resequencer(Expression<Exchange> expression) {
-        return resequencer(Collections.<Expression> singletonList(expression));
+    public ExpressionClause<SplitterType> splitter() {
+        SplitterType answer = new SplitterType();
+        addOutput(answer);
+        return ExpressionClause.createAndSetExpression(answer);
     }
 
     /**
@@ -283,7 +336,38 @@ public abstract class ProcessorType<Type extends ProcessorType> {
      * pattern where a list of expressions are evaluated to be able to compare
      * the message exchanges to reorder them. e.g. you may wish to sort by some
      * headers
-     * 
+     *
+     * @return the expression clause for the expressions on which to compare messages in order
+     */
+    public ExpressionClause<ResequencerType> resequencer() {
+        ResequencerType answer = new ResequencerType();
+        addOutput(answer);
+        ExpressionClause<ResequencerType> clause = new ExpressionClause<ResequencerType>(answer);
+        answer.expression(clause);
+        return clause;
+    }
+
+    /**
+     * A builder for the <a
+     * href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>
+     * pattern where an expression is evaluated to be able to compare the
+     * message exchanges to reorder them. e.g. you may wish to sort by some
+     * header
+     *
+     * @param expression the expression on which to compare messages in order
+     * @return the builder
+     */
+    public ResequencerType resequencer(Expression<Exchange> expression) {
+        return resequencer(Collections.<Expression>singletonList(expression));
+    }
+
+    /**
+     * A builder for the <a
+     * href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>
+     * pattern where a list of expressions are evaluated to be able to compare
+     * the message exchanges to reorder them. e.g. you may wish to sort by some
+     * headers
+     *
      * @param expressions the expressions on which to compare messages in order
      * @return the builder
      */
@@ -299,7 +383,7 @@ public abstract class ProcessorType<Type extends ProcessorType> {
      * pattern where a list of expressions are evaluated to be able to compare
      * the message exchanges to reorder them. e.g. you may wish to sort by some
      * headers
-     * 
+     *
      * @param expressions the expressions on which to compare messages in order
      * @return the builder
      */
@@ -324,11 +408,62 @@ public abstract class ProcessorType<Type extends ProcessorType> {
      * are combined (or just the latest message is used and older prices are
      * discarded). Another idea is to combine line item messages together into a
      * single invoice message.
-     * 
+     *
      * @param correlationExpression the expression used to calculate the
-     *                correlation key. For a JMS message this could be the
-     *                expression <code>header("JMSDestination")</code> or
-     *                <code>header("JMSCorrelationID")</code>
+     *                              correlation key. For a JMS message this could be the
+     *                              expression <code>header("JMSDestination")</code> or
+     *                              <code>header("JMSCorrelationID")</code>
+     */
+    public ExpressionClause<AggregatorType> aggregator() {
+        AggregatorType answer = new AggregatorType();
+        addOutput(answer);
+        return ExpressionClause.createAndSetExpression(answer);
+    }
+
+    /**
+     * A builder for the <a
+     * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
+     * pattern where a batch of messages are processed (up to a maximum amount
+     * or until some timeout is reached) and messages for the same correlation
+     * key are combined together using some kind of
+     * {@link AggregationStrategy ) (by default the latest message is used) to compress many message exchanges
+     * into a smaller number of exchanges. <p/> A good example of this is stock
+     * market data; you may be receiving 30,000 messages/second and you may want
+     * to throttle it right down so that multiple messages for the same stock
+     * are combined (or just the latest message is used and older prices are
+     * discarded). Another idea is to combine line item messages together into a
+     * single invoice message.
+     *
+     * @param correlationExpression the expression used to calculate the
+     *                              correlation key. For a JMS message this could be the
+     *                              expression <code>header("JMSDestination")</code> or
+     *                              <code>header("JMSCorrelationID")</code>
+     */
+    public ExpressionClause<AggregatorType> aggregator(AggregationStrategy aggregationStrategy) {
+        AggregatorType answer = new AggregatorType();
+        answer.setAggregationStrategy(aggregationStrategy);
+        addOutput(answer);
+        return ExpressionClause.createAndSetExpression(answer);
+    }
+
+    /**
+     * A builder for the <a
+     * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
+     * pattern where a batch of messages are processed (up to a maximum amount
+     * or until some timeout is reached) and messages for the same correlation
+     * key are combined together using some kind of
+     * {@link AggregationStrategy ) (by default the latest message is used) to compress many message exchanges
+     * into a smaller number of exchanges. <p/> A good example of this is stock
+     * market data; you may be receiving 30,000 messages/second and you may want
+     * to throttle it right down so that multiple messages for the same stock
+     * are combined (or just the latest message is used and older prices are
+     * discarded). Another idea is to combine line item messages together into a
+     * single invoice message.
+     *
+     * @param correlationExpression the expression used to calculate the
+     *                              correlation key. For a JMS message this could be the
+     *                              expression <code>header("JMSDestination")</code> or
+     *                              <code>header("JMSCorrelationID")</code>
      */
     public AggregatorType aggregator(Expression correlationExpression) {
         AggregatorType answer = new AggregatorType(correlationExpression);
@@ -349,11 +484,11 @@ public abstract class ProcessorType<Type extends ProcessorType> {
      * are combined (or just the latest message is used and older prices are
      * discarded). Another idea is to combine line item messages together into a
      * single invoice message.
-     * 
+     *
      * @param correlationExpression the expression used to calculate the
-     *                correlation key. For a JMS message this could be the
-     *                expression <code>header("JMSDestination")</code> or
-     *                <code>header("JMSCorrelationID")</code>
+     *                              correlation key. For a JMS message this could be the
+     *                              expression <code>header("JMSDestination")</code> or
+     *                              <code>header("JMSCorrelationID")</code>
      */
     public AggregatorType aggregator(Expression correlationExpression, AggregationStrategy aggregationStrategy) {
         AggregatorType answer = new AggregatorType(correlationExpression, aggregationStrategy);
@@ -366,9 +501,9 @@ public abstract class ProcessorType<Type extends ProcessorType> {
      * href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
      * where an expression is used to calculate the time which the message will
      * be dispatched on
-     * 
+     *
      * @param processAtExpression an expression to calculate the time at which
-     *                the messages should be processed
+     *                            the messages should be processed
      * @return the builder
      */
     public DelayerType delayer(Expression<Exchange> processAtExpression) {
@@ -380,12 +515,12 @@ public abstract class ProcessorType<Type extends ProcessorType> {
      * href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
      * where an expression is used to calculate the time which the message will
      * be dispatched on
-     * 
+     *
      * @param processAtExpression an expression to calculate the time at which
-     *                the messages should be processed
-     * @param delay the delay in milliseconds which is added to the
-     *                processAtExpression to determine the time the message
-     *                should be processed
+     *                            the messages should be processed
+     * @param delay               the delay in milliseconds which is added to the
+     *                            processAtExpression to determine the time the message
+     *                            should be processed
      * @return the builder
      */
     public DelayerType delayer(Expression<Exchange> processAtExpression, long delay) {
@@ -397,9 +532,22 @@ public abstract class ProcessorType<Type extends ProcessorType> {
     /**
      * A builder for the <a
      * href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
+     * where an expression is used to calculate the time which the message will
+     * be dispatched on
+     * @return the expression clause to create the expression
+     */
+    public ExpressionClause<DelayerType> delayer() {
+        DelayerType answer = new DelayerType();
+        addOutput(answer);
+        return ExpressionClause.createAndSetExpression(answer);
+    }
+
+    /**
+     * A builder for the <a
+     * href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
      * where a fixed amount of milliseconds are used to delay processing of a
      * message exchange
-     * 
+     *
      * @param delay the default delay in milliseconds
      * @return the builder
      */
@@ -412,7 +560,7 @@ public abstract class ProcessorType<Type extends ProcessorType> {
      * href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
      * where an expression is used to calculate the time which the message will
      * be dispatched on
-     * 
+     *
      * @return the builder
      */
     public ThrottlerType throttler(long maximumRequestCount) {
@@ -459,21 +607,10 @@ public abstract class ProcessorType<Type extends ProcessorType> {
         return (Type) this;
     }
 
-    public FilterType filter(ExpressionType expression) {
-        FilterType filter = getNodeFactory().createFilter();
-        filter.setExpression(expression);
-        addOutput(filter);
-        return filter;
-    }
-
-    public FilterType filter(String language, String expression) {
-        return filter(new LanguageExpression(language, expression));
-    }
-
     /**
      * Trace logs the exchange before it goes to the next processing step using
      * the {@link #DEFAULT_TRACE_CATEGORY} logging category.
-     * 
+     *
      * @return
      */
     public Type trace() {
@@ -483,7 +620,7 @@ public abstract class ProcessorType<Type extends ProcessorType> {
     /**
      * Trace logs the exchange before it goes to the next processing step using
      * the specified logging category.
-     * 
+     *
      * @param category the logging category trace messages will sent to.
      * @return
      */
@@ -518,9 +655,9 @@ public abstract class ProcessorType<Type extends ProcessorType> {
 
     /**
      * Installs the given error handler builder
-     * 
+     *
      * @param errorHandlerBuilder the error handler to be used by default for
-     *                all child routes
+     *                            all child routes
      * @return the current builder with the error handler configured
      */
     public Type errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
@@ -531,9 +668,9 @@ public abstract class ProcessorType<Type extends ProcessorType> {
     /**
      * Configures whether or not the error handler is inherited by every
      * processing node (or just the top most one)
-     * 
+     *
      * @param condition the falg as to whether error handlers should be
-     *                inherited or not
+     *                  inherited or not
      * @return the current builder
      */
     public Type inheritErrorHandler(boolean condition) {
@@ -643,6 +780,15 @@ public abstract class ProcessorType<Type extends ProcessorType> {
      */
     public Type setOutBody(Expression expression) {
         return process(ProcessorBuilder.setOutBody(expression));
+    }
+
+    /**
+     * Adds a processor which sets the body on the OUT message
+     */
+    public ExpressionClause<Type> setOutBody() {
+        ExpressionClause<Type> clause = new ExpressionClause<Type>((Type) this);
+        process(ProcessorBuilder.setOutBody(clause));
+        return clause;
     }
 
     /**
@@ -816,7 +962,6 @@ public abstract class ProcessorType<Type extends ProcessorType> {
         return (Type) this;
     }
 
-
     // Properties
     // -------------------------------------------------------------------------
 
@@ -869,7 +1014,6 @@ public abstract class ProcessorType<Type extends ProcessorType> {
     public String getLabel() {
         return "";
     }
-    
 
     // Implementation methods
     // -------------------------------------------------------------------------
@@ -886,9 +1030,9 @@ public abstract class ProcessorType<Type extends ProcessorType> {
     /**
      * A strategy method which allows derived classes to wrap the child
      * processor in some kind of interceptor
-     * 
+     *
      * @param routeContext
-     * @param target the processor which can be wrapped
+     * @param target       the processor which can be wrapped
      * @return the original processor or a new wrapped interceptor
      */
     protected Processor wrapProcessorInInterceptors(RouteContext routeContext, Processor target) throws Exception {
@@ -901,7 +1045,7 @@ public abstract class ProcessorType<Type extends ProcessorType> {
         DelegateProcessor first = null;
         DelegateProcessor last = null;
         List<InterceptorType> interceptors = new ArrayList<InterceptorType>(routeContext.getRoute()
-            .getInterceptors());
+                .getInterceptors());
         List<InterceptorType> list = getInterceptors();
         for (InterceptorType interceptorType : list) {
             if (!interceptors.contains(interceptorType)) {
@@ -936,7 +1080,8 @@ public abstract class ProcessorType<Type extends ProcessorType> {
     protected ErrorHandlerBuilder createErrorHandlerBuilder() {
         if (isInheritErrorHandler()) {
             return new DeadLetterChannelBuilder();
-        } else {
+        }
+        else {
             return new NoErrorHandlerBuilder();
         }
     }
@@ -961,7 +1106,7 @@ public abstract class ProcessorType<Type extends ProcessorType> {
     }
 
     protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorType<?>> outputs)
-        throws Exception {
+            throws Exception {
         List<Processor> list = new ArrayList<Processor>();
         for (ProcessorType output : outputs) {
             Processor processor = output.createProcessor(routeContext);
@@ -971,18 +1116,19 @@ public abstract class ProcessorType<Type extends ProcessorType> {
         if (!list.isEmpty()) {
             if (list.size() == 1) {
                 processor = list.get(0);
-            } else {
+            }
+            else {
                 processor = createCompositeProcessor(list);
             }
         }
         return processor;
     }
-    
+
     /**
-     * Causes subsequent processors to be called asynchronously 
-     * 
+     * Causes subsequent processors to be called asynchronously
+     *
      * @param coreSize the number of threads that will be used to process
-     *          messages in subsequent processors.
+     *                 messages in subsequent processors.
      * @return a ThreadType builder that can be used to futher configure the
      *         the thread pool.
      */
@@ -993,10 +1139,10 @@ public abstract class ProcessorType<Type extends ProcessorType> {
     }
 
     /**
-     * Causes subsequent processors to be called asynchronously 
-     * 
+     * Causes subsequent processors to be called asynchronously
+     *
      * @param executor the executor that will be used to process
-     *          messages in subsequent processors.
+     *                 messages in subsequent processors.
      * @return a ThreadType builder that can be used to further configure the
      *         the thread pool.
      */
