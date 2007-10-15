@@ -22,7 +22,8 @@ package org.apache.camel.component.file;
 public class FileDeleteRouteTest extends FileRouteTest {
     @Override
     protected void setUp() throws Exception {
-        uri = "file:target/test-rename-inbox?delete=true";
+        uri = "file:target/test-delete-inbox?delete=true";
+        recursiveDelete("target/test-delete-inbox");
         super.setUp();
     }
 }

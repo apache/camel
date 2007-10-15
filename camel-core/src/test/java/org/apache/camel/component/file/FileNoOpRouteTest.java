@@ -25,17 +25,7 @@ public class FileNoOpRouteTest extends FileRouteTest {
     @Override
     protected void setUp() throws Exception {
         uri = "file:target/test-noop-inbox?noop=true";
-
-        // lets delete all the files
-        File oldDir = new File("target/test-noop-inbox");
-        if (oldDir.exists()) {
-            File parentDir = oldDir.getParentFile();
-            File[] files = parentDir.listFiles();
-            File newName = new File(parentDir, oldDir.getName() + "-" + (files.length + 1));
-            log.debug("renaming old output: " + oldDir + " to: " + newName);
-            oldDir.renameTo(newName);
-        }
-
+        recursiveDelete("target/test-noop-inbox");
         super.setUp();
     }
 }

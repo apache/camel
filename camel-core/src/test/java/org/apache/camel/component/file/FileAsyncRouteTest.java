@@ -39,6 +39,12 @@ public class FileAsyncRouteTest extends ContextTestSupport {
     AtomicReference<File> file = new AtomicReference<File>();
 
     @Override
+    protected void setUp() throws Exception {
+        recursiveDelete("target/test-async-inbox");
+        super.setUp();
+    }
+
+    @Override
     protected void tearDown() throws Exception {
         processingLatch.countDown();
         receivedLatch.countDown();
