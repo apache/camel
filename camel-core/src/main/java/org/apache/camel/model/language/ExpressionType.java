@@ -32,7 +32,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.impl.ExpressionSupport;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.CollectionStringBuffer;
@@ -57,6 +57,8 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
     private Predicate predicate;
     @XmlTransient
     private Expression expressionValue;
+    @XmlTransient
+    private ExpressionType expressionType;
 
     public static String getLabel(List<ExpressionType> expressions) {
         CollectionStringBuffer buffer = new CollectionStringBuffer();
@@ -116,20 +118,30 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
 
     public Predicate<Exchange> createPredicate(RouteContext routeContext) {
         if (predicate == null) {
-            CamelContext camelContext = routeContext.getCamelContext();
-            Language language = camelContext.resolveLanguage(getLanguage());
-            predicate = language.createPredicate(getExpression());
-            configurePredicate(routeContext, predicate);
+            if (expressionType != null) {
+                predicate = expressionType.createPredicate(routeContext);
+            }
+            else {
+                CamelContext camelContext = routeContext.getCamelContext();
+                Language language = camelContext.resolveLanguage(getLanguage());
+                predicate = language.createPredicate(getExpression());
+                configurePredicate(routeContext, predicate);
+            }
         }
         return predicate;
     }
 
     public Expression createExpression(RouteContext routeContext) {
         if (expressionValue == null) {
-            CamelContext camelContext = routeContext.getCamelContext();
-            Language language = camelContext.resolveLanguage(getLanguage());
-            expressionValue = language.createExpression(getExpression());
-            configureExpression(routeContext, expressionValue);
+            if (expressionType != null) {
+                expressionValue = expressionType.createExpression(routeContext);
+            }
+            else {
+                CamelContext camelContext = routeContext.getCamelContext();
+                Language language = camelContext.resolveLanguage(getLanguage());
+                expressionValue = language.createExpression(getExpression());
+                configureExpression(routeContext, expressionValue);
+            }
         }
         return expressionValue;
     }
@@ -191,12 +203,21 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
         return "";
     }
 
+    /**
+     * Allows derived classes to set a lazily created expressionType instance
+     * such as if using the {@link ExpressionClause#
+     *
+     * @param expressionType
+     */
+    protected void setExpressionType(ExpressionType expressionType) {
+        this.expressionType = expressionType;
+    }
+
     protected void configurePredicate(RouteContext routeContext, Predicate predicate) {
     }
 
     protected void configureExpression(RouteContext routeContext, Expression expression) {
     }
-
 
     /**
      * Sets a named property on the object instance using introspection
@@ -209,5 +230,4 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
             throw new IllegalArgumentException("Failed to set property " + name + " on " + bean + ". Reason: " + e, e);
         }
     }
-
 }
