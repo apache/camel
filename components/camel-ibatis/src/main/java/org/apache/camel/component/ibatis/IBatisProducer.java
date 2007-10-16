@@ -20,13 +20,11 @@ package org.apache.camel.component.ibatis;
 import com.ibatis.sqlmap.client.SqlMapClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ExchangeHelper;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class IBatisProducer extends DefaultProducer {
-    private SqlMapClient sqlClient;
     private final IBatisEndpoint endpoint;
 
     public IBatisProducer(IBatisEndpoint endpoint) {
@@ -40,12 +38,15 @@ public class IBatisProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (sqlClient == null) {
-            sqlClient = endpoint.getSqlClient();
+        Object body = exchange.getIn().getBody();
+        if (body == null) {
+            // must be a poll so lets do a query
+            endpoint.query(exchange.getOut(true));
         }
-        Object body = ExchangeHelper.getMandatoryInBody(exchange);
-        String operation = getOperationName(exchange);
-        sqlClient.insert(operation, body);
+        else {
+            String operation = getOperationName(exchange);
+            endpoint.getSqlClient().insert(operation, body);
+        }
     }
 
     /**

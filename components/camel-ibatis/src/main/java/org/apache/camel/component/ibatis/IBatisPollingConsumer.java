@@ -31,13 +31,10 @@ import org.apache.camel.impl.PollingConsumerSupport;
  */
 public class IBatisPollingConsumer extends PollingConsumerSupport {
     private final IBatisEndpoint endpoint;
-    private SqlMapClient sqlClient;
-    private String queryName;
 
     public IBatisPollingConsumer(IBatisEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        queryName = endpoint.getEntityName();
     }
 
     public Exchange receive(long timeout) {
@@ -50,14 +47,9 @@ public class IBatisPollingConsumer extends PollingConsumerSupport {
 
     public Exchange receiveNoWait() {
         try {
-            if (sqlClient == null) {
-                sqlClient = endpoint.getSqlClient();
-            }
-            List list = sqlClient.queryForList(queryName);
             Exchange exchange = endpoint.createExchange();
             Message in = exchange.getIn();
-            in.setBody(list);
-            in.setHeader("org.apache.camel.ibatis.queryName", queryName);
+            endpoint.query(in);
             return exchange;
         }
         catch (Exception e) {

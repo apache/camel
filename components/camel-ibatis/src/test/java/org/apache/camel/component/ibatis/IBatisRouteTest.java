@@ -44,10 +44,10 @@ public class IBatisRouteTest extends ContextTestSupport {
 
         assertMockEndpointsSatisifed();
 
-        List<Exchange> list = endpoint.getReceivedExchanges();
-        Exchange exchange = list.get(list.size() - 1);
-        List body = exchange.getIn().getBody(List.class);
-        assertNotNull("Should have returned a List!", body);
+        // now lets poll that the account has been inserted
+        Object answer = template.sendBody("ibatis:selectAllAccounts", null);
+        List body = assertIsInstanceOf(List.class, answer);
+
         assertEquals("Wrong size: " + body, 1, body.size());
         Account actual = assertIsInstanceOf(Account.class, body.get(0));
 
