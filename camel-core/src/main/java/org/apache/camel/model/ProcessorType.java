@@ -191,6 +191,35 @@ public abstract class ProcessorType<Type extends ProcessorType> {
         return to(endpoints);
     }
 
+
+    /**
+     * Causes subsequent processors to be called asynchronously
+     *
+     * @param coreSize the number of threads that will be used to process
+     *                 messages in subsequent processors.
+     * @return a ThreadType builder that can be used to futher configure the
+     *         the thread pool.
+     */
+    public ThreadType thread(int coreSize) {
+        ThreadType answer = new ThreadType(coreSize);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * Causes subsequent processors to be called asynchronously
+     *
+     * @param executor the executor that will be used to process
+     *                 messages in subsequent processors.
+     * @return a ThreadType builder that can be used to further configure the
+     *         the thread pool.
+     */
+    public ProcessorType<Type> thread(ThreadPoolExecutor executor) {
+        ThreadType answer = new ThreadType(executor);
+        addOutput(answer);
+        return this;
+    }
+
     /**
      * Creates an {@link IdempotentConsumer} to avoid duplicate messages
      */
@@ -1124,31 +1153,4 @@ public abstract class ProcessorType<Type extends ProcessorType> {
         return processor;
     }
 
-    /**
-     * Causes subsequent processors to be called asynchronously
-     *
-     * @param coreSize the number of threads that will be used to process
-     *                 messages in subsequent processors.
-     * @return a ThreadType builder that can be used to futher configure the
-     *         the thread pool.
-     */
-    public ThreadType thread(int coreSize) {
-        ThreadType answer = new ThreadType(coreSize);
-        addOutput(answer);
-        return answer;
-    }
-
-    /**
-     * Causes subsequent processors to be called asynchronously
-     *
-     * @param executor the executor that will be used to process
-     *                 messages in subsequent processors.
-     * @return a ThreadType builder that can be used to further configure the
-     *         the thread pool.
-     */
-    public ProcessorType<Type> thread(ThreadPoolExecutor executor) {
-        ThreadType answer = new ThreadType(executor);
-        addOutput(answer);
-        return this;
-    }
 }
