@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.component.mock.MockEndpoint;
 
 import static org.apache.camel.builder.saxon.XQueryBuilder.xquery;
@@ -34,7 +35,7 @@ public class XQueryWithNamespacesFilterTest extends ContextTestSupport {
     public void testSendMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start", "<person name='James' city='London'/>");
+        template.sendBody("direct:start", "<person xmlns='http://acme.com/cheese' name='James' city='London'/>");
 
         resultEndpoint.assertIsSatisfied();
     }
@@ -42,8 +43,7 @@ public class XQueryWithNamespacesFilterTest extends ContextTestSupport {
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 
-        template.sendBody("direct:start", "<person name='Hiram' city='Tampa'/>");
-
+        template.sendBody("direct:start", "<person xmlns='http://acme.com/cheese'  name='Hiram' city='Tampa'/>");
 
         resultEndpoint.assertIsSatisfied();
     }
@@ -60,9 +60,11 @@ public class XQueryWithNamespacesFilterTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
+                Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
+
                 from("direct:start").
-                        filter().xquery("/person[@name='James']").
-                to("mock:result");
+                        filter().xquery("/c:person[@name='James']", ns).
+                        to("mock:result");
                 // END SNIPPET: example
             }
         };
