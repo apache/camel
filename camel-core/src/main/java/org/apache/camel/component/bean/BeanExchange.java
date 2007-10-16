@@ -30,6 +30,10 @@ public class BeanExchange extends DefaultExchange {
         super(context, pattern);
     }
 
+    public BeanExchange(DefaultExchange parent) {
+        super(parent);
+    }
+
     public BeanInvocation getInvocation() {
         return getIn().getBody(BeanInvocation.class);
     }
@@ -40,6 +44,6 @@ public class BeanExchange extends DefaultExchange {
 
     @Override
     public Exchange newInstance() {
-        return new BeanExchange(getContext(), getPattern());
+        return new BeanExchange(this);
     }
 }

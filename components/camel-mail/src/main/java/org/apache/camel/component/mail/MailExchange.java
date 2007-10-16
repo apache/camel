@@ -41,6 +41,11 @@ public class MailExchange extends DefaultExchange {
         setIn(new MailMessage(message));
     }
 
+    public MailExchange(DefaultExchange parent, MailBinding binding) {
+        super(parent);
+        this.binding = binding;
+    }
+
     @Override
     public MailMessage getIn() {
         return (MailMessage) super.getIn();
@@ -67,7 +72,7 @@ public class MailExchange extends DefaultExchange {
 
     @Override
     public Exchange newInstance() {
-        return new MailExchange(getContext(), getPattern(), binding);
+        return new MailExchange(this, binding);
     }
 
     // Expose Email APIs

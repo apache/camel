@@ -33,6 +33,11 @@ public class IrcExchange extends DefaultExchange {
         setIn(inMessage);
     }
 
+    public IrcExchange(DefaultExchange parent, IrcBinding binding) {
+        super(parent);
+        this.binding = binding;
+    }
+
     public IrcBinding getBinding() {
         return binding;
     }
@@ -63,7 +68,7 @@ public class IrcExchange extends DefaultExchange {
 
     @Override
     public IrcExchange newInstance() {
-        return new IrcExchange(getContext(), getPattern(), getBinding());
+        return new IrcExchange(this, getBinding());
     }
 
     @Override

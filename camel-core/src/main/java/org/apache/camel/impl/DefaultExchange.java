@@ -53,6 +53,12 @@ public class DefaultExchange implements Exchange {
         this.pattern = pattern;
     }
 
+    public DefaultExchange(DefaultExchange parent) {
+        this(parent.getContext(), parent.getPattern());
+        this.unitOfWork = parent.getUnitOfWork();
+    }
+
+
     @Override
     public String toString() {
         return "Exchange[" + in + "]";
@@ -112,7 +118,7 @@ public class DefaultExchange implements Exchange {
     }
 
     public Exchange newInstance() {
-        return new DefaultExchange(context);
+        return new DefaultExchange(this);
     }
 
     public CamelContext getContext() {

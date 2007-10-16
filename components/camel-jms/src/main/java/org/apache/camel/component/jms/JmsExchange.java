@@ -42,6 +42,11 @@ public class JmsExchange extends DefaultExchange {
         setIn(new JmsMessage(message));
     }
 
+    public JmsExchange(DefaultExchange parent, JmsBinding binding) {
+        super(parent);
+        this.binding = binding;
+    }
+
     @Override
     public JmsMessage getIn() {
         return (JmsMessage) super.getIn();
@@ -68,7 +73,7 @@ public class JmsExchange extends DefaultExchange {
 
     @Override
     public Exchange newInstance() {
-        return new JmsExchange(getContext(), getPattern(), binding);
+        return new JmsExchange(this, binding);
     }
 
     // Expose JMS APIs

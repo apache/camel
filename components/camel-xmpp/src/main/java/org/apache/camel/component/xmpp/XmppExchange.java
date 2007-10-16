@@ -41,6 +41,11 @@ public class XmppExchange extends DefaultExchange {
         setIn(new XmppMessage(message));
     }
 
+    public XmppExchange(DefaultExchange parent, XmppBinding binding) {
+        super(parent);
+        this.binding = binding;
+    }
+
     @Override
     public XmppMessage getIn() {
         return (XmppMessage) super.getIn();
@@ -67,7 +72,7 @@ public class XmppExchange extends DefaultExchange {
 
     @Override
     public Exchange newInstance() {
-        return new XmppExchange(getContext(), getPattern(), binding);
+        return new XmppExchange(this, binding);
     }
 
     // Expose the underlying XMPP APIs
