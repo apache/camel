@@ -65,11 +65,11 @@ public class NodeData {
             this.url = "http://activemq.apache.org/camel/message-endpoint.html";
         }
         else if (node instanceof FilterType) {
-            this.image = imagePrefix + "MessageFilterIcon.gif";
+            this.image = imagePrefix + "MessageFilterIcon.png";
             this.nodeType = "Message Filter";
         }
         else if (node instanceof WhenType) {
-            this.image = imagePrefix + "MessageFilterIcon.gif";
+            this.image = imagePrefix + "MessageFilterIcon.png";
             this.nodeType = "When Filter";
             this.url = "http://activemq.apache.org/camel/content-based-router.html";
         }
@@ -80,7 +80,7 @@ public class NodeData {
             this.tooltop = "Otherwise";
         }
         else if (node instanceof ChoiceType) {
-            this.image = imagePrefix + "ContentBasedRouterIcon.gif";
+            this.image = imagePrefix + "ContentBasedRouterIcon.png";
             this.nodeType = "Content Based Router";
             this.label = "";
             this.edgeLabel = "";
@@ -91,19 +91,19 @@ public class NodeData {
             this.outputs = outputs;
         }
         else if (node instanceof RecipientListType) {
-            this.image = imagePrefix + "RecipientListIcon.gif";
+            this.image = imagePrefix + "RecipientListIcon.png";
             this.nodeType = "Recipient List";
         }
         else if (node instanceof SplitterType) {
-            this.image = imagePrefix + "SplitterIcon.gif";
+            this.image = imagePrefix + "SplitterIcon.png";
             this.nodeType = "Splitter";
         }
         else if (node instanceof AggregatorType) {
-            this.image = imagePrefix + "AggregatorIcon.gif";
+            this.image = imagePrefix + "AggregatorIcon.png";
             this.nodeType = "Aggregator";
         }
         else if (node instanceof ResequencerType) {
-            this.image = imagePrefix + "ResequencerIcon.gif";
+            this.image = imagePrefix + "ResequencerIcon.png";
             this.nodeType = "Resequencer";
         }
 

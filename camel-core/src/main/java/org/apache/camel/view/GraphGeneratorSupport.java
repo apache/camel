@@ -45,7 +45,8 @@ import org.apache.commons.logging.LogFactory;
 public abstract class GraphGeneratorSupport {
     private static final transient Log LOG = LogFactory.getLog(RouteDotGenerator.class);
     protected String dir;
-    private String imagePrefix = "http://www.enterpriseintegrationpatterns.com/img/";
+    //private String imagePrefix = "http://www.enterpriseintegrationpatterns.com/img/";
+    private String imagePrefix = "http://activemq.apache.org/camel/images/eip/";
     private Map<Object, NodeData> nodeMap = new HashMap<Object, NodeData>();
     private boolean makeParentDirs = true;
     protected int clusterCounter;
