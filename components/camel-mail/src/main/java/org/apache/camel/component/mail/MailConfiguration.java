@@ -25,7 +25,7 @@ import org.apache.camel.RuntimeCamelException;
 
 /**
  * Represents the configuration data for communicating over email
- * 
+ *
  * @version $Revision: 532790 $
  */
 public class MailConfiguration implements Cloneable {
@@ -41,6 +41,7 @@ public class MailConfiguration implements Cloneable {
     private String from = "camel@localhost";
     private boolean deleteProcessedMessages = true;
     private String folderName = "INBOX";
+    private boolean ignoreUriScheme;
 
     public MailConfiguration() {
     }
@@ -50,8 +51,9 @@ public class MailConfiguration implements Cloneable {
      */
     public MailConfiguration copy() {
         try {
-            return (MailConfiguration)clone();
-        } catch (CloneNotSupportedException e) {
+            return (MailConfiguration) clone();
+        }
+        catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
     }
@@ -62,9 +64,11 @@ public class MailConfiguration implements Cloneable {
             setHost(value);
         }
 
-        String scheme = uri.getScheme();
-        if (scheme != null) {
-            setProtocol(scheme);
+        if (getProtocol() != null && isIgnoreUriScheme()) {
+            String scheme = uri.getScheme();
+            if (scheme != null) {
+                setProtocol(scheme);
+            }
         }
         String userInfo = uri.getUserInfo();
         if (userInfo != null) {
@@ -83,7 +87,8 @@ public class MailConfiguration implements Cloneable {
         String fragment = uri.getFragment();
         if (fragment == null || fragment.length() == 0) {
             fragment = userInfo + "@" + host;
-        } else {
+        }
+        else {
             setFolderName(fragment);
         }
         setDestination(fragment);
@@ -216,5 +221,13 @@ public class MailConfiguration implements Cloneable {
 
     public void setFolderName(String folderName) {
         this.folderName = folderName;
+    }
+
+    public boolean isIgnoreUriScheme() {
+        return ignoreUriScheme;
+    }
+
+    public void setIgnoreUriScheme(boolean ignoreUriScheme) {
+        this.ignoreUriScheme = ignoreUriScheme;
     }
 }
