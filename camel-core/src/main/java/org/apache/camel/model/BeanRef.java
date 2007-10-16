@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "bean")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BeanRef extends OutputType {
+public class BeanRef extends OutputType<ProcessorType> {
     @XmlAttribute(required = true)
     private String ref;
     @XmlAttribute(required = false)

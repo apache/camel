@@ -31,9 +31,9 @@ import java.util.List;
  */
 @XmlRootElement(name = "proceed")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProceedType extends ProcessorType {
+public class ProceedType extends ProcessorType<ProcessorType> {
 
-    public List<ProcessorType> getOutputs() {
+    public List<ProcessorType<?>> getOutputs() {
         return Collections.EMPTY_LIST;
     }
 

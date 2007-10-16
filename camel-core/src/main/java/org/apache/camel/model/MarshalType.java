@@ -41,7 +41,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 @XmlRootElement(name = "marshal")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MarshalType extends OutputType {
+public class MarshalType extends OutputType<ProcessorType> {
     @XmlAttribute(required = false)
     private String ref;
     // TODO cannot use @XmlElementRef as it doesn't allow optional properties
