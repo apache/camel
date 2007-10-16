@@ -58,8 +58,8 @@ public class MinaTcpWithInOutTest extends TestCase {
         // now lets sleep for a while
         boolean received = latch.await(5, TimeUnit.SECONDS);
         assertTrue("Did not receive the message!", received);
-        assertNotNull(receivedExchange.getOut());
-        assertEquals("!olleH", receivedExchange.getOut().getBody());
+        assertNotNull(receivedExchange.getIn());
+        assertEquals("!olleH", receivedExchange.getIn().getBody());
     }
     
     @Override

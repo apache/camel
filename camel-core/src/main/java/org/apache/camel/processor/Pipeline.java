@@ -16,6 +16,10 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
@@ -26,13 +30,6 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * Creates a Pipeline pattern where the output of the previous step is sent as
@@ -50,12 +47,12 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
     public static Processor newInstance(List<Processor> processors) {
         if (processors.isEmpty()) {
             return null;
-        } else if (processors.size() == 1) {
+        }
+        else if (processors.size() == 1) {
             return processors.get(0);
         }
         return new Pipeline(processors);
     }
-
 
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
@@ -80,7 +77,8 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
 
             if (first) {
                 first = false;
-            } else {
+            }
+            else {
                 nextExchange = createNextExchange(processor, nextExchange);
             }
 
@@ -91,7 +89,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
                 return false;
             }
         }
-        
+
         // If we get here then the pipeline was processed entirely
         // synchronously.
         ExchangeHelper.copyResults(original, nextExchange);
@@ -117,7 +115,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
                     if (nextExchange.isFailed()) {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Mesage exchange has failed so breaking out of pipeline: " + nextExchange + " exception: " + nextExchange.getException() + " fault: "
-                                      + nextExchange.getFault(false));
+                                    + nextExchange.getFault(false));
                         }
                         break;
                     }
@@ -138,51 +136,30 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
     /**
      * Strategy method to create the next exchange from the
      *
-     * @param producer the producer used to send to the endpoint
+     * @param producer         the producer used to send to the endpoint
      * @param previousExchange the previous exchange
      * @return a new exchange
      */
     protected Exchange createNextExchange(Processor producer, Exchange previousExchange) {
-        Exchange answer = copyExchangeStrategy(previousExchange);
+        Exchange answer = previousExchange.newInstance();
+
+        answer.getProperties().putAll(previousExchange.getProperties());
 
         // now lets set the input of the next exchange to the output of the
         // previous message if it is not null
         Message previousOut = previousExchange.getOut(false);
-        Object output = previousOut != null ? previousOut.getBody() : null;
         Message in = answer.getIn();
-        if (output != null) {
-            in.setBody(output);
-            Set<Map.Entry<String,Object>> entries = previousOut.getHeaders().entrySet();
-            for (Map.Entry<String, Object> entry : entries) {
-                in.setHeader(entry.getKey(), entry.getValue());
-            }
+        if (previousOut != null && previousOut.getBody() != null) {
+            in.copyFrom(previousOut);
         }
         else {
-            Object previousInBody = previousExchange.getIn().getBody();
-            if (in.getBody() == null && previousInBody != null) {
-                LOG.warn("Bad exchange implementation; the copy() method did not copy across the in body: " + previousExchange
-                        + " of type: " + previousExchange.getClass());
-                in.setBody(previousInBody);
-            }
+            in.copyFrom(previousExchange.getIn());
         }
         return answer;
-    }
-
-    /**
-     * Strategy method to copy the exchange before sending to another endpoint.
-     * Derived classes such as the {@link Pipeline} will not clone the exchange
-     *
-     * @param exchange
-     * @return the current exchange if no copying is required such as for a
-     *         pipeline otherwise a new copy of the exchange is returned.
-     */
-    protected Exchange copyExchangeStrategy(Exchange exchange) {
-        return exchange.copy();
     }
 
     @Override
     public String toString() {
         return "Pipeline" + getProcessors();
     }
-
 }

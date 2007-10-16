@@ -37,6 +37,11 @@ public class FileExchange extends DefaultExchange {
         this.file = file;
     }
 
+    public FileExchange(DefaultExchange parent, File file) {
+        super(parent);
+        this.file = file;
+    }
+
     /**
      * @return the file
      */
@@ -52,6 +57,6 @@ public class FileExchange extends DefaultExchange {
     }
 
     public Exchange newInstance() {
-        return new FileExchange(getContext(), getPattern(), getFile());
+        return new FileExchange(this, getFile());
     }
 }

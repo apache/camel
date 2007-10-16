@@ -182,6 +182,13 @@ public class ExchangeHelper {
             if (out != null) {
                 result.getOut(true).copyFrom(out);
             }
+            else {
+                // no results so lets copy the last input
+                // as the final processor on a pipeline might not
+                // have created any OUT; such as a mock:endpoint
+                // so lets assume the last IN is the OUT
+                result.getOut(true).copyFrom(source.getIn());
+            }
         }
     }
 
