@@ -17,8 +17,13 @@
  */
 package org.apache.camel.builder;
 
+import java.util.Map;
+
+import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.language.ExpressionType;
+import org.apache.camel.model.language.XPathExpression;
+import org.apache.camel.model.language.XQueryExpression;
 
 /**
  * Represents an expression clause within the DSL which when the expression is complete
@@ -145,6 +150,79 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
+     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath expression</a>
+     * with the specified result type
+     *
+     * @param text the expression to be evaluated
+     * @param resultType the return type expected by the expressiopn
+     * @return the builder to continue processing the DSL
+     */
+    public T xpath(String text, Class resultType) {
+        XPathExpression expression = new XPathExpression(text);
+        expression.setResultType(resultType);
+        setExpressionType(expression);
+        return result;
+    }
+
+    /**
+     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath expression</a>
+     * with the specified result type and set of namespace prefixes and URIs
+     *
+     * @param text the expression to be evaluated
+     * @param resultType the return type expected by the expression
+     * @param namespaces the namespace prefix and URIs to use
+     * @return the builder to continue processing the DSL
+     */
+    public T xpath(String text, Class resultType, Namespaces namespaces) {
+        return xpath(text, resultType, namespaces.getNamespaces());
+    }
+
+    /**
+     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath expression</a>
+     * with the specified result type and set of namespace prefixes and URIs
+     *
+     * @param text the expression to be evaluated
+     * @param resultType the return type expected by the expression
+     * @param namespaces the namespace prefix and URIs to use
+     * @return the builder to continue processing the DSL
+     */
+    public T xpath(String text, Class resultType, Map<String,String> namespaces) {
+        XPathExpression expression = new XPathExpression(text);
+        expression.setResultType(resultType);
+        expression.setNamespaces(namespaces);
+        setExpressionType(expression);
+        return result;
+    }
+
+    /**
+     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath expression</a>
+     * with the specified set of namespace prefixes and URIs
+     *
+     * @param text the expression to be evaluated
+     * @param namespaces the namespace prefix and URIs to use
+     * @return the builder to continue processing the DSL
+     */
+    public T xpath(String text, Namespaces namespaces) {
+        return xpath(text, namespaces.getNamespaces());
+    }
+
+    /**
+     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath expression</a>
+     * with the specified set of namespace prefixes and URIs
+     *
+     * @param text the expression to be evaluated
+     * @param namespaces the namespace prefix and URIs to use
+     * @return the builder to continue processing the DSL
+     */
+    public T xpath(String text, Map<String,String> namespaces) {
+        XPathExpression expression = new XPathExpression(text);
+        expression.setNamespaces(namespaces);
+        setExpressionType(expression);
+        return result;
+    }
+
+
+    /**
      * Evaluates an <a href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
      *
      * @param text the expression to be evaluated
@@ -152,6 +230,78 @@ public class ExpressionClause<T> extends ExpressionType {
      */
     public T xquery(String text) {
         return language("xquery", text);
+    }
+
+    /**
+     * Evaluates an <a href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
+     * with the specified result type
+     *
+     * @param text the expression to be evaluated
+     * @param resultType the return type expected by the expressiopn
+     * @return the builder to continue processing the DSL
+     */
+    public T xquery(String text, Class resultType) {
+        XQueryExpression expression = new XQueryExpression(text);
+        expression.setResultType(resultType);
+        setExpressionType(expression);
+        return result;
+    }
+
+    /**
+     * Evaluates an <a href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
+     * with the specified result type and set of namespace prefixes and URIs
+     *
+     * @param text the expression to be evaluated
+     * @param resultType the return type expected by the expression
+     * @param namespaces the namespace prefix and URIs to use
+     * @return the builder to continue processing the DSL
+     */
+    public T xquery(String text, Class resultType, Namespaces namespaces) {
+        return xquery(text, resultType, namespaces.getNamespaces());
+    }
+
+    /**
+     * Evaluates an <a href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
+     * with the specified result type and set of namespace prefixes and URIs
+     *
+     * @param text the expression to be evaluated
+     * @param resultType the return type expected by the expression
+     * @param namespaces the namespace prefix and URIs to use
+     * @return the builder to continue processing the DSL
+     */
+    public T xquery(String text, Class resultType, Map<String,String> namespaces) {
+        XQueryExpression expression = new XQueryExpression(text);
+        expression.setResultType(resultType);
+        expression.setNamespaces(namespaces);
+        setExpressionType(expression);
+        return result;
+    }
+
+    /**
+     * Evaluates an <a href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
+     * with the specified set of namespace prefixes and URIs
+     *
+     * @param text the expression to be evaluated
+     * @param namespaces the namespace prefix and URIs to use
+     * @return the builder to continue processing the DSL
+     */
+    public T xquery(String text, Namespaces namespaces) {
+        return xquery(text, namespaces.getNamespaces());
+    }
+
+    /**
+     * Evaluates an <a href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
+     * with the specified set of namespace prefixes and URIs
+     *
+     * @param text the expression to be evaluated
+     * @param namespaces the namespace prefix and URIs to use
+     * @return the builder to continue processing the DSL
+     */
+    public T xquery(String text, Map<String,String> namespaces) {
+        XQueryExpression expression = new XQueryExpression(text);
+        expression.setNamespaces(namespaces);
+        setExpressionType(expression);
+        return result;
     }
 
     /**
