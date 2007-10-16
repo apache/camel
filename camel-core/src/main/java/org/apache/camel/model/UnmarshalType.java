@@ -40,7 +40,7 @@ import org.apache.camel.spi.DataFormat;
  */
 @XmlRootElement(name = "unmarshal")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UnmarshalType extends OutputType {
+public class UnmarshalType extends OutputType<ProcessorType> {
     @XmlAttribute(required = false)
     private String ref;
     // TODO cannot use @XmlElementRef as it doesn't allow optional properties

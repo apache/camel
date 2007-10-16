@@ -40,7 +40,7 @@ import org.apache.camel.processor.SendProcessor;
  */
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ToType extends ProcessorType {
+public class ToType extends ProcessorType<ProcessorType> {
     @XmlAttribute
     private String uri;
     @XmlAttribute
@@ -121,7 +121,7 @@ public class ToType extends ProcessorType {
         this.endpoint = endpoint;
     }
 
-    public List<ProcessorType> getOutputs() {
+    public List<ProcessorType<?>> getOutputs() {
         return Collections.EMPTY_LIST;
     }
 

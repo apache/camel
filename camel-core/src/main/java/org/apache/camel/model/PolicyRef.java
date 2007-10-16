@@ -31,7 +31,7 @@ import org.apache.camel.spi.Policy;
  */
 @XmlRootElement(name = "policy")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PolicyRef extends OutputType {
+public class PolicyRef extends OutputType<ProcessorType> {
     @XmlAttribute(required = true)
     private String ref;
     @XmlTransient

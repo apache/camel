@@ -34,7 +34,7 @@ import org.apache.camel.processor.Throttler;
  */
 @XmlRootElement(name = "throttler")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThrottlerType extends ProcessorType {
+public class ThrottlerType extends ProcessorType<ProcessorType> {
     @XmlAttribute
     private Long maximumRequestsPerPeriod;
     @XmlAttribute
@@ -42,7 +42,7 @@ public class ThrottlerType extends ProcessorType {
     @XmlElementRef
     private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     @XmlElementRef
-    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
+    private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
 
     public ThrottlerType() {
     }
@@ -106,11 +106,11 @@ public class ThrottlerType extends ProcessorType {
         this.interceptors = interceptors;
     }
 
-    public List<ProcessorType> getOutputs() {
+    public List<ProcessorType<?>> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorType> outputs) {
+    public void setOutputs(List<ProcessorType<?>> outputs) {
         this.outputs = outputs;
     }
 }

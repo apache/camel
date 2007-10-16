@@ -40,7 +40,7 @@ import org.apache.camel.processor.ThreadProcessor;
  */
 @XmlRootElement(name = "thread")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThreadType extends ProcessorType {
+public class ThreadType extends ProcessorType<ProcessorType> {
     
     @XmlAttribute
     private int coreSize = 1;
@@ -57,7 +57,7 @@ public class ThreadType extends ProcessorType {
     @XmlAttribute
     private long stackSize;
     @XmlElementRef
-    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
+    private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
 
     @XmlTransient
     private BlockingQueue<Runnable> taskQueue;
@@ -84,7 +84,7 @@ public class ThreadType extends ProcessorType {
     }
 
     @Override
-    public List getOutputs() {
+    public List<ProcessorType<?>> getOutputs() {
         return outputs;
     }
     

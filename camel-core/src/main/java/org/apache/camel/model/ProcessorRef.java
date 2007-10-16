@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @XmlRootElement(name = "process")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProcessorRef extends OutputType {
+public class ProcessorRef extends OutputType<ProcessorType> {
     @XmlAttribute(required = true)
     private String ref;
     @XmlTransient

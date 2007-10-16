@@ -28,7 +28,7 @@ import org.apache.camel.impl.RouteContext;
  */
 @XmlRootElement(name = "finally")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FinallyType extends OutputType {
+public class FinallyType extends OutputType<ProcessorType> {
     @Override
     public String toString() {
         return "Finally[" + getOutputs() + "]";
