@@ -18,9 +18,12 @@
 package org.apache.camel.component.ibatis;
 
 import java.io.IOException;
+import java.util.List;
+import java.sql.SQLException;
 
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
+import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import com.ibatis.sqlmap.client.SqlMapClient;
 
@@ -65,5 +68,13 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
 
     public String getEntityName() {
         return entityName;
+    }
+
+    public void query(Message message) throws IOException, SQLException {
+        String name = getEntityName();
+        List list = getSqlClient().queryForList(name);
+        message.setBody(list);
+        message.setHeader("org.apache.camel.ibatis.queryName", name);
+
     }
 }
