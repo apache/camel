@@ -23,7 +23,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.commons.httpclient.params.HttpClientParams;
 
 /**
  * Defines the <a href="http://activemq.apache.org/camel/http.html">HTTP
@@ -32,6 +34,8 @@ import org.apache.camel.impl.DefaultComponent;
  * @version $Revision$
  */
 public class HttpComponent extends DefaultComponent<HttpExchange> {
+
+    private HttpClientConfigurer httpClientConfigurer;
 
     /**
      * Connects the URL specified on the endpoint to the specified processor.
@@ -50,10 +54,23 @@ public class HttpComponent extends DefaultComponent<HttpExchange> {
     public void disconnect(HttpConsumer consumer) throws Exception {
     }
 
+    public HttpClientConfigurer getHttpClientConfigurer() {
+        return httpClientConfigurer;
+    }
+
+    public void setHttpClientConfigurer(HttpClientConfigurer httpClientConfigurer) {
+        this.httpClientConfigurer = httpClientConfigurer;
+    }
 
     @Override
     protected Endpoint<HttpExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return new HttpEndpoint(uri, this, new URI(uri));
+        HttpClientParams params = new HttpClientParams();
+        IntrospectionSupport.setProperties(params, parameters, "httpClient.");
+        return new HttpEndpoint(uri, this, new URI(uri), params);
     }
 
+    @Override
+    protected boolean useIntrospectionOnEndpoint() {
+        return false;
+    }
 }

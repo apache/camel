@@ -20,6 +20,8 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.params.HttpClientParams;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,11 +39,18 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
     private HttpBinding binding;
     private HttpComponent component;
     private URI httpUri;
+    private HttpClientParams clientParams;
+    private HttpClientConfigurer httpClientConfigurer;
 
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI) throws URISyntaxException {
+        this(endPointURI, component, httpURI, new HttpClientParams());
+    }
+
+    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientParams clientParams) throws URISyntaxException {
         super(endPointURI, component);
         this.component = component;
         this.httpUri = httpURI;
+        this.clientParams = clientParams;
     }
 
     public Producer<HttpExchange> createProducer() throws Exception {
@@ -61,6 +70,63 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
         return new HttpExchange(this, request, response);
     }
 
+    /**
+     * Factory method used by producers and consumers to create a new {@link HttpClient} instance
+     */
+    public HttpClient createHttpClient() {
+        HttpClient answer = new HttpClient(getClientParams());
+        HttpClientConfigurer configurer = getHttpClientConfigurer();
+        if (configurer != null) {
+            configurer.configureHttpClient(answer);
+        }
+        return answer;
+    }
+
+    public void connect(HttpConsumer consumer) throws Exception {
+        component.connect(consumer);
+    }
+
+    public void disconnect(HttpConsumer consumer) throws Exception {
+        component.disconnect(consumer);
+    }
+
+
+    // Properties
+    //-------------------------------------------------------------------------
+
+
+    /**
+     * Provide access to the client parameters used on new {@link HttpClient} instances
+     * used by producers or consumers of this endpoint.
+     */
+    public HttpClientParams getClientParams() {
+        return clientParams;
+    }
+
+    /**
+     * Provide access to the client parameters used on new {@link HttpClient} instances
+     * used by producers or consumers of this endpoint.
+     *
+     * @param clientParams
+     */
+    public void setClientParams(HttpClientParams clientParams) {
+        this.clientParams = clientParams;
+    }
+
+    public HttpClientConfigurer getHttpClientConfigurer() {
+        return httpClientConfigurer;
+    }
+
+    /**
+     * Register a custom configuration strategy for new {@ilnk HttpClient} instances
+     * created by producers or consumers such as to configure authentication mechanisms etc
+     *
+     * @param httpClientConfigurer the strategy for configuring new {@ilnk HttpClient} instances
+     */
+    public void setHttpClientConfigurer(HttpClientConfigurer httpClientConfigurer) {
+        this.httpClientConfigurer = httpClientConfigurer;
+    }
+
     public HttpBinding getBinding() {
         if (binding == null) {
             binding = new HttpBinding();
@@ -74,14 +140,6 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
 
     public boolean isSingleton() {
         return true;
-    }
-
-    public void connect(HttpConsumer consumer) throws Exception {
-        component.connect(consumer);
-    }
-
-    public void disconnect(HttpConsumer consumer) throws Exception {
-        component.disconnect(consumer);
     }
 
     public String getPath() {

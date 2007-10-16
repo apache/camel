@@ -34,11 +34,12 @@ import java.io.IOException;
  */
 public class HttpPollingConsumer extends PollingConsumerSupport<HttpExchange> {
     private final HttpEndpoint endpoint;
-    private HttpClient httpClient = new HttpClient();
+    private HttpClient httpClient;
 
     public HttpPollingConsumer(HttpEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
+        httpClient = endpoint.createHttpClient();
     }
 
     public HttpExchange receive() {
