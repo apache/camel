@@ -72,7 +72,9 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
                 ScheduledPollEndpoint scheduledPollEndpoint = (ScheduledPollEndpoint)endpoint;
                 scheduledPollEndpoint.configureProperties(parameters);
             }
+            if (useIntrospectionOnEndpoint()) {
             setProperties(endpoint, parameters);
+            }
         }
         return endpoint;
     }
@@ -140,4 +142,13 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
     protected void setProperties(Object bean, Map parameters) throws Exception {
         IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), bean, parameters);
     }
+
+    /**
+     * Derived classes may wish to overload this to prevent the default introspection of URI parameters
+     * on the created Endpoint instance
+     */
+    protected boolean useIntrospectionOnEndpoint() {
+        return true;
+    }
+
 }

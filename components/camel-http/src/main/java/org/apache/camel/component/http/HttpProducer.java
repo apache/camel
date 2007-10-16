@@ -35,10 +35,11 @@ import org.apache.commons.httpclient.methods.RequestEntity;
  */
 public class HttpProducer extends DefaultProducer<HttpExchange> implements Producer<HttpExchange> {
     public static final String QUERY = "org.apache.camel.component.http.query";
-    private HttpClient httpClient = new HttpClient();
+    private HttpClient httpClient;
 
     public HttpProducer(HttpEndpoint endpoint) {
         super(endpoint);
+        httpClient = endpoint.createHttpClient();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -59,6 +60,14 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         }
 
         out.setHeader("http.responseCode", responseCode);
+    }
+
+    public HttpClient getHttpClient() {
+        return httpClient;
+    }
+
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 
     protected HttpMethod createMethod(Exchange exchange) {
