@@ -22,17 +22,16 @@ import java.util.List;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.validation.Schema;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.ValidationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.ValidationException;
-
 /**
  * A default error handler which just stores all the errors so they can be reported or transformed.
- * 
+ *
  * @version $Revision: $
  */
 public class DefaultValidationErrorHandler implements ValidatorErrorHandler {
@@ -63,6 +62,9 @@ public class DefaultValidationErrorHandler implements ValidatorErrorHandler {
     }
 
     public void reset() {
+        warnings.clear();
+        errors.clear();
+        fatalErrors.clear();
     }
 
     public boolean isValid() {
