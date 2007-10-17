@@ -64,7 +64,7 @@ public class MailConfiguration implements Cloneable {
             setHost(value);
         }
 
-        if (getProtocol() != null && isIgnoreUriScheme()) {
+        if (getProtocol() != null && !isIgnoreUriScheme()) {
             String scheme = uri.getScheme();
             if (scheme != null) {
                 setProtocol(scheme);
