@@ -30,7 +30,6 @@ public class ValidationTest extends ContextTestSupport {
     protected MockEndpoint validEndpoint;
     protected MockEndpoint invalidEndpoint;
 
-
     public void testValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(1);
         invalidEndpoint.expectedMessageCount(0);
@@ -49,6 +48,16 @@ public class ValidationTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
     }
 
+    public void testinvalidThenValidMessage() throws Exception {
+        validEndpoint.expectedMessageCount(2);
+        invalidEndpoint.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:start", "<invalid/>", "foo",  "notMatchedHeaderValue");
+        template.sendBodyAndHeader("direct:start", "<valid/>", "foo",   "bar");
+        template.sendBodyAndHeader("direct:start", "<valid/>", "foo",   "bar");
+
+        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
+    }
 
     @Override
     protected void setUp() throws Exception {
@@ -63,8 +72,8 @@ public class ValidationTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start").
                         tryBlock().
-                            process(validator).
-                            to("mock:valid").
+                        process(validator).
+                        to("mock:valid").
                         handle(ValidationException.class).to("mock:invalid");
             }
         };
