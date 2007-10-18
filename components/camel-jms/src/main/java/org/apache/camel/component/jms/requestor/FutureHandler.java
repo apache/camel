@@ -15,31 +15,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.discovery;
+package org.apache.camel.component.jms.requestor;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import javax.jms.JMSException;
+import javax.jms.Message;
 
 /**
- * A simple POJO showing how to create a simple registry
- * 
+ * A {@link FutureTask} which implements {@link ReplyHandler}
+ * so that it can be used as a handler for a correlation ID
+ *
  * @version $Revision: 1.1 $
  */
-public class MyRegistry {
-    private static final transient Log LOG = LogFactory.getLog(MyRegistry.class);
+public class FutureHandler extends FutureTask implements ReplyHandler {
+    private static final Callable EMPTY_CALLABLE = new Callable() {
+        public Object call() throws Exception {
+            return null;
+        }
+    };
 
-    private Map<String,Map> services = new HashMap<String, Map>();
-
-    public void onEvent(Map heartbeat) {
-        String key = (String) heartbeat.get("name");
-        LOG.debug(">>> event for: " + key + " details: " + heartbeat);
-        services.put(key, heartbeat);
+    public FutureHandler() {
+        super(EMPTY_CALLABLE);
     }
 
-    public Map<String, Map> getServices() {
-        return services;
+    public synchronized void set(Object result) {
+        super.set(result);
+    }
+
+    public boolean handle(Message message) throws JMSException {
+        set(message);
+        return true;
     }
 }

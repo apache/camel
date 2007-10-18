@@ -18,9 +18,9 @@ package org.apache.camel.component.jms;
 
 import javax.jms.MessageListener;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 
 /**
@@ -44,7 +44,7 @@ public class JmsConsumer extends DefaultConsumer<JmsExchange> {
     }
 
     protected MessageListener createMessageListener(JmsEndpoint endpoint, Processor processor) {
-        EndpointMessageListener<JmsExchange> messageListener = new EndpointMessageListener<JmsExchange>(endpoint, processor);
+        EndpointMessageListener messageListener = new EndpointMessageListener(endpoint, processor);
         messageListener.setBinding(endpoint.getBinding());
         return messageListener;
     }

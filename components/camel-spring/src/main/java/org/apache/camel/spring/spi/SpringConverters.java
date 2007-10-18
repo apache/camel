@@ -81,6 +81,6 @@ public final class SpringConverters {
 
     @Converter
     public static BeanInvocation toBeanInvocation(MethodInvocation invocation) {
-        return new BeanInvocation(invocation.getThis(), invocation.getMethod(), invocation.getArguments());
+        return new BeanInvocation(invocation.getMethod(), invocation.getArguments());
     }
 }

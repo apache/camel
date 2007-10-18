@@ -26,6 +26,7 @@ import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.Topic;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,12 +39,18 @@ import org.apache.commons.logging.LogFactory;
 public class JmsMessage extends DefaultMessage {
     private static final transient Log LOG = LogFactory.getLog(JmsMessage.class);
     private Message jmsMessage;
+    private JmsBinding binding;
 
     public JmsMessage() {
     }
 
     public JmsMessage(Message jmsMessage) {
         setJmsMessage(jmsMessage);
+    }
+
+    public JmsMessage(Message jmsMessage, JmsBinding binding) {
+        this(jmsMessage);
+        setBinding(binding);
     }
 
     @Override
@@ -62,6 +69,24 @@ public class JmsMessage extends DefaultMessage {
      */
     public Message getJmsMessage() {
         return jmsMessage;
+    }
+
+    public JmsBinding getBinding() {
+        if (binding == null) {
+            Exchange exchange = getExchange();
+            if (exchange instanceof JmsExchange) {
+                JmsExchange jmsExchange = (JmsExchange) exchange;
+                return jmsExchange.getBinding();
+            }
+            else {
+                return new JmsBinding();
+            }
+        }
+        return binding;
+    }
+
+    public void setBinding(JmsBinding binding) {
+        this.binding = binding;
     }
 
     public void setJmsMessage(Message jmsMessage) {
@@ -100,9 +125,8 @@ public class JmsMessage extends DefaultMessage {
 
     @Override
     protected Object createBody() {
-        if (jmsMessage != null && getExchange() instanceof JmsExchange) {
-            JmsExchange exchange = (JmsExchange)getExchange();
-            return exchange.getBinding().extractBodyFromJms(exchange, jmsMessage);
+        if (jmsMessage != null) {
+            return getBinding().extractBodyFromJms(getExchange(), jmsMessage);
         }
         return null;
     }

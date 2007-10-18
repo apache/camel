@@ -16,20 +16,19 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.spi.UnitOfWork;
-
 import java.util.Map;
+
+import org.apache.camel.spi.UnitOfWork;
 
 /**
  * The base message exchange interface providing access to the request, response
  * and fault {@link Message} instances. Different providers such as JMS, JBI,
  * CXF and HTTP can provide their own derived API to expose the underlying
  * transport semantics to avoid the leaky abstractions of generic APIs.
- * 
+ *
  * @version $Revision$
  */
 public interface Exchange {
-
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
      *
@@ -39,7 +38,7 @@ public interface Exchange {
 
     /**
      * Returns a property associated with this exchange by name
-     * 
+     *
      * @param name the name of the property
      * @return the value of the given header or null if there is no property for
      *         the given name
@@ -49,7 +48,7 @@ public interface Exchange {
     /**
      * Returns a property associated with this exchange by name and specifying
      * the type required
-     * 
+     *
      * @param name the name of the property
      * @param type the type of the property
      * @return the value of the given header or null if there is no property for
@@ -60,8 +59,8 @@ public interface Exchange {
 
     /**
      * Sets a property on the exchange
-     * 
-     * @param name of the property
+     *
+     * @param name  of the property
      * @param value to associate with the name
      */
     void setProperty(String name, Object value);
@@ -76,24 +75,31 @@ public interface Exchange {
 
     /**
      * Returns all of the properties associated with the exchange
-     * 
+     *
      * @return all the headers in a Map
      */
     Map<String, Object> getProperties();
 
     /**
      * Returns the inbound request message
-     * 
+     *
      * @return the message
      */
     Message getIn();
+
+    /**
+     * Sets the inbound message instance
+     *
+     * @param in the inbound message
+     */
+    void setIn(Message in);
 
     /**
      * Returns the outbound message, lazily creating one if one has not already
      * been associated with this exchange. If you want to inspect this property
      * but not force lazy creation then invoke the {@link #getOut(boolean)}
      * method passing in null
-     * 
+     *
      * @return the response
      */
     Message getOut();
@@ -101,14 +107,21 @@ public interface Exchange {
     /**
      * Returns the outbound message; optionally lazily creating one if one has
      * not been associated with this exchange
-     * 
+     *
      * @return the response
      */
     Message getOut(boolean lazyCreate);
 
     /**
+     * Sets the outbound message
+     *
+     * @param out the outbound message
+     */
+    void setOut(Message out);
+
+    /**
      * Returns the fault message
-     * 
+     *
      * @return the fault
      */
     Message getFault();
@@ -123,14 +136,14 @@ public interface Exchange {
 
     /**
      * Returns the exception associated with this exchange
-     * 
+     *
      * @return the exception (or null if no faults)
      */
     Throwable getException();
 
     /**
      * Sets the exception associated with this exchange
-     * 
+     *
      * @param e
      */
     void setException(Throwable e);
@@ -138,22 +151,22 @@ public interface Exchange {
     /**
      * Returns true if this exchange failed due to either an exception or fault
      *
+     * @return true if this exchange failed due to either an exception or fault
      * @see Exchange#getException()
      * @see Exchange#getFault()
-     * @return true if this exchange failed due to either an exception or fault
      */
     boolean isFailed();
 
     /**
      * Returns the container so that a processor can resolve endpoints from URIs
-     * 
+     *
      * @return the container which owns this exchange
      */
     CamelContext getContext();
 
     /**
      * Creates a new exchange instance with empty messages, headers and properties
-     * 
+     *
      * @return
      */
     Exchange newInstance();
@@ -166,7 +179,7 @@ public interface Exchange {
 
     /**
      * Copies the data into this exchange from the given exchange
-     * 
+     * <p/>
      * #param source is the source from which headers and messages will be
      * copied
      */
@@ -197,5 +210,4 @@ public interface Exchange {
      * @param id
      */
     void setExchangeId(String id);
-
 }

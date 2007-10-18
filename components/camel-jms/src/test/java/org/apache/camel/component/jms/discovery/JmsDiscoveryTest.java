@@ -52,7 +52,7 @@ public class JmsDiscoveryTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
         camelContext.addComponent("activemq", jmsComponentClientAcknowledge(connectionFactory));
 
         return camelContext;
@@ -76,7 +76,7 @@ public class JmsDiscoveryTest extends ContextTestSupport {
                 from("bean:service2?method=status").to("activemq:topic:registry.heartbeats");
                 from("bean:service3?method=status").to("activemq:topic:registry.heartbeats");
 
-                from("activemq:topic:registry.heartbeats").to("bean:registry?method=onEvent");
+                from("activemq:topic:registry.heartbeats?cacheLevelName=CACHE_CONSUMER").to("bean:registry?method=onEvent");
             }
         };
     }

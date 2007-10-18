@@ -51,7 +51,7 @@ public class JmsBinding {
      * @param exchange
      * @param message
      */
-    public Object extractBodyFromJms(JmsExchange exchange, Message message) {
+    public Object extractBodyFromJms(Exchange exchange, Message message) {
         try {
             if (message instanceof ObjectMessage) {
                 ObjectMessage objectMessage = (ObjectMessage)message;
@@ -79,15 +79,15 @@ public class JmsBinding {
      * @return a newly created JMS Message instance containing the
      * @throws JMSException if the message could not be created
      */
-    public Message makeJmsMessage(Exchange exchange, Session session) throws JMSException {
+    public Message makeJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session) throws JMSException {
         Message answer = null;
-        if( exchange instanceof JmsExchange  ) {
-            JmsExchange jmsExchange = (JmsExchange)exchange;
-            answer = jmsExchange.getIn().getJmsMessage();
+        if( camelMessage instanceof JmsMessage  ) {
+            JmsMessage jmsMessage = (JmsMessage)camelMessage;
+            answer = jmsMessage.getJmsMessage();
         }
         if( answer == null ) {
-            answer = createJmsMessage(exchange.getIn().getBody(), session);
-            appendJmsProperties(answer, exchange);
+            answer = createJmsMessage(camelMessage.getBody(), session);
+            appendJmsProperties(answer, exchange, camelMessage);
         }
         return answer;
     }
@@ -95,8 +95,7 @@ public class JmsBinding {
     /**
      * Appends the JMS headers from the Camel {@link JmsMessage}
      */
-    public void appendJmsProperties(Message jmsMessage, Exchange exchange) throws JMSException {
-        org.apache.camel.Message in = exchange.getIn();
+    public void appendJmsProperties(Message jmsMessage, Exchange exchange, org.apache.camel.Message in) throws JMSException {
         Set<Map.Entry<String, Object>> entries = in.getHeaders().entrySet();
         for (Map.Entry<String, Object> entry : entries) {
             String headerName = entry.getKey();
