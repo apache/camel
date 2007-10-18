@@ -349,6 +349,11 @@
         <artifactId>camel-xmpp</artifactId>
         <version>${camel-version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-xstream</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
 
       <!-- testing jars -->
       <dependency>

@@ -20,3 +20,4 @@ DataFormatType
 JaxbDataFormat
 SerializationDataFormat
 XMLBeansDataFormat
+XStreamDataFormat

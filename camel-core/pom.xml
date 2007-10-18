@@ -48,6 +48,14 @@
       <artifactId>jaxb-api</artifactId>
     </dependency>
 
+    <!-- we could move the StAX code into a separate module? -->
+    <dependency>
+      <groupId>stax</groupId>
+      <artifactId>stax-api</artifactId>
+      <optional>true</optional>
+      <scope>compile</scope>
+    </dependency>
+
     <!-- to allow Spring annotations to be used; could replace with the micro-jar later -->
     <dependency>
       <groupId>org.springframework</groupId>
