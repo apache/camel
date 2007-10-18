@@ -67,6 +67,7 @@
     <module>camel-velocity</module>
     <module>camel-xmlbeans</module>
     <module>camel-xmpp</module>
+    <module>camel-xstream</module>
   </modules>
 
 </project>

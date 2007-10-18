@@ -24,6 +24,7 @@ import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
+import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.spi.DataFormat;
 
 /**
@@ -57,6 +58,13 @@ public class DataTypeExpression<T extends ProcessorType> {
      */
     public T jaxb() {
         return dataFormat(new JaxbDataFormat());
+    }
+
+    /**
+     * Uses the XStream data format
+     */
+    public T xstream() {
+        return dataFormat(new XStreamDataFormat());
     }
 
     /**
