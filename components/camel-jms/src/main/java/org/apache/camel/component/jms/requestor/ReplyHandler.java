@@ -15,31 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.discovery;
+package org.apache.camel.component.jms.requestor;
 
-import java.util.Map;
-import java.util.HashMap;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import javax.jms.JMSException;
+import javax.jms.Message;
 
 /**
- * A simple POJO showing how to create a simple registry
- * 
  * @version $Revision: 1.1 $
  */
-public class MyRegistry {
-    private static final transient Log LOG = LogFactory.getLog(MyRegistry.class);
-
-    private Map<String,Map> services = new HashMap<String, Map>();
-
-    public void onEvent(Map heartbeat) {
-        String key = (String) heartbeat.get("name");
-        LOG.debug(">>> event for: " + key + " details: " + heartbeat);
-        services.put(key, heartbeat);
-    }
-
-    public Map<String, Map> getServices() {
-        return services;
-    }
+public interface ReplyHandler {
+    /**
+     * Processes the message, returning true if this is the last method of a lifecycle
+     * so that the handler can be discarded
+     */
+    boolean handle(Message message) throws JMSException;
 }

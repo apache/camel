@@ -16,15 +16,22 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+
+import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.component.jms.requestor.Requestor;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.UuidGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
 
@@ -34,27 +41,117 @@ import org.springframework.jms.core.MessageCreator;
 public class JmsProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(JmsProducer.class);
     private final JmsEndpoint endpoint;
-    private final JmsOperations template;
+    private JmsOperations inOnlyTemplate;
+    private JmsOperations inOutTemplate;
+    private UuidGenerator uuidGenerator;
 
-    public JmsProducer(JmsEndpoint endpoint, JmsOperations template) {
+    public JmsProducer(JmsEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.template = template;
     }
 
     public void process(final Exchange exchange) {
-        template.send(endpoint.getDestination(), new MessageCreator() {
-            public Message createMessage(Session session) throws JMSException {
-                Message message = endpoint.getBinding().makeJmsMessage(exchange, session);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(endpoint + " sending JMS message: " + message);
-                }
-                return message;
+        final org.apache.camel.Message in = exchange.getIn();
+
+        if (exchange.getPattern().isOutCapable()) {
+            // create a temporary queue and consumer for responses...
+            // note due to JMS transaction semantics we cannot use a single transaction
+            // for sending the request and receiving the response
+            Requestor requestor;
+            try {
+                requestor = endpoint.getRequestor();
             }
-        });
+            catch (Exception e) {
+                throw new RuntimeExchangeException(e, exchange);
+            }
+
+            final Destination replyTo = requestor.getReplyTo();
+
+            String correlationId = in.getHeader("JMSCorrelationID", String.class);
+            if (correlationId == null) {
+                correlationId = getUuidGenerator().generateId();
+                in.setHeader("JMSCorrelationID", correlationId);
+            }
+
+            getInOutTemplate().send(endpoint.getDestination(), new MessageCreator() {
+                public Message createMessage(Session session) throws JMSException {
+                    Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session);
+                    message.setJMSReplyTo(replyTo);
+
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(endpoint + " sending JMS message: " + message);
+                    }
+                    return message;
+                }
+            });
+
+            // lets wait and return the response
+            long requestTimeout = endpoint.getRequestTimeout();
+            FutureTask future = requestor.getReceiveFuture(correlationId, requestTimeout);
+
+            try {
+                Message message;
+                if (requestTimeout < 0) {
+                    message = (Message) future.get();
+                }
+                else {
+                    message = (Message) future.get(requestTimeout, TimeUnit.MILLISECONDS);
+                }
+                if (message != null) {
+                    exchange.setOut(new JmsMessage(message, endpoint.getBinding()));
+                }
+                else {
+                    // lets set a timed out exception
+                    exchange.setException(new ExchangeTimedOutException(exchange, requestTimeout));
+                }
+            }
+            catch (Exception e) {
+                exchange.setException(e);
+            }
+        }
+        else {
+            getInOnlyTemplate().send(endpoint.getDestination(), new MessageCreator() {
+                public Message createMessage(Session session) throws JMSException {
+                    Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(endpoint + " sending JMS message: " + message);
+                    }
+                    return message;
+                }
+            });
+        }
     }
 
-    public JmsOperations getTemplate() {
-        return template;
+    public JmsOperations getInOnlyTemplate() {
+        if (inOnlyTemplate == null) {
+            inOnlyTemplate = endpoint.createInOnlyTemplate();
+        }
+        return inOnlyTemplate;
+    }
+
+    public void setInOnlyTemplate(JmsOperations inOnlyTemplate) {
+        this.inOnlyTemplate = inOnlyTemplate;
+    }
+
+    public JmsOperations getInOutTemplate() {
+        if (inOutTemplate == null) {
+            inOutTemplate = endpoint.createInOutTemplate();
+        }
+        return inOutTemplate;
+    }
+
+    public void setInOutTemplate(JmsOperations inOutTemplate) {
+        this.inOutTemplate = inOutTemplate;
+    }
+
+    public UuidGenerator getUuidGenerator() {
+        if (uuidGenerator == null) {
+            uuidGenerator = new UuidGenerator();
+        }
+        return uuidGenerator;
+    }
+
+    public void setUuidGenerator(UuidGenerator uuidGenerator) {
+        this.uuidGenerator = uuidGenerator;
     }
 }

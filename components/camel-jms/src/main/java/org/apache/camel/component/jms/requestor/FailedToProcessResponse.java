@@ -15,31 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.discovery;
+package org.apache.camel.component.jms.requestor;
 
-import java.util.Map;
-import java.util.HashMap;
+import javax.jms.JMSException;
+import javax.jms.Message;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.RuntimeCamelException;
 
 /**
- * A simple POJO showing how to create a simple registry
+ * An exception thrown if a response message from an InOut could not be processed
  * 
  * @version $Revision: 1.1 $
  */
-public class MyRegistry {
-    private static final transient Log LOG = LogFactory.getLog(MyRegistry.class);
+public class FailedToProcessResponse extends RuntimeCamelException {
+    private final Message response;
 
-    private Map<String,Map> services = new HashMap<String, Map>();
-
-    public void onEvent(Map heartbeat) {
-        String key = (String) heartbeat.get("name");
-        LOG.debug(">>> event for: " + key + " details: " + heartbeat);
-        services.put(key, heartbeat);
+    public FailedToProcessResponse(Message response, JMSException e) {
+        super("Failed to process response: "+ e + ". Message: " + response, e);
+        this.response = response;
     }
 
-    public Map<String, Map> getServices() {
-        return services;
+    /**
+     * The response message which caused the exception
+     * 
+     * @return
+     */
+    public Message getResponse() {
+        return response;
     }
 }

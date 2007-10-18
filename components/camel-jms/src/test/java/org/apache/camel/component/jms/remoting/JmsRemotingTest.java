@@ -15,31 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.discovery;
+package org.apache.camel.component.jms.remoting;
 
-import java.util.Map;
-import java.util.HashMap;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.spring.remoting.SpringRemotingRouteTest;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * A simple POJO showing how to create a simple registry
- * 
  * @version $Revision: 1.1 $
  */
-public class MyRegistry {
-    private static final transient Log LOG = LogFactory.getLog(MyRegistry.class);
+public class JmsRemotingTest extends SpringRemotingRouteTest {
 
-    private Map<String,Map> services = new HashMap<String, Map>();
-
-    public void onEvent(Map heartbeat) {
-        String key = (String) heartbeat.get("name");
-        LOG.debug(">>> event for: " + key + " details: " + heartbeat);
-        services.put(key, heartbeat);
-    }
-
-    public Map<String, Map> getServices() {
-        return services;
+    protected ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/remoting/spring.xml");
     }
 }

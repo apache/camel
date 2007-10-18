@@ -16,38 +16,39 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
-
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.task.TaskExecutor;
-import org.springframework.jms.listener.serversession.ServerSessionFactory;
-import org.springframework.jms.support.converter.MessageConverter;
-import org.springframework.jms.support.destination.DestinationResolver;
-import org.springframework.jms.connection.JmsTransactionManager;
-import org.springframework.jms.core.JmsOperations;
-import org.springframework.transaction.PlatformTransactionManager;
+import java.util.Map;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.Session;
-import java.util.Map;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.component.jms.requestor.Requestor;
+import org.apache.camel.impl.DefaultComponent;
+import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.jms.connection.JmsTransactionManager;
+import org.springframework.jms.core.JmsOperations;
+import org.springframework.jms.listener.serversession.ServerSessionFactory;
+import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.jms.support.destination.DestinationResolver;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * A <a href="http://activemq.apache.org/jms.html">JMS Component</a>
- * 
+ *
  * @version $Revision:520964 $
  */
 public class JmsComponent extends DefaultComponent<JmsExchange> implements ApplicationContextAware {
     public static final String QUEUE_PREFIX = "queue:";
     public static final String TOPIC_PREFIX = "topic:";
-
     private JmsConfiguration configuration;
-	private ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
+    private Requestor requestor;
 
     public JmsComponent() {
     }
@@ -59,7 +60,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
     public JmsComponent(CamelContext context) {
         super(context);
     }
-    
+
     /**
      * Static builder method
      */
@@ -111,48 +112,24 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
         template.setTransacted(true);
         return jmsComponent(template);
     }
-
-    @Override
-    protected Endpoint<JmsExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-
-        boolean pubSubDomain = false;
-        if (remaining.startsWith(QUEUE_PREFIX)) {
-            pubSubDomain = false;
-            remaining = removeStartingCharacters(remaining.substring(QUEUE_PREFIX.length()), '/');
-        } else if (remaining.startsWith(TOPIC_PREFIX)) {
-            pubSubDomain = true;
-            remaining = removeStartingCharacters(remaining.substring(TOPIC_PREFIX.length()), '/');
-        }
-
-        final String subject = convertPathToActualDestination(remaining);
-
-        // lets make sure we copy the configuration as each endpoint can
-        // customize its own version
-        JmsEndpoint endpoint = new JmsEndpoint(uri, this, subject, pubSubDomain, getConfiguration().copy());
-
-        String selector = (String)parameters.remove("selector");
-        if (selector != null) {
-            endpoint.setSelector(selector);
-        }
-        setProperties(endpoint.getConfiguration(), parameters);
-        return endpoint;
-    }
+    // Properties
+    //-------------------------------------------------------------------------
 
     public JmsConfiguration getConfiguration() {
         if (configuration == null) {
             configuration = createConfiguration();
-            
+
             // If we are being configured with spring... 
-            if( applicationContext !=null ) {
-            	Map beansOfType = applicationContext.getBeansOfType(ConnectionFactory.class);
-            	if( !beansOfType.isEmpty() ) { 
-            		ConnectionFactory cf = (ConnectionFactory) beansOfType.values().iterator().next();
-            		configuration.setConnectionFactory(cf);
-            	}
+            if (applicationContext != null) {
+                Map beansOfType = applicationContext.getBeansOfType(ConnectionFactory.class);
+                if (!beansOfType.isEmpty()) {
+                    ConnectionFactory cf = (ConnectionFactory) beansOfType.values().iterator().next();
+                    configuration.setConnectionFactory(cf);
+                }
                 beansOfType = applicationContext.getBeansOfType(DestinationResolver.class);
-                if( !beansOfType.isEmpty() ) { 
+                if (!beansOfType.isEmpty()) {
                     DestinationResolver destinationResolver = (DestinationResolver) beansOfType.values().iterator().next();
-                        configuration.setDestinationResolver(destinationResolver);
+                    configuration.setDestinationResolver(destinationResolver);
                 }
             }
         }
@@ -161,7 +138,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
 
     /**
      * Sets the JMS configuration
-     * 
+     *
      * @param configuration the configuration to use by default for endpoints
      */
     public void setConfiguration(JmsConfiguration configuration) {
@@ -303,13 +280,67 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
     public void setUseVersion102(boolean useVersion102) {
         getConfiguration().setUseVersion102(useVersion102);
     }
-    
+
     public void setJmsOperations(JmsOperations jmsOperations) {
         getConfiguration().setJmsOperations(jmsOperations);
     }
 
     public void setDestinationResolver(DestinationResolver destinationResolver) {
         getConfiguration().setDestinationResolver(destinationResolver);
+    }
+
+    public Requestor getRequestor() throws Exception {
+        if (requestor == null) {
+            requestor = new Requestor(getConfiguration(), getExecutorService());
+            requestor.start();
+        }
+        return requestor;
+    }
+
+    public void setRequestor(Requestor requestor) {
+        this.requestor = requestor;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+
+    @Override
+    protected void doStop() throws Exception {
+        if (requestor != null) {
+            requestor.stop();
+        }
+        super.doStop();
+    }
+
+    @Override
+    protected Endpoint<JmsExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+
+        boolean pubSubDomain = false;
+        if (remaining.startsWith(QUEUE_PREFIX)) {
+            pubSubDomain = false;
+            remaining = removeStartingCharacters(remaining.substring(QUEUE_PREFIX.length()), '/');
+        }
+        else if (remaining.startsWith(TOPIC_PREFIX)) {
+            pubSubDomain = true;
+            remaining = removeStartingCharacters(remaining.substring(TOPIC_PREFIX.length()), '/');
+        }
+
+        final String subject = convertPathToActualDestination(remaining);
+
+        // lets make sure we copy the configuration as each endpoint can
+        // customize its own version
+        JmsEndpoint endpoint = new JmsEndpoint(uri, this, subject, pubSubDomain, getConfiguration().copy());
+
+        String selector = (String) parameters.remove("selector");
+        if (selector != null) {
+            endpoint.setSelector(selector);
+        }
+        setProperties(endpoint.getConfiguration(), parameters);
+        return endpoint;
     }
 
     /**
@@ -322,16 +353,11 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
 
     /**
      * Factory method to create the default configuration instance
-     * 
+     *
      * @return a newly created configuration object which can then be further
      *         customized
      */
     protected JmsConfiguration createConfiguration() {
         return new JmsConfiguration();
     }
-
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
-	}
-
 }
