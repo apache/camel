@@ -34,7 +34,7 @@
   <description>Camel OSGi support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.osgi*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.osgi*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
@@ -56,17 +56,17 @@
       <artifactId>jaxb-api</artifactId>
       <optional>false</optional>
     </dependency>
-      <dependency>
-        <groupId>org.springframework.osgi</groupId>
-        <artifactId>spring-osgi-core</artifactId>
-        <version>1.0-m2</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>org.osgi.core</artifactId>
-        <version>1.0.0</version>
-        <scope>provided</scope>
-      </dependency>
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>spring-osgi-core</artifactId>
+      <version>1.0-m2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>1.0.0</version>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- for parsing the XML -->
     <dependency>
@@ -101,13 +101,41 @@
 
   <repositories>
     <repository>
-	   <id>spring.osgi</id>
-	   <url>http://static.springframework.org/maven2</url>
-	</repository>
-	<repository>
-	   <id>spring.svn.repo</id>
-	   <url> https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext</url>
-	</repository>
+      <id>spring.osgi</id>
+      <url>http://static.springframework.org/maven2</url>
+    </repository>
+    <repository>
+      <id>spring.svn.repo</id>
+      <url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext</url>
+    </repository>
   </repositories>
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>${basedir}/src/main/resources/camel-osgi.xsd</file>
+                  <type>xsd</type>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
 
 </project>
