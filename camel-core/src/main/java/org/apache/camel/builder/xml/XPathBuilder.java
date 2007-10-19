@@ -30,6 +30,7 @@ import javax.xml.xpath.XPathFactoryConfigurationException;
 import javax.xml.xpath.XPathFunction;
 import javax.xml.xpath.XPathFunctionException;
 import javax.xml.xpath.XPathFunctionResolver;
+import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -371,6 +372,9 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
                 if (document instanceof InputSource) {
                     InputSource inputSource = (InputSource)document;
                     return getExpression().evaluate(inputSource, resultType);
+                } else if (document instanceof DOMSource) {
+                    DOMSource source = (DOMSource) document;
+                    return getExpression().evaluate(source.getNode(), resultType);
                 } else {
                     return getExpression().evaluate(document, resultType);
                 }
@@ -378,6 +382,10 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
                 if (document instanceof InputSource) {
                     InputSource inputSource = (InputSource)document;
                     return getExpression().evaluate(inputSource);
+                }
+                else if (document instanceof DOMSource) {
+                    DOMSource source = (DOMSource)document;
+                    return getExpression().evaluate(source.getNode());
                 } else {
                     return getExpression().evaluate(document);
                 }
