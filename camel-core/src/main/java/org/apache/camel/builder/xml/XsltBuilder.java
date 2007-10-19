@@ -231,7 +231,11 @@ public class XsltBuilder implements Processor {
     protected void addParameters(Transformer transformer, Map<String, Object> map) {
         Set<Map.Entry<String, Object>> propertyEntries = map.entrySet();
         for (Map.Entry<String, Object> entry : propertyEntries) {
-            transformer.setParameter(entry.getKey(), entry.getValue());
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (value != null) {
+                transformer.setParameter(key, value);
+            }
         }
     }
 }
