@@ -72,9 +72,9 @@ public enum ExchangePattern {
         switch (this) {
             case OutOnly:
             case RobustOutOnly:
-                return true;
-            default:
                 return false;
+            default:
+                return true;
         }
     }
 
@@ -115,7 +115,7 @@ public enum ExchangePattern {
         for (ExchangePattern mep : values()) {
             String uri = mep.getWsdlUri();
             map.put(uri, mep);
-            String name = uri.substring(uri.lastIndexOf('/'));
+            String name = uri.substring(uri.lastIndexOf('/') + 1);
             map.put("http://www.w3.org/2004/08/wsdl/" + name, mep);
             map.put("http://www.w3.org/2006/01/wsdl/" + name, mep);
         }

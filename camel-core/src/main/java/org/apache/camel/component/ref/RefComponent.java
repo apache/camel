@@ -28,7 +28,7 @@ import java.util.Map;
 public class RefComponent extends DefaultComponent<Exchange> {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        String name = uri.substring(4);
+        String name = uri.substring("ref:".length());
         return getCamelContext().getRegistry().lookup(name, Endpoint.class);
     }
 
