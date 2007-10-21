@@ -80,15 +80,15 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     }
 
     public CxfExchange createExchange() {
-        return new CxfExchange(getContext(), getExchangePattern(), getBinding());
+        return new CxfExchange(getContext(), getExchangePattern());
     }
 
     public CxfExchange createExchange(ExchangePattern pattern) {
-        return new CxfExchange(getContext(), pattern, getBinding());
+        return new CxfExchange(getContext(), pattern);
     }
 
     public CxfExchange createExchange(Message inMessage) {
-        return new CxfExchange(getContext(), getExchangePattern(), getBinding(), inMessage);
+        return new CxfExchange(getContext(), getExchangePattern(), inMessage);
     }
            
     public String getDataFormat() {

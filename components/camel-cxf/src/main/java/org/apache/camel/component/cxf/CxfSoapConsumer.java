@@ -16,12 +16,24 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
+
+import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.cxf.util.NullConduit;
+import org.apache.camel.component.cxf.util.CxfEndpointUtils;
+import org.apache.camel.component.cxf.util.NullDestinationFactory;
 import org.apache.cxf.endpoint.EndpointImpl;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.endpoint.ServerImpl;
+import org.apache.cxf.frontend.ServerFactoryBean;
+import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.transport.ChainInitiationObserver;
 import org.apache.cxf.wsdl11.WSDLServiceFactory;
@@ -29,7 +41,12 @@ import org.apache.cxf.service.Service;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.Bus;
 import org.apache.cxf.interceptor.AttachmentInInterceptor;
+import org.apache.cxf.interceptor.InterceptorChain;
+import org.apache.cxf.interceptor.OutgoingChainInterceptor;
 import org.apache.cxf.interceptor.StaxInInterceptor;
+import org.apache.cxf.io.CachedOutputStream;
+import org.apache.cxf.message.ExchangeImpl;
+import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.binding.AbstractBindingFactory;
 import org.apache.cxf.binding.soap.interceptor.ReadHeadersInterceptor;
 import org.apache.cxf.binding.soap.interceptor.MustUnderstandInterceptor;
@@ -46,9 +63,8 @@ public class CxfSoapConsumer implements Consumer {
     private static final Log LOG = LogFactory.getLog(CxfSoapConsumer.class);
 
     private final CxfSoapEndpoint endpoint;
-    private final Consumer consumer;
-    private EndpointImpl ep;
-    private MessageObserver chain;
+    private final Consumer consumer;    
+    private MessageObserver inMessageObserver;     
     private Server server;
 
     public CxfSoapConsumer(CxfSoapEndpoint endpoint, Processor processor) throws Exception {
@@ -65,25 +81,28 @@ public class CxfSoapConsumer implements Consumer {
                     }
                 });
         this.consumer = endpoint.getInnerEndpoint().createConsumer(soapProcessor);
-        WSDLServiceFactory factory = new WSDLServiceFactory(getBus(), endpoint.getDefinition(), endpoint.getService());
-        Service cxfService = factory.create();
-        // need to find with the endpoint and service Qname
-        EndpointInfo ei = cxfService.getServiceInfos().iterator().next().getEndpoints().iterator().next();
-        ei.setAddress("local://" + ei.getService().getName().toString() + "/" + ei.getName().getLocalPart());
-        ei.getBinding().setProperty(AbstractBindingFactory.DATABINDING_DISABLED, Boolean.TRUE);
-        cxfService.getInInterceptors().add(new ReadHeadersInterceptor(getBus()));
-        cxfService.getInInterceptors().add(new MustUnderstandInterceptor());
-        cxfService.getInInterceptors().add(new AttachmentInInterceptor());
-        cxfService.getInInterceptors().add(new StaxInInterceptor());
-        cxfService.getInInterceptors().add(new ReadHeadersInterceptor(getBus()));
-        ep = new EndpointImpl(getBus(), cxfService, ei);
-        chain = new ChainInitiationObserver(ep, getBus());
-        server = new ServerImpl(getBus(), ep, null, chain);
+        Class sei = CxfEndpointUtils.getSEIClass(endpoint.getServiceClass());
+        ServerFactoryBean sfb = CxfEndpointUtils.getServerFactoryBean(sei);
+        sfb.setWsdlURL(endpoint.getWsdl().getURL().toString());        
+        if (endpoint.getServiceName() != null) {
+            sfb.setServiceName(endpoint.getServiceName());
+        }
+        if (endpoint.getEndpointName() != null) {
+            sfb.setEndpointName(endpoint.getEndpointName());
+        }
+        // we do not need use the destination here
+        sfb.setDestinationFactory(new NullDestinationFactory());
+        sfb.setStart(false);
+        
+        server = sfb.create();
     }
-
+    
+    
     public void start() throws Exception {
         server.start();
+        inMessageObserver = server.getDestination().getMessageObserver();
         consumer.start();
+       
     }
 
     public void stop() throws Exception {
@@ -97,12 +116,32 @@ public class CxfSoapConsumer implements Consumer {
 
     protected void processSoapConsumerIn(Exchange exchange) throws Exception {
         LOG.info("processSoapConsumerIn: " + exchange);
-        // TODO: chain.onMessage();
+        CxfSoapBinding binding = endpoint.getCxfSoapBinding();
+        org.apache.cxf.message.Message inMessage = binding.getCxfInMessage(exchange, false);
+        org.apache.cxf.message.Exchange cxfExchange = inMessage.getExchange();
+        cxfExchange.put(org.apache.cxf.endpoint.Endpoint.class, server.getEndpoint());
+        cxfExchange.put(Bus.class, getBus());
+        cxfExchange.setConduit(new NullConduit());        
+        // get the message input stream, deal with the exchange in message
+        inMessageObserver.onMessage(inMessage);       
+        exchange.getIn().setBody(inMessage.getContent(Source.class));
+        //TODO copy the right header information
+        exchange.getIn().setHeaders(inMessage);
+        
     }
 
     protected void processSoapConsumerOut(Exchange exchange) throws Exception {
         LOG.info("processSoapConsumerOut: " + exchange);
-        // TODO
+        CxfSoapBinding binding = endpoint.getCxfSoapBinding();
+        // TODO check if the message is oneway message
+        // Get the method name form the soap endpoint
+        org.apache.cxf.message.Message outMessage = binding.getCxfOutMessage(exchange, false);
+        org.apache.cxf.message.Exchange cxfExchange = outMessage.getExchange();
+        InterceptorChain chain = OutgoingChainInterceptor.getOutInterceptorChain(cxfExchange);
+        outMessage.setInterceptorChain(chain);        
+        chain.doIntercept(outMessage);
+        CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);               
+        exchange.getOut().setBody(outputStream.getInputStream());        
     }
 
 }

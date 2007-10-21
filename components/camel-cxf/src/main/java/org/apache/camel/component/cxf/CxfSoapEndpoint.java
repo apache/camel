@@ -36,10 +36,13 @@ public class CxfSoapEndpoint implements Endpoint {
 
     private final Endpoint endpoint;
     private Resource wsdl;
+    private String serviceClass;
     private org.w3c.dom.Document description;
     private Definition definition;
-    private QName service;
+    private QName serviceName;
+    private QName endpointName;
     private Bus bus;
+    private CxfSoapBinding cxfSoapBinding;
 
     public CxfSoapEndpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
@@ -84,19 +87,56 @@ public class CxfSoapEndpoint implements Endpoint {
     public PollingConsumer createPollingConsumer() throws Exception {
         throw new UnsupportedOperationException();
     }
+    
+    public Resource getWsdl() {
+        return wsdl;
+    }
 
     public void setWsdl(Resource wsdl) {
         this.wsdl = wsdl;
     }
+    
+    public void setServiceClass(String serviceClass) {
+        this.serviceClass = serviceClass;
+    }
+    
+    public String getServiceClass() {
+        return serviceClass;
+    }
+    
+    public void setServiceName(String serviceName) {
+        this.serviceName = QName.valueOf(serviceName);
+    }
+    
+    public void setEndpointName(String endpointName) {
+        this.endpointName = QName.valueOf(endpointName);
+    }
+    
+    public QName getEndpointName() {
+        return endpointName;
+    }
+    
+    public CxfSoapBinding getCxfSoapBinding() {
+        if (cxfSoapBinding == null) {
+            cxfSoapBinding = new CxfSoapBinding();
+        }
+        return cxfSoapBinding;
+    }
+    
+    public void setCxfSoapBinding(CxfSoapBinding bing) {
+        cxfSoapBinding = bing;
+    }
 
     public void init() throws Exception {
         Assert.notNull(wsdl, "soap.wsdl parameter must be set on the uri");
-        description = DOMUtils.readXml(wsdl.getInputStream());
-        WSDLFactory wsdlFactory = WSDLFactory.newInstance();
-        WSDLReader reader = wsdlFactory.newWSDLReader();
-        reader.setFeature("javax.wsdl.verbose", false);
-        definition = reader.readWSDL(wsdl.getURL().toString(), description);
-        service = (QName) definition.getServices().keySet().iterator().next();
+        if (serviceName == null) {
+            description = DOMUtils.readXml(wsdl.getInputStream());
+            WSDLFactory wsdlFactory = WSDLFactory.newInstance();
+            WSDLReader reader = wsdlFactory.newWSDLReader();
+            reader.setFeature("javax.wsdl.verbose", false);
+            definition = reader.readWSDL(wsdl.getURL().toString(), description);
+            serviceName = (QName) definition.getServices().keySet().iterator().next();
+        }    
     }
 
     protected Bus getBus() {
@@ -110,7 +150,7 @@ public class CxfSoapEndpoint implements Endpoint {
         return definition;
     }
 
-    public QName getService() {
-        return service;
+    public QName getServiceName() {
+        return serviceName;
     }
 }

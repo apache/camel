@@ -29,12 +29,12 @@ import java.util.Set;
  * @version $Revision$
  */
 public class CxfBinding {
-    public Object extractBodyFromCxf(CxfExchange exchange, Message message) {
+    public static Object extractBodyFromCxf(CxfExchange exchange, Message message) {
         //  TODO how do we choose a format?
         return getBody(message);
     }
 
-    protected Object getBody(Message message) {
+    protected static Object getBody(Message message) {
         Set<Class<?>> contentFormats = message.getContentFormats();
         if (contentFormats != null) {
             for (Class<?> contentFormat : contentFormats) {            
