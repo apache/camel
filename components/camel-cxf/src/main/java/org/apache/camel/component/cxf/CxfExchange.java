@@ -32,13 +32,11 @@ import org.apache.cxf.transport.Destination;
  *
  * @version $Revision$
  */
-public class CxfExchange extends DefaultExchange {
-    private final CxfBinding binding;
+public class CxfExchange extends DefaultExchange {   
     private Exchange exchange;
 
-    public CxfExchange(CamelContext context, CxfBinding binding, Exchange exchange) {
-        super(context);
-        this.binding = binding;
+    public CxfExchange(CamelContext context, Exchange exchange) {
+        super(context);        
         this.exchange = exchange;
 
         setIn(new CxfMessage(exchange.getInMessage()));
@@ -48,13 +46,12 @@ public class CxfExchange extends DefaultExchange {
         }    
     }
 
-    public CxfExchange(CamelContext context, ExchangePattern pattern, CxfBinding binding) {
-        super(context, pattern);
-        this.binding = binding;
+    public CxfExchange(CamelContext context, ExchangePattern pattern) {
+        super(context, pattern);        
     }
 
-    public CxfExchange(CamelContext context, ExchangePattern pattern, CxfBinding binding, Message inMessage) {
-        this(context, pattern, binding);
+    public CxfExchange(CamelContext context, ExchangePattern pattern, Message inMessage) {
+        this(context, pattern);
         this.exchange = inMessage.getExchange();
 
         setIn(new CxfMessage(inMessage));
@@ -92,12 +89,7 @@ public class CxfExchange extends DefaultExchange {
     }
 
 
-    /**
-     * @return the Camel <-> JBI binding
-     */
-    public CxfBinding getBinding() {
-        return binding;
-    }
+    
 
     // Expose CXF APIs directly on the exchange
     //-------------------------------------------------------------------------

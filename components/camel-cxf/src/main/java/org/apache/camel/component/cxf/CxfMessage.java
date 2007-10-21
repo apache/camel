@@ -90,6 +90,6 @@ public class CxfMessage extends DefaultMessage {
 
     @Override
     protected Object createBody() {
-        return getExchange().getBinding().extractBodyFromCxf(getExchange(), cxfMessage);
+        return CxfBinding.extractBodyFromCxf(getExchange(), cxfMessage);
     }
 }
