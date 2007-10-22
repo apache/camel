@@ -16,17 +16,19 @@
  */
 package org.apache.camel.converter;
 
-import javax.xml.transform.Source;
+import java.io.StringReader;
 
-import org.w3c.dom.Document;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
 
 import junit.framework.TestCase;
-
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.ReflectionInjector;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Document;
 
 /**
  * @version $Revision$
@@ -57,5 +59,13 @@ public class JaxpTest extends TestCase {
         assertNotNull(source);
 
         LOG.debug("Found document: " + source);
+    }
+
+    public void testStreamSourceToDomSource() throws Exception {
+        StreamSource streamSource = new StreamSource(new StringReader("<hello>world!</hello>"));
+        DOMSource domSource = converter.convertTo(DOMSource.class, streamSource);
+        assertNotNull("Could not convert to a DOMSource!", domSource);
+
+        LOG.debug("Found document: " + domSource);
     }
 }
