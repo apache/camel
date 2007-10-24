@@ -16,24 +16,23 @@
  */
 package org.apache.camel.osgi;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.spi.ComponentResolver;
-import org.apache.camel.util.NoFactoryAvailableException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.SynchronousBundleListener;
-import org.springframework.osgi.context.support.BundleDelegatingClassLoader;
-
 import java.io.BufferedInputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+import org.apache.camel.spi.ComponentResolver;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.SynchronousBundleListener;
+import org.springframework.osgi.internal.context.support.BundleDelegatingClassLoader;
 
 /**
  * Created by IntelliJ IDEA.
