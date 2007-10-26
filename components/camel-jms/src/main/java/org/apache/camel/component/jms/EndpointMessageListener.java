@@ -59,6 +59,9 @@ public class EndpointMessageListener implements MessageListener {
             }
             Destination replyDestination = getReplyToDestination(message);
             final JmsExchange exchange = createExchange(message, replyDestination);
+            if (replyDestination != null) {
+                exchange.setPattern(ExchangePattern.InOut);
+            }
             if (eagerLoadingOfProperties) {
                 exchange.getIn().getHeaders();
             }
