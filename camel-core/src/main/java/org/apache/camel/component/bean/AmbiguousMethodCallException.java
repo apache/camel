@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import java.util.List;
+import java.util.Collection;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -28,9 +29,9 @@ import org.apache.camel.Exchange;
  * @version $Revision: $
  */
 public class AmbiguousMethodCallException extends CamelExchangeException {
-    private final List<MethodInfo> methods;
+    private final Collection<MethodInfo> methods;
 
-    public AmbiguousMethodCallException(Exchange exchange, List<MethodInfo> methods) {
+    public AmbiguousMethodCallException(Exchange exchange, Collection<MethodInfo> methods) {
         super("Ambiguous method invocations possible: " + methods, exchange);
         this.methods = methods;
     }
@@ -38,7 +39,7 @@ public class AmbiguousMethodCallException extends CamelExchangeException {
     /**
      * The ambiguous methods for which a single method could not be chosen
      */
-    public List<MethodInfo> getMethods() {
+    public Collection<MethodInfo> getMethods() {
         return methods;
     }
 }

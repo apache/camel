@@ -69,7 +69,7 @@ public class ExpressionBuilder {
      * @see Message#getHeaders()
      * @return an expression object which will return the inbound headers
      */
-    public static <E extends Exchange> Expression<E> headersExpresion() {
+    public static <E extends Exchange> Expression<E> headersExpression() {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
                 return exchange.getIn().getHeaders();
@@ -107,6 +107,25 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression for the outbound message headers
+     *
+     * @see Message#getHeaders()
+     * @return an expression object which will return the inbound headers
+     */
+    public static <E extends Exchange> Expression<E> outHeadersExpression() {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange.getOut().getHeaders();
+            }
+
+            @Override
+            public String toString() {
+                return "outHeaders";
+            }
+        };
+    }
+
+    /**
      * Returns an expression for the property value with the given name
      *
      * @see Exchange#getProperty(String)
@@ -133,7 +152,7 @@ public class ExpressionBuilder {
      * @see Exchange#getProperties()
      * @return an expression object which will return the properties
      */
-    public static <E extends Exchange> Expression<E> propertiesExpresion() {
+    public static <E extends Exchange> Expression<E> propertiesExpression() {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
                 return exchange.getProperties();
