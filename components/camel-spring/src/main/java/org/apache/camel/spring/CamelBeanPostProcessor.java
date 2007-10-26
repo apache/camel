@@ -17,6 +17,7 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.*;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.spring.util.ReflectionUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -52,8 +53,6 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     private SpringCamelContext camelContext;
     @XmlTransient
     private ApplicationContext applicationContext;
-
-    // private List<Consumer> consumers = new ArrayList<Consumer>();
 
     public CamelBeanPostProcessor() {
     }
@@ -175,14 +174,18 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
                     Processor processor = createConsumerProcessor(bean, method, endpoint);
                     LOG.info("Created processor: " + processor);
                     Consumer consumer = endpoint.createConsumer(processor);
-                    consumer.start();
-                    onConsumerAdded(consumer);
+                    startService(consumer);
                 } catch (Exception e) {
                     LOG.warn(e);
                     throw new RuntimeCamelException(e);
                 }
             }
         }
+    }
+
+    protected void startService(Service service) throws Exception {
+        service.start();
+        camelContext.addServiceToClose(service);
     }
 
     /**
@@ -195,9 +198,6 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
         return answer;
     }
 
-    protected void onConsumerAdded(Consumer consumer) {
-        LOG.debug("Adding consumer: " + consumer);
-    }
 
     /**
      * Creates the value for the injection point for the given annotation
@@ -227,7 +227,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     protected PollingConsumer createInjectionPollingConsumer(Endpoint endpoint) {
         try {
             PollingConsumer pollingConsumer = endpoint.createPollingConsumer();
-            pollingConsumer.start();
+            startService(pollingConsumer);
             return pollingConsumer;
         }
         catch (Exception e) {
@@ -241,7 +241,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     protected Producer createInjectionProducer(Endpoint endpoint) {
         try {
             Producer producer = endpoint.createProducer();
-            producer.start();
+            startService(producer);
             return producer;
         } catch (Exception e) {
             throw new RuntimeCamelException(e);

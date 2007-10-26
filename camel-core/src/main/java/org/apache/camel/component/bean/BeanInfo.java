@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -48,6 +49,7 @@ public class BeanInfo {
     private Map<String, MethodInfo> operations = new ConcurrentHashMap<String, MethodInfo>();
     private MethodInfo defaultMethod;
     private List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
+    private List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<MethodInfo>();;
 
     public BeanInfo(CamelContext camelContext, Class type, ParameterMappingStrategy strategy) {
         this.camelContext = camelContext;
@@ -129,11 +131,17 @@ public class BeanInfo {
                                                                        parameterAnnotations);
             hasCustomAnnotation |= expression != null;
 
+            ParameterInfo parameterInfo = new ParameterInfo(i, parameterType, parameterAnnotations,
+                                                            expression);
+            parameters.add(parameterInfo);
+
             if (expression == null) {
                 hasCustomAnnotation |= ObjectHelper.hasAnnotation(parameterAnnotations, Body.class);
                 if (bodyParameters.isEmpty()) {
                     // lets assume its the body
                     expression = ExpressionBuilder.bodyExpression(parameterType);
+                    parameterInfo.setExpression(expression);
+                    bodyParameters.add(parameterInfo);
                 } else {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("No expression available for method: " + method.toString()
@@ -144,12 +152,6 @@ public class BeanInfo {
                 }
             }
 
-            ParameterInfo parameterInfo = new ParameterInfo(i, parameterType, parameterAnnotations,
-                                                            expression);
-            parameters.add(parameterInfo);
-            if (isPossibleBodyParameter(parameterAnnotations)) {
-                bodyParameters.add(parameterInfo);
-            }
         }
 
         // now lets add the method to the repository
@@ -168,6 +170,9 @@ public class BeanInfo {
         if (methodInfo.hasBodyParameter()) {
             operationsWithBody.add(methodInfo);
         }
+        if (methodInfo.isHasCustomAnnotation() && !methodInfo.hasBodyParameter()) {
+            operationsWithCustomAnnotation.add(methodInfo);
+        }
         return methodInfo;
     }
 
@@ -184,64 +189,79 @@ public class BeanInfo {
         if (operationsWithBody.size() == 1) {
             return operationsWithBody.get(0);
         } else if (!operationsWithBody.isEmpty()) {
-            // lets see if we can find a method who's body param type matches
-            // the message body
-            Message in = exchange.getIn();
-            Object body = in.getBody();
-            if (body != null) {
-                Class bodyType = body.getClass();
-
-                List<MethodInfo> possibles = new ArrayList<MethodInfo>();
-                for (MethodInfo methodInfo : operationsWithBody) {
-                    if (methodInfo.bodyParameterMatches(bodyType)) {
-                        possibles.add(methodInfo);
-                    }
-                }
-                if (possibles.size() == 1) {
-                    return possibles.get(0);
-                } else if (possibles.isEmpty()) {
-                    // lets try converting
-                    Object newBody = null;
-                    MethodInfo matched = null;
-                    for (MethodInfo methodInfo : operationsWithBody) {
-                        Object value = convertToType(exchange, methodInfo.getBodyParameterType(), body);
-                        if (value != null) {
-                            if (newBody != null) {
-                                throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched,
-                                                                                               methodInfo));
-                            } else {
-                                newBody = value;
-                                matched = methodInfo;
-                            }
-                        }
-                    }
-                    if (matched != null) {
-                        in.setBody(newBody);
-                        return matched;
-                    }
-                } else {
-                    // if we have only one method with custom annotations lets choose that
-                    MethodInfo chosen = null;
-                    for (MethodInfo possible : possibles) {
-                        if (possible.isHasCustomAnnotation()) {
-                            if (chosen != null) {
-                                chosen = null;
-                                break;
-                            }
-                            else {
-                                chosen = possible;
-                            }
-                        }
-                    }
-                    if (chosen != null) {
-                        return chosen;
-                    }
-                    throw new AmbiguousMethodCallException(exchange, possibles);
-                }
-            }
-            return null;
+            return chooseMethodWithMatchingBody(exchange, operationsWithBody);
+        }
+        else if (operationsWithCustomAnnotation.size() == 1) {
+            return operationsWithCustomAnnotation.get(0);
         }
         return null;
+    }
+
+    protected MethodInfo chooseMethodWithMatchingBody(Exchange exchange, Collection<MethodInfo> operationList) throws AmbiguousMethodCallException {
+        // lets see if we can find a method who's body param type matches
+        // the message body
+        Message in = exchange.getIn();
+        Object body = in.getBody();
+        if (body != null) {
+            Class bodyType = body.getClass();
+
+            List<MethodInfo> possibles = new ArrayList<MethodInfo>();
+            for (MethodInfo methodInfo : operationList) {
+                if (methodInfo.bodyParameterMatches(bodyType)) {
+                    possibles.add(methodInfo);
+                }
+            }
+            if (possibles.size() == 1) {
+                return possibles.get(0);
+            } else if (possibles.isEmpty()) {
+                // lets try converting
+                Object newBody = null;
+                MethodInfo matched = null;
+                for (MethodInfo methodInfo : operationList) {
+                    Object value = convertToType(exchange, methodInfo.getBodyParameterType(), body);
+                    if (value != null) {
+                        if (newBody != null) {
+                            throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched,
+                                                                                           methodInfo));
+                        } else {
+                            newBody = value;
+                            matched = methodInfo;
+                        }
+                    }
+                }
+                if (matched != null) {
+                    in.setBody(newBody);
+                    return matched;
+                }
+            } else {
+                // if we only have a single method with custom annotations, lets use that one
+                if (operationsWithCustomAnnotation.size() == 1) {
+                    return operationsWithCustomAnnotation.get(0);
+                }
+                return chooseMethodWithCustomAnnotations(exchange, possibles);
+            }
+        }
+        return null;
+    }
+
+    protected MethodInfo chooseMethodWithCustomAnnotations(Exchange exchange, Collection<MethodInfo> possibles) throws AmbiguousMethodCallException {
+        // if we have only one method with custom annotations lets choose that
+        MethodInfo chosen = null;
+        for (MethodInfo possible : possibles) {
+            if (possible.isHasCustomAnnotation()) {
+                if (chosen != null) {
+                    chosen = null;
+                    break;
+                }
+                else {
+                    chosen = possible;
+                }
+            }
+        }
+        if (chosen != null) {
+            return chosen;
+        }
+        throw new AmbiguousMethodCallException(exchange, possibles);
     }
 
     /**
@@ -267,7 +287,15 @@ public class BeanInfo {
     protected boolean isPossibleBodyParameter(Annotation[] annotations) {
         if (annotations != null) {
             for (Annotation annotation : annotations) {
-                if ((annotation instanceof Property) || (annotation instanceof Header)) {
+                if ((annotation instanceof Property)
+                        || (annotation instanceof Header)
+                        || (annotation instanceof Headers)
+                        || (annotation instanceof OutHeaders)
+                        || (annotation instanceof Properties)) {
+                    return false;
+                }
+                LanguageAnnotation languageAnnotation = annotation.annotationType().getAnnotation(LanguageAnnotation.class);
+                if (languageAnnotation != null) {
                     return false;
                 }
             }
@@ -282,12 +310,14 @@ public class BeanInfo {
             Property propertyAnnotation = (Property)annotation;
             return ExpressionBuilder.propertyExpression(propertyAnnotation.name());
         } else if (annotation instanceof Properties) {
-            return ExpressionBuilder.propertiesExpresion();
+            return ExpressionBuilder.propertiesExpression();
         } else if (annotation instanceof Header) {
             Header headerAnnotation = (Header)annotation;
             return ExpressionBuilder.headerExpression(headerAnnotation.name());
         } else if (annotation instanceof Headers) {
-            return ExpressionBuilder.headersExpresion();
+            return ExpressionBuilder.headersExpression();
+        } else if (annotation instanceof OutHeaders) {
+            return ExpressionBuilder.outHeadersExpression();
         } else {
             LanguageAnnotation languageAnnotation = annotation.annotationType().getAnnotation(LanguageAnnotation.class);
             if (languageAnnotation != null) {

@@ -27,7 +27,7 @@ public class ParameterInfo {
     private final int index;
     private final Class type;
     private final Annotation[] annotations;
-    private final Expression expression;
+    private Expression expression;
 
     public ParameterInfo(int index, Class type, Annotation[] annotations, Expression expression) {
         this.index = index;
@@ -50,5 +50,9 @@ public class ParameterInfo {
 
     public Class getType() {
         return type;
+    }
+
+    public void setExpression(Expression expression) {
+        this.expression = expression;
     }
 }

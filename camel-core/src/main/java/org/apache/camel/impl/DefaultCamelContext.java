@@ -331,6 +331,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     }
 
+    public void addServiceToClose(Object object) {
+        if (object instanceof Service) {
+            Service service = (Service) object;
+            servicesToClose.add(service);
+        }
+    }
 
     // Helper methods
     // -----------------------------------------------------------------------
