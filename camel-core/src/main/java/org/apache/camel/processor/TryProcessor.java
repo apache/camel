@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision: $
  */
 public class TryProcessor extends ServiceSupport implements Processor {
-    private static final Log LOG = LogFactory.getLog(TryProcessor.class);
+    private static final transient Log LOG = LogFactory.getLog(TryProcessor.class);
 
     private final Processor tryProcessor;
 
@@ -106,9 +106,12 @@ public class TryProcessor extends ServiceSupport implements Processor {
         for (CatchProcessor catchClause : catchClauses) {
             if (catchClause.catches(e)) {
                 // lets attach the exception to the exchange
-                exchange.setException(e);
+                Exchange localExchange = exchange.copy();
+                localExchange.getIn().setHeader("caught.exception", e);
+                // give the rest of the pipeline another chance
+                localExchange.setException(null);
                 try {
-                    catchClause.process(exchange);
+                    catchClause.process(localExchange);
                 } catch (Exception e1) {
                     LOG.warn("Caught exception inside catch clause: " + e1, e1);
                     throw e1;
