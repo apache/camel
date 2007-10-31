@@ -50,7 +50,7 @@ public class JaxpTest extends TestCase {
         String text = converter.convertTo(String.class, document);
         // The preamble changes a little under Java 1.6 it adds a
         // standalone="no" attribute.
-        assertTrue("Converted to String", text.endsWith("<hello>world!</hello>"));
+        assertTrue("Converted to String: " + text, text.endsWith("<hello>world!</hello>"));
     }
 
     public void testConvertToSource() throws Exception {
