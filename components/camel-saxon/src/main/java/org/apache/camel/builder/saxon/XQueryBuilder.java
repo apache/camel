@@ -49,6 +49,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
+import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.BytesSource;
@@ -65,7 +66,7 @@ import org.w3c.dom.Node;
  *
  * @version $Revision$
  */
-public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>, Predicate<E>, NamespaceAware {
+public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<Exchange>, NamespaceAware, Processor {
     private static final transient Log LOG = LogFactory.getLog(XQueryBuilder.class);
     private Configuration configuration;
     private XQueryExpression expression;
@@ -82,7 +83,12 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
         return "XQuery[" + expression + "]";
     }
 
-    public Object evaluate(E exchange) {
+    public void process(Exchange exchange) throws Exception {
+        Object body = evaluate(exchange);
+        exchange.getOut(true).setBody(body);
+    }
+
+    public Object evaluate(Exchange exchange) {
         try {
             if (resultType != null) {
                 if (resultType.equals(String.class)) {
@@ -126,21 +132,21 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
         namespacePrefixes.putAll(namespaces);
     }
 
-    public List evaluateAsList(E exchange) throws Exception {
+    public List evaluateAsList(Exchange exchange) throws Exception {
         return getExpression().evaluate(createDynamicContext(exchange));
     }
 
-    public Object evaluateAsStringSource(E exchange) throws Exception {
+    public Object evaluateAsStringSource(Exchange exchange) throws Exception {
         String text = evaluateAsString(exchange);
         return new StringSource(text);
     }
 
-    public Object evaluateAsBytesSource(E exchange) throws Exception {
+    public Object evaluateAsBytesSource(Exchange exchange) throws Exception {
         byte[] bytes = evaluateAsBytes(exchange);
         return new BytesSource(bytes);
     }
 
-    public Node evaluateAsDOM(E exchange) throws Exception {
+    public Node evaluateAsDOM(Exchange exchange) throws Exception {
         DOMResult result = new DOMResult();
         DynamicQueryContext context = createDynamicContext(exchange);
         XQueryExpression expression = getExpression();
@@ -148,7 +154,7 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
         return result.getNode();
     }
 
-    public byte[] evaluateAsBytes(E exchange) throws Exception {
+    public byte[] evaluateAsBytes(Exchange exchange) throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         Result result = new StreamResult(buffer);
         getExpression().pull(createDynamicContext(exchange), result, properties);
@@ -156,7 +162,7 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
         return bytes;
     }
 
-    public String evaluateAsString(E exchange) throws Exception {
+    public String evaluateAsString(Exchange exchange) throws Exception {
         StringWriter buffer = new StringWriter();
         SequenceIterator iter = getExpression().iterator(createDynamicContext(exchange));
         for (Item item = iter.next(); item != null; item = iter.next()) {
@@ -165,7 +171,7 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
         return buffer.toString();
     }
 
-    public boolean matches(E exchange) {
+    public boolean matches(Exchange exchange) {
         try {
             List list = evaluateAsList(exchange);
             return matches(exchange, list);
@@ -175,7 +181,7 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
         }
     }
 
-    public void assertMatches(String text, E exchange) throws AssertionError {
+    public void assertMatches(String text, Exchange exchange) throws AssertionError {
         try {
             List list = evaluateAsList(exchange);
             if (!matches(exchange, list)) {
@@ -189,94 +195,94 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
 
     // Static helper methods
     //-------------------------------------------------------------------------
-    public static <E extends Exchange> XQueryBuilder<E> xquery(final String queryText) {
-        return new XQueryBuilder<E>() {
+    public static XQueryBuilder xquery(final String queryText) {
+        return new XQueryBuilder() {
             protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext) throws XPathException {
                 return staticQueryContext.compileQuery(queryText);
             }
         };
     }
 
-    public static <E extends Exchange> XQueryBuilder<E> xquery(final Reader reader) {
-        return new XQueryBuilder<E>() {
+    public static XQueryBuilder xquery(final Reader reader) {
+        return new XQueryBuilder() {
             protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext) throws XPathException, IOException {
                 return staticQueryContext.compileQuery(reader);
             }
         };
     }
 
-    public static <E extends Exchange> XQueryBuilder<E> xquery(final InputStream in, final String characterSet) {
-        return new XQueryBuilder<E>() {
+    public static XQueryBuilder xquery(final InputStream in, final String characterSet) {
+        return new XQueryBuilder() {
             protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext) throws XPathException, IOException {
                 return staticQueryContext.compileQuery(in, characterSet);
             }
         };
     }
 
-    public static <E extends Exchange> XQueryBuilder<E> xquery(File file, String characterSet) throws FileNotFoundException {
+    public static XQueryBuilder xquery(File file, String characterSet) throws FileNotFoundException {
         return xquery(IOConverter.toInputStream(file), characterSet);
     }
 
-    public static <E extends Exchange> XQueryBuilder<E> xquery(URL url, String characterSet) throws IOException {
+    public static XQueryBuilder xquery(URL url, String characterSet) throws IOException {
         return xquery(IOConverter.toInputStream(url), characterSet);
     }
 
-    public static <E extends Exchange> XQueryBuilder<E> xquery(File file) throws FileNotFoundException {
+    public static XQueryBuilder xquery(File file) throws FileNotFoundException {
         return xquery(IOConverter.toInputStream(file), ObjectHelper.getDefaultCharacterSet());
     }
 
-    public static <E extends Exchange> XQueryBuilder<E> xquery(URL url) throws IOException {
+    public static XQueryBuilder xquery(URL url) throws IOException {
         return xquery(IOConverter.toInputStream(url), ObjectHelper.getDefaultCharacterSet());
     }
 
     // Fluent API
     // -------------------------------------------------------------------------
-    public XQueryBuilder<E> parameter(String name, Object value) {
+    public XQueryBuilder parameter(String name, Object value) {
         parameters.put(name, value);
         return this;
     }
 
-    public XQueryBuilder<E> namespace(String prefix, String uri) {
+    public XQueryBuilder namespace(String prefix, String uri) {
         namespacePrefixes.put(prefix, uri);
         return this;
     }
 
-    public XQueryBuilder<E> resultType(Class resultType) {
+    public XQueryBuilder resultType(Class resultType) {
         setResultType(resultType);
         return this;
     }
 
-    public XQueryBuilder<E> asBytes() {
+    public XQueryBuilder asBytes() {
         setResultsFormat(ResultFormat.Bytes);
         return this;
     }
 
-    public XQueryBuilder<E> asBytesSource() {
+    public XQueryBuilder asBytesSource() {
         setResultsFormat(ResultFormat.BytesSource);
         return this;
     }
 
-    public XQueryBuilder<E> asDOM() {
+    public XQueryBuilder asDOM() {
         setResultsFormat(ResultFormat.DOM);
         return this;
     }
 
-    public XQueryBuilder<E> asDOMSource() {
+    public XQueryBuilder asDOMSource() {
         setResultsFormat(ResultFormat.DOMSource);
         return this;
     }
 
-    public XQueryBuilder<E> asList() {
+    public XQueryBuilder asList() {
         setResultsFormat(ResultFormat.List);
         return this;
     }
 
-    public XQueryBuilder<E> asString() {
+    public XQueryBuilder asString() {
         setResultsFormat(ResultFormat.String);
         return this;
     }
 
-    public XQueryBuilder<E> asStringSource() {
+    public XQueryBuilder asStringSource() {
         setResultsFormat(ResultFormat.StringSource);
         return this;
     }
@@ -365,7 +371,7 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
     /**
      * Creates a dynamic context for the given exchange
      */
-    protected DynamicQueryContext createDynamicContext(E exchange) throws Exception {
+    protected DynamicQueryContext createDynamicContext(Exchange exchange) throws Exception {
         Configuration config = getConfiguration();
         DynamicQueryContext dynamicQueryContext = new DynamicQueryContext(config);
 
@@ -425,7 +431,7 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
         configuration = null;
     }
 
-    protected boolean matches(E exchange, List results) {
+    protected boolean matches(Exchange exchange, List results) {
         return ObjectHelper.matches(results);
     }
 }
