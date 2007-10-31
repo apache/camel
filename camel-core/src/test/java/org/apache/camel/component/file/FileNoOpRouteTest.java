@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 /**
  * @version $Revision: 1.1 $
  */
@@ -25,7 +23,7 @@ public class FileNoOpRouteTest extends FileRouteTest {
     @Override
     protected void setUp() throws Exception {
         uri = "file:target/test-noop-inbox?noop=true";
-        recursiveDelete("target/test-noop-inbox");
+        deleteDirectory("target/test-noop-inbox");
         super.setUp();
     }
 }

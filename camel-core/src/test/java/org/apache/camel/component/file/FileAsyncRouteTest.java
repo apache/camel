@@ -40,7 +40,7 @@ public class FileAsyncRouteTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        recursiveDelete("target/test-async-inbox");
+        deleteDirectory("target/test-async-inbox");
         super.setUp();
     }
 

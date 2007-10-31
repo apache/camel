@@ -23,7 +23,7 @@ public class FileDeleteRouteTest extends FileRouteTest {
     @Override
     protected void setUp() throws Exception {
         uri = "file:target/test-delete-inbox?delete=true";
-        recursiveDelete("target/test-delete-inbox");
+        deleteDirectory("target/test-delete-inbox");
         super.setUp();
     }
 }

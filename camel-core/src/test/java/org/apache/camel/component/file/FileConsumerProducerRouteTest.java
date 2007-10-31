@@ -34,7 +34,7 @@ public class FileConsumerProducerRouteTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        recursiveDelete("target/test-consumer-produer-inbox");
+        deleteDirectory("target/test-consumer-produer-inbox");
         super.setUp(); 
     }
 

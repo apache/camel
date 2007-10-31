@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -41,7 +39,7 @@ public class FileRouteTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        recursiveDelete("target/test-default-inbox");
+        deleteDirectory("target/test-default-inbox");
         super.setUp();
     }
 

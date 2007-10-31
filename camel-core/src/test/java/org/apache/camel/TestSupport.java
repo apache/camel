@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import java.util.List;
+import java.io.File;
 
 import junit.framework.TestCase;
 
@@ -317,4 +318,27 @@ public abstract class TestSupport extends TestCase {
         }
     }
 
+    /**
+     * Recursively delete a directory, useful to zapping test data
+     *
+     * @param file the directory to be deleted
+     */
+    protected static void deleteDirectory(String file) {
+        deleteDirectory(new File(file));
+    }
+
+    /**
+     * Recursively delete a directory, useful to zapping test data
+     *
+     * @param file the directory to be deleted
+     */
+    protected static void deleteDirectory(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                deleteDirectory(files[i]);
+            }
+        }
+        file.delete();
+    }
 }
