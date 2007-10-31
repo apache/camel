@@ -70,7 +70,7 @@ public class BeanWithHeadersAndBodyInjectionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").beanRef("myBean");
+                from("direct:in").to("bean:myBean?method=myMethod");
             }
         };
     }
@@ -88,6 +88,10 @@ public class BeanWithHeadersAndBodyInjectionTest extends ContextTestSupport {
             this.headers = headers;
             this.body = body;
             LOG.info("myMethod() method called on " + this);
+        }
+
+        public void anotherMethod(@Headers Map<String, Object> headers,Object body) {
+            fail("Should not have called this method!");
         }
     }
 }
