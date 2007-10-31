@@ -132,7 +132,8 @@ public class MethodInfo {
                 for (int i = 0; i < size; i++) {
                     Object value = expressions[i].evaluate(exchange);
                     // now lets try to coerce the value to the required type
-                    value = ExchangeHelper.convertToType(exchange, parameters.get(i).getType(), value);
+                    Class expectedType = parameters.get(i).getType();
+                    value = ExchangeHelper.convertToType(exchange, expectedType, value);
                     answer[i] = value;
                 }
                 return answer;

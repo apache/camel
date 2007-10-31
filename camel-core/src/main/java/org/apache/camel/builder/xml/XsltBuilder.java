@@ -75,7 +75,8 @@ public class XsltBuilder implements Processor {
         ResultHandler resultHandler = resultHandlerFactory.createResult();
         Result result = resultHandler.getResult();
         transformer.transform(source, result);
-        resultHandler.setBody(exchange.getIn());
+        Message out = exchange.getOut(true);
+        resultHandler.setBody(out);
     }
 
     // Builder methods

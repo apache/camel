@@ -18,6 +18,7 @@
 package org.apache.camel.converter.jaxp;
 
 import org.apache.camel.Converter;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -37,12 +38,14 @@ public class DomConverter {
         return buffer.toString();
     }
 
+/*
     @Converter
     public static String toString(Node node) {
         StringBuffer buffer = new StringBuffer();
         append(buffer, node);
         return buffer.toString();
     }
+*/
 
     protected static void append(StringBuffer buffer, NodeList nodeList) {
         int size = nodeList.getLength();
@@ -59,6 +62,10 @@ public class DomConverter {
         else if (node instanceof Element) {
             Element element = (Element) node;
             append(buffer, element.getChildNodes());
+        }
+        else if (node instanceof Document) {
+            Document doc = (Document) node;
+            append(buffer, doc.getChildNodes());
         }
     }
 }
