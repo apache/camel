@@ -376,20 +376,19 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
         DynamicQueryContext dynamicQueryContext = new DynamicQueryContext(config);
 
         Message in = exchange.getIn();
-        Source source = in.getBody(Source.class);
-        if (source == null) {
-            Item item = in.getBody(Item.class);
-            if (item != null) {
-                dynamicQueryContext.setContextItem(item);
-            }
-            else {
+        Item item = in.getBody(Item.class);
+        Source source = null;
+        if (item != null) {
+            dynamicQueryContext.setContextItem(item);
+        }
+        else {
+            source = in.getBody(Source.class);
+            if (source == null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("No body available on exchange so using an empty document: " + exchange);
-                    source = converter.toSource(converter.createDocument());
                 }
+                source = converter.toSource(converter.createDocument());
             }
-        }
-        if (source != null) {
             DocumentInfo doc = getStaticQueryContext().buildDocument(source);
             dynamicQueryContext.setContextItem(doc);
         }

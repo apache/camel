@@ -1,3 +1,3 @@
-<transformed subject="{/mail/subject}">
-{/mail}
+<transformed subject="{mail/subject}">
+{.}
 </transformed>
