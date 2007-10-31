@@ -56,7 +56,7 @@ public class FileRouteGenerateEmptyExchangeWhenIdleTest extends ContextTestSuppo
 
     @Override
     protected void setUp() throws Exception {
-        recursiveDelete("target/test-inbox2");
+        deleteDirectory("target/test-inbox2");
         super.setUp();
     }
 

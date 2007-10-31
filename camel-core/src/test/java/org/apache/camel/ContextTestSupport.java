@@ -248,29 +248,4 @@ public abstract class ContextTestSupport extends TestSupport {
     protected void assertValidContext(CamelContext context) {
         assertNotNull("No context found!", context);
     }
-
-    /**
-     * Recursively delete a directory, useful to zapping test data
-     *
-     * @param file the directory to be deleted
-     */
-    protected static void recursiveDelete(String file) {
-        recursiveDelete(new File(file));
-    }
-    
-    /**
-     * Recursively delete a directory, useful to zapping test data
-     *
-     * @param file the directory to be deleted
-     */
-    protected static void recursiveDelete(File file) {
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                recursiveDelete(files[i]);
-            }
-        }
-        file.delete();
-    }
-
 }
