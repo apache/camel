@@ -30,6 +30,7 @@ import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.FromType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.model.InterceptorRef;
 import org.apache.camel.processor.Interceptor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.ProceedProcessor;
@@ -150,7 +151,18 @@ public class RouteContext {
     }
 
     public void intercept(Interceptor interceptor) {
-        getRoute().intercept(interceptor);
+/*
+        InterceptorRef block = new InterceptorRef(interceptor);
+        RouteType route = getRoute();
+        List<ProcessorType<?>> list = route.getOutputs();
+        for (ProcessorType<?> processorType : list) {
+            block.addOutput(processorType);
+        }
+        route.clearOutput();
+        route.addInterceptor(block);
+*/
+
+        //getRoute().getInterceptors().add(new InterceptorRef(interceptor));
         lastInterceptor = interceptor;
     }
 

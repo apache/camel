@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -60,12 +61,14 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @version $Revision: 1.1 $
  */
-public abstract class ProcessorType<Type extends ProcessorType> {
+public abstract class ProcessorType<Type extends ProcessorType> implements Block {
     public static final String DEFAULT_TRACE_CATEGORY = "org.apache.camel.TRACE";
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Boolean inheritErrorHandlerFlag = Boolean.TRUE; // TODO not sure how
     private DelegateProcessor lastInterceptor;
     private NodeFactory nodeFactory;
+    private LinkedList<Block> blocks = new LinkedList<Block>();
+
     // else to use an
     // optional
     // attribute in
@@ -73,7 +76,9 @@ public abstract class ProcessorType<Type extends ProcessorType> {
 
     public abstract List<ProcessorType<?>> getOutputs();
 
+/*
     public abstract List<InterceptorType> getInterceptors();
+*/
 
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         throw new UnsupportedOperationException("Not implemented yet for class: " + getClass().getName());
@@ -191,6 +196,16 @@ public abstract class ProcessorType<Type extends ProcessorType> {
         return to(endpoints);
     }
 
+    /**
+     * Ends the current block
+     */
+    public Type end() {
+        if (blocks.isEmpty()) {
+            throw new IllegalArgumentException("No block active!");
+        }
+        blocks.removeLast();
+        return (Type) this;
+    }
 
     /**
      * Causes subsequent processors to be called asynchronously
@@ -599,7 +614,15 @@ public abstract class ProcessorType<Type extends ProcessorType> {
     }
 
     public Type interceptor(String ref) {
-        getInterceptors().add(new InterceptorRef(ref));
+        InterceptorRef interceptor = new InterceptorRef(ref);
+        addInterceptor(interceptor);
+        return (Type) this;
+    }
+
+
+    public Type intercept(DelegateProcessor interceptor) {
+        addInterceptor(new InterceptorRef(interceptor));
+        lastInterceptor = interceptor;
         return (Type) this;
     }
 
@@ -607,6 +630,15 @@ public abstract class ProcessorType<Type extends ProcessorType> {
         InterceptType answer = new InterceptType();
         addOutput(answer);
         return answer;
+    }
+
+    public void addInterceptor(InterceptorType interceptor) {
+        addOutput(interceptor);
+        addBlock(interceptor);
+    }
+
+    protected void addBlock(Block block) {
+        blocks.add(block);
     }
 
     public Type proceed() {
@@ -676,11 +708,6 @@ public abstract class ProcessorType<Type extends ProcessorType> {
         return answer;
     }
 
-    public Type intercept(DelegateProcessor interceptor) {
-        getInterceptors().add(new InterceptorRef(interceptor));
-        lastInterceptor = interceptor;
-        return (Type) this;
-    }
 
     /**
      * Installs the given error handler builder
@@ -1073,6 +1100,8 @@ public abstract class ProcessorType<Type extends ProcessorType> {
         // Interceptors are optional
         DelegateProcessor first = null;
         DelegateProcessor last = null;
+/*
+
         List<InterceptorType> interceptors = new ArrayList<InterceptorType>(routeContext.getRoute()
                 .getInterceptors());
         List<InterceptorType> list = getInterceptors();
@@ -1095,6 +1124,7 @@ public abstract class ProcessorType<Type extends ProcessorType> {
         if (last != null) {
             last.setProcessor(target);
         }
+*/
         return first == null ? target : first;
     }
 
@@ -1119,9 +1149,15 @@ public abstract class ProcessorType<Type extends ProcessorType> {
         output.setNodeFactory(getNodeFactory());
     }
 
-    protected void addOutput(ProcessorType processorType) {
+    public void addOutput(ProcessorType processorType) {
         configureChild(processorType);
-        getOutputs().add(processorType);
+        if (blocks.isEmpty()) {
+            getOutputs().add(processorType);
+        }
+        else {
+            Block block = blocks.getLast();
+            block.addOutput(processorType);
+        }
     }
 
     /**
@@ -1153,4 +1189,8 @@ public abstract class ProcessorType<Type extends ProcessorType> {
         return processor;
     }
 
+    public void clearOutput() {
+        getOutputs().clear();
+        blocks.clear();
+    }
 }

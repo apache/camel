@@ -33,11 +33,11 @@ import java.util.List;
  * @version $Revision: $
  */
 @XmlRootElement(name = "route")
-@XmlType(propOrder = {"interceptors", "inputs", "outputs" })
+@XmlType(propOrder = {"inputs", "outputs" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteType extends ProcessorType<ProcessorType> implements CamelContextAware {
     private static final transient Log LOG = LogFactory.getLog(RouteType.class);
-    @XmlElementRef
+    @XmlTransient
     private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     @XmlElementRef
     private List<FromType> inputs = new ArrayList<FromType>();
@@ -178,7 +178,8 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
         RouteContext routeContext = new RouteContext(this, fromType, routes);
         Endpoint endpoint = routeContext.getEndpoint();
 
-        for (ProcessorType output : outputs) {
+        List<ProcessorType<?>> list = new ArrayList<ProcessorType<?>>(outputs);
+        for (ProcessorType output : list) {
             output.addRoutes(routeContext, routes);
         }
 
@@ -192,11 +193,18 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
         if (isInheritErrorHandler()) {
             output.setErrorHandlerBuilder(getErrorHandlerBuilder());
         }
+
+        List<InterceptorType> interceptors = getInterceptors();
+        for (InterceptorType interceptor : interceptors) {
+          output.addInterceptor(interceptor);
+        }
+/*
         List<InterceptorType> list = output.getInterceptors();
         if (list == null) {
             LOG.warn("No interceptor collection: " + output);
         } else {
             list.addAll(getInterceptors());
         }
+*/
     }
 }

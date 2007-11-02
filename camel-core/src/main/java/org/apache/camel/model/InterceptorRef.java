@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.Processor;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -50,6 +51,14 @@ public class InterceptorRef extends InterceptorType {
     @Override
     public String toString() {
         return "Interceptor[" + getLabel() + "]";
+    }
+
+    @Override
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
+        DelegateProcessor processor = createInterceptor(routeContext);
+        Processor child = createOutputsProcessor(routeContext);
+        processor.setProcessor(child);
+        return processor;
     }
 
     public DelegateProcessor createInterceptor(RouteContext routeContext) {

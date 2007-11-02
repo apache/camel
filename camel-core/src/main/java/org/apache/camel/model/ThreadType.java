@@ -78,10 +78,12 @@ public class ThreadType extends ProcessorType<ProcessorType> {
         this.executor = executor;
     }
     
+/*
     @Override
     public List getInterceptors() {
         return Collections.EMPTY_LIST;
     }
+*/
 
     @Override
     public List<ProcessorType<?>> getOutputs() {

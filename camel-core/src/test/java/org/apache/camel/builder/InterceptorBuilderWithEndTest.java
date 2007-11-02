@@ -30,11 +30,11 @@ import org.apache.camel.processor.DelegateProcessor;
 /**
  * @version $Revision: 530102 $
  */
-public class InterceptorBuilderTest extends TestSupport {
+public class InterceptorBuilderWithEndTest extends TestSupport {
 
     /**
      * Validates that interceptors are executed in the right order.
-     * 
+     *
      * @throws Exception
      */
     public void testRouteWithInterceptor() throws Exception {
@@ -58,7 +58,7 @@ public class InterceptorBuilderTest extends TestSupport {
                 order.add("END:2");
             }
         };
-        
+
         final Processor orderProcessor = new Processor() {
             public void process(Exchange exchange) {
                 order.add("INVOKED");
@@ -74,7 +74,7 @@ public class InterceptorBuilderTest extends TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 //from("direct:a").intercept(interceptor1).intercept(interceptor2).to("direct:d");
-                from("direct:a").intercept(interceptor1).process(orderProcessor).intercept(interceptor2).process(toProcessor);
+                from("direct:a").intercept(interceptor1).process(orderProcessor).end().intercept(interceptor2).process(toProcessor);
                 /*
                  * TODO keep old DSL? .intercept() .add(interceptor1)
                  * .add(interceptor2) .target().to("direct:d");
@@ -92,10 +92,10 @@ public class InterceptorBuilderTest extends TestSupport {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("START:1");
         expected.add("INVOKED");
+        expected.add("END:1");
         expected.add("START:2");
         expected.add("TO");
         expected.add("END:2");
-        expected.add("END:1");
 
         log.debug("Interceptor invocation order:" + order);
         assertEquals(expected, order);

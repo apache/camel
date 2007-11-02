@@ -37,9 +37,11 @@ public class ProceedType extends ProcessorType<ProcessorType> {
         return Collections.EMPTY_LIST;
     }
 
+/*
     public List<InterceptorType> getInterceptors() {
         return Collections.EMPTY_LIST;
     }
+*/
 
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         return routeContext.createProceedProcessor();

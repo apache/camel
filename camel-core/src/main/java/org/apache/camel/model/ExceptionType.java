@@ -41,8 +41,10 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExceptionType extends ProcessorType<ProcessorType> {
     
+/*
     @XmlElementRef
     private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
+*/
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
     @XmlElement(name = "redeliveryPolicy", required = false)
@@ -144,6 +146,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     // Properties
     //-------------------------------------------------------------------------
+/*
     public List<InterceptorType> getInterceptors() {
         return interceptors;
     }
@@ -151,6 +154,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
     }
+*/
 
     public List<ProcessorType<?>> getOutputs() {
         return outputs;
