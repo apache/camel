@@ -40,10 +40,6 @@ import org.apache.camel.util.CollectionStringBuffer;
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceType extends ProcessorType<ChoiceType> {
-/*
-    @XmlElementRef
-    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
-*/
     @XmlElementRef
     private List<WhenType> whenClauses = new ArrayList<WhenType>();
     @XmlElement(required = false)
@@ -131,14 +127,4 @@ public class ChoiceType extends ProcessorType<ChoiceType> {
     public void setOtherwise(OtherwiseType otherwise) {
         this.otherwise = otherwise;
     }
-
-/*
-    public List<InterceptorType> getInterceptors() {
-        return interceptors;
-    }
-
-    public void setInterceptors(List<InterceptorType> interceptors) {
-        this.interceptors = interceptors;
-    }
-*/
 }

@@ -37,10 +37,6 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "catch")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CatchType extends ProcessorType<ProcessorType> {
-/*
-    @XmlElementRef
-    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
-*/
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
     @XmlElementRef
@@ -75,16 +71,6 @@ public class CatchType extends ProcessorType<ProcessorType> {
         Processor childProcessor = routeContext.createProcessor(this);
         return new CatchProcessor(getExceptionClasses(), childProcessor);
     }
-
-/*
-    public List<InterceptorType> getInterceptors() {
-        return interceptors;
-    }
-
-    public void setInterceptors(List<InterceptorType> interceptors) {
-        this.interceptors = interceptors;
-    }
-*/
 
     public List<ProcessorType<?>> getOutputs() {
         return outputs;

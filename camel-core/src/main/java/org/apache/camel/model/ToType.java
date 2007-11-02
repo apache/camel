@@ -45,10 +45,6 @@ public class ToType extends ProcessorType<ProcessorType> {
     private String uri;
     @XmlAttribute
     private String ref;
-/*
-    @XmlElementRef
-    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
-*/
     @XmlTransient
     private Endpoint endpoint;
 
@@ -126,17 +122,6 @@ public class ToType extends ProcessorType<ProcessorType> {
     public List<ProcessorType<?>> getOutputs() {
         return Collections.EMPTY_LIST;
     }
-
-/*
-    public List<InterceptorType> getInterceptors() {
-        return interceptors;
-    }
-
-    public void setInterceptors(List<InterceptorType> interceptors) {
-        this.interceptors = interceptors;
-    }
-*/
-
 
     /**
      * Returns the endpoint URI or the name of the reference to it
