@@ -45,8 +45,10 @@ public class ToType extends ProcessorType<ProcessorType> {
     private String uri;
     @XmlAttribute
     private String ref;
+/*
     @XmlElementRef
     private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
+*/
     @XmlTransient
     private Endpoint endpoint;
 
@@ -125,6 +127,7 @@ public class ToType extends ProcessorType<ProcessorType> {
         return Collections.EMPTY_LIST;
     }
 
+/*
     public List<InterceptorType> getInterceptors() {
         return interceptors;
     }
@@ -132,6 +135,7 @@ public class ToType extends ProcessorType<ProcessorType> {
     public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
     }
+*/
 
 
     /**

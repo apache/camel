@@ -40,6 +40,18 @@ public class InterceptType extends OutputType<ProcessorType> {
         return "Intercept[" + getOutputs() + "]";
     }
 
+    @Override
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
+        Interceptor interceptor = new Interceptor();
+        routeContext.intercept(interceptor);
+
+        final Processor interceptRoute = createOutputsProcessor(routeContext);
+        interceptor.setInterceptorLogic(interceptRoute);
+
+        return interceptor;
+    }
+
+/*
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         Interceptor interceptor = new Interceptor();
         routeContext.intercept(interceptor);
@@ -47,6 +59,7 @@ public class InterceptType extends OutputType<ProcessorType> {
         final Processor interceptRoute = routeContext.createProcessor(this);
         interceptor.setInterceptorLogic(interceptRoute);
     }
+*/
 
     /**
      * Applies this interceptor only if the given predicate is true

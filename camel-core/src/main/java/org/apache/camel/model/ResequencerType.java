@@ -43,8 +43,10 @@ import org.apache.camel.processor.StreamResequencer;
  */
 @XmlRootElement(name = "resequencer")
 public class ResequencerType extends ProcessorType<ProcessorType> {
+/*
     @XmlElementRef
     private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
+*/
     @XmlElementRef
     private List<ExpressionType> expressions = new ArrayList<ExpressionType>();
     @XmlElementRef
@@ -129,6 +131,7 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
         return expressions;
     }
 
+/*
     public List<InterceptorType> getInterceptors() {
         return interceptors;
     }
@@ -136,6 +139,7 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
     public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
     }
+*/
 
     public List<ProcessorType<?>> getOutputs() {
         return outputs;

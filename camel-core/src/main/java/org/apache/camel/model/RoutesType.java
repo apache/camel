@@ -28,8 +28,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Route;
 import org.apache.camel.Predicate;
+import org.apache.camel.Route;
 import org.apache.camel.processor.DelegateProcessor;
 
 /**
@@ -40,10 +40,9 @@ import org.apache.camel.processor.DelegateProcessor;
 @XmlRootElement(name = "routes")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutesType implements RouteContainer {
-    
     // TODO: not sure how else to use an optional attribute in JAXB2
     @XmlAttribute
-    private Boolean inheritErrorHandlerFlag = Boolean.TRUE; 
+    private Boolean inheritErrorHandlerFlag = Boolean.TRUE;
     @XmlElementRef
     private List<RouteType> routes = new ArrayList<RouteType>();
     @XmlElementRef
@@ -151,7 +150,11 @@ public class RoutesType implements RouteContainer {
         // lets configure the route
         route.setCamelContext(getCamelContext());
         route.setInheritErrorHandlerFlag(getInheritErrorHandlerFlag());
-        route.getInterceptors().addAll(getInterceptors());
+        List<InterceptorType> list = getInterceptors();
+        for (InterceptorType interceptorType : list) {
+            route.addInterceptor(interceptorType);
+        }
+        //route.getInterceptors().addAll(getInterceptors());
         route.getOutputs().addAll(getIntercepts());
         route.getOutputs().addAll(getExceptions());
         getRoutes().add(route);
@@ -162,7 +165,7 @@ public class RoutesType implements RouteContainer {
         getInterceptors().add(new InterceptorRef(interceptor));
         return this;
     }
-    
+
     public InterceptType intercept() {
         InterceptType answer = new InterceptType();
         getIntercepts().add(answer);
@@ -181,11 +184,9 @@ public class RoutesType implements RouteContainer {
         return answer;
     }
 
-
     // Implementation methods
     //-------------------------------------------------------------------------
     protected RouteType createRoute() {
         return new RouteType();
     }
-
 }

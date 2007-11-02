@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,8 +40,10 @@ public class OutputType<Type extends ProcessorType> extends ProcessorType<Type> 
 
     @XmlElementRef
     protected List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
-    @XmlElementRef
+/*
+    @XmlTransient
     private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
+*/
 
     public List<ProcessorType<?>> getOutputs() {
         return outputs;
@@ -54,14 +57,14 @@ public class OutputType<Type extends ProcessorType> extends ProcessorType<Type> 
             }
         }
     }
-
+/*
     public List<InterceptorType> getInterceptors() {
         return interceptors;
     }
 
     public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
-    }
+    }*/
 
     @Override
     protected void configureChild(ProcessorType output) {
