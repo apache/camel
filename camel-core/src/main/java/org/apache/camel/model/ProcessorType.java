@@ -76,9 +76,6 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
 
     public abstract List<ProcessorType<?>> getOutputs();
 
-/*
-    public abstract List<InterceptorType> getInterceptors();
-*/
 
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         throw new UnsupportedOperationException("Not implemented yet for class: " + getClass().getName());

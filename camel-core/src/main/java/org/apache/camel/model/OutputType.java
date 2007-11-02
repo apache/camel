@@ -40,10 +40,6 @@ public class OutputType<Type extends ProcessorType> extends ProcessorType<Type> 
 
     @XmlElementRef
     protected List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
-/*
-    @XmlTransient
-    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
-*/
 
     public List<ProcessorType<?>> getOutputs() {
         return outputs;
@@ -57,14 +53,7 @@ public class OutputType<Type extends ProcessorType> extends ProcessorType<Type> 
             }
         }
     }
-/*
-    public List<InterceptorType> getInterceptors() {
-        return interceptors;
-    }
 
-    public void setInterceptors(List<InterceptorType> interceptors) {
-        this.interceptors = interceptors;
-    }*/
 
     @Override
     protected void configureChild(ProcessorType output) {

@@ -77,14 +77,7 @@ public class ThreadType extends ProcessorType<ProcessorType> {
     public ThreadType(ThreadPoolExecutor executor) {
         this.executor = executor;
     }
-    
-/*
-    @Override
-    public List getInterceptors() {
-        return Collections.EMPTY_LIST;
-    }
-*/
-
+ 
     @Override
     public List<ProcessorType<?>> getOutputs() {
         return outputs;

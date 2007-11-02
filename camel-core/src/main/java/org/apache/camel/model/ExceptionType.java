@@ -146,16 +146,6 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     // Properties
     //-------------------------------------------------------------------------
-/*
-    public List<InterceptorType> getInterceptors() {
-        return interceptors;
-    }
-
-    public void setInterceptors(List<InterceptorType> interceptors) {
-        this.interceptors = interceptors;
-    }
-*/
-
     public List<ProcessorType<?>> getOutputs() {
         return outputs;
     }
