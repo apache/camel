@@ -21,11 +21,12 @@ import java.util.Iterator;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Message;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.util.ServiceHelper;
-
+import org.apache.camel.util.CollectionHelper;
 import static org.apache.camel.util.ObjectHelper.notNull;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * Implements a dynamic <a
@@ -36,6 +37,9 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version $Revision$
  */
 public class Splitter extends ServiceSupport implements Processor {
+    public static final String SPLIT_SIZE = "org.apache.camel.splitSize";
+    public static final String SPLIT_COUNTER = "org.apache.camel.splitCounter";
+
     private final Processor processor;
     private final Expression expression;
 
@@ -53,11 +57,18 @@ public class Splitter extends ServiceSupport implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         Object value = expression.evaluate(exchange);
+        Integer size = CollectionHelper.size(value);
         Iterator iter = ObjectConverter.iterator(value);
+        int counter = 0;
         while (iter.hasNext()) {
             Object part = iter.next();
             Exchange newExchange = exchange.copy();
-            newExchange.getIn().setBody(part);
+            Message in = newExchange.getIn();
+            in.setBody(part);
+            if (size != null) {
+                in.setHeader(SPLIT_SIZE, size);
+            }
+            in.setHeader(SPLIT_COUNTER, counter++);
             processor.process(newExchange);
         }
     }

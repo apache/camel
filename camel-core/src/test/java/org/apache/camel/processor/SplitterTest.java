@@ -16,8 +16,9 @@
  */
 package org.apache.camel.processor;
 
+import java.util.List;
+
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -28,10 +29,9 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision: 1.1 $
  */
 public class SplitterTest extends ContextTestSupport {
-    protected Endpoint<Exchange> startEndpoint;
-    protected MockEndpoint resultEndpoint;
 
     public void testSendingAMessageUsingMulticastReceivesItsOwnExchange() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("James", "Guillaume", "Hiram", "Rob");
 
         template.send("direct:a", new Processor() {
@@ -42,14 +42,15 @@ public class SplitterTest extends ContextTestSupport {
             }
         });
 
-        resultEndpoint.assertIsSatisfied();
-    }
+        assertMockEndpointsSatisifed();
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        resultEndpoint = getMockEndpoint("mock:result");
+        List<Exchange> list = resultEndpoint.getReceivedExchanges();
+        for (int i = 0; i < 4; i++) {
+            Exchange exchange = list.get(i);
+            Message in = exchange.getIn();
+            assertMessageHeader(in, Splitter.SPLIT_COUNTER, i);
+            assertMessageHeader(in, Splitter.SPLIT_SIZE, 4);
+        }
     }
 
     protected RouteBuilder createRouteBuilder() {
