@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -41,9 +42,14 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AggregatorType extends ExpressionNode {
     @XmlTransient
-    private AggregationStrategy aggregationStrategy = new UseLatestAggregationStrategy();
-    private int batchSize;
-    private long batchTimeout;
+    private AggregationStrategy aggregationStrategy;
+    @XmlAttribute(required = false)
+    private Integer batchSize;
+    @XmlAttribute(required = false)
+    private Long batchTimeout;
+    @XmlAttribute(required = false)
+    private String strategyRef;
+
     public AggregatorType() {
     }
 
@@ -69,13 +75,20 @@ public class AggregatorType extends ExpressionNode {
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         Endpoint from = routeContext.getEndpoint();
         final Processor processor = routeContext.createProcessor(this);
+        AggregationStrategy strategy = getAggregationStrategy();
+        if (strategy == null && strategyRef != null) {
+            strategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
+        }
+        if (strategy == null) {
+            strategy = new UseLatestAggregationStrategy();
+        }
         final Aggregator service = new Aggregator(from, processor, getExpression()
-            .createExpression(routeContext), aggregationStrategy);
+                .createExpression(routeContext), strategy);
 
-        if (batchSize != 0) {
+        if (batchSize != null) {
             service.setBatchSize(batchSize);
         }
-        if (batchSize != 0) {
+        if (batchSize != null) {
             service.setBatchTimeout(batchTimeout);
         }
 
@@ -97,30 +110,38 @@ public class AggregatorType extends ExpressionNode {
         this.aggregationStrategy = aggregationStrategy;
     }
 
-    public int getBatchSize() {
+    public Integer getBatchSize() {
         return batchSize;
     }
 
-    public void setBatchSize(int batchSize) {
+    public void setBatchSize(Integer batchSize) {
         this.batchSize = batchSize;
     }
 
-    public long getBatchTimeout() {
+    public Long getBatchTimeout() {
         return batchTimeout;
     }
 
-    public void setBatchTimeout(long batchTimeout) {
+    public void setBatchTimeout(Long batchTimeout) {
         this.batchTimeout = batchTimeout;
+    }
+
+    public String getStrategyRef() {
+        return strategyRef;
+    }
+
+    public void setStrategyRef(String strategyRef) {
+        this.strategyRef = strategyRef;
     }
 
     // Fluent API
     //-------------------------------------------------------------------------
-    public AggregatorType batchSize(int batchSize){
+    public AggregatorType batchSize(int batchSize) {
         setBatchSize(batchSize);
         return this;
     }
-    
-    public AggregatorType batchTimeout(long batchTimeout){
+
+    public AggregatorType batchTimeout(long batchTimeout) {
         setBatchTimeout(batchTimeout);
         return this;
     }

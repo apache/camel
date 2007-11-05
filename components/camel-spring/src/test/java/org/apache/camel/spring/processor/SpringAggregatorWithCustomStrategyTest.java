@@ -14,25 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.spring.processor;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.AggregatorTest;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision: $
  */
-public class AggregatorTest extends ContextTestSupport {
-    protected int messageCount = 100;
+public class SpringAggregatorWithCustomStrategyTest extends ContextTestSupport {
 
-    public void testSendingLotsOfMessagesGetAggregatedToTheLatestMessage() throws Exception {
+    public void testSendingMessagesWithCustomAggregator() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
 
-        resultEndpoint.expectedBodiesReceived("message:" + messageCount);
+        resultEndpoint.expectedBodiesReceived("message:1 message:2 message:3");
 
         // lets send a large batch of messages
-        for (int i = 1; i <= messageCount; i++) {
+        for (int i = 1; i <= 3; i++) {
             String body = "message:" + i;
             template.sendBodyAndHeader("direct:start", body, "cheese", 123);
         }
@@ -40,13 +41,7 @@ public class AggregatorTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                // START SNIPPET: ex
-                from("direct:start").aggregator(header("cheese")).to("mock:result");
-                // END SNIPPET: ex
-            }
-        };
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/aggregator-custom-strategy.xml");
     }
 }
