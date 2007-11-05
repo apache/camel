@@ -143,7 +143,7 @@ public class JmsBinding {
      */
     public Map<String, Object> createMapFromMapMessage(MapMessage message) throws JMSException {
         Map<String, Object> answer = new HashMap<String, Object>();
-        Enumeration names = message.getPropertyNames();
+        Enumeration names = message.getMapNames();
         while (names.hasMoreElements()) {
             String name = names.nextElement().toString();
             Object value = message.getObject(name);
