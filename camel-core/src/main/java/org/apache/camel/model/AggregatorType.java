@@ -31,6 +31,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.Aggregator;
@@ -169,5 +170,31 @@ public class AggregatorType extends ExpressionNode {
         setBatchTimeout(batchTimeout);
         return this;
     }
-    
+
+    /**
+     * Sets the predicate used to determine if the aggregation is completed
+     *
+     * @return the clause used to create the predicate
+     */
+    public ExpressionClause<AggregatorType> completedPredicate() {
+        checkNoCompletedPredicate();
+        ExpressionClause<AggregatorType> clause = new ExpressionClause<AggregatorType>(this);
+        completedPredicate = new CompletedPredicate(clause);
+        return clause;
+    }
+
+    /**
+     * Sets the predicate used to determine if the aggregation is completed
+     */
+    public AggregatorType completedPredicate(Predicate predicate) {
+        checkNoCompletedPredicate();
+        completedPredicate = new CompletedPredicate(predicate);
+        return this;
+    }
+
+    protected void checkNoCompletedPredicate() {
+        if (completedPredicate != null) {
+            throw new IllegalArgumentException("There already is a completedPredicate defined for this aggregator: " + this);
+        }
+    }
 }
