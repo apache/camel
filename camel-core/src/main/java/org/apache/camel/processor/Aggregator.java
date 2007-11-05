@@ -18,9 +18,11 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.PredicateAggregationCollection;
 
 /**
  * An implementation of the <a
@@ -43,9 +45,17 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  *                <code>header("JMSCorrelationID")</code>
  */
 public class Aggregator extends BatchProcessor {
+    private Predicate aggregationCompletedPredicate;
+
     public Aggregator(Endpoint endpoint, Processor processor, Expression correlationExpression,
                       AggregationStrategy aggregationStrategy) {
         this(endpoint, processor, new AggregationCollection(correlationExpression, aggregationStrategy));
+    }
+
+    public Aggregator(Endpoint endpoint, Processor processor, Expression correlationExpression,
+                      AggregationStrategy aggregationStrategy, Predicate aggregationCompletedPredicate) {
+        this(endpoint, processor, new PredicateAggregationCollection(correlationExpression, aggregationStrategy, aggregationCompletedPredicate));
+        this.aggregationCompletedPredicate = aggregationCompletedPredicate;
     }
 
     public Aggregator(Endpoint endpoint, Processor processor, AggregationCollection collection) {
@@ -55,5 +65,15 @@ public class Aggregator extends BatchProcessor {
     @Override
     public String toString() {
         return "Aggregator[to: " + getProcessor() + "]";
+    }
+
+    @Override
+    protected boolean isBatchCompleted(int index) {
+        if (aggregationCompletedPredicate != null) {
+            if (getCollection().size() > 0) {
+                return true;
+            };
+        }
+        return super.isBatchCompleted(index);
     }
 }

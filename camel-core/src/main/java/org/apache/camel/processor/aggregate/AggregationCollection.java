@@ -17,6 +17,7 @@
 package org.apache.camel.processor.aggregate;
 
 import java.util.AbstractCollection;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -54,6 +55,7 @@ public class AggregationCollection extends AbstractCollection<Exchange> {
         // the strategy may just update the old exchange and return it
         if (newExchange != oldExchange) {
             map.put(correlationKey, newExchange);
+            onAggregation(correlationKey, newExchange);
         }
         return true;
     }
@@ -64,5 +66,17 @@ public class AggregationCollection extends AbstractCollection<Exchange> {
 
     public int size() {
         return map.size();
+    }
+
+    @Override
+    public void clear() {
+        map.clear();
+    }
+
+    /**
+     * A strategy method allowing derived classes such as {@link PredicateAggregationCollection}
+     * to check to see if the aggregation has completed
+     */
+    protected void onAggregation(Object correlationKey, Exchange newExchange) {
     }
 }
