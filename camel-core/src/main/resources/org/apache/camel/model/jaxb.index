@@ -18,6 +18,7 @@ AggregatorType
 BeanRef
 CatchType
 ChoiceType
+CompletedPredicate
 DelayerType
 ExceptionType
 FilterType

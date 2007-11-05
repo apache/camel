@@ -116,7 +116,7 @@ public class BatchProcessor extends ServiceSupport implements Runnable {
     protected synchronized void processBatch() throws Exception {
         long start = System.currentTimeMillis();
         long end = start + batchTimeout;
-        for (int i = 0; i < batchSize; i++) {
+        for (int i = 0; isBatchCompleted(i); i++) {
             long timeout = end - System.currentTimeMillis();
 
             Exchange exchange = consumer.receive(timeout);
@@ -138,6 +138,13 @@ public class BatchProcessor extends ServiceSupport implements Runnable {
             iter.remove();
             processExchange(exchange);
         }
+    }
+
+    /**
+     * A strategy method to decide if the batch is completed the resulting exchanges should be sent
+     */
+    protected boolean isBatchCompleted(int index) {
+        return index < batchSize;
     }
 
     /**

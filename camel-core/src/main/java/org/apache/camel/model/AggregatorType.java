@@ -21,12 +21,14 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.impl.RouteContext;
@@ -49,6 +51,8 @@ public class AggregatorType extends ExpressionNode {
     private Long batchTimeout;
     @XmlAttribute(required = false)
     private String strategyRef;
+    @XmlElement(name="completedPredicate", required = false)
+    private CompletedPredicate completedPredicate;
 
     public AggregatorType() {
     }
@@ -75,6 +79,7 @@ public class AggregatorType extends ExpressionNode {
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         Endpoint from = routeContext.getEndpoint();
         final Processor processor = routeContext.createProcessor(this);
+
         AggregationStrategy strategy = getAggregationStrategy();
         if (strategy == null && strategyRef != null) {
             strategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
@@ -82,8 +87,19 @@ public class AggregatorType extends ExpressionNode {
         if (strategy == null) {
             strategy = new UseLatestAggregationStrategy();
         }
-        final Aggregator service = new Aggregator(from, processor, getExpression()
-                .createExpression(routeContext), strategy);
+        Expression aggregateExpression = getExpression().createExpression(routeContext);
+
+        Predicate predicate = null;
+        if (completedPredicate != null) {
+            predicate = completedPredicate.createPredicate(routeContext);
+        }
+        final Aggregator service;
+        if (predicate != null) {
+            service = new Aggregator(from, processor, aggregateExpression, strategy, predicate);
+        }
+        else {
+            service = new Aggregator(from, processor, aggregateExpression, strategy);
+        }
 
         if (batchSize != null) {
             service.setBatchSize(batchSize);
@@ -134,6 +150,14 @@ public class AggregatorType extends ExpressionNode {
         this.strategyRef = strategyRef;
     }
 
+    public CompletedPredicate getCompletePredicate() {
+        return completedPredicate;
+    }
+
+    public void setCompletePredicate(CompletedPredicate completedPredicate) {
+        this.completedPredicate = completedPredicate;
+    }
+
     // Fluent API
     //-------------------------------------------------------------------------
     public AggregatorType batchSize(int batchSize) {
@@ -145,4 +169,5 @@ public class AggregatorType extends ExpressionNode {
         setBatchTimeout(batchTimeout);
         return this;
     }
+    
 }
