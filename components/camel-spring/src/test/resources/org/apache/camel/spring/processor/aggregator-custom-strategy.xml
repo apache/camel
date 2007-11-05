@@ -32,7 +32,7 @@
       </aggregator>
     </route>
   </camelContext>
-  <!-- END SNIPPET: example -->
 
   <bean id="aggregatorStrategy" class="org.apache.camel.spring.processor.MyAggregator"/>
+  <!-- END SNIPPET: example -->
 </beans>
