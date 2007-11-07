@@ -68,6 +68,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     private DelegateProcessor lastInterceptor;
     private NodeFactory nodeFactory;
     private LinkedList<Block> blocks = new LinkedList<Block>();
+    private ProcessorType<? extends ProcessorType> parent = null;
 
     // else to use an
     // optional
@@ -196,12 +197,15 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     /**
      * Ends the current block
      */
-    public Type end() {
+    public ProcessorType<? extends ProcessorType> end() {
         if (blocks.isEmpty()) {
-            throw new IllegalArgumentException("No block active!");
+        	if (parent == null) {
+                throw new IllegalArgumentException("Root node with no active block");
+        	}
+        	return parent;
         }
-        blocks.removeLast();
-        return (Type) this;
+        popBlock();
+        return this;
     }
 
     /**
@@ -274,6 +278,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      */
     public FilterType filter(Predicate predicate) {
         FilterType filter = new FilterType(predicate);
+        filter.setParent(this);
         addOutput(filter);
         return filter;
     }
@@ -281,6 +286,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     public FilterType filter(ExpressionType expression) {
         FilterType filter = getNodeFactory().createFilter();
         filter.setExpression(expression);
+        filter.setParent(this);
         addOutput(filter);
         return filter;
     }
@@ -297,6 +303,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      */
     public ChoiceType choice() {
         ChoiceType answer = new ChoiceType();
+        answer.setParent(this);
         addOutput(answer);
         return answer;
     }
@@ -308,6 +315,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      */
     public TryType tryBlock() {
         TryType answer = new TryType();
+        answer.setParent(this);
         addOutput(answer);
         return answer;
     }
@@ -631,11 +639,15 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
 
     public void addInterceptor(InterceptorType interceptor) {
         addOutput(interceptor);
-        addBlock(interceptor);
+        pushBlock(interceptor);
     }
 
-    protected void addBlock(Block block) {
+    protected void pushBlock(Block block) {
         blocks.add(block);
+    }
+
+    protected Block popBlock() {
+    	return blocks.isEmpty() ? null : blocks.removeLast();
     }
 
     public Type proceed() {
@@ -652,7 +664,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     /**
      * Apply an interceptor route if the predicate is true
      */
-    public OtherwiseType intercept(Predicate predicate) {
+    public ChoiceType intercept(Predicate predicate) {
         InterceptType answer = new InterceptType();
         addOutput(answer);
         return answer.when(predicate);
@@ -1017,7 +1029,15 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
 
     // Properties
     // -------------------------------------------------------------------------
-
+    @XmlTransient
+    ProcessorType<? extends ProcessorType> getParent() {
+    	return parent;
+    }
+    
+    void setParent(ProcessorType<? extends ProcessorType> parent) {
+    	this.parent = parent;
+    }
+    
     @XmlTransient
     public ErrorHandlerBuilder getErrorHandlerBuilder() {
         if (errorHandlerBuilder == null) {

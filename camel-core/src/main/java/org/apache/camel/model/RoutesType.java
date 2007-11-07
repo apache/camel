@@ -172,7 +172,7 @@ public class RoutesType implements RouteContainer {
         return answer;
     }
 
-    public OtherwiseType intercept(Predicate predicate) {
+    public ChoiceType intercept(Predicate predicate) {
         InterceptType answer = new InterceptType();
         getIntercepts().add(answer);
         return answer.when(predicate);

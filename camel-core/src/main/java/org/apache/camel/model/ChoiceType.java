@@ -80,10 +80,10 @@ public class ChoiceType extends ProcessorType<ChoiceType> {
     }
 
 
-    public OtherwiseType otherwise() {
+    public ChoiceType otherwise() {
         OtherwiseType answer = new OtherwiseType();
         setOtherwise(answer);
-        return answer;
+        return this;
     }
 
     // Properties
