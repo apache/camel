@@ -120,7 +120,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
                         break;
                     }
 
-                    nextExchange = createNextExchange(processor, exchange);
+                    nextExchange = createNextExchange(processor, nextExchange);
                     sync = process(original, nextExchange, callback, processors, processor);
                     if (!sync) {
                         return;
