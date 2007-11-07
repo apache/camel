@@ -28,7 +28,7 @@ import org.apache.camel.impl.RouteContext;
  */
 @XmlRootElement(name = "otherwise")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OtherwiseType extends OutputType<ProcessorType> {
+public class OtherwiseType extends OutputType<ProcessorType> implements Block {
 
     @Override
     public String toString() {

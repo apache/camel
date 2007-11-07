@@ -21,6 +21,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
 import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.ChoiceType;
 import org.apache.camel.model.InterceptType;
 import org.apache.camel.model.OtherwiseType;
 import org.apache.camel.model.ProcessorType;
@@ -130,7 +131,7 @@ public abstract class RouteBuilder extends BuilderSupport {
      * Applies a route for an interceptor if the given predicate is true
      * otherwise the interceptor route is not applied
      */
-    public OtherwiseType intercept(Predicate predicate) {
+    public ChoiceType intercept(Predicate predicate) {
         return routeCollection.intercept(predicate);
     }
 

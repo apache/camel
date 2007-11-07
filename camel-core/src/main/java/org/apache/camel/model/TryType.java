@@ -68,18 +68,28 @@ public class TryType extends OutputType<TryType> {
 
     // Fluent API
     // -------------------------------------------------------------------------
-    public CatchType handle(Class<?> exceptionType) {
+    public TryType handle(Class<?> exceptionType) {
+        popBlock();
         CatchType answer = new CatchType(exceptionType);
         addOutput(answer);
-        return answer;
+        pushBlock(answer);
+        return this;
     }
 
-    public FinallyType handleAll() {
+    public TryType handleAll() {
+        popBlock();
         FinallyType answer = new FinallyType();
         addOutput(answer);
-        return answer;
+        pushBlock(answer);
+        return this;
     }
 
+    @Override
+    public ProcessorType<? extends ProcessorType> end() {
+    	popBlock();
+    	return super.end();
+    }
+    
     // Properties
     // -------------------------------------------------------------------------
 
@@ -109,9 +119,10 @@ public class TryType extends OutputType<TryType> {
         super.setOutputs(outputs);
     }
 
+    @Override
     public void addOutput(ProcessorType output) {
         initialized = false;
-        getOutputs().add(output);
+        super.addOutput(output);
     }
 
     /**

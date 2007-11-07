@@ -70,6 +70,7 @@ public class TryProcessor extends ServiceSupport implements Processor {
             try {
                 DeadLetterChannel.setFailureHandled(exchange, true);
                 handleException(exchange, e);
+                exchange.setException(null);
             } catch (Exception ex) {
                 throw ex;
             } catch (Throwable ex) {

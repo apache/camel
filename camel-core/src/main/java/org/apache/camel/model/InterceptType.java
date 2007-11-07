@@ -64,7 +64,7 @@ public class InterceptType extends OutputType<ProcessorType> {
     /**
      * Applies this interceptor only if the given predicate is true
      */
-    public OtherwiseType when(Predicate predicate) {
+    public ChoiceType when(Predicate predicate) {
         return choice().when(PredicateBuilder.not(predicate)).proceed().otherwise();
 
     }

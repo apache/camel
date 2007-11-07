@@ -30,7 +30,7 @@ import org.apache.camel.processor.FilterProcessor;
  */
 @XmlRootElement(name = "filter")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FilterType extends ExpressionNode {
+public class FilterType extends ExpressionNode implements Block {
     public FilterType() {
     }
 
