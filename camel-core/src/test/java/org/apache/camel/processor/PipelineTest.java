@@ -110,6 +110,17 @@ public class PipelineTest extends ContextTestSupport {
         assertEquals(1, exchange.getOut().getHeader("copy-counter"));                
     }
 
+    public void testOnlyProperties() {
+        Exchange exchange = template.send("direct:b", new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader("header", "headerValue");
+            }
+        });
+        
+        assertEquals("headerValue", exchange.getOut().getHeader("header"));
+        assertEquals(3, exchange.getOut().getHeader("copy-counter"));  
+    }
+    
     @Override
     protected void setUp() throws Exception {
         super.setUp();

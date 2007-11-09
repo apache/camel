@@ -149,7 +149,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
         // previous message if it is not null
         Message previousOut = previousExchange.getOut(false);
         Message in = answer.getIn();
-        if (previousOut != null && previousOut.getBody() != null) {
+        if (previousOut != null) {
             in.copyFrom(previousOut);
         }
         else {
