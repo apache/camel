@@ -35,6 +35,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashSet;
 
 /**
  * A Strategy used to convert between a Camel {@JmsExchange} and {@JmsMessage}
@@ -44,6 +45,8 @@ import java.util.Set;
  */
 public class JmsBinding {
     private static final transient Log LOG = LogFactory.getLog(JmsBinding.class);
+
+    private Set<String> ignoreJmsHeaders;
 
     /**
      * Extracts the body from the JMS message
@@ -152,10 +155,30 @@ public class JmsBinding {
         return answer;
     }
 
+    public Set<String> getIgnoreJmsHeaders() {
+        if (ignoreJmsHeaders == null) {
+            ignoreJmsHeaders = new HashSet<String>();
+            populateIgnoreJmsHeaders(ignoreJmsHeaders);
+        }
+        return ignoreJmsHeaders;
+    }
+
+    public void setIgnoreJmsHeaders(Set<String> ignoreJmsHeaders) {
+        this.ignoreJmsHeaders = ignoreJmsHeaders;
+    }
+
     /**
      * Strategy to allow filtering of headers which are put on the JMS message
      */
     protected boolean shouldOutputHeader(org.apache.camel.Message camelMessage, String headerName, Object headerValue) {
-        return headerValue != null;
+        return headerValue != null && !getIgnoreJmsHeaders().contains(headerName);
+    }
+
+    /**
+     * Populate any JMS headers that should be excluded from being copied from an input message
+     * onto an outgoing message
+     */
+    protected void populateIgnoreJmsHeaders(Set<String> set) {
+        set.add("JMSXAppID"); // MQSeries really doesn't seem to like this being set
     }
 }
