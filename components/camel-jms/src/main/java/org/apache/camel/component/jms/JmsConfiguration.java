@@ -94,6 +94,8 @@ public class JmsConfiguration implements Cloneable {
     private int transactionTimeout = -1;
     private boolean preserveMessageQos;
     private long requestMapPurgePollTimeMillis = 1000L;
+    private boolean disableReplyTo;
+    private boolean eagerLoadingOfProperties;
 
     public JmsConfiguration() {
     }
@@ -345,6 +347,16 @@ public class JmsConfiguration implements Cloneable {
             if (taskExecutor != null) {
                 listenerContainer.setTaskExecutor(taskExecutor);
             }
+        }
+    }
+
+
+    public void configure(EndpointMessageListener listener) {
+        if (isDisableReplyTo()) {
+            listener.setDisableReplyTo(true);
+        }
+        if (isEagerLoadingOfProperties()) {
+            listener.setEagerLoadingOfProperties(true);
         }
     }
 
@@ -669,6 +681,36 @@ public class JmsConfiguration implements Cloneable {
 
     public void setTransacted(boolean consumerTransacted) {
         this.transacted = consumerTransacted;
+    }
+
+    public boolean isEagerLoadingOfProperties() {
+        return eagerLoadingOfProperties;
+    }
+
+    /**
+     * Enables eager loading of JMS properties as soon as a message is loaded which generally
+     * is inefficient as the JMS properties may not be required but sometimes can catch early any
+     * issues with the underlying JMS provider and the use of JMS properties
+     *
+     * @param eagerLoadingOfProperties whether or not to enable eager loading of JMS properties
+     * on inbound messages
+     */
+    public void setEagerLoadingOfProperties(boolean eagerLoadingOfProperties) {
+        this.eagerLoadingOfProperties = eagerLoadingOfProperties;
+    }
+
+    public boolean isDisableReplyTo() {
+        return disableReplyTo;
+    }
+
+    /**
+     * Disables the use of the JMSReplyTo header for consumers so that inbound messages are treated as InOnly
+     * rather than InOut requests.
+     *
+     * @param disableReplyTo whether or not to disable the use of JMSReplyTo header indicating an InOut
+     */
+    public void setDisableReplyTo(boolean disableReplyTo) {
+        this.disableReplyTo = disableReplyTo;
     }
 
     // Implementation methods
