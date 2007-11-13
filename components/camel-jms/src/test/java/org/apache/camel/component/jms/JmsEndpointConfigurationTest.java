@@ -30,6 +30,12 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
  * @version $Revision: $
  */
 public class JmsEndpointConfigurationTest extends ContextTestSupport {
+    private Processor dummyProcessor = new Processor() {
+        public void process(Exchange exchange) throws Exception {
+            log.info("Received: " + exchange);
+        }
+    };
+
     public void testDurableSubscriberConfiguredWithDoubleSlash() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms://topic:Foo.Bar?durableSubscriptionName=James&clientId=ABC");
         assertDurableSubscriberEndpointIsValid(endpoint);
@@ -42,13 +48,26 @@ public class JmsEndpointConfigurationTest extends ContextTestSupport {
 
     public void testSelector() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:Foo.Bar?selector=foo%3D'ABC'");
-        JmsConsumer consumer = endpoint.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                log.info("Received: " + exchange);
-            }
-        });
+        JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
+
         AbstractMessageListenerContainer container = consumer.getListenerContainer();
         assertEquals("selector", "foo='ABC'", container.getMessageSelector());
+
+        Object object = container.getMessageListener();
+        EndpointMessageListener messageListener = assertIsInstanceOf(EndpointMessageListener.class, object);
+        assertFalse("Should not have replyToDisabled", messageListener.isDisableReplyTo());
+        assertFalse("Should not have isEagerLoadingOfProperties()", messageListener.isEagerLoadingOfProperties());
+    }
+
+    public void testConfigureMessageListener() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:Foo.Bar?disableReplyTo=true&eagerLoadingOfProperties=true");
+        JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
+
+        AbstractMessageListenerContainer container = consumer.getListenerContainer();
+        Object object = container.getMessageListener();
+        EndpointMessageListener messageListener = assertIsInstanceOf(EndpointMessageListener.class, object);
+        assertTrue("Should have replyToDisabled", messageListener.isDisableReplyTo());
+        assertTrue("Should have isEagerLoadingOfProperties()", messageListener.isEagerLoadingOfProperties());
     }
 
     protected void assertDurableSubscriberEndpointIsValid(JmsEndpoint endpoint) throws Exception {

@@ -35,7 +35,7 @@ import org.springframework.jms.core.MessageCreator;
  * A JMS {@link MessageListener} which can be used to delegate processing to a
  * Camel endpoint.
  *
- * @version $Revision$
+ * @version $Revision$    ;';;;
  */
 public class EndpointMessageListener implements MessageListener {
     private static final transient Log LOG = LogFactory.getLog(EndpointMessageListener.class);
@@ -50,6 +50,7 @@ public class EndpointMessageListener implements MessageListener {
     public EndpointMessageListener(JmsEndpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
         this.processor = processor;
+        endpoint.getConfiguration().configure(this);
     }
 
     public void onMessage(final Message message) {
