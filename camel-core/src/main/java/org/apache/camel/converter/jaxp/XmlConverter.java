@@ -156,6 +156,7 @@ public class XmlConverter {
     /**
      * Converts the given input Node into text
      */
+/*
     @Converter
     public String toString(NodeList nodeList) throws TransformerException {
         StringWriter buffer = new StringWriter();
@@ -166,6 +167,7 @@ public class XmlConverter {
         }
         return buffer.toString();
     }
+*/
 
     /**
      * Converts the given input Node into text
