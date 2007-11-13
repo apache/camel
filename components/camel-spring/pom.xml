@@ -50,7 +50,6 @@
     <dependency>
       <groupId>javax.xml</groupId>
       <artifactId>jaxb-api</artifactId>
-      <optional>false</optional>
     </dependency>
 
     <!-- for parsing the XML -->
