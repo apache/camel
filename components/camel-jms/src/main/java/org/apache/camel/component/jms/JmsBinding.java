@@ -33,65 +33,73 @@ import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
+import javax.xml.transform.TransformerException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Node;
 
 /**
  * A Strategy used to convert between a Camel {@JmsExchange} and {@JmsMessage}
  * to and from a JMS {@link Message}
- * 
+ *
  * @version $Revision$
  */
 public class JmsBinding {
     private static final transient Log LOG = LogFactory.getLog(JmsBinding.class);
-
     private Set<String> ignoreJmsHeaders;
+    private XmlConverter xmlConverter = new XmlConverter();
 
     /**
      * Extracts the body from the JMS message
-     * 
+     *
      * @param exchange
      * @param message
      */
     public Object extractBodyFromJms(Exchange exchange, Message message) {
         try {
             if (message instanceof ObjectMessage) {
-                ObjectMessage objectMessage = (ObjectMessage)message;
+                ObjectMessage objectMessage = (ObjectMessage) message;
                 return objectMessage.getObject();
-            } else if (message instanceof TextMessage) {
-                TextMessage textMessage = (TextMessage)message;
+            }
+            else if (message instanceof TextMessage) {
+                TextMessage textMessage = (TextMessage) message;
                 return textMessage.getText();
-            } else if (message instanceof MapMessage) {
-                return createMapFromMapMessage((MapMessage)message);
-            } else if (message instanceof BytesMessage || message instanceof StreamMessage) {
+            }
+            else if (message instanceof MapMessage) {
+                return createMapFromMapMessage((MapMessage) message);
+            }
+            else if (message instanceof BytesMessage || message instanceof StreamMessage) {
                 // TODO we need a decoder to be able to process the message
                 return message;
-            } else {
+            }
+            else {
                 return null;
             }
-        } catch (JMSException e) {
+        }
+        catch (JMSException e) {
             throw new RuntimeJmsException("Failed to extract body due to: " + e + ". Message: " + message, e);
         }
     }
 
     /**
      * Creates a JMS message from the Camel exchange and message
-     * 
+     *
      * @param session the JMS session used to create the message
      * @return a newly created JMS Message instance containing the
      * @throws JMSException if the message could not be created
      */
     public Message makeJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session) throws JMSException {
         Message answer = null;
-        if( camelMessage instanceof JmsMessage  ) {
-            JmsMessage jmsMessage = (JmsMessage)camelMessage;
+        if (camelMessage instanceof JmsMessage) {
+            JmsMessage jmsMessage = (JmsMessage) camelMessage;
             answer = jmsMessage.getJmsMessage();
         }
-        if( answer == null ) {
+        if (answer == null) {
             answer = createJmsMessage(camelMessage.getBody(), session);
             appendJmsProperties(answer, exchange, camelMessage);
         }
@@ -106,7 +114,7 @@ public class JmsBinding {
         for (Map.Entry<String, Object> entry : entries) {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
-            
+
             if (headerName.startsWith("JMS") && !headerName.startsWith("JMSX")) {
                 if (headerName.equals("JMSCorrelationID")) {
                     jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
@@ -135,11 +143,24 @@ public class JmsBinding {
     }
 
     protected Message createJmsMessage(Object body, Session session) throws JMSException {
+        if (body instanceof Node) {
+            // lets convert the document to a String format
+            try {
+                body = xmlConverter.toString((Node) body);
+            }
+            catch (TransformerException e) {
+                JMSException jmsException = new JMSException(e.getMessage());
+                jmsException.setLinkedException(e);
+                throw jmsException;    
+            }
+        }
         if (body instanceof String) {
-            return session.createTextMessage((String)body);
-        } else if (body instanceof Serializable) {
-            return session.createObjectMessage((Serializable)body);
-        } else {
+            return session.createTextMessage((String) body);
+        }
+        else if (body instanceof Serializable) {
+            return session.createObjectMessage((Serializable) body);
+        }
+        else {
             return session.createMessage();
         }
     }
