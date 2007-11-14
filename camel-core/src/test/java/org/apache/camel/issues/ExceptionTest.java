@@ -50,6 +50,30 @@ public class ExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisifed();
     }
 
+    public void testExceptionWithLongHandler() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        MockEndpoint exceptionEndpoint = getMockEndpoint("mock:exception");
+
+        exceptionEndpoint.expectedBodiesReceived("<handled/>");
+        resultEndpoint.expectedMessageCount(0);
+
+        template.sendBody("direct:start", "<body/>");
+
+        assertMockEndpointsSatisifed();
+    }
+    
+    public void testLongRouteWithHandler() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        MockEndpoint exceptionEndpoint = getMockEndpoint("mock:exception");
+
+        exceptionEndpoint.expectedMessageCount(1);
+        resultEndpoint.expectedMessageCount(0);
+
+        template.sendBody("direct:start2", "<body/>");
+
+        assertMockEndpointsSatisifed();
+    }
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         final Processor exceptionThrower = new Processor() {
@@ -61,11 +85,17 @@ public class ExceptionTest extends ContextTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                if (getName().endsWith("WithHandler")) {
+                if (getName().endsWith("WithLongHandler")) {
+                    log.debug("Using long exception handler");
+                    exception(IllegalArgumentException.class).setBody(constant("<handled/>")).
+                        to("mock:exception");
+                } else if (getName().endsWith("WithHandler")) {
                     log.debug("Using exception handler");
                     exception(IllegalArgumentException.class).to("mock:exception");
                 }
                 from("direct:start").process(exceptionThrower).to("mock:result");
+                from("direct:start2").to("direct:intermediate").to("mock:result");
+                from("direct:intermediate").setBody(constant("<some-value/>")).process(exceptionThrower).to("mock:resuilt");
             }
         };
     }
