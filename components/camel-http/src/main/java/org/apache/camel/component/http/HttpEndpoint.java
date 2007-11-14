@@ -43,14 +43,15 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
     private HttpClientConfigurer httpClientConfigurer;
 
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI) throws URISyntaxException {
-        this(endPointURI, component, httpURI, new HttpClientParams());
+        this(endPointURI, component, httpURI, new HttpClientParams(), null);
     }
 
-    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientParams clientParams) throws URISyntaxException {
+    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientParams clientParams, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         super(endPointURI, component);
         this.component = component;
         this.httpUri = httpURI;
         this.clientParams = clientParams;
+        this.httpClientConfigurer = clientConfigurer;
     }
 
     public Producer<HttpExchange> createProducer() throws Exception {
