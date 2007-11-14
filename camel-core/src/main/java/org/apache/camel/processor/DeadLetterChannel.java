@@ -119,11 +119,16 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
             if (!data.currentRedeliveryPolicy.shouldRedeliver(data.redeliveryCounter)) {
                 setFailureHandled(exchange, true);
                 AsyncProcessor afp = AsyncProcessorTypeConverter.convert(data.failureProcessor);
-                return afp.process(exchange, new AsyncCallback() {
+                boolean sync = afp.process(exchange, new AsyncCallback() {
                     public void done(boolean sync) {
+                        restoreExceptionOnExchange(exchange);
                         callback.done(data.sync);
                     }
                 });
+                
+                restoreExceptionOnExchange(exchange);
+                
+                return sync;
             }
 
             if (data.redeliveryCounter > 0) {
@@ -162,14 +167,24 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     }
     
     public static boolean isFailureHandled(Exchange exchange) {
-        Boolean rc = exchange.getProperty(FAILURE_HANDLED_PROPERTY, Boolean.class);
-        return rc == null ? false : rc;
+        return exchange.getProperty(FAILURE_HANDLED_PROPERTY) != null;
     }
 
-    public static void setFailureHandled(Exchange exchange, boolean b) {
-        exchange.setProperty(FAILURE_HANDLED_PROPERTY, b ? Boolean.TRUE : Boolean.FALSE );
+    public static void setFailureHandled(Exchange exchange, boolean isHandled) {
+        if (isHandled) {
+            exchange.setProperty(FAILURE_HANDLED_PROPERTY, exchange.getException());
+            exchange.setException(null);
+        } else {
+            exchange.setException(exchange.getProperty(FAILURE_HANDLED_PROPERTY, Throwable.class));
+            exchange.removeProperty(FAILURE_HANDLED_PROPERTY);
+        }
+        
     }
 
+    public static void restoreExceptionOnExchange(Exchange exchange) {
+        exchange.setException(exchange.getProperty(FAILURE_HANDLED_PROPERTY, Throwable.class));
+    }
+    
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }
