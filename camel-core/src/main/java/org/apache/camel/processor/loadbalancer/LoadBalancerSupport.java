@@ -20,13 +20,15 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.Processor;
+import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * A default base class for a {@link LoadBalancer} implementation
  *
  * @version $Revision: 1.1 $
  */
-public abstract class LoadBalancerSupport implements LoadBalancer {
+public abstract class LoadBalancerSupport extends ServiceSupport implements LoadBalancer {
     private List<Processor> processors = new CopyOnWriteArrayList<Processor>();
 
     public void addProcessor(Processor processor) {
@@ -39,5 +41,13 @@ public abstract class LoadBalancerSupport implements LoadBalancer {
 
     public List<Processor> getProcessors() {
         return processors;
+    }
+    
+    protected void doStart() throws Exception {
+        ServiceHelper.startServices(processors);        
+    }
+
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(processors);       
     }
 }
