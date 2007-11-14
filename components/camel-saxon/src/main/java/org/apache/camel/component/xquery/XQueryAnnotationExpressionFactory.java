@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.saxon;
+package org.apache.camel.component.xquery;
 
 import net.sf.saxon.functions.Collection;
 import org.apache.camel.CamelContext;

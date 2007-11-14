@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -6,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,11 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.saxon;
+package org.apache.camel.component.xquery;
+
+import org.apache.camel.spi.Language;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 
 /**
- * @version $Revision$
+ * @version $Revision: 1.1 $
  */
-public enum ResultFormat {
-    Bytes, BytesSource, DOM, DOMSource, List, String, StringSource
+public class XQueryLanguage implements Language {
+
+    public Predicate<Exchange> createPredicate(String expression) {
+        return XQueryBuilder.xquery(expression);
+    }
+
+    public Expression<Exchange> createExpression(String expression) {
+        return XQueryBuilder.xquery(expression);
+    }
 }

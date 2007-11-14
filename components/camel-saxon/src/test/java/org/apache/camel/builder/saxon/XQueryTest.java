@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
-import static org.apache.camel.builder.saxon.XQueryBuilder.xquery;
+import static org.apache.camel.component.xquery.XQueryBuilder.xquery;
 import static org.apache.camel.util.ObjectHelper.className;
 
 /**

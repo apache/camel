@@ -17,6 +17,7 @@
 package org.apache.camel.builder.saxon;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.component.xquery.XQuery;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.util.jndi.JndiContext;

@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.saxon.XQueryBuilder;
+import org.apache.camel.component.xquery.XQueryBuilder;
 import org.apache.camel.component.ResourceBasedComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.springframework.core.io.Resource;
