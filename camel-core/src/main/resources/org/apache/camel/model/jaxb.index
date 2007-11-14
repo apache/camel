@@ -27,6 +27,7 @@ FromType
 IdempotentConsumerType
 InterceptType
 InterceptorRef
+LoadBalanceType
 MarshalType
 MulticastType
 OtherwiseType

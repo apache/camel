@@ -294,7 +294,14 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     public FilterType filter(String language, String expression) {
         return filter(new LanguageExpression(language, expression));
     }
-
+    
+    public LoadBalanceType loadBalance() {
+        LoadBalanceType answer = new LoadBalanceType();
+        answer.setParent(this);
+        addOutput(answer);
+        return answer;
+    }    
+    
 
     /**
      * Creates a choice of one or more predicates with an otherwise clause
