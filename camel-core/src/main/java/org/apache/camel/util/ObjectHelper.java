@@ -480,4 +480,26 @@ public class ObjectHelper {
             throw new RuntimeCamelException(e);
         }
     }
+
+    /**
+     * Returns true if the given name is a valid java identifier
+     */
+    public static boolean isJavaIdentifier(String name) {
+        if (name == null) {
+            return false;
+        }
+        int size = name.length();
+        if (size < 1) {
+            return false;
+        }
+        if (Character.isJavaIdentifierStart(name.charAt(0))) {
+            for (int i = 1; i < size; i++) {
+                if (! Character.isJavaIdentifierPart(name.charAt(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 }
