@@ -381,16 +381,18 @@
       <dependency>
         <groupId>javax.xml</groupId>
         <artifactId>jaxb-api</artifactId>
-        <version>2.0</version>
+        <version>2.1</version>
         <exclusions>
           <exclusion>
             <groupId>javax.xml</groupId>
             <artifactId>jsr173</artifactId>
           </exclusion>
+<!--
           <exclusion>
             <groupId>javax.activation</groupId>
             <artifactId>activation</artifactId>
           </exclusion>
+-->
         </exclusions>
       </dependency>
       <dependency>
