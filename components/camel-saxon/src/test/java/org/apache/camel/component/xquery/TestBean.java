@@ -17,7 +17,7 @@
  */
 package org.apache.camel.component.xquery;
 
-import org.apache.camel.builder.saxon.XQuery;
+import org.apache.camel.component.xquery.XQuery;
 
 /**
  * @version $Revision: 1.1 $
