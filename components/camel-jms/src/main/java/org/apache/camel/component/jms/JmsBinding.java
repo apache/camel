@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -181,6 +182,13 @@ public class JmsBinding {
      * onto an outgoing message
      */
     protected void populateIgnoreJmsHeaders(Set<String> set) {
-        set.add("JMSXAppID"); // MQSeries really doesn't seem to like this being set
+        // ignore provider specified JMS extension headers
+        // see page 39 of JMS 1.1 specification
+        String[] ignore = {
+                "JMSXUserID", "JMSXAppID",
+                "JMSXDeliveryCount", "JMSXProducerTXID", "JMSXConsumerTXID",
+                "JMSXRcvTimestamp", "JMSXState"
+        };
+        set.addAll(Arrays.asList(ignore));
     }
 }
