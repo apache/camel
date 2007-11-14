@@ -195,7 +195,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
                 TypeMapping key = entry.getKey();
                 Class aToType = key.getToType();
                 if (toType.isAssignableFrom(aToType)) {
-                    if (fromType.isAssignableFrom(key.getFromType())) {
+                    if (key.getFromType().isAssignableFrom(fromType)) {
                         return entry.getValue();
                     }
                 }
