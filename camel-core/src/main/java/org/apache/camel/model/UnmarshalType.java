@@ -30,6 +30,7 @@ import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
+import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
 
@@ -49,6 +50,7 @@ public class UnmarshalType extends OutputType<ProcessorType> {
     @XmlElement(required = false, name = "artixDS", type = ArtixDSDataFormat.class),
     @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
     @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),
+    @XmlElement(required = false, name = "string", type = StringDataFormat.class),
     @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class)}
     )
     private DataFormatType dataFormatType;

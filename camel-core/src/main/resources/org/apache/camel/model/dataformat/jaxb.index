@@ -19,5 +19,6 @@ ArtixDSDataFormat
 DataFormatType
 JaxbDataFormat
 SerializationDataFormat
+StringDataFormat
 XMLBeansDataFormat
 XStreamDataFormat
