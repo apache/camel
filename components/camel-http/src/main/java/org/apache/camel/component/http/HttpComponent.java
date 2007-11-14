@@ -66,7 +66,7 @@ public class HttpComponent extends DefaultComponent<HttpExchange> {
     protected Endpoint<HttpExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         HttpClientParams params = new HttpClientParams();
         IntrospectionSupport.setProperties(params, parameters, "httpClient.");
-        return new HttpEndpoint(uri, this, new URI(uri), params);
+        return new HttpEndpoint(uri, this, new URI(uri), params, httpClientConfigurer);
     }
 
     @Override
