@@ -22,8 +22,12 @@ import java.io.InputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
+    private static final transient Log LOG = LogFactory.getLog(FtpProducer.class);
+
     FtpEndpoint endpoint;
     private final FTPClient client;
 
@@ -75,7 +79,9 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
         for (String dir : dirs) {
             sb.append('/').append(dir);
             final boolean success = ftpClient.makeDirectory(sb.toString());
-            System.out.println(sb.toString() + " = " + success);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(sb.toString() + " = " + success);
+            }
             if (!atLeastOneSuccess && success) {
                 atLeastOneSuccess = true;
             }
