@@ -349,10 +349,10 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * @return the expression clasue for the expression used in the
      *                    {@link RecipientList} to decide the destinations
      */
-    public ExpressionClause<Type> recipientList() {
+    public ExpressionClause<ProcessorType<Type>> recipientList() {
         RecipientListType answer = new RecipientListType();
         addOutput(answer);
-        ExpressionClause<Type> clause = new ExpressionClause<Type>((Type) this);
+        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
         answer.setExpression(clause);
         return clause;
     }
@@ -857,8 +857,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     /**
      * Adds a processor which sets the body on the OUT message
      */
-    public ExpressionClause<Type> setOutBody() {
-        ExpressionClause<Type> clause = new ExpressionClause<Type>((Type) this);
+    public ExpressionClause<ProcessorType<Type>> setOutBody() {
+        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
         process(ProcessorBuilder.setOutBody(clause));
         return clause;
     }
@@ -873,8 +873,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     /**
      * Adds a processor which sets the header on the IN message
      */
-    public ExpressionClause<Type> setHeader(String name) {
-        ExpressionClause<Type> clause = new ExpressionClause<Type>((Type) this);
+    public ExpressionClause<ProcessorType<Type>> setHeader(String name) {
+        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
         process(ProcessorBuilder.setHeader(name, clause));
         return clause;
     }
@@ -889,8 +889,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     /**
      * Adds a processor which sets the header on the OUT message
      */
-    public ExpressionClause<Type> setOutHeader(String name) {
-        ExpressionClause<Type> clause = new ExpressionClause<Type>((Type) this);
+    public ExpressionClause<ProcessorType<Type>> setOutHeader(String name) {
+        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
         process(ProcessorBuilder.setOutHeader(name, clause));
         return clause;
     }
@@ -919,8 +919,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     /**
      * Adds a processor which sets the exchange property
      */
-    public ExpressionClause<Type> setProperty(String name) {
-        ExpressionClause<Type> clause = new ExpressionClause<Type>((Type) this);
+    public ExpressionClause<ProcessorType<Type>> setProperty(String name) {
+        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
         process(ProcessorBuilder.setProperty(name, clause));
         return clause;
     }
