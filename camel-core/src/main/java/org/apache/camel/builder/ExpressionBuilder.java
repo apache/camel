@@ -91,7 +91,11 @@ public class ExpressionBuilder {
     public static <E extends Exchange> Expression<E> outHeaderExpression(final String headerName) {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                Object header = exchange.getOut().getHeader(headerName);
+                Message out = exchange.getOut(false);
+                if (out == null) {
+                    return null;
+                }
+                Object header = out.getHeader(headerName);
                 if (header == null) {
                     // lets try the exchange header
                     header = exchange.getProperty(headerName);
@@ -255,7 +259,11 @@ public class ExpressionBuilder {
     public static <E extends Exchange> Expression<E> outBodyExpression() {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                return exchange.getOut().getBody();
+                Message out = exchange.getOut(false);
+                if (out == null) {
+                    return null;
+                }
+                return out.getBody();
             }
 
             @Override
@@ -272,7 +280,11 @@ public class ExpressionBuilder {
     public static <E extends Exchange, T> Expression<E> outBodyExpression(final Class<T> type) {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                return exchange.getOut().getBody(type);
+                Message out = exchange.getOut(false);
+                if (out == null) {
+                    return null;
+                }
+                return out.getBody(type);
             }
 
             @Override
