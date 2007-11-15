@@ -62,5 +62,6 @@ public class PredicateAggregationCollection extends AggregationCollection {
     @Override
     public void clear() {
         collection.clear();
+        super.clear();
     }
 }

@@ -17,8 +17,10 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
  * @version $Revision: 1.1 $
@@ -40,11 +42,41 @@ public class AggregatorTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    public void testPredicate() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+
+        resultEndpoint.expectedMessageCount(messageCount / 5);
+        // lets send a large batch of messages
+        for (int i = 1; i <= messageCount; i++) {
+            String body = "message:" + i;
+            template.sendBodyAndHeader("direct:predicate", body, "cheese", 123);
+        }
+
+        resultEndpoint.assertIsSatisfied();        
+    }
+    
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: ex
                 from("direct:start").aggregator(header("cheese")).to("mock:result");
+                
+                from("direct:predicate").aggregator(header("cheese"), new UseLatestAggregationStrategy() {
+                
+                    @Override
+                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                        Exchange result = super.aggregate(oldExchange, newExchange);
+                        Integer old = (Integer) oldExchange.getProperty("aggregated");
+                        if (old == null) {
+                            old = 1;
+                        }
+                        result.setProperty("aggregated", old + 1);
+                        return result;
+                    }
+                
+                }).
+                    completedPredicate(header("aggregated").
+                    isEqualTo(5)).to("mock:result");
                 // END SNIPPET: ex
             }
         };
