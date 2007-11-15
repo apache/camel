@@ -57,15 +57,13 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
             if (endpoint.isSpringContextEndpoint()) {
                 CxfEndpointBean endpointBean = endpoint.getCxfEndpointBean();
                 svrBean = CxfEndpointUtils.getServerFactoryBean(endpointBean.getServiceClass());
-                endpoint.configure(svrBean);
-                //Need to set the service name and endpoint name to the ClientFactoryBean's service factory
-                // to walk around the issue of setting EndpointName and ServiceName
+                endpoint.configure(svrBean);               
                 CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
                 if (cxfEndpointBean.getServiceName() != null) {
-                    svrBean.getServiceFactory().setServiceName(cxfEndpointBean.getServiceName());
+                    svrBean.setServiceName(cxfEndpointBean.getServiceName());
                 } 
                 if (cxfEndpointBean.getEndpointName() != null) {
-                    svrBean.getServiceFactory().setEndpointName(cxfEndpointBean.getEndpointName());
+                    svrBean.setEndpointName(cxfEndpointBean.getEndpointName());
                 } 
                 
             } else { // setup the serverFactoryBean with the URI paraments           
@@ -74,10 +72,10 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
                 svrBean.setAddress(endpoint.getAddress());
                 svrBean.setServiceClass(serviceClass);
                 if (endpoint.getServiceName() != null) {
-                    svrBean.getServiceFactory().setServiceName(CxfEndpointUtils.getServiceName(endpoint));                
+                    svrBean.setServiceName(CxfEndpointUtils.getServiceName(endpoint));                
                 }
                 if (endpoint.getPortName() != null) {
-                    svrBean.getServiceFactory().setEndpointName(CxfEndpointUtils.getPortName(endpoint));
+                    svrBean.setEndpointName(CxfEndpointUtils.getPortName(endpoint));
                 }    
                 if (endpoint.getWsdlURL() != null) {                
                     svrBean.setWsdlURL(endpoint.getWsdlURL());

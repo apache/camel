@@ -54,7 +54,7 @@ public class    CxfSoapTest extends ContextTestSupport {
                         e.getOut().setBody(result);
                     }
                 });
-                from("direct:provider").to("soap:mock:provider?soap.wsdl=classpath:hello/HelloWorld-DOC.wsdl");
+                from("direct:producer").to("soap:mock:producer?soap.wsdl=classpath:hello/HelloWorld-DOC.wsdl");
             }
         };
     }
@@ -77,14 +77,14 @@ public class    CxfSoapTest extends ContextTestSupport {
         
     }
     
-    public void testSoapProvider() throws Exception {
+    public void testSoapProducer() throws Exception {
         // set out the source message
         URL request = this.getClass().getResource("RequestBody.xml");
         File requestFile = new File(request.toURI());
         FileInputStream inputStream = new FileInputStream(requestFile);
         XMLStreamReader xmlReader = StaxUtils.createXMLStreamReader(inputStream);
         DOMSource source = new DOMSource(StaxUtils.read(xmlReader));        
-        Object result = template.sendBody("direct:provider", source);
+        Object result = template.sendBody("direct:producer", source);
         assertFalse("The result should not be changed", source.equals(result));
         assertTrue("The result should be the instance of DOMSource", result instanceof DOMSource);
         assertEquals("The DOMSource should be equal", XMLUtils.toString(source), XMLUtils.toString((Source)result));

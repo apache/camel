@@ -124,8 +124,8 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
 
     protected void processSoapProviderOut(Exchange exchange) throws Exception {
         LOG.info("processSoapProviderOut: " + exchange);
-        CxfSoapBinding binding = endpoint.getCxfSoapBinding();
-        org.apache.cxf.message.Message inMessage = binding.getCxfInMessage(exchange, true);
+        
+        org.apache.cxf.message.Message inMessage = CxfSoapBinding.getCxfInMessage(exchange, true);
         client.setInInterceptors(client.getEndpoint().getService().getInInterceptors());
         client.onMessage(inMessage);
         
@@ -145,9 +145,8 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
         cxfExchange.put(org.apache.cxf.endpoint.Endpoint.class, cxfEndpoint);
         cxfExchange.put(Bus.class, getBus());
         cxfExchange.setConduit(new NullConduit());
-        exchange.setProperty("CxfExchange", cxfExchange);
-        CxfSoapBinding binding = endpoint.getCxfSoapBinding();
-        org.apache.cxf.message.Message outMessage = binding.getCxfOutMessage(exchange, true);
+        exchange.setProperty("CxfExchange", cxfExchange);        
+        org.apache.cxf.message.Message outMessage = CxfSoapBinding.getCxfOutMessage(exchange, true);
         outMessage.put(Message.REQUESTOR_ROLE, Boolean.TRUE);
         outMessage.put(Message.INBOUND_MESSAGE, Boolean.FALSE);
         InterceptorChain chain = OutgoingChainInterceptor.getOutInterceptorChain(cxfExchange);

@@ -42,7 +42,7 @@ public class CxfSoapEndpoint implements Endpoint {
     private QName serviceName;
     private QName endpointName;
     private Bus bus;
-    private CxfSoapBinding cxfSoapBinding;
+   
 
     public CxfSoapEndpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
@@ -115,18 +115,7 @@ public class CxfSoapEndpoint implements Endpoint {
     public QName getEndpointName() {
         return endpointName;
     }
-    
-    public CxfSoapBinding getCxfSoapBinding() {
-        if (cxfSoapBinding == null) {
-            cxfSoapBinding = new CxfSoapBinding();
-        }
-        return cxfSoapBinding;
-    }
-    
-    public void setCxfSoapBinding(CxfSoapBinding bing) {
-        cxfSoapBinding = bing;
-    }
-
+      
     public void init() throws Exception {
         Assert.notNull(wsdl, "soap.wsdl parameter must be set on the uri");
         if (serviceName == null) {

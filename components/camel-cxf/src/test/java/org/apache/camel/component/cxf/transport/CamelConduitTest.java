@@ -35,14 +35,7 @@ public class CamelConduitTest extends CamelTestSupport {
         BusFactory.setDefaultBus(bus);
         setupServiceInfo("http://cxf.apache.org/camel_conf_test", "/wsdl/camel_test_no_addr.wsdl", "HelloWorldQueueBinMsgService", "HelloWorldQueueBinMsgPort");
         CamelConduit conduit = setupCamelConduit(false, false);
-        /*
-         * assertEquals("Can't get the right ClientReceiveTimeout", 500L,
-         * conduit.getClientConfig().getClientReceiveTimeout());
-         * assertEquals("Can't get the right SessionPoolConfig's LowWaterMark",
-         * 10, conduit.getSessionPool().getLowWaterMark()); assertEquals("Can't
-         * get the right AddressPolicy's ConnectionPassword", "testPassword",
-         * conduit.getCamelAddress().getConnectionPassword());
-         */
+        
         bus.shutdown(false);
         BusFactory.setDefaultBus(null);
     }

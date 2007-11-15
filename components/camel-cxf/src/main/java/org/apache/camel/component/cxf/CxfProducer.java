@@ -92,14 +92,13 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                 cfb = CxfEndpointUtils.getClientFactoryBean(endpointBean.getServiceClass());
             }    
             endpoint.configure(cfb);
-            // Need to set the service name and endpoint name to the ClientFactoryBean's service factory
-            // to walk around the issue of setting EndpointName and ServiceName
+
             CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
             if (cxfEndpointBean.getServiceName() != null) {
-                cfb.getServiceFactory().setServiceName(cxfEndpointBean.getServiceName());
+                cfb.setServiceName(cxfEndpointBean.getServiceName());
             } 
             if (cxfEndpointBean.getEndpointName() != null) {
-                cfb.getServiceFactory().setEndpointName(cxfEndpointBean.getEndpointName());
+                cfb.setEndpointName(cxfEndpointBean.getEndpointName());
             } 
         } else { // set up the clientFactoryBean by using URI information
             if (null != endpoint.getServiceClass()) {
@@ -131,10 +130,10 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                 }
             }
             if (endpoint.getServiceName() != null) {
-                cfb.getServiceFactory().setServiceName(CxfEndpointUtils.getServiceName(endpoint));
+                cfb.setServiceName(CxfEndpointUtils.getServiceName(endpoint));
             }
             if (endpoint.getPortName() != null) {
-                cfb.getServiceFactory().setEndpointName(CxfEndpointUtils.getPortName(endpoint));
+                cfb.setEndpointName(CxfEndpointUtils.getPortName(endpoint));
                
             }    
             if (endpoint.getWsdlURL() != null) {                

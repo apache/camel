@@ -22,6 +22,7 @@ package org.apache.camel.component.cxf.transport;
 public class CamelConstants {
     public static final String TEXT_MESSAGE_TYPE = "text";
     public static final String BINARY_MESSAGE_TYPE = "binary";
+    public static final String CAMEL_TARGET_ENDPOINT_URI = "org.apache.cxf.camel.target.endpoint.uri";
     public static final String CAMEL_SERVER_REQUEST_HEADERS = "org.apache.cxf.camel.server.request.headers";
     public static final String CAMEL_SERVER_RESPONSE_HEADERS = "org.apache.cxf.camel.server.response.headers";
     public static final String CAMEL_REQUEST_MESSAGE = "org.apache.cxf.camel.request.message";

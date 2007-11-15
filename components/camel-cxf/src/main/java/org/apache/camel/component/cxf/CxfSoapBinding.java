@@ -32,8 +32,11 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 
 public class CxfSoapBinding {
+    private CxfSoapBinding() {
+        
+    }
     
-    public org.apache.cxf.message.Message getCxfInMessage(org.apache.camel.Exchange exchange, boolean isClient) {
+    public static org.apache.cxf.message.Message getCxfInMessage(org.apache.camel.Exchange exchange, boolean isClient) {
         MessageImpl answer = new MessageImpl();
         org.apache.cxf.message.Exchange cxfExchange = exchange.getProperty("CxfExchange", 
                                                                         org.apache.cxf.message.Exchange.class);
@@ -59,7 +62,7 @@ public class CxfSoapBinding {
         return answer;
     }
     
-    public org.apache.cxf.message.Message getCxfOutMessage(org.apache.camel.Exchange exchange, boolean isClient) {
+    public static org.apache.cxf.message.Message getCxfOutMessage(org.apache.camel.Exchange exchange, boolean isClient) {
         org.apache.cxf.message.Exchange cxfExchange = exchange.getProperty("CxfExchange", org.apache.cxf.message.Exchange.class);
         assert cxfExchange != null;
         org.apache.cxf.endpoint.Endpoint cxfEndpoint = cxfExchange.get(org.apache.cxf.endpoint.Endpoint.class);
