@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Message;
 
 /**
  * A builder of a number of different {@link Processor} implementations
@@ -174,7 +175,10 @@ public class ProcessorBuilder {
     public static Processor removeOutHeader(final String name) {
         return new Processor() {
             public void process(Exchange exchange) {
-                exchange.getOut().removeHeader(name);
+                Message out = exchange.getOut(false);
+                if (out != null) {
+                    out.removeHeader(name);
+                }
             }
 
             @Override
