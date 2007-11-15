@@ -23,6 +23,7 @@ import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
+import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.spi.DataFormat;
@@ -44,41 +45,6 @@ public class DataTypeExpression<T extends ProcessorType> {
     public DataTypeExpression(ProcessorType<T> processorType, Operation operation) {
         this.processorType = processorType;
         this.operation = operation;
-    }
-
-    /**
-     * Uses the Java Serialization data format
-     */
-    public T serialization() {
-        return dataFormat(new SerializationDataFormat());
-    }
-
-    /**
-     * Uses the JAXB data format
-     */
-    public T jaxb() {
-        return dataFormat(new JaxbDataFormat());
-    }
-
-    /**
-     * Uses the XStream data format
-     */
-    public T xstream() {
-        return dataFormat(new XStreamDataFormat());
-    }
-
-    /**
-     * Uses the JAXB data format turning pretty printing on or off
-     */
-    public T jaxb(boolean prettyPrint) {
-        return dataFormat(new JaxbDataFormat(prettyPrint));
-    }
-
-    /**
-     * Uses the JAXB data format
-     */
-    public T xmlBeans() {
-        return dataFormat(new XMLBeansDataFormat());
     }
 
     /**
@@ -119,6 +85,48 @@ public class DataTypeExpression<T extends ProcessorType> {
      */
     public T artixDS(ArtixDSContentType contentType) {
         return dataFormat(new ArtixDSDataFormat(contentType));
+    }
+
+    /**
+     * Uses the JAXB data format
+     */
+    public T jaxb() {
+        return dataFormat(new JaxbDataFormat());
+    }
+
+    /**
+     * Uses the JAXB data format turning pretty printing on or off
+     */
+    public T jaxb(boolean prettyPrint) {
+        return dataFormat(new JaxbDataFormat(prettyPrint));
+    }
+
+    /**
+     * Uses the Java Serialization data format
+     */
+    public T serialization() {
+        return dataFormat(new SerializationDataFormat());
+    }
+
+    /**
+     * Uses the String data format
+     */
+    public T string() {
+        return dataFormat(new StringDataFormat());
+    }
+
+    /**
+     * Uses the JAXB data format
+     */
+    public T xmlBeans() {
+        return dataFormat(new XMLBeansDataFormat());
+    }
+
+    /**
+     * Uses the XStream data format
+     */
+    public T xstream() {
+        return dataFormat(new XStreamDataFormat());
     }
 
     private T dataFormat(DataFormatType dataFormatType) {
