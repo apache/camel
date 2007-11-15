@@ -55,8 +55,8 @@ public class AggregationCollection extends AbstractCollection<Exchange> {
         // the strategy may just update the old exchange and return it
         if (newExchange != oldExchange) {
             map.put(correlationKey, newExchange);
-            onAggregation(correlationKey, newExchange);
         }
+        onAggregation(correlationKey, newExchange);
         return true;
     }
 
