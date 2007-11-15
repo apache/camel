@@ -873,8 +873,26 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     /**
      * Adds a processor which sets the header on the IN message
      */
+    public ExpressionClause<Type> setHeader(String name) {
+        ExpressionClause<Type> clause = new ExpressionClause<Type>((Type) this);
+        process(ProcessorBuilder.setHeader(name, clause));
+        return clause;
+    }
+
+    /**
+     * Adds a processor which sets the header on the IN message
+     */
     public Type setHeader(String name, Expression expression) {
         return process(ProcessorBuilder.setHeader(name, expression));
+    }
+
+    /**
+     * Adds a processor which sets the header on the OUT message
+     */
+    public ExpressionClause<Type> setOutHeader(String name) {
+        ExpressionClause<Type> clause = new ExpressionClause<Type>((Type) this);
+        process(ProcessorBuilder.setOutHeader(name, clause));
+        return clause;
     }
 
     /**
@@ -896,6 +914,15 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      */
     public Type setProperty(String name, Expression expression) {
         return process(ProcessorBuilder.setProperty(name, expression));
+    }
+
+    /**
+     * Adds a processor which sets the exchange property
+     */
+    public ExpressionClause<Type> setProperty(String name) {
+        ExpressionClause<Type> clause = new ExpressionClause<Type>((Type) this);
+        process(ProcessorBuilder.setProperty(name, clause));
+        return clause;
     }
 
     /**
