@@ -30,6 +30,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
 import org.apache.camel.Route;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.processor.DelegateProcessor;
 
 /**
@@ -55,6 +56,8 @@ public class RoutesType implements RouteContainer {
     private List<ExceptionType> exceptions = new ArrayList<ExceptionType>();
     @XmlTransient
     private CamelContext camelContext;
+    @XmlTransient
+    private ErrorHandlerBuilder errorHandlerBuilder;
 
     @Override
     public String toString() {
@@ -109,12 +112,24 @@ public class RoutesType implements RouteContainer {
         this.camelContext = camelContext;
     }
 
+    public boolean isInheritErrorHandler() {
+        return inheritErrorHandlerFlag != null && inheritErrorHandlerFlag.booleanValue();
+    }
+
     public Boolean getInheritErrorHandlerFlag() {
         return inheritErrorHandlerFlag;
     }
 
     public void setInheritErrorHandlerFlag(Boolean inheritErrorHandlerFlag) {
         this.inheritErrorHandlerFlag = inheritErrorHandlerFlag;
+    }
+
+    public ErrorHandlerBuilder getErrorHandlerBuilder() {
+        return errorHandlerBuilder;
+    }
+
+    public void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder) {
+        this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
     // Fluent API
@@ -187,6 +202,10 @@ public class RoutesType implements RouteContainer {
     // Implementation methods
     //-------------------------------------------------------------------------
     protected RouteType createRoute() {
-        return new RouteType();
+        RouteType route = new RouteType();
+        if (isInheritErrorHandler()) {
+            route.setErrorHandlerBuilder(getErrorHandlerBuilder());
+        }
+        return route;
     }
 }

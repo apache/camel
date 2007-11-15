@@ -161,6 +161,19 @@ public abstract class RouteBuilder extends BuilderSupport {
         return routes;
     }
 
+    @Override
+    public void setInheritErrorHandler(boolean inheritErrorHandler) {
+        super.setInheritErrorHandler(inheritErrorHandler);
+        routeCollection.setInheritErrorHandlerFlag(inheritErrorHandler);
+
+    }
+
+    @Override
+    public void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder) {
+        super.setErrorHandlerBuilder(errorHandlerBuilder);
+        routeCollection.setErrorHandlerBuilder(getErrorHandlerBuilder());
+    }
+
     // Implementation methods
     // -----------------------------------------------------------------------
     protected void checkInitialized() throws Exception {
