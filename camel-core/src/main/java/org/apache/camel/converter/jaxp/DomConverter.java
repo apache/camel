@@ -20,7 +20,7 @@ package org.apache.camel.converter.jaxp;
 import org.apache.camel.Converter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
@@ -58,6 +58,11 @@ public class DomConverter {
         if (node instanceof Text) {
             Text text = (Text) node;
             buffer.append(text.getTextContent());
+        }
+        else if (node instanceof Attr) {
+            Attr attribute = (Attr) node;
+            buffer.append(attribute.getTextContent());
+
         }
         else if (node instanceof Element) {
             Element element = (Element) node;
