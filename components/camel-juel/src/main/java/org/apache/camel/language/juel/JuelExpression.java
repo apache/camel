@@ -69,7 +69,8 @@ public class JuelExpression extends ExpressionSupport<Exchange> {
     protected ELContext populateContext(ELContext context, Exchange exchange) {
         setVariable(context, "exchange", exchange, Exchange.class);
         setVariable(context, "in", exchange.getIn(), Message.class);
-        setVariable(context, "out", exchange.getOut(), Message.class);
+        Message out = exchange.getOut(false);
+        setVariable(context, "out", out, Message.class);
         return context;
     }
 
