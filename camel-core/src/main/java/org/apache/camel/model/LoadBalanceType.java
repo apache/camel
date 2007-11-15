@@ -39,6 +39,7 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
+import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
 import org.apache.camel.util.CollectionStringBuffer;
 
 @XmlRootElement(name = "loadBalance")
@@ -88,7 +89,7 @@ public class LoadBalanceType extends OutputType<LoadBalanceType> {
     }
     
     public LoadBalanceType random() {
-        loadBalancer = new RoundRobinLoadBalancer();
+        loadBalancer = new RandomLoadBalancer();
         return this;
     }
     
