@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -30,7 +31,6 @@ import javax.xml.xpath.XPathFactoryConfigurationException;
 import javax.xml.xpath.XPathFunction;
 import javax.xml.xpath.XPathFunctionException;
 import javax.xml.xpath.XPathFunctionResolver;
-import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -40,6 +40,7 @@ import org.apache.camel.RuntimeExpressionException;
 import static org.apache.camel.builder.xml.Namespaces.*;
 import static org.apache.camel.converter.ObjectConverter.toBoolean;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.util.ExchangeHelper;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -98,7 +99,11 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     }
 
     public Object evaluate(E exchange) {
-        return evaluateAs(exchange, resultQName);
+        Object answer = evaluateAs(exchange, resultQName);
+        if (resultType != null) {
+            return ExchangeHelper.convertToType(exchange, resultType, answer);
+        }
+        return answer;
     }
 
     // Builder methods
@@ -314,10 +319,13 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
         if (outBodyFunction == null) {
             outBodyFunction = new XPathFunction() {
                 public Object evaluate(List list) throws XPathFunctionException {
-                    if (exchange == null) {
-                        return null;
+                    if (exchange != null) {
+                        Message out = exchange.getOut(false);
+                        if (out != null) {
+                            return out.getBody();
+                        }
                     }
-                    return exchange.getOut().getBody();
+                    return null;
                 }
             };
         }
@@ -363,20 +371,20 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     /**
      * Evaluates the expression as the given result type
      */
-    protected synchronized Object evaluateAs(E exchange, QName resultType) {
+    protected synchronized Object evaluateAs(E exchange, QName resultQName) {
         this.exchange = exchange;
         variableResolver.setExchange(exchange);
         try {
             Object document = getDocument(exchange);
-            if (resultType != null) {
+            if (resultQName != null) {
                 if (document instanceof InputSource) {
                     InputSource inputSource = (InputSource)document;
-                    return getExpression().evaluate(inputSource, resultType);
+                    return getExpression().evaluate(inputSource, resultQName);
                 } else if (document instanceof DOMSource) {
                     DOMSource source = (DOMSource) document;
-                    return getExpression().evaluate(source.getNode(), resultType);
+                    return getExpression().evaluate(source.getNode(), resultQName);
                 } else {
-                    return getExpression().evaluate(document, resultType);
+                    return getExpression().evaluate(document, resultQName);
                 }
             } else {
                 if (document instanceof InputSource) {
