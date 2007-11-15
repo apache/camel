@@ -165,12 +165,15 @@ public class CamelInvoker implements Invoker  {
         }
         //System.out.println(cxfExchange.getOut().getBody());
         //TODO deal with the fault message
-        Object[] result;
+        Object result;
         if (cxfExchange.isFailed()) {
             Exception ex= (Exception)cxfExchange.getFault().getBody();
             throw new Fault(ex);
         } else {
-            result = (Object[])cxfExchange.getOut().getBody();
+            result = cxfExchange.getOut().getBody();
+            if(result instanceof Object[]) {
+                return (Object[])result;
+            }
         }
         
         return result;

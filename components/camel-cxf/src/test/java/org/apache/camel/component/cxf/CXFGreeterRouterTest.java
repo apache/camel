@@ -54,6 +54,8 @@ public class CXFGreeterRouterTest extends CXFRouterSpringTest {
             reply = greeter.sayHi();
             assertNotNull("No response received from service", reply);
             assertEquals("Got the wrong reply ", "Bonjour", reply);
+            
+            greeter.greetMeOneWay("call greetMe OneWay !");
         } catch (UndeclaredThrowableException ex) {
             throw (Exception)ex.getCause();
         }

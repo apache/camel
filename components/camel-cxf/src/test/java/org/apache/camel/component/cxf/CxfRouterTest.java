@@ -46,12 +46,13 @@ public class CxfRouterTest extends ContextTestSupport {
     private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
     
     private ServerImpl server;
+    private Bus bus;
     
     
     @Override
     protected void setUp() throws Exception {
-        super.setUp();        
-                
+        super.setUp();       
+        bus = BusFactory.getDefaultBus();      
         startService();
     }
     
@@ -62,7 +63,7 @@ public class CxfRouterTest extends ContextTestSupport {
         svrBean.setAddress(SERVICE_ADDRESS);
         svrBean.setServiceClass(HelloService.class);
         svrBean.setServiceBean(new HelloServiceImpl());
-        svrBean.setBus(CXFBusFactory.getDefaultBus());
+        svrBean.setBus(bus);
 
         server = (ServerImpl)svrBean.create();
         server.start();
@@ -70,9 +71,8 @@ public class CxfRouterTest extends ContextTestSupport {
     
     @Override
     protected void tearDown() throws Exception {
-        if (server != null) {
-            server.stop();
-        }
+        //bus.shutdown(true);
+        BusFactory.setDefaultBus(null);        
     }
   
     protected RouteBuilder createRouteBuilder() {
@@ -89,8 +89,7 @@ public class CxfRouterTest extends ContextTestSupport {
 
     
     public void testInvokingServiceFromCXFClient() throws Exception {  
-        Bus bus = BusFactory.getDefaultBus();
-        
+                
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(ROUTER_ADDRESS);        
