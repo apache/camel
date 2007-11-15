@@ -992,8 +992,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      *
      * @return the expression to create the {@link DataFormat}
      */
-    public DataTypeExpression<Type> unmarshal() {
-        return new DataTypeExpression<Type>(this, DataTypeExpression.Operation.Unmarshal);
+    public DataTypeExpression<ProcessorType<Type>> unmarshal() {
+        return new DataTypeExpression<ProcessorType<Type>>(this, DataTypeExpression.Operation.Unmarshal);
     }
 
     /**
@@ -1034,8 +1034,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      *
      * @return the expression to create the {@link DataFormat}
      */
-    public DataTypeExpression<Type> marshal() {
-        return new DataTypeExpression<Type>(this, DataTypeExpression.Operation.Marshal);
+    public DataTypeExpression<ProcessorType<Type>> marshal() {
+        return new DataTypeExpression<ProcessorType<Type>>(this, DataTypeExpression.Operation.Marshal);
     }
 
     /**

@@ -35,14 +35,14 @@ import org.apache.camel.spi.DataFormat;
  * @version $Revision: 1.1 $
  */
 public class DataTypeExpression<T extends ProcessorType> {
-    private final ProcessorType<T> processorType;
+    private final T processorType;
     private final Operation operation;
 
     public enum Operation {
         Marshal, Unmarshal
     };
 
-    public DataTypeExpression(ProcessorType<T> processorType, Operation operation) {
+    public DataTypeExpression(T processorType, Operation operation) {
         this.processorType = processorType;
         this.operation = operation;
     }
@@ -132,9 +132,9 @@ public class DataTypeExpression<T extends ProcessorType> {
     private T dataFormat(DataFormatType dataFormatType) {
         switch (operation) {
             case Unmarshal:
-                return processorType.unmarshal(dataFormatType);
+                return (T) processorType.unmarshal(dataFormatType);
             case Marshal:
-                return processorType.marshal(dataFormatType);
+                return (T) processorType.marshal(dataFormatType);
             default:
                 throw new IllegalArgumentException("Unknown value: " + operation);
         }
