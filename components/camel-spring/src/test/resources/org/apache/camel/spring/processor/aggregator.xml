@@ -31,7 +31,19 @@
         <to uri="mock:result"/>
       </aggregator>
     </route>
+
+    <route>
+      <from uri="direct:predicate"/>
+      <aggregator strategyRef="myAggregatorStrategy">
+        <simple>header.cheese</simple>
+        <to uri="mock:result"/>
+        <completedPredicate>
+          <methodCall method="isCompleted">myAggregatorStrategy</methodCall>
+        </completedPredicate>
+      </aggregator>
+    </route>
   </camelContext>
   <!-- END SNIPPET: example -->
 
+  <bean id="myAggregatorStrategy" class="org.apache.camel.processor.MyAggregationStrategy"/>
 </beans>

@@ -16,8 +16,8 @@
  */
 package org.apache.camel.util;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -25,9 +25,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.InvalidTypeException;
 import org.apache.camel.Message;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchPropertyException;
-import org.apache.camel.CamelContext;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
@@ -266,5 +266,41 @@ public class ExchangeHelper {
      */
     public static String getContentType(Exchange exchange) {
        return exchange.getIn().getHeader("Content-Type", String.class);
+    }
+
+    /**
+     * Performs a lookup in the registry of the mandatory bean name and throws an exception if it could not be found
+     */
+    public static Object lookupMandatoryBean(Exchange exchange, String name) {
+        Object value = lookupBean(exchange, name);
+        if (value == null) {
+            throw new NoSuchBeanException(name);
+        }
+        return value;
+    }
+
+    /**
+     * Performs a lookup in the registry of the mandatory bean name and throws an exception if it could not be found
+     */
+    public static <T> T lookupMandatoryBean(Exchange exchange, String name, Class<T> type) {
+        T value = lookupBean(exchange, name, type);
+        if (value == null) {
+            throw new NoSuchBeanException(name);
+        }
+        return value;
+    }
+
+    /**
+     * Performs a lookup in the registry of the bean name
+     */
+    public static Object lookupBean(Exchange exchange, String name) {
+        return exchange.getContext().getRegistry().lookup(name);
+    }
+
+    /**
+     * Performs a lookup in the registry of the bean name and type
+     */
+    public static <T> T lookupBean(Exchange exchange, String name, Class<T> type) {
+        return exchange.getContext().getRegistry().lookup(name, type);
     }
 }

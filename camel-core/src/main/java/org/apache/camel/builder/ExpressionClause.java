@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.model.ExpressionNode;
+import org.apache.camel.model.language.MethodCall;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
@@ -47,6 +48,35 @@ public class ExpressionClause<T> extends ExpressionType {
 
     // Fluent API
     //-------------------------------------------------------------------------
+
+    /**
+     * Evaluates an expression using the
+     * <a href="http://activemq.apache.org/camel/bean-language.html>bean language</a>
+     * which basically means the bean is invoked to determine the expression value.
+     *
+     * @param bean the name of the bean looked up the registry
+     * @return the builder to continue processing the DSL
+     */
+    public T bean(String bean) {
+        MethodCall expression = new MethodCall(bean);
+        setExpressionType(expression);
+        return result;
+    }
+
+    /**
+     * Evaluates an expression using the
+     * <a href="http://activemq.apache.org/camel/bean-language.html>bean language</a>
+     * which basically means the bean is invoked to determine the expression value.
+     *
+     * @param bean the name of the bean looked up the registry
+     * @param method the name of the method to invoke on the bean
+     * @return the builder to continue processing the DSL
+     */
+    public T bean(String bean, String method) {
+        MethodCall expression = new MethodCall(bean, method);
+        setExpressionType(expression);
+        return result;
+    }
 
     /**
      * Evaluates the  <a href="http://activemq.apache.org/camel/el.html">EL Language from JSP and JSF</a>

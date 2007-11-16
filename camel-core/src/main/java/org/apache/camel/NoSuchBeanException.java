@@ -14,25 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.language;
+package org.apache.camel;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import org.apache.camel.spi.Registry;
 
 /**
- * For SQL expresions and predicates
+ * A runtime exception if a given bean could not be found in the {@link Registry}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
-@XmlRootElement(name = "sql")
-public class SqlExpression extends ExpressionType {
-    public SqlExpression() {
+public class NoSuchBeanException extends RuntimeCamelException {
+    private static final long serialVersionUID = -8721487431101572630L;
+    private final String name;
+
+    public NoSuchBeanException(String name) {
+        super("No bean could be found in the registry for: " + name);
+        this.name = name;
     }
 
-    public SqlExpression(String expression) {
-        super(expression);
-    }
-
-    public String getLanguage() {
-        return "sql";
+    public String getName() {
+        return name;
     }
 }
