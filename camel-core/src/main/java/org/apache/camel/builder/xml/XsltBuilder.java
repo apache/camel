@@ -74,9 +74,12 @@ public class XsltBuilder implements Processor {
         Source source = getSource(exchange);
         ResultHandler resultHandler = resultHandlerFactory.createResult();
         Result result = resultHandler.getResult();
-        transformer.transform(source, result);
+
+        // lets copy the headers before we invoke the transform in case they modify them
         Message out = exchange.getOut(true);
         out.copyFrom(exchange.getIn());
+
+        transformer.transform(source, result);
         resultHandler.setBody(out);
     }
 
