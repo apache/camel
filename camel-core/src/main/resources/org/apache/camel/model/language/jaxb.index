@@ -20,7 +20,7 @@ GroovyExpression
 HeaderExpression
 JavaScriptExpression
 LanguageExpression
-MethodCall
+MethodCallExpression
 OgnlExpression
 PhpExpression
 PythonExpression

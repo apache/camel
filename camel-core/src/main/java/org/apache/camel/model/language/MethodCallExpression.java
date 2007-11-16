@@ -32,20 +32,20 @@ import org.apache.camel.language.bean.BeanExpression;
  * @version $Revision: 1.1 $
  */
 @XmlRootElement(name = "methodCall")
-public class MethodCall extends ExpressionType {
+public class MethodCallExpression extends ExpressionType {
     @XmlAttribute(required = false)
     private String bean;
     @XmlAttribute(required = false)
     private String method;
 
-    public MethodCall() {
+    public MethodCallExpression() {
     }
 
-    public MethodCall(String beanName) {
+    public MethodCallExpression(String beanName) {
         super(beanName);
     }
 
-    public MethodCall(String beanName, String method) {
+    public MethodCallExpression(String beanName, String method) {
         super(beanName);
         this.method = method;
     }
