@@ -38,7 +38,7 @@
         <simple>header.cheese</simple>
         <to uri="mock:result"/>
         <completedPredicate>
-          <methodCall method="isCompleted">myAggregatorStrategy</methodCall>
+          <methodCall bean="myAggregatorStrategy" method="isCompleted"/>
         </completedPredicate>
       </aggregator>
     </route>
