@@ -17,42 +17,28 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class XPathFilterTest extends ContextTestSupport {
-    protected Endpoint<Exchange> startEndpoint;
-    protected MockEndpoint resultEndpoint;
-    protected String matchingBody = "<person name='James' city='London'/>";
-    protected String notMatchingBody = "<person name='Hiram' city='Tampa'/>";
-
     public void testSendMatchingMessage() throws Exception {
-        resultEndpoint.expectedMessageCount(1);
+        String body = "<person name='James' city='London'/>";
+        getMockEndpoint("mock:result").expectedBodiesReceived(body);
 
-        sendBody("direct:start", matchingBody);
+        sendBody("direct:start", body);
 
-        resultEndpoint.assertIsSatisfied();
+        assertMockEndpointsSatisifed();
     }
 
     public void testSendNotMatchingMessage() throws Exception {
-        resultEndpoint.expectedMessageCount(0);
+        String body = "<person name='Hiram' city='Tampa'/>";
+        getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        sendBody("direct:start", notMatchingBody);
+        sendBody("direct:start", body);
 
-        resultEndpoint.assertIsSatisfied();
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        startEndpoint = resolveMandatoryEndpoint("direct:start");
-        resultEndpoint = getMockEndpoint("mock:result");
+        assertMockEndpointsSatisifed();
     }
 
     protected RouteBuilder createRouteBuilder() {
