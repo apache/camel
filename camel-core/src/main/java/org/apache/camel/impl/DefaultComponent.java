@@ -26,10 +26,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.Injector;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.camel.util.CamelContextHelper;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * @version $Revision$
@@ -149,6 +152,33 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
      */
     protected boolean useIntrospectionOnEndpoint() {
         return true;
+    }
+
+
+    // Some helper methods
+    //-------------------------------------------------------------------------
+
+    /**
+     * Converts the given value to the requested type
+     */
+    public <T> T convertTo(Class<T> type, Object value) {
+        return CamelContextHelper.convertTo(getCamelContext(), type, value);
+    }
+
+    /**
+     * Converts the given value to the specified type throwing an {@link IllegalArgumentException}
+     * if the value could not be converted to a non null value
+     */
+    public  <T> T mandatoryConvertTo(Class<T> type, Object value) {
+        return CamelContextHelper.mandatoryConvertTo(getCamelContext(), type, value);
+    }
+
+    /**
+     * Creates a new instance of the given type using the {@link Injector} on the given
+     * {@link CamelContext}
+     */
+    public  <T> T newInstance(Class<T> beanType) {
+        return getCamelContext().getInjector().newInstance(beanType);
     }
 
 }
