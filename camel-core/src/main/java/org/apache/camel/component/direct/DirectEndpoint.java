@@ -16,22 +16,15 @@
  */
 package org.apache.camel.component.direct;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -42,59 +35,17 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision: 519973 $
  */
 public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
-
-    private final class DirectProducer extends DefaultProducer implements AsyncProcessor {
-        private DirectProducer(Endpoint endpoint) {
-            super(endpoint);
-        }
-
-        public void process(Exchange exchange) throws Exception {
-            if (consumers.isEmpty()) {
-                LOG.warn("No consumers available on " + this + " for " + exchange);
-            } else {
-                for (DefaultConsumer<E> consumer : consumers) {
-                    consumer.getProcessor().process(exchange);
-                }
-            }
-        }
-
-        public boolean process(Exchange exchange, AsyncCallback callback) {
-            int size = consumers.size();
-            if (size == 0) {
-                LOG.warn("No consumers available on " + this + " for " + exchange);
-            } else {
-                if (size > 1) {
-                    // Too hard to do multiple async.. do it sync
-                    try {
-                        for (DefaultConsumer<E> consumer : consumers) {
-                            consumer.getProcessor().process(exchange);
-                        }
-                    } catch (Throwable error) {
-                        exchange.setException(error);
-                    }
-                } else {
-                    for (DefaultConsumer<E> consumer : consumers) {
-                        AsyncProcessor processor = AsyncProcessorTypeConverter.convert(consumer.getProcessor());
-                        return processor.process(exchange, callback);
-                    }
-                }
-            }
-            callback.done(true);
-            return true;
-        }
-    }
-
     private static final Log LOG = LogFactory.getLog(DirectEndpoint.class);
 
-    boolean allowMultipleConsumers = true;
     private final CopyOnWriteArrayList<DefaultConsumer<E>> consumers = new CopyOnWriteArrayList<DefaultConsumer<E>>();
+    boolean allowMultipleConsumers = true;
 
     public DirectEndpoint(String uri, DirectComponent<E> component) {
         super(uri, component);
     }
 
     public Producer createProducer() throws Exception {
-        return new DirectProducer(this);
+        return new DirectProducer<E>(this);
     }
 
     public Consumer<E> createConsumer(Processor processor) throws Exception {
@@ -129,4 +80,7 @@ public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
         return true;
     }
 
+    public List<DefaultConsumer<E>> getConsumers() {
+        return consumers;
+    }
 }
