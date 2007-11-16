@@ -19,7 +19,8 @@ package org.apache.camel.model.language;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * For Groovy expresions and predicates
+ * For expresions and predicates using the
+ * <a href="http://activemq.apache.org/camel/simple.html>simple language</a>
  *
  * @version $Revision: 1.1 $
  */

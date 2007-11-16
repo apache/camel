@@ -139,7 +139,12 @@ public class BeanInfo {
                 hasCustomAnnotation |= ObjectHelper.hasAnnotation(parameterAnnotations, Body.class);
                 if (bodyParameters.isEmpty()) {
                     // lets assume its the body
-                    expression = ExpressionBuilder.bodyExpression(parameterType);
+                    if (Exchange.class.isAssignableFrom(parameterType)) {
+                        expression = ExpressionBuilder.exchangeExpression();
+                    }
+                    else {
+                        expression = ExpressionBuilder.bodyExpression(parameterType);
+                    }
                     parameterInfo.setExpression(expression);
                     bodyParameters.add(parameterInfo);
                 } else {
