@@ -38,7 +38,7 @@ public class MinaTcpWithInOutTest extends TestCase {
     protected CamelContext container = new DefaultCamelContext();
     protected CountDownLatch latch = new CountDownLatch(1);
     protected Exchange receivedExchange;
-    protected String uri = "mina:tcp://localhost:6321?codec=textline";
+    protected String uri = "mina:tcp://localhost:6321?textline=true";
     protected Producer<Exchange> producer;
     private ReverserServer server;
 

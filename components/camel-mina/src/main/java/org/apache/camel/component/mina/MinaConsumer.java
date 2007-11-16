@@ -57,7 +57,8 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
         IoHandler handler = new IoHandlerAdapter() {
             @Override
             public void messageReceived(IoSession session, Object object) throws Exception {
-                getProcessor().process(endpoint.createExchange(session, object));
+                MinaExchange exchange = endpoint.createExchange(session, object);
+                getProcessor().process(exchange);
             }
         };
 
