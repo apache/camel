@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.mina;
 
+import java.net.SocketAddress;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
@@ -29,13 +33,9 @@ import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.WriteFuture;
 
-import java.net.SocketAddress;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 /**
  * A {@link Producer} implementation for MINA
- * 
+ *
  * @version $Revision$
  */
 public class MinaProducer extends DefaultProducer {
@@ -50,41 +50,44 @@ public class MinaProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
-    public void process(Exchange exchange) throws Exception{
+    public void process(Exchange exchange) throws Exception {
         if (session == null) {
             throw new IllegalStateException("Not started yet!");
         }
-        if (!session.isConnected()){
+        if (!session.isConnected()) {
             doStart();
         }
         Object body = exchange.getIn().getBody();
         if (body == null) {
             LOG.warn("No payload for exchange: " + exchange);
-        } else {
-            if (ExchangeHelper.isOutCapable(exchange)){
-                if (LOG.isDebugEnabled()){
-                    LOG.debug("Writing body : "+body);
+        }
+        else {
+            if (ExchangeHelper.isOutCapable(exchange)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Writing body : " + body);
                 }
                 latch = new CountDownLatch(1);
                 WriteFuture future = session.write(body);
                 future.join();
-                if (!future.isWritten()){
-                    throw new RuntimeException("Timed out waiting for response: "+exchange);
+                if (!future.isWritten()) {
+                    throw new RuntimeException("Timed out waiting for response: " + exchange);
                 }
                 latch.await(MAX_WAIT_RESPONSE, TimeUnit.MILLISECONDS);
-                if (latch.getCount()==1){
-                    throw new RuntimeException("No response from server within "+MAX_WAIT_RESPONSE+" millisecs");
+                if (latch.getCount() == 1) {
+                    throw new RuntimeException("No response from server within " + MAX_WAIT_RESPONSE + " millisecs");
                 }
                 ResponseHandler handler = (ResponseHandler) session.getHandler();
-                if (handler.getCause() != null){
+                if (handler.getCause() != null) {
                     throw new Exception("Response Handler had an exception", handler.getCause());
-                }else{
-                    if (LOG.isDebugEnabled()){
-                        LOG.debug("Handler message: "+handler.getMessage());
+                }
+                else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Handler message: " + handler.getMessage());
                     }
                     exchange.getOut().setBody(handler.getMessage());
                 }
-            }else{
+            }
+            else {
                 session.write(body);
             }
         }
@@ -109,16 +112,17 @@ public class MinaProducer extends DefaultProducer {
             session.close().join(2000);
         }
     }
+
     /**
      * Handles response from session writes
-     * 
-     * @author <a href="mailto:karajdaar@gmail.com">nsandhu</a>
      *
+     * @author <a href="mailto:karajdaar@gmail.com">nsandhu</a>
      */
     private final class ResponseHandler extends IoHandlerAdapter {
         private MinaEndpoint endpoint;
         private Object message;
         private Throwable cause;
+
         /**
          * @param endpoint
          */
@@ -129,23 +133,32 @@ public class MinaProducer extends DefaultProducer {
         @Override
         public void messageReceived(IoSession ioSession, Object message) throws Exception {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Message received: "+message);
+                LOG.debug("Message received: " + message);
             }
             cause = null;
             this.message = message;
-            latch.countDown();
+            countDown();
+        }
+
+        protected void countDown() {
+            CountDownLatch downLatch = latch;
+            if (downLatch != null) {
+                downLatch.countDown();
+            }
         }
 
         @Override
         public void exceptionCaught(IoSession ioSession, Throwable cause) {
-            LOG.error("Exception on receiving message from address: "+this.endpoint.getAddress()
-                        + " using connector: "+this.endpoint.getConnector(), cause);
+            LOG.error("Exception on receiving message from address: " + this.endpoint.getAddress()
+                    + " using connector: " + this.endpoint.getConnector(), cause);
             this.message = null;
             this.cause = cause;
-            ioSession.close();
-            latch.countDown();
+            if (ioSession != null) {
+                ioSession.close();
+            }
+            countDown();
         }
-        
+
         public Throwable getCause() {
             return this.cause;
         }
@@ -153,7 +166,5 @@ public class MinaProducer extends DefaultProducer {
         public Object getMessage() {
             return this.message;
         }
-
     }
-
 }
