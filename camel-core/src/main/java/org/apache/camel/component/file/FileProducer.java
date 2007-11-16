@@ -171,7 +171,11 @@ public class FileProducer extends DefaultProducer {
                 answer = new File(endpointFile, message.getMessageId());
             }
         } else {
-            answer = endpointFile;
+            if (name == null) {
+                answer = endpointFile;
+            } else {
+                answer = new File(endpointFile, name);
+            }
         }
         return answer;
     }
