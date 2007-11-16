@@ -33,6 +33,11 @@ public abstract class DefaultProducer<E extends Exchange> extends ServiceSupport
         this.endpoint = endpoint;
     }
 
+    @Override
+    public String toString() {
+        return "Producer[" + endpoint.getEndpointUri() + "]";
+    }
+
     public Endpoint<E> getEndpoint() {
         return endpoint;
     }
