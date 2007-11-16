@@ -156,7 +156,9 @@ public class EndpointMessageListener implements MessageListener {
 
     protected void sendReply(Destination replyDestination, final Message message, final JmsExchange exchange, final JmsMessage out) {
         if (replyDestination == null) {
-            LOG.warn("Cannot send reply message as there is no replyDestination for: " + out);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Cannot send reply message as there is no replyDestination for: " + out);
+            }
             return;
         }
         getTemplate().send(replyDestination, new MessageCreator() {
