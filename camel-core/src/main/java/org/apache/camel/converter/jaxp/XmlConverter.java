@@ -134,7 +134,15 @@ public class XmlConverter {
     public DOMSource toSource(Document document) {
         return new DOMSource(document);
     }
-
+    
+    /**
+     * Converts the given Node to a Source
+     */
+    @Converter
+    public Source toSource(Node node) {
+    	return new DOMSource(node);
+    }
+    
     /**
      * Converts the given input Source into text
      */
