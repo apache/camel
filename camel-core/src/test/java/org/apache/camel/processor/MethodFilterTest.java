@@ -16,28 +16,30 @@
  */
 package org.apache.camel.processor;
 
+import javax.naming.Context;
+
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class XPathFilterTest extends ContextTestSupport {
-    protected String matchingBody = "<person name='James' city='London'/>";
-    protected String notMatchingBody = "<person name='Hiram' city='Tampa'/>";
-
+public class MethodFilterTest extends ContextTestSupport {
     public void testSendMatchingMessage() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(matchingBody);
+        String body = "<person name='James' city='London'/>";
+        getMockEndpoint("mock:result").expectedBodiesReceived(body);
 
-        sendBody("direct:start", matchingBody);
+        template.sendBodyAndHeader("direct:start", body, "foo", "London");
 
         assertMockEndpointsSatisifed();
     }
 
     public void testSendNotMatchingMessage() throws Exception {
+        String body = "<person name='Hiram' city='Tampa'/>";
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        sendBody("direct:start", notMatchingBody);
+        template.sendBodyAndHeader("direct:start", body, "foo", "Tampa");
 
         assertMockEndpointsSatisifed();
     }
@@ -47,10 +49,25 @@ public class XPathFilterTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 from("direct:start").
-                        filter().xpath("/person[@name='James']").
+                        filter().method("myBean", "matches").
                         to("mock:result");
                 // END SNIPPET: example
             }
         };
     }
+
+    @Override
+    protected Context createJndiContext() throws Exception {
+        Context context = super.createJndiContext();
+        context.bind("myBean", new MyBean());
+        return context;
+    }
+
+    // START SNIPPET: filter
+    public static class MyBean {
+        public boolean matches(@Header(name = "foo")String location) {
+            return "London".equals(location);
+        }
+    }
+    // END SNIPPET: filter
 }

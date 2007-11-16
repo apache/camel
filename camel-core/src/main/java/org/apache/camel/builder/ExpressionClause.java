@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.model.ExpressionNode;
-import org.apache.camel.model.language.MethodCall;
+import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
@@ -57,8 +57,8 @@ public class ExpressionClause<T> extends ExpressionType {
      * @param bean the name of the bean looked up the registry
      * @return the builder to continue processing the DSL
      */
-    public T bean(String bean) {
-        MethodCall expression = new MethodCall(bean);
+    public T method(String bean) {
+        MethodCallExpression expression = new MethodCallExpression(bean);
         setExpressionType(expression);
         return result;
     }
@@ -72,8 +72,8 @@ public class ExpressionClause<T> extends ExpressionType {
      * @param method the name of the method to invoke on the bean
      * @return the builder to continue processing the DSL
      */
-    public T bean(String bean, String method) {
-        MethodCall expression = new MethodCall(bean, method);
+    public T method(String bean, String method) {
+        MethodCallExpression expression = new MethodCallExpression(bean, method);
         setExpressionType(expression);
         return result;
     }
