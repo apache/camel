@@ -36,9 +36,7 @@ import org.apache.commons.logging.LogFactory;
 public class MinaUdpTest extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(MinaUdpTest.class);
     protected int messageCount = 3;
-    protected Thread readerThread;
     protected int port = 4445;
-    protected boolean consume = false;
 
     public void testMinaRoute() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
@@ -56,59 +54,10 @@ public class MinaUdpTest extends ContextTestSupport {
         LOG.debug("String value: " + exchange.getIn().getBody(String.class));
     }
 
-    @Override
-    protected void setUp() throws Exception {
-
-        super.setUp();
-
-        if (consume) {
-            final DatagramSocket socket = new DatagramSocket(port);
-
-            readerThread = new Thread() {
-                public void run() {
-                    try {
-                        byte[] buffer = new byte[1024];
-                        DatagramPacket incoming = new DatagramPacket(buffer, buffer.length);
-                        System.out.println("starting to receive udp packets");
-                        while (true) {
-                            //incoming.setLength(buffer.length);
-                            socket.receive(incoming);
-                            byte[] data = incoming.getData();
-                            System.out.println("Got data! " + data.length);
-
-                            ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data));
-                            Object value = in.readObject();
-                            System.out.println("Value: " + value);
-                        }
-                    }
-                    catch (Throwable ex) {
-                        System.err.println(ex);
-                        ex.printStackTrace();
-                    }
-                }
-            };
-            readerThread.start();
-        }
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     protected void sendUdpMessages() throws Exception {
         DatagramSocket socket = new DatagramSocket();
         InetAddress address = InetAddress.getByName("127.0.0.1");
         for (int i = 0; i < messageCount; i++) {
-/*
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            ObjectOutputStream out = new ObjectOutputStream(buffer);
-            out.writeObject("Hello Message: " + i);
-            out.close();
-
-            byte[] data = buffer.toByteArray();
-*/
-
             String text = "Hello Message: " + i;
             byte[] data = text.getBytes();
 
