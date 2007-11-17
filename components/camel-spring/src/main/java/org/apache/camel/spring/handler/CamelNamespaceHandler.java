@@ -30,6 +30,10 @@ import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
+import org.apache.camel.model.loadbalancer.RandomLoadBalanceStrategy;
+import org.apache.camel.model.loadbalancer.RoundRobinLoadBalanceStrategy;
+import org.apache.camel.model.loadbalancer.StickyLoadBalanceStrategy;
+import org.apache.camel.model.loadbalancer.TopicLoadBalanceStrategy;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelContextFactoryBean;
@@ -49,7 +53,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
-    public static final String JAXB_PACKAGES = "org.apache.camel.spring:org.apache.camel.model:org.apache.camel.model.config:org.apache.camel.model.dataformat:org.apache.camel.model.language";
+    public static final String JAXB_PACKAGES = "org.apache.camel.spring:org.apache.camel.model:org.apache.camel.model.config:org.apache.camel.model.dataformat:org.apache.camel.model.language:org.apache.camel.model.loadbalancer";
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(EndpointFactoryBean.class);
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
     protected Set<String> parserElementNames = new HashSet<String>();
@@ -68,6 +72,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("serialization", SerializationDataFormat.class);
         addBeanDefinitionParser("xmlBeans", XMLBeansDataFormat.class);
 
+        //load balancers
+        addBeanDefinitionParser("roundRobin", RoundRobinLoadBalanceStrategy.class);
+        addBeanDefinitionParser("random", RandomLoadBalanceStrategy.class);
+        addBeanDefinitionParser("sticky", StickyLoadBalanceStrategy.class);
+        addBeanDefinitionParser("topic", TopicLoadBalanceStrategy.class);
+        
         // TODO switch to use the above mechanism?
         registerParser("endpoint", endpointParser);
 
