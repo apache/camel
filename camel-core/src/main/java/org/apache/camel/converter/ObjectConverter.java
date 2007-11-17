@@ -126,4 +126,127 @@ public class ObjectConverter {
         return false;
     }
 
+
+    /**
+     * Returns the converted value, or null if the value is null
+     */
+    @Converter
+    public static Byte toByte(Object value) {
+        if (value instanceof Byte) {
+            return (Byte) value;
+        }
+        else if (value instanceof Number) {
+            Number number = (Number) value;
+            return number.byteValue();
+        }
+        else if (value instanceof String) {
+            return Byte.parseByte((String) value);
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the converted value, or null if the value is null
+     */
+    @Converter
+    public static Short toShort(Object value) {
+        if (value instanceof Short) {
+            return (Short) value;
+        }
+        else if (value instanceof Number) {
+            Number number = (Number) value;
+            return number.shortValue();
+        }
+        else if (value instanceof String) {
+            return Short.parseShort((String) value);
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the converted value, or null if the value is null
+     */
+    @Converter
+    public static Integer toInteger(Object value) {
+        if (value instanceof Integer) {
+            return (Integer) value;
+        }
+        else if (value instanceof Number) {
+            Number number = (Number) value;
+            return number.intValue();
+        }
+        else if (value instanceof String) {
+            return Integer.parseInt((String) value);
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the converted value, or null if the value is null
+     */
+    @Converter
+    public static Long toLong(Object value) {
+        if (value instanceof Long) {
+            return (Long) value;
+        }
+        else if (value instanceof Number) {
+            Number number = (Number) value;
+            return number.longValue();
+        }
+        else if (value instanceof String) {
+            return Long.parseLong((String) value);
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the converted value, or null if the value is null
+     */
+    @Converter
+    public static Float toFloat(Object value) {
+        if (value instanceof Float) {
+            return (Float) value;
+        }
+        else if (value instanceof Number) {
+            Number number = (Number) value;
+            return number.floatValue();
+        }
+        else if (value instanceof String) {
+            return Float.parseFloat((String) value);
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the converted value, or null if the value is null
+     */
+    @Converter
+    public static Double toDouble(Object value) {
+        if (value instanceof Double) {
+            return (Double) value;
+        }
+        else if (value instanceof Number) {
+            Number number = (Number) value;
+            return number.doubleValue();
+        }
+        else if (value instanceof String) {
+            return Double.parseDouble((String) value);
+        }
+        else {
+            return null;
+        }
+    }
+
+
+
 }

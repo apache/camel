@@ -41,15 +41,15 @@ public class VmComponent extends SedaComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        BlockingQueue<Exchange> blockingQueue = getBlockingQueue(uri);
+        BlockingQueue<Exchange> blockingQueue = getBlockingQueue(uri, parameters);
         return new SedaEndpoint(uri, this, blockingQueue);
     }
 
-    protected BlockingQueue<Exchange> getBlockingQueue(String uri) {
+    protected BlockingQueue<Exchange> getBlockingQueue(String uri, Map parameters) {
         synchronized (queues) {
             BlockingQueue<Exchange> answer = queues.get(uri);
             if (answer == null) {
-                answer = createQueue();
+                answer = createQueue(uri, parameters);
                 queues.put(uri, answer);
             }
             return answer;
