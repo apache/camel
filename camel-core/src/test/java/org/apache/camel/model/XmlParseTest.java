@@ -17,6 +17,9 @@
 package org.apache.camel.model;
 
 import org.apache.camel.model.language.ExpressionType;
+import org.apache.camel.model.loadbalancer.LoadBalancerType;
+import org.apache.camel.model.loadbalancer.RoundRobinLoadBalanceStrategy;
+import org.apache.camel.model.loadbalancer.StickyLoadBalanceStrategy;
 
 import javax.xml.bind.JAXBException;
 import java.util.List;
@@ -107,6 +110,24 @@ public class XmlParseTest extends XmlTestSupport {
         assertExpression(splitter.getExpression(), "xpath", "/foo/bar");
         assertChildTo("to", splitter, "seda:b");
     }
+    
+    public void testParseLoadBalance() throws Exception {
+        RouteType route = assertOneRoute("routeWithLoadBalance.xml");        
+        assertFrom(route, "seda:a");        
+        LoadBalanceType loadBalance = assertLoadBalancer(route);
+        assertEquals("Here should have 3 output here", 3, loadBalance.getOutputs().size());
+        assertTrue("The loadBalancer shoud be RoundRobinLoadBalanceStrategy", loadBalance.getLoadBalancerType() instanceof RoundRobinLoadBalanceStrategy);
+    }
+    
+    public void testParseStickyLoadBalance() throws Exception {
+        RouteType route = assertOneRoute("routeWithStickyLoadBalance.xml");        
+        assertFrom(route, "seda:a");        
+        LoadBalanceType loadBalance = assertLoadBalancer(route);
+        assertEquals("Here should have 3 output here", 3, loadBalance.getOutputs().size());
+        assertTrue("The loadBalancer shoud be StickyLoadBalanceStrategy", loadBalance.getLoadBalancerType() instanceof StickyLoadBalanceStrategy);
+        StickyLoadBalanceStrategy strategy = (StickyLoadBalanceStrategy)loadBalance.getLoadBalancerType();
+        assertNotNull("the expression should not be null ", strategy.getExpressionType());
+    }
 
     public void testParseBatchResequencerXml() throws Exception {
         RouteType route = assertOneRoute("resequencerBatch.xml");
@@ -187,6 +208,11 @@ public class XmlParseTest extends XmlTestSupport {
     protected SplitterType assertSplitter(ProcessorType<?> route) {
         ProcessorType<?> processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(SplitterType.class, processor);
+    }
+    
+    protected LoadBalanceType assertLoadBalancer(ProcessorType<?> route) {
+        ProcessorType<?> processor = assertOneElement(route.getOutputs());
+        return assertIsInstanceOf(LoadBalanceType.class, processor);
     }
 
     protected ResequencerType assertResequencer(ProcessorType<?> route) {

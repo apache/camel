@@ -24,7 +24,10 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Exchange;
@@ -32,6 +35,12 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
+
+import org.apache.camel.model.loadbalancer.LoadBalancerType;
+import org.apache.camel.model.loadbalancer.RandomLoadBalanceStrategy;
+import org.apache.camel.model.loadbalancer.RoundRobinLoadBalanceStrategy;
+import org.apache.camel.model.loadbalancer.StickyLoadBalanceStrategy;
+import org.apache.camel.model.loadbalancer.TopicLoadBalanceStrategy;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.SendProcessor;
@@ -41,18 +50,48 @@ import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
 import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.ObjectHelper;
 
 @XmlRootElement(name = "loadBalance")
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class LoadBalanceType extends OutputType<LoadBalanceType> {
-   
-    // how to define it in XML    
-    private LoadBalancer loadBalancer;
+    @XmlAttribute(required = false)
+    private String ref;
     
-       
+    @XmlElements({
+        @XmlElement(required = false, name = "roundRobin", type = RoundRobinLoadBalanceStrategy.class),
+        @XmlElement(required = false, name = "random", type = RandomLoadBalanceStrategy.class),
+        @XmlElement(required = false, name = "sticky", type = StickyLoadBalanceStrategy.class),
+        @XmlElement(required = false, name = "topic", type = TopicLoadBalanceStrategy.class)}
+        )
+    private LoadBalancerType loadBalancerType;
+    
+    
+          
+    public LoadBalanceType() {
+        
+    }
+    
+    public String getRef() {
+        return ref;
+    }
+    
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
+    
+    public LoadBalancerType getLoadBalancerType() {
+        return loadBalancerType;
+    }
+    
+    public void setLoadBalancerType(LoadBalancerType loadbalancer) {
+        loadBalancerType = loadbalancer;
+    }
+    
     protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorType<?>> outputs)
         throws Exception {
-        assert loadBalancer != null;
+        ObjectHelper.notNull(loadBalancerType, "loadBalancerType");
+        LoadBalancer loadBalancer = loadBalancerType.getLoadBalancer(routeContext);
         for (ProcessorType processorType : outputs) {
             //The outputs should be the SendProcessor
             SendProcessor processor =(SendProcessor) processorType.createProcessor(routeContext);
@@ -65,7 +104,8 @@ public class LoadBalanceType extends OutputType<LoadBalanceType> {
     // when this method will be called
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        assert loadBalancer != null;        
+        ObjectHelper.notNull(loadBalancerType, "loadBalancerType");
+        LoadBalancer loadBalancer = loadBalancerType.getLoadBalancer(routeContext);
         for (ProcessorType processorType : getOutputs()) {
             //The outputs should be the SendProcessor
             SendProcessor processor =(SendProcessor) processorType.createProcessor(routeContext);
@@ -79,27 +119,27 @@ public class LoadBalanceType extends OutputType<LoadBalanceType> {
     // Fluent API
     // -------------------------------------------------------------------------
     public LoadBalanceType setLoadBalancer(LoadBalancer loadBalancer) {
-        this.loadBalancer = loadBalancer;
+        loadBalancerType = new LoadBalancerType(loadBalancer);
         return this;
     }
     
     public LoadBalanceType roundRobin() {
-        loadBalancer = new RoundRobinLoadBalancer();
+        loadBalancerType = new LoadBalancerType(new RoundRobinLoadBalancer());
         return this;        
     }
     
     public LoadBalanceType random() {
-        loadBalancer = new RandomLoadBalancer();
+        loadBalancerType = new LoadBalancerType(new RandomLoadBalancer());
         return this;
     }
     
     public LoadBalanceType sticky(Expression<Exchange> correlationExpression) {
-        loadBalancer = new StickyLoadBalancer(correlationExpression);
+        loadBalancerType = new LoadBalancerType(new StickyLoadBalancer(correlationExpression));
         return this;
     }
     
     public LoadBalanceType topic() {
-        loadBalancer = new TopicLoadBalancer();
+        loadBalancerType = new LoadBalancerType(new TopicLoadBalancer());
         return this;
     }
     
@@ -116,9 +156,17 @@ public class LoadBalanceType extends OutputType<LoadBalanceType> {
     
     @Override
     public String toString() {
-        return "LoadBanlance[ " + getOutputs() + "]";
+        String result;
+        if (loadBalancerType != null) {
+            result = "LoadBalanceType[" + loadBalancerType + ", ";
+        } else {
+            result =  "LoadBalanceType[" + ref + ", ";
+        } 
+        result = result + getOutputs() + "]";
+        return result;
     }
 
+    
     
 
     
