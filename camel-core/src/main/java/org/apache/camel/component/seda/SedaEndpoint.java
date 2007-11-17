@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.camel.AsyncCallback;
@@ -26,9 +27,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 
 /**
@@ -61,8 +60,8 @@ public class SedaEndpoint extends DefaultEndpoint<Exchange> {
         this.queue = queue;
     }
 
-    public SedaEndpoint(String uri, SedaComponent component) {
-        this(uri, component, component.createQueue());
+    public SedaEndpoint(String uri, SedaComponent component, Map parameters) {
+        this(uri, component, component.createQueue(uri, parameters));
     }
 
     public Producer createProducer() throws Exception {
