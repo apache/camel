@@ -391,7 +391,8 @@ public class JndiContext implements Context, Serializable {
     }
 
     public void unbind(String name) throws NamingException {
-        throw new OperationNotSupportedException();
+        bindings.remove(name);
+        treeBindings.remove(name);
     }
 
     private abstract class LocalNamingEnumeration implements NamingEnumeration {

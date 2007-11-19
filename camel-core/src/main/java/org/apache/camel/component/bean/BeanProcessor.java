@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.spi.Registry;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
@@ -42,16 +41,12 @@ public class BeanProcessor extends ServiceSupport implements Processor {
     public static final String METHOD_NAME = "org.apache.camel.MethodName";
     private static final Log LOG = LogFactory.getLog(BeanProcessor.class);
 
-    private final Object pojo;
-    private final BeanInfo beanInfo;
     private Method methodObject;
     private String method;
-    private final Processor processor;
+    private BeanHolder beanHolder;
 
     public BeanProcessor(Object pojo, BeanInfo beanInfo) {
-        this.pojo = pojo;
-        this.beanInfo = beanInfo;
-        this.processor = CamelContextHelper.convertTo(beanInfo.getCamelContext(), Processor.class, pojo);
+        this(new ConstantBeanHolder(pojo, beanInfo));
     }
 
     public BeanProcessor(Object pojo, CamelContext camelContext, ParameterMappingStrategy parameterMappingStrategy) {
@@ -59,28 +54,29 @@ public class BeanProcessor extends ServiceSupport implements Processor {
     }
 
     public BeanProcessor(Object pojo, CamelContext camelContext) {
-        this(pojo, camelContext, createParameterMappingStrategy(camelContext));
+        this(pojo, camelContext, BeanInfo.createParameterMappingStrategy(camelContext));
     }
 
-    public static ParameterMappingStrategy createParameterMappingStrategy(CamelContext camelContext) {
-        Registry registry = camelContext.getRegistry();
-        ParameterMappingStrategy answer = registry.lookup(ParameterMappingStrategy.class.getName(),
-                                                          ParameterMappingStrategy.class);
-        if (answer == null) {
-            answer = new DefaultParameterMappingStrategy();
-        }
-        return answer;
+    public BeanProcessor(BeanHolder beanHolder) {
+        this.beanHolder = beanHolder;
     }
+
     @Override
     public String toString() {
         String description = methodObject != null ? " " + methodObject : "";
-        return "BeanProcessor[" + pojo + description + "]";
+        return "BeanProcessor[" + beanHolder + description + "]";
     }
 
     public void process(Exchange exchange) throws Exception {
         if (LOG.isDebugEnabled()) {
             LOG.debug(">>>> invoking method for: " + exchange);
         }
+
+        Object bean = beanHolder.getBean();
+        exchange.setProperty("CamelBean", bean);
+
+        Processor processor = getProcessor();
+        BeanInfo beanInfo = beanHolder.getBeanInfo();
 
         // do we have a custom adapter for this POJO to a Processor
         if (processor != null) {
@@ -90,13 +86,13 @@ public class BeanProcessor extends ServiceSupport implements Processor {
         Message in = exchange.getIn();
         BeanInvocation beanInvoke = in.getBody(BeanInvocation.class);
         if (beanInvoke != null) {
-            beanInvoke.invoke(pojo, exchange);
+            beanInvoke.invoke(bean, exchange);
             return;
         }
 
         MethodInvocation invocation;
         if (methodObject != null) {
-            invocation = beanInfo.createInvocation(methodObject, pojo, exchange);
+            invocation = beanInfo.createInvocation(methodObject, bean, exchange);
         } else {
             // lets pass in the method name to use if its specified
             if (ObjectHelper.isNotNullAndNonEmpty(method)) {
@@ -104,10 +100,10 @@ public class BeanProcessor extends ServiceSupport implements Processor {
                     in.setHeader(METHOD_NAME, method);
                 }
             }
-            invocation = beanInfo.createInvocation(pojo, exchange);
+            invocation = beanInfo.createInvocation(bean, exchange);
         }
         if (invocation == null) {
-            throw new IllegalStateException("No method invocation could be created, no maching method could be found on: " + pojo);
+            throw new IllegalStateException("No method invocation could be created, no maching method could be found on: " + bean);
         }
         try {
             Object value = invocation.proceed();
@@ -129,6 +125,10 @@ public class BeanProcessor extends ServiceSupport implements Processor {
         } catch (Throwable throwable) {
             throw new Exception(throwable);
         }
+    }
+
+    protected Processor getProcessor() {
+        return beanHolder.getProcessor();
     }
 
     // Properties
@@ -168,10 +168,10 @@ public class BeanProcessor extends ServiceSupport implements Processor {
     // Implementation methods
     //-------------------------------------------------------------------------
     protected void doStart() throws Exception {
-        ServiceHelper.startService(processor);
+        ServiceHelper.startService(getProcessor());
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(processor);
+        ServiceHelper.stopService(getProcessor());
     }
 }

@@ -502,4 +502,11 @@ public class ObjectHelper {
         }
         return false;
     }
+
+    /**
+     * returns the type of the given object or null if the value is null
+     */
+    public static Object type(Object bean) {
+        return bean != null ? bean.getClass() : null;
+    }
 }

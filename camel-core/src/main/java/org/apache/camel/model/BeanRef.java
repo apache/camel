@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.bean.BeanProcessor;
+import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -90,17 +91,17 @@ public class BeanRef extends OutputType<ProcessorType> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) {
-        if (bean == null) {
-            String reference = getRef();
-            if (reference != null) {
-                bean = routeContext.lookup(reference, Object.class);
-            }
-            else {
+        BeanProcessor answer;
+        if (ref != null) {
+            answer = new BeanProcessor(new RegistryBean(routeContext.getCamelContext(), ref));
+        }
+        else {
+            if (bean == null) {
                 ObjectHelper.notNull(beanType, "bean, ref or beanType");
                 bean = CamelContextHelper.newInstance(routeContext.getCamelContext(), beanType);
             }
+            answer = new BeanProcessor(bean, routeContext.getCamelContext());
         }
-        BeanProcessor answer = new BeanProcessor(bean, routeContext.getCamelContext());
         if (method != null) {
             answer.setMethod(method);
         }
@@ -110,7 +111,7 @@ public class BeanRef extends OutputType<ProcessorType> {
     @Override
     public String getLabel() {
         if (ref != null) {
-           String methodText = "";
+            String methodText = "";
             if (method != null) {
                 methodText = " method: " + method;
             }

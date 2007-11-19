@@ -20,10 +20,9 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.camel.spi.Registry;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -70,21 +69,17 @@ public class BeanComponent extends DefaultComponent {
 
     // Implementation methods
     //-----------------------------------------------------------------------
-
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        Object bean = getBean(remaining);
-        BeanProcessor processor = new BeanProcessor(bean, getCamelContext(), getParameterMappingStrategy());
+        RegistryBean holder = new RegistryBean(getCamelContext(), remaining);
+        BeanProcessor processor;
+        if (ObjectConverter.toBool(parameters.remove("cache"))) {
+            processor = new BeanProcessor(holder.createCacheHolder());
+        }
+        else {
+            processor = new BeanProcessor(holder);
+        }
         setProperties(processor, parameters);
         return createEndpoint(uri, processor);
-    }
-
-    public Object getBean(String remaining) throws NoBeanAvailableException {
-        Registry registry = getCamelContext().getRegistry();
-        Object bean = registry.lookup(remaining);
-        if (bean == null) {
-            throw new NoBeanAvailableException(remaining);
-        }
-        return bean;
     }
 
     protected ProcessorEndpoint createEndpoint(String uri, BeanProcessor processor) {
@@ -92,8 +87,8 @@ public class BeanComponent extends DefaultComponent {
         answer.setExchangePattern(ExchangePattern.InOut);
         return answer;
     }
-               
+
     protected ParameterMappingStrategy createParameterMappingStrategy() {
-        return BeanProcessor.createParameterMappingStrategy(getCamelContext());
+        return BeanInfo.createParameterMappingStrategy(getCamelContext());
     }
 }

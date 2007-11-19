@@ -15,35 +15,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.bean;
+package org.apache.camel.component.rmi;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeExpressionException;
+import java.rmi.registry.Registry;
+
+import org.apache.camel.component.bean.RegistryBean;
+import org.apache.camel.component.bean.ParameterMappingStrategy;
+import org.apache.camel.CamelContext;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class RuntimeBeanExpressionException extends RuntimeExpressionException {
-    private Exchange exchange;
-    private String bean;
-    private String method;
+public class RmiRegistryBean extends RegistryBean {
 
-    public RuntimeBeanExpressionException(Exchange exchange, String bean, String method, Throwable e) {
-        super("Failed to invoke method: " + method + " on " + bean + " due to: " + e, e);
-        this.exchange = exchange;
-        this.bean = bean;
-        this.method = method;
+    private final Registry registry;
+
+    public RmiRegistryBean(CamelContext context, String name, Registry registry) {
+        super(context, name);
+        this.registry = registry;
     }
 
-    public String getBean() {
-        return bean;
+    public RmiRegistryBean(CamelContext context, String name, ParameterMappingStrategy parameterMappingStrategy, Registry registry) {
+        super(context, name, parameterMappingStrategy);
+        this.registry = registry;
     }
 
-    public Exchange getExchange() {
-        return exchange;
-    }
-
-    public String getMethod() {
-        return method;
+    @Override
+    protected Object lookupBean() throws Exception {
+        return registry.lookup(getName());
     }
 }

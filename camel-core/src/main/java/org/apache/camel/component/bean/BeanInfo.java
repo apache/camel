@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.*;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.LanguageAnnotation;
 import static org.apache.camel.util.ExchangeHelper.convertToType;
@@ -32,7 +33,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -50,6 +50,10 @@ public class BeanInfo {
     private MethodInfo defaultMethod;
     private List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
     private List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<MethodInfo>();;
+
+    public BeanInfo(CamelContext camelContext, Class type) {
+        this(camelContext, type, createParameterMappingStrategy(camelContext));
+    }
 
     public BeanInfo(CamelContext camelContext, Class type, ParameterMappingStrategy strategy) {
         this.camelContext = camelContext;
@@ -345,5 +349,15 @@ public class BeanInfo {
 
     protected boolean isValidMethod(Class clazz, Method method) {
         return Modifier.isPublic(method.getModifiers());
+    }
+
+    public static ParameterMappingStrategy createParameterMappingStrategy(CamelContext camelContext) {
+        Registry registry = camelContext.getRegistry();
+        ParameterMappingStrategy answer = registry.lookup(ParameterMappingStrategy.class.getName(),
+                                                          ParameterMappingStrategy.class);
+        if (answer == null) {
+            answer = new DefaultParameterMappingStrategy();
+        }
+        return answer;
     }
 }
