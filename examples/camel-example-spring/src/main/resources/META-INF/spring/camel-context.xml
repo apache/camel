@@ -29,7 +29,7 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
 
-  <camelContext useJmx="true" xmlns="http://activemq.apache.org/camel/schema/spring">
+  <camelContext id="camel" useJmx="true" mbeanServer="mbeanServer" xmlns="http://activemq.apache.org/camel/schema/spring">
     <package>org.apache.camel.example.spring</package>
   </camelContext>
 
@@ -40,6 +40,30 @@
          <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
        </bean>
     </property>
+  </bean>
+
+  <!-- Use JMX -->
+  <bean id="agent" class="org.apache.camel.spring.SpringInstrumentationAgent">
+    <property name="camelContext" ref="camel"/>
+    <property name="MBeanServer" ref="mbeanServer"/>
+  </bean>
+  <!--
+    this bean needs to be eagerly pre-instantiated in order for the exporting to occur;
+    this means that it must not be marked as lazily initialized
+  -->
+  <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
+    <property name="defaultDomain" value="org.apache.camel.test"/>
+  </bean>
+  <bean id="registry" class="org.springframework.remoting.rmi.RmiRegistryFactoryBean">
+    <property name="port" value="1099"/>
+  </bean>
+  <bean id="serverConnector"
+      class="org.springframework.jmx.support.ConnectorServerFactoryBean" depends-on="registry">
+    <property name="objectName" value="connector:name=rmi"/>
+    <property name="serviceUrl" 
+      value="service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi"/>
+    <property name="threaded" value="true"/>
+    <property name="daemon" value="true"/>
   </bean>
 
 </beans>

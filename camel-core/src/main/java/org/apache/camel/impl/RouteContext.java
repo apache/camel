@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -45,7 +46,7 @@ public class RouteContext {
     private RouteType route;
     private FromType from;
     private Collection<Route> routes;
-    private Endpoint endpoint;
+    private Endpoint<? extends Exchange> endpoint;
     private List<Processor> eventDrivenProcessors = new ArrayList<Processor>();
     private Interceptor lastInterceptor;
     private CamelContext camelContext;
@@ -65,7 +66,7 @@ public class RouteContext {
         route = new RouteType("temporary");
     }
 
-    public Endpoint getEndpoint() {
+    public Endpoint<? extends Exchange> getEndpoint() {
         if (endpoint == null) {
             endpoint = from.resolveEndpoint(this);
         }
@@ -91,15 +92,15 @@ public class RouteContext {
         return node.createOutputsProcessor(this);
     }
 
-    public Endpoint resolveEndpoint(String uri) {
+    public Endpoint<? extends Exchange> resolveEndpoint(String uri) {
         return route.resolveEndpoint(uri);
     }
 
     /**
      * Resolves an endpoint from either a URI or a named reference
      */
-    public Endpoint resolveEndpoint(String uri, String ref) {
-        Endpoint endpoint = null;
+    public Endpoint<? extends Exchange> resolveEndpoint(String uri, String ref) {
+        Endpoint<? extends Exchange> endpoint = null;
         if (uri != null) {
             endpoint = resolveEndpoint(uri);
             if (endpoint == null) {
@@ -141,8 +142,13 @@ public class RouteContext {
             final AsyncProcessor asyncProcessor = AsyncProcessorTypeConverter.convert(processor);
             Processor unitOfWorkProcessor = new UnitOfWorkProcessor(asyncProcessor);
 
-            routes.add(new EventDrivenConsumerRoute(getEndpoint(), unitOfWorkProcessor));
-            //routes.add(new EventDrivenConsumerRoute(getEndpoint(), processor));
+            // TODO: hz: move all this into the lifecycle strategy! (used by jmx naming strategy)
+            Route edcr = new EventDrivenConsumerRoute(getEndpoint(), unitOfWorkProcessor);
+            edcr.getProperties().put(Route.PARENT_PROPERTY, Integer.toHexString(route.hashCode()));
+            if (route.getGroup() != null) {
+                edcr.getProperties().put(Route.GROUP_PROPERTY, route.getGroup());
+            }
+            routes.add(edcr);
         }
     }
 

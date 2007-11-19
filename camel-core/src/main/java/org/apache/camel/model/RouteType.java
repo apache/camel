@@ -64,15 +64,6 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
         return "Route[ " + inputs + " -> " + outputs + "]";
     }
 
-    // TODO should we zap this and replace with next method?
-    public void addRoutes(CamelContext context) throws Exception {
-        Collection<Route> routes = new ArrayList<Route>();
-
-        addRoutes(context, routes);
-
-        context.addRoutes(routes);
-    }
-
     public void addRoutes(CamelContext context, Collection<Route> routes) throws Exception {
         setCamelContext(context);
 
@@ -176,7 +167,10 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
 
     protected void addRoutes(Collection<Route> routes, FromType fromType) throws Exception {
         RouteContext routeContext = new RouteContext(this, fromType, routes);
-        Endpoint endpoint = routeContext.getEndpoint();
+        routeContext.getEndpoint(); // force endpoint resolution
+        if (camelContext != null) {
+        	camelContext.getLifecycleStrategy().onRouteContextCreate(routeContext);
+        }
 
         List<ProcessorType<?>> list = new ArrayList<ProcessorType<?>>(outputs);
         for (ProcessorType output : list) {

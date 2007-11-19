@@ -25,21 +25,29 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Route;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.model.RouteType;
 
 public class CamelNamingStrategy {
     public static final String VALUE_UNKNOWN = "unknown";
     public static final String VALUE_ROUTE = "route";
+    public static final String VALUE_STATS = "Stats";
+    public static final String VALUE_DEFAULT_BUILDER = "default";
     public static final String KEY_NAME = "name";
     public static final String KEY_TYPE = "type";
     public static final String KEY_CONTEXT = "context";
     public static final String KEY_GROUP = "group";
     public static final String KEY_COMPONENT = "component";
+    public static final String KEY_BUILDER = "builder";
     public static final String KEY_ROUTE_TYPE = "routeType";
     public static final String KEY_ROUTE = "route";
     public static final String GROUP_ENDPOINTS = "endpoints";
     public static final String GROUP_SERVICES = "services";
-    public static final String GROUP_ROUTE_BUILDER = "routeBuilder";
+    public static final String GROUP_ROUTES = "routes";
     public static final String GROUP_ROUTE_TYPE = "routeType";
+
     protected String domainName;
     protected String hostName = "locahost";
 
@@ -86,7 +94,7 @@ public class CamelNamingStrategy {
      * @throws MalformedObjectNameException
      */
     public ObjectName getObjectName(ManagedEndpoint mbean) throws MalformedObjectNameException {
-        Endpoint ep = mbean.getEndpoint();
+        Endpoint<? extends Exchange> ep = mbean.getEndpoint();
 
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName + ":");
@@ -126,19 +134,23 @@ public class CamelNamingStrategy {
      * @throws MalformedObjectNameException
      */
     public ObjectName getObjectName(ManagedRoute mbean) throws MalformedObjectNameException {
-        Endpoint ep = mbean.getRoute().getEndpoint();
+        Route<? extends Exchange> route = mbean.getRoute();
+        Endpoint<? extends Exchange> ep = route.getEndpoint();
+        
         String ctxid = ep != null ? getContextId(ep.getContext()) : VALUE_UNKNOWN;
         String cid = getComponentId(ep);
         String id = VALUE_UNKNOWN.equals(cid) ? getEndpointId(ep) : 
-        	"[" + cid + "]" + getEndpointId(ep);
-        
+            "[" + cid + "]" + getEndpointId(ep);
+        String group = (String)route.getProperties().get(Route.GROUP_PROPERTY);
+
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName + ":");
         buffer.append(KEY_CONTEXT + "=" + ctxid + ",");
-        buffer.append(KEY_GROUP + "=" + GROUP_ROUTE_BUILDER + ",");
-        buffer.append(KEY_ROUTE_TYPE + "=" + GROUP_ROUTE_TYPE + ",");
+        buffer.append(KEY_GROUP + "=" + GROUP_ROUTES + ",");
+        buffer.append(KEY_BUILDER + "=" + (group != null ? group : VALUE_DEFAULT_BUILDER) + ",");
+        buffer.append(KEY_ROUTE_TYPE + "=" + route.getProperties().get(Route.PARENT_PROPERTY) + ",");
         buffer.append(KEY_ROUTE + "=" + id + ",");
-        buffer.append(KEY_NAME + "=" + VALUE_ROUTE);
+        buffer.append(KEY_TYPE + "=" + VALUE_ROUTE);
         return createObjectName(buffer);
     }
 
@@ -146,18 +158,31 @@ public class CamelNamingStrategy {
      * Implements the naming strategy for a {@see PerformanceCounter}.
      * The convention used for a {@see ManagedEndpoint} ObjectName is
      * "<domain>:context=<context>,type=Routes,endpoint=[urlPrefix]localPart".
-     *
      * @param mbean
+     * @param routeContext
+     *
      * @return generated ObjectName
      * @throws MalformedObjectNameException
      */
-    public ObjectName getObjectName(CamelContext context, PerformanceCounter mbean) throws MalformedObjectNameException {
+    public ObjectName getObjectName(CamelContext context, PerformanceCounter mbean, RouteContext routeContext)
+    	throws MalformedObjectNameException {
+    		
+		RouteType route = routeContext.getRoute();
+		Endpoint<? extends Exchange> ep = routeContext.getEndpoint();
+		String ctxid = ep != null ? getContextId(ep.getContext()) : VALUE_UNKNOWN;
+		String cid = getComponentId(ep);
+		String id = VALUE_UNKNOWN.equals(cid) ? getEndpointId(ep) :
+			"[" + cid + "]" + getEndpointId(ep);
+		String group = route.getGroup();
+		
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName + ":");
-        buffer.append(KEY_CONTEXT + "=" + getContextId(context) + ",");
-        buffer.append(KEY_GROUP + "=" + GROUP_ENDPOINTS + ",");
-        buffer.append(KEY_ROUTE + "=" + "Route.Counter" + ",");
-        buffer.append(KEY_NAME + "=" + "Stats");
+        buffer.append(KEY_CONTEXT + "=" + ctxid + ",");
+        buffer.append(KEY_GROUP + "=" + GROUP_ROUTES + ",");
+        buffer.append(KEY_BUILDER + "=" + (group != null ? group : VALUE_DEFAULT_BUILDER) + ",");
+        buffer.append(KEY_ROUTE_TYPE + "=" + route.hashCode() + ",");
+        buffer.append(KEY_ROUTE + "=" + id + ",");
+        buffer.append(KEY_TYPE + "=" + VALUE_STATS);
         return createObjectName(buffer);
     }
 
@@ -182,22 +207,20 @@ public class CamelNamingStrategy {
         return hostName + "/" + id;
     }
 
-    protected String getComponentId(Endpoint ep) {
+    protected String getComponentId(Endpoint<? extends Exchange> ep) {
         String uri = ep.getEndpointUri();
         int pos = uri.indexOf(':');
         return (pos == -1) ? VALUE_UNKNOWN : uri.substring(0, pos);
     }
     
-    protected String getEndpointId(Endpoint ep) {
+    protected String getEndpointId(Endpoint<? extends Exchange> ep) {
         String uri = ep.getEndpointUri();
         int pos = uri.indexOf(':');
         String id = (pos == -1) ? uri : uri.substring(pos + 1);
 		if (!ep.isSingleton()) { 
 			id += "." + Integer.toString(ep.hashCode());
 		}
-        id = id.replace("=", "_eq_");
-        id = id.replace(",", "_cm_");
-        return id;
+        return ObjectNameEncoder.encode(id);
 	}
 
     /**
@@ -206,7 +229,6 @@ public class CamelNamingStrategy {
     protected ObjectName createObjectName(StringBuffer buffer) throws MalformedObjectNameException {
         String text = buffer.toString();
         try {
-            text = text.replace("?", "_qe_");
             return new ObjectName(text);
         }
         catch (MalformedObjectNameException e) {

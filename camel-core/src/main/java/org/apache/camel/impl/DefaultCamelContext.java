@@ -450,10 +450,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     protected void startRouteDefinitions(Collection<RouteType> list) throws Exception {
         if (list != null) {
+            Collection<Route> routes = new ArrayList<Route>();
             for (RouteType route : list) {
-            	lifecycleStrategy.beforeStartRouteType(this, route);
-                route.addRoutes(this);
+                route.addRoutes(this, routes);
             }
+            addRoutes(routes);
         }
     }
 

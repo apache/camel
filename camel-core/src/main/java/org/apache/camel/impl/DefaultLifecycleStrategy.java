@@ -20,7 +20,7 @@ import java.util.Collection;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.model.RouteType;
+import org.apache.camel.Exchange;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
@@ -31,7 +31,7 @@ public class DefaultLifecycleStrategy implements LifecycleStrategy {
 		// do nothing
 	}
 	
-	public void onEndpointAdd(Endpoint endpoint) {
+	public void onEndpointAdd(Endpoint<? extends Exchange> endpoint) {
 		// do nothing
 	}
 
@@ -43,7 +43,7 @@ public class DefaultLifecycleStrategy implements LifecycleStrategy {
 		// do nothing
 	}
 
-	public void beforeStartRouteType(CamelContext context, RouteType routeType) {
+	public void onRouteContextCreate(RouteContext routeContext) {
 		// do nothing
 	}
 }

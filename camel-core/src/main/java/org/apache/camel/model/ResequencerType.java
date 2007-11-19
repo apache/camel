@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -180,9 +181,9 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
         }
     }
 
-    private Route<Exchange> createBatchResequencerRoute(RouteContext routeContext) throws Exception {
+    private Route<? extends Exchange> createBatchResequencerRoute(RouteContext routeContext) throws Exception {
         final Resequencer resequencer = createBatchResequencer(routeContext, batchConfig);
-        return new Route<Exchange>(routeContext.getEndpoint(), resequencer) {
+        return new Route(routeContext.getEndpoint(), resequencer) {
             @Override
             public String toString() {
                 return "BatchResequencerRoute[" + getEndpoint() + " -> " + resequencer.getProcessor() + "]";
