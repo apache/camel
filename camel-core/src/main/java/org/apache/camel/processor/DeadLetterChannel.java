@@ -41,6 +41,7 @@ import org.apache.commons.logging.LogFactory;
 public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProcessor {
     public static final String REDELIVERY_COUNTER = "org.apache.camel.RedeliveryCounter";
     public static final String REDELIVERED = "org.apache.camel.Redelivered";
+    public static final String EXCEPTION_CAUSE_PROPERTY = "CamelCauseException";
 
     private class RedeliveryData {
         int redeliveryCounter;
@@ -136,7 +137,8 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 data.redeliveryDelay = data.currentRedeliveryPolicy.getRedeliveryDelay(data.redeliveryDelay);
                 sleep(data.redeliveryDelay);
             }
-            
+
+            exchange.setProperty(EXCEPTION_CAUSE_PROPERTY, exchange.getException());
             exchange.setException(null);
             boolean sync = outputAsync.process(exchange, new AsyncCallback() {
                 public void done(boolean sync) {
