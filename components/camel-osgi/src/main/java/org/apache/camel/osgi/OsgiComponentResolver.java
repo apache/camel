@@ -91,7 +91,11 @@ public class OsgiComponentResolver implements ComponentResolver {
         for (int i = 0; i < previousBundles.length; i++) {
             int state = previousBundles[i].getState();
             if (state == Bundle.RESOLVED || state == Bundle.ACTIVE) {
-                mayBeAddComponentFor(previousBundles[i]);
+            	try {
+            		mayBeAddComponentFor(previousBundles[i]);
+            	} catch (Exception e) {
+            		LOG.error("Component " + previousBundles[i] + " not added due to " + e.toString(), e);
+            	}
             }
         }
     }
