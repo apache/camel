@@ -15,35 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.bean;
+package org.apache.camel.component.bean;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeExpressionException;
+import org.apache.camel.Processor;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class RuntimeBeanExpressionException extends RuntimeExpressionException {
-    private Exchange exchange;
-    private String bean;
-    private String method;
+public interface BeanHolder {
+    Object getBean() throws Exception;
 
-    public RuntimeBeanExpressionException(Exchange exchange, String bean, String method, Throwable e) {
-        super("Failed to invoke method: " + method + " on " + bean + " due to: " + e, e);
-        this.exchange = exchange;
-        this.bean = bean;
-        this.method = method;
-    }
+    Processor getProcessor();
 
-    public String getBean() {
-        return bean;
-    }
-
-    public Exchange getExchange() {
-        return exchange;
-    }
-
-    public String getMethod() {
-        return method;
-    }
+    BeanInfo getBeanInfo();
 }

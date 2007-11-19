@@ -23,7 +23,7 @@
     ">
 
   <!-- START SNIPPET: export -->
-  <bean id="sayService" class="org.apache.camel.spring.remoting.SayService"/>
+  <bean id="sayService" class="org.apache.camel.spring.remoting.SayService" scope="singleton"/>
   <!-- END SNIPPET: export -->
 
   <!-- START SNIPPET: proxy -->

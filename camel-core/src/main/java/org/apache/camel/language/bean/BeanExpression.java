@@ -19,8 +19,8 @@ package org.apache.camel.language.bean;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.bean.BeanProcessor;
+import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.impl.ExpressionSupport;
-import org.apache.camel.util.ExchangeHelper;
 
 /**
  * Evaluates an expression using a bean method invocation
@@ -46,8 +46,7 @@ public class BeanExpression<E extends Exchange> extends ExpressionSupport<E> {
     }
 
     public Object evaluate(E exchange) {
-        Object bean = ExchangeHelper.lookupMandatoryBean(exchange, beanName);
-        BeanProcessor processor = new BeanProcessor(bean, exchange.getContext());
+        BeanProcessor processor = new BeanProcessor(new RegistryBean(exchange.getContext(), beanName));
         if (method != null) {
             processor.setMethod(method);
         }
@@ -57,7 +56,7 @@ public class BeanExpression<E extends Exchange> extends ExpressionSupport<E> {
             return newExchange.getOut(true).getBody();
         }
         catch (Exception e) {
-            throw new RuntimeBeanExpressionException(exchange, bean, method, e);
+            throw new RuntimeBeanExpressionException(exchange, beanName, method, e);
         }
     }
 }
