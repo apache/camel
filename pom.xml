@@ -38,6 +38,7 @@
     <compiler.fork>false</compiler.fork>
     <cxf-version>2.0.3-incubator</cxf-version>
     <spring-version>2.0.6</spring-version>
+    <geronimo-spec-version>1.1</geronimo-spec-version>
     <jetty-version>6.1.5</jetty-version>
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
     <openjpa-version>0.9.6-incubating</openjpa-version>
@@ -467,43 +468,43 @@
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jms_1.1_spec</artifactId>
-        <version>1.0</version>
+        <version>${geronimo-spec-version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
-        <version>1.0</version>
+        <version>${geronimo-spec-version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-j2ee-management_1.0_spec</artifactId>
-        <version>1.0</version>
+        <version>${geronimo-spec-version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-j2ee-jacc_1.0_spec</artifactId>
-        <version>1.0</version>
+        <version>${geronimo-spec-version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-        <version>1.0</version>
+        <version>${geronimo-spec-version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jsp_2.0_spec</artifactId>
-        <version>1.0</version>
+        <version>${geronimo-spec-version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-servlet_2.4_spec</artifactId>
-        <version>1.0</version>
+        <version>${geronimo-spec-version}</version>
       </dependency>
 
 
