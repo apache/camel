@@ -20,9 +20,10 @@ import java.util.Collection;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
-import org.apache.camel.model.RouteType;
+import org.apache.camel.impl.RouteContext;
 
 public interface LifecycleStrategy {
 
@@ -34,7 +35,7 @@ public interface LifecycleStrategy {
 	/**
      * Notification on adding an {@see Endpoint}.
      */
-	void onEndpointAdd(Endpoint endpoint);
+	void onEndpointAdd(Endpoint<? extends Exchange> endpoint);
 
 	/**
      * Notification on adding a {@see Service}.
@@ -47,8 +48,8 @@ public interface LifecycleStrategy {
 	void onRoutesAdd(Collection<Route> routes);
 	
 	/**
-     * Notification on adding {@see Route}(s).
-	 * @param context TODO
+     * Notification on adding {@see RouteContext}(s).
+	 * @param routeContext
      */
-	void beforeStartRouteType(CamelContext context, RouteType routeType);
+	void onRouteContextCreate(RouteContext routeContext);
 }

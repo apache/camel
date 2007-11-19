@@ -29,6 +29,9 @@ import java.util.Map;
  * @version $Revision$
  */
 public class Route<E extends Exchange> {
+    public static final String PARENT_PROPERTY = "parent";
+    public static final String GROUP_PROPERTY = "group";
+
     private final Map<String, Object> properties = new HashMap<String, Object>(16);
     private Endpoint<E> endpoint;
     private List<Service> services = new ArrayList<Service>();

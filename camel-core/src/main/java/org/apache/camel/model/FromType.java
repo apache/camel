@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -39,7 +40,7 @@ public class FromType {
     @XmlAttribute
     private String ref;
     @XmlTransient
-    private Endpoint endpoint;
+    private Endpoint<? extends Exchange> endpoint;
 
     public FromType() {
     }
@@ -48,7 +49,7 @@ public class FromType {
         setUri(uri);
     }
 
-    public FromType(Endpoint endpoint) {
+    public FromType(Endpoint<? extends Exchange> endpoint) {
         this.endpoint = endpoint;
     }
 
@@ -61,7 +62,7 @@ public class FromType {
         return description(getUri(), getRef(), getEndpoint());
     }
 
-    public Endpoint resolveEndpoint(RouteContext context) {
+    public Endpoint<? extends Exchange> resolveEndpoint(RouteContext context) {
         if (endpoint == null) {
             endpoint = context.resolveEndpoint(getUri(), getRef());
         }

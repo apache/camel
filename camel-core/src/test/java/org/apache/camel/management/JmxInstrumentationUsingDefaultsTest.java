@@ -59,11 +59,8 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
         resultEndpoint.assertIsSatisfied();
 
-        /* 
-         * Fixme: after stats are merged with the mbean they represent
-         * 
         MBeanServer mbs = iAgent.getMBeanServer();
-        ObjectName name = new ObjectName(domainName + ":name=Stats,*");
+        ObjectName name = new ObjectName(domainName + ":type=Stats,*");
         Set s = mbs.queryNames(name, null);
         assertEquals("Found mbeans: " + s, 1, s.size());
 
@@ -95,7 +92,6 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofMeanProcessingTime);
         assertTrue(valueofMeanProcessingTime >= valueofMinProcessingTime &&
         		valueofMeanProcessingTime <= valueofMaxProcessingTime);
-         */
     }
 
     protected void enableJmx() {

@@ -64,12 +64,6 @@ public class RoutesType implements RouteContainer {
         return "Routes: " + routes;
     }
 
-    public void populateRoutes(List<Route> answer) throws Exception {
-        for (RouteType route : routes) {
-            route.addRoutes(camelContext, answer);
-        }
-    }
-
     // Properties
     //-----------------------------------------------------------------------
     public List<RouteType> getRoutes() {
