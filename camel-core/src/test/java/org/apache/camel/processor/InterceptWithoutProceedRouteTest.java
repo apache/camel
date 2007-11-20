@@ -30,6 +30,7 @@ public class InterceptWithoutProceedRouteTest extends ContextTestSupport {
 
     public void testSendMatchingMessage() throws Exception {
         b.expectedMessageCount(1);
+        a.expectedMessageCount(0);
 
         template.sendBodyAndHeader("direct:start", "<matched/>", "foo", "bar");
 
@@ -37,6 +38,8 @@ public class InterceptWithoutProceedRouteTest extends ContextTestSupport {
     }
 
     public void testSendNotMatchingMessage() throws Exception {
+        b.expectedMessageCount(0);
+        a.expectedMessageCount(0);
 
         template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
 

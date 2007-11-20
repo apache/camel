@@ -26,6 +26,8 @@ import org.apache.camel.processor.Interceptor;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import java.util.Collection;
 
 /**
@@ -34,6 +36,9 @@ import java.util.Collection;
 @XmlRootElement(name = "intercept")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptType extends OutputType<ProcessorType> {
+
+    @XmlTransient
+    private ProceedType proceed = new ProceedType();
 
     @Override
     public String toString() {
@@ -65,7 +70,13 @@ public class InterceptType extends OutputType<ProcessorType> {
      * Applies this interceptor only if the given predicate is true
      */
     public ChoiceType when(Predicate predicate) {
-        return choice().when(PredicateBuilder.not(predicate)).proceed().otherwise();
+        ChoiceType choice = choice().when(PredicateBuilder.not(predicate));
+        choice.addOutput(proceed);
+        return choice.otherwise();
+        //return choice.proceed().otherwise();
+    }
 
+    public ProceedType getProceed() {
+        return proceed;
     }
 }

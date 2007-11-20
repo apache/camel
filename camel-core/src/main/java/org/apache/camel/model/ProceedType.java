@@ -31,13 +31,11 @@ import java.util.List;
  */
 @XmlRootElement(name = "proceed")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProceedType extends ProcessorType<ProcessorType> {
+public class ProceedType extends OutputType<ProcessorType> {
 
-    public List<ProcessorType<?>> getOutputs() {
-        return Collections.EMPTY_LIST;
-    }
-
+    // TODO we should be just returning the outputs!
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return routeContext.createProceedProcessor();
+        //return routeContext.createProceedProcessor();
+        return createOutputsProcessor(routeContext);
     }
 }
