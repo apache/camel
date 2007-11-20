@@ -95,7 +95,7 @@ public class ExceptionTest extends ContextTestSupport {
                 }
                 from("direct:start").process(exceptionThrower).to("mock:result");
                 from("direct:start2").to("direct:intermediate").to("mock:result");
-                from("direct:intermediate").setBody(constant("<some-value/>")).process(exceptionThrower).to("mock:resuilt");
+                from("direct:intermediate").setBody(constant("<some-value/>")).process(exceptionThrower).to("mock:result");
             }
         };
     }
