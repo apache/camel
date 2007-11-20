@@ -163,8 +163,11 @@ public class RoutesType implements RouteContainer {
         for (InterceptorType interceptorType : list) {
             route.addInterceptor(interceptorType);
         }
-        //route.getInterceptors().addAll(getInterceptors());
-        route.getOutputs().addAll(getIntercepts());
+        List<InterceptType> intercepts = getIntercepts();
+        for (InterceptType intercept : intercepts) {
+            route.addOutput(intercept);
+            route.pushBlock(intercept.getProceed());
+        }
         route.getOutputs().addAll(getExceptions());
         getRoutes().add(route);
         return route;

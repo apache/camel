@@ -38,6 +38,7 @@ public class InterceptWithPredicateRouteTest extends ContextTestSupport {
 
     public void testSendNotMatchingMessage() throws Exception {
         a.expectedMessageCount(1);
+        b.expectedMessageCount(0);
 
         template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
 

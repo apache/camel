@@ -658,7 +658,21 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     public Type proceed() {
-        addOutput(new ProceedType());
+        ProceedType proceed = null;
+        for (ProcessorType node = parent; node != null; node = node.getParent()) {
+            if (node instanceof InterceptType) {
+                InterceptType intercept = (InterceptType) node;
+                proceed = intercept.getProceed();
+                break;
+            }
+        }
+        if (proceed == null) {
+            throw new IllegalArgumentException("Cannot use proceed() without being within an intercept() block");
+        }
+
+        // TODO we should be looking up the stack to find the last InterceptType
+        // and returning its ProceedType!
+        addOutput(proceed);
         return (Type) this;
     }
 
@@ -1073,11 +1087,11 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     // Properties
     // -------------------------------------------------------------------------
     @XmlTransient
-    ProcessorType<? extends ProcessorType> getParent() {
+    public ProcessorType<? extends ProcessorType> getParent() {
     	return parent;
     }
     
-    void setParent(ProcessorType<? extends ProcessorType> parent) {
+    public void setParent(ProcessorType<? extends ProcessorType> parent) {
     	this.parent = parent;
     }
     
@@ -1210,6 +1224,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     public void addOutput(ProcessorType processorType) {
+        processorType.setParent(this);
         configureChild(processorType);
         if (blocks.isEmpty()) {
             getOutputs().add(processorType);
