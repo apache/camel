@@ -278,7 +278,6 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      */
     public FilterType filter(Predicate predicate) {
         FilterType filter = new FilterType(predicate);
-        filter.setParent(this);
         addOutput(filter);
         return filter;
     }
@@ -286,7 +285,6 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     public FilterType filter(ExpressionType expression) {
         FilterType filter = getNodeFactory().createFilter();
         filter.setExpression(expression);
-        filter.setParent(this);
         addOutput(filter);
         return filter;
     }
@@ -297,7 +295,6 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     
     public LoadBalanceType loadBalance() {
         LoadBalanceType answer = new LoadBalanceType();
-        answer.setParent(this);
         addOutput(answer);
         return answer;
     }    
@@ -310,7 +307,6 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      */
     public ChoiceType choice() {
         ChoiceType answer = new ChoiceType();
-        answer.setParent(this);
         addOutput(answer);
         return answer;
     }
@@ -322,7 +318,6 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      */
     public TryType tryBlock() {
         TryType answer = new TryType();
-        answer.setParent(this);
         addOutput(answer);
         return answer;
     }
