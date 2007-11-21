@@ -44,20 +44,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
     </dependency>
-    <!--
-        <dependency>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-spring</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-jms_1.1_spec</artifactId>
-        </dependency>
-    -->
     <dependency>
       <groupId>org.apache.qpid</groupId>
       <artifactId>qpid-client</artifactId>
@@ -91,6 +77,18 @@
       <version>${qpid-version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+      <version>1.4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>backport-util-concurrent</groupId>
+      <artifactId>backport-util-concurrent</artifactId>
+      <version>3.1</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>commons-logging</groupId>
@@ -118,6 +116,9 @@
         <configuration>
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
+          <excludes>
+            <exclude>**/AMQPRouteTest.*</exclude>
+          </excludes>
         </configuration>
       </plugin>
     </plugins>

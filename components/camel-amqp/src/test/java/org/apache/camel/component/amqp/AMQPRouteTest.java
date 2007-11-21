@@ -19,16 +19,15 @@ package org.apache.camel.component.amqp;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.qpid.client.transport.TransportConnection;
 
 /**
  * @version $Revision: 574458 $
  */
 public class AMQPRouteTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
-    protected String componentName = "amqp";
-    protected String startEndpointUri;
 
     public void testJmsRouteWithTextMessage() throws Exception {
         String expectedBody = "Hello there!";
@@ -53,23 +52,30 @@ public class AMQPRouteTest extends ContextTestSupport {
     }
 
     protected void sendExchange(final Object expectedBody) {
-        template.sendBodyAndHeader(startEndpointUri, expectedBody, "cheese", 123);
+        template.sendBodyAndHeader("amqp:queue:test.a", expectedBody, "cheese", 123);
     }
 
 
     @Override
     protected void setUp() throws Exception {
-        startEndpointUri = componentName + ":queue:test.a";
+        // lets create an in JVM broker
+        TransportConnection.createVMBroker(1);
 
-        super.setUp();
+    super.setUp();
 
         resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        TransportConnection.killVMBroker(1);
     }
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        camelContext.addComponent(componentName, amqpComponent("amqp://guest:guest@/test?brokerlist='vm://:1'"));
+        camelContext.addComponent("amqp", amqpComponent("amqp://guest:guest@/test?brokerlist='vm://:1'"));
 
         return camelContext;
     }
@@ -77,8 +83,8 @@ public class AMQPRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(startEndpointUri).to(componentName + ":queue:test.b");
-                from(componentName + ":queue:test.b").to("mock:result");
+                from("amqp:test.a").to("amqp:test.b");
+                from("amqp:test.b").to("mock:result");
             }
         };
     }
