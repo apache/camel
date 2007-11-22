@@ -52,7 +52,7 @@ public class JndiRegistry implements Registry {
         } catch (NameNotFoundException e) {
             return null;
         } catch (NamingException e) {
-            throw new RuntimeCamelException(e);
+            return null;
         }
     }
 
