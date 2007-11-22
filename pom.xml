@@ -548,8 +548,8 @@
       <!-- optional mina dependencies -->
       <dependency>
         <groupId>org.apache.mina</groupId>
-        <artifactId>mina-java5</artifactId>
-        <version>1.0.2</version>
+        <artifactId>mina-core</artifactId>
+        <version>1.1.5</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
