@@ -43,10 +43,9 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.apache.mina</groupId>
-      <artifactId>mina-java5</artifactId>
+      <artifactId>mina-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

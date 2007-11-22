@@ -21,6 +21,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.Map;
 
@@ -50,7 +51,6 @@ import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 import org.apache.mina.transport.vmpipe.VmPipeAcceptor;
 import org.apache.mina.transport.vmpipe.VmPipeAddress;
 import org.apache.mina.transport.vmpipe.VmPipeConnector;
-import org.apache.mina.util.CharsetUtil;
 
 /**
  * @version $Revision$
@@ -181,7 +181,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
 
             if (value != null) {
                 if (encoder == null) {
-                    encoder = CharsetUtil.getDefaultCharset().newEncoder();
+                    encoder = Charset.defaultCharset().newEncoder();
                 }
                 answer.putString(value, encoder);
             }
