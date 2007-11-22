@@ -34,7 +34,7 @@
   <description>Camel FTP support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.component.file.remote*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.component.file.remote*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
@@ -76,6 +76,12 @@
       <groupId>org.apache.ftpserver</groupId>
       <artifactId>ftpserver-core</artifactId>
       <version>1.0-incubator-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>backport-util-concurrent</groupId>
+      <artifactId>backport-util-concurrent</artifactId>
+      <version>3.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
