@@ -40,13 +40,13 @@ public class XsltRouteTest extends SpringTestSupport {
         List<Exchange> list = endpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
-        System.out.println("Found: " + xml);
+
         log.debug("Found: " + xml);
 
         TestBean bean = getMandatoryBean(TestBean.class, "testBean");
 
-        // TODO - fixme when we allow XPath injection to do proper type conversion
-        //assertEquals("bean.subject", "Hey", bean.getSubject());
+        assertEquals("bean.subject", "Hey", bean.getSubject());
+        log.debug("Found bean subject: " + bean.getSubject());
     }
 
     protected int getExpectedRouteCount() {
