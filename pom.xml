@@ -547,11 +547,6 @@
 
       <!-- optional mina dependencies -->
       <dependency>
-        <groupId>org.apache.mina</groupId>
-        <artifactId>mina-core</artifactId>
-        <version>1.1.5</version>
-      </dependency>
-      <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
         <version>${slf4j-version}</version>
