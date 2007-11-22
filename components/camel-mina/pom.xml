@@ -34,7 +34,7 @@
   <description>Camel MINA support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.component.mina*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.component.mina*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
@@ -74,16 +74,7 @@
         <configuration>
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
-
-          <!--
-                     <systemProperties>
-                      <property>
-                        <name>org.apache.camel.foo</name>
-                        <value>bar</value>
-                      </property>
-                    </systemProperties>
-          -->
-
+          <forkMode>pertest</forkMode>
           <includes>
             <include>**/*Test.*</include>
           </includes>
