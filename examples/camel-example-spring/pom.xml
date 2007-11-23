@@ -29,15 +29,20 @@
   </parent>
 
   <artifactId>camel-example-spring</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Example :: Spring</name>
   <description>An example showing how to work with Camel and Spring</description>
+
+  <properties>
+    <camel.osgi.export.pkg>org.apache.camel.example.spring*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
@@ -54,7 +59,7 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
   </dependencies>
 
   <build>
