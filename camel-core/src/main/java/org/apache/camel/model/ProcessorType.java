@@ -34,7 +34,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.Builder;
-import org.apache.camel.builder.DataTypeClause;
+import org.apache.camel.builder.DataFormatClause;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ExpressionClause;
@@ -1001,8 +1001,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      *
      * @return the expression to create the {@link DataFormat}
      */
-    public DataTypeClause<ProcessorType<Type>> unmarshal() {
-        return new DataTypeClause<ProcessorType<Type>>(this, DataTypeClause.Operation.Unmarshal);
+    public DataFormatClause<ProcessorType<Type>> unmarshal() {
+        return new DataFormatClause<ProcessorType<Type>>(this, DataFormatClause.Operation.Unmarshal);
     }
 
     /**
@@ -1043,8 +1043,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      *
      * @return the expression to create the {@link DataFormat}
      */
-    public DataTypeClause<ProcessorType<Type>> marshal() {
-        return new DataTypeClause<ProcessorType<Type>>(this, DataTypeClause.Operation.Marshal);
+    public DataFormatClause<ProcessorType<Type>> marshal() {
+        return new DataFormatClause<ProcessorType<Type>>(this, DataFormatClause.Operation.Marshal);
     }
 
     /**
