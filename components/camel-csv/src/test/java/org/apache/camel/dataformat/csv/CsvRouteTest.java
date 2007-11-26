@@ -50,7 +50,10 @@ public class CsvRouteTest extends ContextTestSupport {
         for (Exchange exchange : list) {
             Message in = exchange.getIn();
             String text = in.getBody(String.class);
-            log.debug("Received: " + text);
+
+            log.debug("Received " + text);
+            assertNotNull("Should be able to convert received body to a string", text);
+            assertEquals("text body", "abc,123", text.trim());
         }
     }
 
