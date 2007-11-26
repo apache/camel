@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,40 +44,50 @@ public class CsvDataFormat implements DataFormat {
     private CSVConfig config = new CSVConfig();
 
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
-        OutputStreamWriter out = new OutputStreamWriter(outputStream);
         Map map = ExchangeHelper.convertToMandatoryType(exchange, Map.class, object);
-        CSVConfig conf = createConfig();
-        // lets add fields
-        Set set = map.keySet();
-        for (Object value : set) {
-            if (value != null) {
-                String text = value.toString();
-                CSVField field = new CSVField(text);
-                conf.addField(field);
+        OutputStreamWriter out = new OutputStreamWriter(outputStream);
+        try {
+            CSVConfig conf = createConfig();
+            // lets add fields
+            Set set = map.keySet();
+            for (Object value : set) {
+                if (value != null) {
+                    String text = value.toString();
+                    CSVField field = new CSVField(text);
+                    conf.addField(field);
+                }
             }
+            CSVWriter writer = new CSVWriter(conf);
+            writer.setWriter(out);
+            writer.writeRecord(map);
         }
-        CSVWriter writer = new CSVWriter(conf);
-        writer.setWriter(out);
-        writer.writeRecord(map);
-        out.close();
+        finally {
+            out.close();
+        }
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        CSVParser parser = new CSVParser(new InputStreamReader(inputStream), getStrategy());
-        List<List<String>> list = new ArrayList<List<String>>();
-        while (true) {
-            String[] strings = parser.getLine();
-            if (strings == null) {
-                break;
+        InputStreamReader in = new InputStreamReader(inputStream);
+        try {
+            CSVParser parser = new CSVParser(in, getStrategy());
+            List<List<String>> list = new ArrayList<List<String>>();
+            while (true) {
+                String[] strings = parser.getLine();
+                if (strings == null) {
+                    break;
+                }
+                List<String> line = Arrays.asList(strings);
+                list.add(line);
             }
-            List<String> line = Arrays.asList(strings);
-            list.add(line);
+            if (list.size() == 1) {
+                return list.get(0);
+            }
+            else {
+                return list;
+            }
         }
-        if (list.size() == 1) {
-            return list.get(0);
-        }
-        else {
-            return list;
+        finally {
+            in.close();
         }
     }
 
