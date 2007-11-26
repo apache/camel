@@ -20,6 +20,7 @@ package org.apache.camel.builder;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.dataformat.ArtixDSContentType;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
+import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
@@ -34,7 +35,7 @@ import org.apache.camel.spi.DataFormat;
  *
  * @version $Revision: 1.1 $
  */
-public class DataTypeExpression<T extends ProcessorType> {
+public class DataTypeClause<T extends ProcessorType> {
     private final T processorType;
     private final Operation operation;
 
@@ -42,7 +43,7 @@ public class DataTypeExpression<T extends ProcessorType> {
         Marshal, Unmarshal
     };
 
-    public DataTypeExpression(T processorType, Operation operation) {
+    public DataTypeClause(T processorType, Operation operation) {
         this.processorType = processorType;
         this.operation = operation;
     }
@@ -85,6 +86,13 @@ public class DataTypeExpression<T extends ProcessorType> {
      */
     public T artixDS(ArtixDSContentType contentType) {
         return dataFormat(new ArtixDSDataFormat(contentType));
+    }
+
+    /**
+     * Uses the JAXB data format
+     */
+    public T csv() {
+        return dataFormat(new CsvDataFormat());
     }
 
     /**
