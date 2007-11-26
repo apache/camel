@@ -90,6 +90,7 @@
         <include>org.apache.camel:camel-atom</include>
         <include>org.apache.camel:camel-bam</include>
         <include>org.apache.camel:camel-core</include>
+        <include>org.apache.camel:camel-csv</include>
         <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-ftp</include>
         <include>org.apache.camel:camel-http</include>
@@ -112,6 +113,7 @@
         <include>org.apache.camel:camel-saxon</include>
         <include>org.apache.camel:camel-script</include>
         <include>org.apache.camel:camel-spring</include>
+        <include>org.apache.camel:camel-stringtemplate</include>
         <include>org.apache.camel:camel-xmlbeans</include>
         <include>org.apache.camel:camel-xmpp</include>
         <include>org.apache.camel:camel-xstream</include>
