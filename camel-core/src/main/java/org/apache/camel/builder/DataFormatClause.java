@@ -35,7 +35,7 @@ import org.apache.camel.spi.DataFormat;
  *
  * @version $Revision: 1.1 $
  */
-public class DataTypeClause<T extends ProcessorType> {
+public class DataFormatClause<T extends ProcessorType> {
     private final T processorType;
     private final Operation operation;
 
@@ -43,7 +43,7 @@ public class DataTypeClause<T extends ProcessorType> {
         Marshal, Unmarshal
     };
 
-    public DataTypeClause(T processorType, Operation operation) {
+    public DataFormatClause(T processorType, Operation operation) {
         this.processorType = processorType;
         this.operation = operation;
     }
@@ -89,7 +89,7 @@ public class DataTypeClause<T extends ProcessorType> {
     }
 
     /**
-     * Uses the JAXB data format
+     * Uses the CSV data format
      */
     public T csv() {
         return dataFormat(new CsvDataFormat());
