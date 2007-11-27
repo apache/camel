@@ -27,7 +27,6 @@ public class BeanMockTest extends ApplicationContextTestSupport {
     public void testAssertionsUsingBean() throws Exception {
         MyAssertions bean = getMandatoryBean(MyAssertions.class, "myBean");
         bean.assertEndpointsValid();
-        System.out.println("Done asserting: " + bean);
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
