@@ -147,6 +147,7 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
     public void process(Exchange exchange) {
         CxfExchange cxfExchange = endpoint.createExchange(exchange);
         process(cxfExchange);
+        exchange.copyFrom(cxfExchange);
     }
 
     public void process(CxfExchange exchange) {

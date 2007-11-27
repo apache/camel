@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.invoker.InvokingContext;
 import org.apache.cxf.endpoint.Client;
@@ -143,7 +144,6 @@ public class CamelInvoker implements Invoker  {
         MethodDispatcher md = (MethodDispatcher) 
             exchange.get(Service.class).get(MethodDispatcher.class.getName());
         Method m = md.getMethod(bop);
-        
         List<Object> params = null;
         if (o instanceof List) {
             params = CastUtils.cast((List<?>)o);
@@ -152,7 +152,13 @@ public class CamelInvoker implements Invoker  {
         }
         
         CxfEndpoint endpoint = (CxfEndpoint) cxfConsumer.getEndpoint();
+        
         CxfExchange cxfExchange = endpoint.createExchange(exchange.getInMessage());
+        if (bop.getOperationInfo().isOneWay()) {
+        	cxfExchange.setPattern(ExchangePattern.InOnly);
+        } else {
+        	cxfExchange.setPattern(ExchangePattern.InOut);
+        }
         cxfExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, m.getName());
         cxfExchange.getIn().setBody(params);
         
