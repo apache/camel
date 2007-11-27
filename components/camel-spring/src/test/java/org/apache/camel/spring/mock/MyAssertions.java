@@ -28,6 +28,7 @@ import org.springframework.beans.factory.InitializingBean;
  *
  * @version $Revision: 1.1 $
  */
+// START SNIPPET: example
 public class MyAssertions implements InitializingBean {
     @EndpointInject(uri="mock:matched")
     private MockEndpoint matched;
@@ -36,15 +37,16 @@ public class MyAssertions implements InitializingBean {
     private MockEndpoint notMatched;
 
     public void afterPropertiesSet() throws Exception {
+        // lets add some expectations
         matched.expectedMessageCount(1);
         notMatched.expectedMessageCount(0);
     }
 
     public void assertEndpointsValid() throws Exception {
+        // now lets perform some assertions that the test worked as we expect
         Assert.assertNotNull("Should have a matched endpoint", matched);
         Assert.assertNotNull("Should have a notMatched endpoint", notMatched);
         MockEndpoint.assertIsSatisfied(matched, notMatched);
     }
-
-
 }
+// END SNIPPET: example
