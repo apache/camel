@@ -80,7 +80,7 @@
           </includes>
           <excludes>
             <exclude>**/MinaMulticastTest.*</exclude>
-            <exclude>**/MinaUdpTest.*</exclude>
+            <!--<exclude>**/MinaUdpTest.*</exclude>-->
           </excludes>
         </configuration>
       </plugin>
