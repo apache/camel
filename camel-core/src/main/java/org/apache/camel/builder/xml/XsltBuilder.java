@@ -191,8 +191,42 @@ public class XsltBuilder implements Processor {
         this.resultHandlerFactory = resultHandlerFactory;
     }
 
+    /**
+     * Sets the XSLT transformer from a Source
+     */
     public void setTransformerSource(Source source) throws TransformerConfigurationException {
         setTransformer(converter.getTransformerFactory().newTransformer(source));
+    }
+
+    /**
+     * Sets the XSLT transformer from a File
+     */
+    public void setTransformerFile(File xslt) throws TransformerConfigurationException {
+        setTransformerSource(new StreamSource(xslt));
+    }
+
+    /**
+     * Sets the XSLT transformer from a URL
+     */
+    public void setTransformerURL(URL url) throws TransformerConfigurationException, IOException {
+        notNull(url, "url");
+        setTransformerInputStream(url.openStream());
+    }
+
+    /**
+     * Sets the XSLT transformer from the given input stream
+     */
+    public void setTransformerInputStream(InputStream in) throws TransformerConfigurationException, IOException {
+        notNull(in, "in");
+        setTransformerSource(new StreamSource(in));
+    }
+
+    public XmlConverter getConverter() {
+        return converter;
+    }
+
+    public void setConverter(XmlConverter converter) {
+        this.converter = converter;
     }
 
     // Implementation methods

@@ -39,7 +39,8 @@ public class XsltComponent extends ResourceBasedComponent {
         if (LOG.isDebugEnabled()) {
             LOG.debug(this + " using schema resource: " + resource);
         }
-        XsltBuilder xslt = XsltBuilder.xslt(resource.getInputStream());
+        XsltBuilder xslt = newInstance(XsltBuilder.class);
+        xslt.setTransformerInputStream(resource.getInputStream());
         configureXslt(xslt, uri, remaining, parameters);
         return new ProcessorEndpoint(uri, this, xslt);
     }
