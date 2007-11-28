@@ -54,4 +54,9 @@ public class MinaConverter {
     public static ObjectInput toObjectInput(ByteBuffer buffer) throws IOException {
         return IOConverter.toObjectInput(toInputStream(buffer));
     }
+
+    @Converter
+    public static ByteBuffer toByteBuffer(byte[] bytes) {
+        return ByteBuffer.wrap(bytes);
+    }
 }
