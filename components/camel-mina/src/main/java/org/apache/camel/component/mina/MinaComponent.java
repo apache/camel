@@ -170,7 +170,8 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
                 }
             };
         }
-        addCodecFactory(config, new TextLineCodecFactory());
+        addCodecFactory(config, codecFactory);
+        //addCodecFactory(config, new TextLineCodecFactory());
     }
 
     protected ByteBuffer toByteBuffer(Object message) throws CharacterCodingException {
