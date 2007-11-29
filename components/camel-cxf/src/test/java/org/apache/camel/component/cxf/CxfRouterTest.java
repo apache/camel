@@ -18,24 +18,15 @@ package org.apache.camel.component.cxf;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
-import org.apache.cxf.bus.CXFBusFactory;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.apache.cxf.interceptor.LoggingInInterceptor;
 
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.core.CollectionFactory;
-
-import junit.framework.TestCase;
 
 public class CxfRouterTest extends ContextTestSupport {
     protected static final String ROUTER_ADDRESS = "http://localhost:9000/router";
@@ -101,5 +92,18 @@ public class CxfRouterTest extends ContextTestSupport {
         assertEquals("we should get the right answer from router", "hello world", result);
         
                 
+    }
+    
+    public void testOnwayInvocation() throws Exception {
+    	ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
+        ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
+        clientBean.setAddress(ROUTER_ADDRESS);        
+        clientBean.setServiceClass(HelloService.class);
+        clientBean.setBus(bus);        
+        HelloService client = (HelloService) proxyFactory.create();
+        int invocationCount = client.getInvocationCount();
+        client.ping();
+        //oneway ping invoked, so invocationCount ++
+        assertEquals(client.getInvocationCount() - 1, invocationCount);
     }
 }

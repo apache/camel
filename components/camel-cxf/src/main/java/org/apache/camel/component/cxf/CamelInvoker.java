@@ -144,7 +144,7 @@ public class CamelInvoker implements Invoker  {
         MethodDispatcher md = (MethodDispatcher) 
             exchange.get(Service.class).get(MethodDispatcher.class.getName());
         Method m = md.getMethod(bop);
-        List<Object> params = null;
+        List<Object> params = new ArrayList<Object>();
         if (o instanceof List) {
             params = CastUtils.cast((List<?>)o);
         } else if (o != null) {
