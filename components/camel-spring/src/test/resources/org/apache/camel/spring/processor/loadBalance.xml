@@ -22,15 +22,16 @@
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
+  
   <!-- START SNIPPET: example -->
+  <bean id = "roundRobinRef" class="org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer" />
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <loadBalance>
+      <loadBalance ref="roundRobinRef">
           <to uri="mock:x"/>        
           <to uri="mock:y"/>       
-          <to uri="mock:z"/>
-          <roundRobin/>
+          <to uri="mock:z"/>          
       </loadBalance>
     </route>
   </camelContext>
