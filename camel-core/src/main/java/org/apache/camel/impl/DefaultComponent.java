@@ -27,6 +27,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -180,5 +181,38 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
     public  <T> T newInstance(Class<T> beanType) {
         return getCamelContext().getInjector().newInstance(beanType);
     }
+
+    /**
+     * Look up the given named bean in the {@link Registry} on the
+     * {@link CamelContext}
+     */
+    public Object lookup(String name) {
+        return getCamelContext().getRegistry().lookup(name);
+    }
+
+    /**
+     * Look up the given named bean of the given type in the {@link Registry} on the
+     * {@link CamelContext}
+     */
+    public <T> T lookup(String name, Class<T> beanType) {
+        return getCamelContext().getRegistry().lookup(name, beanType);
+    }
+    
+    /**
+     * Look up the given named bean in the {@link Registry} on the
+     * {@link CamelContext} or throws
+     */
+    public Object mandatoryLookup(String name) {
+        return  CamelContextHelper.mandatoryLookup(getCamelContext(), name);
+    }
+
+    /**
+     * Look up the given named bean of the given type in the {@link Registry} on the
+     * {@link CamelContext}
+     */
+    public <T> T mandatoryLookup(String name, Class<T> beanType) {
+        return  CamelContextHelper.mandatoryLookup(getCamelContext(), name, beanType);
+    }
+
 
 }

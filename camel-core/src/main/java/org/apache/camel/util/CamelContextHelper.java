@@ -23,6 +23,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Registry;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -85,6 +86,42 @@ public class CamelContextHelper {
     }
 
     /**
+     * Look up the given named bean in the {@link Registry} on the
+     * {@link CamelContext}
+     */
+    public static Object lookup(CamelContext context, String name) {
+        return context.getRegistry().lookup(name);
+    }
+
+    /**
+     * Look up the given named bean of the given type in the {@link Registry} on the
+     * {@link CamelContext}
+     */
+    public static <T> T lookup(CamelContext context, String name, Class<T> beanType) {
+        return context.getRegistry().lookup(name, beanType);
+    }
+
+    /**
+     * Look up the given named bean in the {@link Registry} on the
+     * {@link CamelContext} or throws
+     */
+    public static Object mandatoryLookup(CamelContext context, String name) {
+        Object answer = lookup(context, name);
+        notNull(answer, "registry entry called " + name);
+        return answer;
+    }
+
+    /**
+     * Look up the given named bean of the given type in the {@link Registry} on the
+     * {@link CamelContext}
+     */
+    public static <T> T mandatoryLookup(CamelContext context, String name, Class<T> beanType) {
+        T answer = lookup(context, name, beanType);
+        notNull(answer, "registry entry called " + name + " of type " + beanType.getName());
+        return answer;
+    }
+
+    /**
      * Resolves the given language name into a {@link Language} or throws an exception if it could not be converted
      *
      * @param camelContext
@@ -116,5 +153,4 @@ public class CamelContextHelper {
         }
         return expression;
     }
-
 }
