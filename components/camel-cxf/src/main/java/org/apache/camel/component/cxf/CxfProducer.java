@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.invoker.CxfClient;
 import org.apache.camel.component.cxf.invoker.CxfClientFactoryBean;
@@ -147,7 +148,9 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
     public void process(Exchange exchange) {
         CxfExchange cxfExchange = endpoint.createExchange(exchange);
         process(cxfExchange);
-        exchange.copyFrom(cxfExchange);
+        if (exchange.getPattern() != ExchangePattern.InOnly) {
+        	exchange.copyFrom(cxfExchange);
+        }
     }
 
     public void process(CxfExchange exchange) {

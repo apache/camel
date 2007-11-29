@@ -62,6 +62,15 @@ public class CXFGreeterRouterTest extends CXFRouterSpringTest {
     }
     
     @Override
+    public void testOnwayInvocation() throws Exception {
+    	Service service = Service.create(serviceName);
+        service.addPort(routerPortName, "http://schemas.xmlsoap.org/soap/", 
+                        "http://localhost:9003/CamelContext/RouterPort");
+        Greeter greeter = service.getPort(routerPortName, Greeter.class);
+        greeter.greetMeOneWay("call greetMe OneWay !");
+    }
+    
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointBeans.xml");
     }
