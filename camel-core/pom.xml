@@ -43,7 +43,7 @@
       <artifactId>commons-logging-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.xml</groupId>
+      <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
     </dependency>
     <dependency>
