@@ -235,6 +235,11 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
             AsyncCallback callback = (AsyncCallback) e.removeProperty(AsyncCallback.class.getName());
             callback.done(false);
         }
+
+        public void finalizeContext(HttpContext arg0) {
+            // TODO Auto-generated method stub
+            
+        }
     }
 
     static class EventLogger implements EventListener {

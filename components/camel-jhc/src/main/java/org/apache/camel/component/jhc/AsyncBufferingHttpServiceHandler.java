@@ -34,14 +34,9 @@ import java.io.IOException;
  * Time: 6:57:34 PM
  * To change this template use File | Settings | File Templates.
  */
-public abstract class AsyncBufferingHttpServiceHandler extends BufferingHttpServiceHandler {
+public class AsyncBufferingHttpServiceHandler extends BufferingHttpServiceHandler {
 
-    public interface AsyncHandler {
-
-        void sendResponse(HttpResponse response) throws IOException, HttpException;
-
-    }
-
+    
     public AsyncBufferingHttpServiceHandler(final HttpParams params) {
         super(createDefaultProcessor(),
               new DefaultHttpResponseFactory(),
@@ -78,7 +73,7 @@ public abstract class AsyncBufferingHttpServiceHandler extends BufferingHttpServ
             final HttpRequest request) throws IOException, HttpException {
 
         HttpContext context = conn.getContext();
-        HttpVersion ver = request.getRequestLine().getHttpVersion();
+        ProtocolVersion ver = request.getRequestLine().getProtocolVersion();
 
         if (!ver.lessEquals(HttpVersion.HTTP_1_1)) {
             // Downgrade protocol version if greater than HTTP/1.1
@@ -86,43 +81,53 @@ public abstract class AsyncBufferingHttpServiceHandler extends BufferingHttpServ
         }
 
 
-        context.setAttribute(HttpExecutionContext.HTTP_REQUEST, request);
-        context.setAttribute(HttpExecutionContext.HTTP_CONNECTION, conn);
+        context.setAttribute(ExecutionContext.HTTP_REQUEST, request);
+        context.setAttribute(ExecutionContext.HTTP_CONNECTION, conn);
 
         try {
 
             this.httpProcessor.process(request, context);
 
             HttpRequestHandler handler = null;
-            if (this.handlerResolver != null) {
-                String requestURI = request.getRequestLine().getUri();
-                handler = this.handlerResolver.lookup(requestURI);
+            if (handlerResolver != null) {
+                String requestURI = request.getRequestLine().getUri();                
+                handler = handlerResolver.lookup(requestURI);                
             }
-            if (handler != null) {
-                HttpResponse response = this.responseFactory.newHttpResponse(
-                        ver,
-                        HttpStatus.SC_OK,
-                        conn.getContext());
-                HttpParamsLinker.link(response, this.params);
-                context.setAttribute(HttpExecutionContext.HTTP_RESPONSE, response);
-                handler.handle(request, response, context);
-                sendResponse(conn, response);
-            } else {
-                asyncProcessRequest(request, context, new AsyncHandler() {
-                    public void sendResponse(HttpResponse response) throws IOException, HttpException {
-                        try {
-                            AsyncBufferingHttpServiceHandler.this.sendResponse(conn, response);
-                        } catch (HttpException ex) {
-                            response = AsyncBufferingHttpServiceHandler.this.responseFactory.newHttpResponse(
-                                        HttpVersion.HTTP_1_0,
-                                        HttpStatus.SC_INTERNAL_SERVER_ERROR,
-                                        conn.getContext());
-                            HttpParamsLinker.link(response, AsyncBufferingHttpServiceHandler.this.params);
-                            AsyncBufferingHttpServiceHandler.this.handleException(ex, response);
-                            AsyncBufferingHttpServiceHandler.this.sendResponse(conn, response);
+            if (handler != null) {                
+                if (handler instanceof AsyncHttpRequestHandler) {
+                    ((AsyncHttpRequestHandler)handler).handle(request, context, new AsyncResponseHandler() {
+                        public void sendResponse(HttpResponse response) throws IOException, HttpException {
+                            try {
+                                AsyncBufferingHttpServiceHandler.this.sendResponse(conn, response);
+                            } catch (HttpException ex) {
+                                response = AsyncBufferingHttpServiceHandler.this.responseFactory.newHttpResponse(
+                                            HttpVersion.HTTP_1_0,
+                                            HttpStatus.SC_INTERNAL_SERVER_ERROR,
+                                            conn.getContext());
+                                HttpParamsLinker.link(response, AsyncBufferingHttpServiceHandler.this.params);
+                                AsyncBufferingHttpServiceHandler.this.handleException(ex, response);
+                                AsyncBufferingHttpServiceHandler.this.sendResponse(conn, response);
+                            }
                         }
-                    }
-                });
+                    });
+                } else { // just hanlder the request with sync request handler
+                    HttpResponse response = this.responseFactory.newHttpResponse(
+                                                                                 ver,
+                                                                                 HttpStatus.SC_OK,
+                                                                                 conn.getContext());
+                    HttpParamsLinker.link(response, this.params);
+                    context.setAttribute(ExecutionContext.HTTP_RESPONSE, response);
+                    handler.handle(request, response, context);
+                    sendResponse(conn, response);
+                }    
+            } else {
+                // add the default handler here
+                HttpResponse response = this.responseFactory.newHttpResponse(
+                                                                             ver,
+                                                                             HttpStatus.SC_OK,
+                                                                             conn.getContext());
+                response.setStatusCode(HttpStatus.SC_NOT_IMPLEMENTED);
+                
             }
 
         } catch (HttpException ex) {
@@ -135,8 +140,6 @@ public abstract class AsyncBufferingHttpServiceHandler extends BufferingHttpServ
             sendResponse(conn, response);
         }
 
-    }
-
-    protected abstract void asyncProcessRequest(HttpRequest requet, HttpContext context, AsyncHandler handler);
+    }    
 
 }
