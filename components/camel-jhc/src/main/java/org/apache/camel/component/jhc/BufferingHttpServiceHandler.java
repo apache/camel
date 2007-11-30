@@ -104,7 +104,7 @@ public class BufferingHttpServiceHandler extends NHttpServiceHandlerBase
         connState.setRequest(request);
         connState.setInputState(ServerConnState.REQUEST_RECEIVED);
 
-        HttpVersion ver = request.getRequestLine().getHttpVersion();
+        ProtocolVersion ver = request.getRequestLine().getProtocolVersion();
         if (!ver.lessEquals(HttpVersion.HTTP_1_1)) {
             // Downgrade protocol version if greater than HTTP/1.1
             ver = HttpVersion.HTTP_1_1;
@@ -293,7 +293,7 @@ public class BufferingHttpServiceHandler extends NHttpServiceHandlerBase
             final HttpRequest request) throws IOException, HttpException {
 
         HttpContext context = conn.getContext();
-        HttpVersion ver = request.getRequestLine().getHttpVersion();
+        ProtocolVersion ver = request.getRequestLine().getProtocolVersion();
 
         if (!ver.lessEquals(HttpVersion.HTTP_1_1)) {
             // Downgrade protocol version if greater than HTTP/1.1
@@ -306,9 +306,9 @@ public class BufferingHttpServiceHandler extends NHttpServiceHandlerBase
                 conn.getContext());
         HttpParamsLinker.link(response, this.params);
 
-        context.setAttribute(HttpExecutionContext.HTTP_REQUEST, request);
-        context.setAttribute(HttpExecutionContext.HTTP_CONNECTION, conn);
-        context.setAttribute(HttpExecutionContext.HTTP_RESPONSE, response);
+        context.setAttribute(ExecutionContext.HTTP_REQUEST, request);
+        context.setAttribute(ExecutionContext.HTTP_CONNECTION, conn);
+        context.setAttribute(ExecutionContext.HTTP_RESPONSE, response);
 
         try {
 

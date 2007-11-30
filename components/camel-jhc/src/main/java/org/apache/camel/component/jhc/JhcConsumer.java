@@ -36,6 +36,7 @@ import org.apache.http.nio.protocol.EventListener;
 import org.apache.http.nio.reactor.IOEventDispatch;
 import org.apache.http.nio.reactor.ListeningIOReactor;
 import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpParamsLinker;
 import org.apache.http.protocol.*;
 import org.apache.http.util.EncodingUtils;
 import org.apache.http.util.concurrent.ThreadFactory;
@@ -62,14 +63,17 @@ import java.nio.channels.SelectionKey;
 public class JhcConsumer extends DefaultConsumer<JhcExchange> {
 
     private static Log LOG = LogFactory.getLog(JhcConsumer.class);
-
-    private int nbThreads = 2;
-    private ListeningIOReactor ioReactor;
-    private ThreadFactory threadFactory;
-    private Thread runner;
+    private JhcServerEngine engine;
+    private MyHandler handler;
+   
 
     public JhcConsumer(JhcEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+        engine = JhcServerEngineFactory.getJhcServerEngine(endpoint.getParams(), 
+                                                           endpoint.getPort(),
+                                                           endpoint.getProtocol());
+        handler = new MyHandler(endpoint.getParams(), endpoint.getPath());
+        
     }
 
     public JhcEndpoint getEndpoint() {
@@ -77,40 +81,18 @@ public class JhcConsumer extends DefaultConsumer<JhcExchange> {
     }
 
     protected void doStart() throws Exception {
-        super.doStart();
-        final SocketAddress addr = new InetSocketAddress(getEndpoint().getPort());
-        HttpParams params = getEndpoint().getParams();
-        ioReactor = new DefaultListeningIOReactor(nbThreads, threadFactory, params);
-
-        final IOEventDispatch ioEventDispatch;
-        if ("https".equals(getEndpoint().getProtocol())) {
-            SSLContext sslContext = null; // TODO
-            ioEventDispatch = new SSLServerIOEventDispatch(new MyHandler(params), sslContext, params);
-        } else {
-            ioEventDispatch = new DefaultServerIOEventDispatch(new MyHandler(params), params);
+        super.doStart();        
+        engine.register(handler.getPath() + "*", handler);
+        if(! engine.isStarted()) {
+            engine.start();
         }
-        runner = new Thread() {
-            public void run() {
-                try {
-                    ioReactor.listen(addr);
-                    ioReactor.execute(ioEventDispatch);
-                } catch (InterruptedIOException ex) {
-                    LOG.info("Interrupted");
-                } catch (IOException e) {
-                    LOG.warn("I/O error: " + e.getMessage());
-                }
-                LOG.debug("Shutdown");
-            }
-        };
-        runner.start();
     }
 
     protected void doStop() throws Exception {
-        LOG.debug("Stopping");
-        ioReactor.shutdown();
-        LOG.debug("Waiting runner");
-        runner.join();
-        LOG.debug("Stopped");
+        engine.unregister(handler.getPath() + "*");
+        if (engine.getReferenceCounter() == 0) {
+            engine.stop();
+        }
         super.doStop();
     }
 
@@ -156,11 +138,24 @@ public class JhcConsumer extends DefaultConsumer<JhcExchange> {
     }
 
 
-    class MyHandler extends AsyncBufferingHttpServiceHandler {
-        public MyHandler(HttpParams params) {
-            super(params);
+    class MyHandler implements AsyncHttpRequestHandler {
+        private final HttpParams params;
+        private final HttpResponseFactory responseFactory;
+        private final String path;
+        
+        public MyHandler(HttpParams params, String path) {
+            this(params, path, new DefaultHttpResponseFactory());
         }
-        protected void asyncProcessRequest(final HttpRequest request, final HttpContext context, final AsyncBufferingHttpServiceHandler.AsyncHandler handler) {
+        public MyHandler(HttpParams params, String path, HttpResponseFactory responseFactory) {
+            this.params = params;
+            this.path = path;
+            this.responseFactory = responseFactory;
+        }
+       
+        public String getPath() {
+            return path;
+        }
+        public void handle(final HttpRequest request, final HttpContext context, final AsyncResponseHandler handler) throws HttpException, IOException {
             final Exchange exchange = getEndpoint().createExchange();
             exchange.getIn().setHeader("http.uri", request.getRequestLine().getUri());
             if (request instanceof HttpEntityEnclosingRequest) {
@@ -170,8 +165,10 @@ public class JhcConsumer extends DefaultConsumer<JhcExchange> {
                 public void done(boolean doneSynchronously) {
                     LOG.debug("handleExchange");
                     // create the default response to this request
-                    HttpVersion httpVersion = request.getRequestLine().getHttpVersion();
+                    ProtocolVersion httpVersion = (HttpVersion)request.getRequestLine().getProtocolVersion();
+                    
                     HttpResponse response = responseFactory.newHttpResponse(httpVersion, HttpStatus.SC_OK, context);
+                    HttpParamsLinker.link(response, params);
                     HttpEntity entity = exchange.getOut().getBody(HttpEntity.class);
                     response.setEntity(entity);
                     response.setParams(getEndpoint().getParams());
@@ -182,6 +179,11 @@ public class JhcConsumer extends DefaultConsumer<JhcExchange> {
                     }
                 }
             });
+            
+        }
+        public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
+            // now we just handler the requset async, do nothing here
+            
         }
     }
 

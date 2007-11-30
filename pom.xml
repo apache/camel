@@ -40,6 +40,7 @@
     <spring-version>2.0.6</spring-version>
     <geronimo-spec-version>1.1</geronimo-spec-version>
     <jetty-version>6.1.5</jetty-version>
+    <httpcore-version>4.0-alpha6</httpcore-version>
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
     <openjpa-version>0.9.6-incubating</openjpa-version>
     <release-repo-url>scpexe://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository
@@ -580,20 +581,20 @@
 
       <!-- optional jakarta http core support -->
       <dependency>
-	    <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpcore</artifactId>
-        <version>4.0-alpha5</version>
-	  </dependency>
+	 <groupId>org.apache.httpcomponents</groupId>
+         <artifactId>httpcore</artifactId>
+         <version>${httpcore-version}</version>
+      </dependency>
       <dependency>
-	    <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpcore-nio</artifactId>
-        <version>4.0-alpha5</version>
-	  </dependency>
+	 <groupId>org.apache.httpcomponents</groupId>
+         <artifactId>httpcore-nio</artifactId>
+         <version>${httpcore-version}</version>
+      </dependency>
       <dependency>
-	    <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpcore-niossl</artifactId>
-        <version>4.0-alpha5</version>
-	  </dependency>
+	 <groupId>org.apache.httpcomponents</groupId>
+         <artifactId>httpcore-niossl</artifactId>
+         <version>${httpcore-version}</version>
+      </dependency>
 
       <!-- optional scripting support -->
       <dependency>
