@@ -73,7 +73,7 @@ public class JmsConfiguration implements Cloneable {
     private int maxMessagesPerTask = 1;
     private ServerSessionFactory serverSessionFactory;
     private int cacheLevel = -1;
-    private String cacheLevelName = "CACHE_CONNECTION";
+    private String cacheLevelName;
     private long recoveryInterval = -1;
     private long receiveTimeout = -1;
     private int idleTaskExecutionLimit = 1;
@@ -233,13 +233,13 @@ public class JmsConfiguration implements Cloneable {
         return template;
     }
 
-    public AbstractMessageListenerContainer createMessageListenerContainer() {
+    public AbstractMessageListenerContainer createMessageListenerContainer(JmsEndpoint endpoint) {
         AbstractMessageListenerContainer container = chooseMessageListenerContainerImplementation();
-        configureMessageListenerContainer(container);
+        configureMessageListenerContainer(container, endpoint);
         return container;
     }
 
-    protected void configureMessageListenerContainer(AbstractMessageListenerContainer container) {
+    protected void configureMessageListenerContainer(AbstractMessageListenerContainer container, JmsEndpoint endpoint) {
         container.setConnectionFactory(getListenerConnectionFactory());
         if (destinationResolver != null) {
             container.setDestinationResolver(destinationResolver);
@@ -293,6 +293,9 @@ public class JmsConfiguration implements Cloneable {
             }
             else if (cacheLevelName != null) {
                 listenerContainer.setCacheLevelName(cacheLevelName);
+            }
+            else {
+                listenerContainer.setCacheLevel(defaultCacheLevel(endpoint));
             }
 
             if (idleTaskExecutionLimit >= 0) {
@@ -350,7 +353,6 @@ public class JmsConfiguration implements Cloneable {
         }
     }
 
-
     public void configure(EndpointMessageListener listener) {
         if (isDisableReplyTo()) {
             listener.setDisableReplyTo(true);
@@ -390,7 +392,7 @@ public class JmsConfiguration implements Cloneable {
 
     /**
      * Sets the connection factory to be used for consuming messages via the
-     * {@link #createMessageListenerContainer()}
+     * {@link #createMessageListenerContainer(JmsEndpoint)}
      *
      * @param listenerConnectionFactory the connection factory to use for
      *                                  consuming messages
@@ -729,6 +731,32 @@ public class JmsConfiguration implements Cloneable {
         }
     }
 
+
+    /**
+     * Defaults the JMS cache level if none is explicitly specified.
+     *
+     * Note that due to this
+     * <a href="http://opensource.atlassian.com/projects/spring/browse/SPR-3890">Spring Bug</a>
+     * we cannot use CACHE_CONSUMER by default which we should do as its most efficient.
+     * Instead we use CACHE_CONNECTION - part from for non-durable topics which must use
+     * CACHE_CONSUMER to avoid missing messages (due to the consumer being created and destroyed per message).
+     *
+     * @return
+     * @param endpoint
+     */
+    protected int defaultCacheLevel(JmsEndpoint endpoint) {
+        if (endpoint.isPubSubDomain() && !isSubscriptionDurable()) {
+            // we must cache the consumer or we will miss messages
+            // see https://issues.apache.org/activemq/browse/CAMEL-253
+            return DefaultMessageListenerContainer.CACHE_CONSUMER;
+        }
+        else {
+            // to enable consuming and sending with a single JMS session (to avoid XA) we can only use CACHE_CONNECTION
+            // due to this bug : http://opensource.atlassian.com/projects/spring/browse/SPR-3890
+            return DefaultMessageListenerContainer.CACHE_CONNECTION;
+        }
+    }
+    
     /**
      * Factory method which allows derived classes to customize the lazy
      * creation

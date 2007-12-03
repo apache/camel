@@ -69,7 +69,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     }
 
     public JmsConsumer createConsumer(Processor processor) throws Exception {
-        AbstractMessageListenerContainer listenerContainer = configuration.createMessageListenerContainer();
+        AbstractMessageListenerContainer listenerContainer = configuration.createMessageListenerContainer(this);
         return createConsumer(processor, listenerContainer);
     }
 
@@ -183,6 +183,10 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
      */
     public void setRequestTimeout(long requestTimeout) {
         this.requestTimeout = requestTimeout;
+    }
+
+    public boolean isPubSubDomain() {
+        return pubSubDomain;
     }
 
     // Implementation methods
