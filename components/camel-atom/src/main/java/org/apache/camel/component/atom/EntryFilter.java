@@ -17,18 +17,13 @@
  */
 package org.apache.camel.component.atom;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-
-import java.util.Map;
+import org.apache.abdera.model.Feed;
+import org.apache.abdera.model.Document;
+import org.apache.abdera.model.Entry;
 
 /**
- * An <a href="http://activemq.apache.org/camel/atom.html">Atom Component</a>.
- *
  * @version $Revision: 1.1 $
  */
-public class AtomComponent extends DefaultComponent {
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return new AtomEndpoint(uri, this, remaining);
-    }
+public interface EntryFilter {
+    boolean isValidEntry(AtomEndpoint endpoint, Document<Feed> feed, Entry entry);
 }

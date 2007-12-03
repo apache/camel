@@ -17,20 +17,20 @@
  */
 package org.apache.camel.component.atom;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Date;
+
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.util.iri.IRISyntaxException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import static org.apache.camel.util.ExchangeHelper.getExchangeProperty;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.OutputStream;
-import java.io.IOException;
-import java.util.Date;
 
 /**
  * @version $Revision: 1.1 $
@@ -61,7 +61,7 @@ public class AtomProducer extends DefaultProducer {
         Document<Feed> document = endpoint.parseDocument();
         Feed root = document.getRoot();
         Entry entry = root.addEntry();
-        entry.setPublished(org.apache.camel.util.ExchangeHelper.getExchangeProperty(exchange, "org.apache.camel.atom.published", Date.class, new Date()));
+        entry.setPublished(ExchangeHelper.getExchangeProperty(exchange, "org.apache.camel.atom.published", Date.class, new Date()));
 
         String id = exchange.getProperty("org.apache.camel.atom.id", String.class);
         if (id != null) {
