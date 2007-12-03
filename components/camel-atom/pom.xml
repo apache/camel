@@ -34,20 +34,54 @@
   <description>Camel Atom support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.component.atom*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.component.atom*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
+    <!-- TODO these two should be picked up transitively! -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.xml</groupId>
+      <artifactId>jaxb-api</artifactId>
+    </dependency>
+
+
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
+      <artifactId>camel-core</artifactId>
     </dependency>
-      <dependency>
+    <dependency>
       <groupId>org.apache.abdera</groupId>
-        <artifactId>abdera-extensions</artifactId>
-      <version>0.2.0-incubating</version>
-      <scope>compile</scope>
+      <artifactId>abdera-extensions-main</artifactId>
+      <version>0.3.0-incubating</version>
+    </dependency>
+
+
+    <!-- testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
-
+    
 </project>

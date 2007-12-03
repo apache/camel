@@ -17,9 +17,9 @@
  */
 package org.apache.camel.component.atom;
 
-import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
+import org.apache.abdera.model.Feed;
 
 /**
  * @version $Revision: 1.1 $

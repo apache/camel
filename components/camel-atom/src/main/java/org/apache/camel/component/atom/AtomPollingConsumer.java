@@ -19,12 +19,9 @@ package org.apache.camel.component.atom;
 
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Feed;
-import org.apache.abdera.util.iri.IRISyntaxException;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.PollingConsumerSupport;
-
-import java.io.IOException;
 
 /**
  * @version $Revision: 1.1 $
@@ -44,10 +41,7 @@ public class AtomPollingConsumer extends PollingConsumerSupport {
             exchange.getIn().setBody(document);
             return exchange;
         }
-        catch (IRISyntaxException e) {
-            throw new RuntimeCamelException(e);
-        }
-        catch (IOException e) {
+        catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
     }
@@ -65,6 +59,4 @@ public class AtomPollingConsumer extends PollingConsumerSupport {
 
     protected void doStop() throws Exception {
     }
-
-
 }

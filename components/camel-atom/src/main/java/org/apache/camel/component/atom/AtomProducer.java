@@ -17,14 +17,12 @@
  */
 package org.apache.camel.component.atom;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
-import org.apache.abdera.util.iri.IRISyntaxException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
@@ -57,7 +55,7 @@ public class AtomProducer extends DefaultProducer {
         }
     }
 
-    protected Document<Feed> getDocument(Exchange exchange) throws IRISyntaxException, IOException {
+    protected Document<Feed> getDocument(Exchange exchange) throws Exception {
         Document<Feed> document = endpoint.parseDocument();
         Feed root = document.getRoot();
         Entry entry = root.addEntry();
