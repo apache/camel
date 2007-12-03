@@ -17,10 +17,10 @@
  */
 package org.apache.camel.component.atom;
 
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-
-import java.util.Map;
 
 /**
  * An <a href="http://activemq.apache.org/camel/atom.html">Atom Component</a>.

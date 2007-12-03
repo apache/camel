@@ -20,7 +20,6 @@ package org.apache.camel.component.atom;
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -31,7 +30,6 @@ import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.parser.Parser;
-import org.apache.abdera.util.iri.IRISyntaxException;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
@@ -70,7 +68,7 @@ public class AtomEndpoint extends DefaultPollingEndpoint {
         }
     }
 
-    public Document<Feed> parseDocument() throws IRISyntaxException, IOException {
+    public Document<Feed> parseDocument() throws Exception {
         String uri = getAtomUri();
         InputStream in = new URL(uri).openStream();
         return createAtomParser().parse(in, uri);
