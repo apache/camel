@@ -17,19 +17,6 @@
  */
 package org.apache.camel.component.atom;
 
-import org.apache.abdera.Abdera;
-import org.apache.abdera.factory.Factory;
-import org.apache.abdera.model.Document;
-import org.apache.abdera.model.Feed;
-import org.apache.abdera.parser.Parser;
-import org.apache.abdera.util.iri.IRISyntaxException;
-import org.apache.camel.Exchange;
-import org.apache.camel.PollingConsumer;
-import org.apache.camel.Producer;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultPollingEndpoint;
-
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -37,6 +24,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+
+import org.apache.abdera.Abdera;
+import org.apache.abdera.factory.Factory;
+import org.apache.abdera.model.Document;
+import org.apache.abdera.model.Entry;
+import org.apache.abdera.model.Feed;
+import org.apache.abdera.parser.Parser;
+import org.apache.abdera.util.iri.IRISyntaxException;
+import org.apache.camel.Exchange;
+import org.apache.camel.PollingConsumer;
+import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultPollingEndpoint;
 
 /**
  * An <a href="http://activemq.apache.org/camel/atom.html">Atom Endpoint</a>.
@@ -46,6 +45,7 @@ import java.net.URL;
 public class AtomEndpoint extends DefaultPollingEndpoint {
     private Factory atomFactory;
     private String atomUri;
+    private boolean splitEntries = true;
 
     public AtomEndpoint(String endpointUri, AtomComponent component, String atomUri) {
         super(endpointUri, component);
@@ -62,7 +62,12 @@ public class AtomEndpoint extends DefaultPollingEndpoint {
 
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
-        return new AtomPollingConsumer(this);
+        if (isSplitEntries()) {
+            return new AtomEntryPollingConsumer(this);
+        }
+        else {
+            return new AtomPollingConsumer(this);
+        }
     }
 
     public Document<Feed> parseDocument() throws IRISyntaxException, IOException {
@@ -73,6 +78,13 @@ public class AtomEndpoint extends DefaultPollingEndpoint {
 
     public OutputStream createProducerOutputStream() throws FileNotFoundException {
         return new BufferedOutputStream(new FileOutputStream(getAtomUri()));
+    }
+
+    public Exchange createExchange(Document<Feed> document, Entry entry) {
+        Exchange exchange = createExchange();
+        exchange.getIn().setBody(entry);
+        exchange.setProperty("CamelAtomFeed", document);
+        return exchange;
     }
 
     // Properties
@@ -94,6 +106,18 @@ public class AtomEndpoint extends DefaultPollingEndpoint {
 
     public void setAtomUri(String atomUri) {
         this.atomUri = atomUri;
+    }
+
+    public boolean isSplitEntries() {
+        return splitEntries;
+    }
+
+    /**
+     * Sets whether or not entries should be sent individually or whether the entire
+     * feed should be sent as a single message
+     */
+    public void setSplitEntries(boolean splitEntries) {
+        this.splitEntries = splitEntries;
     }
 
     // Implementation methods
