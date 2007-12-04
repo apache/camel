@@ -39,6 +39,8 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private String regexPattern = "";
     private long lastPollTime;
     boolean generateEmptyExchangeWhenIdle;
+    private int unchangedDelay = 0;
+    private boolean unchangedSize = false;
 
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -159,11 +161,58 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     protected boolean isValidFile(File file) {
         boolean result = false;
         if (file != null && file.exists()) {
-            if (isMatched(file)) {
+            // TODO: maybe use a configurable strategy instead of the 
+            // hardcoded one based on last file change
+            if (isMatched(file) && isUnchanged(file)) {
                 result = true;
             }
         }
         return result;
+    }
+
+    private ConcurrentHashMap<File, Long> fileSizes = new ConcurrentHashMap<File, Long>();
+    
+    protected boolean isUnchanged(File file) {
+        if (file == null) {
+            // Sanity check
+            return false;
+        }  else if (file.isDirectory()) {
+            // Allow recursive polling to descend into this directory
+            return true;
+        } else {
+            boolean lastModifiedCheck = true;
+            long modifiedDuration = 0;
+            if (getUnchangedDelay() > 0) {
+                modifiedDuration = System.currentTimeMillis() - file.lastModified();
+                lastModifiedCheck = (modifiedDuration >= getUnchangedDelay());
+            }
+            
+            boolean sizeCheck = true;
+            long sizeDifference = 0;
+            if (isUnchangedSize()) {
+                long prevFileSize = (fileSizes.get(file)==null) ? 0 : fileSizes.get(file).longValue();
+                sizeDifference = file.length() - prevFileSize;
+                sizeCheck = (0 == sizeDifference);
+            }
+            
+            boolean answer = lastModifiedCheck && sizeCheck;
+            
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("file:" + file + " isUnchanged:" + answer + " " + 
+                          "sizeCheck:" + sizeCheck + "(" + sizeDifference + ") " + 
+                          "lastModifiedCheck:" + lastModifiedCheck + "(" +modifiedDuration + ")");
+            }
+            
+            if (isUnchangedSize()) {
+                if (answer) {
+                    fileSizes.remove(file);
+                } else {
+                    fileSizes.put(file, file.length());
+                }
+            }
+            
+            return answer;
+        }
     }
 
     protected boolean isMatched(File file) {
@@ -226,6 +275,22 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
 
     public void setGenerateEmptyExchangeWhenIdle(boolean generateEmptyExchangeWhenIdle) {
         this.generateEmptyExchangeWhenIdle = generateEmptyExchangeWhenIdle;
+    }
+
+    public int getUnchangedDelay() {
+        return unchangedDelay;
+    }
+
+    public void setUnchangedDelay(int unchangedDelay) {
+        this.unchangedDelay = unchangedDelay;
+    }
+
+    public boolean isUnchangedSize() {
+        return unchangedSize;
+    }
+
+    public void setUnchangedSize(boolean unchangedSize) {
+        this.unchangedSize = unchangedSize;
     }
 
 }
