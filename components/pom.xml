@@ -51,6 +51,7 @@
     <module>camel-jing</module>
     <module>camel-jms</module>
     <module>camel-josql</module>
+    <module>camel-jcr</module>
     <module>camel-jpa</module>
     <module>camel-juel</module>
     <module>camel-mail</module>
