@@ -73,6 +73,10 @@ public class JmsProducer extends DefaultProducer {
                 in.setHeader("JMSCorrelationID", correlationId);
             }
 
+            // lets register the future object before we try send just in case
+            long requestTimeout = endpoint.getRequestTimeout();
+            FutureTask future = requestor.getReceiveFuture(correlationId, requestTimeout);
+
             getInOutTemplate().send(endpoint.getDestination(), new MessageCreator() {
                 public Message createMessage(Session session) throws JMSException {
                     Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session);
@@ -86,9 +90,6 @@ public class JmsProducer extends DefaultProducer {
             });
 
             // lets wait and return the response
-            long requestTimeout = endpoint.getRequestTimeout();
-            FutureTask future = requestor.getReceiveFuture(correlationId, requestTimeout);
-
             try {
                 Message message;
                 if (requestTimeout < 0) {
