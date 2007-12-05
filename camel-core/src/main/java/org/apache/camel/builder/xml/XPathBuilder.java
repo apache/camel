@@ -195,6 +195,19 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     }
 
     /**
+     * Registers namespaces with the builder so that the registered
+     * prefixes can be used in XPath expressions
+     * 
+     * @param namespaces is namespaces object that should be used in the
+     *                      XPath expression
+     * @return the current builder
+     */
+    public XPathBuilder<E> namespaces(Namespaces namespaces) {
+        namespaces.configure(this);
+        return this;
+    }
+    
+    /**
      * Registers a variable (in the global namespace) which can be referred to
      * from XPath expressions
      */

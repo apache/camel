@@ -102,6 +102,15 @@ public class Namespaces {
     }
 
     /**
+     * Creates the XPath expression using the current namespace context
+     */
+    public XPathExpression xpath(String expression, Class<?> resultType) {
+        XPathExpression answer = xpath(expression);
+        answer.setResultType(resultType);
+        return answer;
+    }
+
+    /**
      * Creates the XQuery expression using the current namespace context
      */
     public XQueryExpression xquery(String expression) {
@@ -114,9 +123,9 @@ public class Namespaces {
      * Creates the XQuery expression using the current namespace context
      * and the given expected return type
      */
-    public XQueryExpression xquery(String expression, Class<?> returnType) {
+    public XQueryExpression xquery(String expression, Class<?> resultType) {
         XQueryExpression answer = new XQueryExpression(expression);
-        answer.setResultType(returnType);
+        answer.setResultType(resultType);
         configure(answer);
         return answer;
     }
