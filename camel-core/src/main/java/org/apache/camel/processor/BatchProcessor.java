@@ -63,7 +63,6 @@ public class BatchProcessor extends ServiceSupport implements Runnable {
     public void run() {
         LOG.debug("Starting thread for " + this);
         while (isRunAllowed()) {
-            collection.clear();
             try {
                 processBatch();
             } catch (Exception e) {
@@ -136,6 +135,7 @@ public class BatchProcessor extends ServiceSupport implements Runnable {
         Iterator<Exchange> iter = collection.iterator();
         while (iter.hasNext()) {
             Exchange exchange = iter.next();
+            iter.remove();
             processExchange(exchange);
         }
     }
