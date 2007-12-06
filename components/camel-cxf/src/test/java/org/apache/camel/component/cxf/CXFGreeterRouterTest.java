@@ -22,6 +22,8 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Service;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.spring.processor.SpringTestHelper;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.GreeterImpl;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -31,7 +33,6 @@ public class CXFGreeterRouterTest extends CXFRouterSpringTest {
                                                 "SOAPService");
     private final QName routerPortName = new QName("http://apache.org/hello_world_soap_http",
                                                 "RouterPort");
-    
     @Override
     protected void startService() {
         Object implementor = new GreeterImpl();
@@ -71,8 +72,8 @@ public class CXFGreeterRouterTest extends CXFRouterSpringTest {
     }
     
     @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointBeans.xml");
+    protected CamelContext createCamelContext() throws Exception {
+        return SpringTestHelper.createSpringCamelContext(this, "org/apache/camel/component/cxf/GreeterEndpointBeans.xml");
     }
 }
     

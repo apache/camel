@@ -130,7 +130,7 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
         client.onMessage(inMessage);
         
         exchange.getOut().setBody(inMessage.getContent(Source.class));
-        //TODO copy the right header information
+        
         exchange.getOut().setHeaders(inMessage);
     }
     
@@ -145,7 +145,7 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
         cxfExchange.put(org.apache.cxf.endpoint.Endpoint.class, cxfEndpoint);
         cxfExchange.put(Bus.class, getBus());
         cxfExchange.setConduit(new NullConduit());
-        exchange.setProperty("CxfExchange", cxfExchange);        
+        exchange.setProperty(CxfConstants.CXF_EXCHANGE, cxfExchange);        
         org.apache.cxf.message.Message outMessage = CxfSoapBinding.getCxfOutMessage(exchange, true);
         outMessage.put(Message.REQUESTOR_ROLE, Boolean.TRUE);
         outMessage.put(Message.INBOUND_MESSAGE, Boolean.FALSE);

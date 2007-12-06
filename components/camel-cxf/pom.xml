@@ -226,11 +226,7 @@
           <useFile>true</useFile>
           <includes>
             <include>**/*Test.*</include>
-          </includes>
-          <excludes>
-            <!-- TODO re-enable ASAP! -->            
-            <exclude>**/transport/*Test.*</exclude>
-          </excludes>
+          </includes>          
         </configuration>
       </plugin>
     </plugins>

@@ -46,7 +46,7 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
     private Bus bus;
     private CamelContext camelContext;
 
-    @Resource
+    @Resource(name = "bus")
     public void setBus(Bus b) {
         bus = b;
     }
@@ -59,7 +59,7 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
         return camelContext;
     }
 
-    @Resource
+    @Resource(name = "camelContext")
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
