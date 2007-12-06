@@ -53,6 +53,14 @@ public class AggregatorTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    public void testOneMessage() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+
+        resultEndpoint.expectedMessageCount(1);
+        template.sendBodyAndHeader("direct:predicate", "test", "aggregated", 5);
+        resultEndpoint.assertIsSatisfied();
+    }
+    
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

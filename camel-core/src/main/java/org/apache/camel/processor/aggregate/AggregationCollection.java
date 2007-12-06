@@ -37,6 +37,10 @@ public class AggregationCollection extends AbstractCollection<Exchange> {
     private final AggregationStrategy aggregationStrategy;
     private Map<Object, Exchange> map = new LinkedHashMap<Object, Exchange>();
 
+    protected Map<Object, Exchange> getMap() {
+        return map;
+    }
+
     public AggregationCollection(Expression<Exchange> correlationExpression,
                                  AggregationStrategy aggregationStrategy) {
         this.correlationExpression = correlationExpression;
