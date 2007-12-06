@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 import junit.framework.TestCase;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
@@ -36,14 +37,16 @@ import org.apache.cxf.service.Service;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.service.model.ServiceInfo;
 import org.apache.cxf.transport.Conduit;
+import org.apache.cxf.transport.ConduitInitiatorManager;
+import org.apache.cxf.transport.DestinationFactoryManager;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.apache.cxf.wsdl11.WSDLServiceFactory;
 
 import org.easymock.classextension.EasyMock;
 
-public abstract class CamelTestSupport extends TestCase {
-    protected CamelContext camelContext = new DefaultCamelContext();
+public abstract class CamelTestSupport extends ContextTestSupport {
+   
     protected Bus bus;
     protected EndpointInfo endpointInfo;
     protected EndpointReferenceType target;
@@ -51,73 +54,68 @@ public abstract class CamelTestSupport extends TestCase {
     protected Message inMessage;
 
     public void setUp() throws Exception {
-        camelContext.start();
+        super.setUp();
         BusFactory bf = BusFactory.newInstance();
+        //setup the camel transport for the bus
         bus = bf.createBus();
+        DestinationFactoryManager dfm = bus.getExtension(DestinationFactoryManager.class);
+        CamelTransportFactory camelTransportFactory = new CamelTransportFactory();
+        //set the context here to the transport factory;
+        camelTransportFactory.setCamelContext(context);
+        dfm.registerDestinationFactory("http://cxf.apache.org/transports/camel", camelTransportFactory);
+        
+        ConduitInitiatorManager cim = bus.getExtension(ConduitInitiatorManager.class);
+        cim.registerConduitInitiator("http://cxf.apache.org/transports/camel", camelTransportFactory);
         BusFactory.setDefaultBus(bus);
+        endpointInfo = new EndpointInfo();
     }
 
     public void tearDown() throws Exception {
-        bus.shutdown(true);
-        if (System.getProperty("cxf.config.file") != null) {
-            System.clearProperty("cxf.config.file");
-        }
-        camelContext.stop();
+        bus.shutdown(true);        
+        super.tearDown();
     }
-
-    protected void setupServiceInfo(String ns, String wsdl, String serviceName, String portName) {
-        URL wsdlUrl = getClass().getResource(wsdl);
-
-        assertNotNull("Could not find WSDL: " + wsdl, wsdlUrl);
-        WSDLServiceFactory factory = new WSDLServiceFactory(bus, wsdlUrl, new QName(ns, serviceName));
-
-        Service service = factory.create();
-        List<ServiceInfo> list = service.getServiceInfos();
-        for (ServiceInfo serviceInfo : list) {
-            endpointInfo = serviceInfo.getEndpoint(new QName(ns, portName));
-            if (endpointInfo != null) {
-                break;
-            }
-        }
-    }
-
-    protected void sendoutMessage(Conduit conduit, Message message, Boolean isOneWay) throws IOException {
-
-        Exchange exchange = new ExchangeImpl();
-        exchange.setOneWay(isOneWay);
-        message.setExchange(exchange);
-        exchange.setInMessage(message);
-        try {
-            conduit.prepare(message);
-        } catch (IOException ex) {
-            assertFalse("CamelConduit can't perpare to send out message", false);
-            ex.printStackTrace();
-        }
-        OutputStream os = message.getContent(OutputStream.class);
-        assertTrue("The OutputStream should not be null ", os != null);
-        os.write("HelloWorld".getBytes());
-        os.close();
-    }
-
-    protected CamelConduit setupCamelConduit(boolean send, boolean decoupled) {
+    
+    protected CamelConduit setupCamelConduit(EndpointInfo endpointInfo, boolean send, boolean decoupled) {
         if (decoupled) {
             // setup the reference type
         } else {
             target = EasyMock.createMock(EndpointReferenceType.class);
-        }
-
-        CamelConduit camelConduit = new CamelConduit(camelContext, bus, endpointInfo, target);
-
+        }    
+        
+        CamelConduit camelConduit = new CamelConduit(context, bus, endpointInfo, target);
+        
         if (send) {
             // setMessageObserver
             observer = new MessageObserver() {
-                public void onMessage(Message m) {
+                public void onMessage(Message m) {                    
                     inMessage = m;
                 }
             };
             camelConduit.setMessageObserver(observer);
         }
-
-        return camelConduit;
+        
+        return camelConduit;        
     }
+    
+    protected void sendoutMessage(Conduit conduit, Message message, Boolean isOneWay, String content) throws IOException {
+        Exchange cxfExchange = message.getExchange();
+        if (cxfExchange == null) {
+            cxfExchange = new ExchangeImpl();
+            cxfExchange.setOneWay(isOneWay);
+            message.setExchange(cxfExchange);
+            cxfExchange.setInMessage(message);
+        }    
+        try {
+            conduit.prepare(message);
+        } catch (IOException ex) {
+            assertFalse("CamelConduit can't perpare to send out message", false);
+            ex.printStackTrace();            
+        }            
+        OutputStream os = message.getContent(OutputStream.class);
+        assertTrue("The OutputStream should not be null ", os != null);
+        os.write(content.getBytes());
+        os.close();            
+    }
+    
+    
 }

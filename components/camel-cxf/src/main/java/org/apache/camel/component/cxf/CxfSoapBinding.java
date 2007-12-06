@@ -38,7 +38,7 @@ public class CxfSoapBinding {
     
     public static org.apache.cxf.message.Message getCxfInMessage(org.apache.camel.Exchange exchange, boolean isClient) {
         MessageImpl answer = new MessageImpl();
-        org.apache.cxf.message.Exchange cxfExchange = exchange.getProperty("CxfExchange", 
+        org.apache.cxf.message.Exchange cxfExchange = exchange.getProperty(CxfConstants.CXF_EXCHANGE, 
                                                                         org.apache.cxf.message.Exchange.class);
         org.apache.camel.Message message = null;
         if (isClient) {
@@ -46,9 +46,10 @@ public class CxfSoapBinding {
         } else {
             message = exchange.getIn();
         }
+        assert message != null;
         if (cxfExchange == null) {
             cxfExchange = new ExchangeImpl();
-            exchange.setProperty("CxfExchange", cxfExchange);
+            exchange.setProperty(CxfConstants.CXF_EXCHANGE, cxfExchange);
         }    
         Object body = message.getBody(InputStream.class);
         if (body == null) {
@@ -57,13 +58,14 @@ public class CxfSoapBinding {
         if (body instanceof InputStream) {
             answer.setContent(InputStream.class, body);             
         }
+        answer.putAll(message.getHeaders());
         answer.setExchange(cxfExchange);
         cxfExchange.setInMessage(answer);
         return answer;
     }
     
     public static org.apache.cxf.message.Message getCxfOutMessage(org.apache.camel.Exchange exchange, boolean isClient) {
-        org.apache.cxf.message.Exchange cxfExchange = exchange.getProperty("CxfExchange", org.apache.cxf.message.Exchange.class);
+        org.apache.cxf.message.Exchange cxfExchange = exchange.getProperty(CxfConstants.CXF_EXCHANGE, org.apache.cxf.message.Exchange.class);
         assert cxfExchange != null;
         org.apache.cxf.endpoint.Endpoint cxfEndpoint = cxfExchange.get(org.apache.cxf.endpoint.Endpoint.class);
         org.apache.cxf.message.Message outMessage = cxfEndpoint.getBinding().createMessage();

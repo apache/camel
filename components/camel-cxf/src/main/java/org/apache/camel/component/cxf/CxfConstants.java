@@ -23,8 +23,8 @@ package org.apache.camel.component.cxf;
  */
 public interface CxfConstants {
     String METHOD = "method";
-    String SEI = "sei";
-    String IMPL = "impl";
+    String SERVICE_CLASS = "serviceClass";
+    String DATA_FORMATE = "dataFormat";
     String WSDL_URL = "wsdlURL";
     String ADDRESS = "address";
     String SERVICE_NAME = "serviceName";
@@ -32,7 +32,10 @@ public interface CxfConstants {
     String PROTOCOL_NAME_RES = "res";
     String OPERATION_NAME = "operationName";
     String SPRING_CONTEXT_ENDPOINT = "bean:";
-    // service name -- come from the wsdl   
+    String CAMEL_TRANSPORT_PREFIX = "camel:";
+    String CXF_EXCHANGE = "org.apache.cxf.message.exchange";
+    String CAMEL_EXCHANGE = "org.apache.camel.exchange";
+     
 }
 
 

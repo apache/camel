@@ -81,12 +81,17 @@ public class    CxfSoapTest extends ContextTestSupport {
         // set out the source message
         URL request = this.getClass().getResource("RequestBody.xml");
         File requestFile = new File(request.toURI());
-        FileInputStream inputStream = new FileInputStream(requestFile);
+        FileInputStream inputStream = new FileInputStream(requestFile);        
         XMLStreamReader xmlReader = StaxUtils.createXMLStreamReader(inputStream);
         DOMSource source = new DOMSource(StaxUtils.read(xmlReader));        
-        Object result = template.sendBody("direct:producer", source);
+        MockEndpoint endpoint = getMockEndpoint("mock:producer");
+        endpoint.expectedMessageCount(1);
+        Object result = template.sendBody("direct:producer", source);        
+       
+        assertMockEndpointsSatisifed();
         assertFalse("The result should not be changed", source.equals(result));
         assertTrue("The result should be the instance of DOMSource", result instanceof DOMSource);
         assertEquals("The DOMSource should be equal", XMLUtils.toString(source), XMLUtils.toString((Source)result));
+        
     }
 }

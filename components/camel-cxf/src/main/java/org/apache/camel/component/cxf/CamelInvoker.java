@@ -56,8 +56,7 @@ public class CamelInvoker implements Invoker  {
     * @param inMessage
     * @return outMessage
     */
-    public Message invoke(Message inMessage) {
-        System.out.println("invoke the message " + inMessage);
+    public Message invoke(Message inMessage) {        
         Exchange exchange = inMessage.getExchange();
         //InvokingContext invokingContext = exchange.get(InvokingContext.class);
                                
@@ -169,7 +168,7 @@ public class CamelInvoker implements Invoker  {
             // catch the exception and send back to cxf client
             e.printStackTrace();
         }
-        //System.out.println(cxfExchange.getOut().getBody());
+        
         //TODO deal with the fault message
         Object result;
         if (cxfExchange.isFailed()) {

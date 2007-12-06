@@ -21,54 +21,90 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
+import org.apache.cxf.message.Exchange;
+import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
+import org.apache.cxf.service.model.EndpointInfo;
+import org.apache.cxf.transport.Conduit;
+import org.apache.cxf.transport.MessageObserver;
+import org.apache.cxf.ws.addressing.EndpointReferenceType;
+import org.easymock.classextension.EasyMock;
 
 public class CamelConduitTest extends CamelTestSupport {
-    public void xtestGetConfiguration() throws Exception {
-        // setup the new bus to get the configuration file
-        SpringBusFactory bf = new SpringBusFactory();
-        BusFactory.setDefaultBus(null);
-        bus = bf.createBus("/wsdl/camel_test_config.xml");
-        BusFactory.setDefaultBus(bus);
-        setupServiceInfo("http://cxf.apache.org/camel_conf_test", "/wsdl/camel_test_no_addr.wsdl", "HelloWorldQueueBinMsgService", "HelloWorldQueueBinMsgPort");
-        CamelConduit conduit = setupCamelConduit(false, false);
-        
-        bus.shutdown(false);
-        BusFactory.setDefaultBus(null);
+   
+       
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("direct:Producer").to("mock:EndpointA").process(new Processor() {
+                    
+                    public void process(org.apache.camel.Exchange exchange) throws Exception {
+                        
+                        if (exchange.getPattern().isOutCapable()) {
+                            Object result = exchange.getIn().getBody();                        
+                            exchange.getOut().setBody(result);                       
+                        }
+                    }
+                });              
+            }
+        };
+    }
+    
+    protected CamelContext createCamelContext() throws Exception {
+        return new DefaultCamelContext();
     }
 
     public void testPrepareSend() throws Exception {
-        setupServiceInfo("http://cxf.apache.org/hello_world_camel", "/wsdl/camel_test.wsdl", "HelloWorldService", "HelloWorldPort");
-
-        CamelConduit conduit = setupCamelConduit(false, false);
+        endpointInfo.setAddress("camel://direct:Producer");
+        CamelConduit conduit = setupCamelConduit(endpointInfo, false, false);
         Message message = new MessageImpl();
         try {
             conduit.prepare(message);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        verifySentMessage(false, message);
+        verifyMessageContent(message);
     }
 
-    public void verifySentMessage(boolean send, Message message) {
+    public void verifyMessageContent(Message message) {
         OutputStream os = message.getContent(OutputStream.class);
         assertTrue("OutputStream should not be null", os != null);
     }
 
-    public void testSendOut() throws Exception {
-        setupServiceInfo("http://cxf.apache.org/hello_world_camel", "/wsdl/camel_test.wsdl", "HelloWorldServiceLoop", "HelloWorldPortLoop");
-
-        CamelConduit conduit = setupCamelConduit(true, false);
+    public void testSendOut() throws Exception {       
+        endpointInfo.setAddress("camel://direct:Producer");
+        CamelConduit conduit = setupCamelConduit(endpointInfo, true, false);
+        MockEndpoint endpoint = getMockEndpoint("mock:EndpointA");
+        endpoint.expectedMessageCount(1);
         Message message = new MessageImpl();
-        // set the isOneWay to false
-        sendoutMessage(conduit, message, false);
-        verifyReceivedMessage(message);
+        // set the isOneWay to be true
+        sendoutMessage(conduit, message, true, "HelloWorld");
+        assertMockEndpointsSatisifed();
+        // verify the endpoint get the response 
+    }
+    
+    public void testSendOutRunTrip() throws Exception {
+        endpointInfo.setAddress("camel://direct:Producer");
+        CamelConduit conduit = setupCamelConduit(endpointInfo, true, false);
+        MockEndpoint endpoint = getMockEndpoint("mock:EndpointA");
+        endpoint.expectedMessageCount(1);
+        Message message = new MessageImpl();
+        // set the isOneWay to be false
+        sendoutMessage(conduit, message, false, "HelloWorld");        
+        // verify the endpoint get the response 
+        assertMockEndpointsSatisifed();
+        verifyReceivedMessage();
     }
 
-    public void verifyReceivedMessage(Message message) {
+    public void verifyReceivedMessage() {
         ByteArrayInputStream bis = (ByteArrayInputStream)inMessage.getContent(InputStream.class);
         byte bytes[] = new byte[bis.available()];
         try {
@@ -79,12 +115,7 @@ public class CamelConduitTest extends CamelTestSupport {
         String reponse = new String(bytes);
         assertEquals("The reponse date should be equals", reponse, "HelloWorld");
 
-        /*
-         * CamelMessageHeadersType inHeader =
-         * (CamelMessageHeadersType)inMessage.get(CamelConstants.Camel_CLIENT_RESPONSE_HEADERS);
-         * assertTrue("The inMessage Camel Header should not be null", inHeader !=
-         * null);
-         */
+        
 
     }
 }
