@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jms.BytesMessage;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
@@ -36,9 +38,9 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
 /**
- * @version $Revision$
+ * @version $Revision: 591979 $
  */
-public class ConsumeJmsMapMessageTest extends ContextTestSupport {
+public class ConsumeJmsBytesMessageTest extends ContextTestSupport {
     protected JmsTemplate jmsTemplate;
     private MockEndpoint endpoint;
 
@@ -46,45 +48,43 @@ public class ConsumeJmsMapMessageTest extends ContextTestSupport {
         endpoint.expectedMessageCount(1);
 
         jmsTemplate.setPubSubDomain(false);
-        jmsTemplate.send("test.map", new MessageCreator() {
+        jmsTemplate.send("test.bytes", new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
-                MapMessage mapMessage = session.createMapMessage();
-                mapMessage.setString("foo", "abc");
-                mapMessage.setString("bar", "xyz");
-                return mapMessage;
+                BytesMessage bytesMessage = session.createBytesMessage();
+                bytesMessage.writeByte((byte) 1);
+                bytesMessage.writeByte((byte) 2);
+                bytesMessage.writeByte((byte) 3);
+                return bytesMessage;
             }
         });
 
         endpoint.assertIsSatisfied();
-        assertCorrectMapReceived();
+        assertCorrectBytesReceived();
     }
 
-    protected void assertCorrectMapReceived() {
+    protected void assertCorrectBytesReceived() {
         Exchange exchange = endpoint.getReceivedExchanges().get(0);
         JmsExchange jmsExchange = assertIsInstanceOf(JmsExchange.class, exchange);
-        Map map = exchange.getIn().getBody(Map.class);
+        byte[] bytes = exchange.getIn().getBody(byte[].class);
 
-        log.info("Received map: " + map);
+        log.info("Received bytes: " + Arrays.toString(bytes));
 
-        assertNotNull("Should have received a map message!", map);
-        assertIsInstanceOf(MapMessage.class, jmsExchange.getInMessage());
-        assertEquals("map.foo", "abc", map.get("foo"));
-        assertEquals("map.bar", "xyz", map.get("bar"));
-        assertEquals("map.size", 2, map.size());
+        assertNotNull("Should have received a bytes message!", bytes);
+        assertIsInstanceOf(BytesMessage.class, jmsExchange.getInMessage());
+        assertEquals("Wrong byte 1", 1, bytes[0]);
+        assertEquals("Wrong payload lentght", 3, bytes.length);
     }
 
     public void testSendMapMessage() throws Exception {
 
         endpoint.expectedMessageCount(1);
         
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("foo", "abc");
-        map.put("bar", "xyz");
+        byte[] bytes = new byte[] {1, 2, 3};
         
-        template.sendBody("direct:test", map);
+        template.sendBody("direct:test", bytes);
         
         endpoint.assertIsSatisfied();
-        assertCorrectMapReceived();
+        assertCorrectBytesReceived();
     }
     
     @Override
@@ -106,8 +106,8 @@ public class ConsumeJmsMapMessageTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:test.map").to("mock:result");
-                from("direct:test").to("activemq:test.map");
+                from("activemq:test.bytes").to("mock:result");
+                from("direct:test").to("activemq:test.bytes");
             }
         };
     }

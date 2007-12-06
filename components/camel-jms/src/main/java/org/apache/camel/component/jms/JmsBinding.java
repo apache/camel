@@ -35,8 +35,10 @@ import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 import javax.xml.transform.TransformerException;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -73,8 +75,10 @@ public class JmsBinding {
             else if (message instanceof MapMessage) {
                 return createMapFromMapMessage((MapMessage) message);
             }
-            else if (message instanceof BytesMessage || message instanceof StreamMessage) {
-                // TODO we need a decoder to be able to process the message
+            else if (message instanceof BytesMessage) {
+                return createByteArrayFromBytesMessage((BytesMessage)message);
+            }
+            else if (message instanceof StreamMessage) {
                 return message;
             }
             else {
@@ -84,6 +88,15 @@ public class JmsBinding {
         catch (JMSException e) {
             throw new RuntimeJmsException("Failed to extract body due to: " + e + ". Message: " + message, e);
         }
+    }
+
+    protected byte[] createByteArrayFromBytesMessage(BytesMessage message) throws JMSException {
+        if (message.getBodyLength() > Integer.MAX_VALUE) {
+            return null;
+        }
+        byte[] result = new byte[(int) message.getBodyLength()];
+        message.readBytes(result);
+        return result;
     }
 
     /**
@@ -100,7 +113,7 @@ public class JmsBinding {
             answer = jmsMessage.getJmsMessage();
         }
         if (answer == null) {
-            answer = createJmsMessage(camelMessage.getBody(), session);
+            answer = createJmsMessage(camelMessage.getBody(), session, exchange.getContext());
             appendJmsProperties(answer, exchange, camelMessage);
         }
         return answer;
@@ -142,7 +155,7 @@ public class JmsBinding {
         }
     }
 
-    protected Message createJmsMessage(Object body, Session session) throws JMSException {
+    protected Message createJmsMessage(Object body, Session session, CamelContext context) throws JMSException {
         if (body instanceof Node) {
             // lets convert the document to a String format
             try {
@@ -154,14 +167,40 @@ public class JmsBinding {
                 throw jmsException;    
             }
         }
+        if (body instanceof byte[]) {
+            BytesMessage result = session.createBytesMessage();
+            result.writeBytes((byte[]) body);
+            return result;
+        }
+        if (body instanceof Map) {
+            MapMessage result = session.createMapMessage();
+            Map<?, ?> map = (Map<?, ?>) body;
+            try {
+                populateMapMessage(result, map, context);
+                return result;
+            } catch (JMSException e) {
+                // if MapMessage creation failed then fall back to Object Message
+            }
+        }
         if (body instanceof String) {
             return session.createTextMessage((String) body);
         }
-        else if (body instanceof Serializable) {
+        if (body instanceof Serializable) {
             return session.createObjectMessage((Serializable) body);
         }
-        else {
-            return session.createMessage();
+        return session.createMessage();
+    }
+
+    /**
+     * Populates a {@link MapMessage} from a {@link Map} instance. 
+     */
+    protected void populateMapMessage(MapMessage message, Map<?, ?> map, CamelContext context)
+        throws JMSException {
+        for (Object key : map.keySet()) {
+            String keyString = CamelContextHelper.convertTo(context, String.class, key);
+            if (keyString != null) {
+                message.setObject(keyString, map.get(key));
+            }
         }
     }
 
