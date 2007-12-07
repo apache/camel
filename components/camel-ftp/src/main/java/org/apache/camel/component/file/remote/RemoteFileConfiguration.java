@@ -46,7 +46,7 @@ public class RemoteFileConfiguration implements Cloneable {
     }
 
     public String toString() {
-        return protocol + ":\\" + username + "@" + host + ":" + port + "/" + directory;
+        return protocol + "://" + username + "@" + host + ":" + port + "/" + file;
     }
 
     public void configure(URI uri) {
@@ -71,6 +71,11 @@ public class RemoteFileConfiguration implements Cloneable {
     }
 
     public void setFile(String file) {
+        // Avoid accidentally putting everything in root on
+        // servers that expose the full filesystem
+        if (file.startsWith("/")) {
+            file = file.substring(1);
+        }
         this.file = file;
     }
 

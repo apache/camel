@@ -20,17 +20,25 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
 
-import com.jcraft.jsch.ChannelSftp;
-
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.FileComponent;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
 
 public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
+    private static final transient Log LOG = LogFactory.getLog(SftpConsumer.class);
+    
     private boolean recursive = true;
     private String regexPattern = "";
     private long lastPollTime;
     private final SftpEndpoint endpoint;
     private ChannelSftp channel;
+    private Session session;
     private boolean setNames = false;
 
     public SftpConsumer(SftpEndpoint endpoint, Processor processor, ChannelSftp channel) {
@@ -44,17 +52,65 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         this.endpoint = endpoint;
         this.channel = channel;
     }
-
-    protected void poll() throws Exception {
-        final String fileName = endpoint.getConfiguration().getFile();
-        if (endpoint.getConfiguration().isDirectory()) {
-            pollDirectory(fileName);
-        } else {
-            channel.cd(fileName.substring(0, fileName.lastIndexOf('/')));
-            final ChannelSftp.LsEntry file = (ChannelSftp.LsEntry)channel.ls(fileName.substring(fileName.lastIndexOf('/') + 1)).get(0);
-            pollFile(file);
+    
+    // TODO: is there a way to avoid copy-pasting the reconnect logic?
+    protected void connectIfNecessary() throws JSchException {
+        if (channel == null || !channel.isConnected()) {
+            if (session == null || !session.isConnected()) {
+                LOG.warn("Session isn't connected, trying to recreate and connect...");
+                session = endpoint.createSession();
+                session.connect();
+            }
+            LOG.warn("Channel isn't connected, trying to recreate and connect...");
+            channel = endpoint.createChannelSftp(session);
+            channel.connect();
+            LOG.info("Connected to " + endpoint.getConfiguration().toString());
         }
-        lastPollTime = System.currentTimeMillis();
+    }
+    
+    // TODO: is there a way to avoid copy-pasting the reconnect logic?
+    protected void disconnect() throws JSchException
+    {
+        if (session != null) {
+            LOG.info("Session is being explicitly disconnected");
+            session.disconnect();
+        }
+        if (channel != null) {
+            LOG.info("Channel is being explicitly disconnected");
+            channel.disconnect();
+        }
+    }
+
+    // TODO: is there a way to avoid copy-pasting the reconnect logic?
+    protected void poll() throws Exception {
+        connectIfNecessary();
+        // If the attempt to connect isn't successful, then the thrown 
+        // exception will signify that we couldn't poll
+        try {
+            final String fileName = endpoint.getConfiguration().getFile();
+            if (endpoint.getConfiguration().isDirectory()) {
+                pollDirectory(fileName);
+            } else {
+                channel.cd(fileName.substring(0, fileName.lastIndexOf('/')));
+                final ChannelSftp.LsEntry file = (ChannelSftp.LsEntry)channel.ls(fileName.substring(fileName.lastIndexOf('/') + 1)).get(0);
+                pollFile(file);
+            }
+            lastPollTime = System.currentTimeMillis();
+        } catch (JSchException e) {
+            // If the connection has gone stale, then we must manually disconnect
+            // the client before attempting to reconnect
+            LOG.warn("Disconnecting due to exception: " + e.toString());
+            disconnect();
+            // Rethrow to signify that we didn't poll
+            throw e;
+        } catch (SftpException e) {
+            // Still not sure if/when these come up and what we should do about them
+            // client.disconnect();
+            LOG.warn("Caught SftpException:" + e.toString());
+            LOG.warn("Doing nothing for now, need to determine an appropriate action");
+            // Rethrow to signify that we didn't poll
+            throw e;
+        }
     }
 
     protected void pollDirectory(String dir) throws Exception {

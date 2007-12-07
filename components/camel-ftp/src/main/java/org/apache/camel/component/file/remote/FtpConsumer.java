@@ -21,11 +21,17 @@ import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.file.FileComponent;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPConnectionClosedException;
 
 public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
+    private static final transient Log LOG = LogFactory.getLog(FtpConsumer.class);
+    
     private boolean recursive = true;
     private String regexPattern = "";
     private long lastPollTime;
@@ -44,17 +50,51 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         this.endpoint = endpoint;
         this.client = client;
     }
-
-    protected void poll() throws Exception {
-        final String fileName = endpoint.getConfiguration().getFile();
-        if (endpoint.getConfiguration().isDirectory()) {
-            pollDirectory(fileName);
-        } else {
-            client.changeWorkingDirectory(fileName.substring(0, fileName.lastIndexOf('/')));
-            final FTPFile[] files = client.listFiles(fileName.substring(fileName.lastIndexOf('/') + 1));
-            pollFile(files[0]);
+    
+    // TODO: is there a way to avoid copy-pasting the reconnect logic?
+    protected void connectIfNecessary() throws IOException {
+        if (!client.isConnected()) {
+            LOG.warn("FtpConsumer's client isn't connected, trying to reconnect...");
+            endpoint.connect(client);
+            LOG.info("Connected to " + endpoint.getConfiguration());
         }
-        lastPollTime = System.currentTimeMillis();
+    }
+    
+    // TODO: is there a way to avoid copy-pasting the reconnect logic?
+    protected void disconnect() throws IOException {
+        LOG.info("FtpConsumer's client is being explicitly disconnected");
+        endpoint.disconnect(client);
+    }
+
+    // TODO: is there a way to avoid copy-pasting the reconnect logic?
+    protected void poll() throws Exception {
+        connectIfNecessary();
+        // If the attempt to connect isn't successful, then the thrown 
+        // exception will signify that we couldn't poll
+        try {
+            final String fileName = endpoint.getConfiguration().getFile();
+            if (endpoint.getConfiguration().isDirectory()) {
+                pollDirectory(fileName);
+            } else {
+                client.changeWorkingDirectory(fileName.substring(0, fileName.lastIndexOf('/')));
+                final FTPFile[] files = client.listFiles(fileName.substring(fileName.lastIndexOf('/') + 1));
+                pollFile(files[0]);
+            }
+            lastPollTime = System.currentTimeMillis();
+        } catch (FTPConnectionClosedException e) {
+            // If the server disconnected us, then we must manually disconnect 
+            // the client before attempting to reconnect
+            LOG.warn("Disconnecting due to exception: " + e.toString());
+            disconnect();
+            // Rethrow to signify that we didn't poll
+            throw e;
+        } catch (RuntimeCamelException e) {
+            LOG.warn("Caught RuntimeCamelException: " + e.toString());
+            LOG.warn("Hoping an explicit disconnect/reconnect will solve the problem");
+            disconnect();
+            // Rethrow to signify that we didn't poll
+            throw e;
+        }
     }
 
     protected void pollDirectory(String dir) throws Exception {
