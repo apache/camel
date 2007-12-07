@@ -19,12 +19,15 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultMessage;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class FileConfigureTest extends ContextTestSupport {
     private static final String EXPECT_PATH = "target" + File.separator + "foo" + File.separator + "bar";
+    private static final String EXPECT_FILE = "some" + File.separator + "nested" + File.separator + "filename.txt";
 
     public void testUriConfigurations() throws Exception {
         assertFileEndpoint("file://target/foo/bar", EXPECT_PATH);
@@ -47,5 +50,10 @@ public class FileConfigureTest extends ContextTestSupport {
         File file = endpoint.getFile();
         String path = file.getPath();
         assertEquals("For uri: " + endpointUri + " the file is not equal", expectedPath, path);
+        
+        File consumedFile = new File(expectedPath + (expectedPath.endsWith(File.separator) ? "" : File.separator) + EXPECT_FILE);
+        Message message = new DefaultMessage();
+        endpoint.configureMessage(consumedFile, message);
+        assertEquals(EXPECT_FILE, message.getHeader(FileComponent.HEADER_FILE_NAME));  
     }
 }

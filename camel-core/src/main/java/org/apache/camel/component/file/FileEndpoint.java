@@ -109,8 +109,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      */
     public void configureMessage(File file, Message message) {
         message.setBody(file);
-        String path = file.getPath();
-        String relativePath = path.substring(path.length());
+        String relativePath = file.getPath().substring(getFile().getPath().length());
         if (relativePath.startsWith(File.separator) || relativePath.startsWith("/")) {
             relativePath = relativePath.substring(1);
         }
