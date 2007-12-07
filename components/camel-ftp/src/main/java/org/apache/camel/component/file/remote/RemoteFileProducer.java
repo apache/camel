@@ -32,14 +32,21 @@ public abstract class RemoteFileProducer<T extends RemoteFileExchange> extends D
         String endpointFileName = fileConfig.getFile();
         String headerFileName = message.getHeader(FileComponent.HEADER_FILE_NAME, String.class);
         if (fileConfig.isDirectory()) {
-            if (headerFileName != null) {
-                answer = endpointFileName + "/" + headerFileName;
-            } else {
-                answer = endpointFileName + "/" + message.getMessageId();
+            // If the path isn't empty, we need to add a trailing / if it isn't already there
+            String baseDir = "";
+            if (endpointFileName.length() > 0)
+            {
+                baseDir = endpointFileName + (endpointFileName.endsWith("/") ? "" : "/");
             }
+            String fileName = (headerFileName != null) ? headerFileName : message.getMessageId();
+            answer = baseDir + fileName;
         } else {
             answer = endpointFileName;
         }
         return answer;
     }
+    
+    abstract protected void connectIfNecessary() throws Exception;
+    
+    abstract protected void disconnect() throws Exception;
 }

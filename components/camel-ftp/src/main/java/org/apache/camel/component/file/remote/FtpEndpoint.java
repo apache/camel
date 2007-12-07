@@ -40,16 +40,21 @@ public class FtpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
         return consumer;
     }
 
-    protected FTPClient createFtpClient() throws IOException {
+    protected FTPClient createFtpClient() {
         final FTPClient client = new FTPClient();
+        return client;
+    }
+    
+    public void connect(FTPClient client) throws IOException {
         RemoteFileConfiguration config = getConfiguration();
         String host = config.getHost();
         int port = config.getPort();
-        LOG.debug("Connecting to host: " + host + " port: " + port);
-
         client.connect(host, port);
         client.login(config.getUsername(), config.getPassword());
-        client.setFileType(config.isBinary() ? FTPClient.BINARY_FILE_TYPE : FTPClient.ASCII_FILE_TYPE);
-        return client;
+        client.setFileType(config.isBinary() ? FTPClient.BINARY_FILE_TYPE : FTPClient.ASCII_FILE_TYPE);   
+    }
+    
+    public void disconnect(FTPClient client) throws IOException {
+        client.disconnect();
     }
 }

@@ -22,6 +22,7 @@ import java.io.InputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPConnectionClosedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -37,38 +38,81 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
         this.client = client;
     }
 
+    // TODO: is there a way to avoid copy-pasting the reconnect logic?
     public void process(Exchange exchange) throws Exception {
-        process(endpoint.createExchange(exchange));
+        connectIfNecessary();
+        // If the attempt to connect isn't successful, then the thrown 
+        // exception will signify that we couldn't deliver
+        try {
+            process(endpoint.createExchange(exchange));
+        } catch (FTPConnectionClosedException e) {
+            // If the server disconnected us, then we must manually disconnect 
+            // the client before attempting to reconnect
+            LOG.warn("Disconnecting due to exception: " + e.toString());
+            disconnect();
+            // Rethrow to signify that we didn't deliver
+            throw e;
+        } catch (RuntimeCamelException e) {
+            LOG.warn("Caught RuntimeCamelException: " + e.toString());
+            LOG.warn("Hoping an explicit disconnect/reconnect will solve the problem");
+            disconnect();
+            // Rethrow to signify that we didn't deliver
+            throw e;
+        }
+    }
+    
+    // TODO: is there a way to avoid copy-pasting the reconnect logic?
+    protected void connectIfNecessary() throws IOException {
+        if (!client.isConnected()) {
+            LOG.warn("FtpProducer's client isn't connected, trying to reconnect...");
+            endpoint.connect(client);
+            LOG.info("Connected to " + endpoint.getConfiguration());
+        }
+    }
+    
+    // TODO: is there a way to avoid copy-pasting the reconnect logic?
+    public void disconnect() throws IOException {
+        LOG.info("FtpProducer's client is being explicitly disconnected");
+        endpoint.disconnect(client);
     }
 
     public void process(RemoteFileExchange exchange) throws Exception {
         InputStream payload = exchange.getIn().getBody(InputStream.class);
-        final String endpointFile = endpoint.getConfiguration().getFile();
-        client.changeWorkingDirectory(endpointFile); // TODO this line might
-                                                     // not be needed...
-                                                     // check after finish
-                                                     // writing unit tests
         String fileName = createFileName(exchange.getIn(), endpoint.getConfiguration());
-        buildDirectory(client, fileName.substring(0, fileName.lastIndexOf('/')));
+        
+        int lastPathIndex = fileName.lastIndexOf('/');
+        if (lastPathIndex != -1)
+        {
+            String directory = fileName.substring(0, lastPathIndex);
+            if (!buildDirectory(client, directory)) {
+                LOG.warn("Couldn't buildDirectory: " + directory + " (either permissions deny it, or it already exists)");
+            }
+        }
+        
         final boolean success = client.storeFile(fileName, payload);
         if (!success) {
             throw new RuntimeCamelException("error sending file");
         }
+        
+        RemoteFileConfiguration config = endpoint.getConfiguration();
+        LOG.info("Sent: " + fileName + " to " + config.toString().substring(0, config.toString().indexOf(config.getFile())));
     }
 
     @Override
     protected void doStart() throws Exception {
+        LOG.info("Starting");
+        try {
+            connectIfNecessary();
+        } catch (IOException e) {
+            LOG.warn("Couldn't connect to " + endpoint.getConfiguration());
+        }
         super.doStart();
-        // client.connect(endpoint.getConfiguration().getHost());
-        // client.login(endpoint.getConfiguration().getUsername(),
-        // endpoint.getConfiguration().getPassword());
-        // client.setFileType(endpoint.getConfiguration().isBinary() ?
-        // FTPClient.BINARY_FILE_TYPE : FTPClient.ASCII_FILE_TYPE);
     }
 
     @Override
     protected void doStop() throws Exception {
-        client.disconnect();
+        LOG.info("Stopping");
+        disconnect();
         super.doStop();
     }
 
@@ -77,11 +121,8 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
         final StringBuilder sb = new StringBuilder(dirName.length());
         final String[] dirs = dirName.split("\\/");
         for (String dir : dirs) {
-            sb.append('/').append(dir);
+            sb.append(dir).append('/');
             final boolean success = ftpClient.makeDirectory(sb.toString());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(sb.toString() + " = " + success);
-            }
             if (!atLeastOneSuccess && success) {
                 atLeastOneSuccess = true;
             }

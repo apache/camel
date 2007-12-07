@@ -16,90 +16,94 @@
  */
 package org.apache.camel.component.file.remote;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
+
 
 /**
  * @version $Revision: 532790 $
  */
-public class UriConfigurationTest extends TestCase {
+public class UriConfigurationTest extends TestSupport {
     protected CamelContext context = new DefaultCamelContext();
 
-    public void testFtpConfigurationAscii() throws Exception {
-        Endpoint endpoint = context.getEndpoint("ftp://camel-user@localhost:123/tmp?password=secret");
+    public void testFtpConfigurationDefaults() {
+        Endpoint endpoint = context.getEndpoint("ftp://hostname");
         assertTrue("Endpoint not an FtpEndpoint: " + endpoint, endpoint instanceof FtpEndpoint);
         FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
-
-        assertEquals("localhost", ftpEndpoint.getConfiguration().getHost());
-        assertEquals(123, ftpEndpoint.getConfiguration().getPort());
-        assertEquals("camel-user", ftpEndpoint.getConfiguration().getUsername());
-        assertEquals("/tmp", ftpEndpoint.getConfiguration().getFile());
-        assertEquals(true, ftpEndpoint.getConfiguration().isDirectory());
-        assertEquals(false, ftpEndpoint.getConfiguration().isBinary());
+        RemoteFileConfiguration config = ftpEndpoint.getConfiguration();
+        
+        assertEquals("ftp", config.getProtocol());
+        assertEquals("hostname", config.getHost());
+        assertEquals(21, config.getPort());
+        assertNull(config.getUsername());
+        assertNull(config.getPassword());
+        assertEquals(false, config.isBinary());
+        assertEquals(true, config.isDirectory());
     }
-
-    public void testFtpConfigurationBinary() throws Exception {
-        Endpoint endpoint = context.getEndpoint("ftp://camel-user@localhost:123/tmp?password=secret&binary=true");
+    
+    public void testSftpConfigurationDefaults() {
+        Endpoint endpoint = context.getEndpoint("sftp://hostname");
+        assertTrue("Endpoint not an SftpEndpoint: " + endpoint, endpoint instanceof SftpEndpoint);
+        SftpEndpoint sftpEndpoint = (SftpEndpoint) endpoint;
+        RemoteFileConfiguration config = sftpEndpoint.getConfiguration();
+        
+        assertEquals("sftp", config.getProtocol());
+        assertEquals("hostname", config.getHost());
+        assertEquals(22, config.getPort());
+        assertNull(config.getUsername());
+        assertNull(config.getPassword());
+        assertEquals(false, config.isBinary());
+        assertEquals(true, config.isDirectory());
+    }
+    
+    public void testFtpExplicitConfiguration() {
+        Endpoint endpoint = context.getEndpoint("ftp://user@hostname:1021/some/file?password=secret&binary=true&directory=false");
         assertTrue("Endpoint not an FtpEndpoint: " + endpoint, endpoint instanceof FtpEndpoint);
         FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
-
-        assertEquals("localhost", ftpEndpoint.getConfiguration().getHost());
-        assertEquals(123, ftpEndpoint.getConfiguration().getPort());
-        assertEquals("camel-user", ftpEndpoint.getConfiguration().getUsername());
-        assertEquals("/tmp", ftpEndpoint.getConfiguration().getFile());
-        assertEquals(true, ftpEndpoint.getConfiguration().isDirectory());
-        assertEquals(true, ftpEndpoint.getConfiguration().isBinary());
+        RemoteFileConfiguration config = ftpEndpoint.getConfiguration();
+        
+        assertEquals("ftp", config.getProtocol());
+        assertEquals("hostname", config.getHost());
+        assertEquals(1021, config.getPort());
+        assertEquals("user", config.getUsername());
+        assertEquals("secret", config.getPassword());
+        assertEquals(true, config.isBinary());
+        assertEquals(false, config.isDirectory());
     }
-
-    public void testFtpConfigurationDefaultPort() throws Exception {
-        Endpoint endpoint = context.getEndpoint("ftp://camel-user@localhost/tmp?password=secret");
-        assertTrue("Endpoint not an FtpEndpoint: " + endpoint, endpoint instanceof FtpEndpoint);
-        FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
-
-        assertEquals("localhost", ftpEndpoint.getConfiguration().getHost());
-        assertEquals(21, ftpEndpoint.getConfiguration().getPort());
-        assertEquals("camel-user", ftpEndpoint.getConfiguration().getUsername());
-        assertEquals("/tmp", ftpEndpoint.getConfiguration().getFile());
-        assertEquals(true, ftpEndpoint.getConfiguration().isDirectory());
-        assertEquals(false, ftpEndpoint.getConfiguration().isBinary());
-    }
-
-    public void testSftpConfigurationDefaultPort() throws Exception {
-        Endpoint endpoint = context.getEndpoint("sftp://camel-user@localhost/tmp?password=secret");
+    
+    public void testSftpExplicitConfiguration() {
+        Endpoint endpoint = context.getEndpoint("sftp://user@hostname:1021/some/file?password=secret&binary=true&directory=false");
         assertTrue("Endpoint not an SftpEndpoint: " + endpoint, endpoint instanceof SftpEndpoint);
         SftpEndpoint sftpEndpoint = (SftpEndpoint) endpoint;
-
-        assertEquals("localhost", sftpEndpoint.getConfiguration().getHost());
-        assertEquals(22, sftpEndpoint.getConfiguration().getPort());
-        assertEquals("camel-user", sftpEndpoint.getConfiguration().getUsername());
-        assertEquals("/tmp", sftpEndpoint.getConfiguration().getFile());
-        assertEquals(true, sftpEndpoint.getConfiguration().isDirectory());
-        assertEquals(false, sftpEndpoint.getConfiguration().isBinary());
+        RemoteFileConfiguration config = sftpEndpoint.getConfiguration();
+        
+        assertEquals("sftp", config.getProtocol());
+        assertEquals("hostname", config.getHost());
+        assertEquals(1021, config.getPort());
+        assertEquals("user", config.getUsername());
+        assertEquals("secret", config.getPassword());
+        assertEquals(true, config.isBinary());
+        assertEquals(false, config.isDirectory());
     }
-
-    public void testSftpConfigurationDirectory() throws Exception {
-        Endpoint endpoint = context.getEndpoint("sftp://camel-user@localhost:123/tmp?password=secret");
-        assertTrue("Endpoint not an SftpEndpoint: " + endpoint, endpoint instanceof SftpEndpoint);
-        SftpEndpoint sftpEndpoint = (SftpEndpoint) endpoint;
-
-        assertEquals("localhost", sftpEndpoint.getConfiguration().getHost());
-        assertEquals(123, sftpEndpoint.getConfiguration().getPort());
-        assertEquals("camel-user", sftpEndpoint.getConfiguration().getUsername());
-        assertEquals("/tmp", sftpEndpoint.getConfiguration().getFile());
-        assertEquals(true, sftpEndpoint.getConfiguration().isDirectory());
+    
+    public void testRemoteFileEndpointFiles() {
+        assertRemoteFileEndpointFile("ftp://hostname/foo/bar", "foo/bar");
+        assertRemoteFileEndpointFile("ftp://hostname/foo/", "foo/");
+        assertRemoteFileEndpointFile("ftp://hostname/foo", "foo");
+        assertRemoteFileEndpointFile("ftp://hostname/", "");
+        assertRemoteFileEndpointFile("ftp://hostname", "");
+        assertRemoteFileEndpointFile("ftp://hostname//", "/");
+        assertRemoteFileEndpointFile("ftp://hostname//foo/bar", "/foo/bar");
+        assertRemoteFileEndpointFile("sftp://user@hostname:123//foo/bar?password=secret&completegibberish", "/foo/bar");
     }
+    
+    private void assertRemoteFileEndpointFile(String endpointUri, String expectedFile) {
+        RemoteFileEndpoint endpoint = resolveMandatoryEndpoint(context, endpointUri, RemoteFileEndpoint.class);
+        assertNotNull("Could not find endpoint: " + endpointUri, endpoint);
 
-    public void testSftpConfigurationFile() throws Exception {
-        Endpoint endpoint = context.getEndpoint("sftp://camel-user@localhost:123/tmp/file?password=secret&directory=false");
-        assertTrue("Endpoint not an SftpEndpoint: " + endpoint, endpoint instanceof SftpEndpoint);
-        SftpEndpoint sftpEndpoint = (SftpEndpoint) endpoint;
-
-        assertEquals("localhost", sftpEndpoint.getConfiguration().getHost());
-        assertEquals(123, sftpEndpoint.getConfiguration().getPort());
-        assertEquals("camel-user", sftpEndpoint.getConfiguration().getUsername());
-        assertEquals("/tmp/file", sftpEndpoint.getConfiguration().getFile());
-        assertEquals(false, sftpEndpoint.getConfiguration().isDirectory());
+        String file = endpoint.getConfiguration().getFile();
+        assertEquals("For uri: " + endpointUri + " the file is not equal", expectedFile, file);
     }
 }

@@ -29,16 +29,16 @@ public class SftpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
     }
 
     public SftpProducer createProducer() throws Exception {
-        return new SftpProducer(this, createChannelSftp());
+        return new SftpProducer(this, createSession());
     }
 
     public SftpConsumer createConsumer(Processor processor) throws Exception {
-        final SftpConsumer consumer = new SftpConsumer(this, processor, createChannelSftp());
+        final SftpConsumer consumer = new SftpConsumer(this, processor, createChannelSftp(createSession()));
         configureConsumer(consumer);
         return consumer;
     }
 
-    protected ChannelSftp createChannelSftp() throws JSchException {
+    protected Session createSession() throws JSchException {
         final JSch jsch = new JSch();
         final Session session = jsch.getSession(getConfiguration().getUsername(), getConfiguration().getHost());
         // TODO there's got to be a better way to deal with accepting new hosts...
@@ -66,9 +66,12 @@ public class SftpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
             public void showMessage(String string) {
             }
         });
-        session.connect();
+        return session;
+    }
+    
+    public ChannelSftp createChannelSftp (Session session) throws JSchException
+    {
         final ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
-        channel.connect();
         return channel;
     }
 }
