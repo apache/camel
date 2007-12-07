@@ -74,10 +74,12 @@ public class JcrRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // START SNIPPET: jcr
                 from("direct:a")
                     .setProperty(JcrComponent.NODE_NAME, constant("node"))
                     .setProperty("my.contents.property", body())
                     .to("jcr://user:pass@repository/home/test");
+                // END SNIPPET
             }
         };
     }
