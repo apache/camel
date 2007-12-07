@@ -44,7 +44,7 @@ public class ConsumeJmsBytesMessageTest extends ContextTestSupport {
     protected JmsTemplate jmsTemplate;
     private MockEndpoint endpoint;
 
-    public void testConsumeMapMessage() throws Exception {
+    public void testConsumeBytesMessage() throws Exception {
         endpoint.expectedMessageCount(1);
 
         jmsTemplate.setPubSubDomain(false);
@@ -57,6 +57,18 @@ public class ConsumeJmsBytesMessageTest extends ContextTestSupport {
                 return bytesMessage;
             }
         });
+
+        endpoint.assertIsSatisfied();
+        assertCorrectBytesReceived();
+    }
+
+    public void testSendBytesMessage() throws Exception {
+
+        endpoint.expectedMessageCount(1);
+
+        byte[] bytes = new byte[] {1, 2, 3};
+
+        template.sendBody("direct:test", bytes);
 
         endpoint.assertIsSatisfied();
         assertCorrectBytesReceived();
@@ -75,17 +87,6 @@ public class ConsumeJmsBytesMessageTest extends ContextTestSupport {
         assertEquals("Wrong payload lentght", 3, bytes.length);
     }
 
-    public void testSendMapMessage() throws Exception {
-
-        endpoint.expectedMessageCount(1);
-        
-        byte[] bytes = new byte[] {1, 2, 3};
-        
-        template.sendBody("direct:test", bytes);
-        
-        endpoint.assertIsSatisfied();
-        assertCorrectBytesReceived();
-    }
     
     @Override
     protected void setUp() throws Exception {
