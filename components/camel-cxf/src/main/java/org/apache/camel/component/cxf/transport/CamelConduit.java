@@ -102,13 +102,12 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     }
 
     public String getBeanName() {
-        
-        if (endpointInfo == null) {
-            return "default.camel-conduit";
+        if (endpointInfo == null || endpointInfo.getName() == null) {
+            return "default" + BASE_BEAN_NAME_SUFFIX;
         }
-        return endpointInfo.getName() + ".camel-conduit";
+        return endpointInfo.getName().toString() + BASE_BEAN_NAME_SUFFIX;
     }
-
+    
     private void initConfig() {
         // we could configure the camel context here 
         if(bus != null) {

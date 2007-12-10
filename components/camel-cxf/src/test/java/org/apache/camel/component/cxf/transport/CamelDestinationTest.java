@@ -22,10 +22,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.namespace.QName;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.message.Exchange;
@@ -54,6 +57,27 @@ public class CamelDestinationTest extends CamelTestSupport {
         return new DefaultCamelContext();
     }
   
+    public void testCamelDestinationConfiguration() throws Exception {
+        QName testEndpointQName = new QName("http://activemq.apache.org/camel-test", "port");
+        // set up the bus with configure file
+        SpringBusFactory bf = new SpringBusFactory();
+        BusFactory.setDefaultBus(null);
+        Bus bus = bf.createBus("/org/apache/camel/component/cxf/transport/CamelDestination.xml");
+        BusFactory.setDefaultBus(bus);
+        
+        endpointInfo.setAddress("camel://direct:EndpointA");
+        endpointInfo.setName(testEndpointQName);
+        CamelDestination destination = new CamelDestination(null, bus, null, endpointInfo);
+        
+        System.out.println("get the destination bean name" + destination.getBeanName());
+        CamelContext context = destination.getCamelContext();
+        
+        assertNotNull("The camel context which get from camel destination is not null", context);
+        assertEquals("Get the wrong camel context", context.getName(), "dest_context");
+        assertEquals("The camel context should has two routers", context.getRoutes().size(), 2);
+        assertEquals("The router 0 start endpoint is wrong", context.getRoutes().get(0).getEndpoint().getEndpointUri(), "direct:EndpointA");
+        bus.shutdown(false);
+    }
     
     public CamelDestination setupCamelDestination(EndpointInfo endpointInfo, boolean send) throws IOException {
         ConduitInitiator conduitInitiator = EasyMock.createMock(ConduitInitiator.class);        
