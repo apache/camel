@@ -16,18 +16,22 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.logging.Logger;
+
+
+
 public class HelloServiceImpl implements HelloService {
-	
-	private int invocationCount;
+    private static final Logger LOG = Logger.getLogger(HelloServiceImpl.class.getName());
+    private int invocationCount;
 	
     public String echo(String text) {        
-        System.out.println("call for echo with " + text);
+        LOG.info("call for echo with " + text);
         return text;
     }
 
     public void ping() {
     	invocationCount ++;
-    	System.out.println("call for oneway ping");
+    	LOG.info("call for oneway ping");
     }
     
     public int getInvocationCount() {

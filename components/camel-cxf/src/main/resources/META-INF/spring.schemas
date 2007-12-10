@@ -19,3 +19,4 @@
 #
 #
 http\://activemq.apache.org/camel/schema/cxf/cxfEndpoint.xsd=schema/cxfEndpoint.xsd
+http\://cxf.apache.org/transports/camel.xsd=schema/configuration/camel.xsd

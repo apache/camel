@@ -65,7 +65,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     private org.apache.camel.Endpoint distinationEndpoint;
 
     public CamelDestination(CamelContext camelContext, Bus bus, ConduitInitiator ci, EndpointInfo info) throws IOException {
-        super(getTargetReference(info, bus), info);
+        super(bus, getTargetReference(info, bus), info);        
         this.camelContext = camelContext;
         conduitInitiator = ci;
         camelDestinationUri = endpointInfo.getAddress().substring(CxfConstants.CAMEL_TRANSPORT_PREFIX.length());
@@ -130,6 +130,14 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     public void setCamelTemplate(CamelTemplate<Exchange> template) {
         camelTemplate = template;
     }
+    
+    public void setCamelContext(CamelContext context) {
+        camelContext = context;
+    }
+    
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
 
     protected void incoming(org.apache.camel.Exchange camelExchange) {
         getLogger().log(Level.FINE, "server received request: ", camelExchange);
@@ -146,7 +154,10 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     }
 
     public String getBeanName() {
-        return endpointInfo.getName().toString() + ".camel-destination";
+        if (endpointInfo == null || endpointInfo.getName() == null) {
+            return "default" + BASE_BEAN_NAME_SUFFIX;
+        }
+        return endpointInfo.getName().toString() + BASE_BEAN_NAME_SUFFIX;
     }
 
     private void initConfig() {

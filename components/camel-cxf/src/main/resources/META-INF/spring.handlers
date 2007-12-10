@@ -19,3 +19,4 @@
 #
 #
 http\://activemq.apache.org/camel/schema/cxfEndpoint=org.apache.camel.component.cxf.spring.NamespaceHandler
+http\://cxf.apache.org/transports/camel=org.apache.camel.component.cxf.transport.spring.NamespaceHandler

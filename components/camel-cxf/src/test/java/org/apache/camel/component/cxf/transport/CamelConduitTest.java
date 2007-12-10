@@ -21,11 +21,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.xml.namespace.QName;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.message.Exchange;
@@ -38,8 +41,7 @@ import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.easymock.classextension.EasyMock;
 
-public class CamelConduitTest extends CamelTestSupport {
-   
+public class CamelConduitTest extends CamelTestSupport {    
        
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -60,6 +62,35 @@ public class CamelConduitTest extends CamelTestSupport {
     
     protected CamelContext createCamelContext() throws Exception {
         return new DefaultCamelContext();
+    }    
+        
+    public void testCamelConduitConfiguration() throws Exception {
+        QName testEndpointQNameA = new QName("http://activemq.apache.org/camel-test", "portA");
+        QName testEndpointQNameB = new QName("http://activemq.apache.org/camel-test", "portB");
+        // set up the bus with configure file
+        SpringBusFactory bf = new SpringBusFactory();
+        BusFactory.setDefaultBus(null);
+        Bus bus = bf.createBus("/org/apache/camel/component/cxf/transport/CamelConduit.xml");
+        BusFactory.setDefaultBus(bus);
+        
+        // create the conduit and set the configuration with it
+        endpointInfo.setAddress("camel://direct:EndpointA");
+        endpointInfo.setName(testEndpointQNameA);
+        CamelConduit conduit = new CamelConduit(null, bus, endpointInfo);
+        CamelContext context = conduit.getCamelContext();
+        
+        assertNotNull("the camel context which get from camel conduit is not null", context);
+        assertEquals("get the wrong camel context", context.getName(), "conduit_context");
+        assertEquals(context.getRoutes().get(0).getEndpoint().getEndpointUri(), "direct:EndpointA");
+        
+        endpointInfo.setAddress("camel://direct:EndpointC");
+        endpointInfo.setName(testEndpointQNameB);
+        conduit = new CamelConduit(null, bus, endpointInfo);
+        context = conduit.getCamelContext();
+        assertNotNull("the camel context which get from camel conduit is not null", context);
+        assertEquals("get the wrong camel context", context.getName(), "context");
+        assertEquals(context.getRoutes().get(0).getEndpoint().getEndpointUri(), "direct:EndpointC");
+        bus.shutdown(false);
     }
 
     public void testPrepareSend() throws Exception {
@@ -101,10 +132,10 @@ public class CamelConduitTest extends CamelTestSupport {
         sendoutMessage(conduit, message, false, "HelloWorld");        
         // verify the endpoint get the response 
         assertMockEndpointsSatisifed();
-        verifyReceivedMessage();
+        verifyReceivedMessage("HelloWorld");
     }
 
-    public void verifyReceivedMessage() {
+    public void verifyReceivedMessage(String content) {
         ByteArrayInputStream bis = (ByteArrayInputStream)inMessage.getContent(InputStream.class);
         byte bytes[] = new byte[bis.available()];
         try {
@@ -113,9 +144,7 @@ public class CamelConduitTest extends CamelTestSupport {
             ex.printStackTrace();
         }
         String reponse = new String(bytes);
-        assertEquals("The reponse date should be equals", reponse, "HelloWorld");
-
-        
+        assertEquals("The reponse date should be equals", content, reponse);
 
     }
 }
