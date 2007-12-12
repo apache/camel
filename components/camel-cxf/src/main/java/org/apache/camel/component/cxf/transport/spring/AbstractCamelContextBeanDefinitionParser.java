@@ -30,20 +30,20 @@ import org.apache.cxf.configuration.spring.AbstractBeanDefinitionParser;
 
 public class AbstractCamelContextBeanDefinitionParser extends AbstractBeanDefinitionParser {
     private static final String DEFAULT_CAMEL_CONTEXT_NAME = "camelContext";
-    
+
     private String getContextId(String contextId) {
         if (ObjectHelper.isNullOrBlank(contextId)) {
             //set the contextId default value here
-            return DEFAULT_CAMEL_CONTEXT_NAME;                        
+            return DEFAULT_CAMEL_CONTEXT_NAME;
         } else {
             return contextId;
         }
     }
-    
+
     protected void wireCamelContext(BeanDefinitionBuilder bean, String camelContextId) {
         bean.addPropertyReference("camelContext", camelContextId);
     }
-    
+
     protected void doParse(Element element, ParserContext ctx, BeanDefinitionBuilder bean) {
         // paser the id attribute
         bean.setAbstract(true);
@@ -56,13 +56,13 @@ public class AbstractCamelContextBeanDefinitionParser extends AbstractBeanDefini
                     // paraser the camel context
                     BeanDefinition bd = ctx.getDelegate().parseCustomElement((Element)n);
                     // get the inner camel context id
-                    String contextId = (String)bd.getPropertyValues().getPropertyValue("id").getValue();                    
-                    bean.addPropertyReference("camelContext", getContextId(contextId));                   
-                } else if ("camelContextRef".equals(name)){
-                    String contextId = n.getTextContent();                    
+                    String contextId = (String)bd.getPropertyValues().getPropertyValue("id").getValue();
                     bean.addPropertyReference("camelContext", getContextId(contextId));
-                } 
+                } else if ("camelContextRef".equals(name)){
+                    String contextId = n.getTextContent();
+                    bean.addPropertyReference("camelContext", getContextId(contextId));
+                }
             }
-        }    
-    }   
+        }
+    }
 }

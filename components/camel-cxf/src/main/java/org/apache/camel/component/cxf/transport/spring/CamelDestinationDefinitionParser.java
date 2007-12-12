@@ -31,5 +31,5 @@ public class CamelDestinationDefinitionParser extends AbstractCamelContextBeanDe
     public CamelDestinationDefinitionParser() {
         super();
         setBeanClass(CamelDestination.class);
-    }  
+    }
 }
