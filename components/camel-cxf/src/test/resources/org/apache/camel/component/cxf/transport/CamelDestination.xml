@@ -17,26 +17,28 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:camel="http://cxf.apache.org/transports/camel"         
+       xmlns:camel="http://cxf.apache.org/transports/camel"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
        http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd
-       http://activemq.apache.org/camel/schema/cxfEndpoint http://activemq.apache.org/camel/schema/cxf/cxfEndpoint.xsd
+       http://activemq.apache.org/camel/schema/cxfEndpoint
+       http://activemq.apache.org/camel/schema/cxf/cxfEndpoint.xsd
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
-    
-    
+
+
    <camel:destination name="{http://activemq.apache.org/camel-test}port.camel-destination">
         <camelContext id="dest_context" xmlns="http://activemq.apache.org/camel/schema/spring">
-    	  <route>
-      		<from uri="direct:EndpointA" />
-      		<to uri="direct:EndpointB" /> 
-    	  </route>
-    	  <route>
-    	    <from uri="direct:EndpointC" />
-    	    <to uri="mock:EndpiontB" />
-    	  </route>
-        </camelContext> 
+            <route>
+                <from uri="direct:EndpointA"/>
+                <to uri="direct:EndpointB"/>
+            </route>
+            <route>
+                <from uri="direct:EndpointC"/>
+                <to uri="mock:EndpiontB"/>
+            </route>
+        </camelContext>
    </camel:destination>
 
 </beans>

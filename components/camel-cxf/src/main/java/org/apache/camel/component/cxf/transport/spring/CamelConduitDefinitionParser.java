@@ -34,10 +34,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.configuration.spring.AbstractBeanDefinitionParser;
 
 public class CamelConduitDefinitionParser extends AbstractCamelContextBeanDefinitionParser {
-        
+
     public CamelConduitDefinitionParser() {
         super();
         setBeanClass(CamelConduit.class);
     }
-       
+
 }
