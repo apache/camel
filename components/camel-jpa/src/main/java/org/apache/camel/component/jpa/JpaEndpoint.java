@@ -48,6 +48,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint<Exchange> {
     private Map entityManagerProperties;
     private boolean consumeDelete = true;
     private boolean consumeLockEntity = true;
+    private boolean flushOnSend = true;
 
     public JpaEndpoint(String uri, JpaComponent component) {
         super(uri, component);
@@ -161,6 +162,14 @@ public class JpaEndpoint extends ScheduledPollEndpoint<Exchange> {
 
     public void setConsumeLockEntity(boolean consumeLockEntity) {
         this.consumeLockEntity = consumeLockEntity;
+    }
+
+    public boolean isFlushOnSend() {
+        return flushOnSend;
+    }
+
+    public void setFlushOnSend(boolean flushOnSend) {
+        this.flushOnSend = flushOnSend;
     }
 
     // Implementation methods
