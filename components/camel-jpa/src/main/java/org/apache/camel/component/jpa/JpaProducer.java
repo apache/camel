@@ -33,10 +33,12 @@ import org.springframework.orm.jpa.JpaCallback;
  */
 public class JpaProducer extends DefaultProducer<Exchange> {
     private final TransactionStrategy template;
+    private final JpaEndpoint endpoint;
     private final Expression<Exchange> expression;
 
     public JpaProducer(JpaEndpoint endpoint, Expression<Exchange> expression) {
         super(endpoint);
+        this.endpoint = endpoint;
         this.expression = expression;
         this.template = endpoint.createTransactionStrategy();
     }
@@ -51,9 +53,13 @@ public class JpaProducer extends DefaultProducer<Exchange> {
                         Object value = iter.next();
                         entityManager.persist(value);
                     }
+                    if (endpoint.isFlushOnSend()) {
+                        entityManager.flush();
+                    }
                     return null;
                 }
             });
         }
+        exchange.setProperty("CamelJpaValue", values);
     }
 }
