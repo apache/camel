@@ -79,7 +79,7 @@ public class JcrRouteTest extends ContextTestSupport {
                     .setProperty(JcrComponent.NODE_NAME, constant("node"))
                     .setProperty("my.contents.property", body())
                     .to("jcr://user:pass@repository/home/test");
-                // END SNIPPET
+                // END SNIPPET: jcr
             }
         };
     }
