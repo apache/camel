@@ -89,7 +89,9 @@ public class CxfExchange extends DefaultExchange {
     }
 
 
-    
+    public void setExchange(Exchange exchange) {
+    	this.exchange = exchange;
+    }
 
     // Expose CXF APIs directly on the exchange
     //-------------------------------------------------------------------------

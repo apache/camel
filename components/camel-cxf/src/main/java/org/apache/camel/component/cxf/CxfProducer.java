@@ -25,6 +25,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.invoker.CxfClient;
 import org.apache.camel.component.cxf.invoker.CxfClientFactoryBean;
 import org.apache.camel.component.cxf.invoker.InvokingContext;
+import org.apache.camel.component.cxf.invoker.InvokingContextFactory;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultProducer;
@@ -38,6 +39,7 @@ import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.ClientFactoryBean;
+import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.service.model.BindingOperationInfo;
@@ -177,7 +179,20 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
             } else {
                 // get the invocation context
                 org.apache.cxf.message.Exchange ex = exchange.getExchange();
+                if (ex == null) {
+                	ex = (org.apache.cxf.message.Exchange) exchange.getProperty(CxfConstants.CXF_EXCHANGE);
+                	exchange.setExchange(ex);
+                }
+                if (ex == null) {
+                	ex = new ExchangeImpl();
+                	exchange.setExchange(ex);
+                }
+                assert ex != null;
                 InvokingContext invokingContext = ex.get(InvokingContext.class);
+                if (invokingContext == null) {
+                	invokingContext = InvokingContextFactory.createContext(dataFormat);
+                	ex.put(InvokingContext.class, invokingContext);
+                }
                 Object params = invokingContext.getRequestContent(inMessage);
                 // invoke the stream message with the exchange context
                 CxfClient cxfClient = (CxfClient) client;

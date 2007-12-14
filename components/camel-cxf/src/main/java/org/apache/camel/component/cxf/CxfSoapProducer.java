@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf;
 import java.io.OutputStream;
 
 import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.*;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
@@ -33,6 +34,7 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.apache.cxf.helpers.XMLUtils;
 import org.apache.cxf.interceptor.InterceptorChain;
 import org.apache.cxf.interceptor.OutgoingChainInterceptor;
 import org.apache.cxf.io.CachedOutputStream;
@@ -154,8 +156,8 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
                
         chain.doIntercept(outMessage);
         CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
-                
         exchange.getOut().setBody(outputStream.getInputStream());
+        exchange.getIn().setBody(outputStream.getInputStream());
     }
 
 }
