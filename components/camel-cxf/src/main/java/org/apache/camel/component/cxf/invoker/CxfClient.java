@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.invoker;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -25,12 +26,16 @@ import java.util.logging.Logger;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.Binding;
+import org.apache.cxf.binding.soap.interceptor.ReadHeadersInterceptor;
+import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.endpoint.ConduitSelector;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.endpoint.EndpointImpl;
 import org.apache.cxf.endpoint.PreexistingConduitSelector;
 import org.apache.cxf.helpers.IOUtils;
+import org.apache.cxf.interceptor.Interceptor;
+import org.apache.cxf.interceptor.InterceptorChain;
 import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.ExchangeImpl;
@@ -39,6 +44,7 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.cxf.service.model.BindingInfo;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
+import org.apache.cxf.service.model.OperationInfo;
 import org.apache.cxf.transport.MessageObserver;
 
 /**
@@ -125,7 +131,9 @@ public class CxfClient extends ClientImpl {
         // setup conduit selector
         prepareConduitSelector(message);
 
+        modifyChain(chain, null);
         // execute chain
+        
         chain.doIntercept(message);
                 
         //it will close all the stream in the message, so we do not call it  
@@ -142,8 +150,12 @@ public class CxfClient extends ClientImpl {
         }
 
         if (!exchange.isOneWay()) {
+            
+            synchronized (exchange) {
+                waitResponse(exchange);
+            }
             ex = getException(exchange);
-    
+            
             if (ex != null) {
                 if (LOG.isLoggable(Level.FINE)) {
                     LOG.fine("Exception in incoming chain: " + ex.toString());
@@ -156,42 +168,78 @@ public class CxfClient extends ClientImpl {
 
         return retval;
     }
+    
+    private void waitResponse(Exchange exchange) {
+        int remaining = synchronousTimeout;
+        while (!Boolean.TRUE.equals(exchange.get(FINISHED)) && remaining > 0) {
+            long start = System.currentTimeMillis();
+            try {
+                exchange.wait(remaining);
+            } catch (InterruptedException ex) {
+                // ignore
+            }
+            long end = System.currentTimeMillis();
+            remaining -= (int)(end - start);
+        }
+        if (!Boolean.TRUE.equals(exchange.get(FINISHED))) {
+            LogUtils.log(LOG, Level.WARNING, "RESPONSE_TIMEOUT",
+                exchange.get(OperationInfo.class).getName().toString());
+        }
+    }
 
     public void onMessage(Message message) {
         Exchange exchange = message.getExchange();
         
+        
         if (LOG.isLoggable(Level.FINE)) {
             LOG.fine("call the cxf client on message , exchange is " + exchange);
         }    
-        if (exchange.get(InvokingContext.class) == null) {
-            super.onMessage(message);
-        } else {
+        
+        try {
+        	
+        	if (exchange.get(InvokingContext.class) == null) {
+                super.onMessage(message);
+            } else {
 
-            message = getEndpoint().getBinding().createMessage(message);
-            message.put(Message.REQUESTOR_ROLE, Boolean.TRUE);
-            message.put(Message.INBOUND_MESSAGE, Boolean.TRUE);
-                        
-            exchange.put(Binding.class, getEndpoint().getBinding());
-            BindingOperationInfo bi = exchange.get(BindingOperationInfo.class);        
-            if (bi != null) {
-                //Set The OutputMessage
-                exchange.put(BindingMessageInfo.class, bi.getOutput());
+                message = getEndpoint().getBinding().createMessage(message);
+                message.put(Message.REQUESTOR_ROLE, Boolean.TRUE);
+                message.put(Message.INBOUND_MESSAGE, Boolean.TRUE);
+                            
+                exchange.put(Binding.class, getEndpoint().getBinding());
+                BindingOperationInfo bi = exchange.get(BindingOperationInfo.class);        
+                if (bi != null) {
+                    //Set The OutputMessage
+                    exchange.put(BindingMessageInfo.class, bi.getOutput());
+                }
+                InvokingContext invokingContext = exchange.get(InvokingContext.class);
+                assert invokingContext != null;
+
+                // setup interceptor chain
+                PhaseInterceptorChain chain = invokingContext.getResponseInInterceptorChain(exchange);
+                message.setInterceptorChain(chain);
+                modifyChain(chain, null);
+                // execute chain
+                chain.doIntercept(message);
+
+                // set inMessage in the exchange
+                exchange.setInMessage(message);
             }
-            InvokingContext invokingContext = exchange.get(InvokingContext.class);
-            assert invokingContext != null;
-
-            // setup interceptor chain
-            PhaseInterceptorChain chain = invokingContext.getResponseInInterceptorChain(exchange);
-            message.setInterceptorChain(chain);
-            
-            // execute chain
-            chain.doIntercept(message);
-
-            // set inMessage in the exchange
-            exchange.setInMessage(message);
+        	
+        } finally { 
+        	synchronized (message.getExchange()) {
+        		if (!isPartialResponse(message)) {
+        			message.getExchange().put(FINISHED, Boolean.TRUE);
+        			message.getExchange().setInMessage(message);
+        			message.getExchange().notifyAll();
+        		}
+        	}
         }
     }
 
+    private boolean isPartialResponse(Message in) {
+        return Boolean.TRUE.equals(in.get(Message.PARTIAL_RESPONSE_MESSAGE));
+    }
+    
     private Message prepareMessage(Exchange exchange, Map<String, Object> requestContext,
             Object param, InvokingContext InvokingContext) {
 
@@ -229,6 +277,8 @@ public class CxfClient extends ClientImpl {
         chain.setFaultObserver(outFaultObserver);
         return chain;
     }
+    
+   
     
     public Endpoint getEndpoint() {
         return endpoint;

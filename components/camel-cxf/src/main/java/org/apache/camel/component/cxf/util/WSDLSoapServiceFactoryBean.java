@@ -46,7 +46,8 @@ public class WSDLSoapServiceFactoryBean extends ReflectionServiceFactoryBean {
     @Override
     public Service create() {
         
-        WSDLServiceFactory factory = new WSDLServiceFactory(getBus(), getWsdlURL(), null);
+        WSDLServiceFactory factory = new WSDLServiceFactory(getBus(), getWsdlURL(), getServiceQName());
+        
         setService(factory.create()); 
         initializeSoapInterceptors(); 
         //disable the date interceptors 

@@ -44,5 +44,10 @@ public class CxfSoapComponent extends DefaultComponent {
         soapEndpoint.init();
         return soapEndpoint;
     }
+    
+    @Override
+    protected boolean useIntrospectionOnEndpoint() {
+        return false;
+    }
 
 }

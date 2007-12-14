@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.CharBuffer;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +57,23 @@ public class CxfSoapBinding {
         Object body = message.getBody(InputStream.class);
         if (body == null) {
             body = message.getBody();
+        }
+        if (body instanceof BufferedReader) {
+        	//do transform from BufferedReader to InputStream
+        	
+        	try {
+        		BufferedReader reader = (BufferedReader)body;
+        		String line;
+        		String content = "";
+        		while ((line = reader.readLine()) != null) {
+        			content = content + line;
+        		}
+        		ByteArrayInputStream bais = new ByteArrayInputStream(content.getBytes());
+				answer.setContent(InputStream.class, bais);
+        	} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
         if (body instanceof InputStream) {
             answer.setContent(InputStream.class, body);             
