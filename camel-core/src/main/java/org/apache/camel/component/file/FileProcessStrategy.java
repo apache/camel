@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.strategy;
+package org.apache.camel.component.file;
 
 import java.io.File;
 
-import org.apache.camel.component.file.FileEndpoint;
-import org.apache.camel.component.file.FileExchange;
+import org.apache.camel.Endpoint;
 
 /**
  * Represents a strategy for marking that a file is processed.
@@ -33,10 +32,10 @@ public interface FileProcessStrategy {
      *
      * @return true if the file can be processed (such as if a file lock could be obtained)
      */
-    boolean begin(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception;
+    boolean begin(Endpoint endpoint, FileExchange exchange, File file) throws Exception;
 
     /**
      * Releases any file locks and possibly deletes or moves the file
      */
-    void commit(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception;
+    void commit(Endpoint endpoint, FileExchange exchange, File file) throws Exception;
 }

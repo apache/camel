@@ -16,22 +16,20 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
+
 import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.component.file.strategy.DefaultFileRenamer;
-import org.apache.camel.component.file.strategy.DeleteFileProcessStrategy;
-import org.apache.camel.component.file.strategy.FileProcessStrategy;
+import org.apache.camel.component.file.strategy.FileProcessStrategyFactory;
 import org.apache.camel.component.file.strategy.FileProcessStrategySupport;
 import org.apache.camel.component.file.strategy.NoOpFileProcessStrategy;
-import org.apache.camel.component.file.strategy.RenameFileProcessStrategy;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.File;
 
 /**
  * A <a href="http://activemq.apache.org/camel/file.html">File Endpoint</a> for
@@ -285,18 +283,6 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      * A strategy method to lazily create the file strategy
      */
     protected FileProcessStrategy createFileStrategy() {
-        if (isNoop()) {
-            return new NoOpFileProcessStrategy();
-        } else if (moveNamePostfix != null || moveNamePrefix != null) {
-            if (isDelete()) {
-                throw new IllegalArgumentException(
-                                                   "You cannot set the deleteFiles property and a moveFilenamePostfix or moveFilenamePrefix");
-            }
-            return new RenameFileProcessStrategy(isLock(), moveNamePrefix, moveNamePostfix);
-        } else if (isDelete()) {
-            return new DeleteFileProcessStrategy(isLock());
-        } else {
-            return new RenameFileProcessStrategy(isLock());
-        }
+    	return FileProcessStrategyFactory.createFileProcessStrategy(isNoop(), isDelete(), isLock(), moveNamePrefix, moveNamePostfix);
     }
 }

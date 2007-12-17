@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Map;
+
 /**
  * An <a href="http://activemq.apache.org/camel/endpoint.html">endpoint</a>
  * implements the <a
@@ -100,4 +102,6 @@ public interface Endpoint<E extends Exchange> {
      * @throws Exception if the pull consumer could not be created
      */
     PollingConsumer<E> createPollingConsumer() throws Exception;
+    
+    void configureProperties(Map options);
 }
