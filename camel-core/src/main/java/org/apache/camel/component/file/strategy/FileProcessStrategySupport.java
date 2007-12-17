@@ -22,8 +22,9 @@ import java.nio.channels.Channel;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 
-import org.apache.camel.component.file.FileEndpoint;
+import org.apache.camel.Endpoint;
 import org.apache.camel.component.file.FileExchange;
+import org.apache.camel.component.file.FileProcessStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,7 +52,7 @@ public abstract class FileProcessStrategySupport implements FileProcessStrategy 
         this.lockFileRenamer = lockFileRenamer;
     }
 
-    public boolean begin(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception {
+    public boolean begin(Endpoint endpoint, FileExchange exchange, File file) throws Exception {
         if (isLockFile()) {
             File newFile = lockFileRenamer.renameFile(file);
             String lockFileName = newFile.getAbsolutePath();
@@ -72,7 +73,7 @@ public abstract class FileProcessStrategySupport implements FileProcessStrategy 
         return true;
     }
 
-    public void commit(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception {
+    public void commit(Endpoint endpoint, FileExchange exchange, File file) throws Exception {
         if (isLockFile()) {
             Channel channel = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.fileChannel", Channel.class);
             String lockfile = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.file.lock.name", String.class);

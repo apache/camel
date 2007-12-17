@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.Map;
+
 import org.apache.camel.*;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
@@ -87,7 +89,10 @@ public class CxfSoapEndpoint implements Endpoint {
     public PollingConsumer createPollingConsumer() throws Exception {
         throw new UnsupportedOperationException();
     }
-    
+
+    public void configureProperties(Map options) {
+    }
+
     public Resource getWsdl() {
         return wsdl;
     }

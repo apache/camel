@@ -26,6 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
@@ -169,4 +170,7 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
     protected ScheduledThreadPoolExecutor createExecutorService() {
         return new ScheduledThreadPoolExecutor(10);
     }
+
+	public void configureProperties(Map options) {
+	}
 }
