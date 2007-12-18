@@ -38,6 +38,7 @@ public class DeleteFileProcessStrategy extends FileProcessStrategySupport {
         super(lockFile);
     }
 
+    @Override
     public void commit(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Deleting file: " + file);
