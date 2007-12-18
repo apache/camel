@@ -16,14 +16,30 @@
  */
 package org.apache.camel.component.file;
 
+import org.apache.camel.component.mock.MockEndpoint;
+
 /**
  * @version $Revision: 1.1 $
  */
 public class FileDeleteRouteTest extends FileRouteTest {
     @Override
     protected void setUp() throws Exception {
-        uri = "file:target/test-delete-inbox?delete=true";
+        uri = "file:target/test-delete-inbox?consumer.delay=1000&delete=true";
         deleteDirectory("target/test-delete-inbox");
         super.setUp();
     }
+
+    @Override
+    public void testFileRoute() throws Exception {
+        MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        result.expectedBodiesReceived(expectedBody);
+        result.setDefaulResultWaitMillis(5000);
+
+        template.sendBodyAndHeader(uri, expectedBody, "cheese", 123);
+
+        Thread.sleep(4000);
+
+        result.assertIsSatisfied();
+    }
+
 }

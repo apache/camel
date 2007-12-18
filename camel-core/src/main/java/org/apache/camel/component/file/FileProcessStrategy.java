@@ -32,10 +32,10 @@ public interface FileProcessStrategy {
      *
      * @return true if the file can be processed (such as if a file lock could be obtained)
      */
-    boolean begin(Endpoint endpoint, FileExchange exchange, File file) throws Exception;
+    boolean begin(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception;
 
     /**
      * Releases any file locks and possibly deletes or moves the file
      */
-    void commit(Endpoint endpoint, FileExchange exchange, File file) throws Exception;
+    void commit(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception;
 }

@@ -50,6 +50,7 @@ public class RenameFileProcessStrategy extends FileProcessStrategySupport {
         this.renamer = renamer;
     }
 
+    @Override
     public void commit(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception {
         File newName = renamer.renameFile(file);
         newName.getParentFile().mkdirs();
