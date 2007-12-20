@@ -66,7 +66,7 @@ public class DelayerType extends ExpressionNode {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
-        Expression processAtExpression = getExpression().createExpression(routeContext);
+        Expression processAtExpression = getExpression() != null ? getExpression().createExpression(routeContext) : null;
         return new Delayer(childProcessor, processAtExpression, delay);
     }
 }
