@@ -51,11 +51,15 @@ public class ExpressionNode extends ProcessorType<ProcessorType> {
     }
 
     public ExpressionNode(Expression expression) {
-        setExpression(new ExpressionType(expression));
+        if (expression != null) {
+            setExpression(new ExpressionType(expression));
+        }
     }
 
     public ExpressionNode(Predicate predicate) {
-        setExpression(new ExpressionType(predicate));
+        if (predicate != null) {
+            setExpression(new ExpressionType(predicate));
+        }
     }
 
     public ExpressionType getExpression() {

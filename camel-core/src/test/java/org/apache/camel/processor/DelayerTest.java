@@ -36,6 +36,13 @@ public class DelayerTest extends ContextTestSupport {
         // now if we wait a bit longer we should receive the message!
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
+
+        template.sendBody("seda:b", "<hello>world!</hello>");
+        resultEndpoint.assertIsSatisfied();
+
+        // now if we wait a bit longer we should receive the message!
+        resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.assertIsSatisfied();
     }
 
     @Override
@@ -50,6 +57,9 @@ public class DelayerTest extends ContextTestSupport {
                 // START SNIPPET: ex
                 from("seda:a").delayer(header("JMSTimestamp"), 3000).to("mock:result");
                 // END SNIPPET: ex
+                // START SNIPPET: ex2
+                from("seda:b").delayer(3000).to("mock:result");
+                // END SNIPPET: ex2
             }
         };
     }
