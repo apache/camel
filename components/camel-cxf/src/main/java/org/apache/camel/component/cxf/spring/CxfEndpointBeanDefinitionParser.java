@@ -18,8 +18,6 @@
  */
 package org.apache.camel.component.cxf.spring;
 
-import com.sun.xml.bind.v2.schemagen.xmlschema.List;
-
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -62,7 +60,7 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
         } else if ("inInterceptors".equals(name) || "inFaultInterceptors".equals(name)
             || "outInterceptors".equals(name) || "outFaultInterceptors".equals(name)
             || "features".equals(name) || "schemaLocations".equals(name)) {
-            List list = (List)ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
+            java.util.List list = (java.util.List)ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
         } else {
             setFirstChildAsProperty(el, ctx, bean, name);            
