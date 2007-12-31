@@ -17,8 +17,12 @@
  */
 package org.apache.camel.component.ibatis;
 
+import java.util.Iterator;
+
 import com.ibatis.sqlmap.client.SqlMapClient;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultProducer;
 
 /**
@@ -45,7 +49,12 @@ public class IBatisProducer extends DefaultProducer {
         }
         else {
             String operation = getOperationName(exchange);
-            endpoint.getSqlClient().insert(operation, body);
+
+            // lets handle arrays or collections of objects
+            Iterator iter = ObjectConverter.iterator(body);
+            while (iter.hasNext()) {
+                endpoint.getSqlClient().insert(operation, iter.next());
+            }
         }
     }
 
