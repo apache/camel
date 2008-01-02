@@ -31,7 +31,7 @@ public class MyTransform  {
     private String prefix = "MyTransform";
 
     public Object transform(Object body) {
-        String answer = prefix + " body at:  " + new Date() + " body: " + body;
+        String answer = prefix + " set body:  " + new Date() ;
         if (verbose) {
             System.out.println(">>>> " + answer);
         }
