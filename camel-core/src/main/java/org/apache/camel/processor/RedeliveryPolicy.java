@@ -60,6 +60,9 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      * redelivered
      */
     public boolean shouldRedeliver(int redeliveryCounter) {
+        if (getMaximumRedeliveries() < 0) {
+            return true;
+        }
         return redeliveryCounter < getMaximumRedeliveries();
     }
 
@@ -173,7 +176,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Sets the maximum number of times a message exchange will be redelivered
+     * Sets the maximum number of times a message exchange will be redelivered.
+     * Setting a negative value will retry forever.
      */
     public void setMaximumRedeliveries(int maximumRedeliveries) {
         this.maximumRedeliveries = maximumRedeliveries;
