@@ -17,9 +17,18 @@
   specific language governing permissions and limitations
   under the License.
 -->
-<extensions xmlns="http://cxf.apache.org/bus/extension">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:foo="http://cxf.apache.org/configuration/foo"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <extension class="org.apache.camel.component.cxf.transport.CamelTransportFactory"  deferred="true">        
-        <namespace>http://cxf.apache.org/transports/camel</namespace>
-    </extension>
-</extensions>
+    <bean class="org.apache.camel.component.cxf.transport.CamelTransportFactory" lazy-init="true">
+        <property name="bus" ref="cxf"/>
+        <property name="transportIds">
+            <list>
+              <value>http://cxf.apache.org/transports/camel</value>
+            </list>
+        </property>
+    </bean>
+</beans>

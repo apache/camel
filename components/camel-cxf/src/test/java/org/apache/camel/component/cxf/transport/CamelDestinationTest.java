@@ -38,6 +38,7 @@ import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.ConduitInitiator;
+import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.MessageObserver;
 
 import org.easymock.classextension.EasyMock;
@@ -95,6 +96,12 @@ public class CamelDestinationTest extends CamelTestSupport {
             camelDestination.setMessageObserver(observer);
         }
         return camelDestination;
+    }
+    
+    public void testGetTransportFactoryFromBus() throws Exception {
+    	Bus bus = BusFactory.getDefaultBus();
+    	assertNotNull(bus.getExtension(ConduitInitiatorManager.class)
+        	.getConduitInitiator(CamelTransportFactory.TRANSPORT_ID));
     }
     
     public void testOneWayDestination() throws Exception {
