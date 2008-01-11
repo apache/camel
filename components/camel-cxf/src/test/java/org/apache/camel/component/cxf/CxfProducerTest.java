@@ -94,7 +94,7 @@ public class CxfProducerTest extends TestCase {
         org.apache.camel.Message out = exchange.getOut();
         Object[] output = (Object[])out.getBody();
         LOG.info("Received output text: " + output[0]);
-        assertEquals("reply body on Camel", TEST_MESSAGE, output[0]);
+        assertEquals("reply body on Camel", "echo " + TEST_MESSAGE, output[0]);
     }
    
        

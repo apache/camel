@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.namespace.QName;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -46,13 +47,13 @@ public class CxfBinding {
     protected static Object getBody(Message message) {
         Set<Class<?>> contentFormats = message.getContentFormats();
         if (contentFormats != null) {
-            for (Class<?> contentFormat : contentFormats) {            
+            for (Class<?> contentFormat : contentFormats) {
                 Object answer = message.getContent(contentFormat);
                 if (answer != null) {
                     return answer;
                 }
             }
-        }    
+        }
         return null;
     }
 
@@ -71,12 +72,14 @@ public class CxfBinding {
         }
         if (body instanceof InputStream) {
         	answer.setContent(InputStream.class, body);
-                // we need copy context 
+                // we need copy context
         } else if (body instanceof List) {
         	//just set the operation's parament
         	answer.setContent(List.class, body);
                 //just set the method name
-                answer.setContent(String.class, in.getHeader(CxfConstants.OPERATION_NAME));
+                answer.put(CxfConstants.OPERATION_NAME, (String)in.getHeader(CxfConstants.OPERATION_NAME));
+                answer.put(CxfConstants.OPERATION_NAMESPACE, (String)in.getHeader(CxfConstants.OPERATION_NAMESPACE));
+
         } else if (body instanceof DOMSource) {
         	DOMSource source = (DOMSource) body;
         	try {
@@ -84,15 +87,15 @@ public class CxfBinding {
 				answer.setContent(InputStream.class, bais);
 			} catch (Exception e) {
 				throw new RuntimeCamelException(e);
-			}     	        	
-        	
+			}
+
         }
-        
-        
+
+
         return answer;
     }
-    
-   
+
+
     public void storeCxfResponse(CxfExchange exchange, Message response) {
         // no need to process headers as we use the CXF message
         CxfMessage out = exchange.getOut();
@@ -108,7 +111,7 @@ public class CxfBinding {
             out.setBody(response);
         }
     }
-    
+
     public void storeCxfFault(CxfExchange exchange, Message message) {
         CxfMessage fault = exchange.getFault();
         if (fault != null) {
