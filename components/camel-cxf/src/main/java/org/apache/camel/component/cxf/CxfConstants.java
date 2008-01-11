@@ -31,11 +31,12 @@ public interface CxfConstants {
     String PORT_NAME = "portName";
     String PROTOCOL_NAME_RES = "res";
     String OPERATION_NAME = "operationName";
+    String OPERATION_NAMESPACE = "operationNameSpace";
     String SPRING_CONTEXT_ENDPOINT = "bean:";
     String CAMEL_TRANSPORT_PREFIX = "camel:";
     String CXF_EXCHANGE = "org.apache.cxf.message.exchange";
     String CAMEL_EXCHANGE = "org.apache.camel.exchange";
-     
+
 }
 
 

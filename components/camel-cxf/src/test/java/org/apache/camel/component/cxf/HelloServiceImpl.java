@@ -26,7 +26,7 @@ public class HelloServiceImpl implements HelloService {
 	
     public String echo(String text) {        
         LOG.info("call for echo with " + text);
-        return text;
+        return "echo " + text;
     }
 
     public void ping() {

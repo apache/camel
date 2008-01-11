@@ -89,7 +89,7 @@ public class CxfRouterTest extends ContextTestSupport {
         
         HelloService client = (HelloService) proxyFactory.create();
         String result = client.echo("hello world");
-        assertEquals("we should get the right answer from router", "hello world", result);
+        assertEquals("we should get the right answer from router", "echo hello world", result);
         
                 
     }

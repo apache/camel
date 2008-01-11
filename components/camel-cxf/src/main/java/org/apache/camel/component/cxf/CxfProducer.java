@@ -48,17 +48,19 @@ import org.apache.cxf.transport.Conduit;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 
+import javax.xml.namespace.QName;
+
 /**
  * Sends messages from Camel into the CXF endpoint
- * 
+ *
  * @version $Revision$
  */
 public class CxfProducer extends DefaultProducer <CxfExchange> {
     private CxfEndpoint endpoint;
     private Client client;
     private DataFormat dataFormat;
-    
-    
+
+
 
     public CxfProducer(CxfEndpoint endpoint) throws CamelException {
         super(endpoint);
@@ -68,10 +70,10 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
             client = createClientFormClientFactoryBean(null);
         } else {
             // create CxfClient for message
-            client = createClientForStreamMessge();           
+            client = createClientForStreamMessge();
         }
     }
-    
+
     private Client createClientForStreamMessge() throws CamelException {
         CxfClientFactoryBean cfb = new CxfClientFactoryBean();
         if (null != endpoint.getServiceClass()) {
@@ -85,24 +87,24 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
         }
         return createClientFormClientFactoryBean(cfb);
     }
-   
-    //If cfb is null ,we will try to find a right cfb to use.    
-    private Client createClientFormClientFactoryBean(ClientFactoryBean cfb) throws CamelException {              
+
+    //If cfb is null ,we will try to find a right cfb to use.
+    private Client createClientFormClientFactoryBean(ClientFactoryBean cfb) throws CamelException {
         Bus bus = BusFactory.getDefaultBus();
         if (endpoint.isSpringContextEndpoint()) {
             CxfEndpointBean endpointBean = endpoint.getCxfEndpointBean();
             if (cfb == null) {
                 cfb = CxfEndpointUtils.getClientFactoryBean(endpointBean.getServiceClass());
-            }    
+            }
             endpoint.configure(cfb);
 
             CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
             if (cxfEndpointBean.getServiceName() != null) {
                 cfb.setServiceName(cxfEndpointBean.getServiceName());
-            } 
+            }
             if (cxfEndpointBean.getEndpointName() != null) {
                 cfb.setEndpointName(cxfEndpointBean.getEndpointName());
-            } 
+            }
         } else { // set up the clientFactoryBean by using URI information
             if (null != endpoint.getServiceClass()) {
                 try {
@@ -110,21 +112,21 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                     Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
                     if (cfb == null) {
                         cfb = CxfEndpointUtils.getClientFactoryBean(serviceClass);
-                    } 
+                    }
                     cfb.setAddress(endpoint.getAddress());
-                    if (null != endpoint.getServiceClass()) {            
+                    if (null != endpoint.getServiceClass()) {
                         cfb.setServiceClass(ObjectHelper.loadClass(endpoint.getServiceClass()));
-                    } 
+                    }
                     if (null != endpoint.getWsdlURL()) {
                         cfb.setWsdlURL(endpoint.getWsdlURL());
-                    }                
+                    }
                 } catch (ClassNotFoundException e) {
                     throw new CamelException(e);
                 }
             } else { // we can't see any service class from the endpoint
                 if (cfb == null) {
                     cfb = new ClientFactoryBean();
-                }    
+                }
                 if (null != endpoint.getWsdlURL()) {
                     cfb.setWsdlURL(endpoint.getWsdlURL());
                 } else {
@@ -137,22 +139,21 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
             }
             if (endpoint.getPortName() != null) {
                 cfb.setEndpointName(CxfEndpointUtils.getPortName(endpoint));
-               
-            }    
-            if (endpoint.getWsdlURL() != null) {                
+
+            }
+            if (endpoint.getWsdlURL() != null) {
                 cfb.setWsdlURL(endpoint.getWsdlURL());
             }
-        }    
-        cfb.setBus(bus);        
+        }
+        cfb.setBus(bus);
         return cfb.create();
     }
-   
+
     public void process(Exchange exchange) {
         CxfExchange cxfExchange = endpoint.createExchange(exchange);
         process(cxfExchange);
-        if (exchange.getPattern() != ExchangePattern.InOnly) {
-        	exchange.copyFrom(cxfExchange);
-        }
+        exchange.copyFrom(cxfExchange);
+
     }
 
     public void process(CxfExchange exchange) {
@@ -161,21 +162,29 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
         try {
             if (dataFormat.equals(DataFormat.POJO)) {
                 //InputStream is = m.getContent(InputStream.class);
-                // now we just deal with the POJO invocations 
+                // now we just deal with the POJO invocations
                 List paraments = inMessage.getContent(List.class);
-                String operation = inMessage.getContent(String.class);
-                Message response = new MessageImpl();            
-                if (operation != null && paraments != null) {                
+                String operationName = (String)inMessage.get(CxfConstants.OPERATION_NAME);
+                String operationNameSpace = (String)inMessage.get(CxfConstants.OPERATION_NAMESPACE);
+                Message response = new MessageImpl();
+                if (operationName != null && paraments != null) {
                     // now we just deal with the invoking the paraments
+                    // we need to check out the operation Namespace
                     try {
-                        Object[] result = client.invoke(operation, paraments.toArray());                
+                        Object[] result = null;
+                        if (operationNameSpace == null) {
+                            result = client.invoke(operationName, paraments.toArray());
+                        } else {
+                            QName operation = new QName(operationNameSpace, operationName);
+                            result = client.invoke(operation, paraments.toArray());
+                        }
                         response.setContent(Object[].class, result);
                         cxfBinding.storeCxfResponse(exchange, response);
                     } catch (Exception ex) {
                         response.setContent(Exception.class, ex);
-                        cxfBinding.storeCxfFault(exchange, response);                        
+                        cxfBinding.storeCxfFault(exchange, response);
                     }
-                }  
+                }
             } else {
                 // get the invocation context
                 org.apache.cxf.message.Exchange ex = exchange.getExchange();
@@ -202,35 +211,35 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                 Object result = cxfClient.dispatch(params, null, ex);
                 // need to get the binding object to create the message
                 BindingOperationInfo boi = ex.get(BindingOperationInfo.class);
-                Message response = null;                
+                Message response = null;
                 if (boi == null) {
-                    // it should be the raw message                    
-                    response = new MessageImpl(); 
+                    // it should be the raw message
+                    response = new MessageImpl();
                 } else {
                     // create the message here
-                    Endpoint ep = ex.get(Endpoint.class);                    
+                    Endpoint ep = ex.get(Endpoint.class);
                     response = ep.getBinding().createMessage();
-                }                
+                }
                 response.setExchange(ex);
-                ex.setOutMessage(response);                
+                ex.setOutMessage(response);
                 invokingContext.setResponseContent(response, result);
                 cxfBinding.storeCxfResponse(exchange, response);
             }
         } catch (Exception e) {
             //TODO add the falut message handling work
             throw new RuntimeCamelException(e);
-        }     
-                
+        }
+
     }
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart(); 
+        super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();        
+        super.doStop();
     }
 
 }
