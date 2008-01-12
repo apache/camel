@@ -32,21 +32,21 @@ public class CxfRouterTest extends ContextTestSupport {
     protected static final String ROUTER_ADDRESS = "http://localhost:9000/router";
     protected static final String SERVICE_ADDRESS = "http://localhost:9002/helloworld";
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
-    
+
     private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
     private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
-    
+
     private ServerImpl server;
     private Bus bus;
-    
-    
+
+
     @Override
     protected void setUp() throws Exception {
-        super.setUp();       
-        bus = BusFactory.getDefaultBus();      
+        super.setUp();
+        bus = BusFactory.getDefaultBus();
         startService();
     }
-    
+
     protected void startService() {
         //start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
@@ -59,47 +59,47 @@ public class CxfRouterTest extends ContextTestSupport {
         server = (ServerImpl)svrBean.create();
         server.start();
     }
-    
+
     @Override
     protected void tearDown() throws Exception {
         //bus.shutdown(true);
-        BusFactory.setDefaultBus(null);        
+        BusFactory.setDefaultBus(null);
     }
-  
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(routerEndpointURI).to(serviceEndpointURI);              
+                from(routerEndpointURI).to("log:org.apache.camel?level=DEBUG").to(serviceEndpointURI);
             }
         };
     }
-    
+
     protected CamelContext createCamelContext() throws Exception {
         return new DefaultCamelContext();
     }
 
-    
-    public void testInvokingServiceFromCXFClient() throws Exception {  
-                
+
+    public void testInvokingServiceFromCXFClient() throws Exception {
+
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
-        clientBean.setAddress(ROUTER_ADDRESS);        
+        clientBean.setAddress(ROUTER_ADDRESS);
         clientBean.setServiceClass(HelloService.class);
-        clientBean.setBus(bus);        
-        
+        clientBean.setBus(bus);
+
         HelloService client = (HelloService) proxyFactory.create();
+
         String result = client.echo("hello world");
-        assertEquals("we should get the right answer from router", "echo hello world", result);
-        
-                
+        assertEquals("we should get the right answer from router", result, "echo hello world");
+
     }
-    
+
     public void testOnwayInvocation() throws Exception {
     	ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
-        clientBean.setAddress(ROUTER_ADDRESS);        
+        clientBean.setAddress(ROUTER_ADDRESS);
         clientBean.setServiceClass(HelloService.class);
-        clientBean.setBus(bus);        
+        clientBean.setBus(bus);
         HelloService client = (HelloService) proxyFactory.create();
         int invocationCount = client.getInvocationCount();
         client.ping();
