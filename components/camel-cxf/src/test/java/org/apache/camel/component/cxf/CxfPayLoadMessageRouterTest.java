@@ -24,7 +24,7 @@ public class CxfPayLoadMessageRouterTest extends CxfRouterTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(routerEndpointURI).to(serviceEndpointURI);              
+                from(routerEndpointURI).to("log:org.apache.camel?level=DEBUG").to(serviceEndpointURI);
             }
         };
     }

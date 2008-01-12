@@ -28,26 +28,26 @@ import org.apache.cxf.transport.Destination;
 /**
  * An {@link Exchange} for working with Apache CXF which expoes the underlying
  * CXF messages via {@link #getInMessage()} and {@link #getOutMessage()} along with the
- * {@link #getExchange()} 
+ * {@link #getExchange()}
  *
  * @version $Revision$
  */
-public class CxfExchange extends DefaultExchange {   
+public class CxfExchange extends DefaultExchange {
     private Exchange exchange;
 
     public CxfExchange(CamelContext context, Exchange exchange) {
-        super(context);        
+        super(context);
         this.exchange = exchange;
 
         setIn(new CxfMessage(exchange.getInMessage()));
         setOut(new CxfMessage(exchange.getOutMessage()));
         if (exchange.getInFaultMessage() != null) {
             setFault(new CxfMessage(exchange.getInFaultMessage()));
-        }    
+        }
     }
 
     public CxfExchange(CamelContext context, ExchangePattern pattern) {
-        super(context, pattern);        
+        super(context, pattern);
     }
 
     public CxfExchange(CamelContext context, ExchangePattern pattern, Message inMessage) {
@@ -56,11 +56,18 @@ public class CxfExchange extends DefaultExchange {
 
         setIn(new CxfMessage(inMessage));
         if (exchange != null) {
-            setOut(new CxfMessage(exchange.getOutMessage()));
+            if (exchange.getOutMessage()!= null) {
+                setOut(new CxfMessage(exchange.getOutMessage()));
+            }
             if (exchange.getInFaultMessage() != null) {
                 setFault(new CxfMessage(exchange.getInFaultMessage()));
-            }    
+            }
         }
+    }
+
+    @Override
+    public org.apache.camel.Exchange newInstance() {
+        return new CxfExchange(this.getContext(), this.getExchange());
     }
 
     @Override
@@ -82,7 +89,7 @@ public class CxfExchange extends DefaultExchange {
     public CxfMessage getFault() {
         return (CxfMessage) super.getFault();
     }
-    
+
     @Override
     protected org.apache.camel.Message createFaultMessage() {
         return new CxfMessage();

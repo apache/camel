@@ -25,7 +25,7 @@ import org.apache.cxf.message.MessageImpl;
 /**
  * An Apache CXF {@link Message} which provides access to the underlying CXF
  * features
- * 
+ *
  * @version $Revision$
  */
 public class CxfMessage extends DefaultMessage {
@@ -40,6 +40,17 @@ public class CxfMessage extends DefaultMessage {
             this.cxfMessage = new MessageImpl();
         } else {
             this.cxfMessage = cxfMessage;
+        }
+    }
+
+    @Override
+    public void copyFrom(org.apache.camel.Message that) {
+        setMessageId(that.getMessageId());
+        setBody(that.getBody());
+        getHeaders().putAll(that.getHeaders());
+        if (that instanceof CxfMessage) {
+            CxfMessage orig = (CxfMessage) that;
+            setMessage(orig.getMessage());
         }
     }
 
@@ -59,7 +70,7 @@ public class CxfMessage extends DefaultMessage {
 
     /**
      * Returns the underlying CXF message
-     * 
+     *
      * @return the CXF message
      */
     public Message getMessage() {
