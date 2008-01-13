@@ -163,6 +163,21 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
         addOutput(answer);
         return answer;
     }
+    
+    /**
+     * Multicasts messages to all its child outputs; so that each processor and
+     * destination gets a copy of the original message to avoid the processors
+     * interfering with each other.     
+     * @param aggregationStrategy the strategy used to aggregate responses for
+     *          every part
+     * @return the multicast type
+     */
+    public MulticastType multicast(AggregationStrategy aggregationStrategy) {
+        MulticastType answer = new MulticastType();
+        addOutput(answer);
+        answer.setAggregationStrategy(aggregationStrategy);
+        return answer;
+    }
 
     /**
      * Creates a {@link Pipeline} of the list of endpoints so that the message
@@ -357,6 +372,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
      * pattern where an expression is evaluated to iterate through each of the
      * parts of a message and then each part is then send to some endpoint.
+     * This splitter responds with the latest message returned from destination
+     * endpoint. 
      *
      * @param receipients the expression on which to split
      * @return the builder
@@ -372,7 +389,9 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
      * pattern where an expression is evaluated to iterate through each of the
      * parts of a message and then each part is then send to some endpoint.
-     *
+     * This splitter responds with the latest message returned from destination
+     * endpoint. 
+     * 
      * @return the expression clause for the expression on which to split
      */
     public ExpressionClause<SplitterType> splitter() {
@@ -381,6 +400,41 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
         return ExpressionClause.createAndSetExpression(answer);
     }
 
+    /**
+     * A builder for the <a
+     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
+     * pattern where an expression is evaluated to iterate through each of the
+     * parts of a message and then each part is then send to some endpoint.
+     * Answer from the splitter is produced using given {@link AggregationStrategy}
+     * @param partsExpression the expression on which to split
+     * @param aggregationStrategy the strategy used to aggregate responses for
+     *          every part
+     * @return the builder
+     */
+    public SplitterType splitter(Expression partsExpression, AggregationStrategy aggregationStrategy) {
+        SplitterType answer = new SplitterType(partsExpression);
+        addOutput(answer);
+        answer.setAggregationStrategy(aggregationStrategy);
+        return answer;
+    }
+
+    /**
+     * A builder for the <a
+     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
+     * pattern where an expression is evaluated to iterate through each of the
+     * parts of a message and then each part is then send to some endpoint.
+     * Answer from the splitter is produced using given {@link AggregationStrategy}
+     * @param aggregationStrategy the strategy used to aggregate responses for
+     *          every part
+     * @return the expression clause for the expression on which to split
+     */
+    public ExpressionClause<SplitterType> splitter(AggregationStrategy aggregationStrategy) {
+        SplitterType answer = new SplitterType();
+        addOutput(answer);
+        answer.setAggregationStrategy(aggregationStrategy);
+        return ExpressionClause.createAndSetExpression(answer);
+    }
+    
     /**
      * A builder for the <a
      * href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>

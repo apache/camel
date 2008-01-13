@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import static org.apache.camel.util.ObjectHelper.notNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -23,6 +25,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -34,9 +38,16 @@ import org.apache.camel.util.ServiceHelper;
  */
 public class MulticastProcessor extends ServiceSupport implements Processor {
     private Collection<Processor> processors;
-
+    private AggregationStrategy aggregationStrategy;
+    
     public MulticastProcessor(Collection<Processor> processors) {
+        this(processors, null);
+    }
+
+    public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy) {
         this.processors = processors;
+        this.aggregationStrategy = aggregationStrategy;
+        notNull(processors, "processors");        
     }
 
     /**
@@ -57,9 +68,20 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
+        Exchange result = null;
         for (Processor producer : processors) {
             Exchange copy = copyExchangeStrategy(producer, exchange);
             producer.process(copy);
+            if (aggregationStrategy != null) {
+                if (result == null) {
+                    result = copy;
+                } else {
+                    result = aggregationStrategy.aggregate(result, copy);                    
+                }
+            }    
+        }
+        if (result != null) {
+            ExchangeHelper.copyResults(exchange, result);
         }
     }
 
