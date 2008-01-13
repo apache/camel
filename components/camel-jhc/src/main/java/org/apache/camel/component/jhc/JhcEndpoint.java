@@ -37,7 +37,6 @@ public class JhcEndpoint extends DefaultEndpoint<JhcExchange> {
 
     private HttpParams params;
     private URI httpUri;
-    private int workers = 2;
 
     public JhcEndpoint(String endpointUri, JhcComponent component, URI httpUri) {
         super(endpointUri, component);
@@ -51,14 +50,6 @@ public class JhcEndpoint extends DefaultEndpoint<JhcExchange> {
 
     public void setParams(HttpParams params) {
         this.params = params;
-    }
-
-    public void setWorkers(int workers) {
-        this.workers = workers;
-    }
-
-    public int getWorkers() {
-        return workers;
     }
 
     public URI getHttpUri() {
