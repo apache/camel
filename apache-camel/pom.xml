@@ -47,11 +47,19 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-cxf</artifactId>
+      <artifactId>camel-csv</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-cxf</artifactId>
+    </dependency>    
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-ftp</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-groovy</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -99,7 +107,15 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jhc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-juel</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jcr</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -132,7 +148,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-script</artifactId>
-    </dependency>
+    </dependency> 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
@@ -197,6 +213,26 @@
       <artifactId>geronimo-j2ee-jacc_1.0_spec</artifactId>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-j2ee-jacc_1.0_spec</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore-nio</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore-niossl</artifactId>
+      <optional>true</optional>
+    </dependency>
 
   </dependencies>
 
@@ -221,8 +257,9 @@
               <goal>createbundle</goal>
             </goals>
             <configuration>
-              <includes>camel-bam,camel-core,camel-cxf,camel-ftp,camel-juel,
-                camel-http,camel-ibatis,camel-irc,camel-jaxb,camel-jdbc,camel-jing,camel-jms,camel-josql,
+              <includes>camel-bam,camel-core,camel-cxf,camel-csv,camel-ftp,came-groovy,
+                camel-http,camel-ibatis,camel-irc,camel-jaxb,camel-jdbc,camel-jing,camel-jms,
+                camel-jhc,camel-josql,camel-juel,camel-jetty,camel-jcr,
                 camel-jpa,camel-mail,camel-mina,camel-msv,camel-ognl,camel-quartz,camel-rmi,
                 camel-saxon,camel-script,camel-spring,camel-stringtemplate,camel-velocity,
                 camel-xmlbeans,camel-xmpp,commons-logging</includes>
