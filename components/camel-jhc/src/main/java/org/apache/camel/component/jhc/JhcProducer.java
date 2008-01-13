@@ -60,7 +60,7 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
 
     private static Log LOG = LogFactory.getLog(JhcProducer.class);
 
-    private int nbThreads = 2;
+    private int nbThreads = 50;
     private ConnectingIOReactor ioReactor;
     private ThreadFactory threadFactory;
     private Thread runner;
@@ -78,6 +78,7 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
     protected void doStart() throws Exception {
         super.doStart();
         HttpParams params = getEndpoint().getParams();
+        nbThreads = getEndpoint().getWorkers();
         ioReactor = new DefaultConnectingIOReactor(nbThreads, threadFactory, params);
         BasicHttpProcessor httpproc = new BasicHttpProcessor();
         httpproc.addInterceptor(new RequestContent());
@@ -238,7 +239,7 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
 
         public void finalizeContext(HttpContext arg0) {
             // TODO Auto-generated method stub
-            
+
         }
     }
 
