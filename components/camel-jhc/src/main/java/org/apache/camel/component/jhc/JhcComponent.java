@@ -59,10 +59,10 @@ public class JhcComponent extends DefaultComponent<JhcExchange> {
 
     public JhcComponent() {
         params = new BasicHttpParams(null)
-            .setIntParameter(HttpConnectionParams.SO_TIMEOUT, 15000)
-            .setIntParameter(HttpConnectionParams.CONNECTION_TIMEOUT, 20000)
+            .setIntParameter(HttpConnectionParams.SO_TIMEOUT, 5000)
+            .setIntParameter(HttpConnectionParams.CONNECTION_TIMEOUT, 10000)
             .setIntParameter(HttpConnectionParams.SOCKET_BUFFER_SIZE, 8 * 1024)
-            .setBooleanParameter(HttpConnectionParams.STALE_CONNECTION_CHECK, true)
+            .setBooleanParameter(HttpConnectionParams.STALE_CONNECTION_CHECK, false)
             .setBooleanParameter(HttpConnectionParams.TCP_NODELAY, true)
             .setParameter(HttpProtocolParams.USER_AGENT, "Camel-JhcComponent/1.1");
     }
