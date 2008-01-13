@@ -24,6 +24,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
  * @version $Revision: 1.1 $
@@ -53,10 +54,39 @@ public class SplitterTest extends ContextTestSupport {
         }
     }
 
+    public void testSpliterWithAggregationStrategy() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedBodiesReceived("James", "Guillaume", "Hiram", "Rob", "Roman");
+
+        Exchange result = template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                in.setBody("James,Guillaume,Hiram,Rob,Roman");
+                in.setHeader("foo", "bar");
+            }
+        });
+
+        assertMockEndpointsSatisifed();
+        Message out = result.getOut();
+        assertEquals("Roman", out.getBody());
+        assertMessageHeader(out, "foo", "bar");
+        assertMessageHeader(out, Splitter.SPLIT_COUNTER, 4);
+    }
+    
+    public void testEmptyBody() {
+        Exchange result = template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader("foo", "bar");
+            }
+        });
+        
+        assertNull(result.getOut(false));
+    }
+    
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").splitter(body().tokenize(",")).to("mock:result");
+                from("direct:a").splitter(body().tokenize(","), new UseLatestAggregationStrategy()).to("mock:result");
             }
         };
     }

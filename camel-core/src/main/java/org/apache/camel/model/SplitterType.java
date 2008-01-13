@@ -19,12 +19,15 @@ package org.apache.camel.model;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.Splitter;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
  * @version $Revision: 1.1 $
@@ -32,6 +35,9 @@ import org.apache.camel.processor.Splitter;
 @XmlRootElement(name = "splitter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SplitterType extends ExpressionNode {
+    @XmlTransient
+    private AggregationStrategy aggregationStrategy;
+    
     public SplitterType() {
     }
 
@@ -51,6 +57,17 @@ public class SplitterType extends ExpressionNode {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
-        return new Splitter(getExpression().createExpression(routeContext), childProcessor);
+        if (aggregationStrategy == null) {
+            aggregationStrategy = new UseLatestAggregationStrategy();
+        }
+        return new Splitter(getExpression().createExpression(routeContext), childProcessor, aggregationStrategy);
+    }
+    
+    public AggregationStrategy getAggregationStrategy() {
+        return aggregationStrategy;
+    }
+
+    public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
+        this.aggregationStrategy = aggregationStrategy;
     }
 }

@@ -21,10 +21,13 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.MulticastProcessor;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
  * @version $Revision: 1.1 $
@@ -32,17 +35,31 @@ import org.apache.camel.processor.MulticastProcessor;
 @XmlRootElement(name = "multicast")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MulticastType extends OutputType<ProcessorType> {
+    @XmlTransient
+    private AggregationStrategy aggregationStrategy;
+    
     @Override
     public String toString() {
         return "Multicast[" + getOutputs() + "]";
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor(RouteContext routeContext) throws Exception {        
         return createOutputsProcessor(routeContext);
     }
 
     protected Processor createCompositeProcessor(List<Processor> list) {
-        return new MulticastProcessor(list);
+        if (aggregationStrategy == null) {
+            aggregationStrategy = new UseLatestAggregationStrategy();
+        }
+        return new MulticastProcessor(list, aggregationStrategy);
+    }
+    
+    public AggregationStrategy getAggregationStrategy() {
+        return aggregationStrategy;
+    }
+
+    public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
+        this.aggregationStrategy = aggregationStrategy;
     }
 }
