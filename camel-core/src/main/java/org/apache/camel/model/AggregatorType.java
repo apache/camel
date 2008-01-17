@@ -76,7 +76,8 @@ public class AggregatorType extends ExpressionNode {
         return "Aggregator[ " + getExpression() + " -> " + getOutputs() + "]";
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         Endpoint from = routeContext.getEndpoint();
         final Processor processor = routeContext.createProcessor(this);
@@ -105,7 +106,7 @@ public class AggregatorType extends ExpressionNode {
         if (batchSize != null) {
             service.setBatchSize(batchSize);
         }
-        if (batchSize != null) {
+        if (batchTimeout != null) {
             service.setBatchTimeout(batchTimeout);
         }
 

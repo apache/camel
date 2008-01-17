@@ -181,10 +181,6 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
 
                         .to("direct:joinSurnames");
 
-                // FIXME: This aggregator doesn«t usually fail but could also due to timeout
-                // or an incorrect batch size
-                // Join in a list by the surname on the header and mark as
-                // brothers list
                 from("direct:joinSurnames")
                         .aggregator(header(SURNAME_HEADER),
                                 surnameAggregator).setHeader(TYPE_HEADER,
@@ -195,13 +191,6 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
                         from("direct:joinBrothers").aggregator(header(TYPE_HEADER),
                                 brothersAggregator);
 
-                // FIXME: If these lines get commented the test fails some times with different errors
-                // due to a timeout or incorrect batch size that must be adjusted by hand
-                // There are two brothers lists to join but we don«t know always the number "a priori"
-/*
-                agg.setBatchSize(2);
-                agg.setBatchTimeout(10000L);
-*/
                 agg.setBatchTimeout(5000L);
                 agg.removeHeader(SURNAME_HEADER)
                         .removeHeader(TYPE_HEADER)
