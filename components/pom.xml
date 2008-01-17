@@ -66,11 +66,12 @@
     <module>camel-script</module>
     <module>camel-spring</module>
     <module>camel-stringtemplate</module>
+    <module>camel-stream</module>
     <!--<module>camel-supercsv</module>-->
     <module>camel-velocity</module>
     <module>camel-xmlbeans</module>
     <module>camel-xmpp</module>
-    <module>camel-xstream</module>
+    <module>camel-xstream</module>    
   </modules>
 
 </project>

@@ -155,6 +155,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-stream</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-stringtemplate</artifactId>
     </dependency>
     <dependency>
@@ -261,8 +265,8 @@
                 camel-http,camel-ibatis,camel-irc,camel-jaxb,camel-jdbc,camel-jing,camel-jms,
                 camel-jhc,camel-josql,camel-juel,camel-jetty,camel-jcr,
                 camel-jpa,camel-mail,camel-mina,camel-msv,camel-ognl,camel-quartz,camel-rmi,
-                camel-saxon,camel-script,camel-spring,camel-stringtemplate,camel-velocity,
-                camel-xmlbeans,camel-xmpp,commons-logging</includes>
+                camel-saxon,camel-script,camel-spring,camel-stringtemplate, camel-stream,
+                camel-velocity,camel-xmlbeans,camel-xmpp,commons-logging</includes>
             </configuration>
           </execution>
         </executions>
