@@ -95,12 +95,20 @@ public class BeanProcessor extends ServiceSupport implements Processor {
             invocation = beanInfo.createInvocation(methodObject, bean, exchange);
         } else {
             // lets pass in the method name to use if its specified
-            if (ObjectHelper.isNotNullAndNonEmpty(method)) {
-                if (isNullOrBlank(in.getHeader(METHOD_NAME, String.class))) {
-                    in.setHeader(METHOD_NAME, method);
+            boolean hasToClearMethod = false;
+            try {
+                if (ObjectHelper.isNotNullAndNonEmpty(method)) {
+                    if (isNullOrBlank(in.getHeader(METHOD_NAME, String.class))) {
+                        in.setHeader(METHOD_NAME, method);
+                        hasToClearMethod = true;
+                    }
+                }
+                invocation = beanInfo.createInvocation(bean, exchange);
+            } finally {
+                if (hasToClearMethod) {
+                    in.removeHeader(METHOD_NAME);
                 }
             }
-            invocation = beanInfo.createInvocation(bean, exchange);
         }
         if (invocation == null) {
             throw new IllegalStateException("No method invocation could be created, no maching method could be found on: " + bean);
