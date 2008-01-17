@@ -167,7 +167,7 @@ public class ObjectHelper {
             Collection collection = (Collection)collectionOrArray;
             return collection.contains(value);
         } else {
-            Iterator iter = ObjectConverter.iterator(value);
+            Iterator iter = ObjectConverter.iterator(collectionOrArray);
             while (iter.hasNext()) {
                 if (equal(value, iter.next())) {
                     return true;

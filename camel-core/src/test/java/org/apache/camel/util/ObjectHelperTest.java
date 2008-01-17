@@ -19,6 +19,8 @@ package org.apache.camel.util;
 import junit.framework.TestCase;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * @version $Revision$
@@ -38,6 +40,19 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("Property name", "cheese", name);
     }
 
+    public void testContains() throws Exception {
+        String[] array = {"foo", "bar"};
+        Collection<String> collection = Arrays.asList(array);
+        
+        assertTrue(ObjectHelper.contains(array, "foo"));
+        assertTrue(ObjectHelper.contains(collection, "foo"));
+        assertTrue(ObjectHelper.contains("foo", "foo"));
+        
+        assertFalse(ObjectHelper.contains(array, "xyz"));
+        assertFalse(ObjectHelper.contains(collection, "xyz"));
+        assertFalse(ObjectHelper.contains("foo", "xyz"));
+    }
+    
     public void setCheese(String cheese) {
     }
 }
