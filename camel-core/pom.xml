@@ -132,10 +132,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>pertest</forkMode>
-          <excludes>
-            <!-- TODO fix ASAP! -->
-            <exclude>**/AlbertoAggregatorTest.*</exclude>
-          </excludes>
         </configuration>
       </plugin>
 
