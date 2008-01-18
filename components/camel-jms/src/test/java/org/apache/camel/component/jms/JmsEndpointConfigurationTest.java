@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
+import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
 /**
  * @version $Revision: $
@@ -68,6 +69,26 @@ public class JmsEndpointConfigurationTest extends ContextTestSupport {
         EndpointMessageListener messageListener = assertIsInstanceOf(EndpointMessageListener.class, object);
         assertTrue("Should have replyToDisabled", messageListener.isDisableReplyTo());
         assertTrue("Should have isEagerLoadingOfProperties()", messageListener.isEagerLoadingOfProperties());
+    }
+
+
+    public void testCacheConsumerEnabledForQueue() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:Foo.Bar");
+        assertCacheLevel(endpoint, DefaultMessageListenerContainer.CACHE_CONSUMER);
+    }
+
+    public void testCacheConsumerEnabledForTopic() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:topic:Foo.Bar");
+        assertCacheLevel(endpoint, DefaultMessageListenerContainer.CACHE_CONSUMER);
+    }
+
+    protected void assertCacheLevel(JmsEndpoint endpoint, int expected) throws Exception {
+        JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
+
+        AbstractMessageListenerContainer container = consumer.getListenerContainer();
+        DefaultMessageListenerContainer defaultContainer = assertIsInstanceOf(DefaultMessageListenerContainer.class, container);
+        int cacheLevel = defaultContainer.getCacheLevel();
+        assertEquals("CacheLevel", expected, cacheLevel);
     }
 
     protected void assertDurableSubscriberEndpointIsValid(JmsEndpoint endpoint) throws Exception {
