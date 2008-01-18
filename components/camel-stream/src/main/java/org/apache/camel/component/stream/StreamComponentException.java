@@ -15,10 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package org.apache.camel.component.stream;
 
 public class StreamComponentException extends Exception {
+
+	private static final long serialVersionUID = 8064764690837846894L;
 
 	public StreamComponentException(String s) {
 		super(s);

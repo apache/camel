@@ -17,17 +17,14 @@
  */
 package org.apache.camel.component.stream;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Serializable;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.Buffer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
