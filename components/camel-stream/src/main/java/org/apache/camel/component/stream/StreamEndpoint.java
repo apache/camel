@@ -17,8 +17,8 @@
  */
 package org.apache.camel.component.stream;
 
-
 import java.util.Map;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -26,48 +26,32 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
-
 public class StreamEndpoint extends DefaultEndpoint<StreamExchange> {
+	Producer<StreamExchange> producer;
+	private Map parameters;
+	private String uri;
+	private static final Log log = LogFactory.getLog(StreamConsumer.class);
 
-    String file;
-    Producer<StreamExchange> producer;
-    private Map parameters;
-    private String uri;
+	public StreamEndpoint(StreamComponent component, String uri,
+			String remaining, Map parameters) throws Exception {
+		super(uri, component);
+		this.parameters = parameters;
+		this.uri = uri;
+		log.debug(uri + " / " + remaining + " / " + parameters);
+		this.producer = new StreamProducer(this, uri, parameters);
 
-    private static final Log log = LogFactory.getLog(StreamConsumer.class);
+	}
 
+	public Consumer<StreamExchange> createConsumer(Processor p)
+			throws Exception {
+		return new StreamConsumer(this, p, uri, parameters);
+	}
 
-    public StreamEndpoint(StreamComponent component, String uri,
-            String remaining, Map parameters) throws Exception {
+	public Producer<StreamExchange> createProducer() throws Exception {
+		return producer;
+	}
 
-        super(uri, component);
-        this.parameters = parameters;
-        this.uri=uri;
-        log.debug(uri + " / " + remaining + " / " + parameters);
-        this.producer = new StreamProducer(this, uri, parameters);
-
-    }
-
-
-    public Consumer<StreamExchange> createConsumer(Processor p)
-            throws Exception {
-
-        return new StreamConsumer(this, p, uri, parameters);
-
-    }
-
-
-
-    public Producer<StreamExchange> createProducer() throws Exception {
-
-        return producer;
-
-    }
-
-
-    public boolean isSingleton() {
-
-        return true;
-    }
+	public boolean isSingleton() {
+		return true;
+	}
 }

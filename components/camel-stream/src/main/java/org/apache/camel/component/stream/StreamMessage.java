@@ -20,29 +20,25 @@ package org.apache.camel.component.stream;
 import org.apache.camel.impl.DefaultMessage;
 
 public class StreamMessage extends DefaultMessage {
-    String s;
-    public StreamMessage(String s) {
+	Object o;
 
-        this.s = s;
+	public StreamMessage(Object o) {
+		this.o = o;
+	}
 
-    }
+	@Override
+	public String toString() {
+		return o.toString();
+	}
 
+	@Override
+	protected Object createBody() {
+		return o;
+	}
 
-    @Override
-    public String toString() {
-        return s;
-    }
-
-
-    @Override
-    protected Object createBody() {
-        return s;
-    }
-
-
-    @Override
-    public Object getBody() {
-        return s;
-    }
+	@Override
+	public Object getBody() {
+		return o;
+	}
 
 }

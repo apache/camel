@@ -17,9 +17,18 @@
  */
 package org.apache.camel.component.stream;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,82 +36,107 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class StreamConsumer extends DefaultConsumer<StreamExchange> implements StreamReceiver {
+/**
+ * 
+ * Consumer that can read from any stream
+ * 
+ */
 
-    private static final String TYPES = "in";
+public class StreamConsumer extends DefaultConsumer<StreamExchange> {
 
-    private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{"
-                    + TYPES + "}'";
+	private static final String TYPES = "in";
+	private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{"
+			+ TYPES + "}'";
+	private static final List<String> TYPES_LIST = Arrays.asList(TYPES
+			.split(","));
+	private static final Log log = LogFactory.getLog(StreamConsumer.class);
+	Endpoint<StreamExchange> endpoint;
+	private Map<String, String> parameters;
+	private String uri;
+	protected InputStream inputStream = System.in;
 
-    private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
-    private static final Log log = LogFactory.getLog(StreamConsumer.class);
-    Endpoint<StreamExchange> endpoint;
-    private Map<String, String> parameters;
-    private String uri;
-    public StreamConsumer(Endpoint<StreamExchange> endpoint,
-                          Processor processor, String uri, Map<String, String> parameters)
-                          throws Exception {
+	public StreamConsumer(Endpoint<StreamExchange> endpoint,
+			Processor processor, String uri, Map<String, String> parameters)
+			throws Exception {
+		super(endpoint, processor);
+		this.endpoint = endpoint;
+		this.parameters = parameters;
+		validateUri(uri);
+		log.debug("Stream consumer created");
+	}
 
-        super(endpoint, processor);
-        this.endpoint = endpoint;
-        this.parameters = parameters;
-        validateUri(uri);
-        log.debug("### stream consumer created");
+	@Override
+	protected void doStart() throws Exception {
+		super.doStart();
 
-    }
+		if ("in".equals(uri)) {
+			inputStream = System.in;
+		} else if ("file".equals(uri)) {
+			inputStream = resolveStreamFromFile();
+		} else if ("url".equals(uri)) {
+			inputStream = resolveStreamFromUrl();
+		}
 
-    @Override
-    protected void doStart() throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(
+				inputStream));
+		String line = null;
+		try {
+			while ((line = br.readLine()) != null) {
+				consume(line);
+			}
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new StreamComponentException(e);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new StreamComponentException(e);
+		}
+	}
 
-        super.doStart();
-        InputStreamHandler sh = new StdInHandler(this);
+	public void consume(Object o) throws Exception {
+		Exchange exchange = endpoint.createExchange();
+		exchange.setIn(new StreamMessage(o));
+		getProcessor().process(exchange);
+	}
 
-        try {
+	private InputStream resolveStreamFromUrl() throws IOException {
+		String u = parameters.get("url");
+		URL url = new URL(u);
+		URLConnection c = url.openConnection();
+		return c.getInputStream();
+	}
 
-            if (parameters.get("prompt") != null) {
-                pass(parameters.get("prompt"));
-            }
-            sh.consume();
+	private InputStream resolveStreamFromFile() throws IOException {
+		String fileName = parameters.get("file");
+		fileName = fileName != null ? fileName.trim() : "_file";
+		File f = new File(fileName);
+		log.debug("About to read from file: " + f);
+		f.createNewFile();
+		return new FileInputStream(f);
+	}
 
-        } catch (ConsumingException e) {
-            log.error(e);
-            e.printStackTrace();
-        }
+	private void validateUri(String uri) throws Exception {
+		String[] s = uri.split(":");
+		if (s.length < 2) {
+			throw new Exception(INVALID_URI);
+		}
+		String[] t = s[1].split("\\?");
 
-    }
+		if (t.length < 1) {
+			throw new Exception(INVALID_URI);
+		}
 
-    public int pass(String s) throws Exception {
+		this.uri = t[0].trim();
+		if (!TYPES_LIST.contains(this.uri)) {
+			throw new Exception(INVALID_URI);
+		}
+	}
 
-        Exchange ex = endpoint.createExchange();
-
-        ex.setIn(new StreamMessage(s));
-
-        getProcessor().process(ex);
-
-        return 0;
-
-    }
-
-    private void validateUri(String uri) throws Exception {
-
-        String[] s = uri.split(":");
-        if (s.length < 2) {
-            throw new Exception(INVALID_URI);
-
-        }
-        String[] t = s[1].split("\\?");
-
-        if (t.length < 1) {
-            throw new Exception(INVALID_URI);
-        }
-
-        this.uri = t[0].trim();
-
-        if (!TYPES_LIST.contains(this.uri)) {
-
-            throw new Exception(INVALID_URI);
-
-        }
-    }
-
+	@Override
+	public void stop() throws Exception {
+		super.stop();
+		if (inputStream != null)
+			inputStream.close();
+	}
 }
