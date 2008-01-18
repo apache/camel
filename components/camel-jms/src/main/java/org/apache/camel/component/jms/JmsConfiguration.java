@@ -27,6 +27,7 @@ import javax.jms.TopicPublisher;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PackageHelper;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
@@ -737,7 +738,8 @@ public class JmsConfiguration implements Cloneable {
      *
      * Note that due to this
      * <a href="http://opensource.atlassian.com/projects/spring/browse/SPR-3890">Spring Bug</a>
-     * we cannot use CACHE_CONSUMER by default which we should do as its most efficient.
+     * we cannot use CACHE_CONSUMER by default (which we should do as its most efficient)
+     * unless the spring version is 2.5.1 or later.
      * Instead we use CACHE_CONNECTION - part from for non-durable topics which must use
      * CACHE_CONSUMER to avoid missing messages (due to the consumer being created and destroyed per message).
      *
@@ -745,18 +747,24 @@ public class JmsConfiguration implements Cloneable {
      * @param endpoint
      */
     protected int defaultCacheLevel(JmsEndpoint endpoint) {
-        if (endpoint.isPubSubDomain() && !isSubscriptionDurable()) {
-            // we must cache the consumer or we will miss messages
-            // see https://issues.apache.org/activemq/browse/CAMEL-253
+        // if we are on a new enough spring version we can assume CACHE_CONSUMER
+        if (PackageHelper.isValidVersion("org.springframework.jms", 2.51D)) {
             return DefaultMessageListenerContainer.CACHE_CONSUMER;
         }
         else {
-            // to enable consuming and sending with a single JMS session (to avoid XA) we can only use CACHE_CONNECTION
-            // due to this bug : http://opensource.atlassian.com/projects/spring/browse/SPR-3890
-            return DefaultMessageListenerContainer.CACHE_CONNECTION;
+            if (endpoint.isPubSubDomain() && !isSubscriptionDurable()) {
+                // we must cache the consumer or we will miss messages
+                // see https://issues.apache.org/activemq/browse/CAMEL-253
+                return DefaultMessageListenerContainer.CACHE_CONSUMER;
+            }
+            else {
+                // to enable consuming and sending with a single JMS session (to avoid XA) we can only use CACHE_CONNECTION
+                // due to this bug : http://opensource.atlassian.com/projects/spring/browse/SPR-3890
+                return DefaultMessageListenerContainer.CACHE_CONNECTION;
+            }
         }
     }
-    
+
     /**
      * Factory method which allows derived classes to customize the lazy
      * creation
