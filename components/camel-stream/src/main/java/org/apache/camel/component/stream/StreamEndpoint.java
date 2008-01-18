@@ -28,12 +28,12 @@ import org.apache.commons.logging.LogFactory;
 
 public class StreamEndpoint extends DefaultEndpoint<StreamExchange> {
 	Producer<StreamExchange> producer;
-	private Map parameters;
+	private Map<String, String> parameters;
 	private String uri;
 	private static final Log log = LogFactory.getLog(StreamConsumer.class);
 
 	public StreamEndpoint(StreamComponent component, String uri,
-			String remaining, Map parameters) throws Exception {
+			String remaining, Map<String, String> parameters) throws Exception {
 		super(uri, component);
 		this.parameters = parameters;
 		this.uri = uri;

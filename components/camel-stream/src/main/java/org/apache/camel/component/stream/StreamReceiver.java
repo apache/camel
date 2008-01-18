@@ -17,7 +17,6 @@
  */
 package org.apache.camel.component.stream;
 
-
 public interface StreamReceiver {
 
 	public int pass(String s) throws Exception;
