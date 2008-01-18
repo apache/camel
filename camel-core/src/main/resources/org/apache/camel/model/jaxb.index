@@ -42,6 +42,7 @@ RoutesType
 ServiceActivationType
 SplitterType
 ThrottlerType
+ThreadType
 ToType
 TryType
 UnmarshalType
