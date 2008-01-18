@@ -24,15 +24,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class StreamComponent extends DefaultComponent<StreamExchange> {
+	
+	/**
+	 * Component providing streams connectivity
+	 */
+	
+	private static final Log log = LogFactory.getLog(StreamComponent.class);
 
-    private static final Log log = LogFactory.getLog(StreamComponent.class);
-
-    @Override
-    protected Endpoint<StreamExchange> createEndpoint(String uri,
-    String remaining, Map parameters) throws Exception {
-
-        return new StreamEndpoint(this, uri, remaining, parameters);
-
-    }
+	@Override
+	protected Endpoint<StreamExchange> createEndpoint(String uri,
+			String remaining, Map parameters) throws Exception {
+		return new StreamEndpoint(this, uri, remaining, parameters);
+	}
 
 }
