@@ -31,7 +31,7 @@ public class ChainedBeanInvocationTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        beanMock = EasyMock.createStrictMock(MyBean.class);
+        beanMock = EasyMock.createMock(MyBean.class);
         super.setUp();
     }
 
@@ -48,17 +48,17 @@ public class ChainedBeanInvocationTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("bean:myBean?methodName=a")
-                    .bean(beanMock, "b")
+                    .to("bean:myBean?methodName=b")
+                    .bean(beanMock, "a")
                     .beanRef("myBean", "c");
             }
         };
     }
 
     public void testNormalInvocation() throws Throwable {
-        beanMock.a();
-        beanMock.b();
-        beanMock.c();
+        beanMock.a();        
+        beanMock.b();        
+        beanMock.c();        
         EasyMock.replay(beanMock);
         Exchange result = template.send("direct:start", new DefaultExchange(context));
         if (result.getException() != null) {
@@ -68,10 +68,11 @@ public class ChainedBeanInvocationTest extends ContextTestSupport {
     }
 
     public void testMethodHeaderSet() throws Exception {
-        beanMock.b();
-        EasyMock.expectLastCall().times(3);
+        beanMock.a();        
+        beanMock.b();        
+        beanMock.c();        
         EasyMock.replay(beanMock);
-        template.sendBodyAndHeader("direct:start", "test", BeanProcessor.METHOD_NAME, "b");
+        template.sendBodyAndHeader("direct:start", "test", BeanProcessor.METHOD_NAME, "d");
         EasyMock.verify(beanMock);
     }
 
