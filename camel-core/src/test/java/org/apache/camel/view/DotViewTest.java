@@ -61,7 +61,7 @@ public class DotViewTest extends ContextTestSupport {
 
     static class ChoiceRoute extends RouteBuilder {
         public void configure() throws Exception {
-            from("file:foo/xyz?noop=true").
+            from("file:target/foo/xyz?noop=true").
                 choice().
                   when(xpath("/person/city = 'London'")).to("file:target/messages/uk").
                   otherwise().to("file:target/messages/others");
@@ -70,15 +70,15 @@ public class DotViewTest extends ContextTestSupport {
 
     static class FilterRoute extends RouteBuilder {
         public void configure() throws Exception {
-                from("file:foo/bar?noop=true").
+                from("file:target/foo/bar?noop=true").
                         filter(header("foo").isEqualTo("bar")).
-                        to("file:xyz?noop=true");
+                        to("file:target/xyz?noop=true");
         }
     }
 
     static class ComplexRoute extends RouteBuilder {
         public void configure() throws Exception {
-            from("file:xyz?noop=true").
+            from("file:target/xyz?noop=true").
                     filter(header("foo").isEqualTo("bar")).
                     recipientList(header("bar")).
                     splitter(XPathBuilder.xpath("/invoice/lineItems")).
