@@ -25,7 +25,7 @@ import org.apache.camel.impl.DefaultExchange;
  *
  * @version $Revision: 1.1 $
  */
-public class ExchangeTestSupport extends ContextTestSupport {
+public abstract class ExchangeTestSupport extends ContextTestSupport {
     protected Exchange exchange;
 
     /**

@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.processor.CreateRouteWithNonExistingEndpointTest;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.jndi.JndiTest;
 
@@ -68,9 +69,11 @@ public abstract class ContextTestSupport extends TestSupport {
         template = new CamelTemplate<Exchange>(context);
 
         if (useRouteBuilder) {
-            RouteBuilder builder = createRouteBuilder();
-            log.debug("Using created route builder: " + builder);
-            context.addRoutes(builder);
+            RouteBuilder[] builders = createRouteBuilders();
+            for (RouteBuilder builder : builders) {
+                log.debug("Using created route builder: " + builder);
+                context.addRoutes(builder);
+            }
         }
         else {
             log.debug("Using route builder from the created context: " + context);
@@ -138,6 +141,16 @@ public abstract class ContextTestSupport extends TestSupport {
         };
     }
 
+    /**
+     * Factory method which derived classes can use to create an array of
+     * {@link RouteBuilder}s to define the routes for testing
+     * 
+     * @see #createRouteBuilder()
+     */
+    protected RouteBuilder[] createRouteBuilders() throws Exception {
+        return new RouteBuilder[] {createRouteBuilder()};
+    }
+    
     /**
      * Resolves a mandatory endpoint for the given URI or an exception is thrown
      *
