@@ -37,9 +37,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * A <a href="http://activemq.apache.org/camel/dsl.html">Java DSL</a> which is
  * used to build {@link Route} instances in a
- * 
+ *
  * @{link CamelContext} for smart routing.
- * 
+ *
  * @version $Revision$
  */
 public abstract class RouteBuilder extends BuilderSupport {
@@ -86,7 +86,7 @@ public abstract class RouteBuilder extends BuilderSupport {
 
     /**
      * Installs the given error handler builder
-     * 
+     *
      * @param errorHandlerBuilder the error handler to be used by default for
      *                all child routes
      * @return the current builder with the error handler configured
@@ -99,7 +99,7 @@ public abstract class RouteBuilder extends BuilderSupport {
     /**
      * Configures whether or not the error handler is inherited by every
      * processing node (or just the top most one)
-     * 
+     *
      * @param value the flag as to whether error handlers should be inherited or
      *                not
      * @return the current builder
@@ -194,6 +194,10 @@ public abstract class RouteBuilder extends BuilderSupport {
 
     public void setRouteCollection(RoutesType routeCollection) {
         this.routeCollection = routeCollection;
+    }
+
+    public RoutesType getRouteCollection() {
+        return this.routeCollection;
     }
 
     /**
