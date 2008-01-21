@@ -58,7 +58,7 @@ public class DirectoryCreateIssueTest extends TestSupport {
 
     public void testFileCreatedAsDir() throws Exception {
         log.debug("testFileCreatedAsDir");
-        final String path = "a/b/c/d/e/f/g/h";
+        final String path = "target/a/b/c/d/e/f/g/h";
         final int numFiles = 10;
 
         context.addRoutes(
