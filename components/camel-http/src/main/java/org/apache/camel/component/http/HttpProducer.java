@@ -17,6 +17,9 @@
 package org.apache.camel.component.http;
 
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -34,7 +37,12 @@ import org.apache.commons.httpclient.methods.RequestEntity;
  * @version $Revision: 1.1 $
  */
 public class HttpProducer extends DefaultProducer<HttpExchange> implements Producer<HttpExchange> {
+    private static final String HTTP_RESPONSE_CODE = "http.responseCode";
     public static final String QUERY = "org.apache.camel.component.http.query";
+    
+    // This should be a set of lower-case strings 
+    public static final Set<String> HEADERS_TO_SKIP = new HashSet<String>(Arrays.asList(
+            "content-length", "content-type", HTTP_RESPONSE_CODE.toLowerCase())); 
     private HttpClient httpClient;
 
     public HttpProducer(HttpEndpoint endpoint) {
@@ -44,6 +52,16 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
 
     public void process(Exchange exchange) throws Exception {
         HttpMethod method = createMethod(exchange);
+        
+        
+        // propagate headers as HTTP headers
+        for (String headerName : exchange.getIn().getHeaders().keySet()) {
+            String headerValue = exchange.getIn().getHeader(headerName, String.class);
+            if (shouldHeaderBePropagated(headerName, headerValue)) {
+                method.addRequestHeader(headerName, headerValue);
+            }
+        }
+        
         int responseCode = httpClient.executeMethod(method);
 
         // lets store the result in the output message.
@@ -59,7 +77,7 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
             out.setHeader(name, value);
         }
 
-        out.setHeader("http.responseCode", responseCode);
+        out.setHeader(HTTP_RESPONSE_CODE, responseCode);
     }
 
     public HttpClient getHttpClient() {
@@ -103,5 +121,18 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
             }
         }
         return entity;
+    }
+    
+    protected boolean shouldHeaderBePropagated(String headerName, String headerValue) {
+        if (headerValue == null) {
+            return false;
+        }
+        if (headerName.startsWith("org.apache.camel")) {
+            return false;
+        }
+        if (HEADERS_TO_SKIP.contains(headerName.toLowerCase())) {
+            return false;
+        }
+        return true;
     }
 }
