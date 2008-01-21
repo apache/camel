@@ -16,6 +16,16 @@
  */
 package org.apache.camel.component.jhc;
 
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
@@ -24,7 +34,11 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.*;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.nio.DefaultClientIOEventDispatch;
@@ -40,14 +54,14 @@ import org.apache.http.nio.reactor.IOEventDispatch;
 import org.apache.http.nio.reactor.SessionRequest;
 import org.apache.http.nio.reactor.SessionRequestCallback;
 import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.*;
+import org.apache.http.protocol.BasicHttpProcessor;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.RequestConnControl;
+import org.apache.http.protocol.RequestContent;
+import org.apache.http.protocol.RequestExpectContinue;
+import org.apache.http.protocol.RequestTargetHost;
+import org.apache.http.protocol.RequestUserAgent;
 import org.apache.http.util.concurrent.ThreadFactory;
-
-import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.util.Iterator;
 
 /**
  * Created by IntelliJ IDEA.
@@ -59,7 +73,12 @@ import java.util.Iterator;
 public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncProcessor {
 
     private static Log LOG = LogFactory.getLog(JhcProducer.class);
-
+    
+    private static final String HTTP_RESPONSE_CODE = "http.responseCode";
+    // This should be a set of lower-case strings 
+    public static final Set<String> HEADERS_TO_SKIP = new HashSet<String>(Arrays.asList(
+            "content-length", "content-type", HTTP_RESPONSE_CODE.toLowerCase())); 
+    
     private int nbThreads = 2;
     private ConnectingIOReactor ioReactor;
     private ThreadFactory threadFactory;
@@ -135,14 +154,23 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
     protected HttpRequest createRequest(Exchange exchange) {
         String uri = getEndpoint().getEndpointUri();
         HttpEntity entity = createEntity(exchange);
+        HttpRequest req;
         if (entity == null) {
-            BasicHttpRequest req = new BasicHttpRequest("GET", getEndpoint().getPath());
-            return req;
+            req = new BasicHttpRequest("GET", getEndpoint().getPath());
         } else {
-            BasicHttpEntityEnclosingRequest req = new BasicHttpEntityEnclosingRequest("POST", getEndpoint().getPath());
-            req.setEntity(entity);
-            return req;
+            req = new BasicHttpEntityEnclosingRequest("POST", getEndpoint().getPath());
+            ((BasicHttpEntityEnclosingRequest)req).setEntity(entity);
         }
+        
+        // propagate headers as HTTP headers
+        for (String headerName : exchange.getIn().getHeaders().keySet()) {
+            String headerValue = exchange.getIn().getHeader(headerName, String.class);
+            if (shouldHeaderBePropagated(headerName, headerValue)) {
+                req.addHeader(headerName, headerValue);
+            }
+        }
+        
+        return req;
     }
 
     protected HttpEntity createEntity(Exchange exchange) {
@@ -166,7 +194,20 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
         return entity;
     }
 
-
+    // TODO Should somehow reference to HttpProducer as now it is copy/paste
+    protected boolean shouldHeaderBePropagated(String headerName, String headerValue) {
+        if (headerValue == null) {
+            return false;
+        }
+        if (headerName.startsWith("org.apache.camel")) {
+            return false;
+        }
+        if (HEADERS_TO_SKIP.contains(headerName.toLowerCase())) {
+            return false;
+        }
+        return true;
+    }
+    
     static class MySessionRequestCallback implements SessionRequestCallback {
 
         public void completed(SessionRequest sessionRequest) {
@@ -232,6 +273,7 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
                 Header h = (Header) it.next();
                 e.getOut().setHeader(h.getName(), h.getValue());
             }
+            e.getOut().setHeader(HTTP_RESPONSE_CODE, httpResponse.getStatusLine().getStatusCode());
             AsyncCallback callback = (AsyncCallback) e.removeProperty(AsyncCallback.class.getName());
             callback.done(false);
         }
