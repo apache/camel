@@ -104,7 +104,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 Throwable e = exchange.getException();
                 exchange.setException(null); // Reset it since we are handling it.
                 
-                logger.log("On delivery attempt: " + data.redeliveryCounter + " caught: " + e, e);
+                logger.log("Failed delivery for exchangeId: " + exchange.getExchangeId() + ". On delivery attempt: " + data.redeliveryCounter + " caught: " + e, e);
                 data.redeliveryCounter = incrementRedeliveryCounter(exchange, e);
 
                 ExceptionType exceptionPolicy = getExceptionPolicy(exchange, e);
@@ -127,8 +127,8 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                     }
                 });
                 
-                restoreExceptionOnExchange(exchange);
-                
+                restoreExceptionOnExchange(exchange);               
+                logger.log("Failed delivery for exchangeId: " + exchange.getExchangeId() + ". Handled by the failure processor: " + data.failureProcessor);
                 return sync;
             }
 
@@ -255,7 +255,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     protected void sleep(long redeliveryDelay) {
         if (redeliveryDelay > 0) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Sleeping for: " + redeliveryDelay + " until attempting redelivery");
+                LOG.debug("Sleeping for: " + redeliveryDelay + " millis until attempting redelivery");
             }
             try {
                 Thread.sleep(redeliveryDelay);
