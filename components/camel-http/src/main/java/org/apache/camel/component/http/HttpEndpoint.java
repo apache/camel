@@ -21,6 +21,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,17 +42,19 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
     private URI httpUri;
     private HttpClientParams clientParams;
     private HttpClientConfigurer httpClientConfigurer;
+    private HttpConnectionManager httpConnectionManager;
 
-    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI) throws URISyntaxException {
-        this(endPointURI, component, httpURI, new HttpClientParams(), null);
+    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpConnectionManager httpConnectionManager) throws URISyntaxException {
+        this(endPointURI, component, httpURI, new HttpClientParams(), httpConnectionManager, null);
     }
 
-    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientParams clientParams, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
+    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientParams clientParams, HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         super(endPointURI, component);
         this.component = component;
         this.httpUri = httpURI;
         this.clientParams = clientParams;
         this.httpClientConfigurer = clientConfigurer;
+        this.httpConnectionManager = httpConnectionManager;
     }
 
     public Producer<HttpExchange> createProducer() throws Exception {
@@ -76,6 +79,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
      */
     public HttpClient createHttpClient() {
         HttpClient answer = new HttpClient(getClientParams());
+        answer.setHttpConnectionManager(httpConnectionManager);
         HttpClientConfigurer configurer = getHttpClientConfigurer();
         if (configurer != null) {
             configurer.configureHttpClient(answer);
