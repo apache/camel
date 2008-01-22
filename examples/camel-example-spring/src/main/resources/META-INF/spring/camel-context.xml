@@ -43,11 +43,6 @@
     </property>
   </bean>
 
-  <!-- Use JMX -->
-  <bean id="agent" class="org.apache.camel.spring.SpringInstrumentationAgent">
-    <property name="MBeanServer" ref="mbeanServer"/>
-  </bean>
-
   <!--
     this bean needs to be eagerly pre-instantiated in order for the exporting to occur;
     this means that it must not be marked as lazily initialized
