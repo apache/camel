@@ -17,15 +17,23 @@
 package org.apache.camel.component.mock;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.*;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExpressionComparator;
@@ -41,21 +49,22 @@ import org.apache.commons.logging.LogFactory;
  */
 public class MockEndpoint extends DefaultEndpoint<Exchange> {
     private static final transient Log LOG = LogFactory.getLog(MockEndpoint.class);
-    private int expectedCount = -1;
+    private int expectedCount;
     private int counter;
-    private Map<Integer, Processor> processors = new HashMap<Integer, Processor>();
-    private List<Exchange> receivedExchanges = new CopyOnWriteArrayList<Exchange>();
-    private List<Throwable> failures = new CopyOnWriteArrayList<Throwable>();
-    private List<Runnable> tests = new CopyOnWriteArrayList<Runnable>();
+    private Map<Integer, Processor> processors;
+    private List<Exchange> receivedExchanges;
+    private List<Throwable> failures;
+    private List<Runnable> tests;
     private CountDownLatch latch;
-    private long sleepForEmptyTest = 1000L;
-    private long defaulResultWaitMillis = 20000L;
-    private int expectedMinimumCount = -1;
+    private long sleepForEmptyTest;
+    private long defaulResultWaitMillis;
+    private int expectedMinimumCount;
     private List expectedBodyValues;
-    private List actualBodyValues = new ArrayList();
+    private List actualBodyValues;
 
     public MockEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
+        reset();
     }
 
     public static void assertWait(long timeout, TimeUnit unit, MockEndpoint... endpoints) throws InterruptedException {
@@ -463,6 +472,21 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         this.defaulResultWaitMillis = defaulResultWaitMillis;
     }
 
+    public void reset() {
+    	expectedCount = -1;
+        counter = 0;
+        processors = new HashMap<Integer, Processor>();
+        receivedExchanges = new CopyOnWriteArrayList<Exchange>();
+        failures = new CopyOnWriteArrayList<Throwable>();
+        tests = new CopyOnWriteArrayList<Runnable>();
+        latch = null;
+        sleepForEmptyTest = 1000L;
+        defaulResultWaitMillis = 20000L;
+        expectedMinimumCount = -1;
+        expectedBodyValues = null;
+        actualBodyValues = new ArrayList();
+    }
+    
     // Implementation methods
     // -------------------------------------------------------------------------
     protected synchronized void onExchange(Exchange exchange) {
