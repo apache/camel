@@ -69,7 +69,7 @@ public class JettyHttpComponent extends HttpComponent {
     @Override
     protected Endpoint<HttpExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         URI httpURL = uri.startsWith("jetty:") ? new URI(remaining) : new URI(uri);
-        return new JettyHttpEndpoint(this, uri, httpURL);
+        return new JettyHttpEndpoint(this, uri, httpURL, getHttpConnectionManager());
     }
 
     /**
