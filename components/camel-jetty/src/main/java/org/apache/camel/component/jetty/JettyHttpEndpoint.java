@@ -28,6 +28,7 @@ import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpExchange;
 import org.apache.camel.impl.EventDrivenPollingConsumer;
+import org.apache.commons.httpclient.HttpConnectionManager;
 
 /**
  * @version $Revision: 1.1 $
@@ -35,8 +36,8 @@ import org.apache.camel.impl.EventDrivenPollingConsumer;
 public class JettyHttpEndpoint extends HttpEndpoint {
     private JettyHttpComponent component;
 
-    public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
-        super(uri, component, httpURL);
+    public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL, HttpConnectionManager httpConnectionManager) throws URISyntaxException {
+        super(uri, component, httpURL, httpConnectionManager);
         this.component = component;
     }
 
@@ -53,7 +54,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     @Override
     public PollingConsumer<HttpExchange> createPollingConsumer() throws Exception {
-        return new EventDrivenPollingConsumer(this);
+        return new EventDrivenPollingConsumer<HttpExchange>(this);
     }
 
     @Override
