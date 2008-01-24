@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * Represents an XML &lt;to/&gt; element
+ * Represents an XML &lt;from/&gt; element
  * 
  * @version $Revision: $
  */
