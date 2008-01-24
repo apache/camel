@@ -51,6 +51,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     private static final transient Log LOG = LogFactory.getLog(MockEndpoint.class);
     private int expectedCount;
     private int counter;
+    private Processor defaultProcessor;
     private Map<Integer, Processor> processors;
     private List<Exchange> receivedExchanges;
     private List<Throwable> failures;
@@ -145,6 +146,19 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         this.processors.put(index, processor);
     }
 
+    /**
+     * Set the processor that will be invoked when the some message
+     * is received.
+     * 
+     * This processor could be overwritten by
+     * {@link #whenExchangeReceived(int, Processor)} method.
+     * 
+     * @param processor
+     */
+    public void whenAnyExchangeReceived(Processor processor) {
+        this.defaultProcessor = processor;
+    }    
+    
     /**
      * Validates that all the available expectations on this endpoint are
      * satisfied; or throw an exception
@@ -509,7 +523,9 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
 
             receivedExchanges.add(exchange);
 
-            Processor processor = processors.get(getReceivedCounter());
+            Processor processor = processors.get(getReceivedCounter()) != null ?
+                    processors.get(getReceivedCounter()) : defaultProcessor;
+                    
             if (processor != null) {
                 processor.process(exchange);
             }
