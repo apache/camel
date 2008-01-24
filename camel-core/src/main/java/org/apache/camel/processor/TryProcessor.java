@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -113,6 +114,7 @@ public class TryProcessor extends ServiceSupport implements Processor {
                 localExchange.setException(null);
                 try {
                     catchClause.process(localExchange);
+                    ExchangeHelper.copyResults(exchange, localExchange);
                 } catch (Exception e1) {
                     LOG.warn("Caught exception inside catch clause: " + e1, e1);
                     throw e1;

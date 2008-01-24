@@ -17,10 +17,15 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ValidationException;
+import org.apache.camel.builder.Builder;
+import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.language.SimpleExpression;
 
 /**
  * @version $Revision: 1.1 $
@@ -34,27 +39,34 @@ public class ValidationTest extends ContextTestSupport {
         validEndpoint.expectedMessageCount(1);
         invalidEndpoint.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("direct:start", "<valid/>", "foo", "bar");
+        Object result = template.sendBodyAndHeader("direct:start", "<valid/>", "foo", "bar");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
+        assertEquals("validResult", result);
     }
 
     public void testInvalidMessage() throws Exception {
         invalidEndpoint.expectedMessageCount(1);
         validEndpoint.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue");
+        Object result = template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
+        assertEquals("invalidResult", result);
     }
 
     public void testinvalidThenValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(2);
         invalidEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:start", "<invalid/>", "foo",  "notMatchedHeaderValue");
-        template.sendBodyAndHeader("direct:start", "<valid/>", "foo",   "bar");
-        template.sendBodyAndHeader("direct:start", "<valid/>", "foo",   "bar");
+        Object result;
+        
+        result = template.sendBodyAndHeader("direct:start", "<invalid/>", "foo",  "notMatchedHeaderValue");
+        assertEquals("invalidResult", result);
+        result = template.sendBodyAndHeader("direct:start", "<valid/>", "foo",   "bar");
+        assertEquals("validResult", result);
+        result = template.sendBodyAndHeader("direct:start", "<valid/>", "foo",   "bar");
+        assertEquals("validResult", result);
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
     }
@@ -65,6 +77,9 @@ public class ValidationTest extends ContextTestSupport {
 
         validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);
         invalidEndpoint = resolveMandatoryEndpoint("mock:invalid", MockEndpoint.class);
+        
+        validEndpoint.whenAnyExchangeReceived(ProcessorBuilder.setOutBody(Builder.constant("validResult")));
+        invalidEndpoint.whenAnyExchangeReceived(ProcessorBuilder.setOutBody(Builder.constant("invalidResult")));
     }
 
     protected RouteBuilder createRouteBuilder() {
