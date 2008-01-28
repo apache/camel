@@ -61,7 +61,7 @@ import org.apache.hello_world_soap_http.types.FaultDetail;
     public String sayHi() {
         LOG.info("Executing operation sayHi");
         System.out.println("Executing operation sayHi\n");
-        return "Bonjour from" + suffix;
+        return "Bonjour from " + suffix;
     }
 
     public void pingMe(String messageIn) throws PingMeFault {
@@ -71,7 +71,7 @@ import org.apache.hello_world_soap_http.types.FaultDetail;
         LOG.info("Executing operation pingMe, throwing PingMeFault exception, message = "
                  + messageIn);
         System.out.println("Executing operation pingMe, throwing PingMeFault exception\n");
-        throw new PingMeFault("PingMeFault raised by server" + suffix, faultDetail);
+        throw new PingMeFault("PingMeFault raised by server " + suffix, faultDetail);
     }
 
 
