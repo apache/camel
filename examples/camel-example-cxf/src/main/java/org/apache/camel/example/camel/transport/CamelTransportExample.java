@@ -23,13 +23,13 @@ public class CamelTransportExample {
 
     public static void main(String args[]) throws Exception {
 
-        //Server server = new Server();
+        Server server = new Server();
 
         try {
             // setup the camel context for the camel transport
-            //server.prepare();
+            server.prepare();
             // start the endpoints
-            //server.start();
+            server.start();
             // set the client's service access point
             Client client = new Client("http://localhost:9090/GreeterContext/GreeterPort");
             // invoking the services
@@ -40,7 +40,7 @@ public class CamelTransportExample {
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
-            //server.stop();
+            server.stop();
             System.exit(0);
         }
 
