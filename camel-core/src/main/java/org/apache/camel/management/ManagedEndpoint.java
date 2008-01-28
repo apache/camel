@@ -22,23 +22,21 @@ import org.apache.camel.Exchange;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-@ManagedResource(
-        description="Managed Endpoint", 
-        currencyTimeLimit=15)
+@ManagedResource(description = "Managed Endpoint", currencyTimeLimit = 15)
 public class ManagedEndpoint {
-	
-	private Endpoint<? extends Exchange> endpoint;
 
-	public ManagedEndpoint(Endpoint<? extends Exchange> endpoint) {
-		this.endpoint = endpoint;
-	}
-	
-	public Endpoint<? extends Exchange> getEndpoint() {
-		return endpoint;
-	}
-	
-	@ManagedAttribute(description = "Endpoint Uri")
-	public String getUri() throws Exception {
-		return endpoint.getEndpointUri();
-	}
+    private Endpoint<? extends Exchange> endpoint;
+
+    public ManagedEndpoint(Endpoint<? extends Exchange> endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    public Endpoint<? extends Exchange> getEndpoint() {
+        return endpoint;
+    }
+
+    @ManagedAttribute(description = "Endpoint Uri")
+    public String getUri() throws Exception {
+        return endpoint.getEndpointUri();
+    }
 }
