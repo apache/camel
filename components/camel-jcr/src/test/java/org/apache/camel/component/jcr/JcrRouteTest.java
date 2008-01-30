@@ -43,7 +43,7 @@ public class JcrRouteTest extends ContextTestSupport {
     }
 
     private void clean() throws IOException {
-        File[] files = { new File("repository"), new File("repository.xml"), new File("derby.log") };
+        File[] files = { new File("target/repository"), new File("target/repository.xml"), new File("derby.log") };
         for (File file : files) {
             if (file.exists()) {
                 FileUtil.delete(file);
@@ -87,7 +87,7 @@ public class JcrRouteTest extends ContextTestSupport {
     @Override
     protected Context createJndiContext() throws Exception {
         Context context = super.createJndiContext();
-        repository = new TransientRepository();
+        repository = new TransientRepository("target/repository.xml", "target/repository");
         context.bind("repository", repository);
         return context;
     }
