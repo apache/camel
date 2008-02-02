@@ -58,8 +58,7 @@ public class CamelInvoker implements Invoker  {
     */
     public Message invoke(Message inMessage) {        
         Exchange exchange = inMessage.getExchange();
-        //InvokingContext invokingContext = exchange.get(InvokingContext.class);
-                               
+                                      
         //Set Request Context into CXF Message
         Map<String, Object> ctxContainer = new HashMap<String, Object>();
         Map<String, Object> requestCtx = new HashMap<String, Object>();

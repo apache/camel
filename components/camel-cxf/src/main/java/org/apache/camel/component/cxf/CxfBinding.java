@@ -40,7 +40,7 @@ import javax.xml.transform.dom.DOMSource;
  */
 public class CxfBinding {
     public static Object extractBodyFromCxf(CxfExchange exchange, Message message) {
-        //  TODO how do we choose a format?
+        // TODO how do we choose a format?
         return getBody(message);
     }
 
@@ -60,7 +60,8 @@ public class CxfBinding {
     public Message createCxfMessage(CxfExchange exchange) {
         Message answer = exchange.getInMessage();
 
-        // CXF uses the stax which is based on the stream API to parser the XML, so
+        // CXF uses the stax which is based on the stream API to parser the XML,
+        // so
         // the CXF transport is also based on the stream API.
         // And the interceptors are also based on the stream API,
         // so lets use an InputStream to host the CXF on wire message.
@@ -71,26 +72,16 @@ public class CxfBinding {
             body = in.getBody();
         }
         if (body instanceof InputStream) {
-        	answer.setContent(InputStream.class, body);
-                // we need copy context
+            answer.setContent(InputStream.class, body);
+            // we need copy context
         } else if (body instanceof List) {
-        	//just set the operation's parament
-        	answer.setContent(List.class, body);
-                //just set the method name
-                answer.put(CxfConstants.OPERATION_NAME, (String)in.getHeader(CxfConstants.OPERATION_NAME));
-                answer.put(CxfConstants.OPERATION_NAMESPACE, (String)in.getHeader(CxfConstants.OPERATION_NAMESPACE));
-
-        } else if (body instanceof DOMSource) {
-        	DOMSource source = (DOMSource) body;
-        	try {
-				ByteArrayInputStream bais = new ByteArrayInputStream(XMLUtils.toString(source).getBytes());
-				answer.setContent(InputStream.class, bais);
-			} catch (Exception e) {
-				throw new RuntimeCamelException(e);
-			}
-
+            // just set the operation's parament
+            answer.setContent(List.class, body);
+            // just set the method name
+            answer.put(CxfConstants.OPERATION_NAME, (String)in.getHeader(CxfConstants.OPERATION_NAME));
+            answer.put(CxfConstants.OPERATION_NAMESPACE, (String)in
+                .getHeader(CxfConstants.OPERATION_NAMESPACE));
         }
-
 
         return answer;
     }

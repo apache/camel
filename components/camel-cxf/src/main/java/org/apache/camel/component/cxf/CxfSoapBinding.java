@@ -36,16 +36,16 @@ import org.apache.cxf.message.MessageImpl;
 
 public class CxfSoapBinding {
     private CxfSoapBinding() {
-        
+
     }
-    
+    //TODO using the type converter to do this kind of thing
     public static org.apache.cxf.message.Message getCxfInMessage(org.apache.camel.Exchange exchange, boolean isClient) {
         MessageImpl answer = new MessageImpl();
-        org.apache.cxf.message.Exchange cxfExchange = exchange.getProperty(CxfConstants.CXF_EXCHANGE, 
+        org.apache.cxf.message.Exchange cxfExchange = exchange.getProperty(CxfConstants.CXF_EXCHANGE,
                                                                         org.apache.cxf.message.Exchange.class);
         org.apache.camel.Message message = null;
         if (isClient) {
-            message = exchange.getOut();            
+            message = exchange.getOut();
         } else {
             message = exchange.getIn();
         }
@@ -53,37 +53,25 @@ public class CxfSoapBinding {
         if (cxfExchange == null) {
             cxfExchange = new ExchangeImpl();
             exchange.setProperty(CxfConstants.CXF_EXCHANGE, cxfExchange);
-        }    
+        }
         Object body = message.getBody(InputStream.class);
+        
         if (body == null) {
             body = message.getBody();
         }
-        if (body instanceof BufferedReader) {
-        	//do transform from BufferedReader to InputStream
-        	
-        	try {
-        		BufferedReader reader = (BufferedReader)body;
-        		String line;
-        		String content = "";
-        		while ((line = reader.readLine()) != null) {
-        			content = content + line;
-        		}
-        		ByteArrayInputStream bais = new ByteArrayInputStream(content.getBytes());
-				answer.setContent(InputStream.class, bais);
-        	} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        }
+        // we could do some message transform here
         if (body instanceof InputStream) {
-            answer.setContent(InputStream.class, body);             
+            answer.setContent(InputStream.class, body);
+        } else {
+            // the answer body is null
         }
+
         answer.putAll(message.getHeaders());
         answer.setExchange(cxfExchange);
         cxfExchange.setInMessage(answer);
         return answer;
     }
-    
+
     public static org.apache.cxf.message.Message getCxfOutMessage(org.apache.camel.Exchange exchange, boolean isClient) {
         org.apache.cxf.message.Exchange cxfExchange = exchange.getProperty(CxfConstants.CXF_EXCHANGE, org.apache.cxf.message.Exchange.class);
         assert cxfExchange != null;
@@ -97,18 +85,18 @@ public class CxfSoapBinding {
         }
         else {
             message = exchange.getOut();
-        }    
+        }
         // send the body back
         Object body = message.getBody(Source.class);
         if (body == null) {
             body = message.getBody();
         }
         if (body instanceof Source) {
-            outMessage.setContent(Source.class, body);             
+            outMessage.setContent(Source.class, body);
         }
         outMessage.putAll(message.getHeaders());
         return outMessage;
     }
-     
+
 
 }
