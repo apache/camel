@@ -23,11 +23,20 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.*;
 import java.net.URL;
+import java.util.Properties;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 /**
  * Some core java.io based <a
  * href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
- * 
+ *
  * @version $Revision$
  */
 @Converter
@@ -37,7 +46,7 @@ public class IOConverter {
     /**
      * Utility classes should not have a public constructor.
      */
-    private IOConverter() {        
+    private IOConverter() {
     }
 
     @Converter
@@ -89,6 +98,17 @@ public class IOConverter {
     @Converter
     public static InputStream toInputStream(String text) {
         return toInputStream(text.getBytes());
+    }
+
+    @Converter
+    public static InputStream toInputStream(BufferedReader buffer) throws IOException {
+        return toInputStream(toString(buffer));
+    }
+
+    @Converter
+    public static InputStream toInputStrean(DOMSource source) throws TransformerException, IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(toString(source).getBytes());
+        return bais;
     }
 
     @Converter
@@ -147,6 +167,24 @@ public class IOConverter {
     @Converter
     public static String toString(InputStream in) throws IOException {
         return toString(toReader(in));
+    }
+
+    public static String toString(Source source) throws TransformerException, IOException {
+        return toString(source, null);
+    }
+
+    public static String toString(Source source, Properties props) throws TransformerException, IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        StreamResult sr = new StreamResult(bos);
+        Transformer trans = TransformerFactory.newInstance().newTransformer();;
+        if (props == null) {
+            props = new Properties();
+            props.put(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        }
+        trans.setOutputProperties(props);
+        trans.transform(source, sr);
+        bos.close();
+        return bos.toString();
     }
 
     @Converter
