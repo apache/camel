@@ -35,6 +35,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.model.RouteBuilderRef;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.spi.InstrumentationAgent;
 import org.apache.commons.logging.Log;
@@ -60,21 +61,25 @@ import org.springframework.context.event.ContextRefreshedEvent;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelContextFactoryBean extends IdentifiedType implements RouteContainer, FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
     private static final Log LOG = LogFactory.getLog(CamelContextFactoryBean.class);
+    @XmlAttribute(required = false)
+    private Boolean useJmx;
+    @XmlAttribute(required = false)
+    private String mbeanServer;
+    @XmlAttribute(required = false)
+    private Boolean autowireRouteBuilders = Boolean.TRUE;
     @XmlElement(name = "package", required = false)
     private String[] packages = {};
     @XmlElements({@XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false), @XmlElement(name = "proxy", type = CamelProxyFactoryType.class, required = false),
     @XmlElement(name = "export", type = CamelServiceExporterType.class, required = false), @XmlElement(name = "jmxAgent", required = false)})
     private List beans;
+    @XmlElement(name = "routeBuilderRef", required = false)
+    private List<RouteBuilderRef> builderRefs = new ArrayList<RouteBuilderRef>();;
     @XmlElement(name = "endpoint", required = false)
     private List<EndpointFactoryBean> endpoints;
-    @XmlElement(name = "route", required = false)
-    private List<RouteType> routes = new ArrayList<RouteType>();
     @XmlElementRef
     private List<DataFormatType> dataFormats;
-    @XmlAttribute(required = false)
-    private Boolean useJmx;
-    @XmlAttribute(required = false)
-    private String mbeanServer;
+    @XmlElement(name = "route", required = false)
+    private List<RouteType> routes = new ArrayList<RouteType>();
     @XmlTransient
     private SpringCamelContext context;
     @XmlTransient
@@ -243,6 +248,18 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.useJmx = useJmx;
     }
 
+    public void setBuilderRefs(List<RouteBuilderRef> builderRefs) {
+        this.builderRefs = builderRefs;
+    }
+
+    /**
+     * If enabled this will force all {@link RouteBuilder} classes configured in the Spring
+     * {@link ApplicationContext} to be registered automatically with this CamelContext.
+     */
+    public void setAutowireRouteBuilders(Boolean autowireRouteBuilders) {
+        this.autowireRouteBuilders = autowireRouteBuilders;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -259,10 +276,12 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      * Strategy to install all available routes into the context
      */
     protected void installRoutes() throws Exception {
-        Map builders = getApplicationContext().getBeansOfType(RouteBuilder.class, true, true);
-        if (builders != null) {
-            for (Object builder : builders.values()) {
-                getContext().addRoutes((RouteBuilder) builder);
+        if (autowireRouteBuilders != null && autowireRouteBuilders.booleanValue()) {
+            Map builders = getApplicationContext().getBeansOfType(RouteBuilder.class, true, true);
+            if (builders != null) {
+                for (Object builder : builders.values()) {
+                    getContext().addRoutes((RouteBuilder) builder);
+                }
             }
         }
         for (RouteBuilder routeBuilder : additionalBuilders) {
@@ -270,6 +289,16 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
         if (routeBuilder != null) {
             getContext().addRoutes(routeBuilder);
+        }
+
+        System.out.println(">>> CamelContext: " + getId() + " " + " routeBuilderRefs " + builderRefs);
+        
+        // lets add route builders addef from references
+        if (builderRefs != null) {
+            for (RouteBuilderRef builderRef : builderRefs) {
+                RouteBuilder builder = builderRef.createRouteBuilder(getContext());
+                getContext().addRoutes(builder);
+            }
         }
     }
 

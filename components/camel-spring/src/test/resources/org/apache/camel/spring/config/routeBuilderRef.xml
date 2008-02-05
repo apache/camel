@@ -22,22 +22,17 @@
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: example -->
-  <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
-    <jaxb id="myJaxb" prettyPrint="true" contextPath="org.apache.camel.example"/>
 
-    <route>
-      <from uri="direct:start"/>
-      <marshal ref="myJaxb"/>
-      <to uri="direct:marshalled"/>
-    </route>
-    <route>
-      <from uri="direct:marshalled"/>
-      <unmarshal ref="myJaxb"/>
-      <to uri="mock:result"/>
-    </route>
 
+  <!-- START SNIPPET: example5 -->
+  <camelContext id="camel5" xmlns="http://activemq.apache.org/camel/schema/spring" autowireRouteBuilders="false">
+    <routeBuilderRef ref="configuredRouteBuilder"/>
   </camelContext>
-  <!-- END SNIPPET: example -->
+  <!-- END SNIPPET: example5 -->
 
+
+  <bean id="configuredRouteBuilder" class="org.apache.camel.spring.xml.ConfiguredRouteBuilder">
+    <property name="fromUri" value="seda:test.a"/>
+    <property name="toUri" value="seda:test.b"/>
+  </bean>
 </beans>

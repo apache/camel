@@ -38,6 +38,7 @@ RecipientListType
 RedeliveryPolicyType
 ResequencerType
 RouteType
+RouteBuilderRef
 RoutesType
 ServiceActivationType
 SplitterType
