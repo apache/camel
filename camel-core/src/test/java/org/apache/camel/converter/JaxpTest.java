@@ -17,6 +17,7 @@
 package org.apache.camel.converter;
 
 import java.io.StringReader;
+import java.io.InputStream;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
@@ -69,12 +70,19 @@ public class JaxpTest extends TestCase {
         LOG.debug("Found document: " + domSource);
     }
 
-    public void testNodeToSource() throws Exception {
+    public void testNodeToSourceThenToInputStream() throws Exception {
         Document document = converter.convertTo(Document.class, "<?xml version=\"1.0\"?><hello>world!</hello>");
         Element element = document.getDocumentElement();
         Source source = converter.convertTo(Source.class, element);
         assertNotNull("Could not convert from Node to Source!", source);
 
         LOG.debug("Found source: " + source);
+
+        InputStream in = converter.convertTo(InputStream.class, source);
+        assertNotNull("Could not convert from Source to InputStream!", in);
+
+        String actualText = IOConverter.toString(in);
+        assertEquals("Text", "<hello>world!</hello>", actualText);
+
     }
 }
