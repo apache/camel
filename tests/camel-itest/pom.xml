@@ -18,7 +18,7 @@
 -->
 
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -39,54 +39,60 @@
       <version>${camel-version}</version>
     </dependency>
 
-<!--
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-mina</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-http</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jms</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jbi</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-cxf</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-script</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-    </dependency>
--->
-<!--
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-      <type>test-jar</type>
-      <optional>true</optional>
-      <scope>test</scope>
-    </dependency>
--->
+    <!--
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-core</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-mina</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-http</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-jms</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-jbi</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-cxf</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-script</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-spring</artifactId>
+        </dependency>
+    -->
+    <!--
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-core</artifactId>
+          <type>test-jar</type>
+          <optional>true</optional>
+          <scope>test</scope>
+        </dependency>
+    -->
 
     <!-- testing -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-all</artifactId>
+      <version>5.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
