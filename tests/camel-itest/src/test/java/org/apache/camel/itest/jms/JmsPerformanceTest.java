@@ -38,7 +38,8 @@ public class JmsPerformanceTest extends ContextTestSupport {
     protected long consumerSleep = 0L;
     protected int expectedMessageCount;
     protected ClassPathXmlApplicationContext applicationContext;
-    protected boolean useLocalBroker;
+    protected boolean useLocalBroker = true;
+    private int consumedMessageCount;
 
     public void testSendingAndReceivingMessages() throws Exception {
         setExpectedMessageCount(messageCount);
@@ -73,7 +74,9 @@ public class JmsPerformanceTest extends ContextTestSupport {
     }
 
     protected void assertExpectedMessagesReceived() throws InterruptedException {
-        assertTrue("The message ware received by the Pojo", receivedCountDown.await(50000, TimeUnit.SECONDS));
+        receivedCountDown.await(50000, TimeUnit.SECONDS);
+
+        assertEquals("Received message count", expectedMessageCount, consumedMessageCount);
 
         // TODO assert that messages are received in order
     }
@@ -132,6 +135,7 @@ public class JmsPerformanceTest extends ContextTestSupport {
                 }
             }
             receivedCountDown.countDown();
+            consumedMessageCount++;
         }
     }
 }

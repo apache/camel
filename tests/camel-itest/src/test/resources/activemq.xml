@@ -24,11 +24,9 @@
 
   <broker xmlns="http://activemq.org/config/1.0" dataDirectory="target/activemq">
 
-<!--
     <transportConnectors>
        <transportConnector name="openwire" uri="tcp://localhost:61616"/>
     </transportConnectors>
--->
 
   </broker>
 
