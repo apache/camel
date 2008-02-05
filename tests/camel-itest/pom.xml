@@ -117,4 +117,19 @@
       <artifactId>log4j</artifactId>
     </dependency>
   </dependencies>
+
+
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>pertest</forkMode>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
 </project>
