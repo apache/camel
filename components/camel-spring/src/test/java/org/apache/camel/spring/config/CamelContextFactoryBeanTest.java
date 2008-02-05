@@ -14,13 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring;
+package org.apache.camel.spring.config;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
+import org.apache.camel.spring.config.XmlConfigTestSupport;
+import org.apache.camel.model.RouteType;
+import org.apache.camel.model.FromType;
+import org.apache.camel.model.ProcessorType;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,9 +39,7 @@ import java.util.List;
 /**
  * @version $Revision$
  */
-public class CamelContextFactoryBeanTest extends TestSupport {
-    private static final transient Log LOG = LogFactory.getLog(CamelContextFactoryBeanTest.class);
-
+public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
     public void testClassPathRouteLoading() throws Exception {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
 
@@ -62,24 +64,6 @@ public class CamelContextFactoryBeanTest extends TestSupport {
         
         CamelContext context = (CamelContext) applicationContext.getBean("camel3");
         assertValidContext(context);
-    }
-
-    protected void assertValidContext(CamelContext context) {
-        assertNotNull("No context found!", context);
-
-        List<Route> routes = context.getRoutes();
-        LOG.debug("Found routes: " + routes);
-
-        assertEquals("One Route should be found", 1, routes.size());
-
-        for (Route route : routes) {
-            Endpoint key = route.getEndpoint();
-            EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
-            Processor processor = consumerRoute.getProcessor();
-            assertNotNull(processor);
-
-            assertEndpointUri(key, "seda:test.a");
-        }
     }
 
     public void testXMLRouteLoading() throws Exception {

@@ -22,6 +22,8 @@
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
+
+
   <!-- START SNIPPET: example -->
   <bean id="camel" class="org.apache.camel.spring.CamelContextFactoryBean">
     <property name="packages" value="org.apache.camel.spring.example"/>
@@ -42,5 +44,4 @@
     <package>org.apache.camel.spring.example</package>
   </camelContext>
   <!-- END SNIPPET: example3 -->
-
 </beans>
