@@ -118,6 +118,12 @@
         <include>org.apache.camel:camel-xmpp</include>
         <include>org.apache.camel:camel-xstream</include>
         <include>commons-logging:commons-logging</include>
+        <include>javax.xml.bind:jaxb-api</include>
+        <include>javax.activation:activation</include>
+        <include>javax.xml.stream:stax-api</include>
+        <include>com.sun.xml.bind:jaxb-impl</include>
+        <!--<include>stax:stax-api</include>-->
+        <include>org.springframework:spring</include>
       </includes>
     </dependencySet>
     <dependencySet>
