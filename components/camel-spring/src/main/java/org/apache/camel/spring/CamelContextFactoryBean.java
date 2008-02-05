@@ -291,7 +291,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             getContext().addRoutes(routeBuilder);
         }
 
-        System.out.println(">>> CamelContext: " + getId() + " " + " routeBuilderRefs " + builderRefs);
+        //System.out.println(">>> CamelContext: " + getId() + " " + " routeBuilderRefs " + builderRefs);
         
         // lets add route builders addef from references
         if (builderRefs != null) {
