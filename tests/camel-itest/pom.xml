@@ -126,6 +126,11 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>pertest</forkMode>
+          <excludes>
+            <exclude>**/JmsPerformanceTest.*</exclude>
+            <exclude>**/JmsIntegrationTest.*</exclude>
+            <exclude>**/JmsMediumQueuePerformanceTest.*</exclude>
+          </excludes>
         </configuration>
       </plugin>
 
