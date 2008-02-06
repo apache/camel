@@ -76,7 +76,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         @XmlElement(name = "jmxAgent", required = false)})
     private List beans;
     @XmlElement(name = "routeBuilderRef", required = false)
-    private List<RouteBuilderRef> builderRefs = new ArrayList<RouteBuilderRef>();;
+    private List<RouteBuilderRef> builderRefs = new ArrayList<RouteBuilderRef>();
     @XmlElement(name = "endpoint", required = false)
     private List<EndpointFactoryBean> endpoints;
     @XmlElementRef
