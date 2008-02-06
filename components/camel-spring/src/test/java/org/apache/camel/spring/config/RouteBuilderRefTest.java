@@ -44,9 +44,9 @@ public class RouteBuilderRefTest extends XmlConfigTestSupport {
 
     }
 
-    // TODO for some reason this doesn't get injected with the RouteBuilderRef object!
-    public void TODO_testUsingRouteBuilderRefInCamelXml() throws Exception {
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/routeBuilderRef.xml");
+    public void testUsingRouteBuilderRefInCamelXml() throws Exception {
+        ApplicationContext applicationContext = 
+            new ClassPathXmlApplicationContext("org/apache/camel/spring/config/routeBuilderRef.xml");
 
         CamelContext context = (CamelContext) applicationContext.getBean("camel5");
         assertValidContext(context);

@@ -58,6 +58,7 @@ public class RouteBuilderRef extends IdentifiedType {
     public RouteBuilder createRouteBuilder(CamelContext camelContext) {
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(ref, "ref");
-        return CamelContextHelper.newInstance(camelContext, RouteBuilder.class);
+        RouteBuilder builder = CamelContextHelper.lookup(camelContext, ref, RouteBuilder.class);
+        return builder != null ? builder : CamelContextHelper.newInstance(camelContext, RouteBuilder.class);
     }
 }
