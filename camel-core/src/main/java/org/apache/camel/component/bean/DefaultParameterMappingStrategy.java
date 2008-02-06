@@ -33,6 +33,7 @@ public class DefaultParameterMappingStrategy implements ParameterMappingStrategy
     private Map<Class, Expression> parameterTypeToExpressionMap = new ConcurrentHashMap<Class, Expression>();
 
     public DefaultParameterMappingStrategy() {
+        loadDefaultRegistry();
     }
 
     public synchronized Expression getDefaultParameterTypeExpression(Class parameterType) {
