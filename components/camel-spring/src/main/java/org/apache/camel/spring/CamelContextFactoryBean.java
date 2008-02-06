@@ -69,8 +69,11 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private Boolean autowireRouteBuilders = Boolean.TRUE;
     @XmlElement(name = "package", required = false)
     private String[] packages = {};
-    @XmlElements({@XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false), @XmlElement(name = "proxy", type = CamelProxyFactoryType.class, required = false),
-    @XmlElement(name = "export", type = CamelServiceExporterType.class, required = false), @XmlElement(name = "jmxAgent", required = false)})
+    @XmlElements({
+        @XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false), 
+        @XmlElement(name = "proxy", type = CamelProxyFactoryType.class, required = false),
+        @XmlElement(name = "export", type = CamelServiceExporterType.class, required = false), 
+        @XmlElement(name = "jmxAgent", required = false)})
     private List beans;
     @XmlElement(name = "routeBuilderRef", required = false)
     private List<RouteBuilderRef> builderRefs = new ArrayList<RouteBuilderRef>();;
@@ -248,6 +251,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.useJmx = useJmx;
     }
 
+    public List<RouteBuilderRef> getBuilderRefs() {
+        return builderRefs;
+    }
+
     public void setBuilderRefs(List<RouteBuilderRef> builderRefs) {
         this.builderRefs = builderRefs;
     }
@@ -291,9 +298,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             getContext().addRoutes(routeBuilder);
         }
 
-        //System.out.println(">>> CamelContext: " + getId() + " " + " routeBuilderRefs " + builderRefs);
-        
-        // lets add route builders addef from references
+        // lets add route builders added from references
         if (builderRefs != null) {
             for (RouteBuilderRef builderRef : builderRefs) {
                 RouteBuilder builder = builderRef.createRouteBuilder(getContext());
