@@ -18,18 +18,28 @@ package org.apache.camel.language.ognl;
 
 import org.apache.camel.LanguageTestSupport;
 
-
 /**
  * @version $Revision: $
  */
 public class OgnlTest  extends LanguageTestSupport {
-    public void testElExpressions() throws Exception {
+    public void testOgnlExpressions() throws Exception {
         assertExpression("exchange", exchange);
         assertExpression("exchange.getIn().body", "<hello id='m123'>world!</hello>");
         assertExpression("getIn().body", "<hello id='m123'>world!</hello>");
+        assertExpression("request.body", "<hello id='m123'>world!</hello>");
         assertExpression("getIn().headers['foo']", "abc");
         assertExpression("getIn().headers.foo", "abc");
         assertExpression("request.headers.foo", "abc");
+    }
+    
+    public void testGetOutFalseKeepsNullOutMessage() throws Exception {
+        assertExpression("exchange.getOut(false)", null);
+        assertNull(exchange.getOut(false));
+    }
+    
+    public void testResponseCreatesOutMessage() throws Exception {
+       assertExpression("response.body", null);        
+       assertNotNull(exchange.getOut(false));
     }
 
     protected String getLanguageName() {

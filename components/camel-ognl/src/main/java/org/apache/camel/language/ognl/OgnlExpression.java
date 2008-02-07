@@ -57,20 +57,12 @@ public class OgnlExpression extends ExpressionSupport<Exchange> {
         // TODO we could use caching here but then we'd have possible
         // concurrency issues
         // so lets assume that the provider caches
-        Map values = new HashMap();
-        populateContext(values, exchange);
         OgnlContext oglContext = new OgnlContext();
         try {
             return Ognl.getValue(expression, oglContext, new RootObject(exchange));
         } catch (OgnlException e) {
             throw new ExpressionEvaluationException(this, exchange, e);
         }
-    }
-
-    protected void populateContext(Map map, Exchange exchange) {
-        map.put("exchange", exchange);
-        map.put("in", exchange.getIn());
-        map.put("out", exchange.getOut());
     }
 
     protected String assertionFailureMessage(Exchange exchange) {
