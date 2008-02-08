@@ -28,6 +28,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import static org.apache.camel.util.ObjectHelper.notNull;
 import org.apache.camel.util.ProducerCache;
@@ -64,9 +65,9 @@ public class RecipientList extends ServiceSupport implements Processor {
             Producer<Exchange> producer = producerCache.getProducer(endpoint);
             processors.add(producer);
         }
-        // TODO we could support a multicast option?
-        Pipeline pipeline = new Pipeline(processors);
-        pipeline.process(exchange);
+        MulticastProcessor mp = new MulticastProcessor(processors, 
+        		new UseLatestAggregationStrategy());
+        mp.process(exchange);
     }
 
     protected Endpoint<Exchange> resolveEndpoint(Exchange exchange, Object recipient) {
