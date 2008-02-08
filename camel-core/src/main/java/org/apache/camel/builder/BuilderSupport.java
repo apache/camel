@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.processor.LoggingLevel;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.commons.logging.Log;
@@ -135,10 +136,22 @@ public abstract class BuilderSupport {
      * @throws NoSuchEndpointException if the endpoint URI could not be resolved
      */
     public Endpoint endpoint(String uri) throws NoSuchEndpointException {
-        if (uri == null) {
-            throw new IllegalArgumentException("uri parameter cannot be null");
-        }
+        ObjectHelper.notNull(uri, "uri");
         Endpoint endpoint = getContext().getEndpoint(uri);
+        if (endpoint == null) {
+            throw new NoSuchEndpointException(uri);
+        }
+        return endpoint;
+    }
+
+    /**
+     * Resolves the given URI to an endpoint of the specified type
+     *
+     * @throws NoSuchEndpointException if the endpoint URI could not be resolved
+     */
+    public <T extends Endpoint> T endpoint(String uri, Class<T> type) throws NoSuchEndpointException {
+        ObjectHelper.notNull(uri, "uri");
+        T endpoint = getContext().getEndpoint(uri, type);
         if (endpoint == null) {
             throw new NoSuchEndpointException(uri);
         }
