@@ -90,18 +90,24 @@ public class BeanProcessor extends ServiceSupport implements Processor {
             return;
         }
 
+        boolean isExplicitMethod = false;
+        String prevMethod = null;
         MethodInvocation invocation;
         if (methodObject != null) {
             invocation = beanInfo.createInvocation(methodObject, bean, exchange);
         } else {
             // we just override the bean's invocation method name here
             if (ObjectHelper.isNotNullAndNonEmpty(method)) {
+                prevMethod = in.getHeader(METHOD_NAME, String.class);
                 in.setHeader(METHOD_NAME, method);
+                isExplicitMethod = true;
             }
             invocation = beanInfo.createInvocation(bean, exchange);
         }
         if (invocation == null) {
-            throw new IllegalStateException("No method invocation could be created, no maching method could be found on: " + bean);
+            throw new IllegalStateException(
+            	"No method invocation could be created, " + 
+                "no maching method could be found on: " + bean);
         }
         try {
             Object value = invocation.proceed();
@@ -110,18 +116,21 @@ public class BeanProcessor extends ServiceSupport implements Processor {
             }
         } catch (InvocationTargetException e) {
             // lets unwrap the exception
-            Throwable cause = e.getTargetException();
+            Throwable cause = e.getCause();
             if (cause instanceof Exception) {
                 throw (Exception) cause;
-            }
-            else {
-                // TODO deal with errors!
+            } else {
+                // do not handle errors!
                 throw e;
             }
         } catch (Exception e) {
             throw e;
         } catch (Throwable throwable) {
             throw new Exception(throwable);
+        } finally {
+            if (isExplicitMethod) {
+                in.setHeader(METHOD_NAME, prevMethod);
+            }
         }
     }
 
