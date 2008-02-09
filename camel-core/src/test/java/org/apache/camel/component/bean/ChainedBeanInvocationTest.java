@@ -20,7 +20,6 @@ import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.jndi.JndiContext;
@@ -31,7 +30,7 @@ public class ChainedBeanInvocationTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        beanMock = EasyMock.createMock(MyBean.class);
+        beanMock = EasyMock.createStrictMock(MyBean.class);
         super.setUp();
     }
 
@@ -48,17 +47,24 @@ public class ChainedBeanInvocationTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("bean:myBean?methodName=b")
-                    .bean(beanMock, "a")
+                    .to("bean:myBean?methodName=a")
+                    .bean(beanMock, "b")
                     .beanRef("myBean", "c");
+                from("direct:start2")
+                    .to("bean:myBean?methodName=a")
+                    .to("bean:myBean")
+                    .bean(beanMock, "b")
+                    .bean(beanMock)
+                    .beanRef("myBean", "c")
+                    .beanRef("myBean");
             }
         };
     }
 
     public void testNormalInvocation() throws Throwable {
-        beanMock.a();        
-        beanMock.b();        
-        beanMock.c();        
+        beanMock.a();
+        beanMock.b();
+        beanMock.c();
         EasyMock.replay(beanMock);
         Exchange result = template.send("direct:start", new DefaultExchange(context));
         if (result.getException() != null) {
@@ -67,12 +73,24 @@ public class ChainedBeanInvocationTest extends ContextTestSupport {
         EasyMock.verify(beanMock);
     }
 
+    public void testNoMethodSpecified() throws Throwable {
+        beanMock.a();
+        EasyMock.replay(beanMock);
+        Exchange result = template.send("direct:start2", new DefaultExchange(context));
+        assertNotNull(result.getException());
+        assertEquals(result.getException().getClass(), IllegalStateException.class);
+        EasyMock.verify(beanMock);
+    }
+
     public void testMethodHeaderSet() throws Exception {
         beanMock.a();        
+        beanMock.d();        
         beanMock.b();        
+        beanMock.d();        
         beanMock.c();        
+        beanMock.d();        
         EasyMock.replay(beanMock);
-        template.sendBodyAndHeader("direct:start", "test", BeanProcessor.METHOD_NAME, "d");
+        template.sendBodyAndHeader("direct:start2", "test", BeanProcessor.METHOD_NAME, "d");
         EasyMock.verify(beanMock);
     }
 
