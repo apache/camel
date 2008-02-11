@@ -31,7 +31,7 @@ import org.apache.camel.impl.DefaultProducer;
  *
  * @version $Revision: 1.1 $
  */
-final class CollectionProducer extends DefaultProducer implements AsyncProcessor {
+public class CollectionProducer extends DefaultProducer implements AsyncProcessor {
     private final Collection<Exchange> queue;
 
     public CollectionProducer(Endpoint endpoint, Collection<Exchange> queue) {
