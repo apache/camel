@@ -33,8 +33,6 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
-    private static final Log LOG = LogFactory.getLog(SedaConsumer.class);
-
     private SedaEndpoint endpoint;
     private AsyncProcessor processor;
     private Thread thread;
