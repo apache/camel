@@ -39,7 +39,7 @@ public class CollectionProducer extends DefaultProducer implements AsyncProcesso
         this.queue = queue;
     }
 
-    public void process(Exchange exchange) {
+    public void process(Exchange exchange) throws Exception {
         queue.add(exchange.copy());
     }
 
