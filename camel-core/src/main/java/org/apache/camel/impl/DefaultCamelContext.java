@@ -276,6 +276,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     	lifecycleStrategy.onEndpointAdd(answer);
                     }
                 } catch (Exception e) {
+                    LOG.debug("Failed to resolve endpoint " + uri + ". Reason: " + e, e);
                     throw new ResolveEndpointFailedException(uri, e);
                 }
             }
