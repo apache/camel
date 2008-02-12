@@ -156,6 +156,28 @@ public abstract class TestSupport extends TestCase {
      * @param expected the expected value of the OUT message
      * @throws InvalidPayloadException
      */
+    protected void assertInMessageBodyEquals(Exchange exchange, Object expected) throws InvalidPayloadException {
+        assertNotNull("Should have a response exchange!", exchange);
+
+        Object actual;
+        if (expected == null) {
+            actual = ExchangeHelper.getMandatoryInBody(exchange);
+            assertEquals("in body of: " + exchange, expected, actual);
+        }
+        else {
+            actual = ExchangeHelper.getMandatoryInBody(exchange, expected.getClass());
+        }
+        assertEquals("in body of: " + exchange, expected, actual);
+
+        log.debug("Received response: " + exchange + " with in: " + exchange.getIn());
+    }
+
+    /**
+     * Asserts that the given exchange has an OUT message of the given body value
+     * @param exchange the exchange which should have an OUT message
+     * @param expected the expected value of the OUT message
+     * @throws InvalidPayloadException
+     */
     protected void assertOutMessageBodyEquals(Exchange exchange, Object expected) throws InvalidPayloadException {
         assertNotNull("Should have a response exchange!", exchange);
 

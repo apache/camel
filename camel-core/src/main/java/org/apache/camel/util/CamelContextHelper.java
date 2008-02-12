@@ -16,6 +16,10 @@
  */
 package org.apache.camel.util;
 
+import java.util.List;
+import java.util.Collection;
+import java.util.ArrayList;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -55,6 +59,25 @@ public class CamelContextHelper {
         else {
             return endpoint;
         }
+    }
+
+    /**
+     * Returns a list of all endpoints of the given type
+     *
+     * @param camelContext
+     * @param type the type of the endpoints requested
+     * @return a list which may be empty of all the endpoint instances of the given type
+     */
+    public static <T> List<T> getSingletonEndpoints(CamelContext camelContext, Class<T> type) {
+        List<T> answer = new ArrayList<T>();
+        Collection<Endpoint> endpoints = camelContext.getSingletonEndpoints();
+        for (Endpoint endpoint : endpoints) {
+            if (type.isInstance(endpoint)) {
+                T value = type.cast(endpoint);
+                answer.add(value);
+            }
+        }
+        return answer;
     }
 
     /**
