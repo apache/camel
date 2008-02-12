@@ -20,6 +20,8 @@ package org.apache.camel.component.list;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Consumer;
@@ -41,15 +43,18 @@ import org.apache.camel.impl.DefaultProducer;
  * @version $Revision: 1.1 $
  */
 public class ListEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint {
-    private List<Exchange> exchanges = new ArrayList<Exchange>();
+    private List<Exchange> exchanges;
     private TopicLoadBalancer loadBalancer = new TopicLoadBalancer();
+    private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     public ListEndpoint(String uri, CamelContext camelContext) {
         super(uri, camelContext);
+        reset();
     }
 
     public ListEndpoint(String uri, Component component) {
         super(uri, component);
+        reset();
     }
 
     public boolean isSingleton() {
@@ -62,6 +67,15 @@ public class ListEndpoint extends DefaultEndpoint<Exchange> implements Browsable
 
     public TopicLoadBalancer getLoadBalancer() {
         return loadBalancer;
+    }
+
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
     public Producer<Exchange> createProducer() throws Exception {
@@ -77,7 +91,11 @@ public class ListEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     }
 
     public void reset() {
-        exchanges = new CopyOnWriteArrayList<Exchange>();
+        exchanges = createExchangeList();
+    }
+
+    protected List<Exchange> createExchangeList() {
+        return new CopyOnWriteArrayList<Exchange>();
     }
 
     /**

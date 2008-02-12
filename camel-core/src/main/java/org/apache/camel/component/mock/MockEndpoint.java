@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.beans.PropertyChangeSupport;
+import java.beans.PropertyChangeListener;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -63,6 +65,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     private int expectedMinimumCount;
     private List expectedBodyValues;
     private List actualBodyValues;
+    private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     public MockEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -123,6 +126,14 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
 
     public List<Exchange> getExchanges() {
         return getReceivedExchanges();
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
     public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
