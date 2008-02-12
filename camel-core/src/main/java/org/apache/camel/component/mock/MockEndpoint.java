@@ -34,6 +34,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExpressionComparator;
@@ -47,7 +48,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision: 1.1 $
  */
-public class MockEndpoint extends DefaultEndpoint<Exchange> {
+public class MockEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint {
     private static final transient Log LOG = LogFactory.getLog(MockEndpoint.class);
     private int expectedCount;
     private int counter;
@@ -118,6 +119,10 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         for (MockEndpoint endpoint : endpoints) {
             endpoint.expectsMessageCount(count);
         }
+    }
+
+    public List<Exchange> getExchanges() {
+        return getReceivedExchanges();
     }
 
     public Consumer<Exchange> createConsumer(Processor processor) throws Exception {

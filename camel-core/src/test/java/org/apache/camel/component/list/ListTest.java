@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.logging.Log;
@@ -39,10 +40,10 @@ public class ListTest extends ContextTestSupport {
         template.sendBody("list:foo", body1);
         template.sendBody("list:foo", body2);
 
-        List<ListEndpoint> list = CamelContextHelper.getSingletonEndpoints(context, ListEndpoint.class);
+        List<BrowsableEndpoint> list = CamelContextHelper.getSingletonEndpoints(context, BrowsableEndpoint.class);
         assertEquals("number of endpoints", 2, list.size());
 
-        for (ListEndpoint endpoint : list) {
+        for (BrowsableEndpoint endpoint : list) {
             List<Exchange> exchanges = endpoint.getExchanges();
 
             LOG.debug(">>>> " + endpoint + " has: " + exchanges);
