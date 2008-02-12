@@ -56,9 +56,9 @@ public class CamelInvoker implements Invoker  {
     * @param inMessage
     * @return outMessage
     */
-    public Message invoke(Message inMessage) {        
+    public Message invoke(Message inMessage) {
         Exchange exchange = inMessage.getExchange();
-                                      
+
         //Set Request Context into CXF Message
         Map<String, Object> ctxContainer = new HashMap<String, Object>();
         Map<String, Object> requestCtx = new HashMap<String, Object>();
@@ -68,23 +68,23 @@ public class CamelInvoker implements Invoker  {
         CxfExchange cxfExchange = endpoint.createExchange(inMessage);
         try {
             cxfConsumer.getProcessor().process(cxfExchange);
-        } catch (Exception e) {
+        } catch (Exception ex) {
             // catch the exception and send back to cxf client
-            e.printStackTrace();
+            throw new Fault(ex);
         }
-       
+
         // make sure the client has retrun back the message
         Message outMessage = getCxfMessage(cxfExchange, exchange);
-               
+
         //Set Response Context into CXF Message
         /*ctxContainer = (Map<String, Object>)outMessage.getProperty(CxfMessageAdapter.REQ_RESP_CONTEXT);
         Map<String, Object> respCtx = (Map<String, Object>)ctxContainer.get(Client.RESPONSE_CONTEXT);
         updateContext(respCtx, outMessage);*/
-       
+
         return outMessage;
     }
-    
-    public Message getCxfMessage(CxfExchange result, Exchange exchange) {        
+
+    public Message getCxfMessage(CxfExchange result, Exchange exchange) {
         Message outMessage = null;
         if (result.isFailed()) {
             CxfMessage fault = result.getFault();
@@ -104,15 +104,15 @@ public class CamelInvoker implements Invoker  {
             // get the payload message
             outMessage = result.getOutMessage();
             if (outMessage == null) {
-                Endpoint ep = exchange.get(Endpoint.class);                    
+                Endpoint ep = exchange.get(Endpoint.class);
                 outMessage = ep.getBinding().createMessage();
                 exchange.setOutMessage(outMessage);
             }
         }
-        
+
         return outMessage;
     }
-    
+
     @SuppressWarnings("unchecked")
     public void updateContext(Map<String, Object> from, Map<String, Object> to) {
         if (to != null && from != null) {
@@ -139,7 +139,7 @@ public class CamelInvoker implements Invoker  {
      */
     public Object invoke(Exchange exchange, Object o) {
         BindingOperationInfo bop = exchange.get(BindingOperationInfo.class);
-        MethodDispatcher md = (MethodDispatcher) 
+        MethodDispatcher md = (MethodDispatcher)
             exchange.get(Service.class).get(MethodDispatcher.class.getName());
         Method m = md.getMethod(bop);
         List<Object> params = new ArrayList<Object>();
@@ -148,9 +148,9 @@ public class CamelInvoker implements Invoker  {
         } else if (o != null) {
             params = new MessageContentsList(o);
         }
-        
+
         CxfEndpoint endpoint = (CxfEndpoint) cxfConsumer.getEndpoint();
-        
+
         CxfExchange cxfExchange = endpoint.createExchange(exchange.getInMessage());
         if (bop.getOperationInfo().isOneWay()) {
         	cxfExchange.setPattern(ExchangePattern.InOnly);
@@ -159,16 +159,15 @@ public class CamelInvoker implements Invoker  {
         }
         cxfExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, m.getName());
         cxfExchange.getIn().setBody(params);
-        
-        
+
+
         try {
             cxfConsumer.getProcessor().process(cxfExchange);
-        } catch (Exception e) {
+        } catch (Exception ex) {
             // catch the exception and send back to cxf client
-            e.printStackTrace();
+            throw new Fault(ex);
         }
-        
-        //TODO deal with the fault message
+
         Object result;
         if (cxfExchange.isFailed()) {
             Exception ex= (Exception)cxfExchange.getFault().getBody();
@@ -179,9 +178,9 @@ public class CamelInvoker implements Invoker  {
                 return (Object[])result;
             }
         }
-        
+
         return result;
-        
+
     }
 
 }
