@@ -320,12 +320,16 @@ public class Main extends ServiceSupport {
     }
 
     protected void postProcessContext() throws Exception {
+        CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext);
         if (ObjectHelper.isNotNullAndNonEmpty(dotOutputDir)) {
             RouteDotGenerator generator = new RouteDotGenerator(dotOutputDir);
-            CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext);
             LOG.info("Generating DOT file for routes: " + dotOutputDir + " for: " + camelContext);
             generator.drawRoutes(camelContext);
         }
+        postProcesCamelContext(camelContext);
+    }
+
+    protected void postProcesCamelContext(CamelContext camelContext) {
     }
 
     protected String getVersion() {
