@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
@@ -25,15 +27,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.BrowsableEndpoint;
 
 /**
  * An implementation of the <a
  * href="http://activemq.apache.org/camel/queue.html">Queue components</a> for
  * asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
- * 
+ *
  * @version $Revision: 519973 $
  */
-public class SedaEndpoint extends DefaultEndpoint<Exchange> {
+public class SedaEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint {
     private BlockingQueue<Exchange> queue;
 
     public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {
@@ -61,4 +64,7 @@ public class SedaEndpoint extends DefaultEndpoint<Exchange> {
         return true;
     }
 
+    public List<Exchange> getExchanges() {
+        return new ArrayList<Exchange>(getQueue());
+    }
 }

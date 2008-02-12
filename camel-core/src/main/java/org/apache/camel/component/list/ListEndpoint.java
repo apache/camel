@@ -27,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancerConsumer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.component.seda.CollectionProducer;
@@ -39,7 +40,7 @@ import org.apache.camel.impl.DefaultProducer;
  *
  * @version $Revision: 1.1 $
  */
-public class ListEndpoint extends DefaultEndpoint<Exchange> {
+public class ListEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint {
     private List<Exchange> exchanges = new ArrayList<Exchange>();
     private TopicLoadBalancer loadBalancer = new TopicLoadBalancer();
 
