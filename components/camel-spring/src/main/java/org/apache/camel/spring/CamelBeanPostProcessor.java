@@ -17,7 +17,6 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.*;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.spring.util.ReflectionUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -184,8 +183,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     }
 
     protected void startService(Service service) throws Exception {
-        service.start();
-        camelContext.addServiceToClose(service);
+        camelContext.addService(service);
     }
 
     /**

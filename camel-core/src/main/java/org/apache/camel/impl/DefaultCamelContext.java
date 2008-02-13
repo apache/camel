@@ -49,7 +49,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
-
+import org.apache.camel.util.ServiceHelper;
 import static org.apache.camel.util.ServiceHelper.startServices;
 import static org.apache.camel.util.ServiceHelper.stopServices;
 import org.apache.commons.logging.Log;
@@ -270,10 +270,15 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     }
 
                     // If it's a singleton then auto register it.
-                    if (answer != null && answer.isSingleton()) {
-                        startServices(answer);
-                        endpoints.put(uri, answer);
-                    	lifecycleStrategy.onEndpointAdd(answer);
+                    if (answer != null) {
+                        addService(answer);
+
+                        if (answer.isSingleton()) {
+                            endpoints.put(uri, answer);
+
+                            // TODO we should support non-singletons in the lifecycle
+                            lifecycleStrategy.onEndpointAdd(answer);
+                        }
                     }
                 } catch (Exception e) {
                     LOG.debug("Failed to resolve endpoint " + uri + ". Reason: " + e, e);
@@ -283,6 +288,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
         return answer;
     }
+
 
     public <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType) {
         Endpoint endpoint = getEndpoint(name);
@@ -332,9 +338,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     }
 
-    public void addServiceToClose(Object object) {
+    /**
+     * Adds a service, starting it so that it will be stopped with this context
+     */
+    public void addService(Object object) throws Exception {
         if (object instanceof Service) {
             Service service = (Service) object;
+            service.start();
             servicesToClose.add(service);
         }
     }
@@ -472,8 +482,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         if (routeList != null) {
             for (Route<Exchange> route : routeList) {
                 List<Service> services = route.getServicesForRoute();
-                servicesToClose.addAll(services);
-                startServices(services);
+                for (Service service : services) {
+                    addService(service);
+                }
             }
         }
     }
