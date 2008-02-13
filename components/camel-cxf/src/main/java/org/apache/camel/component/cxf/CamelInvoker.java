@@ -46,9 +46,11 @@ import org.apache.cxf.service.model.BindingOperationInfo;
 public class CamelInvoker implements Invoker  {
     private static final Logger LOG = Logger.getLogger(CamelInvoker.class.getName());
     private CxfConsumer cxfConsumer;
+
     public CamelInvoker(CxfConsumer consumer) {
         cxfConsumer = consumer;
     }
+
     /**
     * This method is called when the incoming message is to
     * be passed into the camel processor. The return value is the response
@@ -83,6 +85,7 @@ public class CamelInvoker implements Invoker  {
 
         return outMessage;
     }
+
 
     public Message getCxfMessage(CxfExchange result, Exchange exchange) {
         Message outMessage = null;
@@ -131,36 +134,41 @@ public class CamelInvoker implements Invoker  {
     }
 
     /**
-     * This method is called when the incoming pojo invocation is called
+     * This method is called when the incoming pojo or WebServiceProvider invocation is called
      * from the service invocation interceptor. The return value is the response
      * from the processor
      * @param inMessage
      * @return outMessage
      */
     public Object invoke(Exchange exchange, Object o) {
-        BindingOperationInfo bop = exchange.get(BindingOperationInfo.class);
-        MethodDispatcher md = (MethodDispatcher)
-            exchange.get(Service.class).get(MethodDispatcher.class.getName());
-        Method m = md.getMethod(bop);
-        List<Object> params = new ArrayList<Object>();
+
+        CxfEndpoint endpoint = (CxfEndpoint) cxfConsumer.getEndpoint();
+
+        Object params = null;
+
+
         if (o instanceof List) {
             params = CastUtils.cast((List<?>)o);
         } else if (o != null) {
             params = new MessageContentsList(o);
         }
 
-        CxfEndpoint endpoint = (CxfEndpoint) cxfConsumer.getEndpoint();
 
         CxfExchange cxfExchange = endpoint.createExchange(exchange.getInMessage());
+
+        BindingOperationInfo bop = exchange.get(BindingOperationInfo.class);
+        MethodDispatcher md = (MethodDispatcher)
+            exchange.get(Service.class).get(MethodDispatcher.class.getName());
+        Method m = md.getMethod(bop);
+
+
         if (bop.getOperationInfo().isOneWay()) {
-        	cxfExchange.setPattern(ExchangePattern.InOnly);
+            cxfExchange.setPattern(ExchangePattern.InOnly);
         } else {
-        	cxfExchange.setPattern(ExchangePattern.InOut);
+            cxfExchange.setPattern(ExchangePattern.InOut);
         }
         cxfExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, m.getName());
         cxfExchange.getIn().setBody(params);
-
-
         try {
             cxfConsumer.getProcessor().process(cxfExchange);
         } catch (Exception ex) {
@@ -168,19 +176,15 @@ public class CamelInvoker implements Invoker  {
             throw new Fault(ex);
         }
 
-        Object result;
+        Object result = null;
         if (cxfExchange.isFailed()) {
             Exception ex= (Exception)cxfExchange.getFault().getBody();
             throw new Fault(ex);
         } else {
             result = cxfExchange.getOut().getBody();
-            if(result instanceof Object[]) {
-                return (Object[])result;
-            }
         }
 
         return result;
-
     }
 
 }
