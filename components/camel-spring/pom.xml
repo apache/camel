@@ -117,6 +117,7 @@
         <configuration>
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
+          <forkMode>pertest</forkMode>
           <excludes>
           </excludes>
         </configuration>
