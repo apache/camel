@@ -16,15 +16,6 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.view.RouteDotGenerator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -32,6 +23,16 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.view.RouteDotGenerator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * A command line tool for booting up a CamelContext using an optional Spring
@@ -49,6 +50,8 @@ public class Main extends ServiceSupport {
     private long duration = -1;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private String dotOutputDir;
+    private List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
+    private SpringCamelContext camelContext;
 
     public Main() {
         addOption(new Option("h", "help", "Displays the help screen") {
@@ -84,7 +87,6 @@ public class Main extends ServiceSupport {
         new Main().run(args);
     }
 
-
     /**
      * Parses the command line arguments then runs the program
      */
@@ -100,7 +102,6 @@ public class Main extends ServiceSupport {
         if (!completed.get()) {
             try {
                 start();
-                postProcessContext();
                 waitUntilCompleted();
                 stop();
             }
@@ -116,6 +117,10 @@ public class Main extends ServiceSupport {
     public void completed() {
         completed.set(true);
         latch.countDown();
+    }
+
+    public void addRouteBuilder(RouteBuilder routeBuilder) {
+        getRouteBuilders().add(routeBuilder);
     }
 
     /**
@@ -239,6 +244,10 @@ public class Main extends ServiceSupport {
         this.applicationContextUri = applicationContextUri;
     }
 
+    public SpringCamelContext getCamelContext() {
+        return camelContext;
+    }
+
     public long getDuration() {
         return duration;
     }
@@ -277,6 +286,14 @@ public class Main extends ServiceSupport {
         this.dotOutputDir = dotOutputDir;
     }
 
+    public List<RouteBuilder> getRouteBuilders() {
+        return routeBuilders;
+    }
+
+    public void setRouteBuilders(List<RouteBuilder> routeBuilders) {
+        this.routeBuilders = routeBuilders;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
     protected void doStart() throws Exception {
@@ -285,6 +302,8 @@ public class Main extends ServiceSupport {
             applicationContext = createDefaultApplicationContext();
         }
         applicationContext.start();
+
+        postProcessContext();
     }
 
     protected AbstractApplicationContext createDefaultApplicationContext() {
@@ -320,7 +339,7 @@ public class Main extends ServiceSupport {
     }
 
     protected void postProcessContext() throws Exception {
-        CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext);
+        camelContext = SpringCamelContext.springCamelContext(applicationContext);
         if (ObjectHelper.isNotNullAndNonEmpty(dotOutputDir)) {
             RouteDotGenerator generator = new RouteDotGenerator(dotOutputDir);
             LOG.info("Generating DOT file for routes: " + dotOutputDir + " for: " + camelContext);
@@ -329,7 +348,10 @@ public class Main extends ServiceSupport {
         postProcesCamelContext(camelContext);
     }
 
-    protected void postProcesCamelContext(CamelContext camelContext) {
+    protected void postProcesCamelContext(CamelContext camelContext) throws Exception {
+        for (RouteBuilder routeBuilder : routeBuilders) {
+            camelContext.addRoutes(routeBuilder);
+        }
     }
 
     protected String getVersion() {
