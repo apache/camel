@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.cxf.transport;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,10 +24,8 @@ import java.util.logging.Logger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelTemplate;
 import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.CxfSoapBinding;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -46,7 +42,6 @@ import org.apache.cxf.transport.AbstractDestination;
 import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.ConduitInitiator;
 import org.apache.cxf.transport.MessageObserver;
-import org.apache.cxf.ws.addressing.AttributedURIType;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.apache.cxf.wsdl.EndpointReferenceUtils;
 
@@ -218,7 +213,27 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         }
 
     }
+    
+    /**
+     * Mark message as a partial message.
+     * 
+     * @param partialResponse the partial response message
+     * @param the decoupled target
+     * @return true iff partial responses are supported
+     */
+    protected boolean markPartialResponse(Message partialResponse,
+                                       EndpointReferenceType decoupledTarget) {
+    	return true;
+    }
 
+    /**
+     * @return the associated conduit initiator
+     */
+    protected ConduitInitiator getConduitInitiator() {
+        return conduitInitiator;
+    }
+    
+    
     private class CamelOutputStream extends CachedOutputStream {
         private Message outMessage;      
         
