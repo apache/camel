@@ -41,5 +41,20 @@ public enum DataFormat {
      * must be included in the endpoint.  Streaming is not available for this
      * data format.
      */
-    POJO
+    POJO,
+    
+    /**
+     * For UNKNOWN cases.
+     */
+    UNKNOWN;
+    
+    
+        
+    public static DataFormat asEnum(String value) {
+    	try {
+    		return valueOf(value.toUpperCase());
+    	} catch (Exception e) {
+    		return UNKNOWN;
+    	}
+    }
 }

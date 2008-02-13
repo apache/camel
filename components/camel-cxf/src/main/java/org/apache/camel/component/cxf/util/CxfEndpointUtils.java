@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.cxf.util;
 
+import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.net.URL;
 import java.util.logging.Logger;
 
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
+import javax.xml.ws.WebServiceProvider;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.component.cxf.CxfEndpoint;
@@ -105,20 +107,26 @@ public final class CxfEndpointUtils {
     }
 
     public static boolean hasWebServiceAnnotation(Class<?> cls) {
-        if (cls == null) {
+        return (hasAnnotation(cls, WebService.class) || hasAnnotation(cls, WebServiceProvider.class));
+    }
+
+    public static boolean hasAnnotation(Class<?> cls, Class<? extends Annotation> annotation) {
+        if (cls == null || cls == Object.class) {
             return false;
         }
-        if (null != cls.getAnnotation(WebService.class)) {
+        
+        if (null != cls.getAnnotation(annotation)) {
             return true;
         }
-        for (Class<?> inf : cls.getInterfaces()) {
-            if (null != inf.getAnnotation(WebService.class)) {
-                return true;
+        
+        for (Class<?> interfaceClass : cls.getInterfaces()) {
+            if (null != interfaceClass.getAnnotation(annotation)) {
+            	return true;
             }
         }
-
-        return hasWebServiceAnnotation(cls.getSuperclass());
+        return hasAnnotation(cls.getSuperclass(), annotation);
     }
+    
     
     public static ServerFactoryBean getServerFactoryBean(Class<?> cls) throws CamelException {
         ServerFactoryBean serverFactory  = null;
@@ -213,17 +221,18 @@ public final class CxfEndpointUtils {
         
     public static DataFormat getDataFormat(CxfEndpoint endpoint) throws CamelException {
         String dataFormatString = endpoint.getDataFormat();
-        DataFormat retval = DataFormat.POJO; 
-        
-        if (dataFormatString != null) {
-            try {
-                retval = DataFormat.valueOf(dataFormatString.toUpperCase());
-            } catch (IllegalArgumentException iae) {
-                throw new CamelException(new Message("INVALID_MESSAGE_FORMAT_XXXX", LOG, dataFormatString).toString()
-                                         , iae);
-            }
+        if (dataFormatString == null) {
+        	return DataFormat.POJO;
         }
+                
+        DataFormat retval = DataFormat.asEnum(dataFormatString); 
+        
+        if (retval == DataFormat.UNKNOWN) {
+        	throw new CamelException(new Message("INVALID_MESSAGE_FORMAT_XXXX", LOG, dataFormatString).toString());
+        }
+        
         return retval;
     }
 }
+
 
