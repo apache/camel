@@ -14,4 +14,4 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.component.irc.IrcComponent#
+class=org.apache.camel.component.irc.IrcComponent
