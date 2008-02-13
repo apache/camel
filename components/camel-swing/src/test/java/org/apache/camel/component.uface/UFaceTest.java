@@ -17,28 +17,28 @@
  */
 package org.apache.camel.component.uface;
 
-import java.util.List;
-
-import org.apache.camel.component.list.ListEndpoint;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.Exchange;
-import org.apache.camel.util.ObjectHelper;
-import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.Realm;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class UFaceEndpoint extends ListEndpoint {
-    public UFaceEndpoint(String uri, UFaceComponent component) {
-        super(uri, component);
+public class UFaceTest extends ContextTestSupport {
+    public void testUFaceEndpoints() throws Exception {
+        MockEndpoint endpoint = getMockEndpoint("mock:results");
+        endpoint.expectedMessageCount(1);
+
+        template.sendBody("swing:a", "<hello>world!</hello>");
+
+        assertMockEndpointsSatisifed();
     }
 
-    @Override
-    protected List<Exchange> createExchangeList() {
-        Realm realm = Realm.getDefault();
-        ObjectHelper.notNull(realm, "DataBinding Realm");
-        return new WritableList(realm);
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                from("swing:a").to("swing:b").to("mock:results");
+            }
+        };
     }
 }

@@ -30,7 +30,7 @@ public class ExampleSender implements InitializingBean {
     private int counter;
     private int messageCount = 10;
 
-    @EndpointInject(uri = "mock:a")
+    @EndpointInject(uri = "uface:a")
     private ProducerTemplate template;
 
     public String ping() {
