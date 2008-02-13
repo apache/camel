@@ -71,7 +71,7 @@ public class TesterBean {
 
             SOAPElement message = payload.addChildElement("responseType");
 
-            message.addTextNode(responseMessage + " Request waas  " + requestMessage);
+            message.addTextNode(responseMessage + " Request was  " + requestMessage);
             return soapMessage;
         } catch (SOAPException e) {
             e.printStackTrace();
