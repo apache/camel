@@ -43,6 +43,8 @@ public class ListTest extends ContextTestSupport {
         List<BrowsableEndpoint> list = CamelContextHelper.getSingletonEndpoints(context, BrowsableEndpoint.class);
         assertEquals("number of endpoints", 2, list.size());
 
+        Thread.sleep(2000);
+
         for (BrowsableEndpoint endpoint : list) {
             List<Exchange> exchanges = endpoint.getExchanges();
 
