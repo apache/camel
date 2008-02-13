@@ -24,8 +24,8 @@
 
   <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
-      <from uri="list:a"/>
-      <to uri="list:b"/>
+      <from uri="swing:a"/>
+      <to uri="swing:b"/>
     </route>
 
   </camelContext>

@@ -17,28 +17,38 @@
  */
 package org.apache.camel.component.uface;
 
-import java.util.List;
+import java.util.Date;
 
-import org.apache.camel.component.list.ListEndpoint;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.Exchange;
-import org.apache.camel.util.ObjectHelper;
-import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.Realm;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.EndpointInject;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class UFaceEndpoint extends ListEndpoint {
-    public UFaceEndpoint(String uri, UFaceComponent component) {
-        super(uri, component);
+public class ExampleSender implements InitializingBean {
+    private int counter;
+    private int messageCount = 10;
+
+    @EndpointInject(uri = "swing:a")
+    private ProducerTemplate template;
+
+    public String ping() {
+        return "Message " + (++counter) + " at: " + new Date();
     }
 
-    @Override
-    protected List<Exchange> createExchangeList() {
-        Realm realm = Realm.getDefault();
-        ObjectHelper.notNull(realm, "DataBinding Realm");
-        return new WritableList(realm);
+    public void afterPropertiesSet() throws Exception {
+        // lets send a bunch of messages...
+        for (int i = 0; i < messageCount; i++) {
+            template.sendBodyAndHeader(ping(), "messageCounter", i);
+        }
+    }
+
+    public int getMessageCount() {
+        return messageCount;
+    }
+
+    public void setMessageCount(int messageCount) {
+        this.messageCount = messageCount;
     }
 }

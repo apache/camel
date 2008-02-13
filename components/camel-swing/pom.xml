@@ -28,37 +28,24 @@
     <version>1.3-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-uface</artifactId>
+  <artifactId>camel-swing</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: UFace</name>
-  <description>Camel UFace support</description>
+  <name>Camel :: Swing</name>
+  <description>Camel Swing support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.component.uface*</camel.osgi.export.pkg>
+  	<camel.osgi.export.pkg>org.apache.camel.component.uface.swing*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring</artifactId>
+      <artifactId>camel-uface</artifactId>
     </dependency>
     <dependency>
       <groupId>org.ufacekit</groupId>
-      <artifactId>org.ufacekit.ui</artifactId>
-      <version>${uface-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.ufacekit</groupId>
-      <artifactId>org.ufacekit.ui.beanform</artifactId>
+      <artifactId>org.ufacekit.ui.swing</artifactId>
       <version>${uface-version}</version>
     </dependency>
 
@@ -69,13 +56,6 @@
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.ufacekit</groupId>
-      <artifactId>org.ufacekit.ui.swing</artifactId>
-      <version>${uface-version}</version>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
@@ -93,4 +73,19 @@
     </dependency>
   </dependencies>
 
+
+  <build>
+    <plugins>
+                <!-- allows the example to be ran via 'mvn compile exec:java' -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>org.apache.camel.component.uface.swing.Main</mainClass>
+          <includePluginDependencies>false</includePluginDependencies>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
 </project>

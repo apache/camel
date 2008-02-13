@@ -15,30 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.uface;
+package org.apache.camel.component.uface.swing;
 
-import java.util.List;
+import java.util.Map;
 
-import org.apache.camel.component.list.ListEndpoint;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.Exchange;
-import org.apache.camel.util.ObjectHelper;
-import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.Realm;
+import org.apache.camel.component.uface.UFaceComponent;
+import org.apache.camel.Endpoint;
+import org.ufacekit.ui.swing.databinding.swing.SwingRealm;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class UFaceEndpoint extends ListEndpoint {
-    public UFaceEndpoint(String uri, UFaceComponent component) {
-        super(uri, component);
+public class SwingComponent extends UFaceComponent {
+    public SwingComponent() {
+        SwingRealm.createDefault();
     }
 
-    @Override
-    protected List<Exchange> createExchangeList() {
-        Realm realm = Realm.getDefault();
-        ObjectHelper.notNull(realm, "DataBinding Realm");
-        return new WritableList(realm);
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        return super.createEndpoint(uri, remaining, parameters);
     }
 }

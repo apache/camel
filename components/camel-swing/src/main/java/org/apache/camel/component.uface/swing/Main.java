@@ -29,11 +29,9 @@ public class Main extends org.apache.camel.spring.Main {
         new Main().run(args);
     }
 
-    protected void postProcesCamelContext(CamelContext camelContext) {
+    protected void postProcesCamelContext(CamelContext camelContext) throws Exception {
         super.postProcesCamelContext(camelContext);
 
-        // TODO hack!
-        camelContext.getEndpoint("mock:a");
         try {
             SwingBrowser browser = new SwingBrowser((DefaultCamelContext) camelContext);
             browser.run();

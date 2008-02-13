@@ -101,12 +101,6 @@ public class UFaceBrowser {
 
         BeanForm selectionForm = new BeanForm();
 
-/*
-        UIComposite detailComposite = ui.newComposite(splitter, null, ui.newGridLayout(1));
-
-        ui.newLabel(detailComposite, new UILabel.LabelUIInfo(new GridLayoutData(GridLayoutData.ALIGN_END, GridLayoutData.ALIGN_CENTER))).setText("Exchanges");
-*/
-
         UITable table = ui.newTable(splitter, new UITable.TableUIInfo(new GridLayoutData(GridLayoutData.ALIGN_FILL, GridLayoutData.ALIGN_FILL, true, true)),
                 new UITable.TableBindingInfo(selectionForm,
                         selectionForm.detailList("exchanges", Collection.class)));
