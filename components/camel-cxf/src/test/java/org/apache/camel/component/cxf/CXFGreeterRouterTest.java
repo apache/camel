@@ -28,7 +28,7 @@ import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.GreeterImpl;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CXFGreeterRouterTest extends CXFRouterSpringTest {
+public class CXFGreeterRouterTest extends CxfSpringRouterTest {
     private final QName serviceName = new QName("http://apache.org/hello_world_soap_http",
                                                 "SOAPService");
     private final QName routerPortName = new QName("http://apache.org/hello_world_soap_http",

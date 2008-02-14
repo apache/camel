@@ -27,7 +27,7 @@ import org.apache.cxf.bus.CXFBusFactory;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ServerFactoryBean;
 
-public class CXFRouterSpringTest extends CxfRouterTest {
+public class CxfSpringRouterTest extends CxfRouterTest {
     protected AbstractXmlApplicationContext applicationContext;
     
     @Override
