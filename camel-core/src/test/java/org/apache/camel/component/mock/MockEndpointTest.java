@@ -78,6 +78,22 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.assertIsNotSatisfied();
     }
 
+    public void testExpetationsAfterMessagesArrivePass() throws Exception {
+        sendMessages(11, 12, 13, 14, 12);
+
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(5);
+        resultEndpoint.assertIsNotSatisfied();
+    }
+
+    public void testExpetationsAfterMessagesArriveFail() throws Exception {
+        sendMessages(11, 12, 13, 14, 12);
+
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(6);
+        resultEndpoint.assertIsNotSatisfied();
+    }
+
     public void testReset() throws Exception {
     	MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
     	resultEndpoint.expectedMessageCount(2);
