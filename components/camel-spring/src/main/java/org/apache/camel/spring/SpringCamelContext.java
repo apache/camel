@@ -94,7 +94,10 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             try {
                 LOG.debug("Starting the CamelContext now that the ApplicationContext has started");
                 start();
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
+                throw (e);
+            }
+            catch (Exception e) {
                 throw new RuntimeCamelException(e);
             }
             if (eventEndpoint != null) {
