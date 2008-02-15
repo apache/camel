@@ -46,7 +46,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         this.endpoint = endpoint;
     }
 
-    protected void poll() throws Exception {
+    protected synchronized void poll() throws Exception {
         int rc = pollFileOrDirectory(endpoint.getFile(), isRecursive());
         if( rc == 0 && generateEmptyExchangeWhenIdle ) {
             final FileExchange exchange = endpoint.createExchange((File)null);
