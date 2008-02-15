@@ -36,11 +36,6 @@
       <name>Apache Maven2 Repository</name>
       <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
     </repository>
-    <repository>
-      <id>open.iona.m2-all</id>
-      <name>IONA Open Source Community Dependency Repository</name>
-      <url>http://repo.logicblaze.com/maven2-all</url>
-    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -49,11 +44,6 @@
       <id>apache.m2.repo</id>
       <name>Apache Maven2 Repository</name>
       <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>open.iona.m2-all</id>
-      <name>IONA Open Source Community Dependency Repository</name>
-      <url>http://repo.logicblaze.com/maven2-all</url>
     </pluginRepository>
   </pluginRepositories>
 
