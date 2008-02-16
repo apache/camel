@@ -138,7 +138,6 @@
         <include>org.apache.geronimo.specs:geronimo-j2ee-jacc_1.0_spec</include>
         <include>org.apache.geronimo.specs:geronimo-j2ee-connector_1.5_spec</include>
         <include>org.apache.xbean:xbean-spring</include>
-        <include>org.springframework:spring</include>
       </includes>
     </dependencySet>
   </dependencySets>
