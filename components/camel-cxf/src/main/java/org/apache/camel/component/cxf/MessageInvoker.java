@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,35 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
 
-import java.util.logging.Logger;
+import org.apache.cxf.message.Exchange;
+import org.apache.cxf.message.Message;
 
+/**
+ * The interface to provide a CXF message invoke method
+ */
+public interface MessageInvoker {
 
-
-public class HelloServiceImpl implements HelloService {
-    private static final Logger LOG = Logger.getLogger(HelloServiceImpl.class.getName());
-    private int invocationCount;
-
-    public String echo(String text) {
-        LOG.info("call for echo with " + text);
-        return "echo " + text;
-    }
-
-    public void ping() {
-    	invocationCount ++;
-    	LOG.info("call for oneway ping");
-    }
-
-    public int getInvocationCount() {
-    	return invocationCount;
-    }
-
-    public String sayHello() {
-        return "hello";
-    }
-
+    /**
+     * This method is called when the incoming message is to
+     * be passed into the camel processor. The return value is the response
+     * from the processor
+     * @param the cxf exchange which holds the in and out message
+     */
+     public void invoke(Exchange exchange);
 
 }
-
-

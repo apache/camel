@@ -17,10 +17,14 @@
 package org.apache.camel.component.cxf;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.ws.WebServiceProvider;
 
 import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.feature.MessageDataFormatFeature;
+import org.apache.camel.component.cxf.feature.PayLoadDataFormatFeature;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.component.cxf.util.UriUtils;
@@ -31,11 +35,12 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.endpoint.ServerImpl;
+import org.apache.cxf.feature.AbstractFeature;
+import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.Destination;
 import org.apache.cxf.transport.MessageObserver;
-
 
 /**
  * A consumer of exchanges for a service in CXF
@@ -51,58 +56,64 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
         super(endpoint, processor);
         this.endpoint = endpoint;
         boolean isWebServiceProvider = false;
-        try {
-            // now we just use the default bus here
-            Bus bus = BusFactory.getDefaultBus();
-            ServerFactoryBean svrBean = null;
 
-            if (endpoint.isSpringContextEndpoint()) {
-                CxfEndpointBean endpointBean = endpoint.getCxfEndpointBean();
-                svrBean = CxfEndpointUtils.getServerFactoryBean(endpointBean.getServiceClass());
-                isWebServiceProvider = CxfEndpointUtils.hasAnnotation(endpointBean.getServiceClass(), WebServiceProvider.class);
-                endpoint.configure(svrBean);
-                CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
-                if (cxfEndpointBean.getServiceName() != null) {
-                    svrBean.setServiceName(cxfEndpointBean.getServiceName());
-                }
-                if (cxfEndpointBean.getEndpointName() != null) {
-                    svrBean.setEndpointName(cxfEndpointBean.getEndpointName());
-                }
+        // now we just use the default bus here
+        Bus bus = BusFactory.getDefaultBus();
+        ServerFactoryBean svrBean = null;
 
-            } else { // setup the serverFactoryBean with the URI paraments
-                Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
-                svrBean = CxfEndpointUtils.getServerFactoryBean(serviceClass);
-                isWebServiceProvider = CxfEndpointUtils.hasAnnotation(serviceClass, WebServiceProvider.class);
-                svrBean.setAddress(endpoint.getAddress());
-                svrBean.setServiceClass(serviceClass);
-                if (endpoint.getServiceName() != null) {
-                    svrBean.setServiceName(CxfEndpointUtils.getServiceName(endpoint));
-                }
-                if (endpoint.getPortName() != null) {
-                    svrBean.setEndpointName(CxfEndpointUtils.getPortName(endpoint));
-                }
-                if (endpoint.getWsdlURL() != null) {
-                    svrBean.setWsdlURL(endpoint.getWsdlURL());
-                }
+        if (endpoint.isSpringContextEndpoint()) {
+            CxfEndpointBean endpointBean = endpoint.getCxfEndpointBean();
+            svrBean = CxfEndpointUtils.getServerFactoryBean(endpointBean.getServiceClass());
+            isWebServiceProvider = CxfEndpointUtils.hasAnnotation(endpointBean.getServiceClass(),
+                                                                  WebServiceProvider.class);
+            endpoint.configure(svrBean);
+            CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
+            if (cxfEndpointBean.getServiceName() != null) {
+                svrBean.setServiceName(cxfEndpointBean.getServiceName());
             }
-            DataFormat dataFormat = CxfEndpointUtils.getDataFormat(endpoint);
-            if (dataFormat.equals(DataFormat.POJO) || isWebServiceProvider) {
-            	svrBean.setInvoker(new CamelInvoker(this));
-            }
-            svrBean.setBus(bus);
-            svrBean.setStart(false);
-            server = svrBean.create();
-            if(!dataFormat.equals(DataFormat.POJO) && !isWebServiceProvider) {
-                CxfMessageObserver observer = new CxfMessageObserver(this, server.getEndpoint(), bus , dataFormat);
-                //set the message observer for the Message and PayLoad mode message
-                ServerImpl serverImpl = (ServerImpl)server;
-                serverImpl.setMessageObserver(observer);
+            if (cxfEndpointBean.getEndpointName() != null) {
+                svrBean.setEndpointName(cxfEndpointBean.getEndpointName());
             }
 
-        } catch (Exception ex) {
-            // create Consumer endpoint failed
-            ex.printStackTrace();
+        } else { // setup the serverFactoryBean with the URI paraments
+            Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
+            svrBean = CxfEndpointUtils.getServerFactoryBean(serviceClass);
+            isWebServiceProvider = CxfEndpointUtils.hasAnnotation(serviceClass, WebServiceProvider.class);
+            svrBean.setAddress(endpoint.getAddress());
+            svrBean.setServiceClass(serviceClass);
+            if (endpoint.getServiceName() != null) {
+                svrBean.setServiceName(CxfEndpointUtils.getServiceName(endpoint));
+            }
+            if (endpoint.getPortName() != null) {
+                svrBean.setEndpointName(CxfEndpointUtils.getPortName(endpoint));
+            }
+            if (endpoint.getWsdlURL() != null) {
+                svrBean.setWsdlURL(endpoint.getWsdlURL());
+            }
         }
+        DataFormat dataFormat = CxfEndpointUtils.getDataFormat(endpoint);
+
+        svrBean.setInvoker(new CamelInvoker(this));
+
+        // apply the feature here
+        if (!dataFormat.equals(DataFormat.POJO) && !isWebServiceProvider) {
+            List<AbstractFeature> features = new ArrayList<AbstractFeature>();
+
+            if (dataFormat.equals(DataFormat.PAYLOAD)) {
+                features.add(new PayLoadDataFormatFeature());
+                // add the logging feature here
+                features.add(new LoggingFeature());
+            }
+            if (dataFormat.equals(DataFormat.MESSAGE)) {
+                features.add(new MessageDataFormatFeature());
+            }
+            svrBean.setFeatures(features);
+
+        }
+        svrBean.setBus(bus);
+        svrBean.setStart(false);
+        server = svrBean.create();
+
     }
 
     @Override
@@ -121,6 +132,5 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
     public CxfEndpoint getEndpoint() {
         return endpoint;
     }
-
 
 }

@@ -38,11 +38,17 @@ public class CxfExchange extends DefaultExchange {
     public CxfExchange(CamelContext context, Exchange exchange) {
         super(context);
         this.exchange = exchange;
-
-        setIn(new CxfMessage(exchange.getInMessage()));
-        setOut(new CxfMessage(exchange.getOutMessage()));
-        if (exchange.getInFaultMessage() != null) {
-            setFault(new CxfMessage(exchange.getInFaultMessage()));
+        // TO avoid the NPE here
+        if (exchange != null) {
+            if (exchange.getOutMessage() != null) {
+                setOut(new CxfMessage(exchange.getOutMessage()));
+            }
+            if (exchange.getInMessage() != null) {
+                setIn(new CxfMessage(exchange.getInMessage()));
+            }
+            if (exchange.getInFaultMessage() != null) {
+                setFault(new CxfMessage(exchange.getInFaultMessage()));
+            }
         }
     }
 

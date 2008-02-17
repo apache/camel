@@ -39,43 +39,43 @@ public class CXFGreeterRouterTest extends CxfSpringRouterTest {
         String address = "http://localhost:9000/SoapContext/SoapPort";
         Endpoint.publish(address, implementor);
     }
-    
+
     @Override
     public void testInvokingServiceFromCXFClient() throws Exception {
         Service service = Service.create(serviceName);
-        service.addPort(routerPortName, "http://schemas.xmlsoap.org/soap/", 
+        service.addPort(routerPortName, "http://schemas.xmlsoap.org/soap/",
                         "http://localhost:9003/CamelContext/RouterPort");
         Greeter greeter = service.getPort(routerPortName, Greeter.class);
-        
+
         try {
-            
+
             String reply = greeter.greetMe("test");
             assertNotNull("No response received from service", reply);
             assertEquals("Got the wrong reply ", "Hello test", reply);
             reply = greeter.sayHi();
             assertNotNull("No response received from service", reply);
             assertEquals("Got the wrong reply ", "Bonjour", reply);
-            
+
             greeter.greetMeOneWay("call greetMe OneWay !");
         } catch (UndeclaredThrowableException ex) {
             throw (Exception)ex.getCause();
         }
     }
-    
+
     @Override
     public void testOnwayInvocation() throws Exception {
     	Service service = Service.create(serviceName);
-        service.addPort(routerPortName, "http://schemas.xmlsoap.org/soap/", 
+        service.addPort(routerPortName, "http://schemas.xmlsoap.org/soap/",
                         "http://localhost:9003/CamelContext/RouterPort");
         Greeter greeter = service.getPort(routerPortName, Greeter.class);
         greeter.greetMeOneWay("call greetMe OneWay !");
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringTestHelper.createSpringCamelContext(this, "org/apache/camel/component/cxf/GreeterEndpointBeans.xml");
+        return SpringTestHelper.createSpringCamelContext(this, "org/apache/camel/component/cxf/GreeterEndpointsRouterContext.xml");
     }
 }
-    
+
 
 

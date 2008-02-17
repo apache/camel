@@ -45,10 +45,10 @@ import org.apache.cxf.wsdl11.WSDLServiceBuilder;
 
 public class SoapMessageOutInterceptor extends AbstractMessageOutInterceptor<SoapMessage> {
     private static final Logger LOG = LogUtils.getL7dLogger(SoapMessageInInterceptor.class);
-   
+
 
     public SoapMessageOutInterceptor() {
-        super(Phase.PREPARE_SEND);        
+        super(Phase.PREPARE_SEND);
         addAfter(DOMOutInterceptor.class.getName());
     }
 
@@ -58,12 +58,14 @@ public class SoapMessageOutInterceptor extends AbstractMessageOutInterceptor<Soa
 
     @SuppressWarnings("unchecked")
     public void handleMessage(SoapMessage message) throws Fault {
+        // header is not store as the element
         Element header = message.get(Element.class);
-        List<Element> payload = message.get(List.class);        
-        Exchange exchange = message.getExchange();        
+
+        List<Element> payload = message.get(List.class);
+        Exchange exchange = message.getExchange();
         BindingMessageInfo bmi = exchange.get(BindingMessageInfo.class);
 
-        
+
         //Headers -represent as -Element,Body -represent as StaxStream.
         //Check if BindingOperationInfo contains header
         List<SoapHeaderInfo> bindingHdr = bmi.getExtensors(SoapHeaderInfo.class);
@@ -103,15 +105,15 @@ public class SoapMessageOutInterceptor extends AbstractMessageOutInterceptor<Soa
             }
             payload = newPayload;
         }
-        
+
         //Set SOAP Header Element.
         //Child Elements Could be binding specified parts or user specified headers.
         //REVISTED the soap headers
         //message.setHeaders(Element.class, header);
-        
+
         //TODO Moving Parts from Header to Payload.
-        //For e.g Payload ROuting from SOAP11 <-> SOAP12 
-        
+        //For e.g Payload ROuting from SOAP11 <-> SOAP12
+
         //So write payload and header to outbound message
         if (LOG.isLoggable(Level.INFO)) {
             LOG.info("SoapMessageOutInterceptor binding operation style processing.");
@@ -123,11 +125,11 @@ public class SoapMessageOutInterceptor extends AbstractMessageOutInterceptor<Soa
             //Remove the operation element.
             OperationInfo oi = bmi.getBindingOperation().getOperationInfo();
             Endpoint ep = exchange.get(Endpoint.class);
-            Definition def = 
-                ep.getService().getServiceInfos().get(0).getProperty(WSDLServiceBuilder.WSDL_DEFINITION, 
+            Definition def =
+                ep.getService().getServiceInfos().get(0).getProperty(WSDLServiceBuilder.WSDL_DEFINITION,
                                                              Definition.class);
             String prefix = def.getPrefix(oi.getName().getNamespaceURI());
-            
+
             if ("".equals(prefix)) {
                 prefix = "tns";
             }
@@ -136,7 +138,7 @@ public class SoapMessageOutInterceptor extends AbstractMessageOutInterceptor<Soa
             if (isClient) {
                 opName = new QName(oi.getName().getNamespaceURI(),
                                    oi.getName().getLocalPart(),
-                                   prefix); 
+                                   prefix);
             } else {
                 opName = new QName(oi.getName().getNamespaceURI(),
                                    oi.getName().getLocalPart() + "Response",
@@ -146,7 +148,7 @@ public class SoapMessageOutInterceptor extends AbstractMessageOutInterceptor<Soa
             payload = new ArrayList<Element>();
             payload.add(opEl);
         }
-        
+
         message.put(List.class, payload);
     }
 }

@@ -41,9 +41,10 @@ import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.service.Service;
 import org.apache.cxf.service.invoker.AbstractInvoker;
 import org.apache.cxf.service.invoker.Invoker;
+import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
 
-public class CamelInvoker implements Invoker  {
+public class CamelInvoker implements Invoker, MessageInvoker {
     private static final Logger LOG = Logger.getLogger(CamelInvoker.class.getName());
     private CxfConsumer cxfConsumer;
 
@@ -56,16 +57,11 @@ public class CamelInvoker implements Invoker  {
     * be passed into the camel processor. The return value is the response
     * from the processor
     * @param inMessage
-    * @return outMessage
     */
-    public Message invoke(Message inMessage) {
-        Exchange exchange = inMessage.getExchange();
+    public void invoke(Exchange exchange) {
+        Message inMessage = exchange.getInMessage();
 
-        //Set Request Context into CXF Message
-        Map<String, Object> ctxContainer = new HashMap<String, Object>();
-        Map<String, Object> requestCtx = new HashMap<String, Object>();
-        ctxContainer.put(Client.REQUEST_CONTEXT, requestCtx);
-        updateContext(inMessage, requestCtx);
+        //TODO set the request context here
         CxfEndpoint endpoint = (CxfEndpoint) cxfConsumer.getEndpoint();
         CxfExchange cxfExchange = endpoint.createExchange(inMessage);
         try {
@@ -75,45 +71,44 @@ public class CamelInvoker implements Invoker  {
             throw new Fault(ex);
         }
 
-        // make sure the client has retrun back the message
-        Message outMessage = getCxfMessage(cxfExchange, exchange);
+        // make sure the client has return back the message
+        copybackExchange(cxfExchange, exchange);
 
-        //Set Response Context into CXF Message
-        /*ctxContainer = (Map<String, Object>)outMessage.getProperty(CxfMessageAdapter.REQ_RESP_CONTEXT);
-        Map<String, Object> respCtx = (Map<String, Object>)ctxContainer.get(Client.RESPONSE_CONTEXT);
-        updateContext(respCtx, outMessage);*/
+        Message outMessage = exchange.getOutMessage();
+        // update the outMessageContext
+        outMessage.put(Message.INBOUND_MESSAGE, Boolean.FALSE);
+        BindingOperationInfo boi = exchange.get(BindingOperationInfo.class);
 
-        return outMessage;
+        if (boi != null) {
+            exchange.put(BindingMessageInfo.class, boi.getOutput());
+        }
     }
 
 
-    public Message getCxfMessage(CxfExchange result, Exchange exchange) {
+    public void copybackExchange(CxfExchange result, Exchange exchange) {
+        final Endpoint endpoint = exchange.get(Endpoint.class);
         Message outMessage = null;
         if (result.isFailed()) {
             CxfMessage fault = result.getFault();
             outMessage = exchange.getInFaultMessage();
-            //REVISIT ?
             if (outMessage == null) {
-                outMessage = new MessageImpl();
-                //outMessage.setExchange(exchange);
+                outMessage = endpoint.getBinding().createMessage();
+                outMessage.setExchange(exchange);
                 exchange.setInFaultMessage(outMessage);
             }
             Exception ex = (Exception) fault.getBody();
             outMessage.setContent(Exception.class, ex);
         } else {
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.finest("Payload is a response.");
-            }
-            // get the payload message
             outMessage = result.getOutMessage();
-            if (outMessage == null) {
-                Endpoint ep = exchange.get(Endpoint.class);
-                outMessage = ep.getBinding().createMessage();
-                exchange.setOutMessage(outMessage);
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.finest("Get the response outMessage " + outMessage);
             }
+            if (outMessage == null) {
+                outMessage = endpoint.getBinding().createMessage();
+            }
+            exchange.setOutMessage(outMessage);
         }
 
-        return outMessage;
     }
 
     @SuppressWarnings("unchecked")
@@ -183,7 +178,6 @@ public class CamelInvoker implements Invoker  {
         } else {
             result = cxfExchange.getOut().getBody();
         }
-
         return result;
     }
 

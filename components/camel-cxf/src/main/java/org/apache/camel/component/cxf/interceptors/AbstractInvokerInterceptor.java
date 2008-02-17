@@ -40,15 +40,15 @@ import org.apache.cxf.ws.addressing.EndpointReferenceType;
  */
 public abstract class AbstractInvokerInterceptor extends AbstractPhaseInterceptor<Message> {
     public static final String ROUTING_INERCEPTOR_PHASE = "Routing-Phase";
-    public static final String BUNDLE = "wsdl-cxf"; 
+    public static final String BUNDLE = "wsdl-cxf";
     public AbstractInvokerInterceptor(String phase) {
         super(phase);
     }
-    
+
     private boolean isRequestor(Message message) {
         return Boolean.TRUE.equals(message.get(Message.REQUESTOR_ROLE));
     }
-    
+
     /**
      * Send the intercepted message to router
      */
@@ -62,18 +62,19 @@ public abstract class AbstractInvokerInterceptor extends AbstractPhaseIntercepto
         Message outMessage = null;
         try {
             CamelInvoker invoker = exchange.get(CamelInvoker.class);
-            outMessage = invoker.invoke(inMessage);
+            invoker.invoke(exchange);
+            outMessage = exchange.getOutMessage();
         } catch (Exception e) {
             throw new Fault(e);
         }
 
         // set back channel conduit in the exchange if it is not present
         setBackChannelConduit(exchange, outMessage);
-        
+
         Exception ex = outMessage.getContent(Exception.class);
         if (ex != null) {
             if (!(ex instanceof Fault)) {
-                ex = new Fault(ex); 
+                ex = new Fault(ex);
             }
             throw (Fault)ex;
         }
@@ -86,16 +87,16 @@ public abstract class AbstractInvokerInterceptor extends AbstractPhaseIntercepto
 
         InvokingContext invokingContext = exchange.get(InvokingContext.class);
         assert invokingContext != null;
-        
+
         InterceptorChain chain = invokingContext.getResponseOutInterceptorChain(exchange);
         if (chain != null) {
             outMessage.setInterceptorChain(chain);
-            
+
             //Initiate the OutBound Chain.
             chain.doIntercept(outMessage);
-        }                
+        }
     }
-    
+
     /**
      * Creates a conduit if not present on the exchange. outMessage or faultMessage
      * It will create a back channel in PAYLOAD and MESSAGE case.
@@ -115,9 +116,9 @@ public abstract class AbstractInvokerInterceptor extends AbstractPhaseIntercepto
                 throw new Fault(e);
             }
         }
-        
+
         assert conduit != null;
     }
-    
+
     protected abstract Logger getLogger();
 }
