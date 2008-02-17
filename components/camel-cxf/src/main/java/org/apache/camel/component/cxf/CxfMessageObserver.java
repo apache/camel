@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 
 import org.apache.camel.component.cxf.invoker.InvokingContext;
 import org.apache.camel.component.cxf.invoker.InvokingContextFactory;
-
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.endpoint.EndpointImpl;
@@ -36,8 +35,8 @@ public class CxfMessageObserver extends ChainInitiationObserver {
     private CxfConsumer cxfConsumer;
     private DataFormat dataFormat;
     private CamelInvoker invoker;
-    
-    
+
+
     public CxfMessageObserver(CxfConsumer consumer, Endpoint endpoint, Bus bus,
             DataFormat dataFormat) {
         super(endpoint, bus);
@@ -47,14 +46,14 @@ public class CxfMessageObserver extends ChainInitiationObserver {
     }
 
     protected void setExchangeProperties(Exchange exchange, Message m) {
-        super.setExchangeProperties(exchange, m);        
+        super.setExchangeProperties(exchange, m);
         exchange.put(CxfConsumer.class, cxfConsumer);
         exchange.put(Bus.class, bus);
         exchange.put(Endpoint.class, endpoint);
         exchange.put(InvokingContext.class, InvokingContextFactory.createContext(dataFormat));
         exchange.put(CamelInvoker.class, invoker);
     }
-    
+
     public void onMessage(Message m) {
         if (LOG.isLoggable(Level.FINER)) {
             LOG.fine("Observed Client request at router's endpoint.  Request message: " + m);
@@ -67,11 +66,11 @@ public class CxfMessageObserver extends ChainInitiationObserver {
             exchange.setInMessage(message);
         }
         setExchangeProperties(exchange, message);
-        
+
         InvokingContext invokingContext = exchange.get(InvokingContext.class);
         assert invokingContext != null;
         invokingContext.setEndpointFaultObservers((EndpointImpl)endpoint, bus);
-        
+
         if (LOG.isLoggable(Level.FINEST)) {
             LOG.finest("Build inbound interceptor chain and inject routing interceptor");
         }
@@ -80,6 +79,6 @@ public class CxfMessageObserver extends ChainInitiationObserver {
 
         message.setInterceptorChain(chain);
         chain.setFaultObserver(endpoint.getOutFaultObserver());
-        chain.doIntercept(message);        
+        chain.doIntercept(message);
     }
 }

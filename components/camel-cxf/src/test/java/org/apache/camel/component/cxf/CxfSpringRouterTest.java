@@ -17,15 +17,11 @@
 
 package org.apache.camel.component.cxf;
 
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.spring.SpringTestSupport;
-import org.apache.cxf.bus.CXFBusFactory;
-import org.apache.cxf.endpoint.ServerImpl;
-import org.apache.cxf.frontend.ServerFactoryBean;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfSpringRouterTest extends CxfRouterTest {
     protected AbstractXmlApplicationContext applicationContext;

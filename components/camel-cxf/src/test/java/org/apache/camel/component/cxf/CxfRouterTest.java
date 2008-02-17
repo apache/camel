@@ -26,7 +26,6 @@ import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.apache.cxf.test.TestUtilities;
 
 
 public class CxfRouterTest extends ContextTestSupport {

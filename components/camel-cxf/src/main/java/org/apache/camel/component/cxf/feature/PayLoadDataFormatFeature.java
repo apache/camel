@@ -17,7 +17,6 @@
 
 package org.apache.camel.component.cxf.feature;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.apache.camel.component.cxf.interceptors.DOMInInterceptor;
@@ -28,13 +27,7 @@ import org.apache.cxf.binding.Binding;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.feature.AbstractFeature;
-import org.apache.cxf.interceptor.BareInInterceptor;
-import org.apache.cxf.interceptor.DocLiteralInInterceptor;
-import org.apache.cxf.interceptor.Interceptor;
-import org.apache.cxf.interceptor.WrappedInInterceptor;
 import org.apache.cxf.phase.Phase;
-import org.apache.cxf.phase.PhaseInterceptor;
 
 /**
  * This feature just setting up the CXF endpoint interceptor for handling the

@@ -3,12 +3,9 @@ package org.apache.camel.component.cxf;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.ws.Endpoint;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.commons.logging.Log;
@@ -16,7 +13,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.bus.CXFBusFactory;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.apache.hello_world_soap_http.GreeterImpl;
 
 public class CxfProducerRouterTest extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(CxfProducerRouterTest.class);

@@ -17,26 +17,26 @@
 
 package org.apache.camel.component.cxf;
 
+import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import junit.framework.TestCase;
 
 public class CxfEndpointTest extends TestCase {
-   
+
     public void testSpringCxfEndpoint() throws Exception {
-        ClassPathXmlApplicationContext ctx = 
+        ClassPathXmlApplicationContext ctx =
             new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeans.xml"});
         CamelContext camelContext = new SpringCamelContext(ctx);
         CxfComponent cxfComponent = new CxfComponent(camelContext);
         CxfEndpoint endpoint = (CxfEndpoint)cxfComponent.createEndpoint("cxf://bean:serviceEndpoint");
-        
+
         assertTrue("The endpoint should be the spring context endpoint", endpoint.isSpringContextEndpoint());
         ServerFactoryBean svf = new ServerFactoryBean();
         endpoint.configure(svf);
         assertEquals("Got the wrong endpoint address", svf.getAddress(), "http://localhost:9002/helloworld");
-        assertEquals("Got the wrong endpont service class", 
+        assertEquals("Got the wrong endpont service class",
             svf.getServiceClass().getCanonicalName(),
             "org.apache.camel.component.cxf.HelloService");
     }

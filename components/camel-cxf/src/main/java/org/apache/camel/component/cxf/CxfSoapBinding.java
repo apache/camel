@@ -16,22 +16,11 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.CharBuffer;
-import java.util.List;
-import java.util.Map;
 
 import javax.xml.transform.Source;
 
-import org.apache.camel.Exchange;
-import org.apache.cxf.helpers.IOUtils;
-import org.apache.cxf.interceptor.Fault;
-import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.ExchangeImpl;
-import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 
 public class CxfSoapBinding {
@@ -55,7 +44,7 @@ public class CxfSoapBinding {
             exchange.setProperty(CxfConstants.CXF_EXCHANGE, cxfExchange);
         }
         Object body = message.getBody(InputStream.class);
-        
+
         if (body == null) {
             body = message.getBody();
         }
