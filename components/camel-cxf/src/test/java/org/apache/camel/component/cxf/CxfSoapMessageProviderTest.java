@@ -24,7 +24,6 @@ import javax.xml.namespace.QName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.spring.processor.SpringTestHelper;
-
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.SOAPService;
 

@@ -16,22 +16,11 @@
  */
 package org.apache.camel.component.cxf;
 
-import org.apache.camel.CamelException;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.cxf.helpers.XMLUtils;
-import org.apache.cxf.message.Message;
-import org.apache.cxf.message.MessageImpl;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
+import org.apache.cxf.message.Message;
 
 /**
  * The binding of how Camel messages get mapped to Apache CXF and back again

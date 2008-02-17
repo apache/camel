@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import junit.framework.TestCase;
 
 /**
  * The Greeter test with the PAYLOAD date format

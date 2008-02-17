@@ -26,7 +26,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spring.processor.SpringTestHelper;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.GreeterImpl;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CXFGreeterRouterTest extends CxfSpringRouterTest {
     private final QName serviceName = new QName("http://apache.org/hello_world_soap_http",

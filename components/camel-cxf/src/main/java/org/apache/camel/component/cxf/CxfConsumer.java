@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,20 +26,14 @@ import org.apache.camel.component.cxf.feature.MessageDataFormatFeature;
 import org.apache.camel.component.cxf.feature.PayLoadDataFormatFeature;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
-import org.apache.camel.component.cxf.util.UriUtils;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.spring.SpringCamelContext;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.apache.cxf.message.Message;
-import org.apache.cxf.transport.Destination;
-import org.apache.cxf.transport.MessageObserver;
 
 /**
  * A consumer of exchanges for a service in CXF

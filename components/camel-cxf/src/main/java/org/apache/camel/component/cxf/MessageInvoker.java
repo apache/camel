@@ -18,7 +18,6 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.cxf.message.Exchange;
-import org.apache.cxf.message.Message;
 
 /**
  * The interface to provide a CXF message invoke method

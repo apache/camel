@@ -19,9 +19,13 @@ package org.apache.camel.component.cxf;
 import java.io.OutputStream;
 
 import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMSource;
 
-import org.apache.camel.*;
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.component.cxf.util.Dummy;
 import org.apache.camel.component.cxf.util.NullConduit;
@@ -30,17 +34,13 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.Bus;
-import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.frontend.ClientFactoryBean;
-import org.apache.cxf.frontend.ServerFactoryBean;
-import org.apache.cxf.helpers.XMLUtils;
 import org.apache.cxf.interceptor.InterceptorChain;
 import org.apache.cxf.interceptor.OutgoingChainInterceptor;
 import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
-import org.apache.cxf.phase.PhaseInterceptorChain;
 
 /**
  * A CXF based soap provider.
@@ -55,7 +55,7 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
     private final Producer producer;
     private final AsyncProcessor processor;
     private ClientImpl client;
-    
+
 
     public CxfSoapProducer(CxfSoapEndpoint endpoint) throws Exception {
         this.endpoint = endpoint;
@@ -71,7 +71,7 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
                         processSoapProviderOut(exchange);
                     }
                 });
-        
+
         //create the endpoint and setup the intercepters
         Class sei = CxfEndpointUtils.getSEIClass(endpoint.getServiceClass());
         ClientFactoryBean cfb = CxfEndpointUtils.getClientFactoryBean(sei);
@@ -80,7 +80,7 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
         } else {
             cfb.setServiceClass(sei);
         }
-        cfb.setWsdlURL(endpoint.getWsdl().getURL().toString()); 
+        cfb.setWsdlURL(endpoint.getWsdl().getURL().toString());
         if (endpoint.getServiceName() != null) {
             cfb.setServiceName(endpoint.getServiceName());
         }
@@ -89,7 +89,7 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
         }
         cfb.setConduitSelector(new NullConduitSelector());
         client = (ClientImpl) cfb.create();
-        
+
     }
 
     public org.apache.camel.Endpoint getEndpoint() {
@@ -126,34 +126,34 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
 
     protected void processSoapProviderOut(Exchange exchange) throws Exception {
         LOG.info("processSoapProviderOut: " + exchange);
-        
+
         org.apache.cxf.message.Message inMessage = CxfSoapBinding.getCxfInMessage(exchange, true);
         client.setInInterceptors(client.getEndpoint().getService().getInInterceptors());
         client.onMessage(inMessage);
-        
+
         exchange.getOut().setBody(inMessage.getContent(Source.class));
-        
+
         exchange.getOut().setHeaders(inMessage);
     }
-    
+
     protected Bus getBus() {
         return endpoint.getBus();
     }
 
     protected void processSoapProviderIn(Exchange exchange) throws Exception {
         LOG.info("processSoapProviderIn: " + exchange);
-        org.apache.cxf.endpoint.Endpoint cxfEndpoint = client.getEndpoint();        
-        org.apache.cxf.message.Exchange cxfExchange = new ExchangeImpl();        
+        org.apache.cxf.endpoint.Endpoint cxfEndpoint = client.getEndpoint();
+        org.apache.cxf.message.Exchange cxfExchange = new ExchangeImpl();
         cxfExchange.put(org.apache.cxf.endpoint.Endpoint.class, cxfEndpoint);
         cxfExchange.put(Bus.class, getBus());
         cxfExchange.setConduit(new NullConduit());
-        exchange.setProperty(CxfConstants.CXF_EXCHANGE, cxfExchange);        
+        exchange.setProperty(CxfConstants.CXF_EXCHANGE, cxfExchange);
         org.apache.cxf.message.Message outMessage = CxfSoapBinding.getCxfOutMessage(exchange, true);
         outMessage.put(Message.REQUESTOR_ROLE, Boolean.TRUE);
         outMessage.put(Message.INBOUND_MESSAGE, Boolean.FALSE);
         InterceptorChain chain = OutgoingChainInterceptor.getOutInterceptorChain(cxfExchange);
         outMessage.setInterceptorChain(chain);
-               
+
         chain.doIntercept(outMessage);
         CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
         exchange.getOut().setBody(outputStream.getInputStream());

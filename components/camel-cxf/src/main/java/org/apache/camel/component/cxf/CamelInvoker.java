@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +24,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.cxf.invoker.InvokingContext;
-import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.MethodDispatcher;
 import org.apache.cxf.helpers.CastUtils;
@@ -37,9 +31,7 @@ import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
-import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.service.Service;
-import org.apache.cxf.service.invoker.AbstractInvoker;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
