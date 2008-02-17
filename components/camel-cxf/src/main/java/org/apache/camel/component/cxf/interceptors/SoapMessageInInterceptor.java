@@ -45,8 +45,8 @@ import org.apache.cxf.service.model.MessagePartInfo;
 
 public class SoapMessageInInterceptor extends AbstractMessageInInterceptor<SoapMessage> {
     private static final Logger LOG = LogUtils.getL7dLogger(SoapMessageInInterceptor.class);
-   
-    public SoapMessageInInterceptor() {       
+
+    public SoapMessageInInterceptor() {
         super(Phase.READ);
     }
 
@@ -112,12 +112,12 @@ public class SoapMessageInInterceptor extends AbstractMessageInInterceptor<SoapM
         partList.add(rootNode);
         return partList;
     }
-    
+
     protected Element getHeader(SoapMessage inMessage) {
-        // need to revisited 
+        // need to find out the soap header information        
         Element element = null;
         return element;
 	// return inMessage.getHeaders(Element.class);
-    }    
-    
+    }
+
 }

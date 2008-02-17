@@ -26,6 +26,7 @@ import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.apache.cxf.test.TestUtilities;
 
 
 public class CxfRouterTest extends ContextTestSupport {
@@ -42,8 +43,10 @@ public class CxfRouterTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
+
+        BusFactory.setDefaultBus(null);
         bus = BusFactory.getDefaultBus();
+        super.setUp();
         startService();
     }
 
@@ -62,7 +65,10 @@ public class CxfRouterTest extends ContextTestSupport {
 
     @Override
     protected void tearDown() throws Exception {
-        //bus.shutdown(true);
+        //TODO need to shutdown the server
+        super.tearDown();
+        //server.stop();
+        //bus.shutdown(false);
         BusFactory.setDefaultBus(null);
     }
 
@@ -80,7 +86,6 @@ public class CxfRouterTest extends ContextTestSupport {
 
 
     public void testInvokingServiceFromCXFClient() throws Exception {
-
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(ROUTER_ADDRESS);
@@ -101,9 +106,9 @@ public class CxfRouterTest extends ContextTestSupport {
         clientBean.setServiceClass(HelloService.class);
         clientBean.setBus(bus);
         HelloService client = (HelloService) proxyFactory.create();
-        int invocationCount = client.getInvocationCount();
+        int count = client.getInvocationCount();
         client.ping();
         //oneway ping invoked, so invocationCount ++
-        assertEquals(client.getInvocationCount() - 1, invocationCount);
+        assertEquals("The ping should be invocated", client.getInvocationCount(), ++count);
     }
 }

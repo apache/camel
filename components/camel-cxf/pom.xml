@@ -222,6 +222,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <forkMode>pertest</forkMode>
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
           <includes>
@@ -235,7 +236,7 @@
           </systemProperties>             
         </configuration>
       </plugin>
-    </plugins>
+    </plugins>  
   </build>
 
   <profiles>
