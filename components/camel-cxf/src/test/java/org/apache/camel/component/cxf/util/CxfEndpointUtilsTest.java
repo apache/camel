@@ -16,45 +16,38 @@
  */
 package org.apache.camel.component.cxf.util;
 
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.CharacterCodingException;
-
 import javax.xml.namespace.QName;
 
+import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CxfComponent;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.easymock.classextension.EasyMock;
-import sun.nio.cs.ThreadLocalCoders;
-import sun.text.Normalizer;
-import junit.framework.TestCase;
 
 public class CxfEndpointUtilsTest extends TestCase {
     // set up the port name and service name
     private static final QName SERVICE_NAME =
         new QName("http://www.example.com/test", "ServiceName");
-   
+
     static final String CXF_BASE_URI = "cxf://http://www.example.com/testaddress"
         + "?serviceClass=org.apache.camel.component.cxf.HelloService"
-        + "&portName={http://www.example.com/test}PortName" 
+        + "&portName={http://www.example.com/test}PortName"
         + "&serviceName={http://www.example.com/test}ServiceName";
-        
-    
+
+
     CxfEndpoint cxfEndpoint;
-        
+
     protected void createEndpoint(String uri) throws Exception {
         CamelContext context = new DefaultCamelContext();
         cxfEndpoint = (CxfEndpoint)new CxfComponent(context).createEndpoint(uri);
     }
-    
+
     public void testGetQName() throws Exception {
         createEndpoint(CXF_BASE_URI);
         QName service = CxfEndpointUtils.getQName(cxfEndpoint.getServiceName());
-        assertEquals("We should get the right service name", service, SERVICE_NAME);        
+        assertEquals("We should get the right service name", service, SERVICE_NAME);
     }
-    
-   
-      
+
+
+
 }

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.cxf.transport;
 
-import com.sun.corba.se.spi.activation.EndPointInfo;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +23,6 @@ import java.io.InputStream;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.cxf.Bus;
@@ -40,24 +37,23 @@ import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.ConduitInitiator;
 import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.MessageObserver;
-
 import org.easymock.classextension.EasyMock;
 
 public class CamelDestinationTest extends CamelTestSupport {
     private Message destMessage;
-    
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:Producer").to("direct:EndpointA");                             
+                from("direct:Producer").to("direct:EndpointA");
             }
         };
     }
-    
+
     protected CamelContext createCamelContext() throws Exception {
         return new DefaultCamelContext();
     }
-  
+
     public void testCamelDestinationConfiguration() throws Exception {
         QName testEndpointQName = new QName("http://activemq.apache.org/camel-test", "port");
         // set up the bus with configure file
@@ -65,23 +61,23 @@ public class CamelDestinationTest extends CamelTestSupport {
         BusFactory.setDefaultBus(null);
         Bus bus = bf.createBus("/org/apache/camel/component/cxf/transport/CamelDestination.xml");
         BusFactory.setDefaultBus(bus);
-        
+
         endpointInfo.setAddress("camel://direct:EndpointA");
         endpointInfo.setName(testEndpointQName);
         CamelDestination destination = new CamelDestination(null, bus, null, endpointInfo);
-        
+
         System.out.println("get the destination bean name" + destination.getBeanName());
         CamelContext context = destination.getCamelContext();
-        
+
         assertNotNull("The camel context which get from camel destination is not null", context);
         assertEquals("Get the wrong camel context", context.getName(), "dest_context");
         assertEquals("The camel context should has two routers", context.getRoutes().size(), 2);
         assertEquals("The router 0 start endpoint is wrong", context.getRoutes().get(0).getEndpoint().getEndpointUri(), "direct:EndpointA");
         bus.shutdown(false);
     }
-    
+
     public CamelDestination setupCamelDestination(EndpointInfo endpointInfo, boolean send) throws IOException {
-        ConduitInitiator conduitInitiator = EasyMock.createMock(ConduitInitiator.class);        
+        ConduitInitiator conduitInitiator = EasyMock.createMock(ConduitInitiator.class);
         CamelDestination camelDestination = new CamelDestination(context, bus, conduitInitiator, endpointInfo);
         if (send) {
             // setMessageObserver
@@ -97,20 +93,20 @@ public class CamelDestinationTest extends CamelTestSupport {
         }
         return camelDestination;
     }
-    
+
     public void testGetTransportFactoryFromBus() throws Exception {
     	Bus bus = BusFactory.getDefaultBus();
     	assertNotNull(bus.getExtension(ConduitInitiatorManager.class)
         	.getConduitInitiator(CamelTransportFactory.TRANSPORT_ID));
     }
-    
+
     public void testOneWayDestination() throws Exception {
         destMessage = null;
         inMessage = null;
         EndpointInfo conduitEpInfo = new EndpointInfo();
         conduitEpInfo.setAddress("camel://direct:Producer");
         CamelConduit conduit = setupCamelConduit(conduitEpInfo, true, false);
-        Message outMessage = new MessageImpl();        
+        Message outMessage = new MessageImpl();
         CamelDestination destination = null;
         try {
             endpointInfo.setAddress("camel://direct:EndpointA");
@@ -121,14 +117,14 @@ public class CamelDestinationTest extends CamelTestSupport {
             e.printStackTrace();
         }
         sendoutMessage(conduit, outMessage, true, "HelloWorld");
-        
+
         // just verify the Destination inMessage
         assertTrue("The destiantion should have got the message ", destMessage != null);
-        verifyReceivedMessage(destMessage, "HelloWorld");        
+        verifyReceivedMessage(destMessage, "HelloWorld");
         destination.shutdown();
     }
 
-    
+
 
     private void verifyReceivedMessage(Message inMessage, String content) {
         ByteArrayInputStream bis = (ByteArrayInputStream)inMessage.getContent(InputStream.class);
@@ -142,7 +138,7 @@ public class CamelDestinationTest extends CamelTestSupport {
         String reponse = new String(bytes);
         assertEquals("The reponse date should be equals", content, reponse);
     }
-       
+
     public void testRoundTripDestination() throws Exception {
 
         inMessage = null;
@@ -151,8 +147,8 @@ public class CamelDestinationTest extends CamelTestSupport {
         // set up the conduit send to be true
         CamelConduit conduit = setupCamelConduit(conduitEpInfo, true, false);
         final Message outMessage = new MessageImpl();
-        
-        endpointInfo.setAddress("camel://direct:EndpointA"); 
+
+        endpointInfo.setAddress("camel://direct:EndpointA");
         final CamelDestination destination = setupCamelDestination(endpointInfo, true);
 
         // set up MessageObserver for handlering the conduit message
@@ -168,7 +164,7 @@ public class CamelDestinationTest extends CamelTestSupport {
                 try {
                     backConduit = destination.getBackChannel(m, null, null);
                     // wait for the message to be got from the conduit
-                    Message replyMessage = new MessageImpl();                    
+                    Message replyMessage = new MessageImpl();
                     sendoutMessage(backConduit, replyMessage, true, "HelloWorld Response");
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
@@ -183,10 +179,10 @@ public class CamelDestinationTest extends CamelTestSupport {
         sendoutMessage(conduit, outMessage, false, "HelloWorld");
         // wait for the message to be got from the destination,
         // create the thread to handler the Destination incomming message
-        
+
         verifyReceivedMessage(inMessage, "HelloWorld Response");
-       
+
         destination.shutdown();
     }
-  
+
 }

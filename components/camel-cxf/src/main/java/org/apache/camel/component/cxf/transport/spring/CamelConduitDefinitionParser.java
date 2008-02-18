@@ -18,20 +18,7 @@
  */
 package org.apache.camel.component.cxf.transport.spring;
 
-import org.w3c.dom.Element;
-
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinitionHolder;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.ParserContext;
 import org.apache.camel.component.cxf.transport.CamelConduit;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.cxf.configuration.spring.AbstractBeanDefinitionParser;
 
 public class CamelConduitDefinitionParser extends AbstractCamelContextBeanDefinitionParser {
 

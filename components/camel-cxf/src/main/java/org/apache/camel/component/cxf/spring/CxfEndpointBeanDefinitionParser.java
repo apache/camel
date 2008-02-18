@@ -22,16 +22,14 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.w3c.dom.Element;
-
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.configuration.spring.AbstractBeanDefinitionParser;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
+
+import org.w3c.dom.Element;
 
 public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
@@ -39,7 +37,7 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
     protected Class getBeanClass(Element arg0) {
         return CxfEndpointBean.class;
     }
-    
+
     @Override
     protected void mapAttribute(BeanDefinitionBuilder bean, Element e, String name, String val) {
         if ("endpointName".equals(name) || "serviceName".equals(name)) {
@@ -63,10 +61,10 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
             java.util.List list = (java.util.List)ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
         } else {
-            setFirstChildAsProperty(el, ctx, bean, name);            
-        }        
+            setFirstChildAsProperty(el, ctx, bean, name);
+        }
     }
-    
+
 
     @Override
     protected void doParse(Element element, ParserContext ctx, BeanDefinitionBuilder bean) {
@@ -75,15 +73,15 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
     }
 
     @Override
-    protected String resolveId(Element elem, 
-                               AbstractBeanDefinition definition, 
-                               ParserContext ctx) 
+    protected String resolveId(Element elem,
+                               AbstractBeanDefinition definition,
+                               ParserContext ctx)
         throws BeanDefinitionStoreException {
         String id = super.resolveId(elem, definition, ctx);
         if (StringUtils.isEmpty(id)) {
             throw new BeanDefinitionStoreException("The bean id is needed.");
         }
-        
+
         return id;
     }
 
@@ -91,6 +89,6 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
     protected boolean hasBusProperty() {
         return true;
     }
-    
+
 
 }

@@ -18,14 +18,7 @@
  */
 package org.apache.camel.component.cxf.transport.spring;
 
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.ParserContext;
-
-import org.w3c.dom.Element;
-
-import org.apache.camel.component.cxf.transport.CamelConduit;
 import org.apache.camel.component.cxf.transport.CamelDestination;
-import org.apache.cxf.configuration.spring.AbstractBeanDefinitionParser;
 
 public class CamelDestinationDefinitionParser extends AbstractCamelContextBeanDefinitionParser {
     public CamelDestinationDefinitionParser() {

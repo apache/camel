@@ -31,39 +31,32 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
-import org.apache.cxf.message.Exchange;
-import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
-import org.apache.cxf.service.model.EndpointInfo;
-import org.apache.cxf.transport.Conduit;
-import org.apache.cxf.transport.MessageObserver;
-import org.apache.cxf.ws.addressing.EndpointReferenceType;
-import org.easymock.classextension.EasyMock;
 
-public class CamelConduitTest extends CamelTestSupport {    
-       
+public class CamelConduitTest extends CamelTestSupport {
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:Producer").to("mock:EndpointA").process(new Processor() {
-                    
+
                     public void process(org.apache.camel.Exchange exchange) throws Exception {
-                        
+
                         if (exchange.getPattern().isOutCapable()) {
-                            Object result = exchange.getIn().getBody();                        
-                            exchange.getOut().setBody(result);                       
+                            Object result = exchange.getIn().getBody();
+                            exchange.getOut().setBody(result);
                         }
                     }
-                });              
+                });
             }
         };
     }
-    
+
     protected CamelContext createCamelContext() throws Exception {
         return new DefaultCamelContext();
-    }    
-        
+    }
+
     public void testCamelConduitConfiguration() throws Exception {
         QName testEndpointQNameA = new QName("http://activemq.apache.org/camel-test", "portA");
         QName testEndpointQNameB = new QName("http://activemq.apache.org/camel-test", "portB");
@@ -72,17 +65,17 @@ public class CamelConduitTest extends CamelTestSupport {
         BusFactory.setDefaultBus(null);
         Bus bus = bf.createBus("/org/apache/camel/component/cxf/transport/CamelConduit.xml");
         BusFactory.setDefaultBus(bus);
-        
+
         // create the conduit and set the configuration with it
         endpointInfo.setAddress("camel://direct:EndpointA");
         endpointInfo.setName(testEndpointQNameA);
         CamelConduit conduit = new CamelConduit(null, bus, endpointInfo);
         CamelContext context = conduit.getCamelContext();
-        
+
         assertNotNull("the camel context which get from camel conduit is not null", context);
         assertEquals("get the wrong camel context", context.getName(), "conduit_context");
         assertEquals(context.getRoutes().get(0).getEndpoint().getEndpointUri(), "direct:EndpointA");
-        
+
         endpointInfo.setAddress("camel://direct:EndpointC");
         endpointInfo.setName(testEndpointQNameB);
         conduit = new CamelConduit(null, bus, endpointInfo);
@@ -110,7 +103,7 @@ public class CamelConduitTest extends CamelTestSupport {
         assertTrue("OutputStream should not be null", os != null);
     }
 
-    public void testSendOut() throws Exception {       
+    public void testSendOut() throws Exception {
         endpointInfo.setAddress("camel://direct:Producer");
         CamelConduit conduit = setupCamelConduit(endpointInfo, true, false);
         MockEndpoint endpoint = getMockEndpoint("mock:EndpointA");
@@ -119,9 +112,9 @@ public class CamelConduitTest extends CamelTestSupport {
         // set the isOneWay to be true
         sendoutMessage(conduit, message, true, "HelloWorld");
         assertMockEndpointsSatisifed();
-        // verify the endpoint get the response 
+        // verify the endpoint get the response
     }
-    
+
     public void testSendOutRunTrip() throws Exception {
         endpointInfo.setAddress("camel://direct:Producer");
         CamelConduit conduit = setupCamelConduit(endpointInfo, true, false);
@@ -129,8 +122,8 @@ public class CamelConduitTest extends CamelTestSupport {
         endpoint.expectedMessageCount(1);
         Message message = new MessageImpl();
         // set the isOneWay to be false
-        sendoutMessage(conduit, message, false, "HelloWorld");        
-        // verify the endpoint get the response 
+        sendoutMessage(conduit, message, false, "HelloWorld");
+        // verify the endpoint get the response
         assertMockEndpointsSatisifed();
         verifyReceivedMessage("HelloWorld");
     }
