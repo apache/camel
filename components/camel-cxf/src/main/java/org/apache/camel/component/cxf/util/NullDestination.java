@@ -18,10 +18,7 @@ package org.apache.camel.component.cxf.util;
 
 import java.io.IOException;
 
-import org.apache.cxf.Bus;
-import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.message.Message;
-import org.apache.cxf.transport.ChainInitiationObserver;
 import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.Destination;
 import org.apache.cxf.transport.MessageObserver;
@@ -29,11 +26,11 @@ import org.apache.cxf.ws.addressing.EndpointReferenceType;
 
 public class NullDestination implements Destination{
     MessageObserver messageObserver;
-       
+
     public NullDestination() {
-        // do nothing here   
+        // do nothing here
     }
-        
+
     public EndpointReferenceType getAddress() {
         // TODO Auto-generated method stub
         return null;
@@ -50,12 +47,12 @@ public class NullDestination implements Destination{
 
     public void shutdown() {
         messageObserver = null;
-        
+
     }
 
     public void setMessageObserver(MessageObserver observer) {
         messageObserver = observer;
-        
+
     }
 
 }

@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.cxf.transport;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,13 +35,11 @@ import org.apache.cxf.configuration.Configurable;
 import org.apache.cxf.configuration.Configurer;
 import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.Message;
-import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.AbstractConduit;
 import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.Destination;
 import org.apache.cxf.transport.MessageObserver;
-import org.apache.cxf.ws.addressing.AttributedURIType;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 
 /**
@@ -58,30 +53,30 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     private String targetCamelEndpointUri;
     private CamelTemplate<Exchange> camelTemplate;
     private Bus bus;
-    
+
     public CamelConduit(CamelContext context, Bus b, EndpointInfo endpointInfo) {
         this(context, b, endpointInfo, null);
     }
-    
+
     public CamelConduit(CamelContext context, Bus b, EndpointInfo epInfo, EndpointReferenceType targetReference) {
         super(targetReference);
         String address = epInfo.getAddress();
         if (address != null) {
             targetCamelEndpointUri = address.substring(CxfConstants.CAMEL_TRANSPORT_PREFIX.length());
             if (targetCamelEndpointUri.startsWith("//")) {
-                targetCamelEndpointUri = targetCamelEndpointUri.substring(2);     
-            }           
+                targetCamelEndpointUri = targetCamelEndpointUri.substring(2);
+            }
         }
         camelContext = context;
-        endpointInfo = epInfo;        
+        endpointInfo = epInfo;
         bus = b;
         initConfig();
     }
-    
-    public void setCamelContext(CamelContext context) {        
+
+    public void setCamelContext(CamelContext context) {
         camelContext = context;
     }
-    
+
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -94,7 +89,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
 
     public void close() {
         getLogger().log(Level.FINE, "CamelConduit closed ");
-        
+
     }
 
     protected Logger getLogger() {
@@ -107,17 +102,17 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         }
         return endpointInfo.getName().toString() + BASE_BEAN_NAME_SUFFIX;
     }
-    
+
     private void initConfig() {
-        // we could configure the camel context here 
+        // we could configure the camel context here
         if(bus != null) {
             Configurer configurer = bus.getExtension(Configurer.class);
             if (null != configurer) {
                 configurer.configureBean(this);
             }
-        }    
+        }
     }
-    
+
     public CamelTemplate getCamelTemplate() {
         if (camelTemplate == null) {
             if (camelContext != null) {
@@ -128,7 +123,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         }
         return camelTemplate;
     }
-    
+
     public void setCamelTemplate(CamelTemplate<Exchange> template) {
         camelTemplate = template;
     }
@@ -153,9 +148,9 @@ public class CamelConduit extends AbstractConduit implements Configurable {
             // do nothing here
         }
 
-        
+
         private void commitOutputMessage() {
-            ExchangePattern pattern; 
+            ExchangePattern pattern;
             if (isOneWay) {
                 pattern = ExchangePattern.InOnly;
             } else {
@@ -168,20 +163,20 @@ public class CamelConduit extends AbstractConduit implements Configurable {
                     CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
                     // send out the request message here
                     ex.getIn().setHeaders(outMessage);
-                    ex.getIn().setBody(outputStream.getInputStream());                    
+                    ex.getIn().setBody(outputStream.getInputStream());
                     // setup the out message
                     getLogger().log(Level.FINE, "template sending request: ", ex.getIn());
                 }
             });
-            
+
             if (!isOneWay) {
                 handleResponse(exchange);
             }
-            
+
         }
 
-        private void handleResponse(org.apache.camel.Exchange exchange) {            
-            org.apache.cxf.message.Message inMessage = CxfSoapBinding.getCxfInMessage(exchange, true);           
+        private void handleResponse(org.apache.camel.Exchange exchange) {
+            org.apache.cxf.message.Message inMessage = CxfSoapBinding.getCxfInMessage(exchange, true);
             incomingObserver.onMessage(inMessage);
         }
     }

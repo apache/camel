@@ -20,14 +20,13 @@ package org.apache.camel.component.cxf.phase;
 import java.util.SortedSet;
 
 import junit.framework.TestCase;
-
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.phase.PhaseManager;
 
 
 public class RawMessagePhaseManagerImplTest extends TestCase {
 
-    
+
     public void testGetInPhases() throws Exception {
         PhaseManager pm = new RawMessagePhaseManagerImpl();
         SortedSet<Phase> pl = pm.getInPhases();
@@ -36,13 +35,13 @@ public class RawMessagePhaseManagerImplTest extends TestCase {
         assertEquals(Phase.RECEIVE, pl.first().getName());
     }
 
-    
+
     public void testGetOutPhases() throws Exception {
         PhaseManager pm = new RawMessagePhaseManagerImpl();
         SortedSet<Phase> pl = pm.getOutPhases();
         assertNotNull(pl);
         assertEquals(4, pl.size());
-        
+
         Object[] phaseArray;
         phaseArray = pl.toArray();
         assertEquals(Phase.PREPARE_SEND, ((Phase)phaseArray[0]).getName());

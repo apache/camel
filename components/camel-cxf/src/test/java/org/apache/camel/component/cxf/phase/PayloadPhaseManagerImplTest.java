@@ -19,19 +19,18 @@ package org.apache.camel.component.cxf.phase;
 import java.util.SortedSet;
 
 import junit.framework.TestCase;
-
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.phase.PhaseManager;
 
 
 public class PayloadPhaseManagerImplTest extends TestCase {
 
- 
+
     public void testGetInPhases() throws Exception {
         PhaseManager pm = new PayloadPhaseManagerImpl();
         SortedSet<Phase> pl = pm.getInPhases();
         assertNotNull(pl);
-        
+
         assertEquals(Phase.RECEIVE, pl.first().getName());
         assertEquals(Phase.READ, pl.last().getName());
     }
@@ -46,7 +45,7 @@ public class PayloadPhaseManagerImplTest extends TestCase {
 
         boolean hasWritePhase = false;
         for (Phase p : pl) {
-            
+
             if (Phase.WRITE.equals(p.getName())) {
                 hasWritePhase = true;
                 break;

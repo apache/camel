@@ -99,6 +99,7 @@ public class CamelInvoker implements Invoker, MessageInvoker {
                 outMessage = endpoint.getBinding().createMessage();
             }
             exchange.setOutMessage(outMessage);
+            outMessage.setExchange(exchange);
         }
 
     }

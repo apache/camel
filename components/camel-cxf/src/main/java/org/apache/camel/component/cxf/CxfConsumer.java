@@ -94,11 +94,12 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
 
             if (dataFormat.equals(DataFormat.PAYLOAD)) {
                 features.add(new PayLoadDataFormatFeature());
-                // add the logging feature here
-                features.add(new LoggingFeature());
+                // adding the logging feature here for debug
+                //features.add(new LoggingFeature());
             }
             if (dataFormat.equals(DataFormat.MESSAGE)) {
                 features.add(new MessageDataFormatFeature());
+                //features.add(new LoggingFeature());
             }
             svrBean.setFeatures(features);
 

@@ -27,10 +27,7 @@ import javax.xml.ws.WebServiceProvider;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.component.cxf.CxfEndpoint;
-import org.apache.camel.component.cxf.CxfMessage;
 import org.apache.camel.component.cxf.DataFormat;
-
-
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.common.i18n.Message;
@@ -47,7 +44,7 @@ import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.wsdl11.WSDLServiceFactory;
 
 
-public final class CxfEndpointUtils {    
+public final class CxfEndpointUtils {
     public static final String PROP_NAME_PORT = "port";
     public static final String PROP_NAME_SERVICE = "service";
     public static final String PROP_NAME_SERVICECLASS = "serviceClass";
@@ -56,12 +53,12 @@ public final class CxfEndpointUtils {
     public static final String DATAFORMAT_MESSAGE = "message";
     public static final String DATAFORMAT_PAYLOAD = "payload";
     private static final Logger LOG = LogUtils.getL7dLogger(CxfEndpointUtils.class);
-    
+
     private CxfEndpointUtils() {
         // not constructed
     }
 
-    static QName getQName(final String name) {      
+    static QName getQName(final String name) {
         QName qName = null;
         if (name != null) {
             try {
@@ -69,14 +66,14 @@ public final class CxfEndpointUtils {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        } 
+        }
         return qName;
     }
-    
+
     public static QName getPortName(final CxfEndpoint endpoint) {
         return getQName(endpoint.getPortName());
     }
-    
+
     public static QName getServiceName(final CxfEndpoint endpoint) {
         return getQName(endpoint.getServiceName());
     }
@@ -92,12 +89,12 @@ public final class CxfEndpointUtils {
                 final QName endpointName = QName.valueOf(port);
                 endpointInfo = service.getServiceInfos().get(0).getEndpoint(endpointName);
             }
-            //TBD may be delegate to the EndpointUri params.  
+            //TBD may be delegate to the EndpointUri params.
         }
 
         return endpointInfo;
     }
-    
+
     public static Class getSEIClass(String className) throws ClassNotFoundException {
         if (className == null) {
             return null;
@@ -114,11 +111,11 @@ public final class CxfEndpointUtils {
         if (cls == null || cls == Object.class) {
             return false;
         }
-        
+
         if (null != cls.getAnnotation(annotation)) {
             return true;
         }
-        
+
         for (Class<?> interfaceClass : cls.getInterfaces()) {
             if (null != interfaceClass.getAnnotation(annotation)) {
             	return true;
@@ -126,27 +123,27 @@ public final class CxfEndpointUtils {
         }
         return hasAnnotation(cls.getSuperclass(), annotation);
     }
-    
-    
+
+
     public static ServerFactoryBean getServerFactoryBean(Class<?> cls) throws CamelException {
         ServerFactoryBean serverFactory  = null;
-        try { 
+        try {
             if (cls == null) {
                 serverFactory = new ServerFactoryBean();
                 serverFactory.setServiceFactory(new WSDLSoapServiceFactoryBean());
-                
+
             } else {
                 boolean isJSR181SEnabled = CxfEndpointUtils.hasWebServiceAnnotation(cls);
-                serverFactory = isJSR181SEnabled ? new JaxWsServerFactoryBean() 
+                serverFactory = isJSR181SEnabled ? new JaxWsServerFactoryBean()
                             : new ServerFactoryBean();
-            }    
+            }
             return serverFactory;
         } catch (Exception e) {
             throw new CamelException(e);
         }
-        
+
     }
-    
+
     public static ClientFactoryBean getClientFactoryBean(Class<?> cls) throws CamelException {
         ClientFactoryBean clientFactory = null;
         try {
@@ -155,15 +152,15 @@ public final class CxfEndpointUtils {
                 clientFactory.setServiceFactory(new WSDLSoapServiceFactoryBean());
             } else {
                 boolean isJSR181SEnabled = CxfEndpointUtils.hasWebServiceAnnotation(cls);
-                clientFactory = isJSR181SEnabled ? new JaxWsClientFactoryBean() 
-                        : new ClientFactoryBean(); 
-            }    
+                clientFactory = isJSR181SEnabled ? new JaxWsClientFactoryBean()
+                        : new ClientFactoryBean();
+            }
             return clientFactory;
         } catch (Exception e) {
             throw new CamelException(e);
         }
     }
-    
+
     //TODO check the CxfEndpoint information integration
     public static void checkEndpiontIntegration(CxfEndpoint endpoint, Bus bus) throws CamelException {
 
@@ -202,7 +199,7 @@ public final class CxfEndpointUtils {
                 }
                 if (serviceQName != null) {
                     ((ReflectionServiceFactoryBean)serviceFactory).setServiceName(serviceQName);
-                }    
+                }
                 ((ReflectionServiceFactoryBean)serviceFactory).setServiceClass(cls);
 
             } else {
@@ -216,21 +213,21 @@ public final class CxfEndpointUtils {
             throw new CamelException(new Message("CLASS_X_NOT_FOUND ", LOG, serviceClassName).toString(), cnfe);
         } catch (Exception e) {
             throw new CamelException(e);
-        }       
+        }
     }
-        
+
     public static DataFormat getDataFormat(CxfEndpoint endpoint) throws CamelException {
         String dataFormatString = endpoint.getDataFormat();
         if (dataFormatString == null) {
         	return DataFormat.POJO;
         }
-                
-        DataFormat retval = DataFormat.asEnum(dataFormatString); 
-        
+
+        DataFormat retval = DataFormat.asEnum(dataFormatString);
+
         if (retval == DataFormat.UNKNOWN) {
         	throw new CamelException(new Message("INVALID_MESSAGE_FORMAT_XXXX", LOG, dataFormatString).toString());
         }
-        
+
         return retval;
     }
 }

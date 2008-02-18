@@ -42,14 +42,13 @@ public class MessageDataFormatFeature extends AbstractDataFormatFeature {
     public void initialize(Client client, Bus bus) {
 
         removeInterceptorWhichIsOutThePhases(client.getInInterceptors(), REMAINING_IN_PHASES);
-        removeInterceptorWhichIsOutThePhases(client.getEndpoint().getService().getInInterceptors(), REMAINING_IN_PHASES);
         removeInterceptorWhichIsOutThePhases(client.getEndpoint().getInInterceptors(), REMAINING_IN_PHASES);
-        removeInterceptorWhichIsOutThePhases(client.getEndpoint().getBinding().getInInterceptors(), REMAINING_IN_PHASES);
+        client.getEndpoint().getBinding().getInInterceptors().clear();
 
-        removeInterceptorWhichIsOutThePhases(client.getOutInterceptors(), REMAINING_IN_PHASES);
-        removeInterceptorWhichIsOutThePhases(client.getEndpoint().getService().getOutInterceptors(), REMAINING_IN_PHASES);
-        removeInterceptorWhichIsOutThePhases(client.getEndpoint().getOutInterceptors(), REMAINING_IN_PHASES);
-        removeInterceptorWhichIsOutThePhases(client.getEndpoint().getBinding().getOutInterceptors(), REMAINING_IN_PHASES);
+        removeInterceptorWhichIsOutThePhases(client.getOutInterceptors(), REMAINING_OUT_PHASES);
+        removeInterceptorWhichIsOutThePhases(client.getEndpoint().getOutInterceptors(), REMAINING_OUT_PHASES);
+        client.getEndpoint().getBinding().getOutInterceptors().clear();
+        client.getEndpoint().getOutInterceptors().add(new RawMessageContentRedirectInterceptor());
 
 
     }
@@ -70,7 +69,7 @@ public class MessageDataFormatFeature extends AbstractDataFormatFeature {
 
 
         resetServiceInvokerInterceptor(server);
-        server.getEndpoint().getService().getOutInterceptors().add(new RawMessageContentRedirectInterceptor());
+        server.getEndpoint().getOutInterceptors().add(new RawMessageContentRedirectInterceptor());
     }
 
     @Override
