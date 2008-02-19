@@ -16,27 +16,14 @@
  */
 package org.apache.camel.component.cxf.invoker;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.cxf.Bus;
-import org.apache.cxf.binding.Binding;
-import org.apache.cxf.binding.soap.interceptor.ReadHeadersInterceptor;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.ClientImpl;
-import org.apache.cxf.endpoint.ConduitSelector;
 import org.apache.cxf.endpoint.Endpoint;
-import org.apache.cxf.endpoint.EndpointImpl;
-import org.apache.cxf.endpoint.PreexistingConduitSelector;
-import org.apache.cxf.helpers.IOUtils;
-import org.apache.cxf.interceptor.Interceptor;
-import org.apache.cxf.interceptor.InterceptorChain;
-import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
