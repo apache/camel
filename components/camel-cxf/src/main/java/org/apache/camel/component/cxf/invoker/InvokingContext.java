@@ -18,11 +18,8 @@ package org.apache.camel.component.cxf.invoker;
 
 import java.util.Map;
 
-import org.apache.cxf.Bus;
-import org.apache.cxf.endpoint.EndpointImpl;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
-import org.apache.cxf.phase.PhaseInterceptorChain;
 
 public interface InvokingContext {
 

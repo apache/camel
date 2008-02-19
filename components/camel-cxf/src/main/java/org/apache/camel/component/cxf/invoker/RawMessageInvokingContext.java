@@ -16,30 +16,12 @@
  */
 package org.apache.camel.component.cxf.invoker;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.camel.component.cxf.interceptors.RawMessageContentRedirectInterceptor;
-import org.apache.camel.component.cxf.interceptors.RawMessageInInterceptor;
-import org.apache.camel.component.cxf.phase.RawMessagePhaseManagerImpl;
-
-
-import org.apache.cxf.Bus;
-import org.apache.cxf.endpoint.Endpoint;
-import org.apache.cxf.helpers.IOUtils;
-import org.apache.cxf.interceptor.Interceptor;
-import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
-import org.apache.cxf.phase.Phase;
-import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.cxf.phase.PhaseManager;
 
 public class RawMessageInvokingContext extends AbstractInvokingContext {
     private static final Logger LOG = Logger.getLogger(RawMessageInvokingContext.class.getName());

@@ -16,32 +16,15 @@
  */
 package org.apache.camel.component.cxf.invoker;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.w3c.dom.Element;
-
-import org.apache.camel.component.cxf.interceptors.DOMInInterceptor;
-import org.apache.camel.component.cxf.interceptors.DOMOutInterceptor;
-import org.apache.camel.component.cxf.interceptors.PayloadContentRedirectInterceptor;
-import org.apache.camel.component.cxf.interceptors.PayloadInInterceptor;
-import org.apache.camel.component.cxf.phase.FaultPayloadPhaseManagerImpl;
-import org.apache.camel.component.cxf.phase.PayloadPhaseManagerImpl;
-
-import org.apache.cxf.Bus;
-import org.apache.cxf.endpoint.Endpoint;
-import org.apache.cxf.endpoint.EndpointImpl;
-import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
-import org.apache.cxf.phase.Phase;
-import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.cxf.phase.PhaseManager;
-import org.apache.cxf.transport.MessageObserver;
+
+import org.w3c.dom.Element;
 
 public class PayloadInvokingContext extends AbstractInvokingContext {
     private static final Logger LOG = Logger.getLogger(PayloadInvokingContext.class.getName());

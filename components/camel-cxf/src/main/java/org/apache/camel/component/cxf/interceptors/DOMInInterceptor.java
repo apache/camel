@@ -36,20 +36,19 @@ public class DOMInInterceptor extends AbstractPhaseInterceptor<Message> {
     public DOMInInterceptor() {
         super(Phase.READ);
         this.addAfter(SoapActionInInterceptor.class.getName());
-        this.addBefore(PayloadInInterceptor.class.getName());
     }
 
     public boolean isRequestor(Message message) {
         return Boolean.TRUE.equals(message.get(Message.REQUESTOR_ROLE));
     }
-    
+
     public void handleMessage(Message message) throws Fault {
         if (message instanceof XMLMessage) {
             xmlInterceptor.handleMessage((XMLMessage)message);
         } else if (message instanceof SoapMessage) {
             soapInterceptor.handleMessage((SoapMessage)message);
         } else {
-            throw new Fault(new org.apache.cxf.common.i18n.Message("NOT_SUPPORTED_MESSAGE", 
+            throw new Fault(new org.apache.cxf.common.i18n.Message("NOT_SUPPORTED_MESSAGE",
                                                                    LOG, message.getClass().getName()));
         }
     }
