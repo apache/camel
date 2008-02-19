@@ -57,7 +57,7 @@ public abstract class AbstractInvokerInterceptor extends AbstractPhaseIntercepto
         if (isRequestor(inMessage)) {
             return;
         }
-
+        /*
         Exchange exchange = inMessage.getExchange();
         Message outMessage = null;
         try {
@@ -94,7 +94,7 @@ public abstract class AbstractInvokerInterceptor extends AbstractPhaseIntercepto
 
             //Initiate the OutBound Chain.
             chain.doIntercept(outMessage);
-        }
+        }*/
     }
 
     /**

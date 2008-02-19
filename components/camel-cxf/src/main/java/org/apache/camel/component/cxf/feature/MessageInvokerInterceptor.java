@@ -52,6 +52,7 @@ public class MessageInvokerInterceptor extends AbstractPhaseInterceptor<Message>
                 if (!exchange.isOneWay()) {
                     Endpoint ep = exchange.get(Endpoint.class);
                     Message outMessage = runableEx.getOutMessage();
+                    copyJaxwsProperties(message, outMessage);
                     if (outMessage == null) {
                         outMessage = ep.getBinding().createMessage();
                         exchange.setOutMessage(outMessage);
@@ -79,6 +80,14 @@ public class MessageInvokerInterceptor extends AbstractPhaseInterceptor<Message>
      */
     private Executor getExecutor(final Endpoint endpoint) {
         return endpoint.getService().getExecutor();
+    }
+
+    private void copyJaxwsProperties(Message inMsg, Message outMsg) {
+        outMsg.put(Message.WSDL_OPERATION, inMsg.get(Message.WSDL_OPERATION));
+        outMsg.put(Message.WSDL_SERVICE, inMsg.get(Message.WSDL_SERVICE));
+        outMsg.put(Message.WSDL_INTERFACE, inMsg.get(Message.WSDL_INTERFACE));
+        outMsg.put(Message.WSDL_PORT, inMsg.get(Message.WSDL_PORT));
+        outMsg.put(Message.WSDL_DESCRIPTION, inMsg.get(Message.WSDL_DESCRIPTION));
     }
 
 }
