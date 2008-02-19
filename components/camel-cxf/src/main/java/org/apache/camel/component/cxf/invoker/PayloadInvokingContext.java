@@ -46,99 +46,35 @@ import org.apache.cxf.transport.MessageObserver;
 public class PayloadInvokingContext extends AbstractInvokingContext {
     private static final Logger LOG = Logger.getLogger(PayloadInvokingContext.class.getName());
 
-    private PhaseManager phaseManager;
-    private PhaseManager faultPhaseManager;
-    private MessageObserver inFaultObserver;
-    private MessageObserver outFaultObserver;
-    
+
     public PayloadInvokingContext() {
-        phaseManager = new PayloadPhaseManagerImpl();
-        faultPhaseManager = new FaultPayloadPhaseManagerImpl();
-    }
 
-    public PhaseInterceptorChain getRequestOutInterceptorChain(Exchange exchange) {
-        return getOutIntercepterChain(exchange);
-    }
-
-    public PhaseInterceptorChain getResponseOutInterceptorChain(Exchange exchange) {
-        return getOutIntercepterChain(exchange);
-    }
-
-    private PhaseInterceptorChain getOutIntercepterChain(Exchange exchange) {
-        PhaseInterceptorChain chain = new PhaseInterceptorChain(
-                new PayloadPhaseManagerImpl().getOutPhases());
-        
-        Bus bus = exchange.get(Bus.class);
-        assert bus != null;
-        
-        // bus
-        List<Interceptor> list = bus.getOutInterceptors();
-        if (LOG.isLoggable(Level.FINE)) {
-            LOG.fine("Interceptors contributed by bus: " + list);
-        }
-        chain.add(list);
-        
-        // endpoint
-        Endpoint endpoint = exchange.get(Endpoint.class);
-        if (endpoint != null) {
-            list = endpoint.getOutInterceptors();
-            if (LOG.isLoggable(Level.FINE)) {
-                LOG.fine("Interceptors contributed by endpoint: " + list);
-            }
-            chain.add(list);
-            list = endpoint.getBinding().getOutInterceptors();
-            if (LOG.isLoggable(Level.FINE)) {
-                LOG.fine("Interceptors contributed by binding: " + list);
-            }
-            chain.add(list);
-        }
-        chain.add(new DOMOutInterceptor());
-        chain.add(new PayloadContentRedirectInterceptor());
-        
-        return chain;
     }
 
     public void setRequestOutMessageContent(Message message, Object content) {
 
         PayloadMessage request = (PayloadMessage) content;
-        
+
         Element header = request.getHeader();
         List<Element> payload = request.getPayload();
-        
+
         if (LOG.isLoggable(Level.FINEST)) {
             LOG.finest("header = " + header + ", paylaod = " + payload);
         }
-        
+
         message.put(Element.class, header);
-        message.put(List.class, payload);    
-    }
-
-    @Override
-    protected SortedSet<Phase> getInPhases() {
-        return phaseManager.getInPhases();
-    }
-    
-    protected SortedSet<Phase> getOutPhases() {
-        return phaseManager.getOutPhases();
-    }
-
-    @Override
-    protected List<Interceptor> getRoutingInterceptors() {
-        List<Interceptor> list = new ArrayList<Interceptor>();
-        list.add(new DOMInInterceptor());
-        list.add(new PayloadInInterceptor());
-        return list;
+        message.put(List.class, payload);
     }
 
     @SuppressWarnings("unchecked")
     public Object getResponseObject(Exchange exchange, Map<String, Object> responseContext) {
         PayloadMessage payloadMsg = null;
-        
+
         Message msg = exchange.getInMessage();
         List<Element> payload = getResponseObject(msg , responseContext, List.class);
         Element header = exchange.getInMessage().get(Element.class);
-        payloadMsg = new PayloadMessage(payload, header);            
-        
+        payloadMsg = new PayloadMessage(payload, header);
+
         if (LOG.isLoggable(Level.FINEST)) {
             LOG.finest(payloadMsg.toString());
         }
@@ -160,65 +96,7 @@ public class PayloadInvokingContext extends AbstractInvokingContext {
         }
         return retval;
     }
-    
-    protected PhaseInterceptorChain getInInterceptorChain(Exchange exchange, boolean isResponse) {
 
-        Bus bus = exchange.get(Bus.class);
-        assert bus != null;
-
-        PhaseInterceptorChain chain = new PhaseInterceptorChain(getInPhases());
-
-        List<Interceptor> routingInterceptors = getRoutingInterceptors();
-        chain.add(routingInterceptors);    
-        if (LOG.isLoggable(Level.FINE)) {
-            LOG.fine("Injected " + routingInterceptors);
-        }
-
-        // bus
-        List<Interceptor> list = bus.getInInterceptors();
-        if (LOG.isLoggable(Level.FINE)) {
-            LOG.fine("Interceptors contributed by bus: " + list);
-        }
-        chain.add(list);
-
-        // endpoint
-        Endpoint ep = exchange.get(Endpoint.class);
-        if (ep != null) {
-            list = ep.getInInterceptors();
-            if (LOG.isLoggable(Level.FINE)) {
-                LOG.fine("Interceptors contributed by endpoint: " + list);
-            }
-            chain.add(list);
-
-            // binding
-            list = ep.getBinding().getInInterceptors();
-            if (LOG.isLoggable(Level.FINE)) {
-                LOG.fine("Interceptors contributed by binding: " + list);
-            }
-            chain.add(list);
-        }
-
-        return chain;
-    }
-    
-    /**
-     * This method is called to set the fault observers on the endpoint that are specified
-     * to the phases meaningful to the routing context.
-     * @param endpointImpl
-     */
-    @Override
-    public void setEndpointFaultObservers(EndpointImpl endpointImpl, Bus bus) {
-        if (inFaultObserver == null) {
-            inFaultObserver = new FaultChainInitiatorObserver(bus, faultPhaseManager.getInPhases(), false);
-        }
-        endpointImpl.setInFaultObserver(inFaultObserver);
-        
-        if (outFaultObserver == null) {
-            outFaultObserver = new FaultChainInitiatorObserver(bus, faultPhaseManager.getOutPhases(), true);
-        }
-        endpointImpl.setOutFaultObserver(outFaultObserver);
-    }
-    
     public void setResponseContent(Message outMessage, Object resultPayload) {
         if (resultPayload != null) {
             PayloadMessage payloadMessage = (PayloadMessage) resultPayload;
@@ -234,12 +112,12 @@ public class PayloadInvokingContext extends AbstractInvokingContext {
     public Object getRequestContent(Message inMessage) {
         List<Element> payload = inMessage.get(List.class);
         Element header = inMessage.get(Element.class);
-        
+
         if (LOG.isLoggable(Level.FINEST)) {
             LOG.finest("Header = " + header + ", Payload = " + payload);
         }
-        
+
         return new PayloadMessage(payload, header);
     }
-    
+
 }

@@ -43,143 +43,29 @@ import org.apache.cxf.phase.PhaseManager;
 
 public class RawMessageInvokingContext extends AbstractInvokingContext {
     private static final Logger LOG = Logger.getLogger(RawMessageInvokingContext.class.getName());
-    
-    private PhaseManager phaseManager; 
 
     public RawMessageInvokingContext() {
-        phaseManager = new RawMessagePhaseManagerImpl();
-    }
-    
-    public PhaseInterceptorChain getRequestOutInterceptorChain(Exchange exchange) {
-        return getOutInterceptorChain(exchange);
-    }
 
-    public PhaseInterceptorChain getResponseOutInterceptorChain(Exchange exchange) {
-        return getOutInterceptorChain(exchange);
-    }
-
-    private PhaseInterceptorChain getOutInterceptorChain(Exchange exchange) {
-        
-        PhaseInterceptorChain chain = new PhaseInterceptorChain(
-                new RawMessagePhaseManagerImpl().getOutPhases());
-        
-        Bus bus = exchange.get(Bus.class);
-        assert bus != null;
-        
-        // bus
-        List<Interceptor> list = bus.getOutInterceptors();
-        if (LOG.isLoggable(Level.FINE)) {
-            LOG.fine("Interceptors contributed by bus: " + list);
-        }
-        chain.add(list);
-        
-        // endpoint
-        Endpoint endpoint = exchange.get(Endpoint.class);
-        if (endpoint != null) {
-            list = endpoint.getOutInterceptors();
-            if (LOG.isLoggable(Level.FINE)) {
-                LOG.fine("Interceptors contributed by endpoint: " + list);
-            }
-            chain.add(list);
-        }
-        
-        if (LOG.isLoggable(Level.FINE)) {
-            LOG.fine("inject " + RawMessageContentRedirectInterceptor.class);
-        }
-        chain.add(new RawMessageContentRedirectInterceptor());
-        
-        return chain;
-  
     }
 
     public void setRequestOutMessageContent(Message message, Object content) {
-        message.setContent(InputStream.class, content);        
-    }
-
-    @Override
-    protected SortedSet<Phase> getInPhases() {
-        return phaseManager.getInPhases();
-    }
-
-    @Override
-    protected List<Interceptor> getRoutingInterceptors() {
-        List<Interceptor> list = new ArrayList<Interceptor>();
-        list.add(new RawMessageInInterceptor());
-        return list;
+        message.setContent(InputStream.class, content);
     }
 
     public Object getResponseObject(Exchange exchange, Map<String, Object> responseContext) {
-        
+
         return getResponseObject(exchange.getInMessage(), responseContext, InputStream.class);
     }
-    
-    //@Override
-    protected PhaseInterceptorChain getInInterceptorChain(Exchange exchange, boolean isResponse) {
 
-        Bus bus = exchange.get(Bus.class);
-        assert bus != null;
-
-        PhaseInterceptorChain chain = new PhaseInterceptorChain(getInPhases());
-
-        if (!isResponse) {
-            List<Interceptor> routingInterceptors = getRoutingInterceptors();
-            chain.add(routingInterceptors);    
-            if (LOG.isLoggable(Level.FINE)) {
-                LOG.fine("Injected " + routingInterceptors);
-            }
-        }
-
-        // bus
-        List<Interceptor> list = bus.getInInterceptors();
-        
-        LOG.fine("Interceptors contributed by bus: " + list);
-        chain.add(list);
-
-        // endpoint
-        Endpoint ep = exchange.get(Endpoint.class);
-        if (ep != null) {
-            list = ep.getInInterceptors();
-            if (LOG.isLoggable(Level.FINE)) {
-                LOG.fine("Interceptors contributed by endpoint: " + list);
-            }
-            chain.add(list);
-        }
-
-        return chain;
-    }
-    
     public void setResponseContent(Message outMessage, Object resultPayload) {
         LOG.info("Set content: " + resultPayload);
         outMessage.setContent(InputStream.class, resultPayload);
         //loggerTheMessage(outMessage, "Out Message");
     }
 
-    public Object getRequestContent(Message inMessage) {        
+    public Object getRequestContent(Message inMessage) {
         //loggerTheMessage(inMessage, "In Message");
         return inMessage.getContent(InputStream.class);
     }
-    
-    private void loggerTheMessage(Message message, String messageTile) {
-        StringBuffer buffer = new StringBuffer( messageTile + "\n" 
-                                               + "--------------------------------------");
-        InputStream is = message.getContent(InputStream.class);        
-        if (is != null) {
-            CachedOutputStream bos = new CachedOutputStream();
-            try {
-                IOUtils.copy(is, bos);
 
-                is.close();
-                bos.close();
-
-                buffer.append("\nMessage:\n");
-                buffer.append(bos.getOut().toString());
-                
-                message.setContent(InputStream.class, bos.getInputStream());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        buffer.append("\n--------------------------------------");
-        LOG.info(buffer.toString());
-    }
 }
