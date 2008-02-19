@@ -99,7 +99,6 @@ public class CamelInvoker implements Invoker, MessageInvoker {
                 outMessage = endpoint.getBinding().createMessage();
             }
             exchange.setOutMessage(outMessage);
-            outMessage.setExchange(exchange);
         }
 
     }
@@ -149,8 +148,8 @@ public class CamelInvoker implements Invoker, MessageInvoker {
             exchange.get(Service.class).get(MethodDispatcher.class.getName());
         Method m = md.getMethod(bop);
 
-
-        if (bop.getOperationInfo().isOneWay()) {
+        // The SEI could be the provider class which will not have the bop information.
+        if (bop != null && bop.getOperationInfo().isOneWay()) {
             cxfExchange.setPattern(ExchangePattern.InOnly);
         } else {
             cxfExchange.setPattern(ExchangePattern.InOut);

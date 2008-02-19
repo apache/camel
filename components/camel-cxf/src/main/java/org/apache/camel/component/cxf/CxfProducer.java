@@ -24,6 +24,8 @@ import javax.xml.namespace.QName;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.cxf.feature.MessageDataFormatFeature;
+import org.apache.camel.component.cxf.feature.PayLoadDataFormatFeature;
 import org.apache.camel.component.cxf.invoker.CxfClient;
 import org.apache.camel.component.cxf.invoker.CxfClientFactoryBean;
 import org.apache.camel.component.cxf.invoker.InvokingContext;
@@ -37,6 +39,7 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
+import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
@@ -83,6 +86,19 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
 
         boolean jsr181Enabled = CxfEndpointUtils.hasWebServiceAnnotation(serviceClass);
         cfb.setJSR181Enabled(jsr181Enabled);
+
+        dataFormat = CxfEndpointUtils.getDataFormat(endpoint);
+        List<AbstractFeature> features = new ArrayList<AbstractFeature>();
+        if (dataFormat.equals(DataFormat.MESSAGE)) {
+            features.add(new MessageDataFormatFeature());
+            //features.add(new LoggingFeature());
+        }
+        if (dataFormat.equals(DataFormat.PAYLOAD)) {
+            features.add(new PayLoadDataFormatFeature());
+            //features.add(new LoggingFeature());
+        }
+        cfb.setFeatures(features);
+
 
         return createClientFormClientFactoryBean(cfb);
     }
@@ -209,7 +225,6 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                 CxfClient cxfClient = (CxfClient) client;
                 // invoke the message
                 //TODO need setup the call context here
-                //TODO need to handle the one way message
                 Object result = cxfClient.dispatch(params, null, ex);
                 // need to get the binding object to create the message
                 BindingOperationInfo boi = ex.get(BindingOperationInfo.class);
