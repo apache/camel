@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.camel.ExchangePattern;
+import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.MethodDispatcher;
 import org.apache.cxf.helpers.CastUtils;
@@ -98,9 +99,8 @@ public class CamelInvoker implements Invoker, MessageInvoker {
             if (outMessage == null) {
                 outMessage = endpoint.getBinding().createMessage();
             }
-            exchange.setOutMessage(outMessage);
         }
-
+        exchange.setOutMessage(outMessage);
     }
 
     @SuppressWarnings("unchecked")

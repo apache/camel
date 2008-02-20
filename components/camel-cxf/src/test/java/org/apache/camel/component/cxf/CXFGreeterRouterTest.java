@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spring.processor.SpringTestHelper;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.GreeterImpl;
+import org.apache.hello_world_soap_http.NoSuchCodeLitFault;
 
 public class CXFGreeterRouterTest extends CxfSpringRouterTest {
     private final QName serviceName = new QName("http://apache.org/hello_world_soap_http",
@@ -46,19 +47,24 @@ public class CXFGreeterRouterTest extends CxfSpringRouterTest {
                         "http://localhost:9003/CamelContext/RouterPort");
         Greeter greeter = service.getPort(routerPortName, Greeter.class);
 
+        String reply = greeter.greetMe("test");
+        assertNotNull("No response received from service", reply);
+        assertEquals("Got the wrong reply ", "Hello test", reply);
+        reply = greeter.sayHi();
+        assertNotNull("No response received from service", reply);
+        assertEquals("Got the wrong reply ", "Bonjour", reply);
+
+        greeter.greetMeOneWay("call greetMe OneWay !");
+
+        // test throw the exception
         try {
-
-            String reply = greeter.greetMe("test");
-            assertNotNull("No response received from service", reply);
-            assertEquals("Got the wrong reply ", "Hello test", reply);
-            reply = greeter.sayHi();
-            assertNotNull("No response received from service", reply);
-            assertEquals("Got the wrong reply ", "Bonjour", reply);
-
-            greeter.greetMeOneWay("call greetMe OneWay !");
-        } catch (UndeclaredThrowableException ex) {
-            throw (Exception)ex.getCause();
+            greeter.testDocLitFault("NoSuchCodeLitFault");
+            // should get the exception here
+            fail("Should get the NoSuchCodeLitFault here.");
+        } catch (NoSuchCodeLitFault fault) {
+            // expect the fault here
         }
+
     }
 
     @Override

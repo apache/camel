@@ -223,9 +223,6 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                 Object params = invokingContext.getRequestContent(inMessage);
                 // invoke the stream message with the exchange context
                 CxfClient cxfClient = (CxfClient) client;
-                // invoke the message
-                //TODO need setup the call context here
-                Object result = cxfClient.dispatch(params, null, ex);
                 // need to get the binding object to create the message
                 BindingOperationInfo boi = ex.get(BindingOperationInfo.class);
                 Message response = null;
@@ -238,9 +235,17 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                     response = ep.getBinding().createMessage();
                 }
                 response.setExchange(ex);
-                ex.setOutMessage(response);
-                invokingContext.setResponseContent(response, result);
-                cxfBinding.storeCxfResponse(exchange, response);
+                // invoke the message
+                //TODO need setup the call context here
+                try {
+                    Object result = cxfClient.dispatch(params, null, ex);
+                    ex.setOutMessage(response);
+                    invokingContext.setResponseContent(response, result);
+                    cxfBinding.storeCxfResponse(exchange, response);
+                } catch (Exception e) {
+                    response.setContent(Exception.class, e);
+                    cxfBinding.storeCxfFault(exchange, response);
+                }
             }
         } catch (Exception e) {
             //TODO add the falut message handling work

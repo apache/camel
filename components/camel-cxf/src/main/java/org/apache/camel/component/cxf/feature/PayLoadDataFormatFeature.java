@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 
 import org.apache.camel.component.cxf.interceptors.DOMInInterceptor;
 import org.apache.camel.component.cxf.interceptors.DOMOutInterceptor;
+import org.apache.camel.component.cxf.interceptors.FaultOutInterceptor;
 import org.apache.camel.component.cxf.interceptors.PayloadContentRedirectInterceptor;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.Binding;
@@ -52,6 +53,7 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
         removeInterceptorWhichIsInThePhases(client.getEndpoint().getBinding().getOutInterceptors(), REMOVING_OUT_PHASES);
 
         addDataHandlingInterceptors(client.getEndpoint().getBinding());
+        client.getEndpoint().getBinding().getOutFaultInterceptors().add(new FaultOutInterceptor());
     }
 
     @Override
@@ -69,6 +71,7 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
         resetServiceInvokerInterceptor(server);
 
         addDataHandlingInterceptors(server.getEndpoint().getBinding());
+        server.getEndpoint().getBinding().getOutFaultInterceptors().add(new FaultOutInterceptor());
     }
 
     private void addDataHandlingInterceptors(Binding binding) {

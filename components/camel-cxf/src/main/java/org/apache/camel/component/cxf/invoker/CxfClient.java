@@ -28,6 +28,7 @@ import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.PhaseInterceptorChain;
+import org.apache.cxf.service.Service;
 import org.apache.cxf.service.model.BindingInfo;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
@@ -42,11 +43,9 @@ public class CxfClient extends ClientImpl {
 
     private static final Logger LOG = Logger.getLogger(CxfClient.class.getName());
 
-    private Endpoint endpoint;
-
     public CxfClient(Bus b, Endpoint e) {
         super(b, e);
-        endpoint = e;
+
     }
 
     public Object dispatch(Object params,
@@ -99,21 +98,18 @@ public class CxfClient extends ClientImpl {
 
         Exchange exchange = new ExchangeImpl();
         // put the message Observer to call the CxfClient onMessage()
-        exchange.put(MessageObserver.class, this);
+        setExchangeProperties(exchange, getEndpoint(), bi);
         exchange.put(InvokingContext.class, invokingContext);
-        exchange.put(Bus.class, bus);
-        exchange.put(Endpoint.class, getEndpoint());
-        exchange.put(BindingInfo.class, getEndpoint().getEndpointInfo().getBinding());
+
         if (bi != null) {
             //Set The InputMessage
-            exchange.put(BindingOperationInfo.class, bi);
             exchange.put(BindingMessageInfo.class, bi.getInput());
             exchange.setOneWay(bi.getOperationInfo().isOneWay());
         }
 
         Message message = prepareMessage(exchange, requestContext, param, invokingContext);
 
-        PhaseInterceptorChain chain = setupInterceptorChain(endpoint);
+        PhaseInterceptorChain chain = setupInterceptorChain(getEndpoint());
 
         message.setInterceptorChain(chain);
         modifyChain(chain, requestContext);
@@ -202,12 +198,5 @@ public class CxfClient extends ClientImpl {
         return message;
     }
 
-    public Endpoint getEndpoint() {
-        return endpoint;
-    }
-
-    public Bus getBus() {
-        return bus;
-    }
 }
 
