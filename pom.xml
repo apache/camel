@@ -115,9 +115,9 @@
       </snapshots>
     </repository>
     <repository>
-      <id>open.iona.m2-all</id>
+      <id>open.iona.m2</id>
       <name>IONA Open Source Community Dependency Repository</name>
-      <url>http://repo.open.iona.com/maven2-all</url>
+      <url>http://repo.open.iona.com/maven2</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
