@@ -32,11 +32,17 @@ import org.apache.cxf.staxutils.StaxUtils;
 public class PayloadContentRedirectInterceptor extends AbstractPhaseInterceptor<Message> {
 
     public PayloadContentRedirectInterceptor() {
-        super(Phase.POST_STREAM);        
+        super(Phase.POST_STREAM);
     }
 
     @SuppressWarnings("unchecked")
     public void handleMessage(Message message) throws Fault {
+        // check the fault from the message
+        Exception ex = message.getContent(Exception.class);
+        if (ex != null) {
+            throw new Fault(ex);
+        }
+
         XMLStreamWriter out = message.getContent(XMLStreamWriter.class);
         List<Element> in = message.get(List.class);
         try {
