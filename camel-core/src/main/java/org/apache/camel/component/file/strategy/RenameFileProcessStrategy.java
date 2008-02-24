@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A strategy to rename a file
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class RenameFileProcessStrategy extends FileProcessStrategySupport {
     private static final transient Log LOG = LogFactory.getLog(RenameFileProcessStrategy.class);

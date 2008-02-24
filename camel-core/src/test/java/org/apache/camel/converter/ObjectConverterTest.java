@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 import java.util.Iterator;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ObjectConverterTest extends TestCase {
     public void testArrayAsIterator() throws Exception {

@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
  * which allows the use of {@link Synchronization} hooks. This object might map one-to-one with
  * a transaction in JPA or Spring; or might not.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface UnitOfWork {
 

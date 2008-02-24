@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A strategy which will delete the file when its processed
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DeleteFileProcessStrategy extends FileProcessStrategySupport {
     private static final transient Log LOG = LogFactory.getLog(DeleteFileProcessStrategy.class);

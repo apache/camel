@@ -20,7 +20,7 @@ package org.apache.camel;
 import junit.framework.TestCase;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ExchangePatternTest extends TestCase {
     public void testExchangePattern() throws Exception {

@@ -21,7 +21,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class ExpressionEvaluationException extends RuntimeCamelException {
     private final Expression<Exchange> expression;

@@ -20,7 +20,7 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ValidationWithExceptionTest extends ValidationTest {
     protected RouteBuilder createRouteBuilder() {

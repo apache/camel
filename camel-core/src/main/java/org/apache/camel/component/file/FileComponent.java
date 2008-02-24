@@ -27,7 +27,7 @@ import java.util.Map;
  * The <a href="http://activemq.apache.org/camel/file.html">File Component</a>
  * for working with file systems
  * 
- * @version $Revision: 523772 $
+ * @version $Revision$
  */
 public class FileComponent extends DefaultComponent<FileExchange> {
     public static final String HEADER_FILE_NAME = "org.apache.camel.file.name";

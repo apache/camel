@@ -29,7 +29,7 @@ import org.apache.camel.Predicate;
  * An aggregator collection which uses a predicate to decide when an aggregation is completed for
  * a particular correlation key
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class PredicateAggregationCollection extends AggregationCollection {
     private Predicate aggregationCompletedPredicate;

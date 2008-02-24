@@ -23,7 +23,7 @@ import java.util.Map;
  * Represents an object which is aware of the namespaces in which its used such as
  * XPath and XQuery type expressions so that the current namespace context can be injected
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface NamespaceAware {
     

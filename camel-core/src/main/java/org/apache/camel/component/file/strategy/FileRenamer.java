@@ -20,7 +20,7 @@ package org.apache.camel.component.file.strategy;
 import java.io.File;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface FileRenamer {
 

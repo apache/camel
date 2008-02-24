@@ -22,7 +22,7 @@ import org.apache.camel.Header;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
 */
 public class MyAggregationStrategy extends UseLatestAggregationStrategy {
     @Override

@@ -23,7 +23,7 @@ import org.apache.camel.Predicate;
 /**
  * Represents a language to be used for {@link Expression} or {@link Predicate} instances
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface Language {
 

@@ -25,7 +25,7 @@ import org.apache.camel.Processor;
  * A {@link LoadBalancer} implementations which sends to all destinations
  * (rather like JMS Topics)
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class TopicLoadBalancer extends LoadBalancerSupport {
     public void process(Exchange exchange) throws Exception {

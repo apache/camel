@@ -35,7 +35,7 @@ import java.nio.channels.FileChannel;
 /**
  * A {@link Producer} implementation for File
  *
- * @version $Revision: 523016 $
+ * @version $Revision$
  */
 public class FileProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(FileProducer.class);

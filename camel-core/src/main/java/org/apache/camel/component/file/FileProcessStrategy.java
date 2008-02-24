@@ -23,7 +23,7 @@ import org.apache.camel.Endpoint;
 /**
  * Represents a strategy for marking that a file is processed.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface FileProcessStrategy {
     /**

@@ -24,7 +24,7 @@ import org.apache.camel.builder.xml.XPathBuilder;
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DotViewTest extends ContextTestSupport {
     protected String outputDirectory = "target/site/cameldoc";

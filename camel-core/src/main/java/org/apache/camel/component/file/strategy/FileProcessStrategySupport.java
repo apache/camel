@@ -31,7 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class FileProcessStrategySupport implements FileProcessStrategy {
     public static final String DEFAULT_LOCK_FILE_POSTFIX = ".cameLock";

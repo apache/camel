@@ -23,7 +23,7 @@ import org.apache.camel.TypeConverter;
  * such as for implementing a fallback type converter
  *
  * @see DefaultTypeConverter#addFallbackConverter(TypeConverter) 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface TypeConverterAware {
     void setTypeConverter(TypeConverter parentTypeConverter);

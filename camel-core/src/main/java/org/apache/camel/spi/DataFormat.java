@@ -30,7 +30,7 @@ import org.apache.camel.Exchange;
  * such as Java Serialization or using JAXB2 to encode/decode objects using XML
  * or using SOAP encoding.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface DataFormat {
 

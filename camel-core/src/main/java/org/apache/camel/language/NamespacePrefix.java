@@ -25,7 +25,7 @@ import java.lang.annotation.ElementType;
 /**
  * Creates a namespace prefix for an XPath
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.ANNOTATION_TYPE })
