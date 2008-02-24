@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.ufacekit.ui.swing.databinding.swing.SwingRealm;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class UFaceTest extends ContextTestSupport {
     public void testUFaceEndpoints() throws Exception {

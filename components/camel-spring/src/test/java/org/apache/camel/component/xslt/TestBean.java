@@ -20,7 +20,7 @@ package org.apache.camel.component.xslt;
 import org.apache.camel.language.XPath;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class TestBean {
     private String subject;

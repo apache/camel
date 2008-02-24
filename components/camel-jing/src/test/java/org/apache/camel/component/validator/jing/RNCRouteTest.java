@@ -20,7 +20,7 @@ import org.apache.camel.component.validator.ValidatorRouteTest;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class RNCRouteTest extends ValidatorRouteTest {
 

@@ -18,7 +18,7 @@
 package org.apache.camel.component.ibatis;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class Account {
     private int id;

@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.jpa.JpaTemplate;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @Entity
 @UniqueConstraint(columnNames = {"name" })

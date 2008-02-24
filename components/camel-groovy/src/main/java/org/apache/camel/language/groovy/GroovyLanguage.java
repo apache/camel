@@ -23,7 +23,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.Expression;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class GroovyLanguage implements Language  {
 

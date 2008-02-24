@@ -40,7 +40,7 @@ import static org.apache.camel.util.ServiceHelper.stopServices;
 /**
  * A temporal rule for use within BAM
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class TemporalRule extends ServiceSupport {
     private static final transient Log LOG = LogFactory.getLog(TemporalRule.class);

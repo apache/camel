@@ -38,7 +38,7 @@ import org.apache.camel.impl.DefaultPollingEndpoint;
 /**
  * An <a href="http://activemq.apache.org/camel/atom.html">Atom Endpoint</a>.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class AtomEndpoint extends DefaultPollingEndpoint {
     private Factory atomFactory;

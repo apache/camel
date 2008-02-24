@@ -25,7 +25,7 @@ import org.apache.camel.model.FilterType;
 import org.apache.camel.model.ProcessorType;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class CamelGroovyMethods {
 

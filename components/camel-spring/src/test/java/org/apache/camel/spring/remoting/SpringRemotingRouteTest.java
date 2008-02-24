@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: 520220 $
+ * @version $Revision$
  */
 public class SpringRemotingRouteTest extends TestCase {
     private static final Log LOG = LogFactory.getLog(SpringRemotingRouteTest.class);

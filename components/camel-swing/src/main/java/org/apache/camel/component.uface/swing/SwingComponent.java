@@ -24,7 +24,7 @@ import org.apache.camel.Endpoint;
 import org.ufacekit.ui.swing.databinding.swing.SwingRealm;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SwingComponent extends UFaceComponent {
     public SwingComponent() {

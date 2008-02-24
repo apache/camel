@@ -24,7 +24,7 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.velocity.app.VelocityEngine;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class VelocityComponent extends DefaultComponent {
     private VelocityEngine velocityEngine = new VelocityEngine();

@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class CamelContextAwareBean implements CamelContextAware {
     private CamelContext camelContext;

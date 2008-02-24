@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class XsltRouteTest extends SpringTestSupport {
 

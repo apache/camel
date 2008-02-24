@@ -34,7 +34,7 @@ import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
  * clients.
  * 
  * @author The Apache Directory Project (mina-dev@directory.apache.org)
- * @version $Rev: 555855 $, $Date: 2007-07-12 20:19:00 -0700 (Thu, 12 Jul 2007) $,
+ * @version $Rev$, $Date$,
  */
 public class ReverserServer {
     protected int port = 6321;

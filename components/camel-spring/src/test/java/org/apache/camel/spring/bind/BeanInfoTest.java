@@ -29,7 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class BeanInfoTest extends TestCase {
     private static final Log LOG = LogFactory.getLog(BeanInfoTest.class);

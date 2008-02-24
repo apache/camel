@@ -30,7 +30,7 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class StringTemplateEndpoint extends ResourceBasedEndpoint {
     private final StringTemplateComponent component;

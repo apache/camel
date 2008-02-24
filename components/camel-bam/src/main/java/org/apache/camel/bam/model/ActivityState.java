@@ -34,7 +34,7 @@ import java.util.Date;
 /**
  * The default state for a specific activity within a process
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 @Entity
 public class ActivityState extends TemporalEntity {

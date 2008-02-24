@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.component.xquery.XQueryBuilder.xquery;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class XQueryWithNamespacesFilterTest extends ContextTestSupport {
     protected Endpoint<Exchange> startEndpoint;

@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * An <a href="http://www.ognl.org/">OGNL</a> {@link Expression}
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class OgnlExpression extends ExpressionSupport<Exchange> {
 

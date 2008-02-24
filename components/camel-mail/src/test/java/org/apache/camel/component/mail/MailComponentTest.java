@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MailComponentTest extends ContextTestSupport {
 

@@ -33,7 +33,7 @@ import org.jvnet.mock_javamail.Mailbox;
 import static org.apache.camel.util.ObjectHelper.asString;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MailRouteTest extends ContextTestSupport {
     private MockEndpoint resultEndpoint;

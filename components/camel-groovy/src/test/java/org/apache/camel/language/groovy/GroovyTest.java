@@ -29,7 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ProcessorType;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class GroovyTest extends ContextTestSupport {
     protected String expected = "<hello>world!</hello>";

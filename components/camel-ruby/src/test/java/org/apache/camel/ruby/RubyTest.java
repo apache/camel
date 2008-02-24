@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.jruby.Main;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class RubyTest extends ContextTestSupport {
     protected String expected = "<hello>world!</hello>";

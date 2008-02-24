@@ -30,7 +30,7 @@ import org.ufacekit.ui.swing.SwingFactory;
 import org.ufacekit.ui.swing.databinding.swing.SwingRealm;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SwingBrowser extends UFaceBrowser {
     static {

@@ -21,7 +21,7 @@ import org.apache.camel.spring.ApplicationContextTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class BeanMockTest extends ApplicationContextTestSupport {
     public void testAssertionsUsingBean() throws Exception {

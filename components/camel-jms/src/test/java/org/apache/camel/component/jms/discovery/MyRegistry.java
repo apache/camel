@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A simple POJO showing how to create a simple registry
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MyRegistry {
     private static final transient Log LOG = LogFactory.getLog(MyRegistry.class);

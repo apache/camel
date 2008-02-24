@@ -43,7 +43,7 @@ import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 import static org.apache.camel.component.mock.MockEndpoint.assertWait;
 
 /**
- * @version $Revision: 529902 $
+ * @version $Revision$
  */
 public class TransactedJmsRouteTest extends ContextTestSupport {
 

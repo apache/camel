@@ -32,7 +32,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class VelocityEndpoint extends ResourceBasedEndpoint {
     private final VelocityComponent component;

@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SimulatorTest extends ContextTestSupport {
 

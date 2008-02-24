@@ -21,7 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class Main extends org.apache.camel.spring.Main {
 

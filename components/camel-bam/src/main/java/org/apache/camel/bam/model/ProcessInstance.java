@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Represents a single business process
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 @Entity
 public class ProcessInstance  {

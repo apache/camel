@@ -24,7 +24,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class PojoSenderTest extends SpringTestSupport {
     protected MockEndpoint matchedEndpoint;

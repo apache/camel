@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
  * <a href="http://activemq.apache.org/camel/mock.html">Mock Endpoint</a> for testing but it will
  * pull all messages from the nested endpoint and use those as expected message body assertions.
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class TestEndpoint extends MockEndpoint implements Service {
     private static final transient Log LOG = LogFactory.getLog(TestEndpoint.class);

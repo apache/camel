@@ -21,7 +21,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision: 563665 $
+ * @version $Revision$
  */
 public class MinaFileUdpTest extends ContextTestSupport {
 

@@ -28,7 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class AtomRouteTest extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(AtomRouteTest.class);

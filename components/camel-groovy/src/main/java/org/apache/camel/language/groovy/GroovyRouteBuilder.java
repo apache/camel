@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class GroovyRouteBuilder extends RouteBuilder {
     public GroovyRouteBuilder() {

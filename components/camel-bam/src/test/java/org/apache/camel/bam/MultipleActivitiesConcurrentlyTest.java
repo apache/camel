@@ -22,7 +22,7 @@ import static org.apache.camel.language.juel.JuelExpression.el;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MultipleActivitiesConcurrentlyTest extends MultipleProcessesTest {
 

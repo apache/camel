@@ -17,7 +17,7 @@
 package org.apache.camel.component.mina;
 
 /**
- * @version $Revision: 563665 $
+ * @version $Revision$
  */
 public class MinaTcpTextlineProtocolTest extends MinaVmTest {
     @Override

@@ -19,7 +19,7 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.RuntimeCamelException;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class FtpOperationFailedException extends RuntimeCamelException {
     private final int code;

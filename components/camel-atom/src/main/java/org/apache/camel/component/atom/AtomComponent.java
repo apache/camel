@@ -25,7 +25,7 @@ import org.apache.camel.impl.DefaultComponent;
 /**
  * An <a href="http://activemq.apache.org/camel/atom.html">Atom Component</a>.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class AtomComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {

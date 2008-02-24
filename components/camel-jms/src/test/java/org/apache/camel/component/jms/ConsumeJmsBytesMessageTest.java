@@ -38,7 +38,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
 /**
- * @version $Revision: 591979 $
+ * @version $Revision$
  */
 public class ConsumeJmsBytesMessageTest extends ContextTestSupport {
     protected JmsTemplate jmsTemplate;

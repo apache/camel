@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class TestComponent extends DefaultComponent<Exchange> {
     public Endpoint<Exchange> createEndpoint(String uri) throws Exception {

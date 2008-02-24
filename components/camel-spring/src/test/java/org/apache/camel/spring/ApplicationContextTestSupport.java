@@ -22,7 +22,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class ApplicationContextTestSupport extends TestCase {
     protected AbstractXmlApplicationContext applicationContext;
