@@ -27,7 +27,7 @@ import org.springframework.orm.jpa.JpaTemplate;
 /**
  * A Message Transformer of an XML document to a Customer entity bean
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 // START SNIPPET: example
 @Converter

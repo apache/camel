@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MyTransform  {
     private static final transient Log LOG = LogFactory.getLog(MyTransform.class);
