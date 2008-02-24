@@ -21,7 +21,7 @@ import org.apache.camel.spring.remoting.SpringRemotingRouteTest;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class JmsRemotingTest extends SpringRemotingRouteTest {
 

@@ -58,7 +58,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Represents the context used to configure routes and the policies to use.
  * 
- * @version $Revision: 520517 $
+ * @version $Revision$
  */
 public class DefaultCamelContext extends ServiceSupport implements CamelContext, Service {
     private static final transient Log LOG = LogFactory.getLog(DefaultCamelContext.class);

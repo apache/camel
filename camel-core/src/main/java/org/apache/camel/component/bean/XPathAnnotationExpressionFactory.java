@@ -27,7 +27,7 @@ import org.apache.camel.language.XPath;
 import java.lang.annotation.Annotation;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
     @Override

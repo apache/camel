@@ -18,7 +18,7 @@
 package org.apache.camel.builder.xml;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class StreamResultHandlerFactory implements ResultHandlerFactory {
     public ResultHandler createResult() {

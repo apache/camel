@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "interceptor")
 @XmlAccessorType(XmlAccessType.FIELD)

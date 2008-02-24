@@ -32,7 +32,7 @@ import org.xml.sax.SAXParseException;
 /**
  * A default error handler which just stores all the errors so they can be reported or transformed.
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class DefaultValidationErrorHandler implements ValidatorErrorHandler {
     private static final transient Log log = LogFactory.getLog(DefaultValidationErrorHandler.class);

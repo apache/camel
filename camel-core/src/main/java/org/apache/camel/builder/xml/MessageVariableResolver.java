@@ -38,7 +38,7 @@ import static org.apache.camel.builder.xml.Namespaces.SYSTEM_PROPERTIES_NAMESPAC
  * messge, exchange as well as making system properties and environment
  * properties available.
  * 
- * @version $Revision: 521692 $
+ * @version $Revision$
  */
 public class MessageVariableResolver implements XPathVariableResolver {
 

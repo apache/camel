@@ -19,7 +19,7 @@ package org.apache.camel.component.file;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class FileDeleteRouteTest extends FileRouteTest {
     @Override

@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
  * Represents the <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>
  * {@link DataFormat}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "artixDS")
 @XmlAccessorType(XmlAccessType.FIELD)

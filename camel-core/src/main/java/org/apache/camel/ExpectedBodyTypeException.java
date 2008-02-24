@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Thrown if the body could not be converted to the required type
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ExpectedBodyTypeException extends RuntimeCamelException {
     private final Exchange exchange;

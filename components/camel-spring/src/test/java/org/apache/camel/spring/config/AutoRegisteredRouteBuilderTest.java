@@ -37,7 +37,7 @@ import org.springframework.core.io.ClassPathResource;
 import java.util.List;
 
 /**
- * @version $Revision: 566917 $
+ * @version $Revision$
  */
 public class AutoRegisteredRouteBuilderTest extends XmlConfigTestSupport {
 

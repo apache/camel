@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 import de.odysseus.el.util.SimpleContext;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class JuelTest extends TestCase {
 

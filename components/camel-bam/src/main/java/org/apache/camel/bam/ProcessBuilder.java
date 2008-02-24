@@ -40,7 +40,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * A builder of a process definition
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 public abstract class ProcessBuilder extends RouteBuilder {
     private static int processCounter;

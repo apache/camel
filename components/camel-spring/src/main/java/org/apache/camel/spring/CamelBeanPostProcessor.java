@@ -42,7 +42,7 @@ import java.lang.reflect.Method;
  * {@link Producer} instances together with binding methods annotated with
  * {@link @MessageDriven} to a Camel consumer.
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "beanPostProcessor")
 @XmlAccessorType(XmlAccessType.FIELD)

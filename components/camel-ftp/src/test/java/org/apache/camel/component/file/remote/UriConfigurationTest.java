@@ -23,7 +23,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 
 
 /**
- * @version $Revision: 532790 $
+ * @version $Revision$
  */
 public class UriConfigurationTest extends TestSupport {
     protected CamelContext context = new DefaultCamelContext();

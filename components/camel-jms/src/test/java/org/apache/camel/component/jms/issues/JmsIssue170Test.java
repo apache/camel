@@ -26,7 +26,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class JmsIssue170Test extends Issue170Test {
     @Override

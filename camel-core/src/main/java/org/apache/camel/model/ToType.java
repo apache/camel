@@ -36,7 +36,7 @@ import org.apache.camel.processor.SendProcessor;
 /**
  * Represents an XML &lt;to/&gt; element
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)

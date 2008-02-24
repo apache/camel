@@ -30,7 +30,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * An <a href="http://activemq.apache.org/camel/event.html">Event Component</a>
  * for working with Spring ApplicationEvents
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class EventComponent extends DefaultComponent<Exchange> implements ApplicationContextAware {
     private ApplicationContext applicationContext;

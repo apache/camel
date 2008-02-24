@@ -22,7 +22,7 @@ import org.apache.commons.httpclient.HttpClient;
 /**
  * A plugable strategy for configuring the HttpClient used by this component
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface HttpClientConfigurer {
     /**

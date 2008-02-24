@@ -28,7 +28,7 @@ import org.apache.camel.Service;
 /**
  * A helper class for folks writing delegate listener strategies
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DelegateLifecycleStrategy implements LifecycleStrategy {
     private final LifecycleStrategy delegate;

@@ -30,7 +30,7 @@ import org.apache.camel.model.language.XQueryExpression;
  * Represents an expression clause within the DSL which when the expression is complete
  * the clause continues to another part of the DSL
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ExpressionClause<T> extends ExpressionType {
     private T result;

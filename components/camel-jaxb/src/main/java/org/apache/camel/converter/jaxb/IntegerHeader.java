@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "intHeader")
 @XmlAccessorType(value = XmlAccessType.FIELD)

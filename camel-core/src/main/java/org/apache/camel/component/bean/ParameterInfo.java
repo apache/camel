@@ -21,7 +21,7 @@ import java.lang.annotation.Annotation;
 import org.apache.camel.Expression;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class ParameterInfo {
     private final int index;

@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 /**
  * Represents an XML &lt;from/&gt; element
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 @XmlRootElement(name = "from")
 @XmlAccessorType(XmlAccessType.FIELD)

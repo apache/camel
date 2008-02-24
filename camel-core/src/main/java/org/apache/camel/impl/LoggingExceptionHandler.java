@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
  * A default implementation of {@link ExceptionHandler} which uses a {@link Logger} to
  * log to an arbitrary {@link Log} with some {@link LoggingLevel}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class LoggingExceptionHandler implements ExceptionHandler {
     private final Logger logger;

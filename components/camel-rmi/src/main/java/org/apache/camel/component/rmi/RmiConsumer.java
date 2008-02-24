@@ -33,7 +33,7 @@ import org.apache.camel.impl.DefaultConsumer;
  * A {@link Consumer} which uses RMI's {@see UnicastRemoteObject} to consume
  * method invocations.
  * 
- * @version $Revision: 533758 $
+ * @version $Revision$
  */
 public class RmiConsumer extends DefaultConsumer<BeanExchange> implements InvocationHandler {
 

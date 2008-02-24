@@ -26,7 +26,7 @@ import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultProducer;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class IBatisProducer extends DefaultProducer {
     private final IBatisEndpoint endpoint;

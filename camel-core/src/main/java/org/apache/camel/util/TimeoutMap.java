@@ -21,7 +21,7 @@ package org.apache.camel.util;
  * Represents a thread safe map of values which timeout after a period of
  * inactivity.
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 public interface TimeoutMap extends Runnable {
 

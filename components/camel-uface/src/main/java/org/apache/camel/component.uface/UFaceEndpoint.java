@@ -28,7 +28,7 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.Realm;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class UFaceEndpoint extends ListEndpoint {
     public UFaceEndpoint(String uri, UFaceComponent component) {

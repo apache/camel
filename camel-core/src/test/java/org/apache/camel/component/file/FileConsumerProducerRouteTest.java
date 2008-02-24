@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 529902 $
+ * @version $Revision$
  */
 public class FileConsumerProducerRouteTest extends ContextTestSupport {
     public void testFileRoute() throws Exception {

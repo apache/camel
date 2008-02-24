@@ -29,7 +29,7 @@ import org.apache.camel.Processor;
 /**
  * A default implementation of an event driven {@link Consumer} which uses the {@link PollingConsumer}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DefaultScheduledPollConsumer<E extends Exchange> extends ScheduledPollConsumer<E> {
     private PollingConsumer<E> pollingConsumer;

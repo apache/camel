@@ -18,7 +18,7 @@
 package org.apache.camel.model;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface Block {
     void addOutput(ProcessorType processorType);

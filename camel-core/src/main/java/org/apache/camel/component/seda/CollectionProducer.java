@@ -29,7 +29,7 @@ import org.apache.camel.impl.DefaultProducer;
 /**
  * A simple {@link Producer} which just appends to a {@link Collection} the {@link Exchange} object.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class CollectionProducer extends DefaultProducer implements AsyncProcessor {
     private final Collection<Exchange> queue;

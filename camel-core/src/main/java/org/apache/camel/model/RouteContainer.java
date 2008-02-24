@@ -21,7 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElementRef;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface RouteContainer {
     /**

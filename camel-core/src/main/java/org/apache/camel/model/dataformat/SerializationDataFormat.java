@@ -25,7 +25,7 @@ import org.apache.camel.impl.RouteContext;
 /**
  * Represents the Java Serialization {@link DataFormat}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "serialization")
 public class SerializationDataFormat extends DataFormatType {

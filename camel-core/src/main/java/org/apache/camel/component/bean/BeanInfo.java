@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Represents the metadata about a bean type created via a combination of
  * introspection and annotations together with some useful sensible defaults
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 public class BeanInfo {
     private static final transient Log LOG = LogFactory.getLog(BeanInfo.class);

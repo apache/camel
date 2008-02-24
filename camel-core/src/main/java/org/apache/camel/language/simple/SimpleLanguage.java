@@ -41,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
  * <li>sys.foo to access the system property called 'foo'</li>
  * </ul>
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class SimpleLanguage implements Language {
 

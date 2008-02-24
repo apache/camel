@@ -29,7 +29,7 @@ import java.util.Timer;
  * Represents the component that manages {@link TimerEndpoint}.  It holds the
  * list of {@link TimerConsumer} objects that are started.
  *
- * @version $Revision: 519973 $
+ * @version $Revision$
  */
 public class TimerComponent extends DefaultComponent<Exchange> {
     private Map<String, Timer> timers = new HashMap<String, Timer>();

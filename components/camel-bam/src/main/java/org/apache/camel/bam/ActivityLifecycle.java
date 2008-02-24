@@ -17,7 +17,7 @@
 package org.apache.camel.bam;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public enum ActivityLifecycle {
     Started, Completed

@@ -26,7 +26,7 @@ import org.apache.camel.RuntimeCamelException;
 /**
  * Represents the configuration data for communicating over email
  *
- * @version $Revision: 532790 $
+ * @version $Revision$
  */
 public class MailConfiguration implements Cloneable {
     private String defaultEncoding;

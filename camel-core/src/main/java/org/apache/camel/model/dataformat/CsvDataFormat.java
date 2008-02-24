@@ -28,7 +28,7 @@ import org.apache.camel.spi.DataFormat;
 /**
  * Represents a CSV (Comma Separated Values) {@link DataFormat}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "csv")
 @XmlAccessorType(XmlAccessType.FIELD)

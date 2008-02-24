@@ -59,7 +59,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class ProcessorType<Type extends ProcessorType> implements Block {
     public static final String DEFAULT_TRACE_CATEGORY = "org.apache.camel.TRACE";

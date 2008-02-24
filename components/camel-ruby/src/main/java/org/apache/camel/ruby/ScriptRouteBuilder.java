@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  * Provide some helper methods for building routes from scripting languages
  * with a minimum amount of noise using state for the current node in the DSL
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class ScriptRouteBuilder extends RouteBuilder {
     private static final transient Log LOG = LogFactory.getLog(ScriptRouteBuilder.class);

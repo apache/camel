@@ -37,7 +37,7 @@ import org.apache.camel.converter.NIOConverter;
  * Some simple payload conversions to I/O <a
  * href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
  * 
- * @version $Revision: 533630 $
+ * @version $Revision$
  */
 
 @Converter

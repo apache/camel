@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A simple aggregator which just appends the message bodies together
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MyAggregator implements AggregationStrategy {
     private static final transient Log LOG = LogFactory.getLog(MyAggregator.class);

@@ -26,7 +26,7 @@ import org.apache.camel.Message;
 /**
  * Processes the XSLT result as a String
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class StringResultHandler implements ResultHandler {
     StringWriter buffer = new StringWriter();

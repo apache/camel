@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxb.MessageType;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DumpToXmlTest extends ContextTestSupport {
     public void testDumplFilesToJaxb() throws Exception {

@@ -40,7 +40,7 @@ import org.springframework.jms.listener.SimpleMessageListenerContainer;
 import org.springframework.jms.support.destination.DestinationResolver;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class Requestor extends ServiceSupport implements MessageListener {
     private static final transient Log LOG = LogFactory.getLog(Requestor.class);

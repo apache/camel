@@ -31,7 +31,7 @@ import org.springframework.core.io.Resource;
  * An <a href="http://activemq.apache.org/camel/xslt.html">XSLT Component</a>
  * for performing XSLT transforms of messages
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class XsltComponent extends ResourceBasedComponent {
     private XmlConverter xmlConverter;

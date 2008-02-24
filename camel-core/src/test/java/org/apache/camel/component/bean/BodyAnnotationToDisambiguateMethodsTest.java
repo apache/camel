@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.naming.Context;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class BodyAnnotationToDisambiguateMethodsTest extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(BeanRouteTest.class);

@@ -31,7 +31,7 @@ import org.apache.camel.impl.EventDrivenPollingConsumer;
 import org.apache.commons.httpclient.HttpConnectionManager;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class JettyHttpEndpoint extends HttpEndpoint {
     private JettyHttpComponent component;

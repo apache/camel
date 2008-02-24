@@ -21,7 +21,7 @@ import java.io.Serializable;
 /**
  * A simple POJO for testing
  *
- * @version $Revision: 563665 $
+ * @version $Revision$
  */
 public class PurchaseOrder implements Serializable {
     private String product;

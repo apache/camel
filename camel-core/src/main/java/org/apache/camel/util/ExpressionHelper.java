@@ -22,7 +22,7 @@ import org.apache.camel.Expression;
 /**
  * A collection of helper methods for working with expressions.
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ExpressionHelper {
 

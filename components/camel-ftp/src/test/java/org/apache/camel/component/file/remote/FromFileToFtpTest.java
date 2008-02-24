@@ -20,7 +20,7 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class FromFileToFtpTest extends FtpRouteTest {
     public void testFtpRoute() throws Exception {

@@ -28,7 +28,7 @@ import org.apache.ftpserver.ftplet.Configuration;
 import org.apache.ftpserver.interfaces.FtpServerContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class FtpRouteTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;

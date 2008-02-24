@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * An expression which extracts the named header
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "header")
 public class HeaderExpression extends ExpressionType {

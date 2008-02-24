@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 529902 $
+ * @version $Revision$
  */
 public class FileRouteTest extends ContextTestSupport {
     protected Object expectedBody = "Hello there!";

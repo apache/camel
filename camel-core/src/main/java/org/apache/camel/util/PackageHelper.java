@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Some helper methods for working with Java packages and versioning.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class PackageHelper {
     public static final transient Log LOG = LogFactory.getLog(PackageHelper.class);

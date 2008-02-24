@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 /**
  * Marks a parameter as being the body of an inbound {@link Message}
  * 
- * @version $Revision: 523756 $
+ * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER })

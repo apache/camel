@@ -24,7 +24,7 @@ import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DefaultLanguageResolver implements LanguageResolver {
     protected static final FactoryFinder LANGUAGE_FACTORY = new FactoryFinder("META-INF/services/org/apache/camel/language/");

@@ -28,7 +28,7 @@ import org.apache.camel.Producer;
  * An {@link java.lang.reflect.InvocationHandler} which invokes a
  * message exchange on a camel {@link Endpoint}
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class CamelInvocationHandler implements InvocationHandler {
     private final Endpoint endpoint;

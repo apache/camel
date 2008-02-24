@@ -28,7 +28,7 @@ import org.apache.camel.impl.RouteContext;
 /**
  * For XPath expresions and predicates
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "xpath")
 @XmlAccessorType(XmlAccessType.FIELD)

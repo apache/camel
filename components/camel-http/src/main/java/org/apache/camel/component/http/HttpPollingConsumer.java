@@ -30,7 +30,7 @@ import java.io.IOException;
 /**
  * A polling HTTP consumer which by default performs a GET
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class HttpPollingConsumer extends PollingConsumerSupport<HttpExchange> {
     private final HttpEndpoint endpoint;

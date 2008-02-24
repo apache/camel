@@ -44,7 +44,7 @@ import org.ufacekit.ui.controls.UITableColumn;
 import org.ufacekit.ui.layouts.GridLayoutData;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class UFaceBrowser {
     private final DefaultCamelContext camelContext;

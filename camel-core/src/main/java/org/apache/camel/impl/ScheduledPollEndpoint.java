@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * A base class for {@link Endpoint} which creates a {@link ScheduledPollConsumer}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class ScheduledPollEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     private Map consumerProperties;

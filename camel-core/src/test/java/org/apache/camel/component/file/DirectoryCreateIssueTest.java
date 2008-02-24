@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Albert Moraal
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DirectoryCreateIssueTest extends TestSupport {
     private static final Logger log = Logger.getLogger(DirectoryCreateIssueTest.class);

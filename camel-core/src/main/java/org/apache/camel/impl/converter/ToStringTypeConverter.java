@@ -22,7 +22,7 @@ import org.apache.camel.TypeConverter;
  * A simple converter that can convert any object to a String type by using the
  * toString() method of the object.
  * 
- * @version $Revision: 523731 $
+ * @version $Revision$
  */
 public class ToStringTypeConverter implements TypeConverter {
 

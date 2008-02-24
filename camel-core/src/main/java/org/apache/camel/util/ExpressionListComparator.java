@@ -27,7 +27,7 @@ import org.apache.camel.Expression;
  * {@link org.apache.camel.Expression} objects which is evaluated
  * on each exchange to compare them
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ExpressionListComparator implements Comparator<Exchange> {
     private final List<Expression> expressions;

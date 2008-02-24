@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  * Base class for implementation inheritance for different clauses in the <a
  * href="http://activemq.apache.org/camel/dsl.html">Java DSL</a>
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 public abstract class BuilderSupport {
     private CamelContext context;

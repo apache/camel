@@ -21,7 +21,7 @@ import org.apache.camel.Expression;
 /**
  * A strategy for creating a default parameter expression for a given type
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public interface ParameterMappingStrategy {
 

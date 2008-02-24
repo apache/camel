@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Some helper methods for working with {@link Endpoint} instances
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class EndpointHelper {
     private static final transient Log LOG = LogFactory.getLog(EndpointHelper.class);

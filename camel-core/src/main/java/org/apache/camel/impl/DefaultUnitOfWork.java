@@ -29,7 +29,7 @@ import org.apache.camel.spi.UnitOfWork;
 /**
  * The default implementation of {@link UnitOfWork}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DefaultUnitOfWork implements UnitOfWork {
     private List<Synchronization> synchronizations;

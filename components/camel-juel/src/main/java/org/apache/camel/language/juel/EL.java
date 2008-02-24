@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
 /**
  * An annotation for injection of EL (JSP & JSF) expressions into method parameters, fields or properties
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})

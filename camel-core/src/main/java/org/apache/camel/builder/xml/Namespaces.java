@@ -31,7 +31,7 @@ import org.w3c.dom.Node;
 /**
  * A helper class for working with namespaces or creating namespace based expressions
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class Namespaces {
     public static final String DEFAULT_NAMESPACE = "http://activemq.apache.org/camel/schema/spring";

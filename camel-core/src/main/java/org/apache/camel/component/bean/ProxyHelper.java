@@ -24,7 +24,7 @@ import org.apache.camel.Producer;
 /**
  * A helper class for creating proxies which delegate to Camel
  * 
- * @version $Revision: 519973 $
+ * @version $Revision$
  */
 public class ProxyHelper {
 

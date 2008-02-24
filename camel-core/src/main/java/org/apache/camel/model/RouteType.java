@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Represents an XML &lt;route/&gt; element
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 @XmlRootElement(name = "route")
 @XmlType(propOrder = {"inputs", "outputs" })

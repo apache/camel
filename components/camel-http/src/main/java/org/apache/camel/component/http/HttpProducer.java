@@ -34,7 +34,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class HttpProducer extends DefaultProducer<HttpExchange> implements Producer<HttpExchange> {
     private static final String HTTP_RESPONSE_CODE = "http.responseCode";

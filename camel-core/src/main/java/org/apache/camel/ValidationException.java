@@ -22,7 +22,7 @@ package org.apache.camel;
  * that it is easy to treat all validation errors in a similar way irrespective
  * of the particular validation technology used.
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 public class ValidationException extends CamelExchangeException {
 

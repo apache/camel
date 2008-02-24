@@ -27,7 +27,7 @@ import org.apache.camel.impl.RouteContext;
 import org.apache.camel.spi.Policy;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "policy")
 @XmlAccessorType(XmlAccessType.FIELD)

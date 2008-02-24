@@ -23,7 +23,7 @@ import org.apache.camel.impl.RouteContext;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlType(name = "interceptorType")
 public abstract class InterceptorType extends OutputType implements Block {

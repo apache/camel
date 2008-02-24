@@ -24,7 +24,7 @@ import org.apache.camel.util.CamelContextHelper;
 /**
  * A constant (singleton) bean implementation of {@link BeanHolder}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ConstantBeanHolder implements BeanHolder {
     private final Object bean;

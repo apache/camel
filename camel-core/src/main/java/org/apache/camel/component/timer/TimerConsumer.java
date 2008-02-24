@@ -32,7 +32,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * @version $Revision: 523047 $
+ * @version $Revision$
  */
 public class TimerConsumer extends DefaultConsumer<Exchange> {
     private static final transient Log LOG = LogFactory.getLog(TimerConsumer.class);

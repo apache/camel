@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
  * exchange preventing any particular orchestration or
  * <a href="http://activemq.apache.org/camel/bam.html">BAM</a>
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class NoCorrelationKeyException extends CamelExchangeException {
     private final BamProcessorSupport processor;

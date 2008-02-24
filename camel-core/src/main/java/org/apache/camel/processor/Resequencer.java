@@ -32,7 +32,7 @@ import org.apache.camel.util.ExpressionListComparator;
  * An implementation of the <a href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>
  * which can reorder messages within a batch.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class Resequencer extends BatchProcessor {
     public Resequencer(Endpoint endpoint, Processor processor, Expression<Exchange> expression) {

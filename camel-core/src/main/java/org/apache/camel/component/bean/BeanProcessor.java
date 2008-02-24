@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
  * A {@link Processor} which converts the inbound exchange to a method
  * invocation on a POJO
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class BeanProcessor extends ServiceSupport implements Processor {
     public static final String METHOD_NAME = "org.apache.camel.MethodName";

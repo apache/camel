@@ -28,7 +28,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class MethodInfo {
     private Class type;

@@ -17,7 +17,7 @@
 package org.apache.camel;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class AlreadyStoppedException extends CamelException {
 

@@ -29,7 +29,7 @@ import org.apache.camel.util.ExpressionHelper;
  * create an instance of this class with the expression
  * <code>header("JMSTimestamp")</code> and a delay value of 25000L.
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class Delayer extends DelayProcessorSupport {
     private Expression<Exchange> timeExpression;

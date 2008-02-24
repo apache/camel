@@ -25,7 +25,7 @@ import org.springframework.context.ApplicationContext;
  * A {@link Registry} implementation which looks up the objects in the Spring
  * {@link ApplicationContext}
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ApplicationContextRegistry implements Registry {
     private ApplicationContext applicationContext;

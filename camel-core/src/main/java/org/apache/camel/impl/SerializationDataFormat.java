@@ -31,7 +31,7 @@ import org.apache.camel.spi.DataFormat;
  * The <a href="http://activemq.apache.org/camel/data-format.html">data format</a>
  * using Java Serialiation.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SerializationDataFormat implements DataFormat {
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException {

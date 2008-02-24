@@ -32,7 +32,7 @@ import org.apache.camel.impl.DefaultCamelContext;
  * example will send some text messages on to a JMS Queue, consume them and
  * persist them to disk
  * 
- * @version $Revision: 529902 $
+ * @version $Revision$
  */
 public final class CamelJmsToFileExample {
 

@@ -22,7 +22,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: 566917 $
+ * @version $Revision$
  */
 public class RouteBuilderRefTest extends XmlConfigTestSupport {
   

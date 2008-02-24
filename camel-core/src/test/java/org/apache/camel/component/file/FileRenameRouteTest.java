@@ -17,7 +17,7 @@
 package org.apache.camel.component.file;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class FileRenameRouteTest extends FileRouteTest {
     @Override

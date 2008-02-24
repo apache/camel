@@ -24,7 +24,7 @@ import org.apache.camel.processor.Interceptor;
 /**
  * A {@link Processor} which proceeds on an {@link Interceptor}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ProceedProcessor implements Processor {
     private final Interceptor interceptor;

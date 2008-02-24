@@ -25,7 +25,7 @@ import org.apache.camel.RuntimeCamelException;
 /**
  * An exception thrown if a response message from an InOut could not be processed
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class FailedToProcessResponse extends RuntimeCamelException {
     private final Message response;

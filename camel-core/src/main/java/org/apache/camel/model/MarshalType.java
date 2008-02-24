@@ -38,7 +38,7 @@ import org.apache.camel.spi.DataFormat;
 /**
  * Marshals to a binary payload using the given {@link DataFormatType}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "marshal")
 @XmlAccessorType(XmlAccessType.FIELD)

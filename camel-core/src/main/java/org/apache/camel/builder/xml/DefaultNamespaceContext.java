@@ -31,7 +31,7 @@ import org.apache.camel.spi.NamespaceAware;
  * An implementation of {@link NamespaceContext} which uses a simple Map where
  * the keys are the prefixes and the values are the URIs
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware {
 

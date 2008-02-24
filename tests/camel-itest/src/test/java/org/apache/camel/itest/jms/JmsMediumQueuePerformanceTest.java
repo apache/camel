@@ -18,7 +18,7 @@
 package org.apache.camel.itest.jms;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class JmsMediumQueuePerformanceTest extends JmsPerformanceTest {
     protected int mediumQueueCount = 1000;

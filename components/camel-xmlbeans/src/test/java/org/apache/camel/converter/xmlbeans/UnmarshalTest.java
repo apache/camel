@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.xmlbeans.XmlObject;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class UnmarshalTest extends ContextTestSupport {
 

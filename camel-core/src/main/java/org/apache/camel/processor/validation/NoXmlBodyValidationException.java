@@ -22,7 +22,7 @@ import org.apache.camel.ValidationException;
 /**
  * An exception found if no XML body is available on the inbound message
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class NoXmlBodyValidationException extends ValidationException {
 

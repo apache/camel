@@ -20,7 +20,7 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public interface MethodInvocation {
     Method getMethod();

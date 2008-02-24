@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
     private List<ExceptionType> exceptions = new ArrayList<ExceptionType>();

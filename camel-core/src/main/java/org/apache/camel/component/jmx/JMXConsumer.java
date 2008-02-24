@@ -24,7 +24,7 @@ import org.apache.camel.impl.DefaultConsumer;
 /**
  * Generate an Exchange after getting a JMX Notification
  * 
- * @version $Revision: 523016 $
+ * @version $Revision$
  */
 public class JMXConsumer extends DefaultConsumer implements NotificationListener {
 

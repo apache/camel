@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
  * Lets test that a number of headers MQSeries doesn't like to be sent are excluded when
  * forwarding a JMS message from one destination to another
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class LarsIssueTest  extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(LarsIssueTest.class);

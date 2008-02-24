@@ -40,7 +40,7 @@ import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.StreamResequencer;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "resequencer")
 public class ResequencerType extends ProcessorType<ProcessorType> {

@@ -35,7 +35,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  * Lets test that a number of headers MQSeries doesn't like to be sent are excluded when
  * forwarding a JMS message from one destination to another
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MQSeriesHeaderTest extends ContextTestSupport {
 

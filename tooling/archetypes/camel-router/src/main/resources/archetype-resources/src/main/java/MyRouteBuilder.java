@@ -26,7 +26,7 @@ import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 /**
  * A Camel Router
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MyRouteBuilder extends RouteBuilder {
 

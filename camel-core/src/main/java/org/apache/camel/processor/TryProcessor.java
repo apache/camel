@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Implements try/catch/finally type processing
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 public class TryProcessor extends ServiceSupport implements Processor {
     private static final transient Log LOG = LogFactory.getLog(TryProcessor.class);

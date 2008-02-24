@@ -26,7 +26,7 @@ import org.apache.camel.processor.validation.ValidatingProcessor;
 import org.springframework.core.io.Resource;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class SpringValidator extends ValidatingProcessor {
     private Resource schemaResource;

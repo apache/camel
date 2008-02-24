@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.camel.Processor;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class CatchProcessor extends DelegateProcessor {
     private List<Class> exceptions;

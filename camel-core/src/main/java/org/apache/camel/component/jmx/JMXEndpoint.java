@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Creates a CounterMonitor for jmx attributes
  * 
- * @version $Revision: 523016 $
+ * @version $Revision$
  */
 public class JMXEndpoint extends DefaultEndpoint<JMXExchange> {
 

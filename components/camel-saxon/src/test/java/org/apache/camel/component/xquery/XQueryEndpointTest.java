@@ -25,7 +25,7 @@ import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class XQueryEndpointTest extends SpringTestSupport {
     public void testSendMessageAndHaveItTransformed() throws Exception {

@@ -19,7 +19,7 @@ package org.apache.camel.language;
 import org.apache.camel.LanguageTestSupport;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class SimpleTest extends LanguageTestSupport {
 

@@ -46,7 +46,7 @@ import org.codehaus.plexus.util.cli.Commandline;
  * Runs Camel embedded with META-INF/services/*.xml spring files to try create DOT files for the
  * routing rules, then converts the DOT files into another format such as PNG
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  * @goal dot
  * @requiresDependencyResolution runtime
  * @phase prepare-package

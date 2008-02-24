@@ -19,7 +19,7 @@ package org.apache.camel;
 import java.util.Map;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public interface ProducerTemplate<E extends Exchange> extends Service {
     /**

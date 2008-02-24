@@ -33,7 +33,7 @@ import org.apache.camel.converter.ObjectConverter;
  * A Strategy used to convert between a Camel {@Exchange} and {@Message} to and
  * from a Mail {@link MimeMessage}
  * 
- * @version $Revision: 521240 $
+ * @version $Revision$
  */
 public class MailBinding {
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange) {

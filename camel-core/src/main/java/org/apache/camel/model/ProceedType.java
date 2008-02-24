@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "proceed")
 @XmlAccessorType(XmlAccessType.FIELD)

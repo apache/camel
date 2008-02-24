@@ -29,7 +29,7 @@ import org.apache.camel.builder.ProcessorFactory;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class ActivityBuilder implements ProcessorFactory {
     private ProcessBuilder processBuilder;

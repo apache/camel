@@ -22,7 +22,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version $Revision: 519901 $
+ * @version $Revision$
  */
 public class BeanExchange extends DefaultExchange {
 

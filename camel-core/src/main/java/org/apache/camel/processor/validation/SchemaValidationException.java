@@ -26,7 +26,7 @@ import org.apache.camel.ValidationException;
 /**
  * A Schema validation exception occurred
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 public class SchemaValidationException extends ValidationException {
     private final Object schema;

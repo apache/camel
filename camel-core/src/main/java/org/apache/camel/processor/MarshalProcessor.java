@@ -28,7 +28,7 @@ import org.apache.camel.spi.DataFormat;
  * Marshals the body of the incoming message using the given
  * <a href="http://activemq.apache.org/camel/data-format.html">data format</a>
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MarshalProcessor implements Processor {
     private final DataFormat dataFormat;

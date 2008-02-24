@@ -34,7 +34,7 @@ import org.apache.camel.spi.BrowsableEndpoint;
  * href="http://activemq.apache.org/camel/queue.html">Queue components</a> for
  * asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
  *
- * @version $Revision: 519973 $
+ * @version $Revision$
  */
 public class SedaEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint {
     private BlockingQueue<Exchange> queue;

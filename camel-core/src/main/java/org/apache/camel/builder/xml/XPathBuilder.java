@@ -50,7 +50,7 @@ import org.xml.sax.InputSource;
  *
  * @see XPathConstants#NODESET
  * 
- * @version $Revision: 531854 $
+ * @version $Revision$
  */
 public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicate<E>, NamespaceAware {
     private final String text;

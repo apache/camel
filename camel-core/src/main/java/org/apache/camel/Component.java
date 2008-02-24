@@ -20,7 +20,7 @@ package org.apache.camel;
  * A <a href="http://activemq.apache.org/camel/component.html">component</a> is
  * a factory of {@link Endpoint} objects.
  * 
- * @version $Revision: 519901 $
+ * @version $Revision$
  */
 public interface Component<E extends Exchange> {
 

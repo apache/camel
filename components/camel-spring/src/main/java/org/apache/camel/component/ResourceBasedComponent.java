@@ -27,7 +27,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class ResourceBasedComponent extends DefaultComponent<Exchange> {
     protected static final transient Log LOG = LogFactory.getLog(ValidatorComponent.class);

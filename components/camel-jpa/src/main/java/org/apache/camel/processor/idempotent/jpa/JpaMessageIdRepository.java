@@ -31,7 +31,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class JpaMessageIdRepository implements MessageIdRepository {
     protected static final String QUERY_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1 and x.messageId = ?2";

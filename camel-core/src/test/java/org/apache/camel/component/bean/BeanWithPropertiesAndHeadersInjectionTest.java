@@ -32,7 +32,7 @@ import javax.naming.Context;
 import java.util.Map;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class BeanWithPropertiesAndHeadersInjectionTest extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(BeanRouteTest.class);

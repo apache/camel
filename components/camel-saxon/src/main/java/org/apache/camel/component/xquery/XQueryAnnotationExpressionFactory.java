@@ -27,7 +27,7 @@ import org.apache.camel.language.NamespacePrefix;
 import java.lang.annotation.Annotation;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
     @Override

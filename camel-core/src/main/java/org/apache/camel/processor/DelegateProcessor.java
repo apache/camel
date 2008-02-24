@@ -26,7 +26,7 @@ import org.apache.camel.util.ServiceHelper;
  * A Delegate pattern which delegates processing to a nested processor which can
  * be useful for implementation inheritance when writing an {@link Policy}
  * 
- * @version $Revision: 519941 $
+ * @version $Revision$
  */
 public class DelegateProcessor extends ServiceSupport implements Processor {
     protected Processor processor;

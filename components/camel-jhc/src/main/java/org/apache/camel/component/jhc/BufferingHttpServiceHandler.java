@@ -1,7 +1,7 @@
 /*
  * $HeadURL: https://svn.apache.org/repos/asf/jakarta/httpcomponents/httpcore/tags/4.0-alpha5/module-nio/src/main/java/org/apache/http/nio/protocol/BufferingHttpServiceHandler.java $
- * $Revision: 547966 $
- * $Date: 2007-06-16 21:26:21 +0200 (Sat, 16 Jun 2007) $
+ * $Revision$
+ * $Date$
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one

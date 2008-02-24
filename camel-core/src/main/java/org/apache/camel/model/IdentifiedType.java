@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * &lt;/complexType>
  * </pre>
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlType(name = "identifiedType")
 @XmlAccessorType(XmlAccessType.FIELD)

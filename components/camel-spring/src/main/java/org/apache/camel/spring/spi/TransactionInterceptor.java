@@ -28,7 +28,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class TransactionInterceptor extends DelegateProcessor {
     private static final transient Log LOG = LogFactory.getLog(TransactionInterceptor.class);

@@ -23,7 +23,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SpringParameterTest extends SpringRunner {
     @DataProvider(name = "appContextAndProperties")

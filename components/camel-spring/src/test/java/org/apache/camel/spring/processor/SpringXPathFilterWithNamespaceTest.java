@@ -21,7 +21,7 @@ import org.apache.camel.processor.XPathFilterTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SpringXPathFilterWithNamespaceTest extends XPathFilterTest {
     @Override

@@ -23,7 +23,7 @@ import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 /**
  * A base class for a parser for a bean.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class BeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
     private Class type;

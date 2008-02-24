@@ -27,7 +27,7 @@ import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.RecipientList;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "recipientList")
 @XmlAccessorType(XmlAccessType.FIELD)

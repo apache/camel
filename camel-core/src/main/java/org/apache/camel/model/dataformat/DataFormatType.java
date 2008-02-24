@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlType(name = "dataFormatType")
 @XmlAccessorType(XmlAccessType.FIELD)

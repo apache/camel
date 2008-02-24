@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  * A useful base class for any processor which provides some kind of throttling
  * or delayed processing
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 public abstract class DelayProcessorSupport extends DelegateProcessor {
     private static final transient Log LOG = LogFactory.getLog(Delayer.class);

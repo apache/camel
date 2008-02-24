@@ -21,7 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @version $Revision: 520220 $
+ * @version $Revision$
  */
 public class LogRouteTest extends ContextTestSupport {
     private static final Log LOG = LogFactory.getLog(LogRouteTest.class);

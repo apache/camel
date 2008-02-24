@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "serviceActivation")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -23,7 +23,7 @@ import org.apache.camel.spi.Language;
 import javax.xml.xpath.XPathConstants;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class XPathTest extends LanguageTestSupport {
     public void testExpressions() throws Exception {

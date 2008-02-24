@@ -48,7 +48,7 @@ import org.apache.commons.logging.LogFactory;
  * A Mock endpoint which provides a literate, fluent API for testing routes
  * using a <a href="http://jmock.org/">JMock style</a> API.
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MockEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint {
     private static final transient Log LOG = LogFactory.getLog(MockEndpoint.class);

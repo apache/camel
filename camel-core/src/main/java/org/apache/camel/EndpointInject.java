@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
  *
  * If no name or uri is specified then the name is defaulted from the field, property or method name.
  *
- * @version $Revision: 523756 $
+ * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })

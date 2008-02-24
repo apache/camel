@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * endpoint should be configured, or a name of an endpoint which refers to a
  * Spring bean name in your Spring ApplicationContext.
  * 
- * @version $Revision: 523756 $
+ * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })

@@ -28,7 +28,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.DelegateProcessor;
 
 /**
- * @version $Revision: 530102 $
+ * @version $Revision$
  */
 public class InterceptorBuilderWithEndTest extends TestSupport {
 

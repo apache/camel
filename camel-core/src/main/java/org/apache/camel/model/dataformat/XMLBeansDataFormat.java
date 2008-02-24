@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 /**
  * Represents the XMLBeans XML {@link DataFormat}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "xmlBeans")
 @XmlAccessorType(XmlAccessType.FIELD)
