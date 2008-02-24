@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.model.IdentifiedType;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
 */ // to fudge the XSD generation
 @XmlRootElement(name = "proxy")
 public class CamelProxyFactoryType extends IdentifiedType {

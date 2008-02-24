@@ -38,7 +38,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * A command line tool for booting up a CamelContext using an optional Spring
  * ApplicationContext
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class Main extends ServiceSupport {
     private static final Log LOG = LogFactory.getLog(Main.class);

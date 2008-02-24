@@ -34,7 +34,7 @@ import java.util.Set;
 /**
  * Represents a JAXB2 representation of a Camel {@link Message}
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 @XmlRootElement(name = "message")
 @XmlAccessorType(value = XmlAccessType.FIELD)

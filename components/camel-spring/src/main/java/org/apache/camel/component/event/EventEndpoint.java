@@ -33,7 +33,7 @@ import org.springframework.context.ApplicationEvent;
  * An <a href="http://activemq.apache.org/camel/event.html">Event Endpoint</a>
  * for working with Spring ApplicationEvents
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class EventEndpoint extends DefaultEndpoint<Exchange> {
     private final EventComponent component;

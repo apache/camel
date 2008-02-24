@@ -32,7 +32,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * A helper class for working with predicates
  * 
- * @version $Revision: 520261 $
+ * @version $Revision$
  */
 public class PredicateBuilder {
 

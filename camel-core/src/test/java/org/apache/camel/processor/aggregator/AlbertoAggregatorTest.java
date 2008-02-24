@@ -35,7 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class AlbertoAggregatorTest extends ContextTestSupport {
     private Log log = LogFactory.getLog(this.getClass());

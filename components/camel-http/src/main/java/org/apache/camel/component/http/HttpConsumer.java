@@ -20,7 +20,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
- * @version $Revision: 534063 $
+ * @version $Revision$
  */
 public class HttpConsumer extends DefaultConsumer<HttpExchange> {
 

@@ -29,7 +29,7 @@ import org.apache.camel.util.ServiceHelper;
  * a {@link Processor}. This implementation does not support timeout based
  * receive methods such as {@link #receive(long)}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ProcessorPollingConsumer extends PollingConsumerSupport {
     private Processor processor;

@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.regex.Pattern;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class ExpressionBuilder {
 

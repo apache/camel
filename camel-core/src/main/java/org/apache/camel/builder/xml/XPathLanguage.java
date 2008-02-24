@@ -24,7 +24,7 @@ import org.apache.camel.spi.Language;
 import javax.xml.namespace.QName;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class XPathLanguage implements Language {
     private QName resultType;

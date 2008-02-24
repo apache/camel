@@ -25,7 +25,7 @@ package org.apache.camel;
  * as any arbitrary Java expression.
  *
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public interface Expression<E extends Exchange> {
 

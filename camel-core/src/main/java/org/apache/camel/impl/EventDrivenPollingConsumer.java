@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
  * asynchronous consumer mechanism along with a {@link BlockingQueue} to allow
  * the caller to pull messages on demand.
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class EventDrivenPollingConsumer<E extends Exchange> extends PollingConsumerSupport<E> implements
     Processor {

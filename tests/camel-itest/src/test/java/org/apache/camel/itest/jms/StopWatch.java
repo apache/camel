@@ -20,7 +20,7 @@ package org.apache.camel.itest.jms;
 import java.text.NumberFormat;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class StopWatch {
     private final String id;

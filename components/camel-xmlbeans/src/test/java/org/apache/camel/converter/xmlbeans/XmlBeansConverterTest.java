@@ -23,7 +23,7 @@ import org.apache.camel.Message;
 import org.apache.xmlbeans.XmlObject;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class XmlBeansConverterTest extends ContextTestSupport {
     public void testConvertToXmlObject() throws Exception {

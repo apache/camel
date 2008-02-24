@@ -26,7 +26,7 @@ import java.util.Map;
  * Represents the component that manages {@link DirectEndpoint}. It holds the
  * list of named direct endpoints.
  *
- * @version $Revision: 519973 $
+ * @version $Revision$
  */
 public class DirectComponent<E extends Exchange> extends DefaultComponent<E> {
 

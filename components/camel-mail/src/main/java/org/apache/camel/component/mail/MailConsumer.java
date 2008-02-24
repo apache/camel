@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  * A {@link Consumer} which consumes messages from JavaMail using a
  * {@link Transport} and dispatches them to the {@link Processor}
  * 
- * @version $Revision: 523430 $
+ * @version $Revision$
  */
 public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements MessageCountListener {
     private static final transient Log LOG = LogFactory.getLog(MailConsumer.class);

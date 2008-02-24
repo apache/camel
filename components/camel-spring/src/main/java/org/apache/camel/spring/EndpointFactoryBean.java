@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.*;
 /**
  * A {@link FactoryBean} which instantiates {@link Endpoint} objects
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "endpoint")
 @XmlAccessorType(XmlAccessType.FIELD)

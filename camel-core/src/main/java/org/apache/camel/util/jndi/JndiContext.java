@@ -45,7 +45,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A default JNDI context
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/27 03:52:39 $
+ * @version $Revision$ $Date$
  */
 public class JndiContext implements Context, Serializable {
     public static final String SEPARATOR = "/";

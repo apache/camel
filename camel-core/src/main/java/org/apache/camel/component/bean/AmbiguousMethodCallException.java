@@ -26,7 +26,7 @@ import org.apache.camel.Exchange;
  * An exception thrown if an attempted method invocation resulted in an ambiguous method
  * such that multiple methods match the inbound message exchange
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class AmbiguousMethodCallException extends CamelExchangeException {
     private final Collection<MethodInfo> methods;

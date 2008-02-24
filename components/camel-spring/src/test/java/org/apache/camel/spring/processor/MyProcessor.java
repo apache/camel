@@ -24,7 +24,7 @@ import org.apache.camel.Message;
 /**
  * A simple processor which transforms the input
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
 */
 public class MyProcessor implements Processor {
     public void process(Exchange exchange) {

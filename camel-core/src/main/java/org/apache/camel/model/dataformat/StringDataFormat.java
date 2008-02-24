@@ -25,7 +25,7 @@ import org.apache.camel.impl.RouteContext;
 /**
  * Represents the String (text based) {@link DataFormat}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "string")
 public class StringDataFormat extends DataFormatType {

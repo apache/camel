@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version $Revision: 534495 $
+ * @version $Revision$
  */
 public class XPathWithNamespacesFromDomTest extends ContextTestSupport {
 

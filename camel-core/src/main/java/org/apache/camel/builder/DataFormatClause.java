@@ -33,7 +33,7 @@ import org.apache.camel.spi.DataFormat;
  * An expression for constructing the different possible {@link DataFormat}
  * options.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DataFormatClause<T extends ProcessorType> {
     private final T processorType;

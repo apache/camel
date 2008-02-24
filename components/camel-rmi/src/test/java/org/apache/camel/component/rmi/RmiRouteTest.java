@@ -30,7 +30,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
- * @version $Revision: 520220 $
+ * @version $Revision$
  */
 public class RmiRouteTest extends TestCase {
 

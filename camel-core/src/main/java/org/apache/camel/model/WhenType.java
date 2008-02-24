@@ -24,7 +24,7 @@ import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.FilterProcessor;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "when")
 public class WhenType<Type extends ProcessorType> extends ExpressionNode {

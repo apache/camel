@@ -35,7 +35,7 @@ import java.lang.reflect.Method;
  * instance information which allows derived classes to specialise the process
  * instance entity.
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     private static final transient Log LOG = LogFactory.getLog(JpaBamProcessorSupport.class);

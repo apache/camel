@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
  * Marks a parameter as being an injection point of the headers of an inbound {@link Message}
  *
  * @see Message#getHeaders()
- * @version $Revision: 523756 $
+ * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER })

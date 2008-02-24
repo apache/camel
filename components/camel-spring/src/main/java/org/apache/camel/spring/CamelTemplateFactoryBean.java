@@ -34,7 +34,7 @@ import org.springframework.beans.factory.InitializingBean;
  * A Spring {@link FactoryBean} for creating a new {@link CamelTemplate}
  * instance with a minimum of XML
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 @XmlRootElement(name = "camelTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)

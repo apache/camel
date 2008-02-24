@@ -22,7 +22,7 @@ import org.apache.camel.impl.DefaultMessage;
 /**
  * A {@link Message} for a JMX Notification
  * 
- * @version $Revision: 520985 $
+ * @version $Revision$
  */
 public class JMXMessage extends DefaultMessage {
 

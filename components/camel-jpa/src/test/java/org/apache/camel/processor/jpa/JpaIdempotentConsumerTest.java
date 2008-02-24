@@ -37,7 +37,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import static org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository.jpaMessageIdRepository;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class JpaIdempotentConsumerTest extends IdempotentConsumerTest {
     protected static final String SELECT_ALL_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";

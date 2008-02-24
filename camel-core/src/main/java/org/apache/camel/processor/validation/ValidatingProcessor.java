@@ -37,7 +37,7 @@ import org.apache.camel.Processor;
  * A processor which validates the XML version of the inbound message body
  * against some schema either in XSD or RelaxNG
  * 
- * @version $Revision: 453155 $
+ * @version $Revision$
  */
 public class ValidatingProcessor implements Processor {
     private Schema schema;

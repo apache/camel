@@ -27,7 +27,7 @@ import javax.naming.spi.InitialContextFactory;
  * A factory of the Cameel InitialContext which allows a Map to be used to create a
  * JNDI context.
  *
- * @version $Revision: 1.2 $
+ * @version $Revision$
  */
 public class CamelInitialContextFactory implements InitialContextFactory {
 

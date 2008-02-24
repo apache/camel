@@ -24,7 +24,7 @@ import static org.apache.camel.builder.PredicateBuilder.evaluateValuePredicate;
 /**
  * A useful base class for {@link Predicate} and {@link Expression} implementations
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class ExpressionSupport<E extends Exchange> implements Expression<E> , Predicate<E> {
 

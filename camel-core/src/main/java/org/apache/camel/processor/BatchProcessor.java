@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
  * A base class for any kind of {@link Processor} which implements some kind of
  * batch processing.
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class BatchProcessor extends ServiceSupport implements Runnable {
     public static final long DEFAULT_BATCH_TIMEOUT = 1000L;

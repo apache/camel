@@ -30,7 +30,7 @@ import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.Throttler;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "throttler")
 @XmlAccessorType(XmlAccessType.FIELD)

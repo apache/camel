@@ -20,7 +20,7 @@ package org.apache.camel;
  * Base class for all Camel checked exceptions typically thrown by a
  * {@link Processor}
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class CamelException extends Exception {
 

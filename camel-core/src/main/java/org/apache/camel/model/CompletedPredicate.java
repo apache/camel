@@ -28,7 +28,7 @@ import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.language.ExpressionType;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "completedPredicate")
 @XmlAccessorType(XmlAccessType.FIELD)

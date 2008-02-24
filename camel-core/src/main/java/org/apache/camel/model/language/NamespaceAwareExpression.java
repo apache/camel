@@ -32,7 +32,7 @@ import org.apache.camel.spi.NamespaceAware;
  * A useful base class for any expression which may be namespace or XML content aware
  * such as {@link XPathExpression} or {@link XQueryExpression}
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class NamespaceAwareExpression extends ExpressionType implements NamespaceAware {

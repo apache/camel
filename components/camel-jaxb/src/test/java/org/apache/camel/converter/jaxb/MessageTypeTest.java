@@ -25,7 +25,7 @@ import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MessageTypeTest extends ExchangeTestSupport {
     protected JAXBContext jaxbContext;

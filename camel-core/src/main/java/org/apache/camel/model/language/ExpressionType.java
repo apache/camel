@@ -42,7 +42,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A useful base class for an expression
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlType(name = "expressionType")
 @XmlAccessorType(XmlAccessType.FIELD)

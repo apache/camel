@@ -20,7 +20,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class QuartzConsumer extends DefaultConsumer<QuartzExchange> {
     public QuartzConsumer(QuartzEndpoint endpoint, Processor processor) {

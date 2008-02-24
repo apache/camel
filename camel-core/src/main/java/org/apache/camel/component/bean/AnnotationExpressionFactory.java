@@ -27,7 +27,7 @@ import java.lang.annotation.Annotation;
  * A factory which creates an {@link Expression} object from an annotation on a field, property or method parameter
  * of a specified type.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface AnnotationExpressionFactory {
 

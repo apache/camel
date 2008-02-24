@@ -19,7 +19,7 @@ package org.apache.camel.component.bean;
 import org.apache.camel.CamelException;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class NoBeanAvailableException extends CamelException {
     private final String name;

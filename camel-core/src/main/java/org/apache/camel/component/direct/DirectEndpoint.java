@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  * Represents a direct endpoint that synchronously invokes the consumers of the
  * endpoint when a producer sends a message to it.
  * 
- * @version $Revision: 519973 $
+ * @version $Revision$
  */
 public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     private static final Log LOG = LogFactory.getLog(DirectEndpoint.class);

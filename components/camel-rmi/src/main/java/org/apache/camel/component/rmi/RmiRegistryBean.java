@@ -24,7 +24,7 @@ import org.apache.camel.component.bean.ParameterMappingStrategy;
 import org.apache.camel.CamelContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class RmiRegistryBean extends RegistryBean {
 

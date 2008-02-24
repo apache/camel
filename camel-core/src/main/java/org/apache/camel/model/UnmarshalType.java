@@ -38,7 +38,7 @@ import org.apache.camel.spi.DataFormat;
 /**
  * Unmarshals the binary payload using the given {@link DataFormatType}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "unmarshal")
 @XmlAccessorType(XmlAccessType.FIELD)

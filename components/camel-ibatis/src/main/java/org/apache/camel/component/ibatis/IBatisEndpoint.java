@@ -31,7 +31,7 @@ import com.ibatis.sqlmap.client.SqlMapClient;
  * An <a href="http://activemq.apache.org/camel/ibatis.html>iBatis Endpoint</a>
  * for performing SQL operations using an XML mapping file to abstract away the SQL
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class IBatisEndpoint extends DefaultPollingEndpoint {
     private final String entityName;

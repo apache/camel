@@ -28,7 +28,7 @@ import org.apache.camel.Predicate;
 /**
  * For XQuery expresions and predicates
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "xquery")
 @XmlAccessorType(XmlAccessType.FIELD)

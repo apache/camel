@@ -26,7 +26,7 @@ import javax.management.Notification;
 /**
  * A {@link Exchange} for a jmx notification
  * 
- * @version $Revision: 520985 $
+ * @version $Revision$
  */
 public class JMXExchange extends DefaultExchange {
 

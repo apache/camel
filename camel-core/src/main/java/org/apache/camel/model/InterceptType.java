@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.util.Collection;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "intercept")
 @XmlAccessorType(XmlAccessType.FIELD)

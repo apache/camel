@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class ErrorHandlerSupport extends ServiceSupport implements ErrorHandler {
     private Map<Class, ExceptionType> exceptionPolicices = new IdentityHashMap<Class, ExceptionType>();

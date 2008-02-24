@@ -27,7 +27,7 @@ import java.io.File;
 import java.util.Collections;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class FileExchangeTest extends ContextTestSupport {
     protected File file;

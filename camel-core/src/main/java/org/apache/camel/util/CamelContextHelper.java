@@ -33,7 +33,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * A number of helper methods
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class CamelContextHelper {
     /**

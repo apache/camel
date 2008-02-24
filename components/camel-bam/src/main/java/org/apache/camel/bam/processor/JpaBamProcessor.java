@@ -33,7 +33,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * the persistence and uses the {@link ProcessInstance} entity to store the
  * process information.
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 public class JpaBamProcessor extends JpaBamProcessorSupport<ProcessInstance> {
     private static final transient Log LOG = LogFactory.getLog(JpaBamProcessor.class);

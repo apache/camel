@@ -23,7 +23,7 @@ import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.spi.DataFormat;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DataFormatTest extends ContextTestSupport {
 

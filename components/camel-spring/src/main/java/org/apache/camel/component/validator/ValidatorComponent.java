@@ -28,7 +28,7 @@ import java.util.Map;
  * The <a href="http://activemq.apache.org/camel/validator.html">Validator Component</a>
  * for validating XML against some schema
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ValidatorComponent extends ResourceBasedComponent {
 

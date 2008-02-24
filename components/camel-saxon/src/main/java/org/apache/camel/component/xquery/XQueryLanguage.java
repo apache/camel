@@ -23,7 +23,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class XQueryLanguage implements Language {
 

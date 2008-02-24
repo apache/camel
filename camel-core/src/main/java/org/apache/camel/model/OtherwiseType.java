@@ -24,7 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "otherwise")
 @XmlAccessorType(XmlAccessType.FIELD)

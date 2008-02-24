@@ -27,7 +27,7 @@ import java.lang.reflect.Method;
  * particularly for derived types of array component types and dealing with
  * primitive array types.
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class EnumTypeConverter implements TypeConverter {
     public <T> T convertTo(Class<T> type, Object value) {

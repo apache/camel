@@ -30,7 +30,7 @@ import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.TryProcessor;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "try")
 @XmlAccessorType(XmlAccessType.FIELD)

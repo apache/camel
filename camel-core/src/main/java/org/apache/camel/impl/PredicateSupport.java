@@ -22,7 +22,7 @@ import org.apache.camel.Predicate;
 /**
  * A useful base class for {@link Predicate} implementations
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class PredicateSupport<E extends Exchange> implements Predicate<E> {
 

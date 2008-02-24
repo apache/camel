@@ -24,7 +24,7 @@ import javax.xml.bind.Marshaller;
 import org.apache.camel.model.language.GroovyExpression;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class GenerateXmlTest extends XmlTestSupport {
     public void testCreateSimpleXml() throws Exception {

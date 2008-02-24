@@ -27,7 +27,7 @@ import java.util.Map;
  * The <a href="http://activemq.apache.org/camel/jmx.html">JMX Component</a>
  * for monitoring jmx attributes
  * 
- * @version $Revision: 523772 $
+ * @version $Revision$
  */
 public class JMXComponent extends DefaultComponent<JMXExchange> {
     private MBeanServer mbeanServer;

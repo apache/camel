@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 /**
  * Represents a {@link Serializable} version of a {@link Method}
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MethodBean implements Serializable {
     private String name;

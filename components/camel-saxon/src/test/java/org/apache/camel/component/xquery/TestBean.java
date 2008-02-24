@@ -20,7 +20,7 @@ package org.apache.camel.component.xquery;
 import org.apache.camel.component.xquery.XQuery;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class TestBean {
     private String subject;

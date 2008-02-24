@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 @XmlRootElement(name = "exchange")
 @XmlAccessorType(value = XmlAccessType.FIELD)

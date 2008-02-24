@@ -20,7 +20,7 @@ package org.apache.camel.testng;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DummyBean implements InitializingBean {
     private String message;

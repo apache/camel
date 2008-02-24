@@ -25,7 +25,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * Wraps the processor in a Spring transaction
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SpringTransactionPolicy<E> implements Policy<E> {
     private static final transient Log LOG = LogFactory.getLog(SpringTransactionPolicy.class);

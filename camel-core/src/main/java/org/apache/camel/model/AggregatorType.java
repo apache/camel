@@ -39,7 +39,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "aggregator")
 @XmlAccessorType(XmlAccessType.FIELD)

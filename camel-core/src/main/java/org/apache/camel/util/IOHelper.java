@@ -20,7 +20,7 @@ package org.apache.camel.util;
 import java.io.IOException;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class IOHelper {
 

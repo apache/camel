@@ -28,7 +28,7 @@ import org.apache.camel.util.ObjectHelper;
  * A simple {@link RouteBuilder} which can be configured directly with one or more from URIs, zero or more to URIs
  * and an optional bean processing step.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SimpleRouteBuilder extends RouteBuilder {
     private List<String> fromUris = new ArrayList<String>();

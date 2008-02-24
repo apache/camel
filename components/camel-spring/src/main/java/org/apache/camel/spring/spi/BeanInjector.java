@@ -20,7 +20,7 @@ import org.springframework.beans.factory.wiring.BeanConfigurerSupport;
 import org.springframework.context.ApplicationContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class BeanInjector extends BeanConfigurerSupport {
     public BeanInjector(ApplicationContext applicationContext) throws Exception {

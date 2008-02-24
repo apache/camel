@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class RubyCamel {
     private static CamelContext camelContext;

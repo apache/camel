@@ -27,7 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class XmlTestSupport extends TestSupport {
     protected final transient Log log = LogFactory.getLog(getClass());

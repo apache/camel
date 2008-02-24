@@ -29,7 +29,7 @@ import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MessageIdRepository;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "idempotentConsumer")
 @XmlAccessorType(XmlAccessType.FIELD)

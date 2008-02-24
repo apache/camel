@@ -27,7 +27,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * An extension of the {@link RouteBuilder} to provide some additional helper
  * methods
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class SpringRouteBuilder extends RouteBuilder {
     private ApplicationContext applicationContext;

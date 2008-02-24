@@ -27,7 +27,7 @@ import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 /**
  * Represents a node in the EIP diagram tree
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class NodeData {
     public String id;

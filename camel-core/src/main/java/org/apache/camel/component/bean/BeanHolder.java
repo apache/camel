@@ -20,7 +20,7 @@ package org.apache.camel.component.bean;
 import org.apache.camel.Processor;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface BeanHolder {
     Object getBean() throws Exception;

@@ -24,7 +24,7 @@ import java.util.*;
  * Some core java.util Collection based
  * <a href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
  *
- * @version $Revision: 524215 $
+ * @version $Revision$
  */
 @Converter
 public class CollectionConverter {

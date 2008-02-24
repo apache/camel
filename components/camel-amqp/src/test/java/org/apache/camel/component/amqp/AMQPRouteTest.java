@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.qpid.client.transport.TransportConnection;
 
 /**
- * @version $Revision: 574458 $
+ * @version $Revision$
  */
 public class AMQPRouteTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;

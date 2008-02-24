@@ -27,7 +27,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  * An extension of Spring's {@link JavaMailSenderImpl} to provide helper methods
  * for listening for new mail
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class JavaMailConnection extends JavaMailSenderImpl {
 

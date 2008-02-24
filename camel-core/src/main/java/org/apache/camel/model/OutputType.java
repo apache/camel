@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A useful base class for output types
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlType(name = "outputType")
 @XmlAccessorType(XmlAccessType.FIELD)

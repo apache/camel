@@ -36,7 +36,7 @@ import org.apache.camel.processor.DelegateProcessor;
 /**
  * Represents a collection of routes
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 @XmlRootElement(name = "routes")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -40,7 +40,7 @@ import org.apache.camel.processor.UnitOfWorkProcessor;
 /**
  * The context used to activate new routing rules
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class RouteContext {
     private RouteType route;

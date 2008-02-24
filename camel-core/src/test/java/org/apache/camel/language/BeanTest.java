@@ -24,7 +24,7 @@ import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Message;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class BeanTest extends LanguageTestSupport {
     public void testSimpleExpressions() throws Exception {

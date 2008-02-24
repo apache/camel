@@ -34,7 +34,7 @@ import org.apache.camel.processor.FilterProcessor;
 /**
  * A base class for nodes which contain an expression and a number of outputs
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExpressionNode extends ProcessorType<ProcessorType> {

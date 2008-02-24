@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 public class DefaultTimeoutMap implements TimeoutMap, Runnable {
 

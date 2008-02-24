@@ -26,7 +26,7 @@ import java.beans.PropertyEditorManager;
  * Uses the java.beans.PropertyEditor conversion system to convert Objects to
  * and from String values.
  * 
- * @version $Revision: 523731 $
+ * @version $Revision$
  */
 public class PropertyEditorTypeConverter implements TypeConverter {
 

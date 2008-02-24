@@ -22,7 +22,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.quartz.JobExecutionContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class QuartzExchange extends DefaultExchange {
     public QuartzExchange(CamelContext context, ExchangePattern pattern, JobExecutionContext jobExecutionContext) {

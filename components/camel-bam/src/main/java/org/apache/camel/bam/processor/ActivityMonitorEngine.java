@@ -39,7 +39,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * A timer engine to monitor for expired activities and perform whatever actions
  * are required.
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
     private static final Log LOG = LogFactory.getLog(ActivityMonitorEngine.class);

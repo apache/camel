@@ -44,7 +44,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * Creates a <a href="http://activemq.apache.org/camel/processor.html">Processor</a>
  * which performs an XSLT transformation of the IN message body
  * 
- * @version $Revision: 531854 $
+ * @version $Revision$
  */
 public class XsltBuilder implements Processor {
     private Map<String, Object> parameters = new HashMap<String, Object>();

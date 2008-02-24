@@ -29,7 +29,7 @@ import org.apache.camel.language.bean.BeanExpression;
  * For expresions and predicates using the
  * <a href="http://activemq.apache.org/camel/bean-language.html>bean language</a>
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "methodCall")
 public class MethodCallExpression extends ExpressionType {

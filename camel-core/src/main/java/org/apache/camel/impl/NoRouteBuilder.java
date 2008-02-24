@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * A helper class, usually used for testing which does not create any routes.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class NoRouteBuilder extends RouteBuilder {
     private static final NoRouteBuilder INSTANCE = new NoRouteBuilder();

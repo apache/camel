@@ -32,7 +32,7 @@ import java.util.Timer;
 /**
  * Represents a timer endpoint that can generate periodic inbound PojoExchanges.
  *
- * @version $Revision: 519973 $
+ * @version $Revision$
  */
 public class TimerEndpoint extends DefaultEndpoint<Exchange> {
 

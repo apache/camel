@@ -24,7 +24,7 @@ import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
  * @author Albert Moraal
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class NullBodyTest extends ContextTestSupport {
     public void testNullBody() throws Exception {

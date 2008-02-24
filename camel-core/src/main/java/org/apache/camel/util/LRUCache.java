@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * A Least Recently Used Cache
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class LRUCache<K, V> extends LinkedHashMap<K, V> {
     private static final long serialVersionUID = -342098639681884413L;

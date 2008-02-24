@@ -19,7 +19,7 @@ package org.apache.camel.language.script;
 import org.apache.camel.LanguageTestSupport;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class JavaScriptLanguageTest extends LanguageTestSupport {
     public void testLanguageExpressions() throws Exception {

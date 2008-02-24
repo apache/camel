@@ -27,7 +27,7 @@ import org.apache.camel.spi.DataFormat;
 /**
  * Represents the XStream XML {@link DataFormat}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "xstream")
 @XmlAccessorType(XmlAccessType.FIELD)

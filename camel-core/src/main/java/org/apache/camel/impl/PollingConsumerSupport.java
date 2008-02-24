@@ -24,7 +24,7 @@ import org.apache.camel.spi.ExceptionHandler;
 /**
  * A useful base class for implementations of {@link PollingConsumer}
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class PollingConsumerSupport<E extends Exchange> extends ServiceSupport implements
     PollingConsumer<E> {

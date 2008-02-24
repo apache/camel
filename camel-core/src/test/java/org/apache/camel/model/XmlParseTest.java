@@ -25,7 +25,7 @@ import javax.xml.bind.JAXBException;
 import java.util.List;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class XmlParseTest extends XmlTestSupport {
     public void testParseSimpleRouteXml() throws Exception {

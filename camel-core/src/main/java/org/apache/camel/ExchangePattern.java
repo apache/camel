@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Represents the kind of message exchange pattern
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public enum ExchangePattern {
     InOnly,

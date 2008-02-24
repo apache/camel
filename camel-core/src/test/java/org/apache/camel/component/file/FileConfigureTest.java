@@ -23,7 +23,7 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class FileConfigureTest extends ContextTestSupport {
     private static final String EXPECT_PATH = "target" + File.separator + "foo" + File.separator + "bar";

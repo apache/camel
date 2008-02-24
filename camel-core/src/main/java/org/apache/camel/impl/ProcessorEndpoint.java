@@ -30,7 +30,7 @@ import org.apache.camel.PollingConsumer;
  * given {@link Processor}. This component does not support the use of
  * consumers.
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ProcessorEndpoint extends DefaultPollingEndpoint<Exchange> {
     private final Processor processor;

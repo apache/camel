@@ -17,7 +17,7 @@
 package org.apache.camel;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class InvalidTypeException extends CamelExchangeException {
     private final Object value;

@@ -29,7 +29,7 @@ import org.apache.camel.model.RouteType;
 import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class XmlGraphGenerator extends GraphGeneratorSupport {
     private boolean addUrl = true;

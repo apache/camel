@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  * which implements the <a href="http://activemq.apache.org/bean.html">Bean Component</a>
  * which will look up the URI in the Spring ApplicationContext and use that to handle message dispatching.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class BeanComponent extends DefaultComponent {
     private static final Log LOG = LogFactory.getLog(BeanComponent.class);

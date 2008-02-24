@@ -27,7 +27,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DefaultAnnotationExpressionFactory implements AnnotationExpressionFactory {
     public Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class expressionReturnType) {

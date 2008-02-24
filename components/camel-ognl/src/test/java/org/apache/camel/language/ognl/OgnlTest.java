@@ -19,7 +19,7 @@ package org.apache.camel.language.ognl;
 import org.apache.camel.LanguageTestSupport;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class OgnlTest  extends LanguageTestSupport {
     public void testOgnlExpressions() throws Exception {

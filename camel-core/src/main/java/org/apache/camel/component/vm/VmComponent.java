@@ -32,7 +32,7 @@ import org.apache.camel.component.seda.SedaEndpoint;
  * the camel-core.jar. i.e. to handle communicating across CamelContext instances and possibly across
  * web application contexts, providing that camel-core.jar is on the system classpath.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class VmComponent extends SedaComponent {
     

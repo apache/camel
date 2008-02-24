@@ -31,7 +31,7 @@ import org.apache.camel.builder.ValueBuilder;
 /**
  * A builder of assertions on message exchanges
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class AssertionClause implements Runnable {
 

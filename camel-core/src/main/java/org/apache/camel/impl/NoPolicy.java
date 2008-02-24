@@ -22,7 +22,7 @@ import org.apache.camel.spi.Policy;
 /**
  * Represents an {@link Policy} which adds no interceptors.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class NoPolicy<E> implements Policy<E> {
 

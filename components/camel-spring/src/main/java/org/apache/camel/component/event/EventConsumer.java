@@ -21,7 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class EventConsumer extends DefaultConsumer<Exchange> {
     private EventEndpoint endpoint;

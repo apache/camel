@@ -28,7 +28,7 @@ import org.apache.camel.Processor;
  * particular systme to malfunction or to reduce its throughput you might want
  * to introduce some throttling.
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 public class Throttler extends DelayProcessorSupport {
     private long maximumRequestsPerPeriod;

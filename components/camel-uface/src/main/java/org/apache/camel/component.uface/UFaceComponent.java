@@ -24,7 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.list.ListEndpoint;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class UFaceComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {

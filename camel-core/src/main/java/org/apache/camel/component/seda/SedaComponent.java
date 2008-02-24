@@ -29,7 +29,7 @@ import org.apache.camel.impl.DefaultComponent;
  * An implementation of the <a href="http://activemq.apache.org/camel/seda.html">SEDA components</a>
  * for asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SedaComponent extends DefaultComponent<Exchange> {
 

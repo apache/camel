@@ -21,7 +21,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class CamelJob implements Job {
     public void execute(JobExecutionContext context) throws JobExecutionException {

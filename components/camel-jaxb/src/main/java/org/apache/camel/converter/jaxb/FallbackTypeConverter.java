@@ -35,7 +35,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class FallbackTypeConverter implements TypeConverter, TypeConverterAware {
     private static final transient Log LOG = LogFactory.getLog(FallbackTypeConverter.class);

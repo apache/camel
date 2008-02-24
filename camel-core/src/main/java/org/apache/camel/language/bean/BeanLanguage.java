@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  * <a href="http://activemq.apache.org/camel/bean-integration.html>bean integration</a> to bind the
  * {@link Exchange} to the method arguments.
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class BeanLanguage implements Language {
     public Predicate<Exchange> createPredicate(String expression) {

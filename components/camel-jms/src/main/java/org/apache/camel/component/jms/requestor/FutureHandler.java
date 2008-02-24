@@ -27,7 +27,7 @@ import javax.jms.Message;
  * A {@link FutureTask} which implements {@link ReplyHandler}
  * so that it can be used as a handler for a correlation ID
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class FutureHandler extends FutureTask implements ReplyHandler {
     private static final Callable EMPTY_CALLABLE = new Callable() {

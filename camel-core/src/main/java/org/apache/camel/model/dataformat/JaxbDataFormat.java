@@ -28,7 +28,7 @@ import org.apache.camel.spi.DataFormat;
 /**
  * Represents the JAXB2 XML {@link DataFormat}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "jaxb")
 @XmlAccessorType(XmlAccessType.FIELD)

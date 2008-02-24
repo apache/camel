@@ -22,7 +22,7 @@ import org.apache.camel.util.ObjectHelper;
  * A {@link BeanDefinitionParser} which lazy loads the type on which it creates to allow the schema to be loosly coupled
  * with the camel jars.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class LazyLoadingBeanDefinitionParser extends BeanDefinitionParser {
     private String className;

@@ -28,7 +28,7 @@ import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class NeilSplitterTest extends ContextTestSupport {
     protected Endpoint<Exchange> startEndpoint;

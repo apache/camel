@@ -21,7 +21,7 @@ import org.apache.camel.processor.FilterTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class SpringFilterTest extends FilterTest {
     @Override

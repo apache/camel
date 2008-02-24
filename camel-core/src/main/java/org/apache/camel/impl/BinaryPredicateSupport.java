@@ -24,7 +24,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * A useful base class for {@link Predicate} implementations
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class BinaryPredicateSupport<E extends Exchange> implements Predicate<E> {
 

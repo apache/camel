@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * An exception thrown if an InOut exchange times out receiving the OUT message
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ExchangeTimedOutException extends CamelExchangeException {
     private final long timeout;

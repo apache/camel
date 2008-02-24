@@ -25,7 +25,7 @@ import org.apache.camel.impl.DefaultComponent;
 /**
  * A factory of {@link MockEndpoint} instances
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MockComponent extends DefaultComponent<Exchange> {
 

@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * An annotation for injection of XQuery expressions
  * into method parameters, fields or properties
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})

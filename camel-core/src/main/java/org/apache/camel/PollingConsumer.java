@@ -21,7 +21,7 @@ package org.apache.camel;
  * href="http://activemq.apache.org/camel/polling-consumer.html">Polling
  * Consumer</a> where the caller polls for messages when it is ready.
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface PollingConsumer<E extends Exchange> extends Consumer<E> {
 

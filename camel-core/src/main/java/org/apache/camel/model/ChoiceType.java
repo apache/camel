@@ -35,7 +35,7 @@ import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)

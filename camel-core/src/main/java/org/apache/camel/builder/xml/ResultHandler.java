@@ -23,7 +23,7 @@ import org.apache.camel.Message;
 /**
  * A strategy for handling XSLT results
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface ResultHandler {
     Result getResult();

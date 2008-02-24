@@ -26,7 +26,7 @@ import org.apache.camel.util.ServiceHelper;
  * An interceptor which provides the processing logic as a pluggable processor
  * which allows the {@link #proceed(Exchange)} method to be called at some point
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class Interceptor extends DelegateProcessor {
     private Processor interceptorLogic;

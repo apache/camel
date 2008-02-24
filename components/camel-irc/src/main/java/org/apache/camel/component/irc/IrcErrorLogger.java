@@ -24,7 +24,7 @@ import org.schwering.irc.lib.IRCUser;
 /**
  * A helper class which logs errors
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class IrcErrorLogger extends IRCEventAdapter {
     private Log log;

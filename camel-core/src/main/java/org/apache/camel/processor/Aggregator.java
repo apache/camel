@@ -38,7 +38,7 @@ import org.apache.camel.processor.aggregate.PredicateAggregationCollection;
  * and older prices are discarded). Another idea is to combine line item
  * messages together into a single invoice message.
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  * @param correlationExpression the expression used to calculate the correlation
  *                key. For a JMS message this could be the expression
  *                <code>header("JMSDestination")</code> or

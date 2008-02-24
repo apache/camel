@@ -22,7 +22,7 @@ import javax.persistence.Id;
 import javax.persistence.UniqueConstraint;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @Entity
 @UniqueConstraint(columnNames = {"processorName", "messageId" })

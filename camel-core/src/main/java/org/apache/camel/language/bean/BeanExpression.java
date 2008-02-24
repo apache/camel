@@ -25,7 +25,7 @@ import org.apache.camel.impl.ExpressionSupport;
 /**
  * Evaluates an expression using a bean method invocation
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class BeanExpression<E extends Exchange> extends ExpressionSupport<E> {
     private String beanName;

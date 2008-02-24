@@ -29,7 +29,7 @@ import org.apache.camel.spi.Registry;
 /**
  * A {@link Registry} implementation which looks up the objects in JNDI
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class JndiRegistry implements Registry {
     private Context context;

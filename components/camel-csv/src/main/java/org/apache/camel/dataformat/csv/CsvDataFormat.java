@@ -37,7 +37,7 @@ import org.apache.commons.csv.writer.CSVField;
 import org.apache.commons.csv.writer.CSVWriter;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class CsvDataFormat implements DataFormat {
     private CSVStrategy strategy = CSVStrategy.DEFAULT_STRATEGY;

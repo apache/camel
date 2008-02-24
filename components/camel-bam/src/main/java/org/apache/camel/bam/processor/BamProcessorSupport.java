@@ -38,7 +38,7 @@ import java.lang.reflect.Type;
  * href="http://activemq.apache.org/camel/bam.html">BAM</a> which a derived
  * class would do the actual persistence such as the {@link JpaBamProcessor}
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public abstract class BamProcessorSupport<T> implements Processor {
     private static final transient Log LOG = LogFactory.getLog(BamProcessorSupport.class);

@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * Represents an entry in a {@link TimeoutMap}
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 public class TimeoutMapEntry implements Comparable, Map.Entry {
     private Object key;

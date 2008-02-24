@@ -26,7 +26,7 @@ import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.impl.DefaultProducer;
 
 /**
- * @version $Revision: 533076 $
+ * @version $Revision$
  */
 public class RmiProducer extends DefaultProducer<BeanExchange> {
 

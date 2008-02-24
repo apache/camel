@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.testng.annotations.Test;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @Test(groups = {"routing"})
 public class MyTest extends SpringRunner {

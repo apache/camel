@@ -25,7 +25,7 @@ import org.springframework.util.xml.DomUtils;
 /**
  * A parser of the various scripting language expressions
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ScriptDefinitionParser extends LazyLoadingBeanDefinitionParser {
     private final String scriptEngineName;

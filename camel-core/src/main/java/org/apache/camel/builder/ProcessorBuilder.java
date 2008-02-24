@@ -24,7 +24,7 @@ import org.apache.camel.Message;
 /**
  * A builder of a number of different {@link Processor} implementations
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ProcessorBuilder {
     

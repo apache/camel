@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExpressionException;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class RuntimeBeanExpressionException extends RuntimeExpressionException {
     private Exchange exchange;

@@ -26,7 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * An implementation of a {@link BeanHolder} which will
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class RegistryBean implements BeanHolder {
     private final CamelContext context;

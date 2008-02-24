@@ -24,7 +24,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SpringDataFormatTest extends SpringTestSupport {
     public void testMarshalThenUnmarshalBean() throws Exception {

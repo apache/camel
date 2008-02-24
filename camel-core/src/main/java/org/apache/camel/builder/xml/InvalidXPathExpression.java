@@ -23,7 +23,7 @@ import org.apache.camel.RuntimeExpressionException;
 /**
  * An exception thrown if am XPath expression could not be parsed or evaluated
  *
- * @version $Revision: 521180 $
+ * @version $Revision$
  */
 public class InvalidXPathExpression extends RuntimeExpressionException {
     private final String xpath;
