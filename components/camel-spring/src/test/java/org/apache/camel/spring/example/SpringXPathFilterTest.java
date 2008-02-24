@@ -24,7 +24,7 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SpringXPathFilterTest extends XPathFilterTest {
     @Override

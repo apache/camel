@@ -22,7 +22,7 @@ import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface EntryFilter {
     boolean isValidEntry(AtomEndpoint endpoint, Document<Feed> feed, Entry entry);

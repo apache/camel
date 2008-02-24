@@ -24,7 +24,7 @@ import org.apache.camel.spi.Language;
 /**
  * An <a href="http://www.ognl.org/">OGNL</a> {@link Language} plugin
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class OgnlLanguage implements Language {
 

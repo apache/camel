@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MyService {
     private String name;

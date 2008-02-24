@@ -25,7 +25,7 @@ import org.apache.qpid.client.AMQConnectionFactory;
 import org.apache.qpid.url.URLSyntaxException;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class AMQPComponent extends JmsComponent {
 

@@ -26,7 +26,7 @@ import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class BamRouteTest extends SpringTestSupport {
     protected MockEndpoint overdueEndpoint;

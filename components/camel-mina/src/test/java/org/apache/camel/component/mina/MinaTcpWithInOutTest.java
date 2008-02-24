@@ -32,7 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * @version $Revision: 563665 $
+ * @version $Revision$
  */
 public class MinaTcpWithInOutTest extends TestCase {
     protected CamelContext container = new DefaultCamelContext();

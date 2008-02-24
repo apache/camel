@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * @version $Revision: 520220 $
+ * @version $Revision$
  */
 public class JdbcRouteTest extends TestCase {
     protected String driverClass = "org.hsqldb.jdbcDriver";

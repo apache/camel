@@ -32,7 +32,7 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
- * @version $Revision: 533076 $
+ * @version $Revision$
  */
 public class JdbcProducer extends DefaultProducer<DefaultExchange> {
 

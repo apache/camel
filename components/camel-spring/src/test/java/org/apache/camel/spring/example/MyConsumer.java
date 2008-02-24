@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * An example POJO which is injected with a CamelTemplate
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class MyConsumer {
     private static final Log LOG = LogFactory.getLog(MyConsumer.class);

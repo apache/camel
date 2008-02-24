@@ -24,7 +24,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.PollingConsumerSupport;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class AtomPollingConsumer extends PollingConsumerSupport {
     private final AtomEndpoint endpoint;

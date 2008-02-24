@@ -28,7 +28,7 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class JmsEndpointConfigurationTest extends ContextTestSupport {
     private Processor dummyProcessor = new Processor() {

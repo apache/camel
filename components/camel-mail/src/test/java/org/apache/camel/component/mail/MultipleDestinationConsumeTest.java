@@ -34,7 +34,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MultipleDestinationConsumeTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;

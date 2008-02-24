@@ -19,7 +19,7 @@ package org.apache.camel.spring.example;
 import org.apache.camel.Endpoint;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DummyBean {
     private Endpoint endpoint;

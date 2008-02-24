@@ -23,7 +23,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class EventRouteTest extends SpringTestSupport {
     protected Object expectedBody = "Hello there!";

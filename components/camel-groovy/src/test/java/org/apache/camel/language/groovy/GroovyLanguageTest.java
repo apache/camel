@@ -19,7 +19,7 @@ package org.apache.camel.language.groovy;
 import org.apache.camel.LanguageTestSupport;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class GroovyLanguageTest extends LanguageTestSupport {
     public void testGroovyExpressions() throws Exception {

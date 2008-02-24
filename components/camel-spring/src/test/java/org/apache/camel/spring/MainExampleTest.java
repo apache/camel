@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 import org.apache.camel.spring.util.SimpleRouteBuilder;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MainExampleTest extends TestCase {
     public void testMain() throws Exception {

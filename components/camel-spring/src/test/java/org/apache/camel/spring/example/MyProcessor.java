@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MyProcessor implements Processor {
     private static List exchanges = new CopyOnWriteArrayList();

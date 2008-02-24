@@ -29,7 +29,7 @@ import org.apache.camel.impl.DefaultExchange;
 import static org.apache.camel.builder.sql.SqlBuilder.sql;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class SqlTest extends TestSupport {
 

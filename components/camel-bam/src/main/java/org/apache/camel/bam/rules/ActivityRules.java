@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Represents a activity which is typically a system or could be an endpoint
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class ActivityRules extends ServiceSupport {
     private static final transient Log LOG = LogFactory.getLog(ActivityRules.class);

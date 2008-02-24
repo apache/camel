@@ -27,7 +27,7 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class ProcessRules extends ServiceSupport {
     private ProcessDefinition processDefinition;

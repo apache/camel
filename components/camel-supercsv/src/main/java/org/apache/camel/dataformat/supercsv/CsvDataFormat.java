@@ -41,7 +41,7 @@ import org.supercsv.io.ICsvMapWriter;
 import org.supercsv.prefs.CsvPreference;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class CsvDataFormat implements DataFormat {
     private CsvPreference preference = CsvPreference.STANDARD_PREFERENCE;

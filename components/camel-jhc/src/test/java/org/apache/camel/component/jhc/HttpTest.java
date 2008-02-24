@@ -30,7 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 520220 $
+ * @version $Revision$
  */
 public class HttpTest extends ContextTestSupport {
 

@@ -19,7 +19,7 @@ package org.apache.camel.component.event;
 import org.springframework.context.ApplicationEvent;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DummyEvent extends ApplicationEvent {
     private final String text;

@@ -24,7 +24,7 @@ import org.apache.camel.EndpointInject;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ExampleSender implements InitializingBean {
     private int counter;

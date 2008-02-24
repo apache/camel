@@ -21,7 +21,7 @@ import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class BeanRouteTest extends SpringTestSupport {
     protected Object body = "James";

@@ -34,7 +34,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * A Spring interceptor which sends a message exchange to an endpoint before the method is invoked
  * 
- * @version $Revision: $
+ * @version $Revision$
  */
 public class SendBeforeInterceptor implements MethodInterceptor, CamelContextAware, InitializingBean, DisposableBean {
     private String uri;

@@ -42,7 +42,7 @@ import org.xml.sax.SAXException;
  * A <a href="http://activemq.apache.org/camel/type-coverter.html">Type Converter</a>
  * of XMLBeans objects
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @Converter
 public class XmlBeansConverter {

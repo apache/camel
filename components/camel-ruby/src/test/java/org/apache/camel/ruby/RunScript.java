@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 import org.jruby.Main;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class RunScript {
     public static void main(String[] args) {

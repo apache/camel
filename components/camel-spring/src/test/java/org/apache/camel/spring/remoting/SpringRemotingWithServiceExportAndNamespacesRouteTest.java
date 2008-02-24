@@ -19,7 +19,7 @@ package org.apache.camel.spring.remoting;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: 520220 $
+ * @version $Revision$
  */
 public class SpringRemotingWithServiceExportAndNamespacesRouteTest extends SpringRemotingRouteTest {
 

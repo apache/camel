@@ -28,7 +28,7 @@ import org.apache.camel.impl.ExpressionSupport;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class GroovyExpression extends ExpressionSupport<Exchange> {
     private Class<Script> scriptType;

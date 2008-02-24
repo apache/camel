@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class RootObject {
     private final Exchange exchange;

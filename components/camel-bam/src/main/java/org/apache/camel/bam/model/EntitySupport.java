@@ -22,7 +22,7 @@ import javax.persistence.Id;
 /**
  * A base class for persistent entities
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class EntitySupport {
     private Long id;

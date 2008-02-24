@@ -34,7 +34,7 @@ import org.apache.camel.spring.SpringCamelContext;
  * system properties before the spring application context is initialised; to allow a single spring XML to be reused
  * with some properties being overloaded.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SpringRunner {
     private Properties oldSystemProperties;

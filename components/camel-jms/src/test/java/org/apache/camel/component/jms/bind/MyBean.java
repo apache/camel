@@ -25,7 +25,7 @@ import org.apache.camel.MessageDriven;
 import org.apache.camel.ProducerTemplate;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MyBean {
     private Map headers;

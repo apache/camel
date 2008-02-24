@@ -24,7 +24,7 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class QuartzEndpointConfigureTest extends ContextTestSupport {
 

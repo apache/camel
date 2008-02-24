@@ -28,7 +28,7 @@ import java.util.Map;
  * A component for validating XML payloads using the
  * <a href="http://www.thaiopensource.com/relaxng/jing.html">Jing library</a>
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class JingComponent extends ResourceBasedComponent {
     protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {

@@ -23,7 +23,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public abstract class TemporalEntity extends EntitySupport {
     private Date timeStarted;

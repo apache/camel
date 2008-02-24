@@ -29,7 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
- * @version $Revision: 574458 $
+ * @version $Revision$
  */
 public class JmsDiscoveryTest extends ContextTestSupport {
     protected MyRegistry registry = new MyRegistry();

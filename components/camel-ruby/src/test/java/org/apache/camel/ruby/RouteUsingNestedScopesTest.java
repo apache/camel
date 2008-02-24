@@ -18,7 +18,7 @@
 package org.apache.camel.ruby;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class RouteUsingNestedScopesTest extends RubyTest {
     @Override

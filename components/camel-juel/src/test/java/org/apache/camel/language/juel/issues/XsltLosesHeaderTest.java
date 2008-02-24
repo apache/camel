@@ -31,7 +31,7 @@ import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
  * @author Arjan Moraal
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class XsltLosesHeaderTest extends ContextTestSupport {
     protected String xslt = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"

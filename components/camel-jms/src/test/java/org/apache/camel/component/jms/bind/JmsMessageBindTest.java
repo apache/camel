@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class JmsMessageBindTest extends SpringTestSupport {
     public void testSendAMessageToBean() throws Exception {
