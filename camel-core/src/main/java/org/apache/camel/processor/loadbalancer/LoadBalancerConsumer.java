@@ -26,7 +26,7 @@ import org.apache.camel.impl.DefaultConsumer;
  * Represents a consumer which on starting registers itself with a {@link LoadBalancer} and on closing unregisters
  * itself with a load balancer
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class LoadBalancerConsumer extends DefaultConsumer<Exchange> {
     private final LoadBalancer loadBalancer;

@@ -23,7 +23,7 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.Endpoint;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ListComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {

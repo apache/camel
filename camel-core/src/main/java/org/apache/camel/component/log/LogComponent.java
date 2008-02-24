@@ -28,7 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class LogComponent extends DefaultComponent<Exchange> {
     private static final Log LOG = LogFactory.getLog(LogComponent.class);

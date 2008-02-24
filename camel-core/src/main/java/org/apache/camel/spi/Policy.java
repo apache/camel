@@ -21,7 +21,7 @@ import org.apache.camel.Processor;
 /**
  * A strategy capable of applying interceptors to a processor
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface Policy<E> {
 

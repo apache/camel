@@ -24,7 +24,7 @@ import java.io.File;
 /**
  * A {@link Exchange} for File
  * 
- * @version $Revision: 520985 $
+ * @version $Revision$
  */
 public class FileMessage extends DefaultMessage {
     private File file;

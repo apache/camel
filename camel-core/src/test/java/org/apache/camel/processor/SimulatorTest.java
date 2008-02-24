@@ -26,7 +26,7 @@ import static org.apache.camel.language.simple.SimpleLanguage.simple;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SimulatorTest extends ContextTestSupport {
 

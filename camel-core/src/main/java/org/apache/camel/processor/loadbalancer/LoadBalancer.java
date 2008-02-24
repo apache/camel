@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 /**
  * A strategy for load balancing across a number of {@link Processor} instances
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface LoadBalancer extends Processor {
     /**

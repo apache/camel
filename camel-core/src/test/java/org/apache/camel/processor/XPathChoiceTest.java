@@ -23,7 +23,7 @@ import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class XPathChoiceTest extends ContextTestSupport {
     protected MockEndpoint x;

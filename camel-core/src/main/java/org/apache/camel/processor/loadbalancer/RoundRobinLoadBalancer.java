@@ -24,7 +24,7 @@ import org.apache.camel.Processor;
 /**
  * Implements the round robin load balancing policy
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class RoundRobinLoadBalancer extends QueueLoadBalancer {
     private int counter = -1;

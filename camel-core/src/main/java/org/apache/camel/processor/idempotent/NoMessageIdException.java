@@ -24,7 +24,7 @@ import org.apache.camel.RuntimeCamelException;
  * An exception thrown if no message ID could be found on a message which is to be used with the
  * <a href="http://activemq.apache.org/camel/idempotent-consumer.html">Idempotent Consumer</a> pattern.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class NoMessageIdException extends RuntimeCamelException {
     private final Exchange exchange;

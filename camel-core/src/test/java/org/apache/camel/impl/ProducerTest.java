@@ -28,7 +28,7 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.ExchangePattern;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ProducerTest extends TestSupport {
     protected CamelContext context = new DefaultCamelContext();

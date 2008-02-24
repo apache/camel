@@ -25,7 +25,7 @@ import org.apache.camel.Exchange;
  * the newest exchange and removing old exchanges such as for state tracking or
  * market data prices; where old values are of little use.
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface AggregationStrategy {
 

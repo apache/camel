@@ -20,7 +20,7 @@ package org.apache.camel.processor.idempotent;
  * Access to a repository of Message IDs to implement the
  * <a href="http://activemq.apache.org/camel/idempotent-consumer.html">Idempotent Consumer</a> pattern.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface MessageIdRepository {
 

@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MyExchange extends DefaultExchange {
 

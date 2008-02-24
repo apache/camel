@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
 /**
  * Used to inject an XPath expression into a field, property, method or parameter.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})

@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
  * A <a href="http://activemq.apache.org/camel/file.html">File Endpoint</a> for
  * working with file systems
  * 
- * @version $Revision: 523016 $
+ * @version $Revision$
  */
 public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     private static final transient Log LOG = LogFactory.getLog(FileEndpoint.class);

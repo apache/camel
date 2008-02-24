@@ -29,7 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * @version $Revision: 520220 $
+ * @version $Revision$
  */
 public class DirectRouteTest extends TestCase {
 

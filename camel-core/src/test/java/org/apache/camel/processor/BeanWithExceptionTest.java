@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.naming.Context;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class BeanWithExceptionTest extends ContextTestSupport {
     protected Processor validator = new MyValidator();

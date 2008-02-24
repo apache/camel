@@ -29,7 +29,7 @@ import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SetHeaderTest extends ContextTestSupport {
     protected String matchingBody = "<person name='James' city='London'/>";

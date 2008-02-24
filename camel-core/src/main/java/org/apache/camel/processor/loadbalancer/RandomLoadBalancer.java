@@ -24,7 +24,7 @@ import org.apache.camel.Processor;
 /**
  * Implements the random load balancing policy
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class RandomLoadBalancer extends QueueLoadBalancer {
 

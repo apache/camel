@@ -40,7 +40,7 @@ import org.apache.camel.impl.DefaultProducer;
  * An endpoint which maintains a {@link List} of {@link Exchange} instances
  * which can be useful for tooling, debugging and visualising routes.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ListEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint {
     private List<Exchange> exchanges;

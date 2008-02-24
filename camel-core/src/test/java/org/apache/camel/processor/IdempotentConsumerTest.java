@@ -27,7 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.processor.idempotent.MemoryMessageIdRepository.memoryMessageIdRepository;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class IdempotentConsumerTest extends ContextTestSupport {
     protected Endpoint<Exchange> startEndpoint;

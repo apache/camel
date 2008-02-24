@@ -21,7 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ValidationException;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MyValidator implements Processor {
     public void process(Exchange exchange) throws Exception {

@@ -20,7 +20,7 @@ package org.apache.camel.spi;
  * Represents a service registry which may be implemented via a Spring ApplicationContext,
  * via JNDI, a simple Map or the OSGI Service Registry
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface Registry {
 

@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
  * href="http://activemq.apache.org/camel/idempotent-consumer.html">Idempotent
  * Consumer</a> pattern.
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class IdempotentConsumer extends ServiceSupport implements Processor {
     private static final transient Log LOG = LogFactory.getLog(IdempotentConsumer.class);

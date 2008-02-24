@@ -21,7 +21,7 @@ import org.apache.camel.Component;
 import org.apache.camel.component.bean.BeanComponent;
 
 /**
- * @version $Revision: 525634 $
+ * @version $Revision$
  */
 public class DefaultCamelContextTest extends TestCase {
 

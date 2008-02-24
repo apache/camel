@@ -22,7 +22,7 @@ import org.apache.camel.spi.Language;
 /**
  * An exception thrown if some illegal syntax is rejected by a specific language
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class IllegalSyntaxException extends RuntimeCamelException {
     private final Language language;

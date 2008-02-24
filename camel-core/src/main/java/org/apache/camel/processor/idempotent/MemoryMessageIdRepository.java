@@ -26,7 +26,7 @@ import org.apache.camel.util.LRUCache;
  * taken to use a suitable underlying {@link Map} to avoid this class being a
  * memory leak
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MemoryMessageIdRepository implements MessageIdRepository {
     private Map cache;

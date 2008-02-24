@@ -27,7 +27,7 @@ import org.w3c.dom.Text;
 /**
  * Converts from some DOM types to Java types
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @Converter
 public class DomConverter {

@@ -30,7 +30,7 @@ import javax.naming.Context;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class BeanRouteTest extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(BeanRouteTest.class);

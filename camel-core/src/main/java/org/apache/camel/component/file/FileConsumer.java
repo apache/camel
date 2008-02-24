@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
- * @version $Revision: 523016 $
+ * @version $Revision$
  */
 public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private static final transient Log LOG = LogFactory.getLog(FileConsumer.class);

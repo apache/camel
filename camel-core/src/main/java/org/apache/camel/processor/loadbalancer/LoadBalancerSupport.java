@@ -26,7 +26,7 @@ import org.apache.camel.util.ServiceHelper;
 /**
  * A default base class for a {@link LoadBalancer} implementation
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class LoadBalancerSupport extends ServiceSupport implements LoadBalancer {
     private List<Processor> processors = new CopyOnWriteArrayList<Processor>();

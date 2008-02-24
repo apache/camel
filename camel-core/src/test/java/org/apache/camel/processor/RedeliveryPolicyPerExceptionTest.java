@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import java.util.List;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
     protected MockEndpoint a;

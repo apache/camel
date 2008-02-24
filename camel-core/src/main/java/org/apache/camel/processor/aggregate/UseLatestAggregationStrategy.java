@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
  * for status messages where old status messages have no real value; another example is things
  * like market data prices, where old stock prices are not that relevant, only the current price is.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class UseLatestAggregationStrategy implements AggregationStrategy {
 

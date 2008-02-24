@@ -28,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.language.SimpleExpression;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ValidationTest extends ContextTestSupport {
     protected Processor validator = new MyValidator();

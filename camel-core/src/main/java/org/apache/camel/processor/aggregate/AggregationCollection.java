@@ -30,7 +30,7 @@ import org.apache.camel.Expression;
  * expression so that there is only a single message exchange sent for a single
  * correlation key.
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class AggregationCollection extends AbstractCollection<Exchange> {
     private final Expression<Exchange> correlationExpression;

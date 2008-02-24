@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class InterceptWithPredicateRouteTest extends ContextTestSupport {
     private MockEndpoint a;

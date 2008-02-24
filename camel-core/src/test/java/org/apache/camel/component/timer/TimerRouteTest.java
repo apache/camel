@@ -28,7 +28,7 @@ import javax.naming.Context;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @version $Revision: 520220 $
+ * @version $Revision$
  */
 public class TimerRouteTest extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(TimerRouteTest.class);

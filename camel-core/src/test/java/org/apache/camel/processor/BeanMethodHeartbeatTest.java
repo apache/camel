@@ -32,7 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * This test shows we can poll a bean for a method and send the POJO over some transport
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class BeanMethodHeartbeatTest extends ContextTestSupport {
 

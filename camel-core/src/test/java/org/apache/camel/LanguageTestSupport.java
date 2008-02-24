@@ -20,7 +20,7 @@ import org.apache.camel.impl.DefaultExchange;
 
 /**
  * A useful base class for testing the language plugins in Camel
- * @version $Revision: $
+ * @version $Revision$
  */
 public abstract class LanguageTestSupport extends ExchangeTestSupport {
     protected abstract String getLanguageName();
