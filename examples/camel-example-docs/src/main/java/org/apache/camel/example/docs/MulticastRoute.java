@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * A simple multicast example
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MulticastRoute extends RouteBuilder {
     public void configure() throws Exception {

@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * A simple pipilne example
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class PipelineRoute extends RouteBuilder {
     public void configure() throws Exception {

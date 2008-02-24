@@ -23,7 +23,7 @@ import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 /**
  * A simple content based router example
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ContentBasedRouteRoute extends RouteBuilder {
     public void configure() throws Exception {
