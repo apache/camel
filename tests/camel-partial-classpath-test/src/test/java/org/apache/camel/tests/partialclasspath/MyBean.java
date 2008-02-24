@@ -20,7 +20,7 @@ package org.apache.camel.tests.partialclasspath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MyBean {
     private String a;
