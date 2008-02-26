@@ -21,20 +21,22 @@ import javax.xml.ws.Provider;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.Service.Mode;
-
+// START SNIPPET: e1
 @WebServiceProvider()
 @ServiceMode(Mode.MESSAGE)
-
+// END SNIPPET: e1
 /**
- * This class is used by Camel just for getting the endpoint configuration parameters. All the requests 
- * aimed at this class would be intercepted routed to the camel route specified. The route has to set the 
+ * This class is used by Camel just for getting the endpoint configuration parameters. All the requests
+ * aimed at this class would be intercepted routed to the camel route specified. The route has to set the
  * appropriate response message for the service to work.
  */
+// START SNIPPET: e2
 public class GreeterProvider implements Provider<SOAPMessage> {
 
-	public SOAPMessage invoke(SOAPMessage arg0) {
+	public SOAPMessage invoke(SOAPMessage message) {
 		//request should not come here as camel route would intercept the call before this is invoked.
 		throw new UnsupportedOperationException("Placeholder method");
 	}
-    
+
 }
+//END SNIPPET: e2

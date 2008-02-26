@@ -26,6 +26,7 @@
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
+    <!-- START SNIPPET: example -->
 
     <!--
     If you want to run this example in Tomcat container which need to used servlet transoprt,
@@ -50,8 +51,10 @@
    <camelContext id="test_context" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
             <from uri="cxf:bean:soapMessageEndpoint"/>
-             <to uri="bean:testBean?methodName=processSOAP"/>
+            <to uri="bean:testBean?methodName=processSOAP"/>
         </route>
    </camelContext>
+
+   <!-- END SNIPPET: example -->
 
 </beans>
