@@ -34,6 +34,7 @@ import org.apache.camel.Exchange;
  * A simple bean demonstrating processing of SOAPMessage routed by CAMEL
  *
  */
+//START SNIPPET: e1
 public class TesterBean {
 
     public SOAPMessage processSOAP(Exchange exchange) {
@@ -81,3 +82,4 @@ public class TesterBean {
     }
 
 }
+//END SNIPPET: e1
