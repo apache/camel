@@ -28,15 +28,18 @@ public class Server {
 
     public void prepare() throws Exception {
         // setup the camel context for the camel transport
+        // START SNIPPET: e1
         SpringBusFactory bf = new SpringBusFactory();
         BusFactory.setDefaultBus(null);
         Bus bus = bf.createBus("/org/apache/camel/example/camel/transport/CamelDestination.xml");
         BusFactory.setDefaultBus(bus);
+        // END SNIPPET: e1
     }
 
     public void start() throws Exception {
         // start the endpoints
         System.out.println("Starting Server");
+        // START SNIPPET: e2
         Object implementor = new GreeterImpl("EndpointA");
         String address = "camel://direct:EndpointA";
         endpointA = Endpoint.publish(address, implementor);
@@ -44,6 +47,7 @@ public class Server {
         implementor = new GreeterImpl("EndpointB");
         address = "camel://direct:EndpointB";
         endpointB = Endpoint.publish(address, implementor);
+        // END SNIPPET: e2
     }
 
     public void stop() {
