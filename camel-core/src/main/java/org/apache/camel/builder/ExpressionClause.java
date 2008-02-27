@@ -66,6 +66,27 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
+     * An expression of the exchange
+     */
+    public T exchange() {
+        return expression(ExpressionBuilder.exchangeExpression());
+    }
+
+    /**
+     * An expression of an inbound message
+     */
+    public T inMessage() {
+        return expression(ExpressionBuilder.inMessageExpression());
+    }
+
+    /**
+     * An expression of an inbound message
+     */
+    public T outMessage() {
+        return expression(ExpressionBuilder.outMessageExpression());
+    }
+
+    /**
      * An expression of an inbound message body
      */
     public T body() {

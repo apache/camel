@@ -360,6 +360,22 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns the expression for the OUT message
+     */
+    public static <E extends Exchange> Expression<E> outMessageExpression() {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange.getOut();
+            }
+
+            @Override
+            public String toString() {
+                return "outMessage";
+            }
+        };
+    }
+
+    /**
      * Returns an expression which converts the given expression to the given
      * type
      */
