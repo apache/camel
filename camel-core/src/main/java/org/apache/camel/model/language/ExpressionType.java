@@ -182,6 +182,10 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
         return expressionValue;
     }
 
+    protected void setExpressionValue(Expression expressionValue) {
+        this.expressionValue = expressionValue;
+    }
+
     /**
      * Returns some descriptive text to describe this node
      */
