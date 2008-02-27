@@ -28,6 +28,10 @@ public class JuelLanguageTest extends LanguageTestSupport {
         assertExpression("${in.body}", "<hello id='m123'>world!</hello>");
     }
 
+    public void testElPredicates() throws Exception {
+        assertPredicate("${in.headers.foo.startsWith('a')}");
+    }
+
     protected String getLanguageName() {
         return "el";
     }
