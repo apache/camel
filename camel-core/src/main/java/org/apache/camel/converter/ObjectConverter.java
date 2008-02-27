@@ -147,6 +147,21 @@ public class ObjectConverter {
         }
     }
 
+    @Converter
+    public static byte[] toByteArray(String value) {
+        return value.getBytes();
+    }
+
+    @Converter
+    public static char[] toCharArray(String value) {
+        return value.toCharArray();
+    }
+
+    @Converter
+    public static String fromCharArray(char[] value) {
+        return new String(value);
+    }
+
     /**
      * Returns the converted value, or null if the value is null
      */

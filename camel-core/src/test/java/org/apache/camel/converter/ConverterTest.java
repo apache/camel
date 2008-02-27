@@ -63,8 +63,18 @@ public class ConverterTest extends TestCase {
         assertEquals("Converted to String", "1000", text);
     }
 
-    public void testConvertStringAndBytes() throws Exception {
+    public void testConvertStringToAndFromByteArray() throws Exception {
         byte[] array = converter.convertTo(byte[].class, "foo");
+        assertNotNull(array);
+
+        LOG.debug("Found array of size: " + array.length);
+
+        String text = converter.convertTo(String.class, array);
+        assertEquals("Converted to String", "foo", text);
+    }
+
+    public void testConvertStringToAndFromCharArray() throws Exception {
+        char[] array = converter.convertTo(char[].class, "foo");
         assertNotNull(array);
 
         LOG.debug("Found array of size: " + array.length);
