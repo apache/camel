@@ -18,6 +18,7 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -28,6 +29,36 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     protected String body = "<person name='James' city='London'/>";
     protected MockEndpoint expected;
 
+    public void testUseConstant() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() throws Exception {
+                from("direct:start").
+                        setHeader("foo").constant("ABC").
+                        to("mock:result");
+            }
+        });
+
+        template.sendBodyAndHeader("direct:start", body, "bar", "ABC");
+
+        assertMockEndpointsSatisifed();
+    }
+
+    public void testUseExpression() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() throws Exception {
+                from("direct:start").setHeader("foo").expression(new ExpressionAdapter() {
+                    public Object evaluate(Exchange exchange) {
+                        return "ABC";
+                    }
+                }).to("mock:result");
+            }
+        });
+
+        template.sendBodyAndHeader("direct:start", body, "bar", "ABC");
+
+        assertMockEndpointsSatisifed();
+    }
+
     public void testUseHeaderExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
@@ -36,8 +67,6 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
                         to("mock:result");
             }
         });
-
-        expected.message(0).header("foo").isEqualTo("ABC");
 
         template.sendBodyAndHeader("direct:start", body, "bar", "ABC");
 
@@ -53,8 +82,6 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
             }
         });
 
-        expected.message(0).header("foo").isEqualTo("ABC");
-
         template.sendBody("direct:start", "ABC");
 
         assertMockEndpointsSatisifed();
@@ -69,8 +96,6 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
             }
         });
 
-        expected.message(0).header("foo").isEqualTo("ABC");
-
         template.sendBody("direct:start", "ABC".getBytes());
 
         assertMockEndpointsSatisifed();
@@ -81,5 +106,6 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
         super.setUp();
 
         expected = getMockEndpoint("mock:result");
+        expected.message(0).header("foo").isEqualTo("ABC");
     }
 }
