@@ -112,12 +112,6 @@ public class IOConverter {
     }
 
     @Converter
-    public static byte[] toByteArray(String text) {
-        // TODO could we automatically find this?
-        return text.getBytes();
-    }
-
-    @Converter
     public static String toString(byte[] data) {
         return new String(data);
     }
