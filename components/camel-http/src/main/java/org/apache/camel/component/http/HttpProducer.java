@@ -17,9 +17,6 @@
 package org.apache.camel.component.http;
 
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -37,12 +34,9 @@ import org.apache.commons.httpclient.methods.RequestEntity;
  * @version $Revision$
  */
 public class HttpProducer extends DefaultProducer<HttpExchange> implements Producer<HttpExchange> {
-    private static final String HTTP_RESPONSE_CODE = "http.responseCode";
+    public static final String HTTP_RESPONSE_CODE = "http.responseCode";
     public static final String QUERY = "org.apache.camel.component.http.query";
     
-    // This should be a set of lower-case strings 
-    public static final Set<String> HEADERS_TO_SKIP = new HashSet<String>(Arrays.asList(
-            "content-length", "content-type", HTTP_RESPONSE_CODE.toLowerCase())); 
     private HttpClient httpClient;
 
     public HttpProducer(HttpEndpoint endpoint) {
@@ -53,11 +47,11 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
     public void process(Exchange exchange) throws Exception {
         HttpMethod method = createMethod(exchange);
         
-        
+        HttpBinding binding = ((HttpEndpoint)getEndpoint()).getBinding();
         // propagate headers as HTTP headers
         for (String headerName : exchange.getIn().getHeaders().keySet()) {
             String headerValue = exchange.getIn().getHeader(headerName, String.class);
-            if (shouldHeaderBePropagated(headerName, headerValue)) {
+            if (binding.shouldHeaderBePropagated(headerName, headerValue)) {
                 method.addRequestHeader(headerName, headerValue);
             }
         }
@@ -121,18 +115,5 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
             }
         }
         return entity;
-    }
-    
-    protected boolean shouldHeaderBePropagated(String headerName, String headerValue) {
-        if (headerValue == null) {
-            return false;
-        }
-        if (headerName.startsWith("org.apache.camel")) {
-            return false;
-        }
-        if (HEADERS_TO_SKIP.contains(headerName.toLowerCase())) {
-            return false;
-        }
-        return true;
     }
 }

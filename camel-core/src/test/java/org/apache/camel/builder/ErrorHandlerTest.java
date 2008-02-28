@@ -68,7 +68,7 @@ public class ErrorHandlerTest extends TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("seda:a").errorHandler(loggingErrorHandler("FOO.BAR")).to("seda:b");
-                // this route will use the default error handler, DeadLetterChannel
+                // this route will use the default error handler, DeadLetterChannel
                 from("seda:b").to("seda:c");
             }
         };
