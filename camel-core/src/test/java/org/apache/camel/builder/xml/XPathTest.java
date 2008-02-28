@@ -93,11 +93,8 @@ public class XPathTest extends TestSupport {
     }
 
     protected Exchange createExchange(String xml) {
-        CamelContext context = new DefaultCamelContext();
-        Exchange exchange = new DefaultExchange(context);
-        Message message = exchange.getIn();
-        message.setHeader("name", "James");
-        message.setBody(xml);
+        Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), xml);
+        exchange.getIn().setHeader("name", "James");
         return exchange;
     }
 }

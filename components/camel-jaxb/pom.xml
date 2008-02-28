@@ -34,7 +34,7 @@
   <description>Camel JAXB support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.converter.jaxb*</camel.osgi.export.pkg>
+	<camel.osgi.export.pkg>org.apache.camel.converter.jaxb.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

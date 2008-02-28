@@ -34,7 +34,7 @@
   <description>Camel Quartz support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.component.quartz*</camel.osgi.export.pkg>
+	<camel.osgi.export.pkg>org.apache.camel.component.quartz.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

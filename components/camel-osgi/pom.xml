@@ -34,7 +34,7 @@
   <description>Camel OSGi support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.osgi*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.osgi.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
