@@ -95,20 +95,26 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
 
     public void process(RemoteFileExchange exchange) throws Exception {
         InputStream payload = exchange.getIn().getBody(InputStream.class);
-        
-        String fileName = createFileName(exchange.getIn(), endpoint.getConfiguration());
-        
-        int lastPathIndex = fileName.lastIndexOf('/');
-        if (lastPathIndex != -1)
-        {
-            boolean success = buildDirectory(channel, fileName.substring(0, lastPathIndex));
-            if (!success) {
-                LOG.warn("Couldn't buildDirectory: " + fileName.substring(0, lastPathIndex) + " (either permissions deny it, or it already exists)");
+        try {
+            String fileName = createFileName(exchange.getIn(), endpoint.getConfiguration());
+            
+            int lastPathIndex = fileName.lastIndexOf('/');
+            if (lastPathIndex != -1)
+            {
+                boolean success = buildDirectory(channel, fileName.substring(0, lastPathIndex));
+                if (!success) {
+                    LOG.warn("Couldn't buildDirectory: " + fileName.substring(0, lastPathIndex) + " (either permissions deny it, or it already exists)");
+                }
+            }
+            
+            channel.put(payload, fileName);
+            LOG.info("Sent: " + fileName + " to " + endpoint.getConfiguration());
+        }
+        finally {
+            if (null != payload) {
+                payload.close();
             }
         }
-        
-        channel.put(payload, fileName);
-        LOG.info("Sent: " + fileName + " to " + endpoint.getConfiguration());
     }
 
     @Override
