@@ -34,7 +34,7 @@
   <description>The Core Camel POJO based router</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel*</camel.osgi.export.pkg>
+	<camel.osgi.export.pkg>org.apache.camel.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

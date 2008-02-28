@@ -54,8 +54,9 @@
     <!-- OSGi bundles properties -->
     <camel.osgi.import.pkg>!javax.xml.bind.annotation.adapters,*</camel.osgi.import.pkg>
     <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>
-    <camel.osgi.export>${camel.osgi.export.pkg}*;version=${camel.osgi.export.version}</camel.osgi.export>
-    <camel.osgi.export.version>${project.version}</camel.osgi.export.version>
+    <camel.osgi.export>${camel.osgi.export.pkg};${camel.osgi.version}</camel.osgi.export>
+    <camel.osgi.version>version=${project.version}</camel.osgi.version>
+    <camel.osgi.split.pkg>-split-package:=first</camel.osgi.split.pkg>
     <camel.osgi.import>${camel.osgi.import.pkg}</camel.osgi.import>
     <camel.osgi.symbolic.name>${groupId}.${artifactId}</camel.osgi.symbolic.name>
   </properties>

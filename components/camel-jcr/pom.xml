@@ -31,9 +31,7 @@
   <description>Camel JCR support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.jcr*
-    </camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.component.jcr.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

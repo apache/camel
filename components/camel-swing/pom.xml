@@ -34,7 +34,7 @@
   <description>Camel Swing support</description>
 
   <properties>
-  	<camel.osgi.export.pkg>org.apache.camel.component.uface.swing*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.component.uface.swing.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

@@ -34,7 +34,7 @@
   <description>Camel Mail support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.component.mail*</camel.osgi.export.pkg>
+	<camel.osgi.export.pkg>org.apache.camel.component.mail.*</camel.osgi.export.pkg>
   </properties>
 
   <repositories>

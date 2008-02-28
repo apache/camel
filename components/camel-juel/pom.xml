@@ -34,7 +34,7 @@
   <description>Camel JUEL support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.language.juel*</camel.osgi.export.pkg>
+	<camel.osgi.export.pkg>org.apache.camel.language.juel.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

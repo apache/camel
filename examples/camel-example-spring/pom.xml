@@ -34,7 +34,7 @@
   <description>An example showing how to work with Camel and Spring</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.example.spring*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.example.spring.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

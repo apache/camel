@@ -35,7 +35,7 @@
 
   <properties>
     <saxon-version>8.7</saxon-version>
-	<camel.osgi.export.pkg>org.apache.camel.component.xquery*</camel.osgi.export.pkg>
+	<camel.osgi.export.pkg>org.apache.camel.component.xquery.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
