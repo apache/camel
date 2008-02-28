@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.mina;
 
-import java.net.SocketAddress;
-
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.IoAcceptor;
@@ -27,10 +26,10 @@ import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
 
+import java.net.SocketAddress;
+
 /**
- * A
- * 
- * @{link Consumer} for MINA
+ * A @{link Consumer} implementation for MINA
  * @version $Revision$
  */
 public class MinaConsumer extends DefaultConsumer<MinaExchange> {
@@ -57,8 +56,24 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
         IoHandler handler = new IoHandlerAdapter() {
             @Override
             public void messageReceived(IoSession session, Object object) throws Exception {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Received body: " + object);
+                }
+
                 MinaExchange exchange = endpoint.createExchange(session, object);
                 getProcessor().process(exchange);
+
+                if (ExchangeHelper.isOutCapable(exchange)) {
+                    Object body = exchange.getOut().getBody();
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Writing body: " + body);
+                    }
+                    session.write(body);
+                } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Can not write body since this exchange is not out capable: " + exchange);
+                    }
+                }
             }
         };
 
