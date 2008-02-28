@@ -95,30 +95,10 @@
 
   <build>
     <plugins>
-      <!-- lets delete the log4j.properties from the test-jar -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>package</id>
-            <phase>package</phase>
-            <configuration>
-              <tasks>
-                <echo>Deleting unwanted resources from the test-jar</echo>
-                <delete file="${project.build.directory}/test-classes/log4j.properties" verbose="true"/>
-              </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
       <!-- generate the attached tests jar -->
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
+        <version>2.2</version>
         <executions>
           <execution>
             <goals>
@@ -127,9 +107,8 @@
           </execution>
         </executions>
         <configuration>
-          <!-- TODO this doesn't work - if ever we can figure out the maven ninja to get it working, we can zap the Ant stuff above -->
           <excludes>
-            <exclude>**/*/log4j.properties</exclude>
+            <exclude>log4j.properties</exclude>
           </excludes>
         </configuration>
       </plugin>
