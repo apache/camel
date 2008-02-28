@@ -78,24 +78,31 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
 
     public void process(RemoteFileExchange exchange) throws Exception {
         InputStream payload = exchange.getIn().getBody(InputStream.class);
-        String fileName = createFileName(exchange.getIn(), endpoint.getConfiguration());
-        
-        int lastPathIndex = fileName.lastIndexOf('/');
-        if (lastPathIndex != -1)
-        {
-            String directory = fileName.substring(0, lastPathIndex);
-            if (!buildDirectory(client, directory)) {
-                LOG.warn("Couldn't buildDirectory: " + directory + " (either permissions deny it, or it already exists)");
+        try {
+            String fileName = createFileName(exchange.getIn(), endpoint.getConfiguration());
+            
+            int lastPathIndex = fileName.lastIndexOf('/');
+            if (lastPathIndex != -1)
+            {
+                String directory = fileName.substring(0, lastPathIndex);
+                if (!buildDirectory(client, directory)) {
+                    LOG.warn("Couldn't buildDirectory: " + directory + " (either permissions deny it, or it already exists)");
+                }
+            }
+            
+            final boolean success = client.storeFile(fileName, payload);
+            if (!success) {
+                throw new RuntimeCamelException("error sending file");
+            }
+            
+            RemoteFileConfiguration config = endpoint.getConfiguration();
+            LOG.info("Sent: " + fileName + " to " + config.toString().substring(0, config.toString().indexOf(config.getFile())));
+        }
+        finally {
+            if (null != payload) {
+                payload.close();
             }
         }
-        
-        final boolean success = client.storeFile(fileName, payload);
-        if (!success) {
-            throw new RuntimeCamelException("error sending file");
-        }
-        
-        RemoteFileConfiguration config = endpoint.getConfiguration();
-        LOG.info("Sent: " + fileName + " to " + config.toString().substring(0, config.toString().indexOf(config.getFile())));
     }
 
     @Override

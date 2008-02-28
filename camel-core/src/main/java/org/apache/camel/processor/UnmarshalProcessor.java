@@ -40,13 +40,20 @@ public class UnmarshalProcessor implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         InputStream stream = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
+        try {
 
-        // lets setup the out message before we invoke the dataFormat
-        // so that it can mutate it if necessary
-        Message out = exchange.getOut(true);
-        out.copyFrom(exchange.getIn());
-
-        Object result = dataFormat.unmarshal(exchange, stream);
-        out.setBody(result);
+            // lets setup the out message before we invoke the dataFormat
+            // so that it can mutate it if necessary
+            Message out = exchange.getOut(true);
+            out.copyFrom(exchange.getIn());
+    
+            Object result = dataFormat.unmarshal(exchange, stream);
+            out.setBody(result);
+        }
+        finally {
+            if (null != stream) {
+                stream.close();
+            }
+        }
     }
 }
