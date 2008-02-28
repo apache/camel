@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.mina.common.ByteBuffer;
@@ -53,6 +54,7 @@ import org.apache.mina.transport.vmpipe.VmPipeAddress;
 import org.apache.mina.transport.vmpipe.VmPipeConnector;
 
 /**
+ * The component for using the Mina libaray
  * @version $Revision$
  */
 public class MinaComponent extends DefaultComponent<MinaExchange> {
@@ -99,7 +101,16 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         // TODO customize the config via URI
         SocketConnectorConfig config = new SocketConnectorConfig();
         configureSocketCodecFactory(config, parameters);
-        return new MinaEndpoint(uri, this, address, acceptor, connector, config);
+        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, connector, config);
+
+        boolean sync = ObjectConverter.toBool(parameters.get("sync"));
+        if (sync) {
+            endpoint.setExchangePattern(ExchangePattern.InOut);
+        } else {
+            endpoint.setExchangePattern(ExchangePattern.InOnly);
+        }
+
+        return endpoint;
     }
 
     protected void configureSocketCodecFactory(BaseIoConnectorConfig config, Map parameters) {
