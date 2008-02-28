@@ -26,6 +26,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
+import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpExchange;
 import org.apache.camel.impl.DefaultProducer;
@@ -127,11 +128,12 @@ public class JettyHttpProducer extends DefaultProducer<HttpExchange> implements 
             }
         }
 
+        HttpBinding binding = ((HttpEndpoint)getEndpoint()).getBinding();
         for (String name : in.getHeaders().keySet()) {            
             String value = in.getHeader(name, String.class);
             if( "Content-Type".equals(name) ) {
                 jettyExchange.setRequestContentType(value);
-            } else {
+            } else if (binding.shouldHeaderBePropagated(name, value)){
                 jettyExchange.addRequestHeader(name, value);
             }
         }

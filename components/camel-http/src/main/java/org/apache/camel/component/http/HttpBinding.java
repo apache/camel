@@ -18,6 +18,9 @@ package org.apache.camel.component.http;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +32,11 @@ import org.apache.camel.Message;
  * @version $Revision$
  */
 public class HttpBinding {
+
+    // This should be a set of lower-case strings 
+    public static final Set<String> DEFAULT_HEADERS_TO_IGNORE = new HashSet<String>(Arrays.asList(
+            "content-length", "content-type", HttpProducer.HTTP_RESPONSE_CODE.toLowerCase()));
+    private Set<String> ignoredHeaders = DEFAULT_HEADERS_TO_IGNORE;
 
     /**
      * Writes the exchange to the servlet response
@@ -43,7 +51,7 @@ public class HttpBinding {
             // Write out the headers...
             for (String key : out.getHeaders().keySet()) {
                 String value = out.getHeader(key, String.class);
-                if (value != null) {
+                if (shouldHeaderBePropagated(key, value)) {
                     response.setHeader(key, value);
                 }
             }
@@ -77,5 +85,34 @@ public class HttpBinding {
         // lets assume the body is a reader
         HttpServletRequest request = httpMessage.getRequest();
         return request.getReader();
+    }
+    
+    /*
+     * Exclude a set of headers from responses and new requests as all headers get
+     * propagated between exchanges by default
+     */
+    public boolean shouldHeaderBePropagated(String headerName, String headerValue) {
+        if (headerValue == null) {
+            return false;
+        }
+        if (headerName.startsWith("org.apache.camel")) {
+            return false;
+        }
+        if (getIgnoredHeaders().contains(headerName.toLowerCase())) {
+            return false;
+        }
+        return true;
+    }
+
+    /*
+     * override the set of headers to ignore for responses and new requests
+     * @param headersToIgnore should be a set of lower-case strings
+     */
+    public void setIgnoredHeaders(Set<String> headersToIgnore) {
+        ignoredHeaders  = headersToIgnore;
+    }
+    
+    public Set<String> getIgnoredHeaders() {
+        return ignoredHeaders;
     }
 }
