@@ -69,9 +69,7 @@ public class TryProcessor extends ServiceSupport implements Processor {
 
         if (e != null) {
             try {
-                DeadLetterChannel.setFailureHandled(exchange, true);
                 handleException(exchange, e);
-                exchange.setException(null);
             } catch (Exception ex) {
                 throw ex;
             } catch (Throwable ex) {
@@ -92,6 +90,7 @@ public class TryProcessor extends ServiceSupport implements Processor {
                 finallyProcessor.process(exchange);
             } catch (Exception e2) {
                 LOG.warn("Caught exception in finally block while handling other exception: " + e2, e2);
+                exchange.setException(e2);
             }
         }
     }
@@ -117,7 +116,7 @@ public class TryProcessor extends ServiceSupport implements Processor {
                     ExchangeHelper.copyResults(exchange, localExchange);
                 } catch (Exception e1) {
                     LOG.warn("Caught exception inside catch clause: " + e1, e1);
-                    throw e1;
+                    exchange.setException(e1);
                 }
                 return;
             }
