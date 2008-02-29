@@ -17,6 +17,7 @@
 package org.apache.camel.builder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -268,7 +269,7 @@ public class BuilderWithScopesTest extends TestSupport {
 
     public void testRouteWithTryCatchNoEndWithUncaughtException() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
-        expected.add("VALIDATE");
+        expected.addAll(Collections.nCopies(6, "VALIDATE"));
         
         runTest(createTryCatchNoEnd(), expected);
     }
@@ -305,7 +306,7 @@ public class BuilderWithScopesTest extends TestSupport {
 
     public void testRouteWithTryCatchEndWithUncaughtException() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
-        expected.add("VALIDATE");
+        expected.addAll(Collections.nCopies(6, "VALIDATE"));
         
         runTest(createTryCatchEnd(), expected);
     }
