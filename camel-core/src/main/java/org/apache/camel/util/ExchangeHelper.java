@@ -189,9 +189,8 @@ public class ExchangeHelper {
                 // so lets assume the last IN is the OUT
                 result.getOut(true).copyFrom(source.getIn());
             }
-            Map<String, Object> propertiesToCopy = new HashMap<String, Object>(source.getProperties());
-            propertiesToCopy.entrySet().removeAll(result.getProperties().entrySet());
-            result.getProperties().putAll(propertiesToCopy);
+            result.getProperties().clear();
+            result.getProperties().putAll(source.getProperties());
         }
     }
 
