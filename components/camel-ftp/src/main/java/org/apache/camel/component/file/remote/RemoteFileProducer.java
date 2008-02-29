@@ -34,8 +34,7 @@ public abstract class RemoteFileProducer<T extends RemoteFileExchange> extends D
         if (fileConfig.isDirectory()) {
             // If the path isn't empty, we need to add a trailing / if it isn't already there
             String baseDir = "";
-            if (endpointFileName.length() > 0)
-            {
+            if (endpointFileName.length() > 0) {
                 baseDir = endpointFileName + (endpointFileName.endsWith("/") ? "" : "/");
             }
             String fileName = (headerFileName != null) ? headerFileName : message.getMessageId();
