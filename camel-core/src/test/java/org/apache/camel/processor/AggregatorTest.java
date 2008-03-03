@@ -60,7 +60,15 @@ public class AggregatorTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:predicate", "test", "aggregated", 5);
         resultEndpoint.assertIsSatisfied();
     }
-    
+ 
+    public void testBatchTimeoutExpiry() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.setSleepForEmptyTest(2 * BatchProcessor.DEFAULT_BATCH_TIMEOUT);
+        template.sendBodyAndHeader("direct:start", "message:1", "cheese", 123);
+        resultEndpoint.assertIsSatisfied();
+    }
+     
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
