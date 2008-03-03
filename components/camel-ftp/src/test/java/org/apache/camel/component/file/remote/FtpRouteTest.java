@@ -46,11 +46,7 @@ public class FtpRouteTest extends ContextTestSupport {
         //resultEndpoint.message(0).header("cheese").isEqualTo(123);
 
         sendExchange(expectedBody);
-
-        // TODO: FIX this test the line below fails because FtpConsumer[102] returns an empty array
-        //  I suspect the problem is mostly related to the FTPServer we are using for the test
-        //  The file(s) expected are present on the filesystem.
-        // resultEndpoint.assertIsSatisfied();
+        resultEndpoint.assertIsSatisfied();
     }
 
     protected void sendExchange(final Object expectedBody) {
