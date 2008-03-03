@@ -40,7 +40,7 @@ public class BatchProcessor extends ServiceSupport implements Runnable {
     public static final long DEFAULT_BATCH_TIMEOUT = 1000L;
     public static final int DEFAULT_BATCH_SIZE = 100;
 
-    private static final transient Log LOG = LogFactory.getLog(Resequencer.class);
+    private static final transient Log LOG = LogFactory.getLog(BatchProcessor.class);
     private Endpoint endpoint;
     private Processor processor;
     private Collection<Exchange> collection;
@@ -118,16 +118,20 @@ public class BatchProcessor extends ServiceSupport implements Runnable {
         long end = start + batchTimeout;
         for (int i = 0; !isBatchCompleted(i); i++) {
             long timeout = end - System.currentTimeMillis();
-
+            if (timeout < 0L) {                
+                LOG.debug("batch timeout expired at batch index:"  + i);
+                break;
+            }
             Exchange exchange = consumer.receive(timeout);
             if (exchange == null) {
+                LOG.debug("receive with timeout: " + timeout + " expired at batch index:"  + i);
                 break;
             }
             collection.add(exchange);
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Finsihed batch size: " + batchSize + " timeout: " + batchTimeout + " so sending set: "
+            LOG.debug("Finished batch size: " + batchSize + " timeout: " + batchTimeout + " so sending set: "
                       + collection);
         }
 
