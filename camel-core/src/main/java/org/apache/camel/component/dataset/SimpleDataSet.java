@@ -17,11 +17,6 @@
  */
 package org.apache.camel.component.dataset;
 
-import java.util.Map;
-import java.util.HashMap;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 
 /**
@@ -30,41 +25,19 @@ import org.apache.camel.Processor;
  *
  * @version $Revision: 1.1 $
  */
-public class SimpleDataSet implements DataSet {
+public class SimpleDataSet extends DataSetSupport {
     private Object defaultBody = "<hello>world!</hello>";
-    private Map<String,Object> defaultHeaders;
-    private Processor outputTransformer;
     private Processor inputTransformer;
-    private long size = 10;
 
     public SimpleDataSet() {
     }
 
     public SimpleDataSet(int size) {
-        setSize(size);
-    }
-
-    public void populateMessage(Exchange exchange, long messageIndex) throws Exception {
-        Message in = exchange.getIn();
-        in.setBody(getDefaultBody());
-        in.setHeaders(getDefaultHeaders());
-        applyHeaders(exchange, messageIndex);
-
-        if (outputTransformer != null) {
-            outputTransformer.process(exchange);
-        }
+        super(size);
     }
 
     // Properties
     //-------------------------------------------------------------------------
-
-    public long getSize() {
-        return size;
-    }
-
-    public void setSize(long size) {
-        this.size = size;
-    }
 
     public Object getDefaultBody() {
         return defaultBody;
@@ -72,18 +45,6 @@ public class SimpleDataSet implements DataSet {
 
     public void setDefaultBody(Object defaultBody) {
         this.defaultBody = defaultBody;
-    }
-
-    public Map<String, Object> getDefaultHeaders() {
-        if (defaultHeaders == null) {
-            defaultHeaders = new HashMap<String, Object>();
-            populateDefaultHeaders(defaultHeaders);
-        }
-        return defaultHeaders;
-    }
-
-    public void setDefaultHeaders(Map<String, Object> defaultHeaders) {
-        this.defaultHeaders = defaultHeaders;
     }
 
     public Processor getInputTransformer() {
@@ -94,21 +55,13 @@ public class SimpleDataSet implements DataSet {
         this.inputTransformer = inputTransformer;
     }
 
-    public Processor getOutputTransformer() {
-        return outputTransformer;
-    }
-
-    public void setOutputTransformer(Processor outputTransformer) {
-        this.outputTransformer = outputTransformer;
-    }
-
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected void applyHeaders(Exchange exchange, long messageIndex) {
-        Message in = exchange.getIn();
-        in.setHeader(DataSet.INDEX_HEADER, messageIndex);
-    }
 
-    protected void populateDefaultHeaders(Map<String, Object> map) {
+    /**
+     * Creates the message body for a given message
+     */
+    protected Object createMessageBody(long messageIndex) {
+        return getDefaultBody();
     }
 }

@@ -28,6 +28,7 @@ import org.apache.camel.Service;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.Message;
 import org.apache.camel.impl.EventDrivenPollingConsumer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ExchangeHelper;
@@ -42,6 +43,12 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private static final transient Log LOG = LogFactory.getLog(DataSetEndpoint.class);
     private DataSet dataSet;
     private AtomicInteger receivedCounter = new AtomicInteger();
+
+    public static void assertEquals(String description, Object expected, Object actual, Exchange exchange) {
+        if (!ObjectHelper.equal(expected, actual)) {
+            throw new AssertionError(description + " does not match. Expected: " + expected + " but was: " + actual + " on  " + exchange);
+        }
+    }
 
     public DataSetEndpoint(String endpointUri, Component component, DataSet dataSet) {
         super(endpointUri, component);
@@ -72,10 +79,14 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     /**
      * Creates a message exchange for the given index in the {@link DataSet}
      */
-    public Exchange createExchange(long counter) throws Exception {
-        Exchange expected = createExchange();
-        getDataSet().populateMessage(expected, counter);
-        return expected;
+    public Exchange createExchange(long messageIndex) throws Exception {
+        Exchange exchange = createExchange();
+        getDataSet().populateMessage(exchange, messageIndex);
+
+        Message in = exchange.getIn();
+        in.setHeader(DataSet.INDEX_HEADER, messageIndex);
+
+        return exchange;
     }
 
 
@@ -90,31 +101,20 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     @Override
     protected void performAssertions(Exchange actual) throws Exception {
         int receivedCount = receivedCounter.incrementAndGet();
-        long counter = receivedCount - 1;
-        Exchange expected = createExchange(counter);
+        long index = receivedCount - 1;
+        Exchange expected = createExchange(index);
 
         // now lets assert that they are the same
-        LOG.debug("Received message: " + counter + " = " + actual);
-        assertMessageExpected(counter, expected, actual);
+        LOG.debug("Received message: " + index + " = " + actual);
+
+        assertMessageExpected(index, expected, actual);
     }
 
-    protected void assertMessageExpected(long counter, Exchange expected, Exchange actual) throws InvalidPayloadException, NoSuchHeaderException {
+    protected void assertMessageExpected(long index, Exchange expected, Exchange actual) throws Exception {
         long actualCounter = ExchangeHelper.getMandatoryHeader(actual, DataSet.INDEX_HEADER, Long.class);
-        assertEquals(DataSet.INDEX_HEADER, counter, actualCounter, actual);
+        assertEquals(DataSet.INDEX_HEADER, index, actualCounter, actual);
 
-        Object expectedBody = expected.getIn().getBody();
-        Object actualBody = actual.getIn().getBody();
-        if (expectedBody != null) {
-            // lets coerce to the correct type
-            actualBody = ExchangeHelper.getMandatoryInBody(actual, expectedBody.getClass());
-        }
-        assertEquals("message body", expectedBody, actualBody, actual);
-    }
-
-    protected void assertEquals(String description, Object expected, Object actual, Exchange exchange) {
-        if (!ObjectHelper.equal(expected, actual)) {
-            throw new AssertionError(description + " does not match. Expected: " + expected + " but was: " + actual + " on  " + exchange);
-        }
+        getDataSet().assertMessageExpected(this, expected, actual, index);
     }
 
     public void start() throws Exception {

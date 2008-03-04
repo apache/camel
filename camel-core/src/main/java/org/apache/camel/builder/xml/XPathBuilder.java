@@ -42,6 +42,8 @@ import static org.apache.camel.converter.ObjectConverter.toBoolean;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ExchangeHelper;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 /**
@@ -156,6 +158,16 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      */
     public XPathBuilder<E> stringResult() {
         resultQName = XPathConstants.STRING;
+        return this;
+    }
+
+    /**
+     * Sets the expression result type to boolean
+     *
+     * @return the current builder
+     */
+    public XPathBuilder<E> resultType(Class resultType) {
+        setResultType(resultType);
         return this;
     }
 
@@ -376,6 +388,21 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
 
     public void setResultType(Class resultType) {
         this.resultType = resultType;
+        if (Number.class.isAssignableFrom(resultType)) {
+            numberResult();
+        }
+        else if (String.class.isAssignableFrom(resultType)) {
+            stringResult();
+        }
+        else if (Boolean.class.isAssignableFrom(resultType)) {
+            booleanResult();
+        }
+        else if (Node.class.isAssignableFrom(resultType)) {
+            nodeResult();
+        }
+        else if (NodeList.class.isAssignableFrom(resultType)) {
+            nodeSetResult();
+        }
     }
 
     // Implementation methods
@@ -518,5 +545,4 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
         }
         return answer;
     }
-
 }
