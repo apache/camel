@@ -32,7 +32,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.SynchronousBundleListener;
-import org.springframework.osgi.internal.context.support.BundleDelegatingClassLoader;
+import org.springframework.osgi.util.BundleDelegatingClassLoader;
 
 /**
  * Created by IntelliJ IDEA.

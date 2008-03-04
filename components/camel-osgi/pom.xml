@@ -59,7 +59,7 @@
     <dependency>
       <groupId>org.springframework.osgi</groupId>
       <artifactId>spring-osgi-core</artifactId>
-      <version>1.0-m3</version>
+      <version>1.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.felix</groupId>
@@ -100,11 +100,6 @@
   </dependencies>
 
   <repositories>
-    <repository>
-      <id>i21-s3-maven-repo</id>
-      <name>i21 S3 milestone repo</name>
-      <url>http://s3.amazonaws.com/maven.springframework.org/milestone</url>
-    </repository>
     <repository>
       <id>spring.osgi</id>
       <url>http://static.springframework.org/maven2</url>
