@@ -106,6 +106,17 @@ public class JmsBinding {
      * @return a newly created JMS Message instance containing the
      * @throws JMSException if the message could not be created
      */
+    public Message makeJmsMessage(Exchange exchange, Session session) throws JMSException {
+        return makeJmsMessage(exchange, exchange.getIn(), session);
+    }
+
+    /**
+     * Creates a JMS message from the Camel exchange and message
+     *
+     * @param session the JMS session used to create the message
+     * @return a newly created JMS Message instance containing the
+     * @throws JMSException if the message could not be created
+     */
     public Message makeJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session) throws JMSException {
         Message answer = null;
         if (camelMessage instanceof JmsMessage) {
@@ -119,6 +130,13 @@ public class JmsBinding {
         return answer;
     }
 
+    /**
+     * Appends the JMS headers from the Camel {@link JmsMessage}
+     */
+    public void appendJmsProperties(Message jmsMessage, Exchange exchange) throws JMSException {
+        appendJmsProperties(jmsMessage, exchange, exchange.getIn());
+    }
+    
     /**
      * Appends the JMS headers from the Camel {@link JmsMessage}
      */

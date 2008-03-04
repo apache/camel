@@ -123,6 +123,16 @@ public class JmsProducer extends DefaultProducer {
         }
     }
 
+    /**
+     * Preserved for backwards compatibility.
+     * 
+     * @deprecated
+     * @see #getInOnlyTemplate()
+     */
+    public JmsOperations getTemplate() {
+        return getInOnlyTemplate();
+    }
+
     public JmsOperations getInOnlyTemplate() {
         if (inOnlyTemplate == null) {
             inOnlyTemplate = endpoint.createInOnlyTemplate();
