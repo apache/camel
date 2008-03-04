@@ -27,7 +27,7 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
  * @version $Revision: 1.1 $
  */
 @ContextConfiguration
-public class DataSetTest extends AbstractJUnit38SpringContextTests {
+public class SpringDataSetTest extends AbstractJUnit38SpringContextTests {
     @Autowired
     protected CamelContext camelContext;
 
