@@ -19,15 +19,7 @@ package org.apache.camel.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.InvalidTypeException;
-import org.apache.camel.Message;
-import org.apache.camel.NoSuchBeanException;
-import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.NoSuchPropertyException;
+import org.apache.camel.*;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
@@ -91,6 +83,15 @@ public class ExchangeHelper {
         T answer = exchange.getProperty(propertyName, type);
         if (answer == null) {
             throw new NoSuchPropertyException(exchange, propertyName, type);
+        }
+        return answer;
+    }
+
+    public static <T> T getMandatoryHeader(Exchange exchange, String propertyName, Class<T> type)
+            throws NoSuchHeaderException {
+        T answer = exchange.getIn().getHeader(propertyName, type);
+        if (answer == null) {
+            throw new NoSuchHeaderException(exchange, propertyName, type);
         }
         return answer;
     }

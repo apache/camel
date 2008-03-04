@@ -19,27 +19,27 @@ package org.apache.camel;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
- * An exception caused when a mandatory property is not available on a message
+ * An exception caused when a mandatory header is not available on a message
  * {@link Exchange}
- * 
- * @see ExchangeHelper#getMandatoryProperty(Exchange, String, Class)
- * 
+ *
+ * @see ExchangeHelper#getMandatoryHeader(Exchange, String, Class)
+ *
  * @version $Revision$
  */
-public class NoSuchPropertyException extends CamelExchangeException {
+public class NoSuchHeaderException extends CamelExchangeException {
     private static final long serialVersionUID = -8721487431101572630L;
-    private final String propertyName;
+    private final String headerName;
     private final Class<?> type;
 
-    public NoSuchPropertyException(Exchange exchange, String propertyName, Class<?> type) {
-        super("No '" + propertyName + "' property available of type: " + type.getName()
-              + reason(exchange, propertyName), exchange);
-        this.propertyName = propertyName;
+    public NoSuchHeaderException(Exchange exchange, String headerName, Class<?> type) {
+        super("No '" + headerName + "' header available of type: " + type.getName()
+              + reason(exchange, headerName), exchange);
+        this.headerName = headerName;
         this.type = type;
     }
 
-    public String getPropertyName() {
-        return propertyName;
+    public String getHeaderName() {
+        return headerName;
     }
 
     public Class<?> getType() {
