@@ -190,8 +190,7 @@
       <artifactId>camel-core</artifactId>
       <type>test-jar</type>
       <version>${project.version}</version>
-      <optional>true</optional>
-      <scope>test</scope>
+      <optional>true</optional>      
     </dependency>
 
     <dependency>
