@@ -32,6 +32,7 @@ public abstract class DataSetSupport implements DataSet {
     private Map<String, Object> defaultHeaders;
     private Processor outputTransformer;
     private long size = 10;
+    private long reportCount = -1;
 
     public DataSetSupport() {
     }
@@ -61,12 +62,29 @@ public abstract class DataSetSupport implements DataSet {
         DataSetEndpoint.assertEquals("message body", expectedBody, actualBody, actual);
     }
 
+    // Properties
+    //-------------------------------------------------------------------------
+
     public long getSize() {
         return size;
     }
 
     public void setSize(long size) {
         this.size = size;
+    }
+
+    public long getReportCount() {
+        if (reportCount <= 0) {
+            reportCount = getSize() / 5;
+        }
+        return reportCount;
+    }
+
+    /**
+     * Sets the number of messages in a group on which we will report that messages have been received.
+     */
+    public void setReportCount(long reportCount) {
+        this.reportCount = reportCount;
     }
 
     public Map<String, Object> getDefaultHeaders() {
@@ -88,6 +106,9 @@ public abstract class DataSetSupport implements DataSet {
     public void setOutputTransformer(Processor outputTransformer) {
         this.outputTransformer = outputTransformer;
     }
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
 
     protected abstract Object createMessageBody(long messageIndex);
 

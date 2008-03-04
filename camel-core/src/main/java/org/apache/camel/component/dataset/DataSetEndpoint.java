@@ -43,6 +43,9 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private static final transient Log LOG = LogFactory.getLog(DataSetEndpoint.class);
     private DataSet dataSet;
     private AtomicInteger receivedCounter = new AtomicInteger();
+    private long produceDelay = -1;
+    private long consumeDelay = -1;
+    private long startTime;
 
     public static void assertEquals(String description, Object expected, Object actual, Exchange exchange) {
         if (!ObjectHelper.equal(expected, actual)) {
@@ -90,6 +93,10 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
 
+    // Properties
+    //-------------------------------------------------------------------------
+
+
     public DataSet getDataSet() {
         return dataSet;
     }
@@ -98,8 +105,39 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         this.dataSet = dataSet;
     }
 
+    public long getConsumeDelay() {
+        return consumeDelay;
+    }
+
+    /**
+     * Allows a delay to be specified which causes consumers to pause - to simulate slow consumers
+     */
+    public void setConsumeDelay(long consumeDelay) {
+        this.consumeDelay = consumeDelay;
+    }
+
+    public long getProduceDelay() {
+        return produceDelay;
+    }
+
+    /**
+     * Allows a delay to be specified which causes producers to pause - to simpulate slow producers
+     */
+    public void setProduceDelay(long produceDelay) {
+        this.produceDelay = produceDelay;
+    }
+
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+
+
+
     @Override
     protected void performAssertions(Exchange actual) throws Exception {
+        if (startTime == 0) {
+            startTime = System.currentTimeMillis();
+        }
         int receivedCount = receivedCounter.incrementAndGet();
         long index = receivedCount - 1;
         Exchange expected = createExchange(index);
@@ -108,6 +146,23 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         LOG.debug("Received message: " + index + " = " + actual);
 
         assertMessageExpected(index, expected, actual);
+
+        if (consumeDelay > 0) {
+            Thread.sleep(consumeDelay);
+        }
+
+        long group = getDataSet().getReportCount();
+        if (receivedCount % group == 0) {
+            reportProgress(actual, receivedCount);
+        }
+    }
+
+    protected void reportProgress(Exchange actual, int receivedCount) {
+        long time = System.currentTimeMillis();
+        long elapsed = time - startTime;
+        startTime = time;
+
+        LOG.info("Received: " + receivedCount + " messages so far. Last group took: " + elapsed + " millis");
     }
 
     protected void assertMessageExpected(long index, Exchange expected, Exchange actual) throws Exception {
