@@ -35,7 +35,7 @@
   <properties>
     <maven.test.skip>true</maven.test.skip>
     <createSourcesJar>false</createSourcesJar>
-    <shade.version>1.0-beta-1</shade.version>
+    <shade.version>1.0</shade.version>
   </properties>
 
 
