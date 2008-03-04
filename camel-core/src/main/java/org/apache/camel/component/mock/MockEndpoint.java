@@ -108,6 +108,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
      * @param context the camel context used to find all the available endpoints to be asserted
      */
     public static void assertIsSatisfied(CamelContext context) throws InterruptedException {
+        ObjectHelper.notNull(context, "camelContext");
         Collection<Endpoint> endpoints = context.getSingletonEndpoints();
         for (Endpoint endpoint : endpoints) {
             if (endpoint instanceof MockEndpoint) {
