@@ -41,6 +41,11 @@ public class DataSetConsumer extends DefaultConsumer<Exchange> {
         for (long i = 0; i < dataSet.getSize(); i++) {
             Exchange exchange = endpoint.createExchange(i);
             getProcessor().process(exchange);
+
+            long delay = endpoint.getProduceDelay();
+            if (delay > 0) {
+                Thread.sleep(delay);
+            }
         }
     }
 }
