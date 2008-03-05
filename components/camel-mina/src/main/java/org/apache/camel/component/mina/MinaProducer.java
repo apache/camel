@@ -44,24 +44,26 @@ public class MinaProducer extends DefaultProducer {
     private IoSession session;
     private MinaEndpoint endpoint;
     private CountDownLatch latch;
+    private boolean lazySessionCreation;
 
     public MinaProducer(MinaEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
+        this.lazySessionCreation = this.endpoint.getLazySessionCreation();
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (session == null) {
+        if (session == null && !lazySessionCreation) {
             throw new IllegalStateException("Not started yet!");
         }
-        if (!session.isConnected()) {
-            doStart();
+        if (session == null || !session.isConnected()) {
+            openConnection();
         }
+
         Object body = exchange.getIn().getBody();
         if (body == null) {
             LOG.warn("No payload for exchange: " + exchange);
-        }
-        else {
+        } else {
             if (ExchangeHelper.isOutCapable(exchange)) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Writing body : " + body);
@@ -70,24 +72,24 @@ public class MinaProducer extends DefaultProducer {
                 WriteFuture future = session.write(body);
                 future.join();
                 if (!future.isWritten()) {
-                    throw new RuntimeException("Timed out waiting for response: " + exchange);
+                    throw new RuntimeException(
+                        "Timed out waiting for response: " + exchange);
                 }
                 latch.await(MAX_WAIT_RESPONSE, TimeUnit.MILLISECONDS);
                 if (latch.getCount() == 1) {
-                    throw new RuntimeException("No response from server within " + MAX_WAIT_RESPONSE + " millisecs");
+                    throw new RuntimeException("No response from server within "
+                        + MAX_WAIT_RESPONSE + " millisecs");
                 }
-                ResponseHandler handler = (ResponseHandler) session.getHandler();
+                ResponseHandler handler = (ResponseHandler)session.getHandler();
                 if (handler.getCause() != null) {
                     throw new Exception("Response Handler had an exception", handler.getCause());
-                }
-                else {
+                } else {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Handler message: " + handler.getMessage());
                     }
                     exchange.getOut().setBody(handler.getMessage());
                 }
-            }
-            else {
+            } else {
                 session.write(body);
             }
         }
@@ -95,6 +97,19 @@ public class MinaProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
+        if (!lazySessionCreation) {
+            openConnection();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (session != null) {
+            session.close().join(2000);
+        }
+    }
+
+    private void openConnection() {
         SocketAddress address = endpoint.getAddress();
         IoConnector connector = endpoint.getConnector();
         if (LOG.isDebugEnabled()) {
@@ -104,13 +119,6 @@ public class MinaProducer extends DefaultProducer {
         ConnectFuture future = connector.connect(address, ioHandler, endpoint.getConfig());
         future.join();
         session = future.getSession();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        if (session != null) {
-            session.close().join(2000);
-        }
     }
 
     /**
