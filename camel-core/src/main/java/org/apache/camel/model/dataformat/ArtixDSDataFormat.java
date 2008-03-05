@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents the <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>
@@ -34,6 +36,8 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "artixDS")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ArtixDSDataFormat extends DataFormatType {
+    private static final transient Log LOG = LogFactory.getLog(ArtixDSDataFormat.class);
+
     @XmlAttribute(required = false)
     private String elementTypeName;
     @XmlAttribute(required = false)
@@ -86,6 +90,9 @@ public class ArtixDSDataFormat extends DataFormatType {
         if (elementType == null) {
             if (elementTypeName != null) {
                 elementType = ObjectHelper.loadClass(elementTypeName, getClass().getClassLoader());
+                if (elementType == null) {
+                    LOG.warn("Could not load ArtixDS Element class: " + elementTypeName + " on the classpath");
+                }
             }
         }
         return elementType;
