@@ -91,7 +91,7 @@ public class ArtixDSDataFormat extends DataFormatType {
             if (elementTypeName != null) {
                 elementType = ObjectHelper.loadClass(elementTypeName, getClass().getClassLoader());
                 if (elementType == null) {
-                    LOG.warn("Could not load ArtixDS Element class: " + elementTypeName + " on the classpath");
+                    throw new IllegalArgumentException("The ArtixDS Element class " + elementTypeName + " is not on the classpath! Cannot use the dataFormat " + this);
                 }
             }
         }
