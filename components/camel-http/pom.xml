@@ -51,7 +51,7 @@
     <dependency>
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
-      <version>3.1-rc1</version>
+      <version>3.1</version>
       <optional>false</optional>
     </dependency>
 
