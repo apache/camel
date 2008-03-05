@@ -50,8 +50,9 @@ public abstract class CamelTestSupport extends ContextTestSupport {
         CamelTransportFactory camelTransportFactory = new CamelTransportFactory();
         //set the context here to the transport factory;
         camelTransportFactory.setCamelContext(context);
-
         ConduitInitiatorManager cim = bus.getExtension(ConduitInitiatorManager.class);
+        dfm.registerDestinationFactory(CamelTransportFactory.TRANSPORT_ID, camelTransportFactory);
+        cim.registerConduitInitiator(CamelTransportFactory.TRANSPORT_ID, camelTransportFactory);
         BusFactory.setDefaultBus(bus);
         endpointInfo = new EndpointInfo();
     }
