@@ -35,14 +35,23 @@ import org.apache.camel.impl.DefaultCamelContext;
  * @version $Revision$
  */
 public class MinaTcpWithInOutTest extends TestCase {
-    protected CamelContext container = new DefaultCamelContext();
-    protected CountDownLatch latch = new CountDownLatch(1);
+	
+    protected String uri;
     protected Exchange receivedExchange;
-    protected String uri = "mina:tcp://localhost:6321?textline=true";
-    protected Producer<Exchange> producer;
-    private ReverserServer server;
-
+    protected CountDownLatch latch;
+    protected CamelContext container;
+	
     public void testMinaRouteWithInOut() throws Exception {
+    	container = new DefaultCamelContext();
+    	latch = new CountDownLatch(1);
+    	uri = "mina:tcp://localhost:6321?textline=true";
+    	Producer<Exchange> producer;
+    	ReverserServer server;
+        server = new ReverserServer();
+        server.start();
+        container.addRoutes(createRouteBuilder());
+        container.start();
+    	
         // now lets fire in a message
         Endpoint<Exchange> endpoint = container.getEndpoint("direct:x");
         Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
@@ -60,24 +69,56 @@ public class MinaTcpWithInOutTest extends TestCase {
         assertTrue("Did not receive the message!", received);
         assertNotNull(receivedExchange.getIn());
         assertEquals("!olleH", receivedExchange.getIn().getBody());
-    }
-    
-    @Override
-    protected void setUp() throws Exception {
-        server = new ReverserServer();
-        server.start();
-        container.addRoutes(createRouteBuilder());
-        container.start();
-    }
 
-
-    @Override
-    protected void tearDown() throws Exception {
         if (producer != null) {
             producer.stop();
         }
         container.stop();
         server.stop();
+    }
+    
+    public void testMinaRouteWithInOutLazy() throws Exception {
+    	container = new DefaultCamelContext();
+    	latch = new CountDownLatch(1);
+    	uri = "mina:tcp://localhost:6321?textline=true&lazySessionCreation=true";
+    	Producer<Exchange> producer;
+        container.addRoutes(createRouteBuilder());
+        container.start();
+    	ReverserServer server;          //The server is activated after Camel to check if the lazyness is working
+        server = new ReverserServer();
+        server.start();
+        
+        // now lets fire in a message
+        Endpoint<Exchange> endpoint = container.getEndpoint("direct:x");
+        Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
+        Message message = exchange.getIn();
+        String hello = "Hello!";
+        message.setBody(hello);
+        message.setHeader("cheese", 123);
+
+        producer = endpoint.createProducer();
+        producer.start();
+        producer.process(exchange);
+
+        // now lets sleep for a while
+        boolean received = latch.await(5, TimeUnit.SECONDS);
+        assertTrue("Did not receive the message!", received);
+        assertNotNull(receivedExchange.getIn());
+        assertEquals("!olleH", receivedExchange.getIn().getBody());
+
+        if (producer != null) {
+            producer.stop();
+        }
+        container.stop();
+        server.stop();
+    }
+    
+    @Override
+    protected void setUp() throws Exception {
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
     }
 
     protected RouteBuilder createRouteBuilder() {

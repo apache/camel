@@ -90,7 +90,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         IoAcceptor acceptor = new VmPipeAcceptor();
         SocketAddress address = new VmPipeAddress(connectUri.getPort());
         IoConnector connector = new VmPipeConnector();
-        return new MinaEndpoint(uri, this, address, acceptor, connector, null);
+        return new MinaEndpoint(uri, this, address, acceptor, connector, null, false);
     }
 
     protected MinaEndpoint createSocketEndpoint(String uri, URI connectUri, Map parameters) {
@@ -101,7 +101,10 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         // TODO customize the config via URI
         SocketConnectorConfig config = new SocketConnectorConfig();
         configureSocketCodecFactory(config, parameters);
-        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, connector, config);
+        
+        boolean lazySessionCreation = ObjectConverter.toBool(parameters.get("lazySessionCreation"));
+        
+        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, connector, config, lazySessionCreation);
 
         boolean sync = ObjectConverter.toBool(parameters.get("sync"));
         if (sync) {
@@ -141,7 +144,9 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
 
         configureDataGramCodecFactory(config, parameters);
 
-        return new MinaEndpoint(uri, this, address, acceptor, connector, config);
+        boolean lazySessionCreation = ObjectConverter.toBool(parameters.get("lazySessionCreation"));
+        
+        return new MinaEndpoint(uri, this, address, acceptor, connector, config, lazySessionCreation);
     }
 
     /**

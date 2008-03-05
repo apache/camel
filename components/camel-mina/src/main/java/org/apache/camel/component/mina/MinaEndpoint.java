@@ -36,13 +36,15 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
     private final SocketAddress address;
     private final IoConnector connector;
     private final IoServiceConfig config;
+    private final boolean lazySessionCreation;
 
-    public MinaEndpoint(String endpointUri, MinaComponent component, SocketAddress address, IoAcceptor acceptor, IoConnector connector, IoServiceConfig config) {
+    public MinaEndpoint(String endpointUri, MinaComponent component, SocketAddress address, IoAcceptor acceptor, IoConnector connector, IoServiceConfig config, boolean lazySessionCreation) {
         super(endpointUri, component);
         this.config = config;
         this.address = address;
         this.acceptor = acceptor;
         this.connector = connector;
+        this.lazySessionCreation = lazySessionCreation;
     }
 
     public Producer<MinaExchange> createProducer() throws Exception {
@@ -83,6 +85,10 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
         return config;
     }
 
+    public boolean getLazySessionCreation() {
+    	return lazySessionCreation;
+    }
+    
     public boolean isSingleton() {
         return true;
     }
