@@ -482,6 +482,17 @@ public class XmlConverter {
     }
 
     /**
+     * Converts the given {@link InputStream} to a DOM document
+     *
+     * @param in is the data to be parsed
+     * @return the parsed document
+     */
+    @Converter
+    public Document toDOMDocument(Reader in) throws IOException, SAXException, ParserConfigurationException {
+        return toDOMDocument(new InputSource(in));
+    }
+
+    /**
      * Converts the given {@link InputSource} to a DOM document
      *
      * @param in is the data to be parsed
@@ -501,7 +512,7 @@ public class XmlConverter {
      */
     @Converter
     public Document toDOMDocument(String text) throws IOException, SAXException, ParserConfigurationException {
-        return toDOMDocument(text.getBytes());
+        return toDOMDocument(new StringReader(text));
     }
 
     /**
