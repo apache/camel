@@ -34,6 +34,7 @@
   </prerequisites>
 
   <properties>
+    <activemq-version>5.0.0</activemq-version>
     <commons-io-version>1.3.1</commons-io-version>
     <compiler.fork>false</compiler.fork>
     <cxf-version>2.0.4-incubator</cxf-version>
@@ -44,6 +45,7 @@
     <slf4j-version>1.3.0</slf4j-version>
     <openjpa-version>0.9.6-incubating</openjpa-version>
     <spring-version>2.5.1</spring-version>
+    <mina-version>1.1.6</mina-version>
     <uface-version>1.0-SNAPSHOT</uface-version>
 
     <!-- Repositories -->
@@ -505,12 +507,12 @@
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-core</artifactId>
-        <version>4.1.1</version>
+        <version>${activemq-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>apache-activemq</artifactId>
-        <version>4.1.1</version>
+        <version>${activemq-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
