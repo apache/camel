@@ -333,7 +333,14 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
 
         // lets make sure we copy the configuration as each endpoint can
         // customize its own version
-        JmsEndpoint endpoint = new JmsEndpoint(uri, this, subject, pubSubDomain, getConfiguration().copy());
+        JmsConfiguration newConfiguration = getConfiguration().copy();
+        JmsEndpoint endpoint;
+        if (pubSubDomain) {
+            endpoint = new JmsEndpoint(uri, this, subject, pubSubDomain, newConfiguration);
+        }
+        else {
+            endpoint = new JmsQueueEndpoint(uri, this, subject, newConfiguration);
+        }
 
         String selector = (String) parameters.remove("selector");
         if (selector != null) {
