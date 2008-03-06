@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import java.io.File;
+import java.util.List;
 
 import javax.naming.Context;
 
@@ -27,6 +28,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.CreateRouteWithNonExistingEndpointTest;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.jndi.JndiTest;
+import org.apache.camel.util.CamelContextHelper;
 
 /**
  * A useful base class which creates a {@link CamelContext} with some routes
@@ -260,5 +262,21 @@ public abstract class ContextTestSupport extends TestSupport {
 
     protected void assertValidContext(CamelContext context) {
         assertNotNull("No context found!", context);
+    }
+
+    protected <T> List<T> getSingletonEndpoints(Class<T> type) {
+        return CamelContextHelper.getSingletonEndpoints(context, type);
+    }
+
+    protected <T extends Endpoint> T getMandatoryEndpoint(String uri, Class<T> type) {
+        T endpoint = context.getEndpoint(uri, type);
+        assertNotNull("No endpoint found for uri: " + uri, endpoint);
+        return endpoint;
+    }
+
+    protected Endpoint getMandatoryEndpoint(String uri) {
+        Endpoint endpoint = context.getEndpoint(uri);
+        assertNotNull("No endpoint found for uri: " + uri, endpoint);
+        return endpoint;
     }
 }
