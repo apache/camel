@@ -17,6 +17,7 @@
 package org.apache.camel.component.mina;
 
 import org.apache.camel.Processor;
+import org.apache.camel.CamelException;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
@@ -29,7 +30,7 @@ import org.apache.mina.common.IoSession;
 import java.net.SocketAddress;
 
 /**
- * A @{link Consumer} implementation for MINA
+ * A {@link org.apache.camel.Consumer Consumer} implementation for Apache MINA.
  * @version $Revision$
  */
 public class MinaConsumer extends DefaultConsumer<MinaExchange> {
@@ -54,6 +55,17 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
         }
 
         IoHandler handler = new IoHandlerAdapter() {
+
+            @Override
+            public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
+                // close invalid session
+                LOG.debug("Closing session as an exception was thrown from MINA");
+                session.close();
+
+                // must wrap and rethrow since cause can be of Throwable and we must only throw Exception
+                throw new CamelException(cause);
+            }
+
             @Override
             public void messageReceived(IoSession session, Object object) throws Exception {
                 if (LOG.isDebugEnabled()) {
@@ -65,10 +77,19 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
 
                 if (ExchangeHelper.isOutCapable(exchange)) {
                     Object body = exchange.getOut().getBody();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Writing body: " + body);
+
+                    // TODO: if exchange.isFailed() then out could potential be in - (what should we do)
+
+                    if (body != null) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Writing body: " + body);
+                        }
+                        session.write(body);
+                    } else {
+                        // must close session if no data to write otherwise client will never receive a response and wait forever
+                        LOG.warn("Can not write body since its null, closing session");
+                        session.close();
                     }
-                    session.write(body);
                 } else {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Can not write body since this exchange is not out capable: " + exchange);
@@ -85,4 +106,5 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
         acceptor.unbind(address);
         super.doStop();
     }
+    
 }
