@@ -251,8 +251,7 @@
               <artifacts>
                 <artifact>
                   <file>./src/main/resources/schema/cxfEndpoint.xsd</file>
-                  <type>xsd</type>
-                  <classifier>optional</classifier>
+                  <type>xsd</type>                  
                 </artifact>
               </artifacts>
             </configuration>
