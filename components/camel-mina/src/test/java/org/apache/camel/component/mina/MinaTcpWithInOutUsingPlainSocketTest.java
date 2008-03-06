@@ -39,7 +39,7 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends TestCase {
     protected CamelContext container = new DefaultCamelContext();
 
     // use parameter sync=true to force InOut pattern of the MinaExchange
-    protected String uri = "mina:tcp://localhost:9888?textline=true&sync=true";
+    protected String uri = "mina:tcp://localhost:6333?textline=true&sync=true";
 
     public void testSendAndReceiveOnce() throws Exception {
         String response = sendAndReceive("World");
@@ -81,7 +81,7 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends TestCase {
         byte buf[] = new byte[128];
 
         Socket soc = new Socket();
-        soc.connect(new InetSocketAddress("localhost", 8888));
+        soc.connect(new InetSocketAddress("localhost", 6333));
 
         // Send message using plain Socket to test if this works
         OutputStream os = null;
