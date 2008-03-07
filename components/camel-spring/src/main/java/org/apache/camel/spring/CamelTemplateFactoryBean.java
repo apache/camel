@@ -26,7 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelTemplate;
 import org.apache.camel.Endpoint;
-
+import org.apache.camel.model.IdentifiedType;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -36,9 +36,9 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  * @version $Revision$
  */
-@XmlRootElement(name = "camelTemplate")
+@XmlRootElement(name = "template")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelTemplateFactoryBean implements FactoryBean, InitializingBean, CamelContextAware {
+public class CamelTemplateFactoryBean extends IdentifiedType implements FactoryBean, InitializingBean, CamelContextAware {
     @XmlAttribute(required = false)
     private String defaultEndpoint;
     @XmlTransient

@@ -71,6 +71,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private String[] packages = {};
     @XmlElements({
         @XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false), 
+        @XmlElement(name = "template", type = CamelTemplateFactoryBean.class, required = false), 
         @XmlElement(name = "proxy", type = CamelProxyFactoryType.class, required = false),
         @XmlElement(name = "export", type = CamelServiceExporterType.class, required = false), 
         @XmlElement(name = "jmxAgent", required = false)})
