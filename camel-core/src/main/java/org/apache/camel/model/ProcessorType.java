@@ -50,6 +50,7 @@ import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MessageIdRepository;
 import org.apache.camel.spi.DataFormat;
@@ -368,7 +369,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * A builder for the <a
+     * Creates the <a
      * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
      * pattern where an expression is evaluated to iterate through each of the
      * parts of a message and then each part is then send to some endpoint.
@@ -385,7 +386,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * A builder for the <a
+     * Creates the <a
      * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
      * pattern where an expression is evaluated to iterate through each of the
      * parts of a message and then each part is then send to some endpoint.
@@ -401,7 +402,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * A builder for the <a
+     * Creates the <a
      * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
      * pattern where an expression is evaluated to iterate through each of the
      * parts of a message and then each part is then send to some endpoint.
@@ -419,7 +420,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * A builder for the <a
+     * Creates the <a
      * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
      * pattern where an expression is evaluated to iterate through each of the
      * parts of a message and then each part is then send to some endpoint.
@@ -436,7 +437,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
     
     /**
-     * A builder for the <a
+     * Creates the <a
      * href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>
      * pattern where a list of expressions are evaluated to be able to compare
      * the message exchanges to reorder them. e.g. you may wish to sort by some
@@ -453,7 +454,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * A builder for the <a
+     * Creates the <a
      * href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>
      * pattern where an expression is evaluated to be able to compare the
      * message exchanges to reorder them. e.g. you may wish to sort by some
@@ -467,7 +468,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * A builder for the <a
+     * Creates the <a
      * href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>
      * pattern where a list of expressions are evaluated to be able to compare
      * the message exchanges to reorder them. e.g. you may wish to sort by some
@@ -483,7 +484,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * A builder for the <a
+     * Creates the <a
      * href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>
      * pattern where a list of expressions are evaluated to be able to compare
      * the message exchanges to reorder them. e.g. you may wish to sort by some
@@ -501,7 +502,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * A builder for the <a
+     * Creates an <a
      * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
      * pattern where a batch of messages are processed (up to a maximum amount
      * or until some timeout is reached) and messages for the same correlation
@@ -526,7 +527,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * A builder for the <a
+     * Creates an <a
      * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
      * pattern where a batch of messages are processed (up to a maximum amount
      * or until some timeout is reached) and messages for the same correlation
@@ -539,10 +540,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * discarded). Another idea is to combine line item messages together into a
      * single invoice message.
      *
-     * @param correlationExpression the expression used to calculate the
-     *                              correlation key. For a JMS message this could be the
-     *                              expression <code>header("JMSDestination")</code> or
-     *                              <code>header("JMSCorrelationID")</code>
+     * @param aggregationStrategy the strategy used for the aggregation
      */
     public ExpressionClause<AggregatorType> aggregator(AggregationStrategy aggregationStrategy) {
         AggregatorType answer = new AggregatorType();
@@ -552,7 +550,21 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * A builder for the <a
+     * Creates an <a
+     * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
+     * pattern using a custom aggregation collection implementation.
+     *
+     * @param aggregationCollection the collection used to perform the aggregation
+     */
+    public ExpressionClause<AggregatorType> aggregator(AggregationCollection aggregationCollection) {
+        AggregatorType answer = new AggregatorType();
+        answer.setAggregationCollection(aggregationCollection);
+        addOutput(answer);
+        return ExpressionClause.createAndSetExpression(answer);
+    }
+
+    /**
+     * Creates the <a
      * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
      * pattern where a batch of messages are processed (up to a maximum amount
      * or until some timeout is reached) and messages for the same correlation
@@ -577,7 +589,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * A builder for the <a
+     * Creates the <a
      * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
      * pattern where a batch of messages are processed (up to a maximum amount
      * or until some timeout is reached) and messages for the same correlation
@@ -602,7 +614,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * A builder for the <a
+     * Creates the <a
      * href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
      * where an expression is used to calculate the time which the message will
      * be dispatched on
@@ -616,7 +628,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * A builder for the <a
+     * Creates the <a
      * href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
      * where an expression is used to calculate the time which the message will
      * be dispatched on
@@ -635,7 +647,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * A builder for the <a
+     * Creates the <a
      * href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
      * where an expression is used to calculate the time which the message will
      * be dispatched on
@@ -648,7 +660,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * A builder for the <a
+     * Creates the <a
      * href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
      * where a fixed amount of milliseconds are used to delay processing of a
      * message exchange
@@ -661,7 +673,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * A builder for the <a
+     * Creates the <a
      * href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
      * where an expression is used to calculate the time which the message will
      * be dispatched on

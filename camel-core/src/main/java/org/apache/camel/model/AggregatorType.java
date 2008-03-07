@@ -35,6 +35,7 @@ import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.Aggregator;
+import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
@@ -46,13 +47,15 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 public class AggregatorType extends ExpressionNode {
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
+    @XmlTransient
+    private AggregationCollection aggregationCollection;
     @XmlAttribute(required = false)
     private Integer batchSize;
     @XmlAttribute(required = false)
     private Long batchTimeout;
     @XmlAttribute(required = false)
     private String strategyRef;
-    @XmlElement(name="completedPredicate", required = false)
+    @XmlElement(name = "completedPredicate", required = false)
     private CompletedPredicate completedPredicate;
 
     public AggregatorType() {
@@ -77,30 +80,35 @@ public class AggregatorType extends ExpressionNode {
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         Endpoint from = routeContext.getEndpoint();
         final Processor processor = routeContext.createProcessor(this);
 
-        AggregationStrategy strategy = getAggregationStrategy();
-        if (strategy == null && strategyRef != null) {
-            strategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
-        }
-        if (strategy == null) {
-            strategy = new UseLatestAggregationStrategy();
-        }
-        Expression aggregateExpression = getExpression().createExpression(routeContext);
-
-        Predicate predicate = null;
-        if (completedPredicate != null) {
-            predicate = completedPredicate.createPredicate(routeContext);
-        }
         final Aggregator service;
-        if (predicate != null) {
-            service = new Aggregator(from, processor, aggregateExpression, strategy, predicate);
+        if (aggregationCollection != null) {
+            service = new Aggregator(from, processor, aggregationCollection);
         }
         else {
-            service = new Aggregator(from, processor, aggregateExpression, strategy);
+            AggregationStrategy strategy = getAggregationStrategy();
+            if (strategy == null && strategyRef != null) {
+                strategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
+            }
+            if (strategy == null) {
+                strategy = new UseLatestAggregationStrategy();
+            }
+            Expression aggregateExpression = getExpression().createExpression(routeContext);
+
+            Predicate predicate = null;
+            if (completedPredicate != null) {
+                predicate = completedPredicate.createPredicate(routeContext);
+            }
+            if (predicate != null) {
+                service = new Aggregator(from, processor, aggregateExpression, strategy, predicate);
+            }
+            else {
+                service = new Aggregator(from, processor, aggregateExpression, strategy);
+            }
         }
 
         if (batchSize != null) {
@@ -118,6 +126,14 @@ public class AggregatorType extends ExpressionNode {
         };
 
         routes.add(route);
+    }
+
+    public AggregationCollection getAggregationCollection() {
+        return aggregationCollection;
+    }
+
+    public void setAggregationCollection(AggregationCollection aggregationCollection) {
+        this.aggregationCollection = aggregationCollection;
     }
 
     public AggregationStrategy getAggregationStrategy() {
