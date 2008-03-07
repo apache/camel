@@ -42,6 +42,10 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -50,7 +54,7 @@
 
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>apache-activemq</artifactId>
+      <artifactId>activemq-core</artifactId>
     </dependency>
 
     <!-- for testing -->
@@ -79,6 +83,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
+        <version>${pom.version}</version>
       </plugin>
     </plugins>
   </reporting>
