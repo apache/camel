@@ -38,6 +38,7 @@ import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.EndpointFactoryBean;
+import org.apache.camel.spring.CamelTemplateFactoryBean;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.camel.spring.remoting.CamelServiceExporter;
 import org.apache.camel.util.ObjectHelper;
@@ -64,6 +65,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     public void init() {
         // remoting
         addBeanDefinitionParser("proxy", CamelProxyFactoryBean.class);
+        addBeanDefinitionParser("template", CamelTemplateFactoryBean.class);
         addBeanDefinitionParser("export", CamelServiceExporter.class);
 
         // data types
