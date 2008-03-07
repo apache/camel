@@ -16,48 +16,22 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-/**
- * @version $Revision$
- */
-public class RecipientListTest extends ContextTestSupport {
+public class StaticRecipientListTest extends RecipientListTest {
 
-    public void testSendingAMessageUsingMulticastReceivesItsOwnExchange()
-            throws Exception {
-        MockEndpoint x = getMockEndpoint("mock:x");
-        MockEndpoint y = getMockEndpoint("mock:y");
-        MockEndpoint z = getMockEndpoint("mock:z");
-
-        x.expectedBodiesReceived("answer");
-        y.expectedBodiesReceived("answer");
-        z.expectedBodiesReceived("answer");
-
-        sendBody();
-
-        assertMockEndpointsSatisifed();
-    }
-
+    @Override
     protected void sendBody() {
-        template.sendBodyAndHeader("direct:a", "answer", "recipientListHeader",
-                "mock:x,mock:y,mock:z");
+        template.sendBody("direct:a", "answer");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // START SNIPPET: example
-                from("direct:a").recipientList(
-                        header("recipientListHeader").tokenize(","));
-                // END SNIPPET: example
+                from("direct:a").to("mock:x", "mock:y", "mock:z");
             }
         };
-
     }
-
 }
