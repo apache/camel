@@ -35,4 +35,12 @@ public interface BrowsableEndpoint {
      * @return the exchanges on this endpoint
      */
     List<Exchange> getExchanges();
+
+    // TODO when we remove the generics on Endpoint we can zap the next bit
+    // and make this interface extend Endpoint
+
+    /**
+     * Returns the string representation of the endpoint URI
+     */
+    String getEndpointUri();
 }
