@@ -42,7 +42,7 @@ import org.apache.camel.impl.DefaultProducer;
  *
  * @version $Revision$
  */
-public class ListEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint {
+public class ListEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint<Exchange> {
     private List<Exchange> exchanges;
     private TopicLoadBalancer loadBalancer = new TopicLoadBalancer();
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);

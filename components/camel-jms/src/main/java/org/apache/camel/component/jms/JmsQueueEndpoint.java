@@ -36,7 +36,7 @@ import org.springframework.jms.core.JmsOperations;
  *
  * @version $Revision: 1.1 $
  */
-public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
+public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint<JmsExchange> {
     private int maximumBrowseSize = -1;
 
     public JmsQueueEndpoint(String uri, JmsComponent component, String destination, JmsConfiguration configuration) {
