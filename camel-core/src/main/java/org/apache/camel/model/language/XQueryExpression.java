@@ -20,10 +20,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.model.OutputType;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * For XQuery expresions and predicates
@@ -33,7 +37,11 @@ import org.apache.camel.Predicate;
 @XmlRootElement(name = "xquery")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XQueryExpression extends NamespaceAwareExpression {
+    private static final transient Log LOG = LogFactory.getLog(XQueryExpression.class);
+    
     @XmlAttribute(required = false)
+    private String type;
+    @XmlTransient 
     private Class resultType;
 
     public XQueryExpression() {
@@ -47,6 +55,14 @@ public class XQueryExpression extends NamespaceAwareExpression {
         return "xquery";
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public Class getResultType() {
         return resultType;
     }
@@ -58,6 +74,7 @@ public class XQueryExpression extends NamespaceAwareExpression {
     @Override
     protected void configureExpression(RouteContext routeContext, Expression expression) {
         super.configureExpression(routeContext, expression);
+        updateResultType();
         if (resultType != null) {
             setProperty(expression, "resultType", resultType);
         }
@@ -66,8 +83,19 @@ public class XQueryExpression extends NamespaceAwareExpression {
     @Override
     protected void configurePredicate(RouteContext routeContext, Predicate predicate) {
         super.configurePredicate(routeContext, predicate);
+        updateResultType();
         if (resultType != null) {
             setProperty(predicate, "resultType", resultType);
         }
+    }
+    
+    private void updateResultType() {
+    	if (resultType == null && type != null) {
+    		try {
+				resultType = Class.forName(type);
+			} catch (ClassNotFoundException e) {
+				LOG.error("ClassNotFoundException creating class: " + type);
+			}
+    	}
     }
 }
