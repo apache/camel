@@ -41,27 +41,27 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     private Session session;
     private boolean setNames = false;
 
-    public SftpConsumer(SftpEndpoint endpoint, Processor processor, ChannelSftp channel) {
+    public SftpConsumer(SftpEndpoint endpoint, Processor processor, Session session) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        this.channel = channel;
+        this.session = session; 
     }
 
-    public SftpConsumer(SftpEndpoint endpoint, Processor processor, ChannelSftp channel, ScheduledExecutorService executor) {
+    public SftpConsumer(SftpEndpoint endpoint, Processor processor, Session session, ScheduledExecutorService executor) {
         super(endpoint, processor, executor);
         this.endpoint = endpoint;
-        this.channel = channel;
+        this.session = session;
     }
     
     // TODO: is there a way to avoid copy-pasting the reconnect logic?
     protected void connectIfNecessary() throws JSchException {
         if (channel == null || !channel.isConnected()) {
             if (session == null || !session.isConnected()) {
-                LOG.warn("Session isn't connected, trying to recreate and connect...");
+                LOG.info("Session isn't connected, trying to recreate and connect...");
                 session = endpoint.createSession();
                 session.connect();
             }
-            LOG.warn("Channel isn't connected, trying to recreate and connect...");
+            LOG.info("Channel isn't connected, trying to recreate and connect...");
             channel = endpoint.createChannelSftp(session);
             channel.connect();
             LOG.info("Connected to " + endpoint.getConfiguration().toString());
@@ -133,10 +133,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     }
 
     private void pollFile(ChannelSftp.LsEntry sftpFile) throws Exception {
-        if (sftpFile.getAttrs().getMTime() * 1000 > lastPollTime) { // TODO do
-                                                                    // we need
-                                                                    // to adjust
-                                                                    // the TZ?
+        if (sftpFile.getAttrs().getMTime() * 1000L > lastPollTime) {
             if (isMatched(sftpFile)) {
                 final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 channel.get(sftpFile.getFilename(), byteArrayOutputStream);

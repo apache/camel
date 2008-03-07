@@ -33,7 +33,7 @@ public class SftpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
     }
 
     public SftpConsumer createConsumer(Processor processor) throws Exception {
-        final SftpConsumer consumer = new SftpConsumer(this, processor, createChannelSftp(createSession()));
+        final SftpConsumer consumer = new SftpConsumer(this, processor, createSession());
         configureConsumer(consumer);
         return consumer;
     }
@@ -48,7 +48,7 @@ public class SftpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
             }
 
             public String getPassword() {
-                return SftpEndpoint.this.getConfiguration().getPassword();
+                return getConfiguration().getPassword();
             }
 
             public boolean promptPassword(String string) {
