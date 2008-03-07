@@ -28,19 +28,11 @@ import org.apache.camel.Exchange;
  *
  * @version $Revision$
  */
-public interface BrowsableEndpoint {
+public interface BrowsableEndpoint<T extends Exchange> extends Endpoint<T> {
     /**
      * Return the exchanges available on this endpoint
      *
      * @return the exchanges on this endpoint
      */
     List<Exchange> getExchanges();
-
-    // TODO when we remove the generics on Endpoint we can zap the next bit
-    // and make this interface extend Endpoint
-
-    /**
-     * Returns the string representation of the endpoint URI
-     */
-    String getEndpointUri();
 }
