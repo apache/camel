@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
+import org.apache.camel.CamelException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
@@ -40,6 +41,7 @@ import org.apache.mina.common.WriteFuture;
  */
 public class MinaProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(MinaProducer.class);
+    // TODO: The max wait response should be configurable
     private static final long MAX_WAIT_RESPONSE = 10000;
     private IoSession session;
     private MinaEndpoint endpoint;
@@ -66,23 +68,27 @@ public class MinaProducer extends DefaultProducer {
         } else {
             if (ExchangeHelper.isOutCapable(exchange)) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Writing body : " + body);
+                    LOG.debug("Writing body: " + body);
                 }
+
+                // write the body
                 latch = new CountDownLatch(1);
                 WriteFuture future = session.write(body);
                 future.join();
                 if (!future.isWritten()) {
-                    throw new RuntimeException(
-                        "Timed out waiting for response: " + exchange);
+                    throw new CamelException("Timed out waiting for response: " + exchange);
                 }
+
+                // wait for response, consider timeout
                 latch.await(MAX_WAIT_RESPONSE, TimeUnit.MILLISECONDS);
                 if (latch.getCount() == 1) {
-                    throw new RuntimeException("No response from server within "
-                        + MAX_WAIT_RESPONSE + " millisecs");
+                    throw new CamelException("No response from server within " + MAX_WAIT_RESPONSE + " millisecs");
                 }
-                ResponseHandler handler = (ResponseHandler)session.getHandler();
+
+                // did we get a response
+                ResponseHandler handler = (ResponseHandler) session.getHandler();
                 if (handler.getCause() != null) {
-                    throw new Exception("Response Handler had an exception", handler.getCause());
+                    throw new CamelException("Response Handler had an exception", handler.getCause());
                 } else {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Handler message: " + handler.getMessage());
@@ -116,7 +122,7 @@ public class MinaProducer extends DefaultProducer {
             LOG.debug("Creating connector to address: " + address + " using connector: " + connector);
         }
         IoHandler ioHandler = new ResponseHandler(endpoint);
-        ConnectFuture future = connector.connect(address, ioHandler, endpoint.getConfig());
+        ConnectFuture future = connector.connect(address, ioHandler, endpoint.getConnectorConfig());
         future.join();
         session = future.getSession();
     }
@@ -131,9 +137,6 @@ public class MinaProducer extends DefaultProducer {
         private Object message;
         private Throwable cause;
 
-        /**
-         * @param endpoint
-         */
         private ResponseHandler(MinaEndpoint endpoint) {
             this.endpoint = endpoint;
         }
@@ -175,4 +178,5 @@ public class MinaProducer extends DefaultProducer {
             return this.message;
         }
     }
+
 }

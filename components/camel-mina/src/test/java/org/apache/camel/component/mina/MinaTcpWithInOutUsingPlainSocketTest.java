@@ -38,8 +38,9 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends TestCase {
 
     protected CamelContext container = new DefaultCamelContext();
 
+    private static final int PORT = 6333;
     // use parameter sync=true to force InOut pattern of the MinaExchange
-    protected String uri = "mina:tcp://localhost:6333?textline=true&sync=true";
+    protected String uri = "mina:tcp://localhost:" + PORT + "?textline=true&sync=true";
 
     public void testSendAndReceiveOnce() throws Exception {
         String response = sendAndReceive("World");
@@ -58,12 +59,12 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends TestCase {
         assertEquals("Hello Paris", paris);
     }
 
-    public void xtestReceiveNoResponseSinceOutBodyIsNull() throws Exception {
+    public void testReceiveNoResponseSinceOutBodyIsNull() throws Exception {
         String out = sendAndReceive("force-null-out-body");
         assertNull("no data should be recieved", out);
     }
 
-    public void xtestReceiveNoResponseSinceOutBodyIsNullTwice() throws Exception {
+    public void testReceiveNoResponseSinceOutBodyIsNullTwice() throws Exception {
         String out = sendAndReceive("force-null-out-body");
         assertNull("no data should be recieved", out);
 
@@ -81,7 +82,7 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends TestCase {
         byte buf[] = new byte[128];
 
         Socket soc = new Socket();
-        soc.connect(new InetSocketAddress("localhost", 6333));
+        soc.connect(new InetSocketAddress("localhost", PORT));
 
         // Send message using plain Socket to test if this works
         OutputStream os = null;

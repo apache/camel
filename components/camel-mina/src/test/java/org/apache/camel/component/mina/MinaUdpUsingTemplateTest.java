@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.mina;
 
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
