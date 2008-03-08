@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.mina;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.URI;
@@ -33,8 +32,8 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.IoConnector;
+import org.apache.mina.common.IoServiceConfig;
 import org.apache.mina.common.IoSession;
-import org.apache.mina.common.support.BaseIoConnectorConfig;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.ProtocolDecoder;
@@ -44,9 +43,11 @@ import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.transport.socket.nio.DatagramAcceptor;
+import org.apache.mina.transport.socket.nio.DatagramAcceptorConfig;
 import org.apache.mina.transport.socket.nio.DatagramConnector;
 import org.apache.mina.transport.socket.nio.DatagramConnectorConfig;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
+import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 import org.apache.mina.transport.vmpipe.VmPipeAcceptor;
@@ -54,7 +55,8 @@ import org.apache.mina.transport.vmpipe.VmPipeAddress;
 import org.apache.mina.transport.vmpipe.VmPipeConnector;
 
 /**
- * The component for using the Mina libaray
+ * The component for using Apache MINA.
+ * 
  * @version $Revision$
  */
 public class MinaComponent extends DefaultComponent<MinaExchange> {
@@ -82,7 +84,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
             return createVmEndpoint(uri, u);
         }
         else {
-            throw new IOException("Unrecognised MINA protocol: " + protocol + " for uri: " + uri);
+            throw new IllegalArgumentException("Unrecognised MINA protocol: " + protocol + " for uri: " + uri);
         }
     }
 
@@ -90,7 +92,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         IoAcceptor acceptor = new VmPipeAcceptor();
         SocketAddress address = new VmPipeAddress(connectUri.getPort());
         IoConnector connector = new VmPipeConnector();
-        return new MinaEndpoint(uri, this, address, acceptor, connector, null, false);
+        return new MinaEndpoint(uri, this, address, acceptor, null, connector, null, false);
     }
 
     protected MinaEndpoint createSocketEndpoint(String uri, URI connectUri, Map parameters) {
@@ -98,13 +100,24 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         SocketAddress address = new InetSocketAddress(connectUri.getHost(), connectUri.getPort());
         IoConnector connector = new SocketConnector();
 
-        // TODO customize the config via URI
-        SocketConnectorConfig config = new SocketConnectorConfig();
-        configureSocketCodecFactory(config, parameters);
-        
+        // connector config
+        SocketConnectorConfig connectorConfig = new SocketConnectorConfig();
+        configureSocketCodecFactory(connectorConfig, parameters);
+        // TODO: verbose logging from Mina should use our logger instead of MINA INFO logger
+        //connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
+
+        // acceptor connectorConfig
+        SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig();
+        configureSocketCodecFactory(acceptorConfig, parameters);
+        acceptorConfig.setReuseAddress(true);
+        acceptorConfig.setDisconnectOnUnbind(true);
+        // TODO: verbose logging from Mina should use our logger instead of MINA INFO logger
+        //acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
+
+
         boolean lazySessionCreation = ObjectConverter.toBool(parameters.get("lazySessionCreation"));
         
-        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, connector, config, lazySessionCreation);
+        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation);
 
         boolean sync = ObjectConverter.toBool(parameters.get("sync"));
         if (sync) {
@@ -116,7 +129,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         return endpoint;
     }
 
-    protected void configureSocketCodecFactory(BaseIoConnectorConfig config, Map parameters) {
+    protected void configureSocketCodecFactory(IoServiceConfig config, Map parameters) {
         ProtocolCodecFactory codecFactory = getCodecFactory(parameters);
 
         boolean textline = false;
@@ -138,22 +151,38 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         IoAcceptor acceptor = new DatagramAcceptor();
         SocketAddress address = new InetSocketAddress(connectUri.getHost(), connectUri.getPort());
         IoConnector connector = new DatagramConnector();
+        
+        DatagramConnectorConfig connectorConfig = new DatagramConnectorConfig();
+        configureDataGramCodecFactory(connectorConfig, parameters);
+        // TODO: verbose logging from Mina should use our logger instead of MINA INFO logger
+        //connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
 
-        // TODO customize the config via URI
-        DatagramConnectorConfig config = new DatagramConnectorConfig();
-
-        configureDataGramCodecFactory(config, parameters);
+        DatagramAcceptorConfig acceptorConfig = new DatagramAcceptorConfig();
+        configureDataGramCodecFactory(acceptorConfig, parameters);
+        acceptorConfig.setDisconnectOnUnbind(true);
+        // reuse address is default true for datagram
+        // TODO: verbose logging from Mina should use our logger instead of MINA INFO logger
+        //acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
 
         boolean lazySessionCreation = ObjectConverter.toBool(parameters.get("lazySessionCreation"));
         
-        return new MinaEndpoint(uri, this, address, acceptor, connector, config, lazySessionCreation);
+        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation);
+
+        boolean sync = ObjectConverter.toBool(parameters.get("sync"));
+        if (sync) {
+            endpoint.setExchangePattern(ExchangePattern.InOut);
+        } else {
+            endpoint.setExchangePattern(ExchangePattern.InOnly);
+        }
+
+        return endpoint;
     }
 
     /**
      * For datagrams the entire message is available as a single ByteBuffer so lets just pass those around by default
      * and try converting whatever they payload is into ByteBuffers unless some custom converter is specified
      */
-    protected void configureDataGramCodecFactory(BaseIoConnectorConfig config, Map parameters) {
+    protected void configureDataGramCodecFactory(IoServiceConfig config, Map parameters) {
         ProtocolCodecFactory codecFactory = getCodecFactory(parameters);
         if (codecFactory == null) {
             codecFactory = new ProtocolCodecFactory() {
@@ -187,7 +216,6 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
             };
         }
         addCodecFactory(config, codecFactory);
-        //addCodecFactory(config, new TextLineCodecFactory());
     }
 
     protected ByteBuffer toByteBuffer(Object message) throws CharacterCodingException {
@@ -220,7 +248,8 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         return codecFactory;
     }
 
-    protected void addCodecFactory(BaseIoConnectorConfig config, ProtocolCodecFactory codecFactory) {
+    protected void addCodecFactory(IoServiceConfig config, ProtocolCodecFactory codecFactory) {
         config.getFilterChain().addLast("codec", new ProtocolCodecFilter(codecFactory));
     }
+    
 }

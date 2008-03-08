@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mina;
 
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -65,7 +63,7 @@ public class MinaUdpTest extends ContextTestSupport {
             socket.send(packet);
             Thread.sleep(1000);
         }
-        System.out.println("Sent " + messageCount + " messages");
+        LOG.debug("Sent " + messageCount + " messages");
     }
 
     protected RouteBuilder createRouteBuilder() {

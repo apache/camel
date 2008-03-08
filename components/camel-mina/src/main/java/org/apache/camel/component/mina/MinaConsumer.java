@@ -59,8 +59,10 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
             @Override
             public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
                 // close invalid session
-                LOG.debug("Closing session as an exception was thrown from MINA");
-                session.close();
+                if (session != null) {
+                    LOG.debug("Closing session as an exception was thrown from MINA");
+                    session.close();
+                }
 
                 // must wrap and rethrow since cause can be of Throwable and we must only throw Exception
                 throw new CamelException(cause);
@@ -98,11 +100,14 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
             }
         };
 
-        acceptor.bind(address, handler, endpoint.getConfig());
+        acceptor.bind(address, handler, endpoint.getAcceptorConfig());
     }
 
     @Override
     protected void doStop() throws Exception {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Unbinding from server address: " + address + " using acceptor: " + acceptor);
+        }
         acceptor.unbind(address);
         super.doStop();
     }

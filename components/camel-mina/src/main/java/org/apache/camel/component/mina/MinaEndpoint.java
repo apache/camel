@@ -24,25 +24,30 @@ import org.apache.camel.Producer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.mina.common.IoAcceptor;
+import org.apache.mina.common.IoAcceptorConfig;
 import org.apache.mina.common.IoConnector;
-import org.apache.mina.common.IoServiceConfig;
+import org.apache.mina.common.IoConnectorConfig;
 import org.apache.mina.common.IoSession;
 
 /**
+ * Endpoint for Camel MINA. 
+ *
  * @version $Revision$
  */
 public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
     private final IoAcceptor acceptor;
     private final SocketAddress address;
     private final IoConnector connector;
-    private final IoServiceConfig config;
+    private final IoAcceptorConfig acceptorConfig;
+    private final IoConnectorConfig connectorConfig;
     private final boolean lazySessionCreation;
 
-    public MinaEndpoint(String endpointUri, MinaComponent component, SocketAddress address, IoAcceptor acceptor, IoConnector connector, IoServiceConfig config, boolean lazySessionCreation) {
+    public MinaEndpoint(String endpointUri, MinaComponent component, SocketAddress address, IoAcceptor acceptor, IoAcceptorConfig acceptorConfig, IoConnector connector, IoConnectorConfig connectorConfig, boolean lazySessionCreation) {
         super(endpointUri, component);
-        this.config = config;
         this.address = address;
         this.acceptor = acceptor;
+        this.acceptorConfig = acceptorConfig;
+        this.connectorConfig = connectorConfig;
         this.connector = connector;
         this.lazySessionCreation = lazySessionCreation;
     }
@@ -81,14 +86,18 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
         return connector;
     }
 
-    public IoServiceConfig getConfig() {
-        return config;
-    }
-
     public boolean getLazySessionCreation() {
     	return lazySessionCreation;
     }
-    
+
+    public IoAcceptorConfig getAcceptorConfig() {
+        return acceptorConfig;
+    }
+
+    public IoConnectorConfig getConnectorConfig() {
+        return connectorConfig;
+    }
+
     public boolean isSingleton() {
         return true;
     }

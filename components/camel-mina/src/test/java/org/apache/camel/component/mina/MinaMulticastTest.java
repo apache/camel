@@ -22,7 +22,7 @@ package org.apache.camel.component.mina;
 public class MinaMulticastTest extends MinaVmTest {
     @Override
     protected void setUp() throws Exception {
-        uri = "mina:multicast://224.1.2.3:6255";
+        uri = "mina:multicast://127.0.0.1:6255";
         super.setUp();
     }
 }

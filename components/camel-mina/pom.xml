@@ -65,6 +65,16 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -79,10 +89,7 @@
             <include>**/*Test.*</include>
           </includes>
           <excludes>
-            <exclude>**/MinaMulticastTest.*</exclude>
-            <!-- TODO this currently fails for some reason on our linux based CI server -->
-            <exclude>**/MinaTcpWithInOutUsingPlainSocketTest.*</exclude>
-            <!--<exclude>**/MinaUdpTest.*</exclude>-->
+            <!-- <exclude>**/XXXTest.*</exclude> -->
           </excludes>
         </configuration>
       </plugin>
