@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.CamelException;
+import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
@@ -42,7 +43,8 @@ import org.apache.mina.common.WriteFuture;
 public class MinaProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(MinaProducer.class);
     // TODO: The max wait response should be configurable
-    private static final long MAX_WAIT_RESPONSE = 10000;
+    // The URI parameter could be a option
+    private static final long MAX_WAIT_RESPONSE = 30000;
     private IoSession session;
     private MinaEndpoint endpoint;
     private CountDownLatch latch;
@@ -76,13 +78,13 @@ public class MinaProducer extends DefaultProducer {
                 WriteFuture future = session.write(body);
                 future.join();
                 if (!future.isWritten()) {
-                    throw new CamelException("Timed out waiting for response: " + exchange);
+                    throw new ExchangeTimedOutException(exchange, MAX_WAIT_RESPONSE);
                 }
 
                 // wait for response, consider timeout
                 latch.await(MAX_WAIT_RESPONSE, TimeUnit.MILLISECONDS);
                 if (latch.getCount() == 1) {
-                    throw new CamelException("No response from server within " + MAX_WAIT_RESPONSE + " millisecs");
+                    throw new ExchangeTimedOutException(exchange, MAX_WAIT_RESPONSE);
                 }
 
                 // did we get a response
@@ -155,6 +157,19 @@ public class MinaProducer extends DefaultProducer {
             CountDownLatch downLatch = latch;
             if (downLatch != null) {
                 downLatch.countDown();
+            }
+        }
+
+        @Override
+        public void sessionClosed(IoSession session) throws Exception {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Session closed");
+            }
+
+            if (message == null) {
+                // session was closed but no message received. This is because the remote server had an internal error
+                // and could not return a proper response. We should count down to stop waiting for a response
+                countDown();
             }
         }
 
