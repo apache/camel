@@ -42,18 +42,17 @@ import org.apache.mina.common.WriteFuture;
  */
 public class MinaProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(MinaProducer.class);
-    // TODO: The max wait response should be configurable
-    // The URI parameter could be a option
-    private static final long MAX_WAIT_RESPONSE = 30000;
     private IoSession session;
     private MinaEndpoint endpoint;
     private CountDownLatch latch;
     private boolean lazySessionCreation;
+    private long timeout;
 
     public MinaProducer(MinaEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.lazySessionCreation = this.endpoint.getLazySessionCreation();
+        this.lazySessionCreation = this.endpoint.isLazySessionCreation();
+        this.timeout = this.endpoint.getTimeout();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -78,13 +77,13 @@ public class MinaProducer extends DefaultProducer {
                 WriteFuture future = session.write(body);
                 future.join();
                 if (!future.isWritten()) {
-                    throw new ExchangeTimedOutException(exchange, MAX_WAIT_RESPONSE);
+                    throw new ExchangeTimedOutException(exchange, timeout);
                 }
 
                 // wait for response, consider timeout
-                latch.await(MAX_WAIT_RESPONSE, TimeUnit.MILLISECONDS);
+                latch.await(timeout, TimeUnit.MILLISECONDS);
                 if (latch.getCount() == 1) {
-                    throw new ExchangeTimedOutException(exchange, MAX_WAIT_RESPONSE);
+                    throw new ExchangeTimedOutException(exchange, timeout);
                 }
 
                 // did we get a response
@@ -121,7 +120,7 @@ public class MinaProducer extends DefaultProducer {
         SocketAddress address = endpoint.getAddress();
         IoConnector connector = endpoint.getConnector();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating connector to address: " + address + " using connector: " + connector);
+            LOG.debug("Creating connector to address: " + address + " using connector: " + connector + " timeout: " + timeout + " millis.");
         }
         IoHandler ioHandler = new ResponseHandler(endpoint);
         ConnectFuture future = connector.connect(address, ioHandler, endpoint.getConnectorConfig());
