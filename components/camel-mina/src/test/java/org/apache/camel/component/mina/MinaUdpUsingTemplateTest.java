@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class MinaUdpUsingTemplateTest extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(MinaUdpUsingTemplateTest.class);
-    
+
     private int messageCount = 3;
 
     public void testMinaRoute() throws Exception {
@@ -38,6 +38,8 @@ public class MinaUdpUsingTemplateTest extends ContextTestSupport {
         endpoint.expectedMessageCount(3);
 
         sendUdpMessages();
+        // sleeping for while to let the mock endpoint get all the message
+        Thread.sleep(1000);
 
         assertMockEndpointsSatisifed();
         List<Exchange> list = endpoint.getReceivedExchanges();
