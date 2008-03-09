@@ -35,6 +35,10 @@ import org.apache.mina.common.IoSession;
  * @version $Revision$
  */
 public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
+
+    private static final long DEFAULT_TIMEOUT = 30000;
+    private long timeout = DEFAULT_TIMEOUT;
+
     private final IoAcceptor acceptor;
     private final SocketAddress address;
     private final IoConnector connector;
@@ -42,7 +46,7 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
     private final IoConnectorConfig connectorConfig;
     private final boolean lazySessionCreation;
 
-    public MinaEndpoint(String endpointUri, MinaComponent component, SocketAddress address, IoAcceptor acceptor, IoAcceptorConfig acceptorConfig, IoConnector connector, IoConnectorConfig connectorConfig, boolean lazySessionCreation) {
+    public MinaEndpoint(String endpointUri, MinaComponent component, SocketAddress address, IoAcceptor acceptor, IoAcceptorConfig acceptorConfig, IoConnector connector, IoConnectorConfig connectorConfig, boolean lazySessionCreation, long timeout) {
         super(endpointUri, component);
         this.address = address;
         this.acceptor = acceptor;
@@ -50,6 +54,10 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
         this.connectorConfig = connectorConfig;
         this.connector = connector;
         this.lazySessionCreation = lazySessionCreation;
+        if (timeout > 0) {
+            // override default timeout if provided
+            this.timeout = timeout;
+        }
     }
 
     public Producer<MinaExchange> createProducer() throws Exception {
@@ -85,7 +93,7 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
         return connector;
     }
 
-    public boolean getLazySessionCreation() {
+    public boolean isLazySessionCreation() {
     	return lazySessionCreation;
     }
 
@@ -101,4 +109,8 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
         return true;
     }
 
+    public long getTimeout() {
+        return timeout;
+    }
+    
 }

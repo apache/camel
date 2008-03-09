@@ -93,7 +93,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         IoAcceptor acceptor = new VmPipeAcceptor();
         SocketAddress address = new VmPipeAddress(connectUri.getPort());
         IoConnector connector = new VmPipeConnector();
-        return new MinaEndpoint(uri, this, address, acceptor, null, connector, null, false);
+        return new MinaEndpoint(uri, this, address, acceptor, null, connector, null, false, 0);
     }
 
     protected MinaEndpoint createSocketEndpoint(String uri, URI connectUri, Map parameters) {
@@ -114,8 +114,9 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
 
         boolean lazySessionCreation = ObjectConverter.toBool(parameters.get("lazySessionCreation"));
-        
-        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation);
+        long timeout = getTimeoutParameter(parameters);
+
+        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout);
 
         boolean sync = ObjectConverter.toBool(parameters.get("sync"));
         if (sync) {
@@ -149,7 +150,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         IoAcceptor acceptor = new DatagramAcceptor();
         SocketAddress address = new InetSocketAddress(connectUri.getHost(), connectUri.getPort());
         IoConnector connector = new DatagramConnector();
-        
+
         DatagramConnectorConfig connectorConfig = new DatagramConnectorConfig();
         configureDataGramCodecFactory(connectorConfig, parameters);
         connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
@@ -161,8 +162,9 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
 
         boolean lazySessionCreation = ObjectConverter.toBool(parameters.get("lazySessionCreation"));
-        
-        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation);
+        long timeout = getTimeoutParameter(parameters);
+
+        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout);
 
         boolean sync = ObjectConverter.toBool(parameters.get("sync"));
         if (sync) {
@@ -172,6 +174,20 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         }
 
         return endpoint;
+    }
+
+    private static long getTimeoutParameter(Map parameters) throws IllegalArgumentException {
+        long timeout = 0;
+        String value = (String) parameters.get("timeout");
+        if (value != null) {
+            try {
+                timeout = ObjectConverter.toLong(value);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("The timeout parameter is not a number: " + value);
+            }
+        }
+
+        return timeout;
     }
 
     /**
@@ -198,6 +214,9 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
                 public ProtocolDecoder getDecoder() throws Exception {
                     return new ProtocolDecoder() {
                         public void decode(IoSession session, ByteBuffer in, ProtocolDecoderOutput out) throws Exception {
+                            // must acquire the bytebuffer since we just pass it below instead of creating a new one (CAMEL-257)
+                            in.acquire();
+
                             // lets just pass the ByteBuffer in
                             out.write(in);
                         }
