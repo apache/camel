@@ -79,18 +79,24 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
 
                 if (ExchangeHelper.isOutCapable(exchange)) {
                     Object body = exchange.getOut().getBody();
+                    boolean failed = exchange.isFailed();
 
-                    // TODO: if exchange.isFailed() then out could potential be in - (what should we do)
-
-                    if (body != null) {
+                    if (failed) {
+                        // can not write a response since the exchange is failed and we don't know in what state the
+                        // in/out messages are in so the session is closed
+                        LOG.warn("Can not write body since the exchange is failed, closing session: " + exchange);
+                        session.close();
+                    } else if (body == null) {
+                        // must close session if no data to write otherwise client will never receive a response
+                        // and wait forever (if not timing out)
+                        LOG.warn("Can not write body since its null, closing session: " + exchange);
+                        session.close();
+                    } else {
+                        // we got a response to write
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Writing body: " + body);
                         }
                         session.write(body);
-                    } else {
-                        // must close session if no data to write otherwise client will never receive a response and wait forever
-                        LOG.warn("Can not write body since its null, closing session");
-                        session.close();
                     }
                 } else {
                     if (LOG.isDebugEnabled()) {

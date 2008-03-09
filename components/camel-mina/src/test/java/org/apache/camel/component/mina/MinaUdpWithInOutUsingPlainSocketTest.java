@@ -3,7 +3,6 @@ package org.apache.camel.component.mina;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,8 +11,6 @@ import org.apache.mina.common.ByteBuffer;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.DatagramPacket;
-import java.nio.CharBuffer;
-import java.nio.charset.CharsetDecoder;
 
 /**
  * To test InOut exchange for the UDP protocol.

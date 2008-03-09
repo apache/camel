@@ -62,13 +62,12 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
 
     @Override
     public MinaExchange createExchange(ExchangePattern pattern) {
-        return new MinaExchange(getContext(), pattern);
+        return new MinaExchange(getContext(), pattern, null);
     }
 
     public MinaExchange createExchange(IoSession session, Object object) {
-        MinaExchange exchange = new MinaExchange(getContext(), getExchangePattern());
+        MinaExchange exchange = new MinaExchange(getContext(), getExchangePattern(), session);
         exchange.getIn().setBody(object);
-        // TODO store session in exchange?
         return exchange;
     }
 

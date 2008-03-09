@@ -42,6 +42,7 @@ import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
+import org.apache.mina.filter.LoggingFilter;
 import org.apache.mina.transport.socket.nio.DatagramAcceptor;
 import org.apache.mina.transport.socket.nio.DatagramAcceptorConfig;
 import org.apache.mina.transport.socket.nio.DatagramConnector;
@@ -103,17 +104,14 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         // connector config
         SocketConnectorConfig connectorConfig = new SocketConnectorConfig();
         configureSocketCodecFactory(connectorConfig, parameters);
-        // TODO: verbose logging from Mina should use our logger instead of MINA INFO logger
-        //connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
+        connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
 
         // acceptor connectorConfig
         SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig();
         configureSocketCodecFactory(acceptorConfig, parameters);
         acceptorConfig.setReuseAddress(true);
         acceptorConfig.setDisconnectOnUnbind(true);
-        // TODO: verbose logging from Mina should use our logger instead of MINA INFO logger
-        //acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
-
+        acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
 
         boolean lazySessionCreation = ObjectConverter.toBool(parameters.get("lazySessionCreation"));
         
@@ -154,15 +152,13 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         
         DatagramConnectorConfig connectorConfig = new DatagramConnectorConfig();
         configureDataGramCodecFactory(connectorConfig, parameters);
-        // TODO: verbose logging from Mina should use our logger instead of MINA INFO logger
-        //connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
+        connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
 
         DatagramAcceptorConfig acceptorConfig = new DatagramAcceptorConfig();
         configureDataGramCodecFactory(acceptorConfig, parameters);
         acceptorConfig.setDisconnectOnUnbind(true);
         // reuse address is default true for datagram
-        // TODO: verbose logging from Mina should use our logger instead of MINA INFO logger
-        //acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
+        acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
 
         boolean lazySessionCreation = ObjectConverter.toBool(parameters.get("lazySessionCreation"));
         
