@@ -33,6 +33,7 @@
 
   <modules>
     <module>camel-router</module>
+    <module>camel-component</module>
   </modules>
 
 </project>
