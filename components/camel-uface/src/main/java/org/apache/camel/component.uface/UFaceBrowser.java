@@ -101,9 +101,9 @@ public class UFaceBrowser {
 
         BeanForm selectionForm = new BeanForm();
 
-        UITable table = ui.newTable(splitter, new UITable.TableUIInfo(new GridLayoutData(GridLayoutData.ALIGN_FILL, GridLayoutData.ALIGN_FILL, true, true)),
-                new UITable.TableBindingInfo(selectionForm,
-                        selectionForm.detailList("exchanges", Collection.class)));
+        UITable table = ui.newTable(splitter, new UITable.TableUIInfo(new GridLayoutData(GridLayoutData.ALIGN_FILL, GridLayoutData.ALIGN_FILL, true, true)));
+        selectionForm.add(table, new UITable.TableBindingInfo(selectionForm.detailList("exchanges", Collection.class)));
+
         ui.newTableColumn(table, new UITableColumn.TableColumnUIInfo(null, new CellLabelProvider() {
             public String getLabel(Object object) {
                 Exchange exchange = (Exchange) object;
@@ -126,7 +126,9 @@ public class UFaceBrowser {
         UIFactory ui = root.getFactory();
         AttributeDescriptor bindingData = form.detailList("endpoints", Collection.class);
 
-        UITable table = ui.newTable(root, new UITable.TableUIInfo(null), new UITable.TableBindingInfo(form, bindingData));
+        UITable table = ui.newTable(root, new UITable.TableUIInfo(null));
+        form.add(table, new UITable.TableBindingInfo(bindingData));
+
         ui.newTableColumn(table, new UITableColumn.TableColumnUIInfo(null, new CellLabelProvider() {
             public String getLabel(Object object) {
                 BrowsableEndpoint endpoint = (BrowsableEndpoint) object;
