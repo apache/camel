@@ -22,33 +22,48 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
 public class MinaUdpUsingTemplateTest extends ContextTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(MinaUdpUsingTemplateTest.class);
 
     private int messageCount = 3;
 
     public void testMinaRoute() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedMessageCount(3);
+        endpoint.expectedBodiesReceived("Hello Message: 0", "Hello Message: 1", "Hello Message: 2");
 
         sendUdpMessages();
         // sleeping for while to let the mock endpoint get all the message
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         assertMockEndpointsSatisifed();
-        List<Exchange> list = endpoint.getReceivedExchanges();
-        LOG.debug("Received: " + list);
     }
 
     protected void sendUdpMessages() throws Exception {
         for (int i = 0; i < messageCount; i++) {
             template.sendBody("mina:udp://127.0.0.1:4445", "Hello Message: " + i);
+        }
+    }
+
+    public void testSendingByteMessages() throws Exception {
+        MockEndpoint endpoint = getMockEndpoint("mock:result");
+        endpoint.expectedMessageCount(1);
+
+        byte[] in = "Hello from bytes".getBytes();
+        template.sendBody("mina:udp://127.0.0.1:4445", in);
+
+        // sleeping for while to let the mock endpoint get all the message
+        Thread.sleep(2000);
+
+        assertMockEndpointsSatisifed();
+        List<Exchange> list = endpoint.getReceivedExchanges();
+        byte[] out = list.get(0).getIn().getBody(byte[].class);
+
+        for (int i = 0; i < in.length; i++) {
+            assertEquals("Thew bytes should be the same", in[i], out[i]);
         }
     }
 

@@ -19,20 +19,15 @@ package org.apache.camel.component.mina;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
 public class MinaUdpTest extends ContextTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(MinaUdpTest.class);
     protected int messageCount = 3;
     protected int port = 4445;
 
@@ -45,11 +40,6 @@ public class MinaUdpTest extends ContextTestSupport {
         sendUdpMessages();
 
         assertMockEndpointsSatisifed();
-        List<Exchange> list = endpoint.getReceivedExchanges();
-        Exchange exchange = list.get(0);
-        Object body = exchange.getIn().getBody();
-        LOG.debug("Type: " + body.getClass().getName() + " value: " + body);
-        LOG.debug("String value: " + exchange.getIn().getBody(String.class));
     }
 
     protected void sendUdpMessages() throws Exception {
@@ -63,7 +53,6 @@ public class MinaUdpTest extends ContextTestSupport {
             socket.send(packet);
             Thread.sleep(1000);
         }
-        LOG.debug("Sent " + messageCount + " messages");
     }
 
     protected RouteBuilder createRouteBuilder() {

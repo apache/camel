@@ -44,7 +44,11 @@ public class MinaConverterTest extends TestCase {
         byte[] in = "Hello World".getBytes();
 
         ByteBuffer bb = MinaConverter.toByteBuffer(in);
-        byte[] out = bb.array();
+        assertNotNull(bb);
+
+        // convert back to byte[] and see if the bytes are equal
+        bb.flip(); // must flip to change direction to read
+        byte[] out = MinaConverter.toByteArray(bb);
 
         for (int i = 0; i < out.length; i++) {
             assertEquals(in[i], out[i]);
