@@ -22,27 +22,27 @@ public class MinaExchangeTimeOutTest extends ContextTestSupport {
 
         // default timeout is 30 sec so in the router below the response is slow and we timeout
         try {
-            template.requestBody(uri, "Hello World");
-            fail("Should have thrown an ExchangeTimedOutException wrapped in a RuntimeCamelException");
+            String result = (String)template.requestBody(uri, "Hello World");
+            assertEquals("Okay I will be faster in the future", result);
         } catch (RuntimeCamelException e) {
-            assertTrue("Should have thrown an ExchangeTimedOutException", e.getCause() instanceof ExchangeTimedOutException);
+            fail("Should not get a RuntimeCamelException");
         }
     }
 
     public void testUsingTimeoutParameter() throws Exception {
-        LOG.info("Sending a message to Camel that takes 35 sec to reply, so be patient");
 
-        // use a timeout value of 40 seconds (timeout is in millis) so we should actually get a response in this test
-        Endpoint endpoint = this.context.getEndpoint("mina:tcp://localhost:" + PORT + "?textline=true&sync=true&timeout=40000");
+        // use a timeout value of 2 seconds (timeout is in millis) so we should actually get a response in this test
+        Endpoint endpoint = this.context.getEndpoint("mina:tcp://localhost:" + PORT + "?textline=true&sync=true&timeout=2000");
         Producer producer = endpoint.createProducer();
         producer.start();
         Exchange exchange = producer.createExchange();
         exchange.getIn().setBody("Hello World");
-        producer.process(exchange);
-
-        String out = exchange.getOut().getBody(String.class);
-        assertEquals("Okay I will be faster in the future", out);
-
+        try {
+            producer.process(exchange);
+            fail("Should have thrown an ExchangeTimedOutException wrapped in a RuntimeCamelException");
+        } catch (Exception e) {
+            assertTrue("Should have thrown an ExchangeTimedOutException", e instanceof ExchangeTimedOutException);
+        }
         producer.stop();
     }
 
@@ -63,9 +63,9 @@ public class MinaExchangeTimeOutTest extends ContextTestSupport {
                 from(uri).process(new Processor() {
                     public void process(Exchange e) throws Exception {
                         assertEquals("Hello World", e.getIn().getBody(String.class));
-                        // MinaProducer has a default timeout of 30 seconds so we wait 35 seconds
+                        // MinaProducer has a default timeout of 30 seconds so we just wait 5 seconds
                         // (template.requestBody is a MinaProducer behind the doors)
-                        Thread.sleep(35000);
+                        Thread.sleep(5000);
 
                         e.getOut().setBody("Okay I will be faster in the future");
                     }
