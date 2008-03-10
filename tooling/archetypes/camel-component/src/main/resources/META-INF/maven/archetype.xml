@@ -22,9 +22,10 @@
   <sources>
     <source>src/main/java/DirectComponent.java</source>
     <source>src/main/java/DirectEndpoint.java</source>
-    <source>src/main/java/DirectProducer.java</source>  
+    <source>src/main/java/DirectProducer.java</source>         
   </sources>
-  <resources>
+  <resources>    
+    <resource>ReadMe.txt</resource>
     <resource>src/main/resources/META-INF/services/direct</resource>
     <resource>src/main/resources/log4j.properties</resource>   
   </resources>
