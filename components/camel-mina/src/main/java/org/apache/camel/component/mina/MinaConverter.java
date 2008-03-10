@@ -34,7 +34,6 @@ import org.apache.mina.common.ByteBuffer;
 public class MinaConverter {
     @Converter
     public static byte[] toByteArray(ByteBuffer buffer) {
-        // TODO is there a neater way?
         byte[] answer = new byte[buffer.remaining()];
         buffer.get(answer);
         return answer;
@@ -57,6 +56,8 @@ public class MinaConverter {
 
     @Converter
     public static ByteBuffer toByteBuffer(byte[] bytes) {
-        return ByteBuffer.wrap(bytes);
+        ByteBuffer buf = ByteBuffer.allocate(bytes.length);
+        buf.put(bytes);
+        return buf;
     }
 }

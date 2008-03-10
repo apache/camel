@@ -235,9 +235,6 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
 
     protected ByteBuffer toByteBuffer(Object message) throws CharacterCodingException {
         ByteBuffer answer = convertTo(ByteBuffer.class, message);
-        if (answer == null && message instanceof byte[]) {
-            answer = MinaConverter.toByteBuffer((byte[]) message);
-        }
         if (answer == null) {
             String value = convertTo(String.class, message);
             answer = ByteBuffer.allocate(value.length()).setAutoExpand(true);
