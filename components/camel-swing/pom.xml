@@ -82,7 +82,7 @@
         <artifactId>exec-maven-plugin</artifactId>
         <configuration>
           <mainClass>org.apache.camel.component.uface.swing.Main</mainClass>
-          <includePluginDependencies>false</includePluginDependencies>
+          <includePluginDependencies>true</includePluginDependencies>
         </configuration>
       </plugin>
 

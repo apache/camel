@@ -47,6 +47,7 @@
     <module>camel-jaxb</module>
     <module>camel-jdbc</module>
     <module>camel-jetty</module>
+    <!--<module>camel-jface</module>-->
     <module>camel-jhc</module>
     <module>camel-jing</module>
     <module>camel-jms</module>
@@ -69,6 +70,8 @@
     <module>camel-stringtemplate</module>
     <module>camel-stream</module>
     <!--<module>camel-supercsv</module>-->
+    <module>camel-swing</module>
+    <module>camel-uface</module>
     <module>camel-velocity</module>
     <module>camel-xmlbeans</module>
     <module>camel-xmpp</module>

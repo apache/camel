@@ -30,5 +30,5 @@
 
   </camelContext>
 
-  <bean id="sender" class="org.apache.camel.component.uface.ExampleSender"/>
+  <bean id="sender" class="org.apache.camel.component.swing.ExampleSender"/>
 </beans>
