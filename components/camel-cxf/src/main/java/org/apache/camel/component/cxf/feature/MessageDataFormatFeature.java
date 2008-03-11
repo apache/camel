@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf.feature;
 
 import java.util.logging.Logger;
 
+import org.apache.camel.component.cxf.interceptors.FaultOutInterceptor;
 import org.apache.camel.component.cxf.interceptors.RawMessageContentRedirectInterceptor;
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.logging.LogUtils;
@@ -50,7 +51,7 @@ public class MessageDataFormatFeature extends AbstractDataFormatFeature {
         client.getEndpoint().getBinding().getOutInterceptors().clear();
         client.getEndpoint().getOutInterceptors().add(new RawMessageContentRedirectInterceptor());
 
-
+        client.getEndpoint().getBinding().getOutFaultInterceptors().add(new FaultOutInterceptor());
     }
 
     @Override
@@ -66,6 +67,8 @@ public class MessageDataFormatFeature extends AbstractDataFormatFeature {
         removeInterceptorWhichIsOutThePhases(server.getEndpoint().getOutInterceptors(), REMAINING_OUT_PHASES);
         // Do not use the binding interceptor any more
         server.getEndpoint().getBinding().getOutInterceptors().clear();
+
+        server.getEndpoint().getBinding().getOutFaultInterceptors().add(new FaultOutInterceptor());
 
 
         resetServiceInvokerInterceptor(server);

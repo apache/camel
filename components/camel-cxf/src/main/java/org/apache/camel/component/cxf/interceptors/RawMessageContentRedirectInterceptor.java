@@ -27,15 +27,20 @@ import org.apache.cxf.phase.Phase;
 
 public class RawMessageContentRedirectInterceptor extends AbstractPhaseInterceptor<Message> {
     public RawMessageContentRedirectInterceptor() {
-        super(Phase.WRITE);        
+        super(Phase.WRITE);
     }
-    
+
     public void handleMessage(Message message) throws Fault {
+        // check the fault from the message
+        Exception ex = message.getContent(Exception.class);
+        if (ex != null) {
+            throw new Fault(ex);
+        }
 
         InputStream is = message.getContent(InputStream.class);
         OutputStream os = message.getContent(OutputStream.class);
-        
-        try {            
+
+        try {
             IOUtils.copy(is, os);
             is.close();
             os.flush();
