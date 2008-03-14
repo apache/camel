@@ -17,7 +17,9 @@
 package org.apache.camel.component.cxf;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -235,12 +237,19 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                     response = ep.getBinding().createMessage();
                 }
                 response.setExchange(ex);
-                // invoke the message
-                //TODO need setup the call context here
+                // invoke the message prepare the context
+                Map<String, Object> context = new HashMap<String, Object>();
+                Map<String, Object> requestContext = new HashMap<String, Object>();
+                Map<String, Object> responseContext = new HashMap<String, Object>();
+                // TODO Get the requestContext from the CamelExchange
+                context.put(CxfClient.REQUEST_CONTEXT, requestContext);
+                context.put(CxfClient.RESPONSE_CONTEXT, responseContext);
                 try {
-                    Object result = cxfClient.dispatch(params, null, ex);
+                    Object result = cxfClient.dispatch(params, context, ex);
                     ex.setOutMessage(response);
                     invokingContext.setResponseContent(response, result);
+                    // copy the response context to the response
+                    response.putAll(responseContext);
                     cxfBinding.storeCxfResponse(exchange, response);
                 } catch (Exception e) {
                     response.setContent(Exception.class, e);
@@ -248,7 +257,7 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                 }
             }
         } catch (Exception e) {
-            //TODO add the falut message handling work
+            //TODO add the fault message handling work
             throw new RuntimeCamelException(e);
         }
 
