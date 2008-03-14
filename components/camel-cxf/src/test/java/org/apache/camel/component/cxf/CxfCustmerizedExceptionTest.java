@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.cxf;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.ContextTestSupport;
@@ -26,18 +30,20 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 
 public class CxfCustmerizedExceptionTest extends ContextTestSupport {
+
     protected static final String ROUTER_ADDRESS = "http://localhost:9002/router";
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
     protected static String ROUTER_ENDPOINT_URI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS;
 
     private static final String EXCEPTION_MESSAGE = "This is an exception test message";
-
+    private static final String DETAIL_TEXT = "This is a detail text node";
     private Bus bus;
 
 
@@ -63,9 +69,13 @@ public class CxfCustmerizedExceptionTest extends ContextTestSupport {
                 from(ROUTER_ENDPOINT_URI).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message message = exchange.getFault();
-                        message.setBody(new CamelException(EXCEPTION_MESSAGE));
+                        SoapFault fault = new SoapFault(EXCEPTION_MESSAGE, SoapFault.FAULT_CODE_CLIENT);
+                        Element detail = fault.getOrCreateDetail();
+                        Document doc = detail.getOwnerDocument();
+                        Text tn = doc.createTextNode(DETAIL_TEXT);
+                        detail.appendChild(tn);
+                        message.setBody(fault);
                     }
-
                 });
             }
         };
@@ -90,6 +100,10 @@ public class CxfCustmerizedExceptionTest extends ContextTestSupport {
             fail("Except to get an exception here");
         } catch (Exception e) {
             assertEquals("Except to get right exception message", e.getMessage(), EXCEPTION_MESSAGE);
+            assertEquals("Except to get right exception message", EXCEPTION_MESSAGE, e.getMessage());
+            assertTrue("Exception is not instance of SoapFault", e instanceof SoapFault);
+            assertEquals("Except to get right detail message", DETAIL_TEXT, ((SoapFault)e).getDetail().getTextContent());
+            assertEquals("Except to get right fault-code", SoapFault.FAULT_CODE_CLIENT, ((SoapFault)e).getFaultCode());
         }
 
     }

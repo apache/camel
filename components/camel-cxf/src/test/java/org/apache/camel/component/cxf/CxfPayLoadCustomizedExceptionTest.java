@@ -23,7 +23,7 @@ package org.apache.camel.component.cxf;
 public class CxfPayLoadCustomizedExceptionTest extends CxfCustmerizedExceptionTest {
     @Override
     protected void setUp() throws Exception {
-        ROUTER_ENDPOINT_URI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&DataFormat=MESSAGE";
+        ROUTER_ENDPOINT_URI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&DataFormat=PAYLOAD";
         super.setUp();
 
     }

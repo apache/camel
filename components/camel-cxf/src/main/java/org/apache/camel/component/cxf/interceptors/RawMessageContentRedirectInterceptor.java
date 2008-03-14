@@ -34,7 +34,11 @@ public class RawMessageContentRedirectInterceptor extends AbstractPhaseIntercept
         // check the fault from the message
         Exception ex = message.getContent(Exception.class);
         if (ex != null) {
-            throw new Fault(ex);
+            if (ex instanceof Fault ) {
+                throw (Fault)ex;
+            } else {
+                throw new Fault(ex);
+            }
         }
 
         InputStream is = message.getContent(InputStream.class);
