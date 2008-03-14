@@ -41,6 +41,7 @@ public class MinaConverter {
 
     @Converter
     public static String toString(ByteBuffer buffer) {
+        // TODO: CAMEL-381, we should have type converters to strings that accepts a Charset parameter to handle encoding
         return IOConverter.toString(toByteArray(buffer));
     }
 

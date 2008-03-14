@@ -2,8 +2,6 @@ package org.apache.camel.component.mina;
 
 import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * To test timeout.
@@ -12,15 +10,10 @@ import org.apache.commons.logging.LogFactory;
  */
 public class MinaExchangeTimeOutTest extends ContextTestSupport {
 
-    private static final Log LOG = LogFactory.getLog(MinaExchangeTimeOutTest.class);
-
     private static final int PORT = 6335;
     protected String uri = "mina:tcp://localhost:" + PORT + "?textline=true&sync=true";
 
-    public void testTimedOut() {
-        LOG.info("Sending a message to Camel that should timeout after 30 sec, so be patient");
-
-        // default timeout is 30 sec so in the router below the response is slow and we timeout
+    public void testDefaultTimeOut() {
         try {
             String result = (String)template.requestBody(uri, "Hello World");
             assertEquals("Okay I will be faster in the future", result);
