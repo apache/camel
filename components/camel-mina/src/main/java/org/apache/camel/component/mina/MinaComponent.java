@@ -54,6 +54,8 @@ import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 import org.apache.mina.transport.vmpipe.VmPipeAcceptor;
 import org.apache.mina.transport.vmpipe.VmPipeAddress;
 import org.apache.mina.transport.vmpipe.VmPipeConnector;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The component for using Apache MINA.
@@ -61,6 +63,9 @@ import org.apache.mina.transport.vmpipe.VmPipeConnector;
  * @version $Revision$
  */
 public class MinaComponent extends DefaultComponent<MinaExchange> {
+    private static final transient Log LOG = LogFactory.getLog(MinaComponent.class);
+
+    // encoder used for datagram
     private CharsetEncoder encoder;
 
     public MinaComponent() {
@@ -131,18 +136,19 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
     protected void configureSocketCodecFactory(IoServiceConfig config, Map parameters) {
         ProtocolCodecFactory codecFactory = getCodecFactory(parameters);
 
-        boolean textline = false;
         if (codecFactory == null) {
-            if (parameters != null) {
-                textline = ObjectConverter.toBool(parameters.get("textline"));
-            }
+            boolean textline = ObjectConverter.toBool(parameters.get("textline"));
             if (textline) {
-                codecFactory = new TextLineCodecFactory();
+                Charset encoding = getEncodingParameter(parameters);
+                codecFactory = new TextLineCodecFactory(encoding);
+                LOG.debug("Using TextLineCodecFactory: " + codecFactory + " using encoding: " + encoding);
             }
             else {
                 codecFactory = new ObjectSerializationCodecFactory();
+                LOG.debug("Using ObjectSerializationCodecFactory: " + codecFactory);
             }
         }
+
         addCodecFactory(config, codecFactory);
     }
 
@@ -176,6 +182,19 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         return endpoint;
     }
 
+    private Charset getEncodingParameter(Map parameters) {
+        String encoding = (String) parameters.get("encoding");
+        if (encoding == null) {
+            encoding = Charset.defaultCharset().name();
+            LOG.debug("No encoding parameter using default charset: " + encoding);
+        }
+        if (!Charset.isSupported(encoding)) {
+            throw new IllegalArgumentException("The encoding: " + encoding + " is not supported");
+        }
+
+        return Charset.forName(encoding);
+    }
+
     private static long getTimeoutParameter(Map parameters) throws IllegalArgumentException {
         long timeout = 0;
         String value = (String) parameters.get("timeout");
@@ -195,6 +214,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
      * and try converting whatever they payload is into ByteBuffers unless some custom converter is specified
      */
     protected void configureDataGramCodecFactory(IoServiceConfig config, Map parameters) {
+
         ProtocolCodecFactory codecFactory = getCodecFactory(parameters);
         if (codecFactory == null) {
             codecFactory = new ProtocolCodecFactory() {
@@ -229,7 +249,14 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
                     };
                 }
             };
+
+            // set the encoder used for this datagram codec factory
+            Charset encoding = getEncodingParameter(parameters);
+            encoder = encoding.newEncoder();
+
+            LOG.debug("Using CodecFactory: " + codecFactory + " using encoding: " + encoding);
         }
+
         addCodecFactory(config, codecFactory);
     }
 
@@ -240,9 +267,6 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
             answer = ByteBuffer.allocate(value.length()).setAutoExpand(true);
 
             if (value != null) {
-                if (encoder == null) {
-                    encoder = Charset.defaultCharset().newEncoder();
-                }
                 answer.putString(value, encoder);
             }
         }
@@ -251,11 +275,10 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
 
     protected ProtocolCodecFactory getCodecFactory(Map parameters) {
         ProtocolCodecFactory codecFactory = null;
-        if (parameters != null) {
-            String codec = (String) parameters.get("codec");
-            if (codec != null) {
-                codecFactory = getCamelContext().getRegistry().lookup(codec, ProtocolCodecFactory.class);
-            }
+        String codec = (String) parameters.get("codec");
+        if (codec != null) {
+            codecFactory = getCamelContext().getRegistry().lookup(codec, ProtocolCodecFactory.class);
+            LOG.debug("Using custom CodecFactory: " + codecFactory);
         }
         return codecFactory;
     }

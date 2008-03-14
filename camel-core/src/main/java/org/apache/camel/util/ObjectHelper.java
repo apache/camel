@@ -62,15 +62,38 @@ public class ObjectHelper {
         if (a == b) {
             return true;
         }
+
+        if (a instanceof byte[] && b instanceof byte[]) {
+            return equalByteArray((byte[]) a, (byte[]) b);
+        }
+
         return a != null && b != null && a.equals(b);
     }
 
     /**
+     * A helper method for comparing byte arrays for equality while handling nulls
+     */
+    public static boolean equalByteArray(byte[] a, byte[] b) {
+        if (a == b) {
+            return true;
+        }
+
+        // loop and compare each byte
+        if (a != null && b != null && a.length == b.length) {
+            for (int i = 0; i < a.length; i++) {
+                if (a[i] != b[i]) {
+                    return false;
+                }
+            }
+            // all bytes are equal
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns true if the given object is equal to any of the expected value
-     * 
-     * @param object
-     * @param values
-     * @return
      */
     public static boolean isEqualToAny(Object object, Object... values) {
         for (Object value : values) {
