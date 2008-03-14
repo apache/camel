@@ -166,7 +166,11 @@ public class CamelInvoker implements Invoker, MessageInvoker {
         Object result = null;
         if (cxfExchange.isFailed()) {
             Exception ex= (Exception)cxfExchange.getFault().getBody();
-            throw new Fault(ex);
+            if (ex instanceof Fault ) {
+                throw (Fault)ex;
+            } else {
+                throw new Fault(ex);
+            }
         } else {
             result = cxfExchange.getOut().getBody();
         }
