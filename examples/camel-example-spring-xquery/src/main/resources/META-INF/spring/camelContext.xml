@@ -27,17 +27,16 @@
 
     <!-- lets parse files, transform them with XQuery and send them to JMS -->
     <route>
-      <from uri="file:/D://tmp/data"/>
-      <to uri="file:/D://tmp/target/outputFiles"/>
-      <!--to uri="xquery:myTransform.xquery"/-->
-      <!--to uri="jms:MyQueue"/-->
+      <from uri="file:src/data?noop=true"/>
+      <to uri="xquery:myTransform.xquery"/>
+      <to uri="jms:MyQueue"/>
     </route>
 
     <!-- now lets write messages from the queue to a directory -->
-    <!--route>
+    <route>
       <from uri="jms:MyQueue"/>
-      <to uri="file:/D://tmp/target/outputFiles"/>
-    </route-->
+      <to uri="file:target/outputFiles"/>
+    </route>
 
   </camelContext>
 
