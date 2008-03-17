@@ -98,7 +98,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         IoAcceptor acceptor = new VmPipeAcceptor();
         SocketAddress address = new VmPipeAddress(connectUri.getPort());
         IoConnector connector = new VmPipeConnector();
-        return new MinaEndpoint(uri, this, address, acceptor, null, connector, null, false, 0);
+        return new MinaEndpoint(uri, this, address, acceptor, null, connector, null, false, 0, false);
     }
 
     protected MinaEndpoint createSocketEndpoint(String uri, URI connectUri, Map parameters) {
@@ -120,8 +120,9 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
 
         boolean lazySessionCreation = ObjectConverter.toBool(parameters.get("lazySessionCreation"));
         long timeout = getTimeoutParameter(parameters);
+        boolean transferExchange = ObjectConverter.toBool(parameters.get("transferExchange"));
 
-        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout);
+        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout, transferExchange);
 
         boolean sync = ObjectConverter.toBool(parameters.get("sync"));
         if (sync) {
@@ -169,8 +170,9 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
 
         boolean lazySessionCreation = ObjectConverter.toBool(parameters.get("lazySessionCreation"));
         long timeout = getTimeoutParameter(parameters);
+        boolean transferExchange = false; // transfer exchange is not supported for datagram protocol
 
-        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout);
+        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout, transferExchange);
 
         boolean sync = ObjectConverter.toBool(parameters.get("sync"));
         if (sync) {

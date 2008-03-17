@@ -63,7 +63,7 @@ public class MinaProducer extends DefaultProducer {
             openConnection();
         }
 
-        Object body = exchange.getIn().getBody();
+        Object body = MinaPayloadHelper.getIn(endpoint, exchange);
         if (body == null) {
             LOG.warn("No payload for exchange: " + exchange);
         } else {
@@ -94,7 +94,7 @@ public class MinaProducer extends DefaultProducer {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Handler message: " + handler.getMessage());
                     }
-                    exchange.getOut().setBody(handler.getMessage());
+                    MinaPayloadHelper.setOut(exchange, handler.getMessage());
                 }
             } else {
                 session.write(body);

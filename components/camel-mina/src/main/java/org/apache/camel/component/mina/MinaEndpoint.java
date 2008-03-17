@@ -45,8 +45,9 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
     private final IoAcceptorConfig acceptorConfig;
     private final IoConnectorConfig connectorConfig;
     private final boolean lazySessionCreation;
+    private final boolean transferExchange;
 
-    public MinaEndpoint(String endpointUri, MinaComponent component, SocketAddress address, IoAcceptor acceptor, IoAcceptorConfig acceptorConfig, IoConnector connector, IoConnectorConfig connectorConfig, boolean lazySessionCreation, long timeout) {
+    public MinaEndpoint(String endpointUri, MinaComponent component, SocketAddress address, IoAcceptor acceptor, IoAcceptorConfig acceptorConfig, IoConnector connector, IoConnectorConfig connectorConfig, boolean lazySessionCreation, long timeout, boolean transferExchange) {
         super(endpointUri, component);
         this.address = address;
         this.acceptor = acceptor;
@@ -58,6 +59,7 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
             // override default timeout if provided
             this.timeout = timeout;
         }
+        this.transferExchange = transferExchange;
     }
 
     public Producer<MinaExchange> createProducer() throws Exception {
@@ -73,9 +75,9 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
         return new MinaExchange(getContext(), pattern, null);
     }
 
-    public MinaExchange createExchange(IoSession session, Object object) {
+    public MinaExchange createExchange(IoSession session, Object payload) {
         MinaExchange exchange = new MinaExchange(getContext(), getExchangePattern(), session);
-        exchange.getIn().setBody(object);
+        MinaPayloadHelper.setIn(exchange, payload);
         return exchange;
     }
 
@@ -111,6 +113,10 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
 
     public long getTimeout() {
         return timeout;
+    }
+
+    public boolean isTransferExchange() {
+        return transferExchange;
     }
     
 }
