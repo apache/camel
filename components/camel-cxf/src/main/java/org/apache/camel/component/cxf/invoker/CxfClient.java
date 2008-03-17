@@ -109,6 +109,13 @@ public class CxfClient extends ClientImpl {
 
         Message message = prepareMessage(exchange, requestContext, param, invokingContext);
 
+        // add the endpoint props to the message
+        Endpoint ep = getEndpoint();
+        // the ep should not be null , just in case if it set to be null
+        if (ep != null) {
+            message.putAll(ep);
+        }
+
         PhaseInterceptorChain chain = setupInterceptorChain(getEndpoint());
 
         message.setInterceptorChain(chain);
