@@ -164,11 +164,28 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
         addOutput(answer);
         return answer;
     }
-    
+
     /**
      * Multicasts messages to all its child outputs; so that each processor and
      * destination gets a copy of the original message to avoid the processors
-     * interfering with each other.     
+     * interfering with each other.
+     * @param aggregationStrategy the strategy used to aggregate responses for
+     *          every part
+     * @param pralleProcessing if is true camel will fork thread to call the endpoint producer
+     * @return the multicast type
+     */
+    public MulticastType multicast(AggregationStrategy aggregationStrategy, boolean paralleProcessing) {
+        MulticastType answer = new MulticastType();
+        addOutput(answer);
+        answer.setAggregationStrategy(aggregationStrategy);
+        answer.setParallelProcessing(true);
+        return answer;
+    }
+
+    /**
+     * Multicasts messages to all its child outputs; so that each processor and
+     * destination gets a copy of the original message to avoid the processors
+     * interfering with each other.
      * @param aggregationStrategy the strategy used to aggregate responses for
      *          every part
      * @return the multicast type
@@ -308,13 +325,13 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     public FilterType filter(String language, String expression) {
         return filter(new LanguageExpression(language, expression));
     }
-    
+
     public LoadBalanceType loadBalance() {
         LoadBalanceType answer = new LoadBalanceType();
         addOutput(answer);
         return answer;
-    }    
-    
+    }
+
 
     /**
      * Creates a choice of one or more predicates with an otherwise clause
@@ -374,7 +391,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * pattern where an expression is evaluated to iterate through each of the
      * parts of a message and then each part is then send to some endpoint.
      * This splitter responds with the latest message returned from destination
-     * endpoint. 
+     * endpoint.
      *
      * @param receipients the expression on which to split
      * @return the builder
@@ -391,8 +408,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * pattern where an expression is evaluated to iterate through each of the
      * parts of a message and then each part is then send to some endpoint.
      * This splitter responds with the latest message returned from destination
-     * endpoint. 
-     * 
+     * endpoint.
+     *
      * @return the expression clause for the expression on which to split
      */
     public ExpressionClause<SplitterType> splitter() {
@@ -435,7 +452,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
         answer.setAggregationStrategy(aggregationStrategy);
         return ExpressionClause.createAndSetExpression(answer);
     }
-    
+
     /**
      * Creates the <a
      * href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>
@@ -1151,11 +1168,11 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     public ProcessorType<? extends ProcessorType> getParent() {
     	return parent;
     }
-    
+
     public void setParent(ProcessorType<? extends ProcessorType> parent) {
     	this.parent = parent;
     }
-    
+
     @XmlTransient
     public ErrorHandlerBuilder getErrorHandlerBuilder() {
         if (errorHandlerBuilder == null) {
