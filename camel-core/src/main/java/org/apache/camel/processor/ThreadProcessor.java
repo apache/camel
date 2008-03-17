@@ -34,7 +34,7 @@ import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * A processor that forces async processing of the exchange using a thread pool.
- * 
+ *
  * @version $Revision$
  */
 public class ThreadProcessor implements AsyncProcessor, Service {
@@ -49,7 +49,7 @@ public class ThreadProcessor implements AsyncProcessor, Service {
     private long keepAliveTime;
     private int maxSize = 1;
     private int coreSize = 1;
-    private final AtomicBoolean shutdown = new AtomicBoolean(true);;
+    private final AtomicBoolean shutdown = new AtomicBoolean(true);
 
     class ProcessCall implements Runnable {
         private final Exchange exchange;

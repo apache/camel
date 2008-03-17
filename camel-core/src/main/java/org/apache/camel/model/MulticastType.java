@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -35,16 +36,19 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 @XmlRootElement(name = "multicast")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MulticastType extends OutputType<ProcessorType> {
+    private boolean parallelProcessing;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
-    
+    @XmlTransient
+    private ThreadPoolExecutor threadPoolExecutor;
+
     @Override
     public String toString() {
         return "Multicast[" + getOutputs() + "]";
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {        
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
         return createOutputsProcessor(routeContext);
     }
 
@@ -52,14 +56,31 @@ public class MulticastType extends OutputType<ProcessorType> {
         if (aggregationStrategy == null) {
             aggregationStrategy = new UseLatestAggregationStrategy();
         }
-        return new MulticastProcessor(list, aggregationStrategy);
+        return new MulticastProcessor(list, aggregationStrategy, parallelProcessing, threadPoolExecutor);
     }
-    
+
     public AggregationStrategy getAggregationStrategy() {
         return aggregationStrategy;
     }
 
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
+    }
+
+    public boolean isParallelProcessing() {
+        return parallelProcessing;
+    }
+
+    public void setParallelProcessing(boolean parallelProcessing) {
+        this.parallelProcessing = parallelProcessing;
+    }
+
+    public ThreadPoolExecutor getThreadPoolExecutor() {
+        return threadPoolExecutor;
+    }
+
+    public void setThreadPoolExecutor(ThreadPoolExecutor executor) {
+        this.threadPoolExecutor = executor;
+
     }
 }

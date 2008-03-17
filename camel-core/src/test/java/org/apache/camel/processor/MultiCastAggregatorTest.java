@@ -30,17 +30,32 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
     protected Endpoint<Exchange> startEndpoint;
     protected MockEndpoint result;
 
+    public void testMulticastReceivesItsOwnExchangeParallelly() throws Exception {
+        sendingAMessageUsingMulticastReceivesItsOwnExchange(true);        
+    }
+    
+    public void testMulticastReceivesItsOwnExchangeSequentially() throws Exception {        
+        sendingAMessageUsingMulticastReceivesItsOwnExchange(false);
+    }
 
-    public void testSendingAMessageUsingMulticastReceivesItsOwnExchange() throws Exception {
+    private void sendingAMessageUsingMulticastReceivesItsOwnExchange(boolean isParallel) throws Exception {
         result.expectedBodiesReceived("inputx+inputy+inputz");
+        String url;
+        if (isParallel) {
+            url = "direct:parallel";
+        } else {
+            url = "direct:sequential";
+        }
 
-        Exchange result = template.send("direct:a", new Processor() {
+        Exchange result = template.send(url, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody("input");
                 in.setHeader("foo", "bar");
             }
         });
+
+
         assertNotNull("We should get result here", result);
         assertEquals("Can't get the right result", "inputx+inputy+inputz", result.getOut().getBody(String.class));
 
@@ -117,7 +132,9 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").multicast(new BodyOutAggregatingStrategy()).to("direct:x", "direct:y", "direct:z");
+                from("direct:parallel").multicast(new BodyOutAggregatingStrategy(), true).to("direct:x", "direct:y", "direct:z");
+
+                from("direct:sequential").multicast(new BodyOutAggregatingStrategy()).to("direct:x", "direct:y", "direct:z");
 
                 from("direct:x").process(new AppendingProcessor("x")).to("direct:aggregater");
                 from("direct:y").process(new AppendingProcessor("y")).to("direct:aggregater");
