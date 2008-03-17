@@ -78,7 +78,7 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
                 getProcessor().process(exchange);
 
                 if (ExchangeHelper.isOutCapable(exchange)) {
-                    Object body = exchange.getOut().getBody();
+                    Object body = MinaPayloadHelper.getOut(endpoint, exchange);
                     boolean failed = exchange.isFailed();
 
                     if (failed) {
@@ -117,5 +117,5 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
         acceptor.unbind(address);
         super.doStop();
     }
-    
+
 }

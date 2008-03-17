@@ -23,8 +23,6 @@ import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-import java.nio.charset.Charset;
-
 /**
  * Unit testing using different encodings with the TCP protocol.
  *
