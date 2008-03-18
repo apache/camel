@@ -988,6 +988,13 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
+     * Adds a processor which sets the header on the IN message to the given value
+     */
+    public Type setHeader(String name, String value) {
+        return (Type) setHeader(name).constant(value);
+    }
+
+    /**
      * Adds a processor which sets the header on the OUT message
      */
     public ExpressionClause<ProcessorType<Type>> setOutHeader(String name) {
@@ -1004,6 +1011,13 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
+     * Adds a processor which sets the header on the OUT message
+     */
+    public Type setOutHeader(String name, String value) {
+        return (Type) setOutHeader(name).constant(value);
+    }
+
+    /**
      * Adds a processor which sets the header on the FAULT message
      */
     public Type setFaultHeader(String name, Expression expression) {
@@ -1016,6 +1030,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     public Type setProperty(String name, Expression expression) {
         return process(ProcessorBuilder.setProperty(name, expression));
     }
+
 
     /**
      * Adds a processor which sets the exchange property
