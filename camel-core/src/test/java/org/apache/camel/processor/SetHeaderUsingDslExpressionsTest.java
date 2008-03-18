@@ -43,6 +43,20 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
         assertMockEndpointsSatisifed();
     }
 
+    public void testUseConstantParameter() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() throws Exception {
+                from("direct:start").
+                        setHeader("foo", "ABC").
+                        to("mock:result");
+            }
+        });
+
+        template.sendBodyAndHeader("direct:start", body, "bar", "ABC");
+
+        assertMockEndpointsSatisifed();
+    }
+
     public void testUseExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
