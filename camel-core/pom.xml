@@ -109,9 +109,7 @@
         <configuration>
           <forkMode>pertest</forkMode>
           <excludes>
-            <!-- TODO FIXME ASAP -->
-            <exclude>**/RomeksExceptionTest.*</exclude>
-            <exclude>**/SimulatorTest.*</exclude>
+            <!-- TODO FIXME ASAP -->            
             <exclude>**/MultiCastAggregatorTest.*</exclude>
           </excludes>
         </configuration>

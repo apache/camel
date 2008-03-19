@@ -82,9 +82,7 @@
         <configuration>
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
-          <excludes>
-            <!-- TODO FIXME ASAP when camel-core/SimulatorTest works again -->
-            <exclude>**/SimulatorTest.*</exclude>
+          <excludes>            
             <exclude>**/FooTest.*</exclude>
           </excludes>
         </configuration>
