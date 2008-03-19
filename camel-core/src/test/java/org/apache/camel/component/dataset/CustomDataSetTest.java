@@ -40,7 +40,7 @@ public class CustomDataSetTest extends ContextTestSupport {
         public void assertMessageExpected(DataSetEndpoint dataSetEndpoint, Exchange expected, Exchange actual, long index) throws Exception {
             // lets compare the XPath result
             Predicate<Exchange> predicate = PredicateBuilder.isEqualTo(expression, ExpressionBuilder.constantExpression(index));
-            System.out.println(">>>> evaluating predicate: " + predicate);
+            log.debug("evaluating predicate: " + predicate);
             predicate.assertMatches("Actual: " + actual, actual);
         }
 
