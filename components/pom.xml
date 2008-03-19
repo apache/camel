@@ -55,6 +55,7 @@
     <module>camel-jcr</module>
     <module>camel-jpa</module>
     <module>camel-juel</module>
+    <module>camel-jxpath</module>
     <module>camel-mail</module>
     <module>camel-mina</module>
     <module>camel-msv</module>
