@@ -112,6 +112,7 @@
             <!-- TODO FIXME ASAP -->
             <exclude>**/RomeksExceptionTest.*</exclude>
             <exclude>**/SimulatorTest.*</exclude>
+            <exclude>**/MultiCastAggregatorTest.*</exclude>
           </excludes>
         </configuration>
       </plugin>
