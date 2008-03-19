@@ -43,8 +43,13 @@ public class DirectoryCreateIssueTest extends TestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+
+        // The following code is removed
+        // if you want to enable debugging, add the src/test/ide-resources directory to your IDE classpath
+/*
         BasicConfigurator.configure();
         Logger.getRootLogger().setLevel(Level.DEBUG);
+*/
         context = new DefaultCamelContext();
         context.start();
         template = new CamelTemplate(context);
