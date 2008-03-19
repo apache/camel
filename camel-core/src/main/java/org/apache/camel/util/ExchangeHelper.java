@@ -125,9 +125,10 @@ public class ExchangeHelper {
      * an exception if it is not present
      */
     public static Object getMandatoryOutBody(Exchange exchange) throws InvalidPayloadException {
-        Object answer = exchange.getOut().getBody();
+        Message out = exchange.getOut();
+        Object answer = out.getBody();
         if (answer == null) {
-            throw new InvalidPayloadException(exchange, Object.class);
+            throw new InvalidPayloadException(exchange, Object.class, out);
         }
         return answer;
     }
@@ -137,9 +138,10 @@ public class ExchangeHelper {
      * an exception if it is not present
      */
     public static <T> T getMandatoryOutBody(Exchange exchange, Class<T> type) throws InvalidPayloadException {
-        T answer = exchange.getOut().getBody(type);
+        Message out = exchange.getOut();
+        T answer = out.getBody(type);
         if (answer == null) {
-            throw new InvalidPayloadException(exchange, type);
+            throw new InvalidPayloadException(exchange, type, out);
         }
         return answer;
     }
