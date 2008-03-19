@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -34,7 +33,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.processor.ThreadProcessor.ProcessCall;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -58,10 +56,11 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
     }
 
     public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy) {
-        this(processors, null, false, null);
+        this(processors, aggregationStrategy, false, null);
     }
 
     public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing, ThreadPoolExecutor executor) {
+        notNull(processors, "processors");
         this.processors = processors;
         this.aggregationStrategy = aggregationStrategy;
         this.isParallelProcessing = parallelProcessing;
@@ -73,7 +72,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
             }
 
         }
-        notNull(processors, "processors");
+
     }
 
     /**
