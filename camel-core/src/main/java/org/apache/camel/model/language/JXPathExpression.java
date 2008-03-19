@@ -33,6 +33,6 @@ public class JXPathExpression extends ExpressionType {
     }
 
     public String getLanguage() {
-        return "jaxpath";
+        return "jxpath";
     }
 }
