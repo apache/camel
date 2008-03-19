@@ -23,8 +23,12 @@ public class InvalidPayloadException extends CamelExchangeException {
     private final Class<?> type;
 
     public InvalidPayloadException(Exchange exchange, Class<?> type) {
+        this(exchange, type, exchange.getIn());
+    }
+
+    public InvalidPayloadException(Exchange exchange, Class<?> type, Message message) {
         super("No in body available of type: " + type.getName()
-              + NoSuchPropertyException.valueDescription(exchange.getIn().getBody()), exchange);
+              + NoSuchPropertyException.valueDescription(message.getBody()) + " on: " + message, exchange);
         this.type = type;
     }
 
