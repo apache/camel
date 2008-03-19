@@ -86,6 +86,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jcr</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jdbc</artifactId>
     </dependency>
     <dependency>
@@ -94,11 +98,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jing</artifactId>
+      <artifactId>camel-jhc</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jdbc</artifactId>
+      <artifactId>camel-jing</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -114,15 +118,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jhc</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-juel</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jcr</artifactId>
+      <artifactId>camel-jxpath</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>

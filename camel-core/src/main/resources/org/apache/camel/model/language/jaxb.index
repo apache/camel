@@ -19,6 +19,7 @@ ExpressionType
 GroovyExpression
 HeaderExpression
 JavaScriptExpression
+JXPathExpression
 LanguageExpression
 MethodCallExpression
 OgnlExpression
