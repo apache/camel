@@ -100,7 +100,7 @@ public class ThreadTest extends ContextTestSupport {
                 }
             }, new AsyncCallback() {
                 public void done(boolean doneSynchronously) {
-                    System.out.println("Completed: "+index+", exception: "+exchanges[index].getException());
+                    log.debug("Completed: "+index+", exception: "+exchanges[index].getException());
                     completedExchanges.countDown();
                 }
             });
