@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlAttribute;
 
 import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
@@ -36,7 +37,8 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 @XmlRootElement(name = "multicast")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MulticastType extends OutputType<ProcessorType> {
-    private boolean parallelProcessing;
+    @XmlAttribute(required = false)
+    private Boolean parallelProcessing;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlTransient
@@ -56,7 +58,7 @@ public class MulticastType extends OutputType<ProcessorType> {
         if (aggregationStrategy == null) {
             aggregationStrategy = new UseLatestAggregationStrategy();
         }
-        return new MulticastProcessor(list, aggregationStrategy, parallelProcessing, threadPoolExecutor);
+        return new MulticastProcessor(list, aggregationStrategy, isParallelProcessing(), threadPoolExecutor);
     }
 
     public AggregationStrategy getAggregationStrategy() {
@@ -68,7 +70,7 @@ public class MulticastType extends OutputType<ProcessorType> {
     }
 
     public boolean isParallelProcessing() {
-        return parallelProcessing;
+        return parallelProcessing != null ? parallelProcessing : false;
     }
 
     public void setParallelProcessing(boolean parallelProcessing) {
