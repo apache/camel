@@ -40,11 +40,11 @@ public class BeanInvocationSerializeTest extends TestSupport {
         ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()));
         Object object = in.readObject();
         BeanInvocation actual = assertIsInstanceOf(BeanInvocation.class, object);
-        System.out.println("Received " + actual);
+        log.debug("Received " + actual);
     }
 
     public void cheese(String a, String b) {
-        System.out.println("Called with a: " + a + " b: " + b);
+        log.debug("Called with a: " + a + " b: " + b);
 
     }
 }
