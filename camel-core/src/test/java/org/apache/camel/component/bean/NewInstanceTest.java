@@ -83,7 +83,6 @@ public class NewInstanceTest extends ContextTestSupport {
 
         public int read(@Body String body) {
             LOG.info("read() method called with: " + body + " on " + this);
-            System.out.println("read() method called with: " + body + " on " + this);
             return id;
         }
     }
