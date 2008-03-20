@@ -147,7 +147,7 @@ public class PredicateBuilder {
             }
 
             protected String getOperationText() {
-                return "==";
+                return "!=";
             }
         };
     }
