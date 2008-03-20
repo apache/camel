@@ -50,9 +50,9 @@
     </dependency>
 
     <dependency>
-      <groupId>jsch</groupId>
+      <groupId>com.jcraft</groupId>
       <artifactId>jsch</artifactId>
-      <version>0.1.29</version>
+      <version>0.1.31</version>
     </dependency>
     <dependency>
       <groupId>commons-net</groupId>
