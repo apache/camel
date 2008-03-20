@@ -33,21 +33,27 @@ import org.apache.camel.Message;
  */
 public class HttpBinding {
 
-    // This should be a set of lower-case strings 
+    // This should be a set of lower-case strings
     public static final Set<String> DEFAULT_HEADERS_TO_IGNORE = new HashSet<String>(Arrays.asList(
             "content-length", "content-type", HttpProducer.HTTP_RESPONSE_CODE.toLowerCase()));
     private Set<String> ignoredHeaders = DEFAULT_HEADERS_TO_IGNORE;
 
     /**
      * Writes the exchange to the servlet response
-     * 
+     *
      * @param response
      * @throws IOException
      */
     public void writeResponse(HttpExchange exchange, HttpServletResponse response) throws IOException {
         Message out = exchange.getOut();
         if (out != null) {
-            
+
+            // Set the status code in the response.  Default is 200.
+            if (out.getHeader(HttpProducer.HTTP_RESPONSE_CODE) != null) {
+                int responseCode = ((Integer)out.getHeader(HttpProducer.HTTP_RESPONSE_CODE)).intValue();
+                response.setStatus(responseCode);
+            }
+
             // Write out the headers...
             for (String key : out.getHeaders().keySet()) {
                 String value = out.getHeader(key, String.class);
@@ -55,7 +61,7 @@ public class HttpBinding {
                     response.setHeader(key, value);
                 }
             }
-            
+
             // Write out the body.
             if (out.getBody() != null) {
 
@@ -86,7 +92,7 @@ public class HttpBinding {
         HttpServletRequest request = httpMessage.getRequest();
         return request.getReader();
     }
-    
+
     /*
      * Exclude a set of headers from responses and new requests as all headers get
      * propagated between exchanges by default
@@ -111,7 +117,7 @@ public class HttpBinding {
     public void setIgnoredHeaders(Set<String> headersToIgnore) {
         ignoredHeaders  = headersToIgnore;
     }
-    
+
     public Set<String> getIgnoredHeaders() {
         return ignoredHeaders;
     }
