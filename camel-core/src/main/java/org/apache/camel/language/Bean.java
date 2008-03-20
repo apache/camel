@@ -15,41 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.jxpath;
+package org.apache.camel.language;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.annotation.ElementType;
 
 /**
- * @version $Revision: 1.1 $
+ * Used to inject a bean expression into a field, property, method or parameter when using
+ * <a href="http://activemq.apache.org/camel/bean-integration.html">Bean Integration</a>.
+ *
+ * @version $Revision$
  */
-public class PersonBean {
-    private String name;
-    private String location;
-
-    public PersonBean() {
-    }
-
-    public PersonBean(String name, String location) {
-        this.name = name;
-        this.location = location;
-    }
-
-    @Override
-    public String toString() {
-        return "PersonBean[name: " + name + " location: " + location + "]";
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
+@LanguageAnnotation(language = "bean")
+public @interface Bean {
+    public abstract String value();
 }

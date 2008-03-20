@@ -26,8 +26,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An annotation for injection of XQuery expressions
- * into method parameters, fields or properties
+ * An annotation for injection of an XQuery expressions into a field, property, method or parameter when using
+ * <a href="http://activemq.apache.org/camel/bean-integration.html">Bean Integration</a>.
  *
  * @version $Revision$
  */
