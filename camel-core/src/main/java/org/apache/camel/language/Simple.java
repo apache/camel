@@ -23,6 +23,9 @@ import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 
 /**
+ * Used to inject a simple expression into a field, property, method or parameter when using
+ * <a href="http://activemq.apache.org/camel/bean-integration.html">Bean Integration</a>.
+ *
  * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
