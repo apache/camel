@@ -48,7 +48,7 @@ public class CxfClient extends ClientImpl {
 
     }
 
-    public Object dispatch(Object params,
+    public Object dispatch(Map<Class, Object> params,
                            Map<String, Object> context,
                            Exchange exchange) throws Exception {
 
@@ -82,7 +82,7 @@ public class CxfClient extends ClientImpl {
 
     @SuppressWarnings("unchecked")
     public Object invokeWithMessageStream(BindingOperationInfo bi,
-                                          Object param,
+                                          Map<Class, Object> param,
                                           Map<String, Object> context,
                                           InvokingContext invokingContext) throws Exception {
 
@@ -182,7 +182,7 @@ public class CxfClient extends ClientImpl {
 
 
     private Message prepareMessage(Exchange exchange, Map<String, Object> requestContext,
-            Object param, InvokingContext InvokingContext) {
+            Map<Class, Object> param, InvokingContext InvokingContext) {
 
         Message message = getEndpoint().getBinding().createMessage();
         message.put(Message.REQUESTOR_ROLE, Boolean.TRUE);

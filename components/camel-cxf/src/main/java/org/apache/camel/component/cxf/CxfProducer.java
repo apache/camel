@@ -222,7 +222,7 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                 	invokingContext = InvokingContextFactory.createContext(dataFormat);
                 	ex.put(InvokingContext.class, invokingContext);
                 }
-                Object params = invokingContext.getRequestContent(inMessage);
+                Map params = invokingContext.getRequestContent(inMessage);
                 // invoke the stream message with the exchange context
                 CxfClient cxfClient = (CxfClient) client;
                 // need to get the binding object to create the message
