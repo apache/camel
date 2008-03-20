@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.invoker;
 
 import java.util.List;
 import java.util.Map;
+import java.util.IdentityHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,9 +35,9 @@ public class PayloadInvokingContext extends AbstractInvokingContext {
 
     }
 
-    public void setRequestOutMessageContent(Message message, Object content) {
+    public void setRequestOutMessageContent(Message message, Map<Class, Object> contents) {
 
-        PayloadMessage request = (PayloadMessage) content;
+        PayloadMessage request = (PayloadMessage)contents.get(PayloadMessage.class);
 
         Element header = request.getHeader();
         List<Element> payload = request.getPayload();
@@ -91,8 +92,9 @@ public class PayloadInvokingContext extends AbstractInvokingContext {
         }
     }
 
+
     @SuppressWarnings("unchecked")
-    public Object getRequestContent(Message inMessage) {
+    public Map<Class, Object> getRequestContent(Message inMessage) {
         List<Element> payload = inMessage.get(List.class);
         Element header = inMessage.get(Element.class);
 
@@ -100,7 +102,10 @@ public class PayloadInvokingContext extends AbstractInvokingContext {
             LOG.finest("Header = " + header + ", Payload = " + payload);
         }
 
-        return new PayloadMessage(payload, header);
+        Map<Class, Object> contents = new IdentityHashMap<Class, Object>();
+        contents.put(PayloadMessage.class, new PayloadMessage(payload, header));
+
+        return contents;
     }
 
 }

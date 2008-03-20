@@ -29,7 +29,7 @@ public interface InvokingContext {
      * It sets the content in the given (out) message object.
      * @param content
      */
-    void setRequestOutMessageContent(Message message, Object content);
+    void setRequestOutMessageContent(Message message, Map<Class, Object> contents);
 
     /**
      * This method is call when the CxfClient receives a response from a CXF server and needs
@@ -54,8 +54,8 @@ public interface InvokingContext {
      * the client and needs to extract the request content from the message.  It retreives
      * and receives the request content from the incoming message.
      * @param inMessage
-     * @return the request from client
+     * @return the request contents from client
      */
-    Object getRequestContent(Message inMessage);
+    Map<Class, Object> getRequestContent(Message inMessage);
 
 }

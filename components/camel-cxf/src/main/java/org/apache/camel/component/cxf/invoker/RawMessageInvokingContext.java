@@ -18,6 +18,9 @@ package org.apache.camel.component.cxf.invoker;
 
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Set;
+import java.util.Iterator;
+import java.util.IdentityHashMap;
 import java.util.logging.Logger;
 
 import org.apache.cxf.message.Exchange;
@@ -30,8 +33,15 @@ public class RawMessageInvokingContext extends AbstractInvokingContext {
 
     }
 
-    public void setRequestOutMessageContent(Message message, Object content) {
-        message.setContent(InputStream.class, content);
+    public void setRequestOutMessageContent(Message message, Map<Class, Object> contents) {
+        Set entries = contents.keySet();
+        Iterator iter = entries.iterator();
+        while (iter.hasNext()){
+            Object obj = iter.next();
+            if (obj instanceof Class){
+                message.setContent((Class<?>)obj, contents.get((Class<?>)obj));
+            }
+        }
     }
 
     public Object getResponseObject(Exchange exchange, Map<String, Object> responseContext) {
@@ -45,9 +55,20 @@ public class RawMessageInvokingContext extends AbstractInvokingContext {
         //loggerTheMessage(outMessage, "Out Message");
     }
 
-    public Object getRequestContent(Message inMessage) {
+    public Map<Class, Object> getRequestContent(Message inMessage) {
         //loggerTheMessage(inMessage, "In Message");
-        return inMessage.getContent(InputStream.class);
+
+        IdentityHashMap<Class, Object> contents = new IdentityHashMap<Class, Object>();
+
+        Set set = inMessage.getContentFormats();
+        Iterator iter = set.iterator();
+        while (iter.hasNext()){
+            Object obj = iter.next();
+            if (obj instanceof Class)
+                contents.put((Class<?>)obj, inMessage.getContent((Class<?>)obj));
+        }
+
+        return contents;
     }
 
 }
