@@ -18,6 +18,7 @@ package org.apache.camel.language.jxpath;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Message;
 import org.apache.camel.impl.ExpressionSupport;
 import org.apache.camel.language.ExpressionEvaluationException;
 import org.apache.commons.jxpath.CompiledExpression;
@@ -48,7 +49,8 @@ public class JXPathExpression extends ExpressionSupport<Exchange> {
     
     public Object evaluate(Exchange exchange) {
 		try {
-			Object result = getJXPathExpression().getValue(JXPathContext.newContext(exchange));
+            JXPathContext context = JXPathContext.newContext(exchange);
+            Object result = getJXPathExpression().getValue(context, type);
 			assertResultType(exchange, result);
 			return result;
 		} catch (JXPathException e) {
