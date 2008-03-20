@@ -37,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.SimpleMessageListenerContainer;
+import org.springframework.jms.listener.SimpleMessageListenerContainer102;
 import org.springframework.jms.support.destination.DestinationResolver;
 
 /**
@@ -48,7 +49,7 @@ public class Requestor extends ServiceSupport implements MessageListener {
     private AbstractMessageListenerContainer listenerContainer;
     private TimeoutMap requestMap;
     private Destination replyTo;
-                                
+
     public Requestor(JmsConfiguration configuration, ScheduledExecutorService executorService) {
         this.configuration = configuration;
         requestMap = new DefaultTimeoutMap(executorService, configuration.getRequestMapPurgePollTimeMillis());
@@ -135,7 +136,8 @@ public class Requestor extends ServiceSupport implements MessageListener {
     }
 
     protected AbstractMessageListenerContainer createListenerContainer() {
-        SimpleMessageListenerContainer answer = new SimpleMessageListenerContainer();
+        SimpleMessageListenerContainer answer = configuration.isUseVersion102() ?
+            new SimpleMessageListenerContainer102() : new SimpleMessageListenerContainer();
         answer.setDestinationName("temporary");
         answer.setDestinationResolver(new DestinationResolver() {
 
