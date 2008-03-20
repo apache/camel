@@ -35,7 +35,7 @@ public abstract class ExpressionSupport<E extends Exchange> implements Expressio
 
     public void assertMatches(String text, E exchange) {
         if (!matches(exchange)) {
-            throw new AssertionError(text + assertionFailureMessage(exchange) + " for exchange: " + exchange);
+            throw new AssertionError(text + " " + assertionFailureMessage(exchange) + " for exchange: " + exchange);
         }
     }
 
