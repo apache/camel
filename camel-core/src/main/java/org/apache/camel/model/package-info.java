@@ -14,6 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/**
+ * The JAXB POJOs for the
+ * <a href="http://activemq.apache.org/camel/xml-configuration.html">XML Configuration</a>
+ * of the routing rules.
+ */
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://activemq.apache.org/camel/schema/spring", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel.model;
 

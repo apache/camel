@@ -14,5 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/**
+ * The JAXB POJOs for the
+ * <a href="http://activemq.apache.org/camel/data-format.html">Data Formats</a> used to marshal and unmarshal objects to
+ * and from streams inside <a href="http://activemq.apache.org/camel/components.html">components</a>
+ */
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://activemq.apache.org/camel/schema/spring", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel.model.dataformat;

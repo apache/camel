@@ -14,5 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://activemq.apache.org/camel/schema/spring", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED) 
+
+/**
+ * The JAXB POJOs for the
+ * <a href="http://activemq.apache.org/camel/expression.html">Expression</a> and
+ * <a href="http://activemq.apache.org/camel/predicate.html">Predicate</a> plugins for the
+ * <a href="http://activemq.apache.org/camel/xml-configuration.html">XML Configuration</a>.
+ */
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://activemq.apache.org/camel/schema/spring", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel.model.language;
