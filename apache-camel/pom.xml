@@ -7,9 +7,9 @@
   The ASF licenses this file to You under the Apache License, Version 2.0
   (the "License"); you may not use this file except in compliance with
   the License.  You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,7 +59,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-cxf</artifactId>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-ftp</artifactId>
@@ -155,7 +155,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-script</artifactId>
-    </dependency> 
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
@@ -190,7 +190,7 @@
       <artifactId>camel-core</artifactId>
       <type>test-jar</type>
       <version>${project.version}</version>
-      <optional>true</optional>      
+      <optional>true</optional>
     </dependency>
 
     <dependency>
@@ -222,7 +222,7 @@
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-j2ee-jacc_1.0_spec</artifactId>
       <optional>true</optional>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>
@@ -251,6 +251,48 @@
           <forkMode>pertest</forkMode>
         </configuration>
       </plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <executions>
+             <execution>
+                 <id>unpack-camel-core-javadoc</id>
+                  <phase>package</phase>
+                  <goals>
+                      <goal>unpack</goal>
+                  </goals>
+                  <configuration>
+                    <outputDirectory>${project.build.directory}/javadoc/camel-core</outputDirectory>
+                    <artifactItems>
+                      <artifactItem>
+                          <groupId>${pom.groupId}</groupId>
+                          <artifactId>camel-core</artifactId>
+                          <classifier>javadoc</classifier>
+                          <version>${pom.version}</version>
+                          </artifactItem>
+                      </artifactItems>
+                   </configuration>
+              </execution>
+              <execution>
+                 <id>unpack-camel-spring-javadoc</id>
+                  <phase>package</phase>
+                  <goals>
+                      <goal>unpack</goal>
+                  </goals>
+                  <configuration>
+                    <outputDirectory>${project.build.directory}/javadoc/camel-spring</outputDirectory>
+                    <artifactItems>
+                      <artifactItem>
+                          <groupId>${pom.groupId}</groupId>
+                          <artifactId>camel-spring</artifactId>
+                          <classifier>javadoc</classifier>
+                          <version>${pom.version}</version>
+                          </artifactItem>
+                      </artifactItems>
+                   </configuration>
+              </execution>
+           </executions>
+       </plugin>
       <!--
       <plugin>
         <groupId>org.apache.activemq</groupId>
@@ -389,27 +431,27 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
             <version>1.1</version>
-  
+
             <executions>
               <execution>
                 <id>download-website</id>
                 <phase>compile</phase>
                 <configuration>
                   <tasks>
-  
+
                     <exec executable="rsync">
                       <arg value="-ave"/>
                       <arg value="ssh"/>
                       <arg value="people.apache.org:/www/activemq.apache.org/camel/"/>
                       <arg value="${basedir}/target/website/"/>
                     </exec>
-  
+
                     <echo message="Replaceing absolute links with relative ones"/>
                     <replace dir="${basedir}/target/website">
                       <replacefilter token="http://activemq.apache.org/camel/maven/" value="maven/"/>
                       <replacefilter token="http://activemq.apache.org/camel/styles/" value="styles/"/>
                     </replace>
-  
+
                   </tasks>
                 </configuration>
                 <goals>

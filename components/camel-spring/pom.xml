@@ -194,6 +194,29 @@
         </dependencies>
       </plugin>
 
+      <!-- generate the JavaDoc -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <links>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+            <link>http://java.sun.com/j2ee/1.4/docs/api/</link>
+            <link>http://jakarta.apache.org/commons/collections/apidocs-COLLECTIONS_3_0/</link>
+            <link>http://jakarta.apache.org/commons/dbcp/apidocs/</link>
+            <link>http://jakarta.apache.org/commons/fileupload/apidocs/</link>
+            <link>http://jakarta.apache.org/commons/httpclient/apidocs/</link>
+            <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
+            <link>http://jakarta.apache.org/commons/pool/apidocs/</link>
+            <link>http://junit.sourceforge.net/javadoc/</link>
+            <link>http://logging.apache.org/log4j/docs/api/</link>
+            <link>http://mina.apache.org/report/trunk/apidocs/</link>
+          </links>
+          <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
+          <linksource>true</linksource>          
+          <source>1.5</source>          
+        </configuration>
+      </plugin>
 
       <!-- generate the attached tests jar -->
       <plugin>
