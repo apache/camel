@@ -44,6 +44,7 @@ ServiceActivationType
 SplitterType
 ThrottlerType
 ThreadType
+ThrowFaultType
 ToType
 TryType
 UnmarshalType

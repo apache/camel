@@ -44,7 +44,17 @@ public class CxfCustmerizedExceptionTest extends ContextTestSupport {
 
     private static final String EXCEPTION_MESSAGE = "This is an exception test message";
     private static final String DETAIL_TEXT = "This is a detail text node";
+    private static SoapFault SOAP_FAULT;
     private Bus bus;
+
+
+    static {
+        SOAP_FAULT = new SoapFault(EXCEPTION_MESSAGE, SoapFault.FAULT_CODE_CLIENT);
+        Element detail = SOAP_FAULT.getOrCreateDetail();
+        Document doc = detail.getOwnerDocument();
+        Text tn = doc.createTextNode(DETAIL_TEXT);
+        detail.appendChild(tn);
+    }
 
 
     @Override
@@ -66,17 +76,7 @@ public class CxfCustmerizedExceptionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(ROUTER_ENDPOINT_URI).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        Message message = exchange.getFault();
-                        SoapFault fault = new SoapFault(EXCEPTION_MESSAGE, SoapFault.FAULT_CODE_CLIENT);
-                        Element detail = fault.getOrCreateDetail();
-                        Document doc = detail.getOwnerDocument();
-                        Text tn = doc.createTextNode(DETAIL_TEXT);
-                        detail.appendChild(tn);
-                        message.setBody(fault);
-                    }
-                });
+                from(ROUTER_ENDPOINT_URI).throwFault(SOAP_FAULT);
             }
         };
     }
