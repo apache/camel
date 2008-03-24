@@ -42,7 +42,7 @@ public class DataOutInterceptor extends AbstractOutDatabindingInterceptor {
         try {
             // put the payload source as a document
             Source source = message.getContent(Source.class);
-            if(source != null ) {
+            if (source != null) {
                 XMLStreamReader xmlReader = StaxUtils.createXMLStreamReader(source);
                 StaxUtils.copy(xmlReader, xmlWriter);
             }

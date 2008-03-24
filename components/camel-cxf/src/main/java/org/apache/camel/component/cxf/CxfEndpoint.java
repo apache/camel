@@ -57,12 +57,12 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
             //get the bean from spring context
             beanId = address.substring(CxfConstants.SPRING_CONTEXT_ENDPOINT.length());
             if (beanId.startsWith("//")) {
-               beanId = beanId.substring(2);
+                beanId = beanId.substring(2);
             }
             SpringCamelContext context = (SpringCamelContext) this.getContext();
             configurer = new ConfigurerImpl(context.getApplicationContext());
             cxfEndpointBean = (CxfEndpointBean) context.getApplicationContext().getBean(beanId);
-            assert(cxfEndpointBean != null);
+            assert cxfEndpointBean != null;
         }
     }
 
@@ -99,11 +99,11 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     }
 
     public String getAddress() {
-    	return address;
+        return address;
     }
 
     public String getWsdlURL() {
-    	return wsdlURL;
+        return wsdlURL;
     }
 
     public void setWsdlURL(String url) {
@@ -127,7 +127,7 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
         serviceName = service;
     }
 
-    public String getPortName(){
+    public String getPortName() {
         return portName;
     }
 

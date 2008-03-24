@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,11 +25,11 @@ import org.apache.cxf.message.Exchange;
 public interface MessageInvoker {
 
     /**
-     * This method is called when the incoming message is to
-     * be passed into the camel processor. The return value is the response
-     * from the processor
+     * This method is called when the incoming message is to be passed into the
+     * camel processor. The return value is the response from the processor
+     *
      * @param the cxf exchange which holds the in and out message
      */
-     public void invoke(Exchange exchange);
+    void invoke(Exchange exchange);
 
 }

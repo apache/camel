@@ -26,14 +26,14 @@ import org.apache.cxf.transport.Destination;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 
-public class NullConduit implements Conduit{
+public class NullConduit implements Conduit {
 
     public void close() {
         // TODO Auto-generated method stub
-        
+
     }
 
-    public void close(Message message) throws IOException {        
+    public void close(Message message) throws IOException {
         OutputStream outputStream = message.getContent(OutputStream.class);
         if (outputStream != null) {
             outputStream.close();
@@ -53,12 +53,12 @@ public class NullConduit implements Conduit{
     public void prepare(Message message) throws IOException {
         CachedOutputStream outputStream = new CachedOutputStream();
         message.setContent(OutputStream.class, outputStream);
-        
+
     }
 
     public void setMessageObserver(MessageObserver observer) {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

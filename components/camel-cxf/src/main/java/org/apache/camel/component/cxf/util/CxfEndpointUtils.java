@@ -104,7 +104,7 @@ public final class CxfEndpointUtils {
     }
 
     public static boolean hasWebServiceAnnotation(Class<?> cls) {
-        return (hasAnnotation(cls, WebService.class) || hasAnnotation(cls, WebServiceProvider.class));
+        return hasAnnotation(cls, WebService.class) || hasAnnotation(cls, WebServiceProvider.class);
     }
 
     public static boolean hasAnnotation(Class<?> cls, Class<? extends Annotation> annotation) {
@@ -118,7 +118,7 @@ public final class CxfEndpointUtils {
 
         for (Class<?> interfaceClass : cls.getInterfaces()) {
             if (null != interfaceClass.getAnnotation(annotation)) {
-            	return true;
+                return true;
             }
         }
         return hasAnnotation(cls.getSuperclass(), annotation);
@@ -219,13 +219,13 @@ public final class CxfEndpointUtils {
     public static DataFormat getDataFormat(CxfEndpoint endpoint) throws CamelException {
         String dataFormatString = endpoint.getDataFormat();
         if (dataFormatString == null) {
-        	return DataFormat.POJO;
+            return DataFormat.POJO;
         }
 
         DataFormat retval = DataFormat.asEnum(dataFormatString);
 
         if (retval == DataFormat.UNKNOWN) {
-        	throw new CamelException(new Message("INVALID_MESSAGE_FORMAT_XXXX", LOG, dataFormatString).toString());
+            throw new CamelException(new Message("INVALID_MESSAGE_FORMAT_XXXX", LOG, dataFormatString).toString());
         }
 
         return retval;

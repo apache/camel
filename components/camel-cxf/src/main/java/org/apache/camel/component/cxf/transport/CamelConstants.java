@@ -19,7 +19,8 @@ package org.apache.camel.component.cxf.transport;
 /**
  * @version $Revision$
  */
-public class CamelConstants {
+public final class CamelConstants {
+
     public static final String TEXT_MESSAGE_TYPE = "text";
     public static final String BINARY_MESSAGE_TYPE = "binary";
     public static final String CAMEL_TARGET_ENDPOINT_URI = "org.apache.cxf.camel.target.endpoint.uri";
@@ -45,4 +46,8 @@ public class CamelConstants {
     public static final String CAMEL_SERVER_CONFIG_ID = "camel-server";
     public static final String CAMEL_REBASED_REPLY_TO = "org.apache.cxf.camel.server.replyto";
     public static final String CAMEL_CORRELATION_ID = "org.apache.cxf.camel.correlationId";
+
+    private CamelConstants() {
+        // Utility class
+    }
 }

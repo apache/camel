@@ -42,19 +42,19 @@ public enum DataFormat {
      * data format.
      */
     POJO,
-    
+
     /**
      * For UNKNOWN cases.
      */
     UNKNOWN;
-    
-    
-        
+
+
+
     public static DataFormat asEnum(String value) {
-    	try {
-    		return valueOf(value.toUpperCase());
-    	} catch (Exception e) {
-    		return UNKNOWN;
-    	}
+        try {
+            return valueOf(value.toUpperCase());
+        } catch (Exception e) {
+            return UNKNOWN;
+        }
     }
 }

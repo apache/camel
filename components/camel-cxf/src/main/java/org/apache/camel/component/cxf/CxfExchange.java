@@ -61,7 +61,7 @@ public class CxfExchange extends DefaultExchange {
 
         setIn(new CxfMessage(inMessage));
         if (exchange != null) {
-            if (exchange.getOutMessage()!= null) {
+            if (exchange.getOutMessage() != null) {
                 setOut(new CxfMessage(exchange.getOutMessage()));
             }
             if (exchange.getInFaultMessage() != null) {
@@ -102,7 +102,7 @@ public class CxfExchange extends DefaultExchange {
 
 
     public void setExchange(Exchange exchange) {
-    	this.exchange = exchange;
+        this.exchange = exchange;
     }
 
     // Expose CXF APIs directly on the exchange

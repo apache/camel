@@ -39,14 +39,14 @@ import org.apache.hello_world_soap_http.GreeterImpl;
  */
 public class CxfProducerTest extends TestCase {
     private static final transient Log LOG = LogFactory.getLog(CxfProducerTest.class);
+    private static final String SIMPLE_SERVER_ADDRESS = "http://localhost:28080/test";
+    private static final String JAXWS_SERVER_ADDRESS = "http://localhost:28081/test";
+    private static final String ECHO_OPERATION = "echo";
+    private static final String GREET_ME_OPERATION = "greetMe";
+    private static final String TEST_MESSAGE = "Hello World!";
     protected CamelContext camelContext = new DefaultCamelContext();
     protected CamelTemplate<CxfExchange> template = new CamelTemplate<CxfExchange>(camelContext);
 
-    private final static String SIMPLE_SERVER_ADDRESS = "http://localhost:28080/test";
-    private final static String JAXWS_SERVER_ADDRESS = "http://localhost:28081/test";
-    private final static String ECHO_OPERATION = "echo";
-    private final static String GREET_ME_OPERATION ="greetMe";
-    private final static String TEST_MESSAGE = "Hello World!";
     private ServerImpl simpleServer;
     private Endpoint jaxwsEndpoint;
 
@@ -114,7 +114,7 @@ public class CxfProducerTest extends TestCase {
 
     private String getSimpleEndpointUri() {
         return "cxf://" + SIMPLE_SERVER_ADDRESS
-        + "?serviceClass=org.apache.camel.component.cxf.HelloService";
+            + "?serviceClass=org.apache.camel.component.cxf.HelloService";
     }
 
     private String getJaxwsEndpointUri() {

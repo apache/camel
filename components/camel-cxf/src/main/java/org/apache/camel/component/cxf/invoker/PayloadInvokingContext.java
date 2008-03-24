@@ -16,16 +16,17 @@
  */
 package org.apache.camel.component.cxf.invoker;
 
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.IdentityHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.w3c.dom.Element;
 
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 
-import org.w3c.dom.Element;
+
 
 public class PayloadInvokingContext extends AbstractInvokingContext {
     private static final Logger LOG = Logger.getLogger(PayloadInvokingContext.class.getName());

@@ -23,8 +23,8 @@ import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 /**
  *
  */
-public class CxfEndpointBean extends AbstractWSDLBasedEndpointFactory{    
+public class CxfEndpointBean extends AbstractWSDLBasedEndpointFactory {
     public CxfEndpointBean() {
         setServiceFactory(new ReflectionServiceFactoryBean());
-    }    
+    }
 }

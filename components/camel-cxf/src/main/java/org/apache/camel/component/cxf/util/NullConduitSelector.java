@@ -25,31 +25,31 @@ import org.apache.cxf.transport.Conduit;
 public class NullConduitSelector implements ConduitSelector {
     private Endpoint endpoint;
     private NullConduit nullConduit;
-    
+
     public NullConduitSelector() {
         nullConduit = new NullConduit();
     }
     public void complete(Exchange exchange) {
         //do nothing here
-        
+
     }
 
     public Endpoint getEndpoint() {
-       return endpoint;
+        return endpoint;
     }
 
     public void prepare(Message message) {
         //do nothing here
-        
+
     }
 
-    public Conduit selectConduit(Message message) {        
+    public Conduit selectConduit(Message message) {
         return nullConduit;
     }
 
     public void setEndpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
-        
+
     }
 
 }

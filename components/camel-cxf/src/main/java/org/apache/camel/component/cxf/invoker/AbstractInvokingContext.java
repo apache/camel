@@ -48,7 +48,7 @@ public abstract class AbstractInvokingContext implements InvokingContext {
     }
 
     protected void loggerTheMessage(Message message, String messageTile) {
-        StringBuffer buffer = new StringBuffer( messageTile + "\n"
+        StringBuffer buffer = new StringBuffer(messageTile + "\n"
                                                + "--------------------------------------");
         InputStream is = message.getContent(InputStream.class);
         if (is != null) {

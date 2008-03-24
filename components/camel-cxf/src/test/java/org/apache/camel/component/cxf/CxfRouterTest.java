@@ -99,7 +99,7 @@ public class CxfRouterTest extends ContextTestSupport {
     }
 
     public void testOnwayInvocation() throws Exception {
-    	ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
+        ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(ROUTER_ADDRESS);
         clientBean.setServiceClass(HelloService.class);

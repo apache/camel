@@ -69,7 +69,7 @@ public class CXFGreeterRouterTest extends CxfSpringRouterTest {
 
     @Override
     public void testOnwayInvocation() throws Exception {
-    	Service service = Service.create(serviceName);
+        Service service = Service.create(serviceName);
         service.addPort(routerPortName, "http://schemas.xmlsoap.org/soap/",
                         "http://localhost:9003/CamelContext/RouterPort");
         Greeter greeter = service.getPort(routerPortName, Greeter.class);

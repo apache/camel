@@ -182,7 +182,7 @@ public class CxfClient extends ClientImpl {
 
 
     private Message prepareMessage(Exchange exchange, Map<String, Object> requestContext,
-            Map<Class, Object> param, InvokingContext InvokingContext) {
+            Map<Class, Object> param, InvokingContext invokingContext) {
 
         Message message = getEndpoint().getBinding().createMessage();
         message.put(Message.REQUESTOR_ROLE, Boolean.TRUE);
@@ -194,7 +194,7 @@ public class CxfClient extends ClientImpl {
         }
 
         if (param != null) {
-            InvokingContext.setRequestOutMessageContent(message, param);
+            invokingContext.setRequestOutMessageContent(message, param);
         }
 
         if (null != requestContext) {

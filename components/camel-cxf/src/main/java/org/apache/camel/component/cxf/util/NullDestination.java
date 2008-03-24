@@ -24,7 +24,7 @@ import org.apache.cxf.transport.Destination;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 
-public class NullDestination implements Destination{
+public class NullDestination implements Destination {
     MessageObserver messageObserver;
 
     public NullDestination() {

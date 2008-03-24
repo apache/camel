@@ -40,7 +40,7 @@ public class PayloadContentRedirectInterceptor extends AbstractPhaseInterceptor<
         // check the fault from the message
         Exception ex = message.getContent(Exception.class);
         if (ex != null) {
-            if (ex instanceof Fault ) {
+            if (ex instanceof Fault) {
                 throw (Fault)ex;
             } else {
                 throw new Fault(ex);

@@ -114,10 +114,10 @@ public class SoapMessageInInterceptor extends AbstractMessageInInterceptor<SoapM
     }
 
     protected Element getHeader(SoapMessage inMessage) {
-        // need to find out the soap header information        
+        // need to find out the soap header information
         Element element = null;
         return element;
-	// return inMessage.getHeaders(Element.class);
+        // return inMessage.getHeaders(Element.class);
     }
 
 }
