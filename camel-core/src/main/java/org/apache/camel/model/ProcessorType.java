@@ -26,6 +26,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -701,6 +702,18 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
         ThrottlerType answer = new ThrottlerType(maximumRequestCount);
         addOutput(answer);
         return answer;
+    }
+
+
+    public Type throwFault(Throwable fault) {
+        ThrowFaultType answer = new ThrowFaultType();
+        answer.setFault(fault);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    public Type throwFault(String message) {
+        return throwFault(new CamelException(message));
     }
 
     public Type interceptor(String ref) {

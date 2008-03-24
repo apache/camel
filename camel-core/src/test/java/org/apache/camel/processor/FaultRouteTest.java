@@ -17,6 +17,7 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -66,12 +67,48 @@ public class FaultRouteTest extends ContextTestSupport {
 
         MockEndpoint.assertIsSatisfied(a, b, c);
 
-        // TODO wrap up as an expecation on the mock endpoint
+        // TODO wrap up as an exception on the mock endpoint
         List<Exchange> list = a.getReceivedExchanges();
         Exchange exchange = list.get(0);
         Message fault = exchange.getFault();
         assertNotNull("Should have a fault on A", fault);
         assertEquals("Fault body", "fault", fault.getBody());
+    }
+
+
+    public void testWithThrowFaultMessage() throws Exception {
+
+        throwFaultTest("direct:string");
+
+    }
+
+    public void testWithThrowFaultException() throws Exception {
+
+        throwFaultTest("direct:exception");
+
+    }
+
+    private void throwFaultTest(String startPoint) throws InterruptedException {
+        a.expectedMessageCount(1);
+        b.expectedMessageCount(0);
+        c.expectedMessageCount(0);
+
+        template.sendBody(startPoint, "in");
+
+        MockEndpoint.assertIsSatisfied(a, b, c);
+
+        List<Exchange> list = a.getReceivedExchanges();
+        Exchange exchange = list.get(0);
+        Message fault = exchange.getFault();
+        assertNotNull("Should have a fault on A", fault);
+        if (startPoint.equals("direct:exception")) {
+            assertTrue("It should be the IllegalStateException", fault.getBody() instanceof IllegalStateException);
+            assertEquals("Fault message", "It makes no sense of business logic", ((IllegalStateException)(fault.getBody())).getMessage());
+        } else { // test for the throwFault with String
+            assertTrue("It should be the CamelException", fault.getBody() instanceof CamelException);
+            assertEquals("Fault message", "ExceptionMessage", ((CamelException)(fault.getBody())).getMessage());
+        }
+
     }
 
     @Override
@@ -89,6 +126,16 @@ public class FaultRouteTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("mock:a")
+                        .to("mock:b");
+
+                from("direct:string")
+                        .to("mock:a")
+                        .throwFault("ExceptionMessage")
+                        .to("mock:b");
+
+                from("direct:exception")
+                        .to("mock:a")
+                        .throwFault(new IllegalStateException("It makes no sense of business logic"))
                         .to("mock:b");
             }
         };
