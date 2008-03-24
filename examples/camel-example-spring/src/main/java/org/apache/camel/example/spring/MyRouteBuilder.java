@@ -16,9 +16,6 @@
  */
 package org.apache.camel.example.spring;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.Main;
 

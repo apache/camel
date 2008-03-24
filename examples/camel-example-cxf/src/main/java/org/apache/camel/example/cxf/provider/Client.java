@@ -35,7 +35,7 @@ import javax.xml.ws.soap.SOAPBinding;
 public final class Client {
 
     // The endpoint address of the service
-    String endpointAddress = null;
+    String endpointAddress;
 
     public Client(String endpointAddress) {
         this.endpointAddress = endpointAddress;

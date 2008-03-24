@@ -28,17 +28,17 @@ import org.apache.hello_world_soap_http.types.FaultDetail;
 
 public final class Client {
 
-    private static final QName SERVICE_NAME 
+    private static final QName SERVICE_NAME
         = new QName("http://apache.org/hello_world_soap_http", "SOAPService");
     private String wsdlLocation;
     private SOAPService soapService;
-           
+
     public Client(String wsdl) throws MalformedURLException {
         URL wsdlURL = null;
-        if (wsdl != null ) {
+        if (wsdl != null) {
             wsdlLocation = wsdl;
-        } 
-        
+        }
+
         File wsdlFile = new File(wsdlLocation);
         if (wsdlFile.exists()) {
             wsdlURL = wsdlFile.toURL();
@@ -47,14 +47,14 @@ public final class Client {
         }
         soapService = new SOAPService(wsdlURL, SERVICE_NAME);
     }
-    
-    
+
+
 
     public void invock() throws Exception {
-        
+
         System.out.println("Acquiring router port ...");
         Greeter port = soapService.getSoapOverHttpRouter();
-        String resp; 
+        String resp;
 
         System.out.println("Invoking sayHi...");
         resp = port.sayHi();
@@ -87,9 +87,9 @@ public final class Client {
             System.out.println("Expected exception: PingMeFault has occurred: " + ex.getMessage());
             FaultDetail detail = ex.getFaultInfo();
             System.out.println("FaultDetail major:" + detail.getMajor());
-            System.out.println("FaultDetail minor:" + detail.getMinor());            
-        }          
-         
+            System.out.println("FaultDetail minor:" + detail.getMinor());
+        }
+
     }
 
 }

@@ -17,7 +17,7 @@
 package org.apache.camel.example.camel.transport;
 
 
-public class CamelTransportExample {
+public final class CamelTransportExample {
     private CamelTransportExample() {
     }
 
