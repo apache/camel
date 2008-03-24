@@ -7,9 +7,9 @@
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
   with the License. You may obtain a copy of the License at
- 
+
   http://www.apache.org/licenses/LICENSE-2.0
- 
+
   Unless required by applicable law or agreed to in writing,
   software distributed under the License is distributed on an
   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -22,9 +22,9 @@
     "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 
 <!--
-Checks to make sure the code meets the ActiveMQ coding guidelines which 
+Checks to make sure the code meets the ActiveMQ coding guidelines which
 
-It also enforces aa bunch of other "BestPractices like method
+It also enforces a bunch of other "BestPractices like method
 lengths, if/try depths, etc...
 -->
 
@@ -55,9 +55,9 @@ lengths, if/try depths, etc...
 
 
         <!-- Checks for Naming Conventions.                  -->
-        <!-- See http://checkstyle.sf.net/config_naming.html -->      
+        <!-- See http://checkstyle.sf.net/config_naming.html -->
         <module name="ConstantName"/>
-        <module name="LocalFinalVariableName"/>-->
+        <module name="LocalFinalVariableName"/>
         <module name="LocalVariableName"/>
         <module name="MemberName"/>
         <module name="MethodName"/>
@@ -65,7 +65,7 @@ lengths, if/try depths, etc...
         <module name="ParameterName"/>
         <module name="StaticVariableName"/>
         <module name="TypeName"/>
-        
+
         <!-- Header checks -->
         <module name="Header">
             <property name="header"
@@ -93,7 +93,7 @@ lengths, if/try depths, etc...
             <property name="file" value="etc/import-control.xml"/>
         </module>
         -->
-        
+
 
         <!-- Checks for Size Violations.                    -->
         <!-- See http://checkstyle.sf.net/config_sizes.html -->
@@ -105,7 +105,7 @@ lengths, if/try depths, etc...
         </module>
         <module name="FileLength">
             <property name="max" value="3000"/>
-    </module>
+    	</module>
         <module name="LineLength">
             <property name="max" value="200"/>
         </module>
@@ -113,7 +113,7 @@ lengths, if/try depths, etc...
             <property name="max" value="150"/>
             <property name="countEmpty" value="false"/>
         </module>
-        <!-- We should try to get this enabled soon.. 
+        <!-- We should try to get this enabled soon..
         <module name="ParameterNumber">
             <property name="max" value="7"/>
         </module>
@@ -139,7 +139,7 @@ lengths, if/try depths, etc...
             <property name="tokens" value="ASSIGN, BAND, BAND_ASSIGN, BOR, BOR_ASSIGN, BSR, BSR_ASSIGN, BXOR, BXOR_ASSIGN, COLON, DIV, DIV_ASSIGN, EQUAL, GE, GT, LAND, LCURLY, LE, LITERAL_ASSERT, LITERAL_CATCH, LITERAL_DO, LITERAL_ELSE, LITERAL_FINALLY, LITERAL_FOR, LITERAL_IF, LITERAL_RETURN, LITERAL_SYNCHRONIZED, LITERAL_TRY, LITERAL_WHILE, LOR, LT, MINUS, MINUS_ASSIGN, MOD, MOD_ASSIGN, NOT_EQUAL, PLUS, PLUS_ASSIGN, QUESTION, SL, SLIST, SL_ASSIGN, SR, SR_ASSIGN, STAR, STAR_ASSIGN,TYPE_EXTENSION_AND"/>
             <!-- <property name="tokens" value="ASSIGN, BAND, BAND_ASSIGN, BOR, BOR_ASSIGN, BSR, BSR_ASSIGN, BXOR, BXOR_ASSIGN, COLON, DIV, DIV_ASSIGN, EQUAL, GE, GT, LAND, LCURLY, LE, LITERAL_ASSERT, LITERAL_CATCH, LITERAL_DO, LITERAL_ELSE, LITERAL_FINALLY, LITERAL_FOR, LITERAL_IF, LITERAL_RETURN, LITERAL_SYNCHRONIZED, LITERAL_TRY, LITERAL_WHILE, LOR, LT, MINUS, MINUS_ASSIGN, MOD, MOD_ASSIGN, NOT_EQUAL, PLUS, PLUS_ASSIGN, QUESTION, RCURLY, SL, SLIST, SL_ASSIGN, SR, SR_ASSIGN, STAR, STAR_ASSIGN,TYPE_EXTENSION_AND"/>-->
         </module>
-      
+
 
         <!-- Modifier Checks                                    -->
         <!-- See http://checkstyle.sf.net/config_modifiers.html -->
@@ -198,9 +198,9 @@ lengths, if/try depths, etc...
         <!--<module name="SuperClone"/>-->
         <module name="SuperFinalize"/>
         <!--<module name="IllegalCatch"/>-->
-    <module name="IllegalThrows">
-      <property name="illegalClassNames" value="java.lang.Error,java.lang.RuntimeException"/>
-    </module>
+    	<module name="IllegalThrows">
+      		<property name="illegalClassNames" value="java.lang.Error,java.lang.RuntimeException"/>
+    	</module>
         <!--<module name="RedundantThrows"/>-->
         <module name="PackageDeclaration"/>
         <!--
@@ -226,8 +226,8 @@ lengths, if/try depths, etc...
         <module name="MultipleVariableDeclarations"/>
         <!--<module name="RequireThis"/>-->
         <module name="UnnecessaryParentheses"/>
-        
-        
+
+
 
         <!-- Checks for class design                         -->
         <!-- See http://checkstyle.sf.net/config_design.html -->
@@ -242,8 +242,8 @@ lengths, if/try depths, etc...
             <property name="max" value="5"/>
         </module>
 
-        <!-- Ah we do a fair bit of using a class like a struct.. so 
-             we are not so strict on requirin encapsulation 
+        <!-- Ah we do a fair bit of using a class like a struct.. so
+             we are not so strict on requirin encapsulation
         <module name="VisibilityModifier">
             <property name="protectedAllowed" value="true"/>
             <property name="packageAllowed" value="true"/>
@@ -267,10 +267,10 @@ lengths, if/try depths, etc...
         </module>
         -->
 
-        
+
         <!-- Miscellaneous other checks.                   -->
         <!-- See http://checkstyle.sf.net/config_misc.html -->
-        <!-- 
+        <!--
         <module name="ArrayTypeStyle"/>
         <module name="FinalParameters"/>
         -->
@@ -285,14 +285,14 @@ lengths, if/try depths, etc...
         </module>
 
         <module name="UpperEll"/>
-        
+
         <!--Assert statement may have side effects:-->
         <module name="DescendantToken">
             <property name="tokens" value="LITERAL_ASSERT"/>
             <property name="limitedTokens" value="ASSIGN,DEC,INC,POST_DEC,POST_INC,PLUS_ASSIGN,MINUS_ASSIGN,STAR_ASSIGN,DIV_ASSIGN,MOD_ASSIGN,BSR_ASSIGN,SR_ASSIGN,SL_ASSIGN,BAND_ASSIGN,BXOR_ASSIGN,BOR_ASSIGN"/>
             <property name="maximumNumber" value="0"/>
         </module>
- 
+
         <!--<module name="UncommentedMain"/>-->
         <!--module name="TrailingComment"/-->
         <module name="Indentation">
@@ -300,5 +300,5 @@ lengths, if/try depths, etc...
         </module>
         <!--<module name="RequiredRegexp">-->
     </module>
-
+	<module name="SuppressionCommentFilter"/>
 </module>
