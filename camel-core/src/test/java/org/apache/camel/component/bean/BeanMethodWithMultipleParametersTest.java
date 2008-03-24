@@ -42,7 +42,8 @@ public class BeanMethodWithMultipleParametersTest extends ContextTestSupport {
 
     }
 
-    public void DISABLED_testSendMessage() throws Exception {
+    //TODO fix this test
+    public void xtestSendMessage() throws Exception {
         Object[] args = {"abc", 5, "def"};
 
         template.sendBodyAndHeader("direct:in", args, BeanProcessor.METHOD_NAME, "myMethod");

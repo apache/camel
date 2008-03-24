@@ -16,7 +16,7 @@
  */
 package org.apache.camel.processor;
 
-import static org.apache.camel.util.ObjectHelper.notNull;
+
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +36,7 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Implements the Multicast pattern to send a message exchange to a number of
@@ -67,7 +68,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
         if (isParallelProcessing) {
             if (executor != null) {
                 this.executor = executor;
-            } else {// setup default Executor
+            } else { // setup default Executor
                 this.executor = new ThreadPoolExecutor(1, processors.size(), 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(processors.size()));
             }
 
@@ -104,7 +105,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
         }
 
         public void run() {
-            if( shutdown.get() ) {
+            if (shutdown.get()) {
                 exchange.setException(new RejectedExecutionException());
                 callback.done(false);
             } else {
@@ -127,7 +128,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
             int i = 0;
             for (Processor producer : processors) {
                 exchanges[i] = copyExchangeStrategy(producer, exchange);
-                ProcessCall call = new ProcessCall(exchanges[i], producer, new AsyncCallback(){
+                ProcessCall call = new ProcessCall(exchanges[i], producer, new AsyncCallback() {
                     public void done(boolean doneSynchronously) {
                         completedExchanges.countDown();
                     }
@@ -138,7 +139,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
             }
             completedExchanges.await();
             if (aggregationStrategy != null) {
-                for (Exchange resultExchange: exchanges) {
+                for (Exchange resultExchange : exchanges) {
                     if (result == null) {
                         result = resultExchange;
                     } else {

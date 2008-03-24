@@ -16,18 +16,15 @@
  */
 package org.apache.camel.component.timer;
 
+import java.util.Date;
+import java.util.Timer;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.component.bean.BeanExchange;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
-
-import java.util.Date;
-import java.util.Timer;
 
 /**
  * Represents a timer endpoint that can generate periodic inbound PojoExchanges.
@@ -40,7 +37,7 @@ public class TimerEndpoint extends DefaultEndpoint<Exchange> {
     private final String timerName;
     private Date time;
     private long period = 1000;
-    private long delay = 0;
+    private long delay;
     private boolean fixedRate;
     private boolean daemon = true;
     private Timer timer;

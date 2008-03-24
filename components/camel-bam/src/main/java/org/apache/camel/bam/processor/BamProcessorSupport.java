@@ -16,6 +16,11 @@
  */
 package org.apache.camel.bam.processor;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
+import javax.persistence.EntityExistsException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -28,10 +33,6 @@ import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import javax.persistence.EntityExistsException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 /**
  * A base {@link Processor} for working on <a
@@ -48,26 +49,19 @@ public abstract class BamProcessorSupport<T> implements Processor {
     private TransactionTemplate transactionTemplate;
     private int maximumRetries = 30;
 
-    public int getMaximumRetries() {
-        return maximumRetries;
-    }
-
-    public void setMaximumRetries(int maximumRetries) {
-        this.maximumRetries = maximumRetries;
-    }
-
-    protected BamProcessorSupport(TransactionTemplate transactionTemplate, Expression<Exchange> correlationKeyExpression) {
+    protected BamProcessorSupport(TransactionTemplate transactionTemplate,
+                                  Expression<Exchange> correlationKeyExpression) {
         this.transactionTemplate = transactionTemplate;
         this.correlationKeyExpression = correlationKeyExpression;
 
         Type type = getClass().getGenericSuperclass();
         if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
+            ParameterizedType parameterizedType = (ParameterizedType)type;
             Type[] arguments = parameterizedType.getActualTypeArguments();
             if (arguments.length > 0) {
                 Type argumentType = arguments[0];
                 if (argumentType instanceof Class) {
-                    this.entityType = (Class<T>) argumentType;
+                    this.entityType = (Class<T>)argumentType;
                 }
             }
         }
@@ -76,7 +70,8 @@ public abstract class BamProcessorSupport<T> implements Processor {
         }
     }
 
-    protected BamProcessorSupport(TransactionTemplate transactionTemplate, Expression<Exchange> correlationKeyExpression, Class<T> entitytype) {
+    protected BamProcessorSupport(TransactionTemplate transactionTemplate,
+                                  Expression<Exchange> correlationKeyExpression, Class<T> entitytype) {
         this.transactionTemplate = transactionTemplate;
         this.entityType = entitytype;
         this.correlationKeyExpression = correlationKeyExpression;
@@ -101,28 +96,37 @@ public abstract class BamProcessorSupport<T> implements Processor {
                         processEntity(exchange, entity);
 
                         return entity;
-                    }
-                    catch (JpaSystemException e) {
+                    } catch (JpaSystemException e) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Likely exception is due to duplicate row in concurrent setting: " + e, e);
+                            LOG.debug("Likely exception is due to duplicate row in concurrent setting: " + e,
+                                      e);
                         }
-                        LOG.info("Attempt to insert duplicate row due to concurrency issue, so retrying: " + e);
+                        LOG.info("Attempt to insert duplicate row due to concurrency issue, so retrying: "
+                                 + e);
                         return retryDueToDuplicate(status);
-                    }
-                    catch (DataIntegrityViolationException e) {
+                    } catch (DataIntegrityViolationException e) {
                         Throwable throwable = e.getCause();
                         if (throwable instanceof EntityExistsException) {
-                            LOG.info("Attempt to insert duplicate row due to concurrency issue, so retrying: " + throwable);
+                            LOG
+                                .info("Attempt to insert duplicate row due to concurrency issue, so retrying: "
+                                      + throwable);
                             return retryDueToDuplicate(status);
                         }
                         return onError(status, throwable);
-                    }
-                    catch (Throwable e) {
+                    } catch (Throwable e) {
                         return onError(status, e);
                     }
                 }
             });
         }
+    }
+
+    public int getMaximumRetries() {
+        return maximumRetries;
+    }
+
+    public void setMaximumRetries(int maximumRetries) {
+        this.maximumRetries = maximumRetries;
     }
 
     // Properties
@@ -154,7 +158,6 @@ public abstract class BamProcessorSupport<T> implements Processor {
         }
         return value;
     }
-
 
     protected Object retryDueToDuplicate(TransactionStatus status) {
         status.setRollbackOnly();

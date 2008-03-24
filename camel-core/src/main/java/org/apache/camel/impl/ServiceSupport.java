@@ -16,16 +16,12 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.Service;
-import org.apache.camel.util.ServiceHelper;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedResource;
+import org.apache.camel.Service;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * A useful base class which ensures that a service is only initialized once and
@@ -49,8 +45,7 @@ public abstract class ServiceSupport implements Service {
                     ServiceHelper.startServices(childServices);
                 }
                 doStart();
-            }
-            finally {
+            } finally {
                 starting.set(false);
             }
         }
@@ -60,8 +55,7 @@ public abstract class ServiceSupport implements Service {
         if (started.get() && stopping.compareAndSet(false, true)) {
             try {
                 doStop();
-            }
-            finally {
+            } finally {
                 if (childServices != null) {
                     ServiceHelper.stopServices(childServices);
                 }
@@ -80,7 +74,7 @@ public abstract class ServiceSupport implements Service {
     }
 
     /**
-     * @return true if this service is 
+     * @return true if this service is
      */
     public boolean isStarting() {
         return starting.get();
@@ -96,7 +90,7 @@ public abstract class ServiceSupport implements Service {
     /**
      * Helper methods so the service knows if it should keep running.  Returns
      * false if the service is being stopped or is stopped.
-     *  
+     *
      * @return true if the service should continue to run.
      */
     protected boolean isRunAllowed() {
@@ -135,8 +129,7 @@ public abstract class ServiceSupport implements Service {
     protected boolean removeChildService(Object childService) {
         if (childServices != null) {
             return childServices.remove(childService);
-        }
-        else {
+        } else {
             return false;
         }
     }

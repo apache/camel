@@ -16,12 +16,30 @@
  */
 package org.apache.camel.converter;
 
-import org.apache.camel.Converter;
-import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.Writer;
 import java.net.URL;
 import java.util.Properties;
 
@@ -33,6 +51,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.camel.Converter;
+import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Some core java.io based <a
  * href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
@@ -40,7 +63,7 @@ import javax.xml.transform.stream.StreamResult;
  * @version $Revision$
  */
 @Converter
-public class IOConverter {
+public final class IOConverter {
     private static final transient Log LOG = LogFactory.getLog(IOConverter.class);
 
     /**
@@ -170,7 +193,7 @@ public class IOConverter {
     public static String toString(Source source, Properties props) throws TransformerException, IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         StreamResult sr = new StreamResult(bos);
-        Transformer trans = TransformerFactory.newInstance().newTransformer();;
+        Transformer trans = TransformerFactory.newInstance().newTransformer();
         if (props == null) {
             props = new Properties();
             props.put(OutputKeys.OMIT_XML_DECLARATION, "yes");
@@ -190,8 +213,7 @@ public class IOConverter {
     public static ObjectOutput toObjectOutput(OutputStream stream) throws IOException {
         if (stream instanceof ObjectOutput) {
             return (ObjectOutput) stream;
-        }
-        else {
+        } else {
             return new ObjectOutputStream(stream);
         }
     }
@@ -200,8 +222,7 @@ public class IOConverter {
     public static ObjectInput toObjectInput(InputStream stream) throws IOException {
         if (stream instanceof ObjectInput) {
             return (ObjectInput) stream;
-        }
-        else {
+        } else {
             return new ObjectInputStream(stream);
         }
     }

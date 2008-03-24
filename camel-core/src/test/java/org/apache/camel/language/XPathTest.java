@@ -16,11 +16,11 @@
  */
 package org.apache.camel.language;
 
+import javax.xml.xpath.XPathConstants;
+
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.builder.xml.XPathLanguage;
 import org.apache.camel.spi.Language;
-
-import javax.xml.xpath.XPathConstants;
 
 /**
  * @version $Revision$

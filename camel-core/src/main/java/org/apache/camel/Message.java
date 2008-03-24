@@ -16,15 +16,13 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.impl.MessageSupport;
-
 import java.util.Map;
 
 /**
  * Implements the <a
  * href="http://activemq.apache.org/camel/message.html">Message</a> pattern and
  * represents an inbound or outbound message as part of an {@link Exchange}
- * 
+ *
  * @version $Revision$
  */
 public interface Message {
@@ -36,21 +34,21 @@ public interface Message {
 
     /**
      * set the id of the message
-     * 
+     *
      * @param messageId
      */
     void setMessageId(String messageId);
 
     /**
      * Returns the exchange this message is related to
-     * 
+     *
      * @return
      */
     Exchange getExchange();
 
     /**
      * Accesses a specific header
-     * 
+     *
      * @param name
      * @return object header associated with the name
      */
@@ -59,7 +57,7 @@ public interface Message {
     /**
      * Returns a header associated with this message by name and specifying the
      * type required
-     * 
+     *
      * @param name the name of the header
      * @param type the type of the header
      * @return the value of the given header or null if there is no property for
@@ -69,7 +67,7 @@ public interface Message {
 
     /**
      * Sets a header on the message
-     * 
+     *
      * @param name of the header
      * @param value to associate with the name
      */
@@ -85,28 +83,28 @@ public interface Message {
 
     /**
      * Returns all of the headers associated with the message
-     * 
+     *
      * @return all the headers in a Map
      */
     Map<String, Object> getHeaders();
 
     /**
      * Set all the headers associated with this message
-     * 
+     *
      * @param headers
      */
     void setHeaders(Map<String, Object> headers);
 
     /**
      * Returns the body of the message as a POJO
-     * 
+     *
      * @return the body of the message
      */
     Object getBody();
 
     /**
      * Returns the body as the specified type
-     * 
+     *
      * @param type the type that the body
      * @return the body of the message as the specified type
      */
@@ -125,7 +123,7 @@ public interface Message {
     /**
      * Creates a copy of this message so that it can be used and possibly
      * modified further in another exchange
-     * 
+     *
      * @return a new message instance copied from this message
      */
     Message copy();

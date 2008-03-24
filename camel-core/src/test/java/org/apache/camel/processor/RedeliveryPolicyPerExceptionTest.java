@@ -16,14 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import java.util.List;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
-import java.util.List;
 
 /**
  * @version $Revision$
@@ -80,8 +80,7 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
             public void process(Exchange exchange) {
                 if ("b".equals(exchange.getIn().getBody())) {
                     throw new NullPointerException("MyCustomException");
-                }
-                else {
+                } else {
                     throw new IllegalArgumentException("MyCustomException");
                 }
             }

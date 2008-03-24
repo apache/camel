@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +20,7 @@ import java.util.Map;
 
 /**
  * Represents an entry in a {@link TimeoutMap}
- * 
+ *
  * @version $Revision$
  */
 public class TimeoutMapEntry implements Comparable, Map.Entry {
@@ -80,8 +79,7 @@ public class TimeoutMapEntry implements Comparable, Map.Entry {
         long diff = this.expireTime - that.expireTime;
         if (diff > 0) {
             return 1;
-        }
-        else if (diff < 0) {
+        } else if (diff < 0) {
             return -1;
         }
         return this.key.hashCode() - that.key.hashCode();

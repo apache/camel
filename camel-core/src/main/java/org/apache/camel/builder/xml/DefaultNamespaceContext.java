@@ -35,7 +35,7 @@ import org.apache.camel.spi.NamespaceAware;
  */
 public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware {
 
-    private final Map<String,String> map;
+    private final Map<String, String> map;
     private final NamespaceContext parent;
 
     public DefaultNamespaceContext() {
@@ -44,10 +44,10 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
 
     public DefaultNamespaceContext(XPathFactory factory) {
         this.parent = factory.newXPath().getNamespaceContext();
-        this.map = new HashMap<String,String>();
+        this.map = new HashMap<String, String>();
     }
 
-    public DefaultNamespaceContext(NamespaceContext parent, Map<String,String> map) {
+    public DefaultNamespaceContext(NamespaceContext parent, Map<String, String> map) {
         this.parent = parent;
         this.map = map;
     }

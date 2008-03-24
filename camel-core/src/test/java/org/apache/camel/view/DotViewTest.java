@@ -70,20 +70,16 @@ public class DotViewTest extends ContextTestSupport {
 
     static class FilterRoute extends RouteBuilder {
         public void configure() throws Exception {
-                from("file:target/foo/bar?noop=true").
-                        filter(header("foo").isEqualTo("bar")).
-                        to("file:target/xyz?noop=true");
+            from("file:target/foo/bar?noop=true").filter(header("foo").isEqualTo("bar"))
+                .to("file:target/xyz?noop=true");
         }
     }
 
     static class ComplexRoute extends RouteBuilder {
         public void configure() throws Exception {
-            from("file:target/xyz?noop=true").
-                    filter(header("foo").isEqualTo("bar")).
-                    recipientList(header("bar")).
-                    splitter(XPathBuilder.xpath("/invoice/lineItems")).
-                    throttler(3).
-                    to("mock:result");
+            from("file:target/xyz?noop=true").filter(header("foo").isEqualTo("bar"))
+                .recipientList(header("bar")).splitter(XPathBuilder.xpath("/invoice/lineItems")).throttler(3)
+                .to("mock:result");
         }
     }
 }

@@ -21,9 +21,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlAttribute;
 
 import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;

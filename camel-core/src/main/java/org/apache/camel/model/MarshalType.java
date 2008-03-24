@@ -72,8 +72,7 @@ public class MarshalType extends OutputType<ProcessorType> {
     public String toString() {
         if (dataFormatType != null) {
             return "Marshal[" + dataFormatType + "]";
-        }
-        else {
+        } else {
             return "Marshal[ref:  " + ref + "]";
         }
     }

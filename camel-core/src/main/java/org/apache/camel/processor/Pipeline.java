@@ -47,8 +47,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
     public static Processor newInstance(List<Processor> processors) {
         if (processors.isEmpty()) {
             return null;
-        }
-        else if (processors.size() == 1) {
+        } else if (processors.size() == 1) {
             return processors.get(0);
         }
         return new Pipeline(processors);
@@ -65,7 +64,9 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
         while (true) {
             if (nextExchange.isFailed()) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Mesage exchange has failed so breaking out of pipeline: " + nextExchange + " exception: " + nextExchange.getException() + " fault: " + nextExchange.getFault(false));
+                    LOG.debug("Mesage exchange has failed so breaking out of pipeline: " + nextExchange
+                              + " exception: " + nextExchange.getException() + " fault: "
+                              + nextExchange.getFault(false));
                 }
                 break;
             }
@@ -77,8 +78,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
 
             if (first) {
                 first = false;
-            }
-            else {
+            } else {
                 nextExchange = createNextExchange(processor, nextExchange);
             }
 
@@ -151,8 +151,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
         Message in = answer.getIn();
         if (previousOut != null) {
             in.copyFrom(previousOut);
-        }
-        else {
+        } else {
             in.copyFrom(previousExchange.getIn());
         }
         return answer;

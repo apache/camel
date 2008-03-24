@@ -26,10 +26,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 
 /**
  * A {@link Processor} which converts the inbound exchange to a method
@@ -105,9 +105,8 @@ public class BeanProcessor extends ServiceSupport implements Processor {
             invocation = beanInfo.createInvocation(bean, exchange);
         }
         if (invocation == null) {
-            throw new IllegalStateException(
-            	"No method invocation could be created, " + 
-                "no maching method could be found on: " + bean);
+            throw new IllegalStateException("No method invocation could be created, "
+                                            + "no maching method could be found on: " + bean);
         }
         try {
             Object value = invocation.proceed();

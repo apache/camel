@@ -16,21 +16,21 @@
  */
 package org.apache.camel.builder;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.regex.Pattern;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Collection;
-import java.util.regex.Pattern;
-
 /**
  * @version $Revision$
  */
-public class ExpressionBuilder {
+public final class ExpressionBuilder {
 
 
     /**
@@ -577,9 +577,8 @@ public class ExpressionBuilder {
             public String toString() {
                 if (expression != null) {
                     return expression;
-                }
-                else {
-                return "concat" + expressions;
+                } else {
+                    return "concat" + expressions;
                 }
             }
         };

@@ -19,14 +19,16 @@ package org.apache.camel.builder.xml;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.model.language.XPathExpression;
-import org.apache.camel.model.language.XQueryExpression;
-import org.apache.camel.spi.NamespaceAware;
-import org.apache.camel.util.ObjectHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+
+import org.apache.camel.model.language.XPathExpression;
+import org.apache.camel.model.language.XQueryExpression;
+import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.util.ObjectHelper;
+
 
 /**
  * A helper class for working with namespaces or creating namespace based expressions
@@ -43,13 +45,6 @@ public class Namespaces {
 
     private Map<String, String> namespaces = new HashMap<String, String>();
 
-    /**
-     * Returns true if the given namespaceURI is empty or if it matches the
-     * given expected namespace
-     */
-    public static boolean isMatchingNamespaceOrEmptyNamespace(String namespaceURI, String expectedNamespace) {
-        return ObjectHelper.isNullOrBlank(namespaceURI) || namespaceURI.equals(expectedNamespace);
-    }
 
     /**
      * Creates a namespaces object from the given XML element
@@ -67,6 +62,13 @@ public class Namespaces {
         add(prefix, uri);
     }
 
+    /**
+     * Returns true if the given namespaceURI is empty or if it matches the
+     * given expected namespace
+     */
+    public static boolean isMatchingNamespaceOrEmptyNamespace(String namespaceURI, String expectedNamespace) {
+        return ObjectHelper.isNullOrBlank(namespaceURI) || namespaceURI.equals(expectedNamespace);
+    }
     public Namespaces add(String prefix, String uri) {
         namespaces.put(prefix, uri);
         return this;

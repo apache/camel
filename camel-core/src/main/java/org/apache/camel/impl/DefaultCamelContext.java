@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,40 +31,39 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.model.RouteType;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.model.RouteType;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
+import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
-import static org.apache.camel.util.ServiceHelper.startServices;
-import static org.apache.camel.util.ServiceHelper.stopServices;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import static org.apache.camel.util.ServiceHelper.startServices;
+import static org.apache.camel.util.ServiceHelper.stopServices;
 
 /**
  * Represents the context used to configure routes and the policies to use.
- * 
+ *
  * @version $Revision$
  */
 public class DefaultCamelContext extends ServiceSupport implements CamelContext, Service {
     private static final transient Log LOG = LogFactory.getLog(DefaultCamelContext.class);
     private static final String NAME_PREFIX = "camel-";
-    private static int NAME_SUFFIX = 0;
+    private static int nameSuffix;
 
     private String name;
     private Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
@@ -77,17 +77,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private boolean autoCreateComponents = true;
     private LanguageResolver languageResolver = new DefaultLanguageResolver();
     private Registry registry;
-	private LifecycleStrategy lifecycleStrategy = new DefaultLifecycleStrategy();
+    private LifecycleStrategy lifecycleStrategy = new DefaultLifecycleStrategy();
     private List<RouteType> routeDefinitions = new ArrayList<RouteType>();
 
     public DefaultCamelContext() {
-    	name = NAME_PREFIX + ++NAME_SUFFIX;
+        name = NAME_PREFIX + ++nameSuffix;
     }
 
     /**
      * Creates the {@link CamelContext} using the given JNDI context as the
      * registry
-     * 
+     *
      * @param jndiContext
      */
     public DefaultCamelContext(Context jndiContext) {
@@ -98,7 +98,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * Creates the {@link CamelContext} using the given registry
      */
     public DefaultCamelContext(Registry registry) {
-    	this();
+        this();
         this.registry = registry;
     }
 
@@ -106,14 +106,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * Gets the name of the this context.
      */
     public String getName() {
-    	return name;
+        return name;
     }
 
     /**
      * Sets the name of the this context.
      */
     public void setName(String name) {
-    	this.name = name;
+        this.name = name;
     }
 
     /**
@@ -169,7 +169,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     /**
      * Removes a previously added component.
-     * 
+     *
      * @param componentName
      * @return the previously added component or null if it had not been
      *         previously added.
@@ -183,7 +183,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     /**
      * Gets the a previously added component by name or lazily creates the
      * component using the factory Callback.
-     * 
+     *
      * @param componentName
      * @param factory used to create a new component instance if the component
      *                was not previously added.
@@ -261,7 +261,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                             answer = component.createEndpoint(uri);
 
                             if (answer != null && LOG.isDebugEnabled()) {
-                                LOG.debug(uri + " converted to endpoint: " + answer + " by component: "+ component);
+                                LOG.debug(uri + " converted to endpoint: " + answer + " by component: " + component);
                             }
                         }
                     }
@@ -553,7 +553,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * A pluggable strategy to allow an endpoint to be created without requiring
      * a component to be its factory, such as for looking up the URI inside some
      * {@link Registry}
-     * 
+     *
      * @param uri the uri for the endpoint to be created
      * @return the newly created endpoint or null if it could not be resolved
      */
@@ -572,7 +572,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     /**
      * Attempt to convert the bean from a {@link Registry} to an endpoint using
      * some kind of transformation or wrapper
-     * 
+     *
      * @param uri the uri for the endpoint (and name in the registry)
      * @param bean the bean to be converted to an endpoint, which will be not
      *                null

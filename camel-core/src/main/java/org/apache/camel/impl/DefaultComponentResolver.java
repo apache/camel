@@ -34,9 +34,9 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DefaultComponentResolver<E extends Exchange> implements ComponentResolver<E> {
-    private static final transient Log LOG = LogFactory.getLog(DefaultComponentResolver.class);
     protected static final FactoryFinder COMPONENT_FACTORY =
             new FactoryFinder("META-INF/services/org/apache/camel/component/");
+    private static final transient Log LOG = LogFactory.getLog(DefaultComponentResolver.class);
 
     public Component<E> resolveComponent(String name, CamelContext context) {
         Object bean = null;
@@ -45,8 +45,7 @@ public class DefaultComponentResolver<E extends Exchange> implements ComponentRe
             if (bean != null && LOG.isDebugEnabled()) {
                 LOG.debug("Found component: " + name + " in registry: " + bean);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
         }
         if (bean != null) {
@@ -58,11 +57,9 @@ public class DefaultComponentResolver<E extends Exchange> implements ComponentRe
         Class type;
         try {
             type = COMPONENT_FACTORY.findClass(name);
-        }
-        catch (NoFactoryAvailableException e) {
+        } catch (NoFactoryAvailableException e) {
             return null;
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             throw new IllegalArgumentException("Invalid URI, no Component registered for scheme : "
                     + name, e);
         }
@@ -74,8 +71,7 @@ public class DefaultComponentResolver<E extends Exchange> implements ComponentRe
         }
         if (Component.class.isAssignableFrom(type)) {
             return (Component<E>) context.getInjector().newInstance(type);
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Type is not a Component implementation. Found: "
                     + type.getName());
         }

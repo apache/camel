@@ -16,6 +16,12 @@
  */
 package org.apache.camel.impl;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
@@ -23,12 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.util.ObjectHelper;
-
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * A default endpoint useful for implementation inheritance
@@ -171,6 +171,6 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         return new ScheduledThreadPoolExecutor(10);
     }
 
-	public void configureProperties(Map options) {
-	}
+    public void configureProperties(Map options) {
+    }
 }

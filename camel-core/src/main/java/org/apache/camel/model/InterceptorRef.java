@@ -16,15 +16,15 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.impl.RouteContext;
-import org.apache.camel.processor.DelegateProcessor;
-import org.apache.camel.Processor;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import org.apache.camel.Processor;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.processor.DelegateProcessor;
 
 /**
  * @version $Revision$
@@ -82,11 +82,9 @@ public class InterceptorRef extends InterceptorType {
     public String getLabel() {
         if (ref != null) {
             return "ref:  " + ref;
-        }
-        else if (interceptor != null) {
+        } else if (interceptor != null) {
             return interceptor.toString();
-        }
-        else {
+        } else {
             return "";
         }
     }

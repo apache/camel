@@ -16,14 +16,14 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.Message;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.Message;
+
 /**
  * The default implementation of {@link Message}
- * 
+ *
  * @version $Revision$
  */
 public class DefaultMessage extends MessageSupport {
@@ -53,8 +53,7 @@ public class DefaultMessage extends MessageSupport {
     public Object removeHeader(String name) {
         if (headers != null) {
             return headers.remove(name);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -78,7 +77,7 @@ public class DefaultMessage extends MessageSupport {
      * A factory method to lazily create the headers to make it easy to create
      * efficient Message implementations which only construct and populate the
      * Map on demand
-     * 
+     *
      * @return return a newly constructed Map possibly containing headers from
      *         the underlying inbound transport
      */
@@ -91,7 +90,7 @@ public class DefaultMessage extends MessageSupport {
     /**
      * A strategy method populate the initial set of headers on an inbound
      * message from an underlying binding
-     * 
+     *
      * @param map is the empty header map to populate
      */
     protected void populateInitialHeaders(Map<String, Object> map) {

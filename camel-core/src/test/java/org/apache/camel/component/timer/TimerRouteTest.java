@@ -16,16 +16,15 @@
  */
 package org.apache.camel.component.timer;
 
-import org.apache.camel.CamelContext;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.naming.Context;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.jndi.JndiContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.naming.Context;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @version $Revision$
@@ -61,7 +60,7 @@ public class TimerRouteTest extends ContextTestSupport {
     public static class MyBean {
         public AtomicInteger counter = new AtomicInteger(0);
 
-        public void someMethod(){
+        public void someMethod() {
             LOG.debug("Invoked someMethod()");
             counter.incrementAndGet();
         }

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -24,12 +27,9 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.UuidGenerator;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * A default implementation of {@link Exchange}
- * 
+ *
  * @version $Revision$
  */
 public class DefaultExchange implements Exchange {

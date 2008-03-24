@@ -22,16 +22,16 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.processor.LoggingLevel;
 import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * Base class for implementation inheritance for different clauses in the <a
  * href="http://activemq.apache.org/camel/dsl.html">Java DSL</a>
- * 
+ *
  * @version $Revision$
  */
 public abstract class BuilderSupport {
@@ -129,10 +129,10 @@ public abstract class BuilderSupport {
     public ValueBuilder constant(Object value) {
         return Builder.constant(value);
     }
-    
+
     /**
      * Resolves the given URI to an endpoint
-     * 
+     *
      * @throws NoSuchEndpointException if the endpoint URI could not be resolved
      */
     public Endpoint endpoint(String uri) throws NoSuchEndpointException {
@@ -160,7 +160,7 @@ public abstract class BuilderSupport {
 
     /**
      * Resolves the list of URIs into a list of {@link Endpoint} instances
-     * 
+     *
      * @throws NoSuchEndpointException if an endpoint URI could not be resolved
      */
     public List<Endpoint> endpoints(String... uris) throws NoSuchEndpointException {

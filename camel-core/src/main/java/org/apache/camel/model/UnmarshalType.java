@@ -26,12 +26,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
+import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
-import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
-import org.apache.camel.model.dataformat.CsvDataFormat;
+import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
 
@@ -72,8 +72,7 @@ public class UnmarshalType extends OutputType<ProcessorType> {
     public String toString() {
         if (dataFormatType != null) {
             return "Marshal[" + dataFormatType + "]";
-        }
-        else {
+        } else {
             return "Marshal[ref:  " + ref + "]";
         }
     }

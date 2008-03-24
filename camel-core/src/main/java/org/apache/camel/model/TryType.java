@@ -86,10 +86,10 @@ public class TryType extends OutputType<TryType> {
 
     @Override
     public ProcessorType<? extends ProcessorType> end() {
-    	popBlock();
-    	return super.end();
+        popBlock();
+        return super.end();
     }
-    
+
     // Properties
     // -------------------------------------------------------------------------
 

@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,9 +22,9 @@ import java.io.File;
  * @version $Revision$
  */
 public class DefaultFileRenamer implements FileRenamer {
-	
-	private static final boolean ON_WINDOWS = System.getProperty("os.name").startsWith("Windows");
-	
+
+    private static final boolean ON_WINDOWS = System.getProperty("os.name").startsWith("Windows");
+
     private String namePrefix;
     private String namePostfix;
 
@@ -40,10 +39,10 @@ public class DefaultFileRenamer implements FileRenamer {
     public File renameFile(File file) {
         File parent = file.getParentFile();
         String name = renameFileName(file);
-        
-        if( ON_WINDOWS && ( name.indexOf(":")>=0 || name.startsWith("//") )) {
+
+        if (ON_WINDOWS && (name.indexOf(":") >= 0 || name.startsWith("//"))) {
             return new File(name);
-        }        
+        }
         return new File(parent, name);
     }
 

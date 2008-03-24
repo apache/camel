@@ -16,11 +16,11 @@
  */
 package org.apache.camel.util;
 
-import junit.framework.TestCase;
-
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+
+import junit.framework.TestCase;
 
 /**
  * @version $Revision$
@@ -47,16 +47,16 @@ public class ObjectHelperTest extends TestCase {
     public void testContains() throws Exception {
         String[] array = {"foo", "bar"};
         Collection<String> collection = Arrays.asList(array);
-        
+
         assertTrue(ObjectHelper.contains(array, "foo"));
         assertTrue(ObjectHelper.contains(collection, "foo"));
         assertTrue(ObjectHelper.contains("foo", "foo"));
-        
+
         assertFalse(ObjectHelper.contains(array, "xyz"));
         assertFalse(ObjectHelper.contains(collection, "xyz"));
         assertFalse(ObjectHelper.contains("foo", "xyz"));
     }
-    
+
     public void testEqual() {
         assertTrue(ObjectHelper.equal(null, null));
         assertTrue(ObjectHelper.equal("", ""));
@@ -72,12 +72,12 @@ public class ObjectHelperTest extends TestCase {
         assertFalse(ObjectHelper.equal(true, false));
         assertFalse(ObjectHelper.equal(new Object(), new Object()));
 
-        byte[] a = new byte[] { 40, 50, 60 };
-        byte[] b = new byte[] { 40, 50, 60 };
+        byte[] a = new byte[] {40, 50, 60};
+        byte[] b = new byte[] {40, 50, 60};
         assertTrue(ObjectHelper.equal(a, b));
 
-        a = new byte[] { 40, 50, 60 };
-        b = new byte[] { 40, 50, 60, 70 };
+        a = new byte[] {40, 50, 60};
+        b = new byte[] {40, 50, 60, 70};
         assertFalse(ObjectHelper.equal(a, b));
     }
 
@@ -91,32 +91,32 @@ public class ObjectHelperTest extends TestCase {
         byte[] empty = new byte[0];
         assertTrue(ObjectHelper.equalByteArray(empty, empty));
 
-        byte[] a = new byte[] { 40, 50, 60 };
-        byte[] b = new byte[] { 40, 50, 60 };
+        byte[] a = new byte[] {40, 50, 60};
+        byte[] b = new byte[] {40, 50, 60};
         assertTrue(ObjectHelper.equalByteArray(a, b));
 
-        a = new byte[] { 40, 50, 60 };
-        b = new byte[] { 40, 50, 60, 70 };
+        a = new byte[] {40, 50, 60};
+        b = new byte[] {40, 50, 60, 70};
         assertFalse(ObjectHelper.equalByteArray(a, b));
 
-        a = new byte[] { 40, 50, 60, 70 };
-        b = new byte[] { 40, 50, 60 };
+        a = new byte[] {40, 50, 60, 70};
+        b = new byte[] {40, 50, 60};
         assertFalse(ObjectHelper.equalByteArray(a, b));
 
-        a = new byte[] { 40, 50, 60 };
+        a = new byte[] {40, 50, 60};
         b = new byte[0];
         assertFalse(ObjectHelper.equalByteArray(a, b));
 
         a = new byte[0];
-        b = new byte[] { 40, 50, 60 };
+        b = new byte[] {40, 50, 60};
         assertFalse(ObjectHelper.equalByteArray(a, b));
 
-        a = new byte[] { 40, 50, 60 };
+        a = new byte[] {40, 50, 60};
         b = null;
         assertFalse(ObjectHelper.equalByteArray(a, b));
 
         a = null;
-        b = new byte[] { 40, 50, 60 };
+        b = new byte[] {40, 50, 60};
         assertFalse(ObjectHelper.equalByteArray(a, b));
 
         a = null;

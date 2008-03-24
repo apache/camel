@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import javax.naming.Context;
+
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,8 +25,6 @@ import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.util.jndi.JndiContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.naming.Context;
 
 /**
  * @version $Revision$

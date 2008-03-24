@@ -110,11 +110,9 @@ public class ChoiceType extends ProcessorType<ChoiceType> {
     public List<ProcessorType<?>> getOutputs() {
         if (otherwise != null) {
             return otherwise.getOutputs();
-        }
-        else if (whenClauses.isEmpty()) {
+        } else if (whenClauses.isEmpty()) {
             return Collections.EMPTY_LIST;
-        }
-        else {
+        } else {
             WhenType when = whenClauses.get(whenClauses.size() - 1);
             return when.getOutputs();
         }

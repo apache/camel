@@ -84,13 +84,13 @@ public class BeanWithHeadersAndBodyInjectionTest extends ContextTestSupport {
             return "MyBean[foo: " + headers + " body: " + body + "]";
         }
 
-        public void myMethod(@Headers Map<String, Object> headers,Object body) {
+        public void myMethod(@Headers Map<String, Object> headers, Object body) {
             this.headers = headers;
             this.body = body;
             LOG.info("myMethod() method called on " + this);
         }
 
-        public void anotherMethod(@Headers Map<String, Object> headers,Object body) {
+        public void anotherMethod(@Headers Map<String, Object> headers, Object body) {
             fail("Should not have called this method!");
         }
     }

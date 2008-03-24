@@ -21,20 +21,20 @@ import org.apache.camel.Expression;
 
 /**
  * A collection of helper methods for working with expressions.
- * 
+ *
  * @version $Revision$
  */
-public class ExpressionHelper {
+public final class ExpressionHelper {
 
     /**
      * Utility classes should not have a public constructor.
      */
-    private ExpressionHelper() {        
+    private ExpressionHelper() {
     }
 
     /**
      * Evaluates the given expression on the exchange as a String value
-     * 
+     *
      * @param expression the expression to evaluate
      * @param exchange the exchange to use to evaluate the expression
      * @return the result of the evaluation as a string.
@@ -46,7 +46,7 @@ public class ExpressionHelper {
     /**
      * Evaluates the given expression on the exchange, converting the result to
      * the given type
-     * 
+     *
      * @param expression the expression to evaluate
      * @param exchange the exchange to use to evaluate the expression
      * @param resultType the type of the result that is required

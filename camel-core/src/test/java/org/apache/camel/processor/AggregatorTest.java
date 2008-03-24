@@ -60,7 +60,7 @@ public class AggregatorTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:predicate", "test", "aggregated", 5);
         resultEndpoint.assertIsSatisfied();
     }
- 
+
     public void testBatchTimeoutExpiry() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
@@ -68,8 +68,9 @@ public class AggregatorTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "message:1", "cheese", 123);
         resultEndpoint.assertIsSatisfied();
     }
-     
-    public void _testAggregatorNotAtStart() throws Exception {
+
+    //TODO fix this test
+    public void xtestAggregatorNotAtStart() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.message(0).header("visited").isNotNull();
@@ -77,7 +78,7 @@ public class AggregatorTest extends ContextTestSupport {
         template.sendBodyAndHeader("seda:header", "message:1", "cheese", 123);
         resultEndpoint.assertIsSatisfied();
     }
-    
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -85,7 +86,7 @@ public class AggregatorTest extends ContextTestSupport {
                 from("direct:start").aggregator(header("cheese")).to("mock:result");
 
                 from("seda:header").setHeader("visited", constant(true)).aggregator(header("cheese")).to("mock:result");
-                
+
                 from("direct:predicate").aggregator(header("cheese"), new MyAggregationStrategy()).
                         completedPredicate(header("aggregated").isEqualTo(5)).to("mock:result");
                 // END SNIPPET: ex

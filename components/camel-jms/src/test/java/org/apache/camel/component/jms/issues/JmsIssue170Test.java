@@ -31,7 +31,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 public class JmsIssue170Test extends Issue170Test {
     @Override
     protected void setUp() throws Exception {
-        Q1 = "activemq:Test.Q1";
+        qOne = "activemq:Test.Q1";
         super.setUp();
     }
 
@@ -48,14 +48,14 @@ public class JmsIssue170Test extends Issue170Test {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to(Q1);
+                from("direct:start").to(qOne);
 
                 // write to Q3 but not to Q2
-                from(Q1).to("activemq:Test.Q2", "activemq:Test.Q3");
+                from(qOne).to("activemq:Test.Q2", "activemq:Test.Q3");
 
                 // subscribe from the JMS queues to send to the mocks for testing
-                from("activemq:Test.Q2").to(Q2);
-                from("activemq:Test.Q3").to(Q3);
+                from("activemq:Test.Q2").to(qTwo);
+                from("activemq:Test.Q3").to(qThree);
             }
         };
     }

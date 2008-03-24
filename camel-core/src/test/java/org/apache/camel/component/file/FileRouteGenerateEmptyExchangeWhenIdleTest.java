@@ -36,21 +36,21 @@ public class FileRouteGenerateEmptyExchangeWhenIdleTest extends ContextTestSuppo
         template.sendBodyAndHeader(uri, expectedBody, "cheese", 123);
 
         result.assertIsSatisfied();
-        
-        int fileCount=0;
-        int nullCount=0;
+
+        int fileCount = 0;
+        int nullCount = 0;
         for (Exchange exchange : result.getReceivedExchanges()) {
-            assertTrue( exchange instanceof FileExchange );
+            assertTrue(exchange instanceof FileExchange);
             FileExchange fx = (FileExchange)exchange;
-            if( fx.getFile() == null ) {
+            if (fx.getFile() == null) {
                 nullCount++;
             } else {
                 fileCount++;
             }
         }
-        
+
         assertEquals(1, fileCount);
-        assertTrue( nullCount > 0 );
+        assertTrue(nullCount > 0);
 
     }
 

@@ -24,15 +24,15 @@ import org.apache.camel.Expression;
  * href="http://activemq.apache.org/camel/expression.html">expression</a> and
  * <a href="http://activemq.apache.org/camel/predicate.html">predicate</a> <a
  * href="http://activemq.apache.org/camel/dsl.html">Java DSL</a>
- * 
+ *
  * @version $Revision$
  */
-public class Builder {
-    
+public final class Builder {
+
     /**
      * Utility classes should not have a public constructor.
      */
-    private Builder() {        
+    private Builder() {
     }
 
     /**

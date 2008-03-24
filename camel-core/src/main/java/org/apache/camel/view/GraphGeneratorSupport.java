@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,25 +16,25 @@
  */
 package org.apache.camel.view;
 
-import java.io.IOException;
 import java.io.File;
-import java.io.PrintWriter;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashMap;
-import java.util.ArrayList;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.ProcessorType;
-import org.apache.camel.model.MulticastType;
 import org.apache.camel.model.ChoiceType;
 import org.apache.camel.model.FromType;
+import org.apache.camel.model.MulticastType;
+import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.RouteType;
 import org.apache.camel.model.ToType;
 import org.apache.camel.model.language.ExpressionType;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -45,13 +44,14 @@ import org.apache.commons.logging.LogFactory;
 public abstract class GraphGeneratorSupport {
     private static final transient Log LOG = LogFactory.getLog(RouteDotGenerator.class);
     protected String dir;
+    protected int clusterCounter;
+    protected String extension;
+
     //private String imagePrefix = "http://www.enterpriseintegrationpatterns.com/img/";
     private String imagePrefix = "http://activemq.apache.org/camel/images/eip/";
     private Map<Object, NodeData> nodeMap = new HashMap<Object, NodeData>();
     private boolean makeParentDirs = true;
-    protected int clusterCounter;
     private Map<String, List<RouteType>> routeGroupMap;
-    protected String extension;
 
     protected GraphGeneratorSupport(String dir, String extension) {
         this.dir = dir;
@@ -101,8 +101,7 @@ public abstract class GraphGeneratorSupport {
         PrintWriter writer = new PrintWriter(new FileWriter(new File(parent, fileName)));
         try {
             generateFile(writer, map);
-        }
-        finally {
+        } finally {
             writer.close();
         }
     }
@@ -131,11 +130,10 @@ public abstract class GraphGeneratorSupport {
     protected NodeData getNodeData(Object node) {
         Object key = node;
         if (node instanceof FromType) {
-            FromType fromType = (FromType) node;
+            FromType fromType = (FromType)node;
             key = fromType.getUriOrRef();
-        }
-        else if (node instanceof ToType) {
-            ToType toType = (ToType) node;
+        } else if (node instanceof ToType) {
+            ToType toType = (ToType)node;
             key = toType.getUriOrRef();
         }
         NodeData answer = nodeMap.get(key);

@@ -16,12 +16,12 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.spi.Registry;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.apache.camel.spi.Registry;
 
 /**
  * Used to indicate an injection point of an {@link Endpoint}, {@link Producer},

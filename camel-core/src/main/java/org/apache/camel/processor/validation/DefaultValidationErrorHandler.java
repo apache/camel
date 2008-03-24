@@ -21,13 +21,14 @@ import java.util.List;
 
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.validation.Schema;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 /**
  * A default error handler which just stores all the errors so they can be reported or transformed.
@@ -35,28 +36,28 @@ import org.xml.sax.SAXParseException;
  * @version $Revision$
  */
 public class DefaultValidationErrorHandler implements ValidatorErrorHandler {
-    private static final transient Log log = LogFactory.getLog(DefaultValidationErrorHandler.class);
+    private static final transient Log LOG = LogFactory.getLog(DefaultValidationErrorHandler.class);
     private List<SAXParseException> warnings = new ArrayList<SAXParseException>();
     private List<SAXParseException> errors = new ArrayList<SAXParseException>();
     private List<SAXParseException> fatalErrors = new ArrayList<SAXParseException>();
 
     public void warning(SAXParseException e) throws SAXException {
-        if (log.isDebugEnabled()) {
-            log.debug("warning: " + e, e);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("warning: " + e, e);
         }
         warnings.add(e);
     }
 
     public void error(SAXParseException e) throws SAXException {
-        if (log.isDebugEnabled()) {
-            log.debug("error: " + e, e);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("error: " + e, e);
         }
         errors.add(e);
     }
 
     public void fatalError(SAXParseException e) throws SAXException {
-        if (log.isDebugEnabled()) {
-            log.debug("fatalError: " + e, e);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("fatalError: " + e, e);
         }
         fatalErrors.add(e);
     }

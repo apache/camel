@@ -16,9 +16,6 @@
  */
 package org.apache.camel.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -32,6 +29,9 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * <p>
  * ResolverUtil is used to locate classes that are available in the/a class path
@@ -40,7 +40,7 @@ import java.util.jar.JarInputStream;
  * specific annotation. However, through the use of the {@link Test} class it is
  * possible to search using arbitrary conditions.
  * </p>
- * 
+ *
  * <p>
  * A ClassLoader is used to locate all locations (directories and jar files) in
  * the class path that contain classes within certain packages, and then to load
@@ -49,7 +49,7 @@ import java.util.jar.JarInputStream;
  * be overridden by calling {@link #setClassLoaders(Set)} prior to
  * invoking any of the {@code find()} methods.
  * </p>
- * 
+ *
  * <p>
  * General searches are initiated by calling the
  * {@link #find(ResolverUtil.Test, String)} ()} method and supplying a package
@@ -59,11 +59,11 @@ import java.util.jar.JarInputStream;
  * for extensions of particular classes, or classes annotated with a specific
  * annotation.
  * </p>
- * 
+ *
  * <p>
  * The standard usage pattern for the ResolverUtil class is as follows:
  * </p>
- * 
+ *
  * <pre>
  * esolverUtil&lt;ActionBean&gt; resolver = new ResolverUtil&lt;ActionBean&gt;();
  * esolver.findImplementation(ActionBean.class, pkg1, pkg2);
@@ -71,7 +71,7 @@ import java.util.jar.JarInputStream;
  * esolver.find(new CustomTest(), pkg2);
  * ollection&lt;ActionBean&gt; beans = resolver.getClasses();
  * </pre>
- * 
+ *
  * @author Tim Fennell
  */
 public class ResolverUtil<T> {
@@ -158,7 +158,7 @@ public class ResolverUtil<T> {
     /**
      * Provides access to the classes discovered so far. If no calls have been
      * made to any of the {@code find()} methods, this set will be empty.
-     * 
+     *
      * @return the set of classes that have been discovered.
      */
     public Set<Class<? extends T>> getClasses() {
@@ -197,7 +197,7 @@ public class ResolverUtil<T> {
      * implementations. In the case of a non-interface class, subclasses will be
      * collected. Accumulated classes can be accessed by calling
      * {@link #getClasses()}.
-     * 
+     *
      * @param parent the class of interface to find subclasses or
      *                implementations of
      * @param packageNames one or more package names to scan (including
@@ -221,7 +221,7 @@ public class ResolverUtil<T> {
     /**
      * Attempts to discover classes that are annotated with to the annotation.
      * Accumulated classes can be accessed by calling {@link #getClasses()}.
-     * 
+     *
      * @param annotation the annotation that should be present on matching
      *                classes
      * @param packageNames one or more package names to scan (including
@@ -243,7 +243,7 @@ public class ResolverUtil<T> {
      * subpackages. Each class is offered up to the Test as it is discovered,
      * and if the Test returns true the class is retained. Accumulated classes
      * can be fetched by calling {@link #getClasses()}.
-     * 
+     *
      * @param test an instance of {@link Test} that will be used to filter
      *                classes
      * @param packageName the name of the package from which to start scanning
@@ -306,7 +306,7 @@ public class ResolverUtil<T> {
      * <i>.class</i> the file is loaded and tested to see if it is acceptable
      * according to the Test. Operates recursively to find classes within a
      * folder structure matching the package structure.
-     * 
+     *
      * @param test a Test used to filter the classes that are discovered
      * @param parent the package name up to this directory in the package
      *                hierarchy. E.g. if /classes is in the classpath and we
@@ -339,7 +339,7 @@ public class ResolverUtil<T> {
      * Finds matching classes within a jar files that contains a folder
      * structure matching the package structure. If the File is not a JarFile or
      * does not exist a warning will be logged, but no error will be raised.
-     * 
+     *
      * @param test a Test used to filter the classes that are discovered
      * @param parent the parent package under which classes must be in order to
      *                be considered
@@ -370,7 +370,7 @@ public class ResolverUtil<T> {
      * Add the class designated by the fully qualified class name provided to
      * the set of resolved classes if and only if it is approved by the Test
      * supplied.
-     * 
+     *
      * @param test the test used to determine if the class matches
      * @param fqn the fully qualified name of a class
      */
@@ -389,9 +389,9 @@ public class ResolverUtil<T> {
                     }
                     found = true;
                     break;
-                }
-                catch (ClassNotFoundException e) {
-                    LOG.debug("Could not find class '" + fqn + "' in class loader: " + classLoader + ". Reason: " + e, e);
+                } catch (ClassNotFoundException e) {
+                    LOG.debug("Could not find class '" + fqn + "' in class loader: " + classLoader
+                              + ". Reason: " + e, e);
                 }
             }
             if (!found) {

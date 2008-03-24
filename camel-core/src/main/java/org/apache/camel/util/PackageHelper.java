@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,8 +24,11 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class PackageHelper {
+public final class PackageHelper {
     public static final transient Log LOG = LogFactory.getLog(PackageHelper.class);
+    private PackageHelper() {
+        // Utility Class
+    }
 
     /**
      * Returns true if the version number of the given package name can be found and is greater than or equal to the minimum version.
@@ -47,7 +49,8 @@ public class PackageHelper {
                 int idx = value.indexOf('.');
                 if (idx >= 0) {
                     StringBuffer buffer = new StringBuffer(value.substring(0, ++idx));
-                    for (int i = idx, size = value.length(); i < size; i++) {
+                    int i = idx;
+                    for (int size = value.length(); i < size; i++) {
                         char ch = value.charAt(i);
                         if (Character.isDigit(ch)) {
                             buffer.append(ch);
@@ -58,8 +61,7 @@ public class PackageHelper {
                 Double number = Double.parseDouble(value);
                 return number >= minimumVersion;
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOG.debug("Failed to find out " + packageName + " version: " + e, e);
         }
         return true;

@@ -16,20 +16,20 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.impl.RouteContext;
-import org.apache.camel.util.ObjectHelper;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.util.ObjectHelper;
+
 /**
  * Represents an XML &lt;from/&gt; element
- * 
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "from")
@@ -77,7 +77,7 @@ public class FromType {
 
     /**
      * Sets the URI of the endpoint to use
-     * 
+     *
      * @param uri the endpoint URI to use
      */
     public void setUri(String uri) {
@@ -91,7 +91,7 @@ public class FromType {
     /**
      * Sets the name of the endpoint within the registry (such as the Spring
      * ApplicationContext or JNDI) to use
-     * 
+     *
      * @param ref the reference name to use
      */
     public void setRef(String ref) {
@@ -112,8 +112,7 @@ public class FromType {
     public Object getUriOrRef() {
         if (ObjectHelper.isNullOrBlank(uri)) {
             return uri;
-        }
-        else if (endpoint != null) {
+        } else if (endpoint != null) {
             return endpoint.getEndpointUri();
         }
         return ref;

@@ -49,7 +49,7 @@ public class SimpleLanguage implements Language {
         SimpleLanguage language = new SimpleLanguage();
         return language.createExpression(expression);
     }
-    
+
     public Predicate<Exchange> createPredicate(String expression) {
         return PredicateBuilder.toPredicate(createExpression(expression));
     }
@@ -71,8 +71,7 @@ public class SimpleLanguage implements Language {
             if (idx < 0) {
                 results.add(createConstantExpression(expression, pivot, size));
                 break;
-            }
-            else {
+            } else {
                 if (pivot < idx) {
                     results.add(createConstantExpression(expression, pivot, idx));
                 }
@@ -98,8 +97,7 @@ public class SimpleLanguage implements Language {
     protected Expression<Exchange> createSimpleExpression(String expression) {
         if (ObjectHelper.isEqualToAny(expression, "body", "in.body")) {
             return ExpressionBuilder.bodyExpression();
-        }
-        else if (ObjectHelper.equal(expression, "out.body")) {
+        } else if (ObjectHelper.equal(expression, "out.body")) {
             return ExpressionBuilder.outBodyExpression();
         }
 

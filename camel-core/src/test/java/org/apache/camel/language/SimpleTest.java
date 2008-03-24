@@ -45,8 +45,7 @@ public class SimpleTest extends LanguageTestSupport {
         try {
             assertExpression("hey ${foo", "bad expression!");
             fail("Should have thrown an exception!");
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             log.debug("Caught expected exception: " + e, e);
         }
     }

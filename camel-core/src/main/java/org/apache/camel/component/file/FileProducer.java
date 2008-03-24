@@ -16,14 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,6 +23,14 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ExchangeHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A {@link Producer} implementation for File
@@ -79,8 +79,7 @@ public class FileProducer extends DefaultProducer {
             if (getEndpoint().isAppend()) {
                 fc = new RandomAccessFile(file, "rw").getChannel();
                 fc.position(fc.size());
-            }
-            else {
+            } else {
                 fc = new FileOutputStream(file).getChannel();
             }
             int size = getEndpoint().getBufferSize();
@@ -90,32 +89,27 @@ public class FileProducer extends DefaultProducer {
                 int count = in.read(buffer);
                 if (count <= 0) {
                     break;
-                }
-                else if (count < size) {
+                } else if (count < size) {
                     byteBuffer = ByteBuffer.wrap(buffer, 0, count);
                     fc.write(byteBuffer);
                     break;
-                }
-                else {
+                } else {
                     fc.write(byteBuffer);
                     byteBuffer.clear();
                 }
             }
-        }
-        finally {
+        } finally {
             if (in != null) {
                 try {
                     in.close();
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     LOG.warn("Failed to close input: " + e, e);
                 }
             }
             if (fc != null) {
                 try {
                     fc.close();
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     LOG.warn("Failed to close output: " + e, e);
                 }
             }

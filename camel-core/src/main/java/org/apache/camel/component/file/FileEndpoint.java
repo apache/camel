@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A <a href="http://activemq.apache.org/camel/file.html">File Endpoint</a> for
  * working with file systems
- * 
+ *
  * @version $Revision$
  */
 public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
@@ -49,7 +49,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     private String moveNamePrefix;
     private String moveNamePostfix;
     private String[] excludedNamePrefixes = {"."};
-    private String[] excludedNamePostfixes = { FileProcessStrategySupport.DEFAULT_LOCK_FILE_POSTFIX };
+    private String[] excludedNamePostfixes = {FileProcessStrategySupport.DEFAULT_LOCK_FILE_POSTFIX};
     private int bufferSize = 128 * 1024;
     private boolean ignoreFileNameHeader;
 
@@ -150,7 +150,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     /**
      * Sets the strategy to be used when the file has been processed such as
      * deleting or renaming it etc.
-     * 
+     *
      * @param fileProcessStrategy the new stategy to use
      */
     public void setFileStrategy(FileProcessStrategy fileProcessStrategy) {
@@ -180,7 +180,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     /**
      * Sets the name postfix appended to moved files. For example to rename all
      * the files from * to *.done set this value to ".done"
-     * 
+     *
      * @param moveNamePostfix
      * @see DefaultFileRenamer#setNamePostfix(String)
      */
@@ -196,7 +196,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      * Sets the name prefix appended to moved files. For example to move
      * processed files into a hidden directory called ".camel" set this value to
      * ".camel/"
-     * 
+     *
      * @see DefaultFileRenamer#setNamePrefix(String)
      */
     public void setMoveNamePrefix(String moveNamePrefix) {
@@ -234,7 +234,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     /**
      * If set to true then the default {@link FileProcessStrategy} will be to use the
      * {@link NoOpFileProcessStrategy} to not move or copy processed files
-     * 
+     *
      * @param noop
      */
     public void setNoop(boolean noop) {
@@ -283,6 +283,6 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      * A strategy method to lazily create the file strategy
      */
     protected FileProcessStrategy createFileStrategy() {
-    	return FileProcessStrategyFactory.createFileProcessStrategy(isNoop(), isDelete(), isLock(), moveNamePrefix, moveNamePostfix);
+        return FileProcessStrategyFactory.createFileProcessStrategy(isNoop(), isDelete(), isLock(), moveNamePrefix, moveNamePostfix);
     }
 }

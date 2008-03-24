@@ -18,8 +18,8 @@ package org.apache.camel.impl;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Producer;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Producer;
 
 /**
  * A default implementation of @{link Producer} for implementation inheritence

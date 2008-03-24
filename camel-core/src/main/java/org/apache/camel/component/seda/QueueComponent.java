@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.seda;
 
-import org.apache.camel.Exchange;
+import java.util.concurrent.BlockingQueue;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.concurrent.BlockingQueue;
 
 /**
  * An implementation of the <a href="http://activemq.apache.org/camel/queue.html">Queue components</a>

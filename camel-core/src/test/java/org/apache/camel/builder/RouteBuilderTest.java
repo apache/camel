@@ -16,7 +16,9 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.CamelContext;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -24,7 +26,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.DelegateProcessor;
@@ -37,8 +38,6 @@ import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MemoryMessageIdRepository;
 import static org.apache.camel.processor.idempotent.MemoryMessageIdRepository.memoryMessageIdRepository;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @version $Revision$
@@ -240,7 +239,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 from("seda:a").intercept(interceptor1).intercept(interceptor2).to("seda:d");
                 /*
-                 * 
+                 *
                  * TODO keep old DSL? .intercept() .add(interceptor1)
                  * .add(interceptor2) .target().to("seda:d");
                  */
@@ -294,7 +293,7 @@ public class RouteBuilderTest extends TestSupport {
             /*
              * TODO FilterProcessor filterProcessor =
              * assertIsInstanceOf(FilterProcessor.class, processor);
-             * 
+             *
              * SendProcessor sendProcessor =
              * assertIsInstanceOf(SendProcessor.class,
              * filterProcessor.getProcessor()); assertEquals("Endpoint URI",

@@ -16,21 +16,22 @@
  */
 package org.apache.camel.processor;
 
-import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 public class LoadBalanceTest extends ContextTestSupport {
     protected MockEndpoint x;
     protected MockEndpoint y;
     protected MockEndpoint z;
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
 
-        x = getMockEndpoint("mock:x");        
+        x = getMockEndpoint("mock:x");
         y = getMockEndpoint("mock:y");
         z = getMockEndpoint("mock:z");
     }
@@ -43,31 +44,31 @@ public class LoadBalanceTest extends ContextTestSupport {
             };
         };
     }
-    
+
     public void testRoundRobin() throws Exception {
         String body = "<one/>";
         x.expectedBodiesReceived(body);
         expectsMessageCount(0, y, z);
         sendMessage("bar", body);
         assertMockEndpointsSatisifed();
-        
+
         body = "<two/>";
         y.expectedBodiesReceived(body);
         expectsMessageCount(0, x, z);
         sendMessage("bar", body);
-        assertMockEndpointsSatisifed();        
-        
+        assertMockEndpointsSatisifed();
+
         body = "<three/>";
         z.expectedBodiesReceived(body);
         expectsMessageCount(0, x, y);
         sendMessage("bar", body);
         assertMockEndpointsSatisifed();
-        
+
     }
-    
+
     protected void sendMessage(final Object headerValue, final Object body) throws Exception {
         template.sendBodyAndHeader("direct:start", body, "foo", headerValue);
     }
- 
+
 
 }

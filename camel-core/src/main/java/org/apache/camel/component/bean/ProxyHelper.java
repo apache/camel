@@ -23,20 +23,20 @@ import org.apache.camel.Producer;
 
 /**
  * A helper class for creating proxies which delegate to Camel
- * 
+ *
  * @version $Revision$
  */
-public class ProxyHelper {
+public final class ProxyHelper {
 
     /**
      * Utility classes should not have a public constructor.
      */
-    private ProxyHelper() {        
+    private ProxyHelper() {
     }
 
     /**
      * Creates a Proxy which sends PojoExchange to the endpoint.
-     * 
+     *
      * @throws Exception
      */
     public static Object createProxy(final Endpoint endpoint, ClassLoader cl, Class interfaces[])
@@ -47,7 +47,7 @@ public class ProxyHelper {
 
     /**
      * Creates a Proxy which sends PojoExchange to the endpoint.
-     * 
+     *
      * @throws Exception
      */
     public static Object createProxy(Endpoint endpoint, Class interfaces[]) throws Exception {
@@ -59,7 +59,7 @@ public class ProxyHelper {
 
     /**
      * Creates a Proxy which sends PojoExchange to the endpoint.
-     * 
+     *
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
@@ -70,7 +70,7 @@ public class ProxyHelper {
 
     /**
      * Creates a Proxy which sends PojoExchange to the endpoint.
-     * 
+     *
      * @throws Exception
      */
     @SuppressWarnings("unchecked")

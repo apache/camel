@@ -16,17 +16,17 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
-import java.io.File;
-import java.util.Map;
-
 /**
  * The <a href="http://activemq.apache.org/camel/file.html">File Component</a>
  * for working with file systems
- * 
+ *
  * @version $Revision$
  */
 public class FileComponent extends DefaultComponent<FileExchange> {

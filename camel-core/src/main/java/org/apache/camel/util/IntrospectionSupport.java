@@ -16,8 +16,6 @@
  */
 package org.apache.camel.util;
 
-import org.apache.camel.TypeConverter;
-
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.lang.reflect.Field;
@@ -34,12 +32,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public class IntrospectionSupport {
+
+import org.apache.camel.TypeConverter;
+
+public final class IntrospectionSupport {
 
     /**
      * Utility classes should not have a public constructor.
      */
-    private IntrospectionSupport() {        
+    private IntrospectionSupport() {
     }
 
     public static boolean getProperties(Object target, Map props, String optionPrefix) {
@@ -162,7 +163,7 @@ public class IntrospectionSupport {
         }
 
         for (Iterator iter = props.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry entry = (Entry)iter.next();
+            Entry entry = (Entry)iter.next();
             if (setProperty(typeConverter, target, (String)entry.getKey(), entry.getValue())) {
                 iter.remove();
                 rc = true;
@@ -194,15 +195,13 @@ public class IntrospectionSupport {
                 setter.invoke(target, new Object[] {convertedValue});
             }
             return true;
-        }
-        catch (InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
             Throwable throwable = e.getTargetException();
             if (throwable instanceof Exception) {
-                Exception exception = (Exception) throwable;
+                Exception exception = (Exception)throwable;
                 throw exception;
-            }
-            else {
-                Error error = (Error) throwable;
+            } else {
+                Error error = (Error)throwable;
                 throw error;
             }
         }

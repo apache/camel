@@ -16,29 +16,30 @@
  */
 package org.apache.camel.processor;
 
+
+
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
-import static org.apache.camel.util.ObjectHelper.notNull;
 import org.apache.camel.util.ProducerCache;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Implements a dynamic <a
  * href="http://activemq.apache.org/camel/recipient-list.html">Recipient List</a>
  * pattern where the list of actual endpoints to send a message exchange to are
  * dependent on some dynamic expression.
- * 
+ *
  * @version $Revision$
  */
 public class RecipientList extends ServiceSupport implements Processor {
@@ -65,8 +66,7 @@ public class RecipientList extends ServiceSupport implements Processor {
             Producer<Exchange> producer = producerCache.getProducer(endpoint);
             processors.add(producer);
         }
-        MulticastProcessor mp = new MulticastProcessor(processors, 
-        		new UseLatestAggregationStrategy());
+        MulticastProcessor mp = new MulticastProcessor(processors, new UseLatestAggregationStrategy());
         mp.process(exchange);
     }
 

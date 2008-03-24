@@ -28,8 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class RecipientListTest extends ContextTestSupport {
 
-    public void testSendingAMessageUsingMulticastReceivesItsOwnExchange()
-            throws Exception {
+    public void testSendingAMessageUsingMulticastReceivesItsOwnExchange() throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");
         MockEndpoint z = getMockEndpoint("mock:z");

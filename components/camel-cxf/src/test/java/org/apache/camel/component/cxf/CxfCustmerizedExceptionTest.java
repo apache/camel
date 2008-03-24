@@ -40,11 +40,11 @@ public class CxfCustmerizedExceptionTest extends ContextTestSupport {
 
     protected static final String ROUTER_ADDRESS = "http://localhost:9002/router";
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
-
+    protected static String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS;
     private static final String EXCEPTION_MESSAGE = "This is an exception test message";
     private static final String DETAIL_TEXT = "This is a detail text node";
     private static final SoapFault SOAP_FAULT;
-    protected static String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS;
+
 
     private Bus bus;
 

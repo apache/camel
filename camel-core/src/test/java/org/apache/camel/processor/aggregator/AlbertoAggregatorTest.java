@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,10 +37,10 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class AlbertoAggregatorTest extends ContextTestSupport {
-    private Log log = LogFactory.getLog(this.getClass());
     private static final String SURNAME_HEADER = "surname";
     private static final String TYPE_HEADER = "type";
     private static final String BROTHERS_TYPE = "brothers";
+    private Log log = LogFactory.getLog(this.getClass());
 
     public void testAggregator() throws Exception {
 
@@ -76,27 +75,6 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
 
         return new RouteBuilder() {
-            private void debugIn(String stringId, Exchange oldExchange,
-                    Exchange newExchange) {
-
-                log.debug(stringId + " old headers in: "
-                        + oldExchange.getIn().getHeaders());
-                log.debug(stringId + " old body in: "
-                        + oldExchange.getIn().getBody());
-                log.debug(stringId + " new headers in: "
-                        + newExchange.getIn().getHeaders());
-                log.debug(stringId + " new body in: "
-                        + newExchange.getIn().getBody());
-            }
-
-            private void debugOut(String stringId, Exchange exchange) {
-
-                log.debug(stringId + " old headers out: "
-                        + exchange.getIn().getHeaders());
-                log.debug(stringId + " old body out: "
-                        + exchange.getIn().getBody());
-            }
-
             AggregationStrategy surnameAggregator = new AggregationStrategy() {
                 public Exchange aggregate(Exchange oldExchange,
                         Exchange newExchange) {
@@ -111,8 +89,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
 
                         brothers = oldIn.getBody(List.class);
                         brothers.add(newIn.getBody(String.class));
-                    }
-                    else {
+                    } else {
 
                         brothers = new ArrayList<String>();
                         brothers.add(oldIn.getBody(String.class));
@@ -140,8 +117,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
                         brothers = oldIn.getBody(Map.class);
                         brothers.put(newIn.getHeader(SURNAME_HEADER,
                                 String.class), newIn.getBody(List.class));
-                    }
-                    else {
+                    } else {
 
                         brothers = new HashMap<String, List>();
                         brothers.put(oldIn.getHeader(SURNAME_HEADER, String.class),
@@ -157,6 +133,27 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
                 }
             };
 
+            private void debugIn(String stringId, Exchange oldExchange,
+                    Exchange newExchange) {
+
+                log.debug(stringId + " old headers in: "
+                        + oldExchange.getIn().getHeaders());
+                log.debug(stringId + " old body in: "
+                        + oldExchange.getIn().getBody());
+                log.debug(stringId + " new headers in: "
+                        + newExchange.getIn().getHeaders());
+                log.debug(stringId + " new body in: "
+                        + newExchange.getIn().getBody());
+            }
+
+            private void debugOut(String stringId, Exchange exchange) {
+
+                log.debug(stringId + " old headers out: "
+                        + exchange.getIn().getHeaders());
+                log.debug(stringId + " old body out: "
+                        + exchange.getIn().getBody());
+            }
+
             @Override
             public void configure() throws Exception {
 
@@ -164,20 +161,19 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
                         // Separate people
                         .splitter(bodyAs(String.class).tokenize(",")).process(
 
-                        // Split the name, erase the surname and put it in a
-                        // header
-                        new Processor() {
-                            public void process(Exchange exchange)
-                                    throws Exception {
+                            // Split the name, erase the surname and put it in a
+                            // header
+                            new Processor() {
+                                public void process(Exchange exchange) throws Exception {
 
-                                String[] parts = exchange.getIn()
-                                        .getBody(String.class).split(
-                                        " ");
-                                exchange.getIn().setBody(parts[0]);
-                                exchange.getIn().setHeader(
-                                        SURNAME_HEADER, parts[1]);
-                            } // process
-                        }) // Processor
+                                    String[] parts = exchange.getIn()
+                                            .getBody(String.class).split(
+                                            " ");
+                                    exchange.getIn().setBody(parts[0]);
+                                    exchange.getIn().setHeader(
+                                            SURNAME_HEADER, parts[1]);
+                                } // process
+                            }) // Processor
 
                         .to("direct:joinSurnames");
 

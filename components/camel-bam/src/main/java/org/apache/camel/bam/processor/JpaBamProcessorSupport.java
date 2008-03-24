@@ -16,6 +16,9 @@
  */
 package org.apache.camel.bam.processor;
 
+import java.lang.reflect.Method;
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -27,9 +30,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.List;
-import java.lang.reflect.Method;
-
 /**
  * A base class for JPA based BAM which can use any entity to store the process
  * instance information which allows derived classes to specialise the process
@@ -39,20 +39,23 @@ import java.lang.reflect.Method;
  */
 public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     private static final transient Log LOG = LogFactory.getLog(JpaBamProcessorSupport.class);
-    
+
     private ActivityRules activityRules;
     private JpaTemplate template;
     private String findByKeyQuery;
     private String keyPropertyName = "correlationKey";
     private boolean correlationKeyIsPrimary = true;
 
-    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template, Expression<Exchange> correlationKeyExpression, ActivityRules activityRules, Class<T> entitytype) {
+    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template,
+                                  Expression<Exchange> correlationKeyExpression, ActivityRules activityRules,
+                                  Class<T> entitytype) {
         super(transactionTemplate, correlationKeyExpression, entitytype);
         this.activityRules = activityRules;
         this.template = template;
     }
 
-    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template, Expression<Exchange> correlationKeyExpression, ActivityRules activityRules) {
+    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template,
+                                  Expression<Exchange> correlationKeyExpression, ActivityRules activityRules) {
         super(transactionTemplate, correlationKeyExpression);
         this.activityRules = activityRules;
         this.template = template;
@@ -108,11 +111,14 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
         if (entity == null) {
             entity = createEntity(exchange, key);
             setKeyProperty(entity, key);
-            ProcessDefinition definition = ProcessDefinition.getRefreshedProcessDefinition(template, getActivityRules().getProcessRules().getProcessDefinition());
+            ProcessDefinition definition = ProcessDefinition
+                .getRefreshedProcessDefinition(template, getActivityRules().getProcessRules()
+                    .getProcessDefinition());
             setProcessDefinitionProperty(entity, definition);
             template.persist(entity);
 
-            // Now we must flush to avoid concurrent updates clashing trying to insert the
+            // Now we must flush to avoid concurrent updates clashing trying to
+            // insert the
             // same row
             LOG.debug("About to flush on entity: " + entity + " with key: " + key);
             template.flush();
@@ -123,13 +129,11 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     protected T findEntityByCorrelationKey(Object key) {
         if (isCorrelationKeyIsPrimary()) {
             return template.find(getEntityType(), key);
-        }
-        else {
+        } else {
             List<T> list = template.find(getFindByKeyQuery(), key);
             if (list.isEmpty()) {
                 return null;
-            }
-            else {
+            } else {
                 return list.get(0);
             }
         }
@@ -139,12 +143,13 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
         try {
             Method getter = IntrospectionSupport.getPropertyGetter(getEntityType(), getKeyPropertyName());
             return getter.getReturnType();
-        }
-        catch (NoSuchMethodException e) {
-            LOG.warn("no such getter for: " + getKeyPropertyName() + " on " + getEntityType() + ". Reason: " + e, e);
+        } catch (NoSuchMethodException e) {
+            LOG.warn("no such getter for: " + getKeyPropertyName() + " on " + getEntityType() + ". Reason: "
+                     + e, e);
             return null;
         }
     }
+
     /**
      * Sets the key property on the new entity
      */
@@ -152,7 +157,8 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
         IntrospectionSupport.setProperty(entity, getKeyPropertyName(), key);
     }
 
-    protected void setProcessDefinitionProperty(T entity, ProcessDefinition processDefinition) throws Exception {
+    protected void setProcessDefinitionProperty(T entity, ProcessDefinition processDefinition)
+        throws Exception {
         IntrospectionSupport.setProperty(entity, "processDefinition", processDefinition);
     }
 
@@ -160,15 +166,14 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
      * Create a new instance of the entity for the given key
      */
     protected T createEntity(Exchange exchange, Object key) {
-        return (T) exchange.getContext().getInjector().newInstance(getEntityType());
+        return (T)exchange.getContext().getInjector().newInstance(getEntityType());
     }
 
     protected void processEntity(Exchange exchange, T entity) throws Exception {
         if (entity instanceof Processor) {
-            Processor processor = (Processor) entity;
+            Processor processor = (Processor)entity;
             processor.process(exchange);
-        }
-        else {
+        } else {
             // TODO add other extension points - eg. passing in Activity
             throw new IllegalArgumentException("No processor defined for this route");
         }

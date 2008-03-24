@@ -17,8 +17,9 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -40,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "onException")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExceptionType extends ProcessorType<ProcessorType> {
-    
+
 /*
     @XmlElementRef
     private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
@@ -82,8 +83,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     public RedeliveryPolicy createRedeliveryPolicy(RedeliveryPolicy parentPolicy) {
         if (redeliveryPolicy != null) {
             return redeliveryPolicy.createRedeliveryPolicy(parentPolicy);
-        }
-        else if (errorHandler != null) {
+        } else if (errorHandler != null) {
             // lets create a new error handler that has no retries
             RedeliveryPolicy answer = parentPolicy.copy();
             answer.setMaximumRedeliveries(0);
@@ -193,7 +193,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
         }
         return redeliveryPolicy;
     }
-    
+
     protected List<Class> createExceptionClasses() {
         List<String> list = getExceptions();
         List<Class> answer = new ArrayList<Class>(list.size());

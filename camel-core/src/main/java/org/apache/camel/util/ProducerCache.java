@@ -22,11 +22,11 @@ import java.util.Map;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.commons.logging.Log;
@@ -57,7 +57,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
 
     /**
      * Sends the exchange to the given endpoint
-     * 
+     *
      * @param endpoint the endpoint to send the exchange to
      * @param exchange the exchange to send
      */
@@ -73,7 +73,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
     /**
      * Sends an exchange to an endpoint using a supplied
      * @{link Processor} to populate the exchange
-     * 
+     *
      * @param endpoint the endpoint to send the exchange to
      * @param processor the transformer used to populate the new exchange
      */
@@ -89,9 +89,9 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
 
     /**
      * Sends an exchange to an endpoint using a supplied
-     * @{link Processor} to populate the exchange.  The callback 
+     * @{link Processor} to populate the exchange.  The callback
      * will be called when the exchange is completed.
-     * 
+     *
      * @param endpoint the endpoint to send the exchange to
      * @param processor the transformer used to populate the new exchange
      */
@@ -106,14 +106,14 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
             throw new RuntimeCamelException(e);
         }
     }
-    
+
     public static boolean isProcessedSync(Exchange exchange) {
         Boolean rc = exchange.getProperty(ProducerCache.class.getName() + ".SYNC", Boolean.class);
         return rc == null ? false : rc;
     }
 
     public static void setProcessedSync(Exchange exchange, boolean b) {
-        exchange.setProperty(ProducerCache.class.getName() + ".SYNC", b ? Boolean.TRUE : Boolean.FALSE );
+        exchange.setProperty(ProducerCache.class.getName() + ".SYNC", b ? Boolean.TRUE : Boolean.FALSE);
     }
 
     /**
@@ -126,7 +126,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
      * @param processor the transformer used to populate the new exchange
      */
     public E send(Endpoint<E> endpoint, ExchangePattern pattern, Processor processor) {
-         try {
+        try {
             Producer<E> producer = getProducer(endpoint);
             E exchange = producer.createExchange(pattern);
             return sendExchange(endpoint, producer, processor, exchange);

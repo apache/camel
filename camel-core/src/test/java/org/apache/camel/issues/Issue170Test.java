@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,13 +24,13 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision$
  */
 public class Issue170Test extends ContextTestSupport {
-    protected String Q1 = "seda:Q1";
-    protected String Q2 = "mock:Q2";
-    protected String Q3 = "mock:Q3";
+    protected String qOne = "seda:Q1";
+    protected String qTwo = "mock:Q2";
+    protected String qThree = "mock:Q3";
 
     public void testSendMessagesGetCorrectCounts() throws Exception {
-        MockEndpoint q2 = getMockEndpoint(Q2);
-        MockEndpoint q3 = getMockEndpoint(Q3);
+        MockEndpoint q2 = getMockEndpoint(qTwo);
+        MockEndpoint q3 = getMockEndpoint(qThree);
 
         String body1 = "<message id='1'/>";
         String body2 = "<message id='2'/>";
@@ -48,8 +47,8 @@ public class Issue170Test extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to(Q1);
-                from(Q1).to(Q2, Q3); // write to Q3 but not to Q2
+                from("direct:start").to(qOne);
+                from(qOne).to(qTwo, qThree); // write to Q3 but not to Q2
             }
         };
     }

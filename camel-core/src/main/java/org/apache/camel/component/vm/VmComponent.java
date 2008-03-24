@@ -35,9 +35,9 @@ import org.apache.camel.component.seda.SedaEndpoint;
  * @version $Revision$
  */
 public class VmComponent extends SedaComponent {
-    
-    private static final AtomicInteger START_COUNTER = new AtomicInteger();
     protected static Map<String, BlockingQueue> queues = new HashMap<String, BlockingQueue>();
+    private static final AtomicInteger START_COUNTER = new AtomicInteger();
+
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
@@ -61,7 +61,7 @@ public class VmComponent extends SedaComponent {
         super.doStart();
         START_COUNTER.incrementAndGet();
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         super.doStop();

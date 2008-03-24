@@ -26,15 +26,15 @@ import org.w3c.dom.NodeList;
 
 /**
  * A number of helper methods for working with collections
- * 
+ *
  * @version $Revision$
  */
-public class CollectionHelper {
-    
+public final class CollectionHelper {
+
     /**
      * Utility classes should not have a public constructor.
      */
-    private CollectionHelper() {        
+    private CollectionHelper() {
     }
 
     /**
@@ -43,22 +43,18 @@ public class CollectionHelper {
     public static Integer size(Object value) {
         if (value != null) {
             if (value instanceof Collection) {
-                Collection collection = (Collection) value;
+                Collection collection = (Collection)value;
                 return collection.size();
-            }
-            else if (value instanceof Map) {
-                Map map = (Map) value;
+            } else if (value instanceof Map) {
+                Map map = (Map)value;
                 return map.size();
-            }
-            else if (value instanceof Object[]) {
-                Object[] array  = (Object[]) value;
+            } else if (value instanceof Object[]) {
+                Object[] array = (Object[])value;
                 return array.length;
-            }
-            else if (value.getClass().isArray()) {
+            } else if (value.getClass().isArray()) {
                 return Array.getLength(value);
-            }
-            else if (value instanceof NodeList) {
-                NodeList nodeList = (NodeList) value;
+            } else if (value instanceof NodeList) {
+                NodeList nodeList = (NodeList)value;
                 return nodeList.getLength();
             }
         }
@@ -69,7 +65,7 @@ public class CollectionHelper {
      * Sets the value of the entry in the map for the given key, though if the
      * map already contains a value for the given key then the value is appended
      * to a list of values.
-     * 
+     *
      * @param map the map to add the entry to
      * @param key the key in the map
      * @param value the value to put in the map

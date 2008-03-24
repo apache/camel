@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import javax.naming.Context;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Header;
 import org.apache.camel.Processor;
@@ -25,8 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.naming.Context;
 
 /**
  * @version $Revision$
@@ -72,20 +72,19 @@ public class BeanWithExceptionTest extends ContextTestSupport {
             public void configure() {
                 exception(ValidationException.class).to("mock:invalid");
 
-                from("direct:start").
-                        beanRef("myBean").
-                        to("mock:valid");            }
+                from("direct:start").beanRef("myBean").to("mock:valid");
+            }
         };
     }
 
     public static class ValidationBean {
         private static final transient Log LOG = LogFactory.getLog(ValidationBean.class);
 
-        public void someMethod(String body, @Header(name = "foo") String header) throws ValidationException {
+        public void someMethod(String body, @Header(name = "foo")
+                               String header) throws ValidationException {
             if ("bar".equals(header)) {
                 LOG.info("someMethod() called with valid header and body: " + body);
-            }
-            else {
+            } else {
                 throw new ValidationException(null, "Invalid header foo: " + header);
             }
         }

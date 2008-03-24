@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,26 +43,30 @@ public class DataFormatType extends IdentifiedType implements DataFormat {
     @XmlTransient
     private String dataFormatTypeName;
 
-    public static DataFormat getDataFormat(RouteContext routeContext, DataFormatType type, String ref) {
-        if (type == null) {
-            notNull(ref, "ref or dataFormatType");
-            DataFormat dataFormat = routeContext.lookup(ref, DataFormat.class);
-            if (dataFormat instanceof DataFormatType) {
-                type = (DataFormatType) dataFormat;
-            }
-            else {
-                return dataFormat;
-            }
-        }
-        return type.getDataFormat(routeContext);
-    }
-
     public DataFormatType() {
     }
 
     public DataFormatType(DataFormat dataFormat) {
         this.dataFormat = dataFormat;
     }
+
+    protected DataFormatType(String dataFormatTypeName) {
+        this.dataFormatTypeName = dataFormatTypeName;
+    }
+
+    public static DataFormat getDataFormat(RouteContext routeContext, DataFormatType type, String ref) {
+        if (type == null) {
+            notNull(ref, "ref or dataFormatType");
+            DataFormat dataFormat = routeContext.lookup(ref, DataFormat.class);
+            if (dataFormat instanceof DataFormatType) {
+                type = (DataFormatType)dataFormat;
+            } else {
+                return dataFormat;
+            }
+        }
+        return type.getDataFormat(routeContext);
+    }
+
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         ObjectHelper.notNull(dataFormat, "dataFormat");
@@ -110,13 +113,11 @@ public class DataFormatType extends IdentifiedType implements DataFormat {
     protected void setProperty(Object bean, String name, Object value) {
         try {
             IntrospectionSupport.setProperty(bean, name, value);
-        }
-        catch (Exception e) {
-            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean + ". Reason: " + e, e);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean
+                                               + ". Reason: " + e, e);
         }
     }
 
-    protected DataFormatType(String dataFormatTypeName) {
-        this.dataFormatTypeName = dataFormatTypeName;
-    }
+
 }

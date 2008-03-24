@@ -16,30 +16,30 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.File;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * @version $Revision$
  */
 public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private static final transient Log LOG = LogFactory.getLog(FileConsumer.class);
+    ConcurrentHashMap<File, File> filesBeingProcessed = new ConcurrentHashMap<File, File>();
+    boolean generateEmptyExchangeWhenIdle;
     private final FileEndpoint endpoint;
     private boolean recursive = true;
     private String regexPattern = "";
     private long lastPollTime;
-    boolean generateEmptyExchangeWhenIdle;
-    private int unchangedDelay = 0;
-    private boolean unchangedSize = false;
+
+    private int unchangedDelay;
+    private boolean unchangedSize;
+    private ConcurrentHashMap<File, Long> fileSizes = new ConcurrentHashMap<File, Long>();
 
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -48,7 +48,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
 
     protected synchronized void poll() throws Exception {
         int rc = pollFileOrDirectory(endpoint.getFile(), isRecursive());
-        if( rc == 0 && generateEmptyExchangeWhenIdle ) {
+        if (rc == 0 && generateEmptyExchangeWhenIdle) {
             final FileExchange exchange = endpoint.createExchange((File)null);
             getAsyncProcessor().process(exchange, new AsyncCallback() {
                 public void done(boolean sync) {
@@ -59,7 +59,6 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     }
 
     /**
-     * 
      * @param fileOrDirectory
      * @param processDir
      * @return the number of files processed or being processed async.
@@ -67,8 +66,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     protected int pollFileOrDirectory(File fileOrDirectory, boolean processDir) {
         if (!fileOrDirectory.isDirectory()) {
             return pollFile(fileOrDirectory); // process the file
-        }
-        else if (processDir) {
+        } else if (processDir) {
             int rc = 0;
             if (isValidFile(fileOrDirectory)) {
                 LOG.debug("Polling directory " + fileOrDirectory);
@@ -77,35 +75,33 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                     rc += pollFileOrDirectory(files[i], isRecursive()); // self-recursion
                 }
             }
-            return rc; 
-        }
-        else {
+            return rc;
+        } else {
             LOG.debug("Skipping directory " + fileOrDirectory);
             return 0;
         }
     }
-    
-    ConcurrentHashMap<File, File> filesBeingProcessed = new ConcurrentHashMap<File, File>();
 
     /**
      * @param file
      * @return the number of files processed or being processed async.
      */
     protected int pollFile(final File file) {
-        
 
         if (!file.exists()) {
             return 0;
         }
-        if( !isValidFile(file) ) {
+        if (!isValidFile(file)) {
             return 0;
         }
-        // we only care about file modified times if we are not deleting/moving files
+        // we only care about file modified times if we are not deleting/moving
+        // files
         if (endpoint.isNoop()) {
             long fileModified = file.lastModified();
             if (fileModified <= lastPollTime) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Ignoring file: " + file + " as modified time: " + fileModified + " less than last poll time: " + lastPollTime);
+                    LOG.debug("Ignoring file: " + file + " as modified time: " + fileModified
+                              + " less than last poll time: " + lastPollTime);
                 }
                 return 0;
             }
@@ -125,7 +121,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                 LOG.debug("About to process file:  " + file + " using exchange: " + exchange);
             }
             if (processStrategy.begin(endpoint, exchange, file)) {
-                
+
                 // Use the async processor interface so that processing of
                 // the
                 // exchange can happen asynchronously
@@ -143,15 +139,13 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                         filesBeingProcessed.remove(file);
                     }
                 });
-                
-            }
-            else {
+
+            } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(endpoint + " cannot process file: " + file);
                 }
             }
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             handleException(e);
         }
         return 1;
@@ -160,7 +154,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     protected boolean isValidFile(File file) {
         boolean result = false;
         if (file != null && file.exists()) {
-            // TODO: maybe use a configurable strategy instead of the 
+            // TODO: maybe use a configurable strategy instead of the
             // hardcoded one based on last file change
             if (isMatched(file) && isUnchanged(file)) {
                 result = true;
@@ -169,13 +163,12 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         return result;
     }
 
-    private ConcurrentHashMap<File, Long> fileSizes = new ConcurrentHashMap<File, Long>();
-    
+
     protected boolean isUnchanged(File file) {
         if (file == null) {
             // Sanity check
             return false;
-        }  else if (file.isDirectory()) {
+        } else if (file.isDirectory()) {
             // Allow recursive polling to descend into this directory
             return true;
         } else {
@@ -183,25 +176,25 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
             long modifiedDuration = 0;
             if (getUnchangedDelay() > 0) {
                 modifiedDuration = System.currentTimeMillis() - file.lastModified();
-                lastModifiedCheck = (modifiedDuration >= getUnchangedDelay());
+                lastModifiedCheck = modifiedDuration >= getUnchangedDelay();
             }
-            
+
             boolean sizeCheck = true;
             long sizeDifference = 0;
             if (isUnchangedSize()) {
-                long prevFileSize = (fileSizes.get(file)==null) ? 0 : fileSizes.get(file).longValue();
+                long prevFileSize = (fileSizes.get(file) == null) ? 0 : fileSizes.get(file).longValue();
                 sizeDifference = file.length() - prevFileSize;
-                sizeCheck = (0 == sizeDifference);
+                sizeCheck = 0 == sizeDifference;
             }
-            
+
             boolean answer = lastModifiedCheck && sizeCheck;
-            
+
             if (LOG.isDebugEnabled()) {
-                LOG.debug("file:" + file + " isUnchanged:" + answer + " " + 
-                          "sizeCheck:" + sizeCheck + "(" + sizeDifference + ") " + 
-                          "lastModifiedCheck:" + lastModifiedCheck + "(" +modifiedDuration + ")");
+                LOG.debug("file:" + file + " isUnchanged:" + answer + " " + "sizeCheck:" + sizeCheck + "("
+                          + sizeDifference + ") " + "lastModifiedCheck:" + lastModifiedCheck + "("
+                          + modifiedDuration + ")");
             }
-            
+
             if (isUnchangedSize()) {
                 if (answer) {
                     fileSizes.remove(file);
@@ -209,7 +202,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                     fileSizes.put(file, file.length());
                 }
             }
-            
+
             return answer;
         }
     }

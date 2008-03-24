@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -61,8 +60,7 @@ public class CamelNamingStrategy {
         }
         try {
             hostName = InetAddress.getLocalHost().getHostName();
-        }
-        catch (UnknownHostException ex) {
+        } catch (UnknownHostException ex) {
             // ignore, use the default "locahost"
         }
     }
@@ -136,11 +134,11 @@ public class CamelNamingStrategy {
     public ObjectName getObjectName(ManagedRoute mbean) throws MalformedObjectNameException {
         Route<? extends Exchange> route = mbean.getRoute();
         Endpoint<? extends Exchange> ep = route.getEndpoint();
-        
+
         String ctxid = ep != null ? getContextId(ep.getContext()) : VALUE_UNKNOWN;
         String cid = getComponentId(ep);
-        String id = VALUE_UNKNOWN.equals(cid) ? getEndpointId(ep) : 
-            "[" + cid + "]" + getEndpointId(ep);
+        String id = VALUE_UNKNOWN.equals(cid) ? getEndpointId(ep)
+            : "[" + cid + "]" + getEndpointId(ep);
         String group = (String)route.getProperties().get(Route.GROUP_PROPERTY);
 
         StringBuffer buffer = new StringBuffer();
@@ -165,16 +163,15 @@ public class CamelNamingStrategy {
      * @throws MalformedObjectNameException
      */
     public ObjectName getObjectName(CamelContext context, PerformanceCounter mbean, RouteContext routeContext)
-    	throws MalformedObjectNameException {
-    		
-		RouteType route = routeContext.getRoute();
-		Endpoint<? extends Exchange> ep = routeContext.getEndpoint();
-		String ctxid = ep != null ? getContextId(ep.getContext()) : VALUE_UNKNOWN;
-		String cid = getComponentId(ep);
-		String id = VALUE_UNKNOWN.equals(cid) ? getEndpointId(ep) :
-			"[" + cid + "]" + getEndpointId(ep);
-		String group = route.getGroup();
-		
+        throws MalformedObjectNameException {
+
+        RouteType route = routeContext.getRoute();
+        Endpoint<? extends Exchange> ep = routeContext.getEndpoint();
+        String ctxid = ep != null ? getContextId(ep.getContext()) : VALUE_UNKNOWN;
+        String cid = getComponentId(ep);
+        String id = VALUE_UNKNOWN.equals(cid) ? getEndpointId(ep) : "[" + cid + "]" + getEndpointId(ep);
+        String group = route.getGroup();
+
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName + ":");
         buffer.append(KEY_CONTEXT + "=" + ctxid + ",");
@@ -212,16 +209,16 @@ public class CamelNamingStrategy {
         int pos = uri.indexOf(':');
         return (pos == -1) ? VALUE_UNKNOWN : uri.substring(0, pos);
     }
-    
+
     protected String getEndpointId(Endpoint<? extends Exchange> ep) {
         String uri = ep.getEndpointUri();
         int pos = uri.indexOf(':');
         String id = (pos == -1) ? uri : uri.substring(pos + 1);
-		if (!ep.isSingleton()) { 
-			id += "." + Integer.toString(ep.hashCode());
-		}
+        if (!ep.isSingleton()) {
+            id += "." + Integer.toString(ep.hashCode());
+        }
         return ObjectNameEncoder.encode(id);
-	}
+    }
 
     /**
      * Factory method to create an ObjectName escaping any required characters
@@ -230,8 +227,7 @@ public class CamelNamingStrategy {
         String text = buffer.toString();
         try {
             return new ObjectName(text);
-        }
-        catch (MalformedObjectNameException e) {
+        } catch (MalformedObjectNameException e) {
             throw new MalformedObjectNameException("Could not create ObjectName from: " + text + ". Reason: " + e);
         }
     }

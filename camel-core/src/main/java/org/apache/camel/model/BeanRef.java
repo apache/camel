@@ -94,8 +94,7 @@ public class BeanRef extends OutputType<ProcessorType> {
         BeanProcessor answer;
         if (ref != null) {
             answer = new BeanProcessor(new RegistryBean(routeContext.getCamelContext(), ref));
-        }
-        else {
+        } else {
             if (bean == null) {
                 ObjectHelper.notNull(beanType, "bean, ref or beanType");
                 bean = CamelContextHelper.newInstance(routeContext.getCamelContext(), beanType);
@@ -116,14 +115,11 @@ public class BeanRef extends OutputType<ProcessorType> {
                 methodText = " method: " + method;
             }
             return "ref: " + ref + methodText;
-        }
-        else if (bean != null) {
+        } else if (bean != null) {
             return bean.toString();
-        }
-        else if (beanType != null) {
+        } else if (beanType != null) {
             return beanType.getName();
-        }
-        else {
+        } else {
             return "";
         }
     }

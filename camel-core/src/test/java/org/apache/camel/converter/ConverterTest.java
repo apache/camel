@@ -20,18 +20,17 @@ import java.beans.PropertyEditorManager;
 import java.beans.PropertyEditorSupport;
 import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.net.URL;
 
 import junit.framework.TestCase;
-
 import org.apache.camel.TypeConverter;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.impl.ReflectionInjector;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

@@ -65,8 +65,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
                         public void done(boolean sync) {
                         }
                     });
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     LOG.error("Seda queue caught: " + e, e);
                 }
             }
