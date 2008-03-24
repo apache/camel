@@ -25,7 +25,7 @@ import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.Destination;
 import org.apache.cxf.transport.DestinationFactory;
 
-public class NullDestinationFactory implements DestinationFactory{
+public class NullDestinationFactory implements DestinationFactory {
 
     public Destination getDestination(EndpointInfo ei) throws IOException {
         // setup the endpoint information
@@ -36,11 +36,11 @@ public class NullDestinationFactory implements DestinationFactory{
         return new NullDestination();
     }
 
-    public List<String> getTransportIds() {        
+    public List<String> getTransportIds() {
         return null;
     }
 
-    public Set<String> getUriPrefixes() {        
+    public Set<String> getUriPrefixes() {
         return null;
     }
 

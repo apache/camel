@@ -51,22 +51,21 @@ import org.apache.cxf.wsdl.EndpointReferenceUtils;
 public class CamelDestination extends AbstractDestination implements Configurable {
     protected static final String BASE_BEAN_NAME_SUFFIX = ".camel-destination";
     private static final Logger LOG = LogUtils.getL7dLogger(CamelDestination.class);
-    private CamelTemplate<Exchange> camelTemplate; 
+    final ConduitInitiator conduitInitiator;
     CamelContext camelContext;
     Consumer consumer;
     String camelDestinationUri;
-    final ConduitInitiator conduitInitiator;
-    
+    private CamelTemplate<Exchange> camelTemplate;
     private org.apache.camel.Endpoint distinationEndpoint;
 
     public CamelDestination(CamelContext camelContext, Bus bus, ConduitInitiator ci, EndpointInfo info) throws IOException {
-        super(bus, getTargetReference(info, bus), info);        
+        super(bus, getTargetReference(info, bus), info);
         this.camelContext = camelContext;
         conduitInitiator = ci;
         camelDestinationUri = endpointInfo.getAddress().substring(CxfConstants.CAMEL_TRANSPORT_PREFIX.length());
         if (camelDestinationUri.startsWith("//")) {
-            camelDestinationUri = camelDestinationUri.substring(2);     
-        }                
+            camelDestinationUri = camelDestinationUri.substring(2);
+        }
         initConfig();
     }
 
@@ -91,13 +90,13 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             distinationEndpoint = camelContext.getEndpoint(camelDestinationUri);
             consumer = distinationEndpoint.createConsumer(new ConsumerProcessor());
             consumer.start();
-            
+
         } catch (Exception ex) {
             getLogger().log(Level.SEVERE, "Camel connect failed with EException : ", ex);
         }
     }
 
-    public void deactivate() {        
+    public void deactivate() {
         try {
             consumer.stop();
         } catch (Exception e) {
@@ -110,7 +109,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         getLogger().log(Level.FINE, "CamelDestination shutdown()");
         this.deactivate();
     }
-    
+
     public CamelTemplate getCamelTemplate() {
         if (camelTemplate == null) {
             if (camelContext != null) {
@@ -121,31 +120,31 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         }
         return camelTemplate;
     }
-    
+
     public void setCamelTemplate(CamelTemplate<Exchange> template) {
         camelTemplate = template;
     }
-    
+
     public void setCamelContext(CamelContext context) {
         camelContext = context;
     }
-    
+
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
     protected void incoming(org.apache.camel.Exchange camelExchange) {
         getLogger().log(Level.FINE, "server received request: ", camelExchange);
-        org.apache.cxf.message.Message inMessage = 
+        org.apache.cxf.message.Message inMessage =
             CxfSoapBinding.getCxfInMessage(camelExchange, false);
-        
+
         inMessage.put(CxfConstants.CAMEL_EXCHANGE, camelExchange);
         ((MessageImpl)inMessage).setDestination(this);
-                
+
         // Handling the incoming message
         // The response message will be send back by the outgoingchain
         incomingObserver.onMessage(inMessage);
-        
+
     }
 
     public String getBeanName() {
@@ -156,13 +155,13 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     }
 
     private void initConfig() {
-        //we could configure the camel context here 
-        if(bus != null) {
+        //we could configure the camel context here
+        if (bus != null) {
             Configurer configurer = bus.getExtension(Configurer.class);
             if (null != configurer) {
                 configurer.configureBean(this);
             }
-        }        
+        }
     }
 
     protected class ConsumerProcessor implements Processor {
@@ -184,12 +183,12 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             super(EndpointReferenceUtils.getAnonymousEndpointReference());
             inMessage = message;
             cxfExchange = inMessage.getExchange();
-            camelExchange = cxfExchange.get(Exchange.class);            
+            camelExchange = cxfExchange.get(Exchange.class);
         }
 
         /**
          * Register a message observer for incoming messages.
-         * 
+         *
          * @param observer the observer to notify on receipt of incoming
          */
         public void setMessageObserver(MessageObserver observer) {
@@ -199,13 +198,13 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         /**
          * Send an outbound message, assumed to contain all the name-value
          * mappings of the corresponding input message (if any).
-         * 
+         *
          * @param message the message to be sent.
          */
-        public void prepare(Message message) throws IOException {            
+        public void prepare(Message message) throws IOException {
             message.put(CxfConstants.CAMEL_EXCHANGE, inMessage.get(CxfConstants.CAMEL_EXCHANGE));
             message.setContent(OutputStream.class, new CamelOutputStream(message));
-            
+
         }
 
         protected Logger getLogger() {
@@ -213,17 +212,17 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         }
 
     }
-    
+
     /**
      * Mark message as a partial message.
-     * 
+     *
      * @param partialResponse the partial response message
      * @param the decoupled target
      * @return true iff partial responses are supported
      */
     protected boolean markPartialResponse(Message partialResponse,
                                        EndpointReferenceType decoupledTarget) {
-    	return true;
+        return true;
     }
 
     /**
@@ -232,11 +231,11 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     protected ConduitInitiator getConduitInitiator() {
         return conduitInitiator;
     }
-    
-    
+
+
     private class CamelOutputStream extends CachedOutputStream {
-        private Message outMessage;      
-        
+        private Message outMessage;
+
         public CamelOutputStream(Message m) {
             super();
             outMessage = m;
@@ -244,12 +243,12 @@ public class CamelDestination extends AbstractDestination implements Configurabl
 
         // prepair the message and get the send out message
         private void commitOutputMessage() throws IOException {
-            Exchange camelExchange =(Exchange)outMessage.get(CxfConstants.CAMEL_EXCHANGE);            
+            Exchange camelExchange = (Exchange)outMessage.get(CxfConstants.CAMEL_EXCHANGE);
             camelExchange.getOut().setHeaders(outMessage);
             CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
             camelExchange.getOut().setBody(outputStream.getInputStream());
             getLogger().log(Level.FINE, "send the response message: " + outputStream);
-             
+
         }
 
         @Override
@@ -267,5 +266,5 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             // Do nothing here
         }
     }
-  
+
 }

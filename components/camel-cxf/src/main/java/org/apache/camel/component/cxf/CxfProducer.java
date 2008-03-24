@@ -53,12 +53,10 @@ import org.apache.cxf.service.model.BindingOperationInfo;
  *
  * @version $Revision$
  */
-public class CxfProducer extends DefaultProducer <CxfExchange> {
+public class CxfProducer extends DefaultProducer<CxfExchange> {
     private CxfEndpoint endpoint;
     private Client client;
     private DataFormat dataFormat;
-
-
 
     public CxfProducer(CxfEndpoint endpoint) throws CamelException {
         super(endpoint);
@@ -93,19 +91,18 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
         List<AbstractFeature> features = new ArrayList<AbstractFeature>();
         if (dataFormat.equals(DataFormat.MESSAGE)) {
             features.add(new MessageDataFormatFeature());
-            //features.add(new LoggingFeature());
+            // features.add(new LoggingFeature());
         }
         if (dataFormat.equals(DataFormat.PAYLOAD)) {
             features.add(new PayLoadDataFormatFeature());
-            //features.add(new LoggingFeature());
+            // features.add(new LoggingFeature());
         }
         cfb.setFeatures(features);
-
 
         return createClientFormClientFactoryBean(cfb);
     }
 
-    //If cfb is null ,we will try to find a right cfb to use.
+    // If cfb is null ,we will try to find a right cfb to use.
     private Client createClientFormClientFactoryBean(ClientFactoryBean cfb) throws CamelException {
         Bus bus = BusFactory.getDefaultBus();
         if (endpoint.isSpringContextEndpoint()) {
@@ -124,8 +121,10 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
         } else { // set up the clientFactoryBean by using URI information
             if (null != endpoint.getServiceClass()) {
                 try {
-                    //we need to choice the right front end to create the clientFactoryBean
-                    Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
+                    // we need to choice the right front end to create the
+                    // clientFactoryBean
+                    Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this
+                        .getClass());
                     if (cfb == null) {
                         cfb = CxfEndpointUtils.getClientFactoryBean(serviceClass);
                     }
@@ -146,7 +145,8 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                 if (null != endpoint.getWsdlURL()) {
                     cfb.setWsdlURL(endpoint.getWsdlURL());
                 } else {
-                    // throw the exception for insufficiency of the endpoint info
+                    // throw the exception for insufficiency of the endpoint
+                    // info
                     throw new CamelException("Insufficiency of the endpoint info");
                 }
             }
@@ -177,7 +177,7 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
         Message inMessage = cxfBinding.createCxfMessage(exchange);
         try {
             if (dataFormat.equals(DataFormat.POJO)) {
-                //InputStream is = m.getContent(InputStream.class);
+                // InputStream is = m.getContent(InputStream.class);
                 // now we just deal with the POJO invocations
                 List parameters = inMessage.getContent(List.class);
                 if (parameters == null) {
@@ -209,22 +209,22 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                 // get the invocation context
                 org.apache.cxf.message.Exchange ex = exchange.getExchange();
                 if (ex == null) {
-                	ex = (org.apache.cxf.message.Exchange) exchange.getProperty(CxfConstants.CXF_EXCHANGE);
-                	exchange.setExchange(ex);
+                    ex = (org.apache.cxf.message.Exchange)exchange.getProperty(CxfConstants.CXF_EXCHANGE);
+                    exchange.setExchange(ex);
                 }
                 if (ex == null) {
-                	ex = new ExchangeImpl();
-                	exchange.setExchange(ex);
+                    ex = new ExchangeImpl();
+                    exchange.setExchange(ex);
                 }
                 assert ex != null;
                 InvokingContext invokingContext = ex.get(InvokingContext.class);
                 if (invokingContext == null) {
-                	invokingContext = InvokingContextFactory.createContext(dataFormat);
-                	ex.put(InvokingContext.class, invokingContext);
+                    invokingContext = InvokingContextFactory.createContext(dataFormat);
+                    ex.put(InvokingContext.class, invokingContext);
                 }
                 Map params = invokingContext.getRequestContent(inMessage);
                 // invoke the stream message with the exchange context
-                CxfClient cxfClient = (CxfClient) client;
+                CxfClient cxfClient = (CxfClient)client;
                 // need to get the binding object to create the message
                 BindingOperationInfo boi = ex.get(BindingOperationInfo.class);
                 Message response = null;
@@ -257,7 +257,7 @@ public class CxfProducer extends DefaultProducer <CxfExchange> {
                 }
             }
         } catch (Exception e) {
-            //TODO add the fault message handling work
+            // TODO add the fault message handling work
             throw new RuntimeCamelException(e);
         }
 

@@ -105,7 +105,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
 
     private void initConfig() {
         // we could configure the camel context here
-        if(bus != null) {
+        if (bus != null) {
             Configurer configurer = bus.getExtension(Configurer.class);
             if (null != configurer) {
                 configurer.configureBean(this);

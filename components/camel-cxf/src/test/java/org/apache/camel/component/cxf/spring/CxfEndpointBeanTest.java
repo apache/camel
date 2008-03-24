@@ -22,7 +22,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  *
  */
-public class CxfEndpointBeanTest extends TestCase{
+public class CxfEndpointBeanTest extends TestCase {
 
     public void testCxfEndpointBeanDefinitionParser() {
         ClassPathXmlApplicationContext ctx =

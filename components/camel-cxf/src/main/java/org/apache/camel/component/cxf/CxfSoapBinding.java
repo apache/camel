@@ -23,7 +23,7 @@ import javax.xml.transform.Source;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.MessageImpl;
 
-public class CxfSoapBinding {
+public final class CxfSoapBinding {
     private CxfSoapBinding() {
 
     }
@@ -71,8 +71,7 @@ public class CxfSoapBinding {
         org.apache.camel.Message message = null;
         if (isClient) {
             message = exchange.getIn();
-        }
-        else {
+        } else {
             message = exchange.getOut();
         }
         // send the body back

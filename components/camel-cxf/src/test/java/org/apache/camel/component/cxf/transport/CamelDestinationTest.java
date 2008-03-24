@@ -95,9 +95,9 @@ public class CamelDestinationTest extends CamelTestSupport {
     }
 
     public void testGetTransportFactoryFromBus() throws Exception {
-    	Bus bus = BusFactory.getDefaultBus();
-    	assertNotNull(bus.getExtension(ConduitInitiatorManager.class)
-        	.getConduitInitiator(CamelTransportFactory.TRANSPORT_ID));
+        Bus bus = BusFactory.getDefaultBus();
+        assertNotNull(bus.getExtension(ConduitInitiatorManager.class)
+            .getConduitInitiator(CamelTransportFactory.TRANSPORT_ID));
     }
 
     public void testOneWayDestination() throws Exception {

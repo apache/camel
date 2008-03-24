@@ -25,15 +25,14 @@ import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 
 public class CxfEndpointUtilsTest extends TestCase {
-    // set up the port name and service name
-    private static final QName SERVICE_NAME =
-        new QName("http://www.example.com/test", "ServiceName");
-
     static final String CXF_BASE_URI = "cxf://http://www.example.com/testaddress"
         + "?serviceClass=org.apache.camel.component.cxf.HelloService"
         + "&portName={http://www.example.com/test}PortName"
         + "&serviceName={http://www.example.com/test}ServiceName";
 
+    // set up the port name and service name
+    private static final QName SERVICE_NAME =
+        new QName("http://www.example.com/test", "ServiceName");
 
     CxfEndpoint cxfEndpoint;
 

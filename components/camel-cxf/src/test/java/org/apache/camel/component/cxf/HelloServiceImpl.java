@@ -30,12 +30,12 @@ public class HelloServiceImpl implements HelloService {
     }
 
     public void ping() {
-    	invocationCount ++;
-    	LOG.info("call for oneway ping");
+        invocationCount++;
+        LOG.info("call for oneway ping");
     }
 
     public int getInvocationCount() {
-    	return invocationCount;
+        return invocationCount;
     }
 
     public String sayHello() {
