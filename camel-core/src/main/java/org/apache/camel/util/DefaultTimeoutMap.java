@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,12 +29,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * 
+ *
  * @version $Revision$
  */
 public class DefaultTimeoutMap implements TimeoutMap, Runnable {
 
-    private static final Log log = LogFactory.getLog(DefaultTimeoutMap.class);
+    private static final Log LOG = LogFactory.getLog(DefaultTimeoutMap.class);
 
     private Map map = new HashMap();
     private SortedSet index = new TreeSet();
@@ -121,15 +120,14 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
                 }
                 if (entry.getExpireTime() < now) {
                     if (isValidForEviction(entry)) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Evicting inactive request for correlationID: " + entry);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Evicting inactive request for correlationID: " + entry);
                         }
                         System.out.println("Evicting inactive request for correlationID: " + entry);
                         map.remove(entry.getKey());
                         iter.remove();
                     }
-                }
-                else {
+                } else {
                     break;
                 }
             }
@@ -174,7 +172,7 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
 
     /**
      * A hook to allow derivations to avoid evicting the current entry
-     * 
+     *
      * @param entry
      * @return
      */

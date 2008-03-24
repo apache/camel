@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.converter.jaxp;
-
-import org.apache.camel.Converter;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.*;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import org.apache.camel.Converter;
+
 
 /**
  * Converts from some DOM types to Java types
@@ -30,7 +30,10 @@ import org.w3c.dom.Text;
  * @version $Revision$
  */
 @Converter
-public class DomConverter {
+public final class DomConverter {
+    private DomConverter() {
+        // Utility Class
+    }
     @Converter
     public static String toString(NodeList nodeList) {
         StringBuffer buffer = new StringBuffer();
@@ -58,17 +61,14 @@ public class DomConverter {
         if (node instanceof Text) {
             Text text = (Text) node;
             buffer.append(text.getTextContent());
-        }
-        else if (node instanceof Attr) {
+        } else if (node instanceof Attr) {
             Attr attribute = (Attr) node;
             buffer.append(attribute.getTextContent());
 
-        }
-        else if (node instanceof Element) {
+        } else if (node instanceof Element) {
             Element element = (Element) node;
             append(buffer, element.getChildNodes());
-        }
-        else if (node instanceof Document) {
+        } else if (node instanceof Document) {
             Document doc = (Document) node;
             append(buffer, doc.getChildNodes());
         }

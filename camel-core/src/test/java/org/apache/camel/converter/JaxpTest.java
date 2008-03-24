@@ -16,12 +16,15 @@
  */
 package org.apache.camel.converter;
 
-import java.io.StringReader;
 import java.io.InputStream;
+import java.io.StringReader;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import junit.framework.TestCase;
 import org.apache.camel.TypeConverter;
@@ -29,8 +32,7 @@ import org.apache.camel.impl.ReflectionInjector;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+
 
 /**
  * @version $Revision$

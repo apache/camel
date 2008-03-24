@@ -16,17 +16,18 @@
  */
 package org.apache.camel.component.jmx;
 
+import java.util.Map;
+
+import javax.management.MBeanServer;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
-import javax.management.MBeanServer;
-import java.util.Map;
-
 /**
  * The <a href="http://activemq.apache.org/camel/jmx.html">JMX Component</a>
  * for monitoring jmx attributes
- * 
+ *
  * @version $Revision$
  */
 public class JMXComponent extends DefaultComponent<JMXExchange> {

@@ -16,20 +16,14 @@
  */
 package org.apache.camel.component.timer;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.bean.BeanExchange;
-import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * @version $Revision$
@@ -66,25 +60,20 @@ public class TimerConsumer extends DefaultConsumer<Exchange> {
         if (endpoint.isFixedRate()) {
             if (endpoint.getTime() != null) {
                 timer.scheduleAtFixedRate(task, endpoint.getTime(), endpoint.getPeriod());
-            }
-            else {
+            } else {
                 timer.scheduleAtFixedRate(task, endpoint.getDelay(), endpoint.getPeriod());
             }
-        }
-        else {
+        } else {
             if (endpoint.getTime() != null) {
                 if (endpoint.getPeriod() >= 0) {
                     timer.schedule(task, endpoint.getTime(), endpoint.getPeriod());
-                }
-                else {
+                } else {
                     timer.schedule(task, endpoint.getTime());
                 }
-            }
-            else {
+            } else {
                 if (endpoint.getPeriod() >= 0) {
                     timer.schedule(task, endpoint.getDelay(), endpoint.getPeriod());
-                }
-                else {
+                } else {
                     timer.schedule(task, endpoint.getDelay());
                 }
             }
@@ -98,8 +87,7 @@ public class TimerConsumer extends DefaultConsumer<Exchange> {
         exchange.setProperty("org.apache.camel.timer.period", endpoint.getPeriod());
         try {
             getProcessor().process(exchange);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOG.error("Caught: " + e, e);
         }
     }

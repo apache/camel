@@ -16,9 +16,7 @@
  */
 package org.apache.camel.bam.model;
 
-import org.apache.camel.bam.processor.ProcessContext;
-import org.apache.camel.bam.rules.ActivityRules;
-import org.apache.camel.util.ObjectHelper;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -29,11 +27,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import java.util.Date;
+
+import org.apache.camel.bam.processor.ProcessContext;
+import org.apache.camel.bam.rules.ActivityRules;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The default state for a specific activity within a process
- * 
+ *
  * @version $Revision$
  */
 @Entity

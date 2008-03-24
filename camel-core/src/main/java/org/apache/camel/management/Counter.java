@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,24 +22,22 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-@ManagedResource(
-        description="Counter", 
-        currencyTimeLimit=15)
+@ManagedResource(description = "Counter", currencyTimeLimit = 15)
 public class Counter {
 
-	protected AtomicLong numExchanges = new AtomicLong(0L);
-	
-	@ManagedOperation(description = "Reset counters")
-	public void reset() {
-		numExchanges.set(0L);
-	}
-	
-	@ManagedAttribute(description = "Total number of exchanges")
-	public long getNumExchanges() throws Exception {
-		return numExchanges.get();
-	}
+    protected AtomicLong numExchanges = new AtomicLong(0L);
 
-	public long increment() {
-		return numExchanges.incrementAndGet();
-	}
+    @ManagedOperation(description = "Reset counters")
+    public void reset() {
+        numExchanges.set(0L);
+    }
+
+    @ManagedAttribute(description = "Total number of exchanges")
+    public long getNumExchanges() throws Exception {
+        return numExchanges.get();
+    }
+
+    public long increment() {
+        return numExchanges.incrementAndGet();
+    }
 }

@@ -76,14 +76,11 @@ public class BeanInvocation implements Externalizable {
         try {
             Object response = getMethod().invoke(pojo, getArgs());
             exchange.getOut().setBody(response);
-        }
-        catch (InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
             exchange.setException(e.getCause());
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             throw e;
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             throw new RuntimeException(e);
         }
     }
@@ -92,8 +89,7 @@ public class BeanInvocation implements Externalizable {
         methodBean = ObjectHelper.cast(MethodBean.class, objectInput.readObject());
         try {
             method = methodBean.getMethod();
-        }
-        catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException e) {
             throw IOHelper.createIOException(e);
         }
         args = ObjectHelper.cast(Object[].class, objectInput.readObject());

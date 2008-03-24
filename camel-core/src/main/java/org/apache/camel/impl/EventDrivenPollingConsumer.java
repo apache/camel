@@ -16,6 +16,10 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -26,15 +30,11 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
-
 /**
  * A default implementation of the {@link PollingConsumer} which uses the normal
  * asynchronous consumer mechanism along with a {@link BlockingQueue} to allow
  * the caller to pull messages on demand.
- * 
+ *
  * @version $Revision$
  */
 public class EventDrivenPollingConsumer<E extends Exchange> extends PollingConsumerSupport<E> implements

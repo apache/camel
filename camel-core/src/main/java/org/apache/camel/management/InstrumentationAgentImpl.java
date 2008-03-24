@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -54,22 +53,21 @@ import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
 
 public class InstrumentationAgentImpl extends ServiceSupport implements InstrumentationAgent,
     CamelContextAware {
-
-    private static final transient Log LOG = LogFactory.getLog(InstrumentationAgentImpl.class);
-
     public static final String SYSTEM_PROPERTY_JMX = "org.apache.camel.jmx";
     public static final String DEFAULT_DOMAIN = "org.apache.camel";
     public static final String DEFAULT_HOST = "localhost";
     public static final int DEFAULT_PORT = 1099;
+    private static final transient Log LOG = LogFactory.getLog(InstrumentationAgentImpl.class);
+
 
     private MBeanServer server;
     private CamelContext context;
     private Set<ObjectName> mbeans = new HashSet<ObjectName>();
     private MetadataMBeanInfoAssembler assembler;
     private JMXConnectorServer cs;
-    private boolean jmxEnabled = false;
-    private String jmxDomainName = null;
-    private int jmxConnectorPort = 0;
+    private boolean jmxEnabled;
+    private String jmxDomainName;
+    private int jmxConnectorPort;
     private CamelNamingStrategy namingStrategy;
 
     public InstrumentationAgentImpl() {

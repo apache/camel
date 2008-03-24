@@ -24,18 +24,18 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * A collection of helper methods for working with {@link Service} objects
- * 
+ *
  * @version $Revision$
  */
-public class ServiceHelper {
+public final class ServiceHelper {
     private static final transient Log LOG = LogFactory.getLog(ServiceHelper.class);
-    
+
     /**
      * Utility classes should not have a public constructor.
      */
-    private ServiceHelper() {        
+    private ServiceHelper() {
     }
-    
+
     public static void startService(Object value) throws Exception {
         if (value instanceof Service) {
             Service service = (Service)value;

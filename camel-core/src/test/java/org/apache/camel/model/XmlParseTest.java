@@ -16,13 +16,13 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.model.language.ExpressionType;
-import org.apache.camel.model.loadbalancer.LoadBalancerType;
-import org.apache.camel.model.loadbalancer.RoundRobinLoadBalanceStrategy;
-import org.apache.camel.model.loadbalancer.StickyLoadBalanceStrategy;
+import java.util.List;
 
 import javax.xml.bind.JAXBException;
-import java.util.List;
+
+import org.apache.camel.model.language.ExpressionType;
+import org.apache.camel.model.loadbalancer.RoundRobinLoadBalanceStrategy;
+import org.apache.camel.model.loadbalancer.StickyLoadBalanceStrategy;
 
 /**
  * @version $Revision$
@@ -81,7 +81,8 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo(route, "seda:b", "seda:c", "seda:d");
     }
 
-    public void TODO_testParseRouteWithInterceptorXml() throws Exception {
+    //TODO get the test fixed
+    public void xtestParseRouteWithInterceptorXml() throws Exception {
         RouteType route = assertOneRoute("routeWithInterceptor.xml");
         assertFrom(route, "seda:a");
         assertChildTo("to", route, "seda:d");
@@ -110,18 +111,18 @@ public class XmlParseTest extends XmlTestSupport {
         assertExpression(splitter.getExpression(), "xpath", "/foo/bar");
         assertChildTo("to", splitter, "seda:b");
     }
-    
+
     public void testParseLoadBalance() throws Exception {
-        RouteType route = assertOneRoute("routeWithLoadBalance.xml");        
-        assertFrom(route, "seda:a");        
+        RouteType route = assertOneRoute("routeWithLoadBalance.xml");
+        assertFrom(route, "seda:a");
         LoadBalanceType loadBalance = assertLoadBalancer(route);
         assertEquals("Here should have 3 output here", 3, loadBalance.getOutputs().size());
         assertTrue("The loadBalancer shoud be RoundRobinLoadBalanceStrategy", loadBalance.getLoadBalancerType() instanceof RoundRobinLoadBalanceStrategy);
     }
-    
+
     public void testParseStickyLoadBalance() throws Exception {
-        RouteType route = assertOneRoute("routeWithStickyLoadBalance.xml");        
-        assertFrom(route, "seda:a");        
+        RouteType route = assertOneRoute("routeWithStickyLoadBalance.xml");
+        assertFrom(route, "seda:a");
         LoadBalanceType loadBalance = assertLoadBalancer(route);
         assertEquals("Here should have 3 output here", 3, loadBalance.getOutputs().size());
         assertTrue("The loadBalancer shoud be StickyLoadBalanceStrategy", loadBalance.getLoadBalancerType() instanceof StickyLoadBalanceStrategy);
@@ -137,7 +138,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals(500, resequencer.getBatchConfig().getBatchSize());
         assertEquals(2000L, resequencer.getBatchConfig().getBatchTimeout());
     }
-    
+
     public void testParseStreamResequencerXml() throws Exception {
         RouteType route = assertOneRoute("resequencerStream.xml");
         ResequencerType resequencer = assertResequencer(route);
@@ -146,7 +147,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals(100, resequencer.getStreamConfig().getCapacity());
         assertEquals(2000L, resequencer.getStreamConfig().getTimeout());
     }
-    
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -209,7 +210,7 @@ public class XmlParseTest extends XmlTestSupport {
         ProcessorType<?> processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(SplitterType.class, processor);
     }
-    
+
     protected LoadBalanceType assertLoadBalancer(ProcessorType<?> route) {
         ProcessorType<?> processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(LoadBalanceType.class, processor);

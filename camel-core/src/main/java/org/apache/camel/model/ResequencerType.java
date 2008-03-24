@@ -24,10 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -48,9 +45,9 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
     private List<ExpressionType> expressions = new ArrayList<ExpressionType>();
     @XmlElementRef
     private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
-    // Binding annotation at setter 
+    // Binding annotation at setter
     private BatchResequencerConfig batchConfig;
-    // Binding annotation at setter 
+    // Binding annotation at setter
     private StreamResequencerConfig streamConfig;
     @XmlTransient
     private List<Expression> expressionList;
@@ -67,27 +64,27 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
     /**
      * Configures the stream-based resequencing algorithm using the default
      * configuration.
-     * 
+     *
      * @return <code>this</code> instance.
      */
     public ResequencerType stream() {
         return stream(StreamResequencerConfig.getDefault());
     }
-    
+
     /**
      * Configures the batch-based resequencing algorithm using the default
      * configuration.
-     * 
+     *
      * @return <code>this</code> instance.
      */
     public ResequencerType batch() {
         return batch(BatchResequencerConfig.getDefault());
     }
-    
+
     /**
      * Configures the stream-based resequencing algorithm using the given
      * {@link StreamResequencerConfig}.
-     * 
+     *
      * @return <code>this</code> instance.
      */
     public ResequencerType stream(StreamResequencerConfig config) {
@@ -95,11 +92,11 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
         this.batchConfig = null;
         return this;
     }
-    
+
     /**
      * Configures the batch-based resequencing algorithm using the given
      * {@link BatchResequencerConfig}.
-     * 
+     *
      * @return <code>this</code> instance.
      */
     public ResequencerType batch(BatchResequencerConfig config) {
@@ -147,17 +144,17 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
     public StreamResequencerConfig getStreamConfig() {
         return streamConfig;
     }
-    
+
     //
     // TODO: find out how to have these two within an <xsd:choice>
     //
-    
-    @XmlElement(name="batch-config", required=false)
+
+    @XmlElement(name = "batch-config", required = false)
     public void setBatchConfig(BatchResequencerConfig batchConfig) {
         batch(batchConfig);
     }
 
-    @XmlElement(name="stream-config", required=false)
+    @XmlElement(name = "stream-config", required = false)
     public void setStreamConfig(StreamResequencerConfig streamConfig) {
         stream(streamConfig);
     }
@@ -165,7 +162,7 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
     //
     // END_TODO
     //
-    
+
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         return createStreamResequencer(routeContext, streamConfig);
@@ -190,28 +187,28 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
             }
         };
     }
-    
-    protected Resequencer createBatchResequencer(RouteContext routeContext, 
+
+    protected Resequencer createBatchResequencer(RouteContext routeContext,
             BatchResequencerConfig config) throws Exception {
         Processor processor = routeContext.createProcessor(this);
-        Resequencer resequencer = new Resequencer(routeContext.getEndpoint(), 
+        Resequencer resequencer = new Resequencer(routeContext.getEndpoint(),
                 processor, resolveExpressionList(routeContext));
         resequencer.setBatchSize(config.getBatchSize());
         resequencer.setBatchTimeout(config.getBatchTimeout());
         return resequencer;
     }
-    
-    protected StreamResequencer createStreamResequencer(RouteContext routeContext, 
+
+    protected StreamResequencer createStreamResequencer(RouteContext routeContext,
             StreamResequencerConfig config) throws Exception {
         config.getComparator().setExpressions(resolveExpressionList(routeContext));
         Processor processor = routeContext.createProcessor(this);
-        StreamResequencer resequencer = new StreamResequencer(processor, 
+        StreamResequencer resequencer = new StreamResequencer(processor,
                 config.getComparator(), config.getCapacity());
         resequencer.setTimeout(config.getTimeout());
         return resequencer;
-        
+
     }
-    
+
     private List<Expression> resolveExpressionList(RouteContext routeContext) {
         if (expressionList == null) {
             expressionList = new ArrayList<Expression>();

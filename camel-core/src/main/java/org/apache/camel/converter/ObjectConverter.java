@@ -16,31 +16,33 @@
  */
 package org.apache.camel.converter;
 
-import org.apache.camel.Converter;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import org.apache.camel.Converter;
+
+
 
 /**
  * Some core java.lang based <a
  * href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
- * 
+ *
  * @version $Revision$
  */
 @Converter
-public class ObjectConverter {
-    
+public final class ObjectConverter {
+
     /**
      * Utility classes should not have a public constructor.
      */
-    private ObjectConverter() {        
+    private ObjectConverter() {
     }
-    
+
     public static boolean isCollection(Object value) {
         // TODO we should handle primitive array types?
         return value instanceof Collection || (value != null && value.getClass().isArray());
@@ -134,15 +136,12 @@ public class ObjectConverter {
     public static Byte toByte(Object value) {
         if (value instanceof Byte) {
             return (Byte) value;
-        }
-        else if (value instanceof Number) {
+        } else if (value instanceof Number) {
             Number number = (Number) value;
             return number.byteValue();
-        }
-        else if (value instanceof String) {
+        } else if (value instanceof String) {
             return Byte.parseByte((String) value);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -169,15 +168,12 @@ public class ObjectConverter {
     public static Short toShort(Object value) {
         if (value instanceof Short) {
             return (Short) value;
-        }
-        else if (value instanceof Number) {
+        } else if (value instanceof Number) {
             Number number = (Number) value;
             return number.shortValue();
-        }
-        else if (value instanceof String) {
+        } else if (value instanceof String) {
             return Short.parseShort((String) value);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -189,15 +185,12 @@ public class ObjectConverter {
     public static Integer toInteger(Object value) {
         if (value instanceof Integer) {
             return (Integer) value;
-        }
-        else if (value instanceof Number) {
+        } else if (value instanceof Number) {
             Number number = (Number) value;
             return number.intValue();
-        }
-        else if (value instanceof String) {
+        } else if (value instanceof String) {
             return Integer.parseInt((String) value);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -209,15 +202,12 @@ public class ObjectConverter {
     public static Long toLong(Object value) {
         if (value instanceof Long) {
             return (Long) value;
-        }
-        else if (value instanceof Number) {
+        } else if (value instanceof Number) {
             Number number = (Number) value;
             return number.longValue();
-        }
-        else if (value instanceof String) {
+        } else if (value instanceof String) {
             return Long.parseLong((String) value);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -229,15 +219,12 @@ public class ObjectConverter {
     public static Float toFloat(Object value) {
         if (value instanceof Float) {
             return (Float) value;
-        }
-        else if (value instanceof Number) {
+        } else if (value instanceof Number) {
             Number number = (Number) value;
             return number.floatValue();
-        }
-        else if (value instanceof String) {
+        } else if (value instanceof String) {
             return Float.parseFloat((String) value);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -249,15 +236,12 @@ public class ObjectConverter {
     public static Double toDouble(Object value) {
         if (value instanceof Double) {
             return (Double) value;
-        }
-        else if (value instanceof Number) {
+        } else if (value instanceof Number) {
             Number number = (Number) value;
             return number.doubleValue();
-        }
-        else if (value instanceof String) {
+        } else if (value instanceof String) {
             return Double.parseDouble((String) value);
-        }
-        else {
+        } else {
             return null;
         }
     }

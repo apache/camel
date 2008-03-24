@@ -31,10 +31,10 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
     protected MockEndpoint result;
 
     public void testMulticastReceivesItsOwnExchangeParallelly() throws Exception {
-        sendingAMessageUsingMulticastReceivesItsOwnExchange(true);        
+        sendingAMessageUsingMulticastReceivesItsOwnExchange(true);
     }
-    
-    public void testMulticastReceivesItsOwnExchangeSequentially() throws Exception {        
+
+    public void testMulticastReceivesItsOwnExchangeSequentially() throws Exception {
         sendingAMessageUsingMulticastReceivesItsOwnExchange(false);
     }
 
@@ -80,12 +80,12 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
         }
 
 
-       public void process(Exchange exchange) {
-                // lets transform the IN message
-                Message in = exchange.getIn();
-                String body = in.getBody(String.class);
-                in.setBody(body + appendingString);
-       }
+        public void process(Exchange exchange) {
+            // lets transform the IN message
+            Message in = exchange.getIn();
+            String body = in.getBody(String.class);
+            in.setBody(body + appendingString);
+        }
 
 
     }
@@ -119,7 +119,8 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
         /**
          * An expression used to determine if the aggreagation is complete
          */
-        public boolean isCompleted(@Header(name="aggregated") Integer aggregated) {
+        public boolean isCompleted(@Header(name = "aggregated")
+                                   Integer aggregated) {
             if (aggregated == null) {
                 return false;
             }

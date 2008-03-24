@@ -41,21 +41,21 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
     public StickyLoadBalancer() {
         this.loadBalancer = new RoundRobinLoadBalancer();
     }
-    
-    public void setCorrelationExpression(Expression<Exchange> correlationExpression) {
-        this.correlationExpression = correlationExpression;
-    }
-    
-    public void setLoadBalancer(QueueLoadBalancer loadBalancer) {
-        this.loadBalancer = loadBalancer;
-    }
-    
+
     public StickyLoadBalancer(Expression<Exchange> correlationExpression) {
         this(correlationExpression, new RoundRobinLoadBalancer());
     }
 
     public StickyLoadBalancer(Expression<Exchange> correlationExpression, QueueLoadBalancer loadBalancer) {
         this.correlationExpression = correlationExpression;
+        this.loadBalancer = loadBalancer;
+    }
+
+    public void setCorrelationExpression(Expression<Exchange> correlationExpression) {
+        this.correlationExpression = correlationExpression;
+    }
+
+    public void setLoadBalancer(QueueLoadBalancer loadBalancer) {
         this.loadBalancer = loadBalancer;
     }
 

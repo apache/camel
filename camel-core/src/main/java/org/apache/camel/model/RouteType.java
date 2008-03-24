@@ -16,20 +16,31 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.Endpoint;
+import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.Route;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.bind.annotation.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 /**
  * Represents an XML &lt;route/&gt; element
- * 
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "route")
@@ -169,7 +180,7 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
         RouteContext routeContext = new RouteContext(this, fromType, routes);
         routeContext.getEndpoint(); // force endpoint resolution
         if (camelContext != null) {
-        	camelContext.getLifecycleStrategy().onRouteContextCreate(routeContext);
+            camelContext.getLifecycleStrategy().onRouteContextCreate(routeContext);
         }
 
         List<ProcessorType<?>> list = new ArrayList<ProcessorType<?>>(outputs);
@@ -190,7 +201,7 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
 
         List<InterceptorType> interceptors = getInterceptors();
         for (InterceptorType interceptor : interceptors) {
-          output.addInterceptor(interceptor);
+            output.addInterceptor(interceptor);
         }
 /*
         List<InterceptorType> list = output.getInterceptors();

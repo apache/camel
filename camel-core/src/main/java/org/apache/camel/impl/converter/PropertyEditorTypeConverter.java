@@ -16,16 +16,16 @@
  */
 package org.apache.camel.impl.converter;
 
-import org.apache.camel.TypeConverter;
-import org.apache.camel.util.ObjectHelper;
-
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
+
+import org.apache.camel.TypeConverter;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Uses the java.beans.PropertyEditor conversion system to convert Objects to
  * and from String values.
- * 
+ *
  * @version $Revision$
  */
 public class PropertyEditorTypeConverter implements TypeConverter {

@@ -41,7 +41,7 @@ import org.apache.camel.processor.ThreadProcessor;
 @XmlRootElement(name = "thread")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThreadType extends ProcessorType<ProcessorType> {
-    
+
     @XmlAttribute
     private int coreSize = 1;
     @XmlAttribute
@@ -68,7 +68,7 @@ public class ThreadType extends ProcessorType<ProcessorType> {
 
     public ThreadType() {
     }
-    
+
     public ThreadType(int coreSize) {
         this.coreSize = coreSize;
         this.maxSize = coreSize;
@@ -77,12 +77,12 @@ public class ThreadType extends ProcessorType<ProcessorType> {
     public ThreadType(ThreadPoolExecutor executor) {
         this.executor = executor;
     }
- 
+
     @Override
     public List<ProcessorType<?>> getOutputs() {
         return outputs;
     }
-    
+
     @Override
     public String toString() {
         return "Thread[" + getLabel() + "]";
@@ -90,12 +90,12 @@ public class ThreadType extends ProcessorType<ProcessorType> {
 
     @Override
     public String getLabel() {
-        return "coreSize="+coreSize;
+        return "coreSize=" + coreSize;
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        
+
         ThreadProcessor thread = new ThreadProcessor();
         thread.setExecutor(executor);
         thread.setCoreSize(coreSize);
@@ -107,9 +107,9 @@ public class ThreadType extends ProcessorType<ProcessorType> {
         thread.setStackSize(stackSize);
         thread.setTaskQueue(taskQueue);
         thread.setThreadGroup(threadGroup);
-        
-        // TODO: see if we can avoid creating so many nested pipelines 
-        
+
+        // TODO: see if we can avoid creating so many nested pipelines
+
         ArrayList<Processor> pipe = new ArrayList<Processor>(2);
         pipe.add(thread);
         pipe.add(createOutputsProcessor(routeContext, outputs));
@@ -125,7 +125,7 @@ public class ThreadType extends ProcessorType<ProcessorType> {
         setCoreSize(coreSize);
         return this;
     }
-    
+
     public ThreadType daemon(boolean daemon) {
         setDaemon(daemon);
         return this;
@@ -145,7 +145,7 @@ public class ThreadType extends ProcessorType<ProcessorType> {
         setName(name);
         return this;
     }
-    
+
     public ThreadType priority(int priority) {
         setPriority(priority);
         return this;
@@ -165,18 +165,18 @@ public class ThreadType extends ProcessorType<ProcessorType> {
         setThreadGroup(threadGroup);
         return this;
     }
-    
+
     public ThreadType executor(ThreadPoolExecutor executor) {
         setExecutor(executor);
         return this;
     }
-    
+
     ///////////////////////////////////////////////////////////////////
     //
     // Property Accessors
     //
     ///////////////////////////////////////////////////////////////////
-    
+
     public void setCoreSize(int coreSize) {
         this.coreSize = coreSize;
     }

@@ -19,19 +19,28 @@ package org.apache.camel.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.*;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.InvalidTypeException;
+import org.apache.camel.Message;
+import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.NoSuchHeaderException;
+import org.apache.camel.NoSuchPropertyException;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
- * 
+ *
  * @version $Revision$
  */
-public class ExchangeHelper {
+public final class ExchangeHelper {
 
     /**
      * Utility classes should not have a public constructor.
      */
-    private ExchangeHelper() {        
+    private ExchangeHelper() {
     }
 
     /**
@@ -56,12 +65,12 @@ public class ExchangeHelper {
 
     /**
      * Attempts to resolve the endpoint for the given value
-     * 
+     *
      * @param exchange the message exchange being processed
      * @param value the value which can be an {@link Endpoint} or an object
      *                which provides a String representation of an endpoint via
      *                {@link #toString()}
-     * 
+     *
      * @return the endpoint
      * @throws NoSuchEndpointException if the endpoint cannot be resolved
      */
@@ -88,7 +97,7 @@ public class ExchangeHelper {
     }
 
     public static <T> T getMandatoryHeader(Exchange exchange, String propertyName, Class<T> type)
-            throws NoSuchHeaderException {
+        throws NoSuchHeaderException {
         T answer = exchange.getIn().getHeader(propertyName, type);
         if (answer == null) {
             throw new NoSuchHeaderException(exchange, propertyName, type);
@@ -184,8 +193,7 @@ public class ExchangeHelper {
             Message out = source.getOut(false);
             if (out != null) {
                 result.getOut(true).copyFrom(out);
-            }
-            else {
+            } else {
                 // no results so lets copy the last input
                 // as the final processor on a pipeline might not
                 // have created any OUT; such as a mock:endpoint
@@ -253,8 +261,7 @@ public class ExchangeHelper {
         map.put("in", in);
         map.put("request", in);
         map.put("headers", in.getHeaders());
-        map.put("body", in.getBody())
-                ;
+        map.put("body", in.getBody());
         if (isOutCapable(exchange)) {
             Message out = exchange.getOut(true);
             map.put("out", out);
@@ -267,7 +274,7 @@ public class ExchangeHelper {
      * Returns the MIME content type on the input message or null if one is not defined
      */
     public static String getContentType(Exchange exchange) {
-       return exchange.getIn().getHeader("Content-Type", String.class);
+        return exchange.getIn().getHeader("Content-Type", String.class);
     }
 
     /**

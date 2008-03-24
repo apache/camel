@@ -26,20 +26,19 @@ import org.apache.camel.spi.Injector;
 public class ReportingTypeConverterRegistry implements TypeConverterRegistry {
     private List<String> errors = new ArrayList<String>();
 
-	public String[] getErrors() {
-		return errors.toArray(new String[errors.size()]);
-	}
-	
-    public void addTypeConverter(Class toType, Class fromType,
-			TypeConverter typeConverter) {
+    public String[] getErrors() {
+        return errors.toArray(new String[errors.size()]);
+    }
 
-    	if (errors.size() == 0) {
-    		errors.add("Method should not be invoked.");
-    	}
-	}
+    public void addTypeConverter(Class toType, Class fromType, TypeConverter typeConverter) {
 
-	public Injector getInjector() {
-		return null;
-	}
+        if (errors.size() == 0) {
+            errors.add("Method should not be invoked.");
+        }
+    }
+
+    public Injector getInjector() {
+        return null;
+    }
 
 }

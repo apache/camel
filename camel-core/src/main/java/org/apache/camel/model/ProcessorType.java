@@ -50,8 +50,8 @@ import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationCollection;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MessageIdRepository;
 import org.apache.camel.spi.DataFormat;
@@ -70,7 +70,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     private DelegateProcessor lastInterceptor;
     private NodeFactory nodeFactory;
     private LinkedList<Block> blocks = new LinkedList<Block>();
-    private ProcessorType<? extends ProcessorType> parent = null;
+    private ProcessorType<? extends ProcessorType> parent;
 
     // else to use an
     // optional
@@ -233,10 +233,10 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      */
     public ProcessorType<? extends ProcessorType> end() {
         if (blocks.isEmpty()) {
-        	if (parent == null) {
+            if (parent == null) {
                 throw new IllegalArgumentException("Root node with no active block");
-        	}
-        	return parent;
+            }
+            return parent;
         }
         popBlock();
         return this;
@@ -745,7 +745,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     protected Block popBlock() {
-    	return blocks.isEmpty() ? null : blocks.removeLast();
+        return blocks.isEmpty() ? null : blocks.removeLast();
     }
 
     public Type proceed() {
@@ -1194,11 +1194,11 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     // -------------------------------------------------------------------------
     @XmlTransient
     public ProcessorType<? extends ProcessorType> getParent() {
-    	return parent;
+        return parent;
     }
 
     public void setParent(ProcessorType<? extends ProcessorType> parent) {
-    	this.parent = parent;
+        this.parent = parent;
     }
 
     @XmlTransient
@@ -1319,8 +1319,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     protected ErrorHandlerBuilder createErrorHandlerBuilder() {
         if (isInheritErrorHandler()) {
             return new DeadLetterChannelBuilder();
-        }
-        else {
+        } else {
             return new NoErrorHandlerBuilder();
         }
     }
@@ -1334,8 +1333,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
         configureChild(processorType);
         if (blocks.isEmpty()) {
             getOutputs().add(processorType);
-        }
-        else {
+        } else {
             Block block = blocks.getLast();
             block.addOutput(processorType);
         }
@@ -1352,7 +1350,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorType<?>> outputs)
-            throws Exception {
+        throws Exception {
         List<Processor> list = new ArrayList<Processor>();
         for (ProcessorType output : outputs) {
             Processor processor = output.createProcessor(routeContext);
@@ -1362,8 +1360,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
         if (!list.isEmpty()) {
             if (list.size() == 1) {
                 processor = list.get(0);
-            }
-            else {
+            } else {
                 processor = createCompositeProcessor(list);
             }
         }

@@ -16,21 +16,21 @@
  */
 package org.apache.camel.component.mock;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
-import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ValueBuilder;
+import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
+import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
 
 /**
  * A builder of assertions on message exchanges
- * 
+ *
  * @version $Revision$
  */
 public abstract class AssertionClause implements Runnable {
@@ -115,7 +115,7 @@ public abstract class AssertionClause implements Runnable {
         predicates.add(predicate);
     }
 
-    
+
 
     public class PredicateValueBuilder extends ValueBuilder<Exchange> {
 

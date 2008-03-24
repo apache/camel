@@ -16,9 +16,10 @@
  */
 package org.apache.camel.util;
 
-import java.util.List;
-import java.util.Collection;
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -35,7 +36,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  *
  * @version $Revision$
  */
-public class CamelContextHelper {
+public final class CamelContextHelper {
     /**
      * Utility classes should not have a public constructor.
      */
@@ -51,12 +52,11 @@ public class CamelContextHelper {
      * @return
      */
     public static Endpoint getMandatoryEndpoint(CamelContext camelContext, String uri)
-            throws NoSuchEndpointException {
+        throws NoSuchEndpointException {
         Endpoint endpoint = camelContext.getEndpoint(uri);
         if (endpoint == null) {
             throw new NoSuchEndpointException(uri);
-        }
-        else {
+        } else {
             return endpoint;
         }
     }
@@ -66,7 +66,8 @@ public class CamelContextHelper {
      *
      * @param camelContext
      * @param type the type of the endpoints requested
-     * @return a list which may be empty of all the endpoint instances of the given type
+     * @return a list which may be empty of all the endpoint instances of the
+     *         given type
      */
     public static <T> List<T> getSingletonEndpoints(CamelContext camelContext, Class<T> type) {
         List<T> answer = new ArrayList<T>();

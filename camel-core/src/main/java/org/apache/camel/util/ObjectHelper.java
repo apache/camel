@@ -16,11 +16,8 @@
  */
 package org.apache.camel.util;
 
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.converter.ObjectConverter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import java.io.Closeable;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,23 +26,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.io.Closeable;
-import java.io.IOException;
+
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.converter.ObjectConverter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A number of useful helper methods for working with Objects
- * 
+ *
  * @version $Revision$
  */
-public class ObjectHelper {
+public final class ObjectHelper {
     private static final transient Log LOG = LogFactory.getLog(ObjectHelper.class);
 
     /**
      * Utility classes should not have a public constructor.
      */
-    private ObjectHelper() {        
+    private ObjectHelper() {
     }
-    
+
     /**
      * @deprecated use the equal method instead
      *
@@ -154,7 +154,7 @@ public class ObjectHelper {
     /**
      * Removes any starting characters on the given text which match the given
      * character
-     * 
+     *
      * @param text the string
      * @param ch the initial characters to remove
      * @return either the original string or the new substring
@@ -204,7 +204,7 @@ public class ObjectHelper {
      * Returns the predicate matching boolean on a {@link List} result set where
      * if the first element is a boolean its value is used otherwise this method
      * returns true if the collection is not empty
-     * 
+     *
      * @returns true if the first element is a boolean and its value is true or
      *          if the list is non empty
      */
@@ -233,7 +233,7 @@ public class ObjectHelper {
     /**
      * A helper method to access a system property, catching any security
      * exceptions
-     * 
+     *
      * @param name the name of the system property required
      * @param defaultValue the default value to use if the property is not
      *                available or a security exception prevents access
@@ -270,7 +270,7 @@ public class ObjectHelper {
     /**
      * Attempts to load the given class name using the thread context class
      * loader or the class loader used to load this class
-     * 
+     *
      * @param name the name of the class to load
      * @return the class or null if it could not be loaded
      */
@@ -281,7 +281,7 @@ public class ObjectHelper {
     /**
      * Attempts to load the given class name using the thread context class
      * loader or the given class loader
-     * 
+     *
      * @param name the name of the class to load
      * @param loader the class loader to use after the thread context class
      *                loader
@@ -306,7 +306,7 @@ public class ObjectHelper {
     /**
      * A helper method to invoke a method via reflection and wrap any exceptions
      * as {@link RuntimeCamelException} instances
-     * 
+     *
      * @param method the method to invoke
      * @param instance the object instance (or null for static methods)
      * @param parameters the parameters to the method
@@ -324,7 +324,7 @@ public class ObjectHelper {
 
     /**
      * Returns a list of methods which are annotated with the given annotation
-     * 
+     *
      * @param type the type to reflect on
      * @param annotationType the annotation type
      * @return a list of the methods found
@@ -346,7 +346,7 @@ public class ObjectHelper {
 
     /**
      * Turns the given object arrays into a meaningful string
-     * 
+     *
      * @param objects an array of objects or null
      * @return a meaningful string
      */
@@ -449,9 +449,8 @@ public class ObjectHelper {
         if (closeable != null) {
             try {
                 closeable.close();
-            }
-            catch (IOException e) {
-                log.warn("Could not close " + name + ". Reason: "+ e, e);
+            } catch (IOException e) {
+                log.warn("Could not close " + name + ". Reason: " + e, e);
             }
         }
     }
@@ -461,19 +460,18 @@ public class ObjectHelper {
      */
     public static <T> T cast(Class<T> toType, Object value) {
         if (toType == boolean.class) {
-            return (T) cast(Boolean.class, value);
-        }
-        else if (toType.isPrimitive()) {
+            return (T)cast(Boolean.class, value);
+        } else if (toType.isPrimitive()) {
             Class newType = convertPrimitiveTypeToWrapperType(toType);
             if (newType != toType) {
-                return (T) cast(newType, value);
+                return (T)cast(newType, value);
             }
         }
         try {
             return toType.cast(value);
-        }
-        catch (ClassCastException e) {
-            throw new IllegalArgumentException("Failed to convert: " + value + " to type: " + toType.getName() + " due to: " + e, e);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Failed to convert: " + value + " to type: "
+                                               + toType.getName() + " due to: " + e, e);
         }
     }
 
@@ -517,7 +515,7 @@ public class ObjectHelper {
         }
         if (Character.isJavaIdentifierStart(name.charAt(0))) {
             for (int i = 1; i < size; i++) {
-                if (! Character.isJavaIdentifierPart(name.charAt(i))) {
+                if (!Character.isJavaIdentifierPart(name.charAt(i))) {
                     return false;
                 }
             }

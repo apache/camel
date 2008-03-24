@@ -16,6 +16,10 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.naming.Context;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -25,9 +29,6 @@ import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.util.jndi.JndiContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.naming.Context;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @version $Revision$
@@ -81,8 +82,8 @@ public class BeanRouteTest extends ContextTestSupport {
     }
 
     public static class MyBean {
-        public String body;
         private static AtomicInteger counter = new AtomicInteger(0);
+        public String body;
         private int id;
 
         public MyBean() {

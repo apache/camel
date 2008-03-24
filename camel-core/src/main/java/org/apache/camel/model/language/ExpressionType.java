@@ -60,14 +60,6 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
     @XmlTransient
     private ExpressionType expressionType;
 
-    public static String getLabel(List<ExpressionType> expressions) {
-        CollectionStringBuffer buffer = new CollectionStringBuffer();
-        for (ExpressionType expression : expressions) {
-            buffer.append(expression.getLabel());
-        }
-        return buffer.toString();
-    }
-
     public ExpressionType() {
     }
 
@@ -81,6 +73,14 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
 
     public ExpressionType(Expression expression) {
         this.expressionValue = expression;
+    }
+
+    public static String getLabel(List<ExpressionType> expressions) {
+        CollectionStringBuffer buffer = new CollectionStringBuffer();
+        for (ExpressionType expression : expressions) {
+            buffer.append(expression.getLabel());
+        }
+        return buffer.toString();
     }
 
     @Override
@@ -120,8 +120,7 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
         if (predicate == null) {
             if (expressionType != null) {
                 predicate = expressionType.createPredicate(routeContext);
-            }
-            else {
+            } else {
                 CamelContext camelContext = routeContext.getCamelContext();
                 Language language = camelContext.resolveLanguage(getLanguage());
                 predicate = language.createPredicate(getExpression());
@@ -135,8 +134,7 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
         if (expressionValue == null) {
             if (expressionType != null) {
                 expressionValue = expressionType.createExpression(routeContext);
-            }
-            else {
+            } else {
                 CamelContext camelContext = routeContext.getCamelContext();
                 Language language = camelContext.resolveLanguage(getLanguage());
                 expressionValue = language.createExpression(getExpression());
@@ -200,8 +198,7 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
             if (expressionValue != null) {
                 return expressionValue.toString();
             }
-        }
-        else {
+        } else {
             return language;
         }
         return "";
@@ -229,9 +226,9 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
     protected void setProperty(Object bean, String name, Object value) {
         try {
             IntrospectionSupport.setProperty(bean, name, value);
-        }
-        catch (Exception e) {
-            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean + ". Reason: " + e, e);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean
+                                               + ". Reason: " + e, e);
         }
     }
 }

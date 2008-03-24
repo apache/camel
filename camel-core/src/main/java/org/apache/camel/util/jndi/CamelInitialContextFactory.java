@@ -34,11 +34,9 @@ public class CamelInitialContextFactory implements InitialContextFactory {
     public Context getInitialContext(Hashtable environment) throws NamingException {
         try {
             return new JndiContext(environment);
-        }
-        catch (NamingException e) {
+        } catch (NamingException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             NamingException exception = new NamingException(e.getMessage());
             exception.initCause(e);
             throw exception;

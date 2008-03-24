@@ -16,28 +16,26 @@
  */
 package org.apache.camel.builder;
 
+import java.util.List;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.DeadLetterChannel;
-import org.apache.camel.processor.DelegateAsyncProcessor;
-import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
-
-import java.util.List;
 
 /**
  * @version $Revision$
  */
 public class ErrorHandlerTest extends TestSupport {
 
-    // TODO
-    public void TODO_testOverloadingTheDefaultErrorHandler() throws Exception {
+    // TODO get the test fixed
+    public void xtestOverloadingTheDefaultErrorHandler() throws Exception {
         // START SNIPPET: e1
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
@@ -68,7 +66,8 @@ public class ErrorHandlerTest extends TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("seda:a").errorHandler(loggingErrorHandler("FOO.BAR")).to("seda:b");
-                // this route will use the default error handler, DeadLetterChannel
+                // this route will use the default error handler,
+                // DeadLetterChannel
                 from("seda:b").to("seda:c");
             }
         };
@@ -84,19 +83,14 @@ public class ErrorHandlerTest extends TestSupport {
 
             SendProcessor sendProcessor = null;
             if (endpointUri.equals("seda:a")) {
-                LoggingErrorHandler
-                        loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class,
-                        processor);
+                LoggingErrorHandler loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class,
+                                                                          processor);
                 Processor outputProcessor = loggingProcessor.getOutput();
                 sendProcessor = assertIsInstanceOf(SendProcessor.class, outputProcessor);
-            }
-            else {
-                assertEquals("From endpoint", "seda:b",
-                        endpointUri);
-                DeadLetterChannel deadLetterChannel =
-                        assertIsInstanceOf(DeadLetterChannel.class, processor);
-                Processor
-                        outputProcessor = deadLetterChannel.getOutput();
+            } else {
+                assertEquals("From endpoint", "seda:b", endpointUri);
+                DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, processor);
+                Processor outputProcessor = deadLetterChannel.getOutput();
                 sendProcessor = assertIsInstanceOf(SendProcessor.class, outputProcessor);
             }
             log.debug("For " + endpointUri + " using: " + sendProcessor);
@@ -126,16 +120,15 @@ public class ErrorHandlerTest extends TestSupport {
         }
     }
 
-    // TODO
-    public void TODO_testConfigureDeadLetterChannelWithCustomRedeliveryPolicy() throws Exception {
+    // TODO Fix the test
+    public void xtestConfigureDeadLetterChannelWithCustomRedeliveryPolicy() throws Exception {
         // START SNIPPET: e4
-        RouteBuilder builder = new
-                RouteBuilder() {
-                    public void configure() {
-                        errorHandler(deadLetterChannel("seda:errors").maximumRedeliveries(2).useExponentialBackOff());
-                        from("seda:a").to("seda:b");
-                    }
-                };
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() {
+                errorHandler(deadLetterChannel("seda:errors").maximumRedeliveries(2).useExponentialBackOff());
+                from("seda:a").to("seda:b");
+            }
+        };
         // END SNIPPET: e4
 
         List<Route> list = getRouteList(builder);

@@ -60,9 +60,14 @@ public class DataFormatTest extends ContextTestSupport {
         public boolean equals(Object o) {
             if (o instanceof MyBean) {
                 MyBean that = (MyBean) o;
-                return equal(this.name, that.name) && equal(this.counter,  that.counter);                
+                return equal(this.name, that.name) && equal(this.counter,  that.counter);
             }
             return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return name.hashCode() + counter;
         }
     }
 

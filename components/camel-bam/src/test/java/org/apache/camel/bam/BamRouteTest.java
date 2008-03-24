@@ -16,14 +16,17 @@
  */
 package org.apache.camel.bam;
 
+
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
-import static org.apache.camel.util.Time.seconds;
+
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import static org.apache.camel.builder.xml.XPathBuilder.xpath;
+import static org.apache.camel.util.Time.seconds;
 
 /**
  * @version $Revision$

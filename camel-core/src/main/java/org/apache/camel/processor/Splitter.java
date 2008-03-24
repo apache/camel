@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.util.Iterator;
 
@@ -30,13 +29,14 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Implements a dynamic <a
  * href="http://activemq.apache.org/camel/splitter.html">Splitter</a> pattern
  * where an expression is evaluated to iterate through each of the parts of a
  * message and then each part is then send to some endpoint.
- * 
+ *
  * @version $Revision$
  */
 public class Splitter extends ServiceSupport implements Processor {
@@ -46,7 +46,7 @@ public class Splitter extends ServiceSupport implements Processor {
     private final Processor processor;
     private final Expression expression;
     private final AggregationStrategy aggregationStrategy;
-    
+
     public Splitter(Expression expression, Processor destination, AggregationStrategy aggregationStrategy) {
         this.processor = destination;
         this.expression = expression;
@@ -55,7 +55,7 @@ public class Splitter extends ServiceSupport implements Processor {
         notNull(expression, "expression");
         notNull(aggregationStrategy, "aggregationStrategy");
     }
-    
+
     @Override
     public String toString() {
         return "Splitter[on: " + expression + " to: " + processor + " aggregate: " + aggregationStrategy + "]";

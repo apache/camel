@@ -18,18 +18,16 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.PollingConsumer;
 
 /**
  * An endpoint which allows exchanges to be sent into it which just invokes a
  * given {@link Processor}. This component does not support the use of
  * consumers.
- * 
+ *
  * @version $Revision$
  */
 public class ProcessorEndpoint extends DefaultPollingEndpoint<Exchange> {

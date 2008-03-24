@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,15 +16,15 @@
  */
 package org.apache.camel.processor;
 
+import java.util.List;
+
 import org.apache.camel.CamelException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
-import java.util.List;
 
 /**
  * @version $Revision$
@@ -38,9 +37,9 @@ public class FaultRouteTest extends ContextTestSupport {
 
     public void testWithOut() throws Exception {
         a.whenExchangeReceived(1, new Processor() {
-			public void process(Exchange exchange) throws Exception {
-				exchange.getOut().setBody("out");
-			}
+            public void process(Exchange exchange) throws Exception {
+                exchange.getOut().setBody("out");
+            }
         });
         a.expectedMessageCount(1);
         b.expectedBodiesReceived("out");
@@ -55,9 +54,9 @@ public class FaultRouteTest extends ContextTestSupport {
         shouldWork = false;
 
         a.whenExchangeReceived(1, new Processor() {
-			public void process(Exchange exchange) throws Exception {
-				exchange.getFault().setBody("fault");
-			}
+            public void process(Exchange exchange) throws Exception {
+                exchange.getFault().setBody("fault");
+            }
         });
         a.expectedMessageCount(1);
         b.expectedMessageCount(0);
@@ -74,7 +73,6 @@ public class FaultRouteTest extends ContextTestSupport {
         assertNotNull("Should have a fault on A", fault);
         assertEquals("Fault body", "fault", fault.getBody());
     }
-
 
     public void testWithThrowFaultMessage() throws Exception {
 
@@ -102,11 +100,14 @@ public class FaultRouteTest extends ContextTestSupport {
         Message fault = exchange.getFault();
         assertNotNull("Should have a fault on A", fault);
         if (startPoint.equals("direct:exception")) {
-            assertTrue("It should be the IllegalStateException", fault.getBody() instanceof IllegalStateException);
-            assertEquals("Fault message", "It makes no sense of business logic", ((IllegalStateException)(fault.getBody())).getMessage());
+            assertTrue("It should be the IllegalStateException",
+                       fault.getBody() instanceof IllegalStateException);
+            assertEquals("Fault message", "It makes no sense of business logic",
+                         ((IllegalStateException)(fault.getBody())).getMessage());
         } else { // test for the throwFault with String
             assertTrue("It should be the CamelException", fault.getBody() instanceof CamelException);
-            assertEquals("Fault message", "ExceptionMessage", ((CamelException)(fault.getBody())).getMessage());
+            assertEquals("Fault message", "ExceptionMessage", ((CamelException)(fault.getBody()))
+                .getMessage());
         }
 
     }
@@ -124,19 +125,13 @@ public class FaultRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:a")
-                        .to("mock:b");
+                from("direct:start").to("mock:a").to("mock:b");
 
-                from("direct:string")
-                        .to("mock:a")
-                        .throwFault("ExceptionMessage")
-                        .to("mock:b");
+                from("direct:string").to("mock:a").throwFault("ExceptionMessage").to("mock:b");
 
-                from("direct:exception")
-                        .to("mock:a")
-                        .throwFault(new IllegalStateException("It makes no sense of business logic"))
-                        .to("mock:b");
+                from("direct:exception").to("mock:a")
+                    .throwFault(new IllegalStateException("It makes no sense of business logic"))
+                    .to("mock:b");
             }
         };
     }

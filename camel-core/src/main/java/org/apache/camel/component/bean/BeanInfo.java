@@ -16,14 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.*;
-import org.apache.camel.spi.Registry;
-import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.language.LanguageAnnotation;
-import static org.apache.camel.util.ExchangeHelper.convertToType;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -35,10 +27,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.camel.Body;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Header;
+import org.apache.camel.Headers;
+import org.apache.camel.Message;
+import org.apache.camel.OutHeaders;
+import org.apache.camel.Properties;
+import org.apache.camel.Property;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.language.LanguageAnnotation;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import static org.apache.camel.util.ExchangeHelper.convertToType;
+
+
+
 /**
  * Represents the metadata about a bean type created via a combination of
  * introspection and annotations together with some useful sensible defaults
- * 
+ *
  * @version $Revision$
  */
 public class BeanInfo {
@@ -145,8 +159,7 @@ public class BeanInfo {
                     // lets assume its the body
                     if (Exchange.class.isAssignableFrom(parameterType)) {
                         expression = ExpressionBuilder.exchangeExpression();
-                    }
-                    else {
+                    } else {
                         expression = ExpressionBuilder.bodyExpression(parameterType);
                     }
                     parameterInfo.setExpression(expression);
@@ -167,9 +180,9 @@ public class BeanInfo {
         String opName = method.getName();
 
         /*
-         * 
+         *
          * TODO allow an annotation to expose the operation name to use
-         * 
+         *
          * if (method.getAnnotation(Operation.class) != null) { String name =
          * method.getAnnotation(Operation.class).name(); if (name != null &&
          * name.length() > 0) { opName = name; } }
@@ -188,7 +201,7 @@ public class BeanInfo {
     /**
      * Lets try choose one of the available methods to invoke if we can match
      * the message body to the body parameter
-     * 
+     *
      * @param pojo the bean to invoke a method on
      * @param exchange the message exchange
      * @return the method to invoke or null if no definitive method could be
@@ -199,8 +212,7 @@ public class BeanInfo {
             return operationsWithBody.get(0);
         } else if (!operationsWithBody.isEmpty()) {
             return chooseMethodWithMatchingBody(exchange, operationsWithBody);
-        }
-        else if (operationsWithCustomAnnotation.size() == 1) {
+        } else if (operationsWithCustomAnnotation.size() == 1) {
             return operationsWithCustomAnnotation.get(0);
         }
         return null;
@@ -261,8 +273,7 @@ public class BeanInfo {
                 if (chosen != null) {
                     chosen = null;
                     break;
-                }
-                else {
+                } else {
                     chosen = possible;
                 }
             }
@@ -335,8 +346,7 @@ public class BeanInfo {
                 if (object instanceof AnnotationExpressionFactory) {
                     AnnotationExpressionFactory expressionFactory = (AnnotationExpressionFactory) object;
                     return expressionFactory.createExpression(camelContext, annotation, languageAnnotation, parameterType);
-                }
-                else {
+                } else {
                     LOG.error("Ignoring bad annotation: " + languageAnnotation + "on method: " + method
                             + " which declares a factory: " + type.getName()
                             + " which does not implement " + AnnotationExpressionFactory.class.getName());

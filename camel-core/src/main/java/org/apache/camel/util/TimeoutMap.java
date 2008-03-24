@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,14 +19,14 @@ package org.apache.camel.util;
 /**
  * Represents a thread safe map of values which timeout after a period of
  * inactivity.
- * 
+ *
  * @version $Revision$
  */
 public interface TimeoutMap extends Runnable {
 
     /**
      * Looks up the value in the map by the given key.
-     * 
+     *
      * @param key
      *            the key of the value to search for
      * @return the value for the given key or null if it is not present (or has
@@ -51,5 +50,5 @@ public interface TimeoutMap extends Runnable {
     /**
      * Purges any old entries from the map
      */
-    public void purge();
+    void purge();
 }

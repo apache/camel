@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-import java.util.List;
 import java.util.Collection;
 
 import org.apache.camel.CamelExchangeException;

@@ -38,10 +38,10 @@ import org.apache.commons.logging.LogFactory;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XQueryExpression extends NamespaceAwareExpression {
     private static final transient Log LOG = LogFactory.getLog(XQueryExpression.class);
-    
+
     @XmlAttribute(required = false)
     private String type;
-    @XmlTransient 
+    @XmlTransient
     private Class resultType;
 
     public XQueryExpression() {
@@ -88,14 +88,14 @@ public class XQueryExpression extends NamespaceAwareExpression {
             setProperty(predicate, "resultType", resultType);
         }
     }
-    
+
     private void updateResultType() {
-    	if (resultType == null && type != null) {
-    		try {
-				resultType = Class.forName(type);
-			} catch (ClassNotFoundException e) {
-				LOG.error("ClassNotFoundException creating class: " + type);
-			}
-    	}
+        if (resultType == null && type != null) {
+            try {
+                resultType = Class.forName(type);
+            } catch (ClassNotFoundException e) {
+                LOG.error("ClassNotFoundException creating class: " + type);
+            }
+        }
     }
 }

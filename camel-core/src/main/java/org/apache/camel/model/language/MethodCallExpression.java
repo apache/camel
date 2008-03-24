@@ -19,8 +19,8 @@ package org.apache.camel.model.language;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.Expression;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.language.bean.BeanExpression;

@@ -33,7 +33,7 @@ import org.apache.camel.processor.DelegateProcessor;
  * @version $Revision$
  */
 public class BuilderWithScopesTest extends TestSupport {
-	
+
     final ArrayList<String> order = new ArrayList<String>();
     final DelegateProcessor interceptor1 = new DelegateProcessor() {
         @Override
@@ -76,22 +76,19 @@ public class BuilderWithScopesTest extends TestSupport {
             order.add("VALIDATE");
             Object value = exchange.getIn().getHeader("foo");
             if (value == null) {
-            	throw new IllegalArgumentException("The foo header is not present.");
+                throw new IllegalArgumentException("The foo header is not present.");
             } else if (!value.equals("bar")) {
                 throw new ValidationException(exchange, "The foo header does not equal bar! Was: " + value);
             }
         }
     };
 
-    
-    protected void runTest(RouteBuilder builder, 
-    		ArrayList<String> expected) throws Exception {
+    protected void runTest(RouteBuilder builder, ArrayList<String> expected) throws Exception {
         runTest(builder, expected, null);
     }
 
-    protected void runTest(RouteBuilder builder, 
-    		ArrayList<String> expected, String header) throws Exception {
-    	
+    protected void runTest(RouteBuilder builder, ArrayList<String> expected, String header) throws Exception {
+
         order.clear();
         CamelContext container = new DefaultCamelContext();
 
@@ -105,44 +102,39 @@ public class BuilderWithScopesTest extends TestSupport {
         }
         Producer producer = endpoint.createProducer();
         producer.process(exchange);
-        
+
         log.debug("Interceptor invocation order:" + order);
         assertEquals(expected, order);
     }
-    
+
     public void testRouteWithFilterEnd() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("TO");
-        
+
         runTest(new RouteBuilder() {
-	            public void configure() {
-	                from("direct:a")
-	                    .filter(header("foo").isEqualTo("bar")).process(orderProcessor).end()
-	                    .process(toProcessor);
-	            }
-	        }, expected, "banana");
+            public void configure() {
+                from("direct:a").filter(header("foo").isEqualTo("bar")).process(orderProcessor).end()
+                    .process(toProcessor);
+            }
+        }, expected, "banana");
     }
 
     public void testRouteWithFilterNoEnd() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
-        
+
         runTest(new RouteBuilder() {
-	            public void configure() {
-	                from("direct:a")
-	                    .filter(header("foo").isEqualTo("bar")).process(orderProcessor)
-	                    .process(toProcessor);
-	            }
-	        }, expected, "banana");
+            public void configure() {
+                from("direct:a").filter(header("foo").isEqualTo("bar")).process(orderProcessor)
+                    .process(toProcessor);
+            }
+        }, expected, "banana");
     }
 
-    protected RouteBuilder createChoiceBuilder() { 	
+    protected RouteBuilder createChoiceBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a")
-                    .choice()
-                        .when(header("foo").isEqualTo("bar")).process(orderProcessor)
-                        .when(header("foo").isEqualTo("cheese")).process(orderProcessor2)
-                        .end()
+                from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
+                    .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).end()
                     .process(toProcessor);
             }
         };
@@ -152,50 +144,43 @@ public class BuilderWithScopesTest extends TestSupport {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("INVOKED");
         expected.add("TO");
-        
+
         runTest(createChoiceBuilder(), expected, "bar");
-    }    
+    }
 
     public void testRouteWithChoice2() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("INVOKED2");
         expected.add("TO");
-        
+
         runTest(createChoiceBuilder(), expected, "cheese");
-    }    
+    }
 
     public void testRouteWithChoice3() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("TO");
-        
+
         runTest(createChoiceBuilder(), expected, "banana");
-    }    
+    }
 
     public void testRouteWithChoiceNoEnd() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("INVOKED");
-        
-        runTest(new RouteBuilder() {
-	            public void configure() {
-	                from("direct:a")
-	                    .choice()
-	                        .when(header("foo").isEqualTo("bar")).process(orderProcessor)
-	                        .when(header("foo").isEqualTo("cheese")).process(orderProcessor2)
-	                    .process(toProcessor);	// continuation of the second when clause
-	            }
-	        }, expected, "bar");
-    }    
 
-    protected RouteBuilder createChoiceWithOtherwiseBuilder() { 	
+        runTest(new RouteBuilder() {
+            public void configure() {
+                from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
+                    .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).process(toProcessor); // continuation of the second when clause
+            }
+        }, expected, "bar");
+    }
+
+    protected RouteBuilder createChoiceWithOtherwiseBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a")
-                    .choice()
-                        .when(header("foo").isEqualTo("bar")).process(orderProcessor)
-                        .when(header("foo").isEqualTo("cheese")).process(orderProcessor2)
-                        .otherwise().process(orderProcessor3)
-                        .end()
-                    .process(toProcessor);
+                from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
+                    .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).otherwise()
+                    .process(orderProcessor3).end().process(toProcessor);
             }
         };
     };
@@ -204,84 +189,76 @@ public class BuilderWithScopesTest extends TestSupport {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("INVOKED");
         expected.add("TO");
-        
+
         runTest(createChoiceWithOtherwiseBuilder(), expected, "bar");
-    }    
+    }
 
     public void testRouteWithChoiceOtherwise2() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("INVOKED2");
         expected.add("TO");
-        
+
         runTest(createChoiceWithOtherwiseBuilder(), expected, "cheese");
-    }    
+    }
 
     public void testRouteWithChoiceOtherwise3() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("INVOKED3");
         expected.add("TO");
         runTest(createChoiceWithOtherwiseBuilder(), expected, "banana");
-    }    
+    }
 
     public void testRouteWithChoiceOtherwiseNoEnd() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("INVOKED");
-        
+
         runTest(new RouteBuilder() {
-	            public void configure() {
-	                from("direct:a")
-	                    .choice()
-	                        .when(header("foo").isEqualTo("bar")).process(orderProcessor)
-	                        .when(header("foo").isEqualTo("cheese")).process(orderProcessor2)
-	                        .otherwise().process(orderProcessor3)
-	                    .process(toProcessor);	// continuation of the otherwise clause
-	            }
-	        }, expected, "bar");
+            public void configure() {
+                from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
+                    .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).otherwise()
+                    .process(orderProcessor3).process(toProcessor); // continuation of the otherwise clause
+            }
+        }, expected, "bar");
     }
-    
-    protected RouteBuilder createTryCatchNoEnd() { 	
+
+    protected RouteBuilder createTryCatchNoEnd() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a")
-	                .tryBlock().process(validator).process(toProcessor)
-	                .handle(ValidationException.class).process(orderProcessor)
-	                .process(orderProcessor3);	// continuation of the handle clause
+                from("direct:a").tryBlock().process(validator).process(toProcessor)
+                    .handle(ValidationException.class).process(orderProcessor).process(orderProcessor3); // continuation of the handle clause
             }
         };
     };
-    
+
     public void testRouteWithTryCatchNoEndNoException() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("TO");
-        
+
         runTest(createTryCatchNoEnd(), expected, "bar");
     }
-    
+
     public void testRouteWithTryCatchNoEndWithCaughtException() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("INVOKED");
         expected.add("INVOKED3");
-        
+
         runTest(createTryCatchNoEnd(), expected, "banana");
     }
 
     public void testRouteWithTryCatchNoEndWithUncaughtException() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
         expected.addAll(Collections.nCopies(6, "VALIDATE"));
-        
+
         runTest(createTryCatchNoEnd(), expected);
     }
 
-    protected RouteBuilder createTryCatchEnd() { 	
+    protected RouteBuilder createTryCatchEnd() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a")
-	                .tryBlock().process(validator).process(toProcessor)
-	                .handle(ValidationException.class).process(orderProcessor)
-	                .end()
-	                .process(orderProcessor3);
+                from("direct:a").tryBlock().process(validator).process(toProcessor)
+                    .handle(ValidationException.class).process(orderProcessor).end().process(orderProcessor3);
             }
         };
     };
@@ -291,55 +268,53 @@ public class BuilderWithScopesTest extends TestSupport {
         expected.add("VALIDATE");
         expected.add("TO");
         expected.add("INVOKED3");
-        
+
         runTest(createTryCatchEnd(), expected, "bar");
     }
-    
+
     public void testRouteWithTryCatchEndWithCaughtException() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("INVOKED");
         expected.add("INVOKED3");
-        
+
         runTest(createTryCatchEnd(), expected, "banana");
     }
 
     public void testRouteWithTryCatchEndWithUncaughtException() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
         expected.addAll(Collections.nCopies(6, "VALIDATE"));
-        
+
         runTest(createTryCatchEnd(), expected);
     }
-    
-    protected RouteBuilder createTryCatchFinallyNoEnd() { 	
+
+    protected RouteBuilder createTryCatchFinallyNoEnd() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a")
-	                .tryBlock().process(validator).process(toProcessor)
-	                .handle(ValidationException.class).process(orderProcessor)
-                    .handleAll().process(orderProcessor2)
-	                .process(orderProcessor3);	// continuation of the handleAll clause
+                from("direct:a").tryBlock().process(validator).process(toProcessor)
+                    .handle(ValidationException.class).process(orderProcessor).handleAll()
+                    .process(orderProcessor2).process(orderProcessor3); // continuation of the handleAll clause
             }
         };
     };
-    
+
     public void testRouteWithTryCatchFinallyNoEndNoException() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("TO");
         expected.add("INVOKED2");
         expected.add("INVOKED3");
-        
+
         runTest(createTryCatchFinallyNoEnd(), expected, "bar");
     }
-    
+
     public void testRouteWithTryCatchFinallyNoEndWithCaughtException() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("INVOKED");
         expected.add("INVOKED2");
         expected.add("INVOKED3");
-        
+
         runTest(createTryCatchFinallyNoEnd(), expected, "banana");
     }
 
@@ -348,40 +323,37 @@ public class BuilderWithScopesTest extends TestSupport {
         expected.add("VALIDATE");
         expected.add("INVOKED2");
         expected.add("INVOKED3");
-        
+
         runTest(createTryCatchFinallyNoEnd(), expected);
     }
-    
-    protected RouteBuilder createTryCatchFinallyEnd() { 	
+
+    protected RouteBuilder createTryCatchFinallyEnd() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a")
-	                .tryBlock().process(validator).process(toProcessor)
-	                .handle(ValidationException.class).process(orderProcessor)
-                    .handleAll().process(orderProcessor2)
-                    .end()
-	                .process(orderProcessor3);
+                from("direct:a").tryBlock().process(validator).process(toProcessor)
+                    .handle(ValidationException.class).process(orderProcessor).handleAll()
+                    .process(orderProcessor2).end().process(orderProcessor3);
             }
         };
     };
-    
+
     public void testRouteWithTryCatchFinallyEndNoException() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("TO");
         expected.add("INVOKED2");
         expected.add("INVOKED3");
-        
+
         runTest(createTryCatchFinallyEnd(), expected, "bar");
     }
-    
+
     public void testRouteWithTryCatchFinallyEndWithCaughtException() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("INVOKED");
         expected.add("INVOKED2");
         expected.add("INVOKED3");
-        
+
         runTest(createTryCatchFinallyEnd(), expected, "banana");
     }
 
@@ -390,7 +362,7 @@ public class BuilderWithScopesTest extends TestSupport {
         expected.add("VALIDATE");
         expected.add("INVOKED2");
         expected.add("INVOKED3");
-        
+
         runTest(createTryCatchFinallyEnd(), expected);
     }
 }

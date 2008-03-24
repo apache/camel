@@ -16,7 +16,6 @@
  */
 package org.apache.camel;
 
-import java.io.File;
 import java.util.List;
 
 import javax.naming.Context;
@@ -25,10 +24,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.processor.CreateRouteWithNonExistingEndpointTest;
 import org.apache.camel.spi.Language;
-import org.apache.camel.util.jndi.JndiTest;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.jndi.JndiTest;
 
 /**
  * A useful base class which creates a {@link CamelContext} with some routes
@@ -76,8 +74,7 @@ public abstract class ContextTestSupport extends TestSupport {
                 log.debug("Using created route builder: " + builder);
                 context.addRoutes(builder);
             }
-        }
-        else {
+        } else {
             log.debug("Using route builder from the created context: " + context);
         }
 
@@ -96,8 +93,7 @@ public abstract class ContextTestSupport extends TestSupport {
     protected void stopCamelContext() throws Exception {
         if (camelContextService != null) {
             camelContextService.stop();
-        }
-        else {
+        } else {
             context.stop();
         }
     }
@@ -105,15 +101,13 @@ public abstract class ContextTestSupport extends TestSupport {
     protected void startCamelContext() throws Exception {
         if (camelContextService != null) {
             camelContextService.start();
-        }
-        else {
+        } else {
             if (context instanceof DefaultCamelContext) {
-                DefaultCamelContext defaultCamelContext = (DefaultCamelContext) context;
+                DefaultCamelContext defaultCamelContext = (DefaultCamelContext)context;
                 if (!defaultCamelContext.isStarted()) {
                     defaultCamelContext.start();
                 }
-            }
-            else {
+            } else {
                 context.start();
             }
         }
@@ -146,13 +140,13 @@ public abstract class ContextTestSupport extends TestSupport {
     /**
      * Factory method which derived classes can use to create an array of
      * {@link RouteBuilder}s to define the routes for testing
-     * 
+     *
      * @see #createRouteBuilder()
      */
     protected RouteBuilder[] createRouteBuilders() throws Exception {
         return new RouteBuilder[] {createRouteBuilder()};
     }
-    
+
     /**
      * Resolves a mandatory endpoint for the given URI or an exception is thrown
      *

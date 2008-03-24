@@ -16,14 +16,14 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.Processor;
-import org.apache.camel.impl.RouteContext;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import org.apache.camel.Processor;
+import org.apache.camel.impl.RouteContext;
 
 /**
  * @version $Revision$
@@ -52,11 +52,9 @@ public class ProcessorRef extends OutputType<ProcessorType> {
     public String getLabel() {
         if (ref != null) {
             return "ref:  " + ref;
-        }
-        else if (processor != null) {
+        } else if (processor != null) {
             return processor.toString();
-        }
-        else {
+        } else {
             return "";
         }
     }

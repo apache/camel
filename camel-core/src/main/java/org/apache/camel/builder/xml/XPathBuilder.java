@@ -32,26 +32,32 @@ import javax.xml.xpath.XPathFunction;
 import javax.xml.xpath.XPathFunctionException;
 import javax.xml.xpath.XPathFunctionResolver;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import org.xml.sax.InputSource;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
-import static org.apache.camel.builder.xml.Namespaces.*;
-import static org.apache.camel.converter.ObjectConverter.toBoolean;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ExchangeHelper;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
+
+import static org.apache.camel.builder.xml.Namespaces.DEFAULT_NAMESPACE;
+import static org.apache.camel.builder.xml.Namespaces.IN_NAMESPACE;
+import static org.apache.camel.builder.xml.Namespaces.OUT_NAMESPACE;
+import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmptyNamespace;
+import static org.apache.camel.converter.ObjectConverter.toBoolean;
 
 /**
  * Creates an XPath expression builder which creates a nodeset result by default.
  * If you want to evaluate a String expression then call {@link #stringResult()}
  *
  * @see XPathConstants#NODESET
- * 
+ *
  * @version $Revision$
  */
 public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicate<E>, NamespaceAware {
@@ -113,7 +119,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
 
     /**
      * Sets the expression result type to boolean
-     * 
+     *
      * @return the current builder
      */
     public XPathBuilder<E> booleanResult() {
@@ -123,7 +129,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
 
     /**
      * Sets the expression result type to boolean
-     * 
+     *
      * @return the current builder
      */
     public XPathBuilder<E> nodeResult() {
@@ -133,7 +139,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
 
     /**
      * Sets the expression result type to boolean
-     * 
+     *
      * @return the current builder
      */
     public XPathBuilder<E> nodeSetResult() {
@@ -143,7 +149,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
 
     /**
      * Sets the expression result type to boolean
-     * 
+     *
      * @return the current builder
      */
     public XPathBuilder<E> numberResult() {
@@ -153,7 +159,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
 
     /**
      * Sets the expression result type to boolean
-     * 
+     *
      * @return the current builder
      */
     public XPathBuilder<E> stringResult() {
@@ -173,7 +179,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
 
     /**
      * Sets the object model URI to use
-     * 
+     *
      * @return the current builder
      */
     public XPathBuilder<E> objectModel(String uri) {
@@ -184,7 +190,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     /**
      * Sets the {@link XPathFunctionResolver} instance to use on these XPath
      * expressions
-     * 
+     *
      * @return the current builder
      */
     public XPathBuilder<E> functionResolver(XPathFunctionResolver functionResolver) {
@@ -195,7 +201,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     /**
      * Registers the namespace prefix and URI with the builder so that the
      * prefix can be used in XPath expressions
-     * 
+     *
      * @param prefix is the namespace prefix that can be used in the XPath
      *                expressions
      * @param uri is the namespace URI to which the prefix refers
@@ -209,7 +215,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     /**
      * Registers namespaces with the builder so that the registered
      * prefixes can be used in XPath expressions
-     * 
+     *
      * @param namespaces is namespaces object that should be used in the
      *                      XPath expression
      * @return the current builder
@@ -218,7 +224,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
         namespaces.configure(this);
         return this;
     }
-    
+
     /**
      * Registers a variable (in the global namespace) which can be referred to
      * from XPath expressions
@@ -297,7 +303,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
         return expression;
     }
 
-    public void setNamespaces(Map<String,String> namespaces) {
+    public void setNamespaces(Map<String, String> namespaces) {
         getNamespaceContext().setNamespaces(namespaces);
     }
 
@@ -390,17 +396,13 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
         this.resultType = resultType;
         if (Number.class.isAssignableFrom(resultType)) {
             numberResult();
-        }
-        else if (String.class.isAssignableFrom(resultType)) {
+        } else if (String.class.isAssignableFrom(resultType)) {
             stringResult();
-        }
-        else if (Boolean.class.isAssignableFrom(resultType)) {
+        } else if (Boolean.class.isAssignableFrom(resultType)) {
             booleanResult();
-        }
-        else if (Node.class.isAssignableFrom(resultType)) {
+        } else if (Node.class.isAssignableFrom(resultType)) {
             nodeResult();
-        }
-        else if (NodeList.class.isAssignableFrom(resultType)) {
+        } else if (NodeList.class.isAssignableFrom(resultType)) {
             nodeSetResult();
         }
     }
@@ -430,8 +432,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
                 if (document instanceof InputSource) {
                     InputSource inputSource = (InputSource)document;
                     return getExpression().evaluate(inputSource);
-                }
-                else if (document instanceof DOMSource) {
+                } else if (document instanceof DOMSource) {
                     DOMSource source = (DOMSource)document;
                     return getExpression().evaluate(source.getNode());
                 } else {

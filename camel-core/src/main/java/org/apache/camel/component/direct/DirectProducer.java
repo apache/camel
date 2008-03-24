@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,8 +40,7 @@ public class DirectProducer<E extends Exchange> extends DefaultProducer implemen
     public void process(Exchange exchange) throws Exception {
         if (endpoint.getConsumers().isEmpty()) {
             LOG.warn("No getConsumers() available on " + this + " for " + exchange);
-        }
-        else {
+        } else {
             for (DefaultConsumer<E> consumer : endpoint.getConsumers()) {
                 consumer.getProcessor().process(exchange);
             }
@@ -53,20 +51,17 @@ public class DirectProducer<E extends Exchange> extends DefaultProducer implemen
         int size = endpoint.getConsumers().size();
         if (size == 0) {
             LOG.warn("No getConsumers() available on " + this + " for " + exchange);
-        }
-        else {
+        } else {
             if (size > 1) {
                 // Too hard to do multiple async.. do it sync
                 try {
                     for (DefaultConsumer<E> consumer : endpoint.getConsumers()) {
                         consumer.getProcessor().process(exchange);
                     }
-                }
-                catch (Throwable error) {
+                } catch (Throwable error) {
                     exchange.setException(error);
                 }
-            }
-            else {
+            } else {
                 for (DefaultConsumer<E> consumer : endpoint.getConsumers()) {
                     AsyncProcessor processor = AsyncProcessorTypeConverter.convert(consumer.getProcessor());
                     return processor.process(exchange, callback);

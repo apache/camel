@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +16,7 @@
  */
 package org.apache.camel.model.loadbalancer;
 
-import static org.apache.camel.util.ObjectHelper.notNull;
+
 
 import java.util.List;
 
@@ -33,6 +32,7 @@ import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 @XmlType(name = "loadBalancerType")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -42,50 +42,50 @@ public class LoadBalancerType extends IdentifiedType implements LoadBalancer {
     private LoadBalancer loadBalancer;
     @XmlTransient
     private String loadBalancerTypeName;
-    
+
+    public LoadBalancerType() {
+    }
+
+    public LoadBalancerType(LoadBalancer loadBalancer) {
+        this.loadBalancer = loadBalancer;
+    }
+
+    protected LoadBalancerType(String loadBalancerTypeName) {
+        this.loadBalancerTypeName = loadBalancerTypeName;
+    }
+
     public static LoadBalancer getLoadBalancer(RouteContext routeContext, LoadBalancerType type, String ref) {
         if (type == null) {
             notNull(ref, "ref or LoadBalancerType");
             LoadBalancer loadBalancer = routeContext.lookup(ref, LoadBalancer.class);
             if (loadBalancer instanceof LoadBalancerType) {
                 type = (LoadBalancerType) loadBalancer;
-            }
-            else {
+            } else {
                 return loadBalancer;
             }
         }
         return type.getLoadBalancer(routeContext);
     }
-    
-    public LoadBalancerType () {        
-    }
-    
-    public LoadBalancerType(LoadBalancer loadBalancer) {
-        this.loadBalancer = loadBalancer;
-    }
-    
-    protected LoadBalancerType(String loadBalancerTypeName) {
-        this.loadBalancerTypeName = loadBalancerTypeName;
-    }
-    
+
+
     /**
      * Sets a named property on the data format instance using introspection
      */
     protected void setProperty(Object bean, String name, Object value) {
         try {
             IntrospectionSupport.setProperty(bean, name, value);
-        }
-        catch (Exception e) {
-            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean + ". Reason: " + e, e);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean
+                                               + ". Reason: " + e, e);
         }
     }
-    
+
     /**
      * Allows derived classes to customize the load balancer
      */
     protected void configureLoadBalancer(LoadBalancer loadBalancer) {
     }
-    
+
     public LoadBalancer getLoadBalancer(RouteContext routeContext) {
         if (loadBalancer == null) {
             loadBalancer = createLoadBalancer(routeContext);
@@ -109,7 +109,7 @@ public class LoadBalancerType extends IdentifiedType implements LoadBalancer {
         return null;
     }
 
-    
+
     public void addProcessor(Processor processor) {
         ObjectHelper.notNull(loadBalancer, "loadBalancer");
         loadBalancer.addProcessor(processor);

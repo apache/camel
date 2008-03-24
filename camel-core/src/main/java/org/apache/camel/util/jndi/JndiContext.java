@@ -44,7 +44,7 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A default JNDI context
- * 
+ *
  * @version $Revision$ $Date$
  */
 public class JndiContext implements Context, Serializable {
@@ -56,7 +56,7 @@ public class JndiContext implements Context, Serializable {
     };
     protected static final Injector INJETOR = new ReflectionInjector();
     private static final long serialVersionUID = -5754338187296859149L;
-        
+
     private final Hashtable environment; // environment for this context
     private final Map bindings; // bindings at my level
     private final Map treeBindings; // all bindings under me
@@ -96,7 +96,7 @@ public class JndiContext implements Context, Serializable {
         this(clone, env);
         this.nameInNamespace = nameInNamespace;
     }
-    
+
     /**
      * A helper method to create the JNDI bindings from the input environment
      * properties using $foo.class to point to a class name with $foo.* being
@@ -146,7 +146,7 @@ public class JndiContext implements Context, Serializable {
      * from the next context, plus the context it just created (if it in fact
      * created it). (the names are suitably extended by the segment originally
      * lopped off).
-     * 
+     *
      * @param name
      * @param value
      * @return
@@ -194,8 +194,7 @@ public class JndiContext implements Context, Serializable {
     protected JndiContext newContext() {
         try {
             return new JndiContext();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
     }

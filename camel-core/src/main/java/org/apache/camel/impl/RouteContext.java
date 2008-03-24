@@ -31,7 +31,6 @@ import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.FromType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
-import org.apache.camel.model.InterceptorRef;
 import org.apache.camel.processor.Interceptor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.ProceedProcessor;
@@ -115,8 +114,7 @@ public class RouteContext {
         }
         if (endpoint == null) {
             throw new IllegalArgumentException("Either 'uri' or 'ref' must be specified on: " + this);
-        }
-        else {
+        } else {
             return endpoint;
         }
     }
@@ -175,8 +173,7 @@ public class RouteContext {
     public Processor createProceedProcessor() {
         if (lastInterceptor == null) {
             throw new IllegalArgumentException("Cannot proceed() from outside of an interceptor!");
-        }
-        else {
+        } else {
             return new ProceedProcessor(lastInterceptor);
         }
     }

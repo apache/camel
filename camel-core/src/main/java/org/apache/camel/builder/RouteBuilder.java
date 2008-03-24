@@ -16,23 +16,22 @@
  */
 package org.apache.camel.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
 import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ChoiceType;
+import org.apache.camel.model.ExceptionType;
 import org.apache.camel.model.InterceptType;
-import org.apache.camel.model.OtherwiseType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.RoutesType;
-import org.apache.camel.model.ExceptionType;
 import org.apache.camel.processor.DelegateProcessor;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A <a href="http://activemq.apache.org/camel/dsl.html">Java DSL</a> which is

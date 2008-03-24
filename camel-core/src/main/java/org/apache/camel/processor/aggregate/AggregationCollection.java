@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  * A {@link Collection} which aggregates exchanges together using a correlation
  * expression so that there is only a single message exchange sent for a single
  * correlation key.
- * 
+ *
  * @version $Revision$
  */
 public class AggregationCollection extends AbstractCollection<Exchange> {
@@ -40,14 +40,14 @@ public class AggregationCollection extends AbstractCollection<Exchange> {
     private final AggregationStrategy aggregationStrategy;
     private Map<Object, Exchange> map = new LinkedHashMap<Object, Exchange>();
 
-    protected Map<Object, Exchange> getMap() {
-        return map;
-    }
-
     public AggregationCollection(Expression<Exchange> correlationExpression,
                                  AggregationStrategy aggregationStrategy) {
         this.correlationExpression = correlationExpression;
         this.aggregationStrategy = aggregationStrategy;
+    }
+
+    protected Map<Object, Exchange> getMap() {
+        return map;
     }
 
     @Override

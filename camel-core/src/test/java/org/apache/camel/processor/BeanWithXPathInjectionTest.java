@@ -16,14 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import javax.naming.Context;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.XPath;
 import org.apache.camel.util.jndi.JndiContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.naming.Context;
 
 /**
  * @version $Revision$
@@ -33,8 +33,8 @@ public class BeanWithXPathInjectionTest extends ContextTestSupport {
     protected MyBean myBean = new MyBean();
 
     public void testSendMessage() throws Exception {
-        String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>" +
-                "<foo>bar</foo></env:Body></env:Envelope>";
+        String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
+                              + "<foo>bar</foo></env:Body></env:Envelope>";
 
         template.sendBodyAndHeader("direct:in", expectedBody, "foo", "bar");
 

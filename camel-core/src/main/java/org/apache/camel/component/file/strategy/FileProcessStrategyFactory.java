@@ -18,8 +18,11 @@ package org.apache.camel.component.file.strategy;
 
 import org.apache.camel.component.file.FileProcessStrategy;
 
-public class FileProcessStrategyFactory {
-	/**
+public final class FileProcessStrategyFactory {
+    private FileProcessStrategyFactory() {
+        // Utility class
+    }
+    /**
      * A strategy method to lazily create the file strategy
      */
     public static FileProcessStrategy createFileProcessStrategy(boolean isNoop, boolean isDelete, boolean isLock, String moveNamePrefix, String moveNamePostfix) {

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter;
 
-import org.apache.camel.Converter;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,19 +23,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
+import org.apache.camel.Converter;
+
 /**
- * Some core java.nio based 
+ * Some core java.nio based
  * <a href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
  *
  * @version $Revision$
  */
 @Converter
-public class NIOConverter {
+public final class NIOConverter {
 
     /**
      * Utility classes should not have a public constructor.
      */
-    private NIOConverter() {        
+    private NIOConverter() {
     }
 
     @Converter
@@ -54,13 +54,13 @@ public class NIOConverter {
     public static ByteBuffer toByteBuffer(byte[] data) {
         return ByteBuffer.wrap(data);
     }
-    
+
     @Converter
     public static ByteBuffer toByteBuffer(File file) throws IOException {
-       byte[] buf = new byte[(int) file.length()];
-       InputStream in = new BufferedInputStream(new FileInputStream(file));
-       in.read(buf);
-       return ByteBuffer.wrap(buf);
+        byte[] buf = new byte[(int)file.length()];
+        InputStream in = new BufferedInputStream(new FileInputStream(file));
+        in.read(buf);
+        return ByteBuffer.wrap(buf);
     }
 
     @Converter

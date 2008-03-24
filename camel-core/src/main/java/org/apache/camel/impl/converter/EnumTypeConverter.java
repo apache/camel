@@ -16,11 +16,11 @@
  */
 package org.apache.camel.impl.converter;
 
+import java.lang.reflect.Method;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.util.ObjectHelper;
-
-import java.lang.reflect.Method;
 
 /**
  * A type converter which is used to convert to and from array types
@@ -36,8 +36,7 @@ public class EnumTypeConverter implements TypeConverter {
             Method method = null;
             try {
                 method = type.getMethod("valueOf", String.class);
-            }
-            catch (NoSuchMethodException e) {
+            } catch (NoSuchMethodException e) {
                 throw new RuntimeCamelException("Could not find valueOf method on enum type: " + type.getName());
             }
             return (T) ObjectHelper.invokeMethod(method, null, text);

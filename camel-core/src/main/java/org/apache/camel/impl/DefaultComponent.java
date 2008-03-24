@@ -28,12 +28,14 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.camel.util.CamelContextHelper;
+
 import static org.apache.camel.util.ObjectHelper.notNull;
+
 
 /**
  * @version $Revision$
@@ -53,7 +55,7 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
 
     public Endpoint<E> createEndpoint(String uri) throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
-        //endcode uri string to the unsafe URI characters        
+        //endcode uri string to the unsafe URI characters
         URI u = new URI(UnsafeUriCharactersEncoder.encode(uri));
         String path = u.getSchemeSpecificPart();
 
@@ -126,7 +128,7 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
     /**
      * A factory method allowing derived components to create a new endpoint
      * from the given URI, remaining path and optional parameters
-     * 
+     *
      * @param uri the full URI of the endpoint
      * @param remaining the remaining part of the URI without the query
      *                parameters or component prefix
@@ -194,7 +196,7 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
     public <T> T lookup(String name, Class<T> beanType) {
         return getCamelContext().getRegistry().lookup(name, beanType);
     }
-    
+
     /**
      * Look up the given named bean in the {@link Registry} on the
      * {@link CamelContext} or throws

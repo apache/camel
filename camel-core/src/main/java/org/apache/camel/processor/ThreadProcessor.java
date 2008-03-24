@@ -61,7 +61,7 @@ public class ThreadProcessor implements AsyncProcessor, Service {
         }
 
         public void run() {
-            if( shutdown.get() ) {
+            if (shutdown.get()) {
                 exchange.setException(new RejectedExecutionException());
                 callback.done(false);
             } else {
@@ -75,7 +75,7 @@ public class ThreadProcessor implements AsyncProcessor, Service {
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        if( shutdown.get() ) {
+        if (shutdown.get()) {
             throw new IllegalStateException("ThreadProcessor is not running.");
         }
         ProcessCall call = new ProcessCall(exchange, callback);

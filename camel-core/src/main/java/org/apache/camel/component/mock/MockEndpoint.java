@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mock;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,8 +26,6 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.beans.PropertyChangeSupport;
-import java.beans.PropertyChangeListener;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -36,9 +36,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.util.ExpressionComparator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -47,7 +47,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A Mock endpoint which provides a literate, fluent API for testing routes
  * using a <a href="http://jmock.org/">JMock style</a> API.
- * 
+ *
  * @version $Revision$
  */
 public class MockEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint<Exchange> {
@@ -166,16 +166,16 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     /**
      * Set the processor that will be invoked when the some message
      * is received.
-     * 
+     *
      * This processor could be overwritten by
      * {@link #whenExchangeReceived(int, Processor)} method.
-     * 
+     *
      * @param processor
      */
     public void whenAnyExchangeReceived(Processor processor) {
         this.defaultProcessor = processor;
-    }    
-    
+    }
+
     /**
      * Validates that all the available expectations on this endpoint are
      * satisfied; or throw an exception
@@ -187,7 +187,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     /**
      * Validates that all the available expectations on this endpoint are
      * satisfied; or throw an exception
-     * 
+     *
      * @param timeoutForEmptyEndpoints the timeout in milliseconds that we
      *                should wait for the test to be true
      */
@@ -242,7 +242,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     /**
      * Specifies the expected number of message exchanges that should be
      * received by this endpoint
-     * 
+     *
      * @param expectedCount the number of message exchanges that should be
      *                expected by this endpoint
      */
@@ -258,7 +258,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     /**
      * Specifies the minimum number of expected message exchanges that should be
      * received by this endpoint
-     * 
+     *
      * @param expectedCount the number of message exchanges that should be
      *                expected by this endpoint
      */
@@ -310,7 +310,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     /**
      * Adds an expectation that messages received should have ascending values
      * of the given expression such as a user generated counter value
-     * 
+     *
      * @param expression
      */
     public void expectsAscending(final Expression<Exchange> expression) {
@@ -324,7 +324,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     /**
      * Adds an expectation that messages received should have descending values
      * of the given expression such as a user generated counter value
-     * 
+     *
      * @param expression
      */
     public void expectsDescending(final Expression<Exchange> expression) {
@@ -338,7 +338,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     /**
      * Adds an expectation that no duplicate messages should be received using
      * the expression to determine the message ID
-     * 
+     *
      * @param expression the expression used to create a unique message ID for
      *                message comparison (which could just be the message
      *                payload if the payload can be tested for uniqueness using
@@ -416,7 +416,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
 
     /**
      * Adds an assertion to the given message index
-     * 
+     *
      * @param messageIndex the number of the message
      * @return the assertion clause
      */
@@ -432,7 +432,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
 
     /**
      * Adds an assertion to all the received messages
-     * 
+     *
      * @return the assertion clause
      */
     public AssertionClause allMessages() {
@@ -483,7 +483,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     /**
      * Allows a sleep to be specified to wait to check that this endpoint really
      * is empty when {@link #expectedMessageCount(int)} is called with zero
-     * 
+     *
      * @param sleepForEmptyTest the milliseconds to sleep for to determine that
      *                this endpoint really is empty
      */
@@ -555,8 +555,8 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
 
         receivedExchanges.add(exchange);
 
-        Processor processor = processors.get(getReceivedCounter()) != null ?
-                processors.get(getReceivedCounter()) : defaultProcessor;
+        Processor processor = processors.get(getReceivedCounter()) != null
+                ? processors.get(getReceivedCounter()) : defaultProcessor;
 
         if (processor != null) {
             processor.process(exchange);

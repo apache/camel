@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,20 +16,17 @@
  */
 package org.apache.camel.component.dataset;
 
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Component;
-import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.NoSuchHeaderException;
-import org.apache.camel.Service;
 import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.PollingConsumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.EventDrivenPollingConsumer;
+import org.apache.camel.PollingConsumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Service;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.EventDrivenPollingConsumer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -47,15 +43,15 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private long consumeDelay = -1;
     private long startTime;
 
+    public DataSetEndpoint(String endpointUri, Component component, DataSet dataSet) {
+        super(endpointUri, component);
+        this.dataSet = dataSet;
+    }
+
     public static void assertEquals(String description, Object expected, Object actual, Exchange exchange) {
         if (!ObjectHelper.equal(expected, actual)) {
             throw new AssertionError(description + " does not match. Expected: " + expected + " but was: " + actual + " on  " + exchange);
         }
-    }
-
-    public DataSetEndpoint(String endpointUri, Component component, DataSet dataSet) {
-        super(endpointUri, component);
-        this.dataSet = dataSet;
     }
 
     @Override
@@ -75,7 +71,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     @Override
-        public int getReceivedCounter() {
+    public int getReceivedCounter() {
         return receivedCounter.get();
     }
 

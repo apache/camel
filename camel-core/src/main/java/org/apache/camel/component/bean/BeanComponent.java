@@ -74,8 +74,7 @@ public class BeanComponent extends DefaultComponent {
         BeanProcessor processor;
         if (ObjectConverter.toBool(parameters.remove("cache"))) {
             processor = new BeanProcessor(holder.createCacheHolder());
-        }
-        else {
+        } else {
             processor = new BeanProcessor(holder);
         }
         setProperties(processor, parameters);

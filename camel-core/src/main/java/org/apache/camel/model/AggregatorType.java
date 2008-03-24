@@ -88,8 +88,7 @@ public class AggregatorType extends ExpressionNode {
         final Aggregator service;
         if (aggregationCollection != null) {
             service = new Aggregator(from, processor, aggregationCollection);
-        }
-        else {
+        } else {
             AggregationStrategy strategy = getAggregationStrategy();
             if (strategy == null && strategyRef != null) {
                 strategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
@@ -105,8 +104,7 @@ public class AggregatorType extends ExpressionNode {
             }
             if (predicate != null) {
                 service = new Aggregator(from, processor, aggregateExpression, strategy, predicate);
-            }
-            else {
+            } else {
                 service = new Aggregator(from, processor, aggregateExpression, strategy);
             }
         }

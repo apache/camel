@@ -474,8 +474,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
                     }
                 }
             }
-        }
-        else {
+        } else {
             endpoint = context.getEndpoint(endpointUri);
         }
         if (endpoint == null) {
@@ -504,8 +503,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
             Message out = result.getOut(false);
             if (out != null) {
                 answer = out.getBody();
-            }
-            else {
+            } else {
                 answer = result.getIn().getBody();
             }
         }

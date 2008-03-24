@@ -95,21 +95,21 @@ public class MockEndpointTest extends ContextTestSupport {
     }
 
     public void testReset() throws Exception {
-    	MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-    	resultEndpoint.expectedMessageCount(2);
-    	
-    	sendMessages(11, 12);
-    	
-    	resultEndpoint.assertIsSatisfied();
-    	resultEndpoint.reset();
-    	
-    	resultEndpoint.expectedMessageCount(3);
-    	
-    	sendMessages(11, 12, 13);
-    	
-    	resultEndpoint.assertIsSatisfied();
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(2);
+
+        sendMessages(11, 12);
+
+        resultEndpoint.assertIsSatisfied();
+        resultEndpoint.reset();
+
+        resultEndpoint.expectedMessageCount(3);
+
+        sendMessages(11, 12, 13);
+
+        resultEndpoint.assertIsSatisfied();
     }
-    
+
     protected void sendMessages(int... counters) {
         for (int counter : counters) {
             template.sendBodyAndHeader("direct:a", "<message>" + counter + "</message>",

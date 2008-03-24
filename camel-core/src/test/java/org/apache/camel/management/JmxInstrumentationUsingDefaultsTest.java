@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,21 +26,20 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.management.InstrumentationAgentImpl;
 
 public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
-	
-	public static final int DEFAULT_PORT = 1099;
+
+    public static final int DEFAULT_PORT = 1099;
 
     protected InstrumentationAgentImpl iAgent;
     protected String domainName = InstrumentationAgentImpl.DEFAULT_DOMAIN;
-    protected boolean sleepSoYouCanBrowseInJConsole = false;
+    protected boolean sleepSoYouCanBrowseInJConsole;
 
     public void testMBeansRegistered() throws Exception {
         assertNotNull(iAgent.getMBeanServer());
-        //assertEquals(domainName, iAgent.getMBeanServer().getDefaultDomain());
+        // assertEquals(domainName, iAgent.getMBeanServer().getDefaultDomain());
 
-    	resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
+        resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
         ObjectName name = new ObjectName(domainName + ":group=endpoints,*");
         Set s = iAgent.getMBeanServer().queryNames(name, null);
@@ -53,7 +51,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     }
 
     public void testCounters() throws Exception {
-    	MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived("<hello>world!</hello>");
         sendBody("direct:start", "<hello>world!</hello>");
 
@@ -68,49 +66,55 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         ObjectName pcob = (ObjectName)iter.next();
 
         Long valueofNumExchanges = (Long)mbs.getAttribute(pcob, "NumExchanges");
-        assertNotNull("Expected attribute not found. MBean registerred under a " +
-        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofNumExchanges);
+        assertNotNull("Expected attribute not found. MBean registerred under a "
+                      + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
+                      valueofNumExchanges);
         assertTrue(valueofNumExchanges == 1);
         Long valueofNumCompleted = (Long)mbs.getAttribute(pcob, "NumCompleted");
-        assertNotNull("Expected attribute not found. MBean registerred under a " +
-        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofNumCompleted);
+        assertNotNull("Expected attribute not found. MBean registerred under a "
+                      + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
+                      valueofNumCompleted);
         assertTrue(valueofNumCompleted == 1);
         Long valueofNumFailed = (Long)mbs.getAttribute(pcob, "NumFailed");
-        assertNotNull("Expected attribute not found. MBean registerred under a " +
-        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofNumFailed);
+        assertNotNull("Expected attribute not found. MBean registerred under a "
+                      + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
+                      valueofNumFailed);
         assertTrue(valueofNumFailed == 0);
         Long valueofMinProcessingTime = (Long)mbs.getAttribute(pcob, "MinProcessingTime");
-        assertNotNull("Expected attribute not found. MBean registerred under a " +
-        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofMinProcessingTime);
+        assertNotNull("Expected attribute not found. MBean registerred under a "
+                      + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
+                      valueofMinProcessingTime);
         assertTrue(valueofMinProcessingTime > 0);
         Long valueofMaxProcessingTime = (Long)mbs.getAttribute(pcob, "MaxProcessingTime");
-        assertNotNull("Expected attribute not found. MBean registerred under a " +
-        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofMaxProcessingTime);
+        assertNotNull("Expected attribute not found. MBean registerred under a "
+                      + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
+                      valueofMaxProcessingTime);
         assertTrue(valueofMaxProcessingTime > 0);
         Long valueofMeanProcessingTime = (Long)mbs.getAttribute(pcob, "MeanProcessingTime");
-        assertNotNull("Expected attribute not found. MBean registerred under a " +
-        		"'<domain>:name=Stats,*' key must be of type PerformanceCounter.class", valueofMeanProcessingTime);
-        assertTrue(valueofMeanProcessingTime >= valueofMinProcessingTime &&
-        		valueofMeanProcessingTime <= valueofMaxProcessingTime);
+        assertNotNull("Expected attribute not found. MBean registerred under a "
+                      + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
+                      valueofMeanProcessingTime);
+        assertTrue(valueofMeanProcessingTime >= valueofMinProcessingTime
+                   && valueofMeanProcessingTime <= valueofMaxProcessingTime);
     }
 
     protected void enableJmx() {
-		iAgent.enableJmx(null, 0);
-	}
-	
-    protected CamelContext createCamelContext() throws Exception {
-    	CamelContext context = super.createCamelContext();
-    	
-    	createInstrumentationAgent(context, DEFAULT_PORT);
+        iAgent.enableJmx(null, 0);
+    }
 
-    	return context;
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        createInstrumentationAgent(context, DEFAULT_PORT);
+
+        return context;
     }
 
     protected void createInstrumentationAgent(CamelContext context, int port) throws Exception {
-    	iAgent = new InstrumentationAgentImpl();
-    	iAgent.setCamelContext(context);
-    	enableJmx();
-    	iAgent.start();
+        iAgent = new InstrumentationAgentImpl();
+        iAgent.setCamelContext(context);
+        enableJmx();
+        iAgent.start();
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -120,7 +124,6 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
             }
         };
     }
-
 
     @Override
     protected void tearDown() throws Exception {

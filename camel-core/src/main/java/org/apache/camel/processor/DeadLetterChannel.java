@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
  * href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter
  * Channel</a> after attempting to redeliver the message using the
  * {@link RedeliveryPolicy}
- * 
+ *
  * @version $Revision$
  */
 public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProcessor {
@@ -54,7 +54,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     }
 
     private static final transient Log LOG = LogFactory.getLog(DeadLetterChannel.class);
-    private static final String FAILURE_HANDLED_PROPERTY = DeadLetterChannel.class.getName()+".FAILURE_HANDLED";
+    private static final String FAILURE_HANDLED_PROPERTY = DeadLetterChannel.class.getName() + ".FAILURE_HANDLED";
     private Processor output;
     private Processor deadLetter;
     private AsyncProcessor outputAsync;
@@ -67,9 +67,9 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
     public DeadLetterChannel(Processor output, Processor deadLetter, RedeliveryPolicy redeliveryPolicy, Logger logger) {
         this.deadLetter = deadLetter;
-        this.output = output;        
+        this.output = output;
         this.outputAsync = AsyncProcessorTypeConverter.convert(output);
-        
+
         this.redeliveryPolicy = redeliveryPolicy;
         this.logger = logger;
     }
@@ -90,7 +90,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     public boolean process(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
 
         while (true) {
-            
+
             // We can't keep retrying if the route is being shutdown.
             if (!isRunAllowed()) {
                 if (exchange.getException() == null) {
@@ -99,11 +99,11 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 callback.done(data.sync);
                 return data.sync;
             }
-            
+
             if (exchange.getException() != null) {
                 Throwable e = exchange.getException();
                 exchange.setException(null); // Reset it since we are handling it.
-                
+
                 logger.log("Failed delivery for exchangeId: " + exchange.getExchangeId() + ". On delivery attempt: " + data.redeliveryCounter + " caught: " + e, e);
                 data.redeliveryCounter = incrementRedeliveryCounter(exchange, e);
 
@@ -126,8 +126,8 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                         callback.done(data.sync);
                     }
                 });
-                
-                restoreExceptionOnExchange(exchange);               
+
+                restoreExceptionOnExchange(exchange);
                 logger.log("Failed delivery for exchangeId: " + exchange.getExchangeId() + ". Handled by the failure processor: " + data.failureProcessor);
                 return sync;
             }
@@ -167,7 +167,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         }
 
     }
-    
+
     public static boolean isFailureHandled(Exchange exchange) {
         return exchange.getProperty(FAILURE_HANDLED_PROPERTY) != null;
     }
@@ -180,13 +180,13 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
             exchange.setException(exchange.getProperty(FAILURE_HANDLED_PROPERTY, Throwable.class));
             exchange.removeProperty(FAILURE_HANDLED_PROPERTY);
         }
-        
+
     }
 
     public static void restoreExceptionOnExchange(Exchange exchange) {
         exchange.setException(exchange.getProperty(FAILURE_HANDLED_PROPERTY, Throwable.class));
     }
-    
+
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }

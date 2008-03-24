@@ -33,10 +33,10 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision$
  */
 public class ThreadTest extends ContextTestSupport {
-    
+
     protected MockEndpoint resultEndpoint;
     private CountDownLatch continueProcessing = new CountDownLatch(1);
-    
+
     public void testSimpleAsyncThreadCase() throws Exception {
 
         // Send the exchange using the async completion interface.
@@ -52,11 +52,11 @@ public class ThreadTest extends ContextTestSupport {
                 log.info("Exchange completed.");
             }
         });
-        
+
         // Should not received anything since processing should not be complete.
         resultEndpoint.expectedMessageCount(0);
         resultEndpoint.assertIsSatisfied();
-        
+
         // Release the processing latch..
         continueProcessing.countDown();
 
@@ -86,9 +86,9 @@ public class ThreadTest extends ContextTestSupport {
 
         int exchangeCount = 10;
         final CountDownLatch completedExchanges = new CountDownLatch(exchangeCount);
-        
-        final Exchange exchanges[] = new Exchange[exchangeCount]; 
-        for (int i = 0; i < exchangeCount; i++) { 
+
+        final Exchange exchanges[] = new Exchange[exchangeCount];
+        for (int i = 0; i < exchangeCount; i++) {
             final int index = i;
             // Send the exchange using the async completion interface.
             // This call returns before the exchange is completed.
@@ -100,24 +100,24 @@ public class ThreadTest extends ContextTestSupport {
                 }
             }, new AsyncCallback() {
                 public void done(boolean doneSynchronously) {
-                    log.debug("Completed: "+index+", exception: "+exchanges[index].getException());
+                    log.debug("Completed: " + index + ", exception: " + exchanges[index].getException());
                     completedExchanges.countDown();
                 }
             });
         }
-        
+
         // Should not received anything since processing should not be complete.
         resultEndpoint.expectedMessageCount(0);
         resultEndpoint.assertIsSatisfied();
 
         // Release it in a sec
         releaseProcessingLatchIn(1000);
-        // Make sure we can shut down the context while there are 
+        // Make sure we can shut down the context while there are
         // concurrent requests outstanding.
         stopCamelContext();
-        
+
         // All exchanges should get completed..
-        assertTrue(completedExchanges.await(5, TimeUnit.SECONDS));        
+        assertTrue(completedExchanges.await(5, TimeUnit.SECONDS));
     }
 
     protected void releaseProcessingLatchIn(final long delay) {
@@ -132,8 +132,8 @@ public class ThreadTest extends ContextTestSupport {
             }
         }.start();
     }
-    
-    
+
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();

@@ -18,20 +18,20 @@ package org.apache.camel.builder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Processor;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 
 /**
  * A builder of a number of different {@link Processor} implementations
  *
  * @version $Revision$
  */
-public class ProcessorBuilder {
-    
+public final class ProcessorBuilder {
+
     /**
      * Utility classes should not have a public constructor.
      */
-    private ProcessorBuilder() {        
+    private ProcessorBuilder() {
     }
 
     /**

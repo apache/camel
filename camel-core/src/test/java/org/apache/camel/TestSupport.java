@@ -16,16 +16,15 @@
  */
 package org.apache.camel;
 
-import java.util.List;
 import java.io.File;
+import java.util.List;
 
 import junit.framework.TestCase;
-
 import org.apache.camel.builder.Builder;
-import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.util.ExchangeHelper;
@@ -34,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * A bunch of useful testing methods
- * 
+ *
  * @version $Revision$
  */
 public abstract class TestSupport extends TestCase {
@@ -163,8 +162,7 @@ public abstract class TestSupport extends TestCase {
         if (expected == null) {
             actual = ExchangeHelper.getMandatoryInBody(exchange);
             assertEquals("in body of: " + exchange, expected, actual);
-        }
-        else {
+        } else {
             actual = ExchangeHelper.getMandatoryInBody(exchange, expected.getClass());
         }
         assertEquals("in body of: " + exchange, expected, actual);
@@ -185,8 +183,7 @@ public abstract class TestSupport extends TestCase {
         if (expected == null) {
             actual = ExchangeHelper.getMandatoryOutBody(exchange);
             assertEquals("output body of: " + exchange, expected, actual);
-        }
-        else {
+        } else {
             actual = ExchangeHelper.getMandatoryOutBody(exchange, expected.getClass());
         }
         assertEquals("output body of: " + exchange, expected, actual);
@@ -324,15 +321,15 @@ public abstract class TestSupport extends TestCase {
     /**
      * If a processor is wrapped with a bunch of DelegateProcessor or DelegateAsyncProcessor objects
      * this call will drill through them and return the wrapped Processor.
-     * 
+     *
      * @param processor
      * @return
      */
     protected Processor unwrap(Processor processor) {
-        while( true ) {
-            if( processor instanceof DelegateAsyncProcessor ) {
+        while (true) {
+            if (processor instanceof DelegateAsyncProcessor) {
                 processor = ((DelegateAsyncProcessor)processor).getProcessor();
-            } else if( processor instanceof DelegateProcessor ) {
+            } else if (processor instanceof DelegateProcessor) {
                 processor = ((DelegateProcessor)processor).getProcessor();
             } else {
                 return processor;

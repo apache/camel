@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,9 +28,12 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class EndpointHelper {
+public final class EndpointHelper {
     private static final transient Log LOG = LogFactory.getLog(EndpointHelper.class);
 
+    private EndpointHelper() {
+        //Utility Class
+    }
     /**
      * Creates a {@link PollingConsumer} and polls all pending messages on the endpoint
      * and invokes the given {@link Processor} to process each {@link Exchange} and then closes
@@ -49,26 +51,24 @@ public class EndpointHelper {
                 Exchange exchange = consumer.receive(timeout);
                 if (exchange == null) {
                     break;
-                }
-                else {
+                } else {
                     processor.process(exchange);
                 }
             }
-        }
-        finally {
+        } finally {
             try {
                 consumer.stop();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 LOG.warn("Failed to stop PollingConsumer: " + e, e);
             }
         }
     }
 
     /**
-     * Creates a {@link PollingConsumer} and polls all pending messages on the endpoint
-     * and invokes the given {@link Processor} to process each {@link Exchange} and then closes
-     * down the consumer and throws any exceptions thrown.
+     * Creates a {@link PollingConsumer} and polls all pending messages on the
+     * endpoint and invokes the given {@link Processor} to process each
+     * {@link Exchange} and then closes down the consumer and throws any
+     * exceptions thrown.
      *
      * @param endpoint
      * @param processor

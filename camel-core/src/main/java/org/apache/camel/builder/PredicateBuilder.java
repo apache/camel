@@ -31,15 +31,15 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A helper class for working with predicates
- * 
+ *
  * @version $Revision$
  */
-public class PredicateBuilder {
+public final class PredicateBuilder {
 
     /**
      * Utility classes should not have a public constructor.
      */
-    private PredicateBuilder() {        
+    private PredicateBuilder() {
     }
 
     /**
@@ -257,7 +257,7 @@ public class PredicateBuilder {
     /**
      * Returns a predicate which is true if the expression matches the given
      * regular expression
-     * 
+     *
      * @param expression the expression to evaluate
      * @param regex the regular expression to match against
      * @return a new predicate
@@ -269,7 +269,7 @@ public class PredicateBuilder {
     /**
      * Returns a predicate which is true if the expression matches the given
      * regular expression
-     * 
+     *
      * @param expression the expression to evaluate
      * @param pattern the regular expression to match against
      * @return a new predicate

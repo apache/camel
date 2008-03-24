@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.timer;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultComponent;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * Represents the component that manages {@link TimerEndpoint}.  It holds the
@@ -36,8 +36,8 @@ public class TimerComponent extends DefaultComponent<Exchange> {
 
     public Timer getTimer(TimerEndpoint endpoint) {
         String key = endpoint.getTimerName();
-        if (! endpoint.isDaemon()) {
-           key = "nonDaemon:" + key;
+        if (!endpoint.isDaemon()) {
+            key = "nonDaemon:" + key;
         }
 
         Timer answer = timers.get(key);
@@ -47,7 +47,7 @@ public class TimerComponent extends DefaultComponent<Exchange> {
         }
         return answer;
     }
-    
+
     @Override
     protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         TimerEndpoint answer = new TimerEndpoint(uri, this, remaining);

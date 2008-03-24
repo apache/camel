@@ -53,11 +53,9 @@ public class PolicyRef extends OutputType<ProcessorType> {
     public String getLabel() {
         if (ref != null) {
             return "ref:  " + ref;
-        }
-        else if (policy != null) {
+        } else if (policy != null) {
             return policy.toString();
-        }
-        else {
+        } else {
             return "";
         }
     }

@@ -16,17 +16,16 @@
  */
 package org.apache.camel.converter.jaxp;
 
-import org.apache.camel.Converter;
-import org.apache.camel.converter.IOConverter;
-import org.apache.camel.converter.NIOConverter;
-import org.apache.camel.util.ObjectHelper;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.lang.reflect.Constructor;
+import java.nio.ByteBuffer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,16 +42,20 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.lang.reflect.Constructor;
-import java.nio.ByteBuffer;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
+import org.apache.camel.Converter;
+import org.apache.camel.converter.IOConverter;
+import org.apache.camel.converter.NIOConverter;
+import org.apache.camel.util.ObjectHelper;
+
 
 /**
  * A helper class to transform to and from various JAXB types such as {@link Source} and {@link Document}
@@ -65,9 +68,6 @@ public class XmlConverter {
 
     public static String defaultCharset = ObjectHelper.getSystemProperty(DEFAULT_CHARSET_PROPERTY, "UTF-8");
 
-    private DocumentBuilderFactory documentBuilderFactory;
-    private TransformerFactory transformerFactory;
-
     /*
      * When converting a DOM tree to a SAXSource,
      * we try to use Xalan internal DOM parser if
@@ -75,14 +75,20 @@ public class XmlConverter {
      * to a String and build a SAXSource on top of
      * it.
      */
-    private static final Class dom2SaxClass;
+    private static final Class DOM_TO_SAX_CLASS;
+
+    private DocumentBuilderFactory documentBuilderFactory;
+    private TransformerFactory transformerFactory;
+
 
     static {
         Class cl = null;
         try {
             cl = Class.forName("org.apache.xalan.xsltc.trax.DOM2SAX");
-        } catch (Throwable t) {}
-        dom2SaxClass = cl;
+        } catch (Throwable t) {
+            // do nothing here
+        }
+        DOM_TO_SAX_CLASS = cl;
     }
 
 
@@ -134,15 +140,15 @@ public class XmlConverter {
     public DOMSource toSource(Document document) {
         return new DOMSource(document);
     }
-    
+
     /**
      * Converts the given Node to a Source
      */
     @Converter
     public Source toSource(Node node) {
-    	return new DOMSource(node);
+        return new DOMSource(node);
     }
-    
+
     /**
      * Converts the given input Source into text
      */
@@ -193,14 +199,11 @@ public class XmlConverter {
     public DOMSource toDOMSource(Source source) throws ParserConfigurationException, IOException, SAXException, TransformerException {
         if (source instanceof DOMSource) {
             return (DOMSource) source;
-        }
-        else if (source instanceof SAXSource) {
+        } else if (source instanceof SAXSource) {
             return toDOMSourceFromSAX((SAXSource) source);
-        }
-        else if (source instanceof StreamSource) {
+        } else if (source instanceof StreamSource) {
             return toDOMSourceFromStream((StreamSource) source);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -214,8 +217,7 @@ public class XmlConverter {
         Source source = toSource(text);
         if (source != null) {
             return toDOMSourceFromStream((StreamSource) source);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -246,14 +248,11 @@ public class XmlConverter {
     public SAXSource toSAXSource(Source source) throws IOException, SAXException, TransformerException {
         if (source instanceof SAXSource) {
             return (SAXSource) source;
-        }
-        else if (source instanceof DOMSource) {
+        } else if (source instanceof DOMSource) {
             return toSAXSourceFromDOM((DOMSource) source);
-        }
-        else if (source instanceof StreamSource) {
+        } else if (source instanceof StreamSource) {
             return toSAXSourceFromStream((StreamSource) source);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -369,8 +368,7 @@ public class XmlConverter {
                 InputSource inputsource = new InputSource(inputStream);
                 inputsource.setSystemId(systemId);
                 document = builder.parse(inputsource);
-            }
-            else {
+            } else {
                 throw new IOException("No input stream or reader available");
             }
         }
@@ -379,10 +377,10 @@ public class XmlConverter {
 
     @Converter
     public SAXSource toSAXSourceFromDOM(DOMSource source) throws TransformerException {
-        if (dom2SaxClass != null) {
+        if (DOM_TO_SAX_CLASS != null) {
             try {
-                Constructor cns = dom2SaxClass.getConstructor(new Class[] { Node.class });
-                XMLReader converter = (XMLReader) cns.newInstance(new Object[] { source.getNode() });
+                Constructor cns = DOM_TO_SAX_CLASS.getConstructor(new Class[] {Node.class});
+                XMLReader converter = (XMLReader) cns.newInstance(new Object[] {source.getNode()});
                 return new SAXSource(converter, new InputSource());
             } catch (Exception e) {
                 throw new TransformerException(e);
