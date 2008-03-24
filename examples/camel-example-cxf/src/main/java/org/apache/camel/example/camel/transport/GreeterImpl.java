@@ -25,16 +25,16 @@ import org.apache.hello_world_soap_http.types.FaultDetail;
                       targetNamespace = "http://apache.org/hello_world_soap_http",
                       endpointInterface = "org.apache.hello_world_soap_http.Greeter")
 
- public class GreeterImpl implements Greeter {
+public class GreeterImpl implements Greeter {
+
+    private static final Logger LOG =
+        Logger.getLogger(GreeterImpl.class.getPackage().getName());
 
     private String suffix;
 
     public GreeterImpl(String suffix) {
         this.suffix = suffix;
     }
-
-    private static final Logger LOG =
-        Logger.getLogger(GreeterImpl.class.getPackage().getName());
 
     /* (non-Javadoc)
      * @see org.apache.hello_world_soap_http.Greeter#greetMe(java.lang.String)
@@ -43,7 +43,7 @@ import org.apache.hello_world_soap_http.types.FaultDetail;
         LOG.info("Executing operation greetMe");
         System.out.println("Executing operation greetMe");
         System.out.println("Message received: " + me + "\n");
-        return "Hello " + me + "form " + suffix ;
+        return "Hello " + me + "form " + suffix;
     }
 
     /* (non-Javadoc)

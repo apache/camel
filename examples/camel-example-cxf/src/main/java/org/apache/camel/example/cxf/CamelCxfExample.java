@@ -28,7 +28,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 /**
  * An example class for demonstrating camel works as Router.
  * This example shows how camel can route a SOAP over HTTP client's request
- * to a SOAP over JMS Service. 
+ * to a SOAP over JMS Service.
  *
  */
 public final class CamelCxfExample {
@@ -39,17 +39,17 @@ public final class CamelCxfExample {
     private static final String SERVICE_NAME = "serviceName={http://apache.org/hello_world_soap_http}SOAPService";
     private static final String SOAP_OVER_HTTP_ROUTER = "portName={http://apache.org/hello_world_soap_http}SoapOverHttpRouter";
     private static final String SOAP_OVER_JMS = "portName={http://apache.org/hello_world_soap_http}SoapOverJms";
-        
-    private static String ROUTER_ENDPOINT_URI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&" 
+
+    private static final String ROUTER_ENDPOINT_URI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&"
                                                    + WSDL_LOCATION + "&" + SERVICE_NAME + "&" + SOAP_OVER_HTTP_ROUTER + "&dataFormat=POJO";
-    private static String SERVICE_ENDPOINT_URI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&" 
+    private static final String SERVICE_ENDPOINT_URI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&"
                                                    + WSDL_LOCATION + "&" + SERVICE_NAME + "&" + SOAP_OVER_JMS + "&dataFormat=POJO";
-    
-    private CamelCxfExample() {        
+
+    private CamelCxfExample() {
     }
-        
+
     public static void main(String args[]) throws Exception {
-        
+
         // START SNIPPET: e1
         CamelContext context = new DefaultCamelContext();
         // END SNIPPET: e1
@@ -57,7 +57,7 @@ public final class CamelCxfExample {
         // START SNIPPET: e2
         JmsBroker broker = new JmsBroker();
         Server server = new Server();
-        try {     
+        try {
             broker.start();
             server.start();
             // END SNIPPET: e2
@@ -65,18 +65,18 @@ public final class CamelCxfExample {
             // START SNIPPET: e3
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
-                    from(ROUTER_ENDPOINT_URI).to(SERVICE_ENDPOINT_URI);               
+                    from(ROUTER_ENDPOINT_URI).to(SERVICE_ENDPOINT_URI);
                 }
             });
             // END SNIPPET: e3
             // Staring the routing context
-            // Using the CXF Client to kick off the invocations 
+            // Using the CXF Client to kick off the invocations
             // START SNIPPET: e4
             context.start();
             Client client = new Client(ROUTER_ADDRESS + "?wsdl");
             // END SNIPPET: e4
             // Now everything is set up - lets start the context
-             
+
             client.invock();
             Thread.sleep(1000);
             context.stop();
@@ -87,6 +87,6 @@ public final class CamelCxfExample {
             broker.stop();
             System.exit(0);
         }
-        
+
     }
 }
