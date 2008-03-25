@@ -19,11 +19,14 @@ package org.apache.camel.component.dataset;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class DataSetConsumer extends DefaultConsumer<Exchange> {
+    private static final transient Log LOG = LogFactory.getLog(DataSetConsumer.class);
     private DataSetEndpoint endpoint;
 
     public DataSetConsumer(DataSetEndpoint endpoint, Processor processor) {
@@ -35,15 +38,33 @@ public class DataSetConsumer extends DefaultConsumer<Exchange> {
     protected void doStart() throws Exception {
         super.doStart();
 
-        DataSet dataSet = endpoint.getDataSet();
-        for (long i = 0; i < dataSet.getSize(); i++) {
-            Exchange exchange = endpoint.createExchange(i);
-            getProcessor().process(exchange);
-
-            long delay = endpoint.getProduceDelay();
-            if (delay > 0) {
-                Thread.sleep(delay);
+        endpoint.getExecutorService().execute(new Runnable() {
+            public void run() {
+                sendMessages();
             }
+        });
+    }
+
+    protected void sendMessages() {
+        try {
+            DataSet dataSet = endpoint.getDataSet();
+            for (long i = 0; i < dataSet.getSize(); i++) {
+                Exchange exchange = endpoint.createExchange(i);
+                getProcessor().process(exchange);
+
+                long delay = endpoint.getProduceDelay();
+                if (delay > 0) {
+                    try {
+                        Thread.sleep(delay);
+                    }
+                    catch (InterruptedException e) {
+                        LOG.debug(e);
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+            LOG.error(e);
         }
     }
 }
