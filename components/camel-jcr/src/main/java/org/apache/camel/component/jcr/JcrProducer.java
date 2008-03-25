@@ -49,8 +49,7 @@ public class JcrProducer extends DefaultProducer<DefaultExchange> {
             session.save();
             exchange.getOut().setBody(node.getUUID());
         } finally {
-            if (session != null &&
-                session.isLive() ) {
+            if (session != null && session.isLive()) {
                 session.logout();
             }
         }

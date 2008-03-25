@@ -58,7 +58,7 @@ public class JmsConfiguration implements Cloneable {
     private ConnectionFactory templateConnectionFactory;
     private ConnectionFactory listenerConnectionFactory;
     private int acknowledgementMode = -1;
-    private String acknowledgementModeName = null;
+    private String acknowledgementModeName;
     // Used to configure the spring Container
     private ExceptionListener exceptionListener;
     private ConsumerType consumerType = ConsumerType.Default;
@@ -110,20 +110,20 @@ public class JmsConfiguration implements Cloneable {
      */
     public JmsConfiguration copy() {
         try {
-            return (JmsConfiguration) clone();
-        }
-        catch (CloneNotSupportedException e) {
+            return (JmsConfiguration)clone();
+        } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
     }
 
     /**
-     * Creates a JmsOperations object used for request/response using a request timeout value
+     * Creates a JmsOperations object used for request/response using a request
+     * timeout value
      */
     public JmsOperations createInOutTemplate(boolean pubSubDomain, String destination, long requestTimeout) {
         JmsOperations answer = createInOnlyTemplate(pubSubDomain, destination);
         if (answer instanceof JmsTemplate && requestTimeout > 0) {
-            JmsTemplate jmsTemplate = (JmsTemplate) answer;
+            JmsTemplate jmsTemplate = (JmsTemplate)answer;
             jmsTemplate.setExplicitQosEnabled(true);
             jmsTemplate.setTimeToLive(requestTimeout);
         }
@@ -138,8 +138,9 @@ public class JmsConfiguration implements Cloneable {
 
         ConnectionFactory factory = getTemplateConnectionFactory();
 
-        // I whish the spring templates had built in support for preserving the message
-        // qos when doing a send. :(  
+        // I whish the spring templates had built in support for preserving the
+        // message
+        // qos when doing a send. :(
         JmsTemplate template = useVersion102 ? new JmsTemplate102(factory, pubSubDomain) {
             /**
              * Override so we can support preserving the Qos settings that have
@@ -158,13 +159,13 @@ public class JmsConfiguration implements Cloneable {
                         }
                     }
                     if (isPubSubDomain()) {
-                        ((TopicPublisher) producer).publish(message, message.getJMSDeliveryMode(), message.getJMSPriority(), ttl);
+                        ((TopicPublisher)producer).publish(message, message.getJMSDeliveryMode(), message
+                            .getJMSPriority(), ttl);
+                    } else {
+                        ((QueueSender)producer).send(message, message.getJMSDeliveryMode(), message
+                            .getJMSPriority(), ttl);
                     }
-                    else {
-                        ((QueueSender) producer).send(message, message.getJMSDeliveryMode(), message.getJMSPriority(), ttl);
-                    }
-                }
-                else {
+                } else {
                     super.doSend(producer, message);
                 }
             }
@@ -186,8 +187,7 @@ public class JmsConfiguration implements Cloneable {
                         }
                     }
                     producer.send(message, message.getJMSDeliveryMode(), message.getJMSPriority(), ttl);
-                }
-                else {
+                } else {
                     super.doSend(producer, message);
                 }
             }
@@ -220,14 +220,13 @@ public class JmsConfiguration implements Cloneable {
         template.setSessionTransacted(transacted);
         if (transacted) {
             template.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
-        }
-        else {
-            // This is here for completeness, but the template should not get used
+        } else {
+            // This is here for completeness, but the template should not get
+            // used
             // for receiving messages.
             if (acknowledgementMode >= 0) {
                 template.setSessionAcknowledgeMode(acknowledgementMode);
-            }
-            else if (acknowledgementModeName != null) {
+            } else if (acknowledgementModeName != null) {
                 template.setSessionAcknowledgeModeName(acknowledgementModeName);
             }
         }
@@ -240,7 +239,8 @@ public class JmsConfiguration implements Cloneable {
         return container;
     }
 
-    protected void configureMessageListenerContainer(AbstractMessageListenerContainer container, JmsEndpoint endpoint) {
+    protected void configureMessageListenerContainer(AbstractMessageListenerContainer container,
+                                                     JmsEndpoint endpoint) {
         container.setConnectionFactory(getListenerConnectionFactory());
         if (destinationResolver != null) {
             container.setDestinationResolver(destinationResolver);
@@ -272,30 +272,26 @@ public class JmsConfiguration implements Cloneable {
         container.setSessionTransacted(transacted);
         if (transacted) {
             container.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
-        }
-        else {
+        } else {
             if (acknowledgementMode >= 0) {
                 container.setSessionAcknowledgeMode(acknowledgementMode);
-            }
-            else if (acknowledgementModeName != null) {
+            } else if (acknowledgementModeName != null) {
                 container.setSessionAcknowledgeModeName(acknowledgementModeName);
             }
         }
 
         if (container instanceof DefaultMessageListenerContainer) {
             // this includes DefaultMessageListenerContainer102
-            DefaultMessageListenerContainer listenerContainer = (DefaultMessageListenerContainer) container;
+            DefaultMessageListenerContainer listenerContainer = (DefaultMessageListenerContainer)container;
             if (concurrentConsumers >= 0) {
                 listenerContainer.setConcurrentConsumers(concurrentConsumers);
             }
 
             if (cacheLevel >= 0) {
                 listenerContainer.setCacheLevel(cacheLevel);
-            }
-            else if (cacheLevelName != null) {
+            } else if (cacheLevelName != null) {
                 listenerContainer.setCacheLevelName(cacheLevelName);
-            }
-            else {
+            } else {
                 listenerContainer.setCacheLevel(defaultCacheLevel(endpoint));
             }
 
@@ -320,9 +316,9 @@ public class JmsConfiguration implements Cloneable {
             }
             if (transactionManager != null) {
                 listenerContainer.setTransactionManager(transactionManager);
-            }
-            else if (transacted) {
-                throw new IllegalArgumentException("Property transacted is enabled but a transactionManager was not injected!");
+            } else if (transacted) {
+                throw new IllegalArgumentException(
+                                                   "Property transacted is enabled but a transactionManager was not injected!");
             }
             if (transactionName != null) {
                 listenerContainer.setTransactionName(transactionName);
@@ -330,20 +326,18 @@ public class JmsConfiguration implements Cloneable {
             if (transactionTimeout >= 0) {
                 listenerContainer.setTransactionTimeout(transactionTimeout);
             }
-        }
-        else if (container instanceof ServerSessionMessageListenerContainer) {
+        } else if (container instanceof ServerSessionMessageListenerContainer) {
             // this includes ServerSessionMessageListenerContainer102
-            ServerSessionMessageListenerContainer listenerContainer = (ServerSessionMessageListenerContainer) container;
+            ServerSessionMessageListenerContainer listenerContainer = (ServerSessionMessageListenerContainer)container;
             if (maxMessagesPerTask >= 0) {
                 listenerContainer.setMaxMessagesPerTask(maxMessagesPerTask);
             }
             if (serverSessionFactory != null) {
                 listenerContainer.setServerSessionFactory(serverSessionFactory);
             }
-        }
-        else if (container instanceof SimpleMessageListenerContainer) {
+        } else if (container instanceof SimpleMessageListenerContainer) {
             // this includes SimpleMessageListenerContainer102
-            SimpleMessageListenerContainer listenerContainer = (SimpleMessageListenerContainer) container;
+            SimpleMessageListenerContainer listenerContainer = (SimpleMessageListenerContainer)container;
             if (concurrentConsumers >= 0) {
                 listenerContainer.setConcurrentConsumers(concurrentConsumers);
             }
@@ -396,7 +390,7 @@ public class JmsConfiguration implements Cloneable {
      * {@link #createMessageListenerContainer(JmsEndpoint)}
      *
      * @param listenerConnectionFactory the connection factory to use for
-     *                                  consuming messages
+     *                consuming messages
      */
     public void setListenerConnectionFactory(ConnectionFactory listenerConnectionFactory) {
         this.listenerConnectionFactory = listenerConnectionFactory;
@@ -414,7 +408,7 @@ public class JmsConfiguration implements Cloneable {
      * {@link JmsTemplate} via {@link #createInOnlyTemplate(boolean, String)}
      *
      * @param templateConnectionFactory the connection factory for sending
-     *                                  messages
+     *                messages
      */
     public void setTemplateConnectionFactory(ConnectionFactory templateConnectionFactory) {
         this.templateConnectionFactory = templateConnectionFactory;
@@ -691,12 +685,13 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Enables eager loading of JMS properties as soon as a message is loaded which generally
-     * is inefficient as the JMS properties may not be required but sometimes can catch early any
-     * issues with the underlying JMS provider and the use of JMS properties
+     * Enables eager loading of JMS properties as soon as a message is loaded
+     * which generally is inefficient as the JMS properties may not be required
+     * but sometimes can catch early any issues with the underlying JMS provider
+     * and the use of JMS properties
      *
-     * @param eagerLoadingOfProperties whether or not to enable eager loading of JMS properties
-     * on inbound messages
+     * @param eagerLoadingOfProperties whether or not to enable eager loading of
+     *                JMS properties on inbound messages
      */
     public void setEagerLoadingOfProperties(boolean eagerLoadingOfProperties) {
         this.eagerLoadingOfProperties = eagerLoadingOfProperties;
@@ -707,10 +702,11 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Disables the use of the JMSReplyTo header for consumers so that inbound messages are treated as InOnly
-     * rather than InOut requests.
+     * Disables the use of the JMSReplyTo header for consumers so that inbound
+     * messages are treated as InOnly rather than InOut requests.
      *
-     * @param disableReplyTo whether or not to disable the use of JMSReplyTo header indicating an InOut
+     * @param disableReplyTo whether or not to disable the use of JMSReplyTo
+     *                header indicating an InOut
      */
     public void setDisableReplyTo(boolean disableReplyTo) {
         this.disableReplyTo = disableReplyTo;
@@ -721,27 +717,30 @@ public class JmsConfiguration implements Cloneable {
     protected AbstractMessageListenerContainer chooseMessageListenerContainerImplementation() {
         // TODO we could allow a spring container to auto-inject these objects?
         switch (consumerType) {
-            case Simple:
-                return isUseVersion102() ? new SimpleMessageListenerContainer102() : new SimpleMessageListenerContainer();
-            case ServerSessionPool:
-                return isUseVersion102() ? new ServerSessionMessageListenerContainer102() : new ServerSessionMessageListenerContainer();
-            case Default:
-                return isUseVersion102() ? new DefaultMessageListenerContainer102() : new DefaultMessageListenerContainer();
-            default:
-                throw new IllegalArgumentException("Unknown consumer type: " + consumerType);
+        case Simple:
+            return isUseVersion102()
+                ? new SimpleMessageListenerContainer102() : new SimpleMessageListenerContainer();
+        case ServerSessionPool:
+            return isUseVersion102()
+                ? new ServerSessionMessageListenerContainer102()
+                : new ServerSessionMessageListenerContainer();
+        case Default:
+            return isUseVersion102()
+                ? new DefaultMessageListenerContainer102() : new DefaultMessageListenerContainer();
+        default:
+            throw new IllegalArgumentException("Unknown consumer type: " + consumerType);
         }
     }
 
-
     /**
-     * Defaults the JMS cache level if none is explicitly specified.
-     *
-     * Note that due to this
-     * <a href="http://opensource.atlassian.com/projects/spring/browse/SPR-3890">Spring Bug</a>
-     * we cannot use CACHE_CONSUMER by default (which we should do as its most efficient)
-     * unless the spring version is 2.5.1 or later.
-     * Instead we use CACHE_CONNECTION - part from for non-durable topics which must use
-     * CACHE_CONSUMER to avoid missing messages (due to the consumer being created and destroyed per message).
+     * Defaults the JMS cache level if none is explicitly specified. Note that
+     * due to this <a
+     * href="http://opensource.atlassian.com/projects/spring/browse/SPR-3890">Spring
+     * Bug</a> we cannot use CACHE_CONSUMER by default (which we should do as
+     * its most efficient) unless the spring version is 2.5.1 or later. Instead
+     * we use CACHE_CONNECTION - part from for non-durable topics which must use
+     * CACHE_CONSUMER to avoid missing messages (due to the consumer being
+     * created and destroyed per message).
      *
      * @return
      * @param endpoint
@@ -750,16 +749,16 @@ public class JmsConfiguration implements Cloneable {
         // if we are on a new enough spring version we can assume CACHE_CONSUMER
         if (PackageHelper.isValidVersion("org.springframework.jms", 2.51D)) {
             return DefaultMessageListenerContainer.CACHE_CONSUMER;
-        }
-        else {
+        } else {
             if (endpoint.isPubSubDomain() && !isSubscriptionDurable()) {
                 // we must cache the consumer or we will miss messages
                 // see https://issues.apache.org/activemq/browse/CAMEL-253
                 return DefaultMessageListenerContainer.CACHE_CONSUMER;
-            }
-            else {
-                // to enable consuming and sending with a single JMS session (to avoid XA) we can only use CACHE_CONNECTION
-                // due to this bug : http://opensource.atlassian.com/projects/spring/browse/SPR-3890
+            } else {
+                // to enable consuming and sending with a single JMS session (to
+                // avoid XA) we can only use CACHE_CONNECTION
+                // due to this bug :
+                // http://opensource.atlassian.com/projects/spring/browse/SPR-3890
                 return DefaultMessageListenerContainer.CACHE_CONNECTION;
             }
         }
@@ -796,8 +795,8 @@ public class JmsConfiguration implements Cloneable {
 
     /**
      * Set to true if you want to send message using the QoS settings specified
-     * on the message.  Normally the QoS settings used are the one configured
-     * on this Object.
+     * on the message. Normally the QoS settings used are the one configured on
+     * this Object.
      *
      * @param preserveMessageQos
      */
@@ -826,8 +825,8 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the frequency that the requestMap for InOut exchanges is purged
-     * for timed out message exchanges
+     * Sets the frequency that the requestMap for InOut exchanges is purged for
+     * timed out message exchanges
      *
      * @param requestMapPurgePollTimeMillis
      */

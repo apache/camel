@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,10 +16,10 @@
  */
 package org.apache.camel.component.amqp;
 
-import org.apache.camel.component.jms.JmsComponent;
-import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.qpid.client.AMQConnectionFactory;
 import org.apache.qpid.url.URLSyntaxException;
 
@@ -28,11 +27,6 @@ import org.apache.qpid.url.URLSyntaxException;
  * @version $Revision$
  */
 public class AMQPComponent extends JmsComponent {
-
-    public static Component amqpComponent(String uri) throws URLSyntaxException {
-        AMQConnectionFactory connectionFactory = new AMQConnectionFactory(uri);
-        return new AMQPComponent(connectionFactory);
-    }
 
     public AMQPComponent() {
         init();
@@ -51,7 +45,12 @@ public class AMQPComponent extends JmsComponent {
     public AMQPComponent(AMQConnectionFactory connectionFactory) {
         setConnectionFactory(connectionFactory);
     }
-    
+
+    public static Component amqpComponent(String uri) throws URLSyntaxException {
+        AMQConnectionFactory connectionFactory = new AMQConnectionFactory(uri);
+        return new AMQPComponent(connectionFactory);
+    }
+
     /**
      * Lets install the default connection factory
      */

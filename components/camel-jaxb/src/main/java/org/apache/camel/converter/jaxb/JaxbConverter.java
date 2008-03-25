@@ -16,19 +16,22 @@
  */
 package org.apache.camel.converter.jaxb;
 
-import org.apache.camel.Converter;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.converter.HasAnnotation;
-import org.apache.camel.converter.jaxp.XmlConverter;
-import org.w3c.dom.Document;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.util.JAXBSource;
 import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+
+import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.converter.HasAnnotation;
+import org.apache.camel.converter.jaxp.XmlConverter;
+
+
 
 /**
  * @version $Revision$

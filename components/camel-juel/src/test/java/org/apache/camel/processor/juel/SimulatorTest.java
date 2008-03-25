@@ -16,13 +16,15 @@
  */
 package org.apache.camel.processor.juel;
 
+
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.ExchangeHelper;
+
 import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**

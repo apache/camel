@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,10 +27,10 @@ import javax.jms.MessageListener;
 import javax.jms.Session;
 import javax.jms.TemporaryQueue;
 
+import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.DefaultTimeoutMap;
 import org.apache.camel.util.TimeoutMap;
-import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.task.TaskExecutor;
@@ -86,17 +85,16 @@ public class Requestor extends ServiceSupport implements MessageListener {
             // lets notify the monitor for this response
             Object handler = requestMap.get(correlationID);
             if (handler == null) {
-                LOG.warn("Response received for unknown correlationID: " + correlationID + " request: " + message);
-            }
-            else if (handler instanceof ReplyHandler) {
-                ReplyHandler replyHandler = (ReplyHandler) handler;
+                LOG.warn("Response received for unknown correlationID: " + correlationID + " request: "
+                         + message);
+            } else if (handler instanceof ReplyHandler) {
+                ReplyHandler replyHandler = (ReplyHandler)handler;
                 boolean complete = replyHandler.handle(message);
                 if (complete) {
                     requestMap.remove(correlationID);
                 }
             }
-        }
-        catch (JMSException e) {
+        } catch (JMSException e) {
             throw new FailedToProcessResponse(message, e);
         }
     }
@@ -136,12 +134,13 @@ public class Requestor extends ServiceSupport implements MessageListener {
     }
 
     protected AbstractMessageListenerContainer createListenerContainer() {
-        SimpleMessageListenerContainer answer = configuration.isUseVersion102() ?
-            new SimpleMessageListenerContainer102() : new SimpleMessageListenerContainer();
+        SimpleMessageListenerContainer answer = configuration.isUseVersion102()
+            ? new SimpleMessageListenerContainer102() : new SimpleMessageListenerContainer();
         answer.setDestinationName("temporary");
         answer.setDestinationResolver(new DestinationResolver() {
 
-            public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain) throws JMSException {
+            public Destination resolveDestinationName(Session session, String destinationName,
+                                                      boolean pubSubDomain) throws JMSException {
                 TemporaryQueue queue = session.createTemporaryQueue();
                 replyTo = queue;
                 return queue;

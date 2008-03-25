@@ -38,70 +38,70 @@ import org.apache.http.protocol.HttpRequestHandlerResolver;
 import org.apache.http.util.concurrent.ThreadFactory;
 
 public class JhcServerEngine {
-    private static Log LOG = LogFactory.getLog(JhcServerEngine.class);
+    private static final Log LOG = LogFactory.getLog(JhcServerEngine.class);
     private final HttpParams params;
     private int port;
     private String protocol;
     private int nbThreads = 2;
     private ListeningIOReactor ioReactor;
     private ThreadFactory threadFactory;
-    private Thread runner;   
-    private SSLContext sslContext;    
+    private Thread runner;
+    private SSLContext sslContext;
     private AsyncBufferingHttpServiceHandler serviceHandler;
     private HttpRequestHandlerRegistry handlerRegistry;
     private boolean isStarted;
     private int referenceCounter;
-    
+
     JhcServerEngine(HttpParams params, int port, String protocol) {
         this.params = params;
-        serviceHandler = new AsyncBufferingHttpServiceHandler(params);        
+        serviceHandler = new AsyncBufferingHttpServiceHandler(params);
         handlerRegistry = new HttpRequestHandlerRegistry();
         serviceHandler.setHandlerResolver(handlerRegistry);
         this.port = port;
         this.protocol = protocol;
     }
-    
-       
+
+
     public int getPort() {
         return port;
     }
-    
+
     public String getProtocol() {
         return this.protocol;
     }
-    
+
     public void setSslContext(SSLContext sslContext) {
         this.sslContext = sslContext;
     }
-    
+
     public SSLContext getSslContext() {
         return this.sslContext;
     }
-    
+
     public synchronized void register(String pattern, AsyncHttpRequestHandler handler) {
         handlerRegistry.register(pattern, handler);
-        referenceCounter ++;
+        referenceCounter++;
     }
-    
+
     public synchronized void unregister(String pattern) {
         handlerRegistry.unregister(pattern);
-        referenceCounter --;
+        referenceCounter--;
     }
-    
+
     public int getReferenceCounter() {
         return referenceCounter;
     }
-    
+
     public boolean isStarted() {
         return isStarted;
     }
-    
+
     public void start() throws IOReactorException {
-        final SocketAddress addr = new InetSocketAddress(port);        
+        final SocketAddress addr = new InetSocketAddress(port);
         ioReactor = new DefaultListeningIOReactor(nbThreads, threadFactory, params);
 
         final IOEventDispatch ioEventDispatch;
-        if ("https".equals(protocol)) {            
+        if ("https".equals(protocol)) {
             ioEventDispatch = new SSLServerIOEventDispatch(serviceHandler, sslContext, params);
         } else {
             ioEventDispatch = new DefaultServerIOEventDispatch(serviceHandler, params);
@@ -111,7 +111,7 @@ public class JhcServerEngine {
                 try {
                     ioReactor.listen(addr);
                     isStarted = true;
-                    ioReactor.execute(ioEventDispatch);                    
+                    ioReactor.execute(ioEventDispatch);
                 } catch (InterruptedIOException ex) {
                     LOG.info("Interrupted");
                 } catch (IOException e) {
@@ -122,7 +122,7 @@ public class JhcServerEngine {
         };
         runner.start();
     }
-    
+
     public void stop() throws IOException {
         LOG.debug("Stopping the jhc ioReactor ");
         ioReactor.shutdown();

@@ -16,11 +16,10 @@
  */
 package org.apache.camel.converter.jaxb;
 
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConverter;
-import org.apache.camel.spi.TypeConverterAware;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -29,10 +28,12 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.util.JAXBSource;
 import javax.xml.transform.Source;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
+
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.TypeConverterAware;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
@@ -65,8 +66,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
                 }
             }
             return null;
-        }
-        catch (JAXBException e) {
+        } catch (JAXBException e) {
             throw new RuntimeCamelException(e);
         }
     }

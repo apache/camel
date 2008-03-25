@@ -25,18 +25,20 @@ import javax.sql.DataSource;
 
 /**
  * TODO Provide description for TestDataSource.
- * 
+ *
  * @author <a href="mailto:nsandhu@raleys.com">nsandhu</a>
  *
  */
-public class TestDataSource implements DataSource{
-    private String url, username, password;
-    public TestDataSource(String url, String user, String password){
-        this.url=url;
-        this.username=user;
-        this.password=password;
+public class TestDataSource implements DataSource {
+    private final String url;
+    private final String username;
+    private final String password;
+    public TestDataSource(String url, String user, String password) {
+        this.url = url;
+        this.username = user;
+        this.password = password;
     }
-    
+
     public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(url, username, password);
     }
@@ -54,20 +56,20 @@ public class TestDataSource implements DataSource{
     }
 
     public void setLoginTimeout(int seconds) throws SQLException {
-       DriverManager.setLoginTimeout(seconds);
+        DriverManager.setLoginTimeout(seconds);
     }
 
     public void setLogWriter(PrintWriter out) throws SQLException {
         DriverManager.setLogWriter(out);
     }
 
-	public boolean isWrapperFor(Class<?> iface) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	public <T> T unwrap(Class<T> iface) throws SQLException {
-		return null;
-	}
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        return null;
+    }
 
 }

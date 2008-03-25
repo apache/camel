@@ -20,31 +20,32 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.camel.Processor;
-import org.apache.camel.component.file.FileComponent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 
+import org.apache.camel.Processor;
+import org.apache.camel.component.file.FileComponent;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+
 public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     private static final transient Log LOG = LogFactory.getLog(SftpConsumer.class);
-    
+    private final SftpEndpoint endpoint;
     private boolean recursive = true;
     private String regexPattern = "";
     private long lastPollTime;
-    private final SftpEndpoint endpoint;
+
     private ChannelSftp channel;
     private Session session;
-    private boolean setNames = false;
+    private boolean setNames;
 
     public SftpConsumer(SftpEndpoint endpoint, Processor processor, Session session) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        this.session = session; 
+        this.session = session;
     }
 
     public SftpConsumer(SftpEndpoint endpoint, Processor processor, Session session, ScheduledExecutorService executor) {
@@ -52,7 +53,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         this.endpoint = endpoint;
         this.session = session;
     }
-    
+
     // TODO: is there a way to avoid copy-pasting the reconnect logic?
     protected void connectIfNecessary() throws JSchException {
         if (channel == null || !channel.isConnected()) {
@@ -67,10 +68,9 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             LOG.info("Connected to " + endpoint.getConfiguration().toString());
         }
     }
-    
+
     // TODO: is there a way to avoid copy-pasting the reconnect logic?
-    protected void disconnect() throws JSchException
-    {
+    protected void disconnect() throws JSchException {
         if (session != null) {
             LOG.info("Session is being explicitly disconnected");
             session.disconnect();
@@ -84,7 +84,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     // TODO: is there a way to avoid copy-pasting the reconnect logic?
     protected void poll() throws Exception {
         connectIfNecessary();
-        // If the attempt to connect isn't successful, then the thrown 
+        // If the attempt to connect isn't successful, then the thrown
         // exception will signify that we couldn't poll
         try {
             final String fileName = endpoint.getConfiguration().getFile();

@@ -16,15 +16,14 @@
  */
 package org.apache.camel.component.jhc;
 
+import java.net.URI;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.apache.http.params.BasicHttpParams;
-
-import java.net.URI;
+import org.apache.http.params.HttpParams;
 
 /**
  * Created by IntelliJ IDEA.

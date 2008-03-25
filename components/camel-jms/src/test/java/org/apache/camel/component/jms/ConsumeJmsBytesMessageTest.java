@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.jms;
 
+
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.jms.BytesMessage;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
-import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.Session;
 
@@ -32,10 +30,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+
 
 /**
  * @version $Revision$
@@ -87,7 +87,7 @@ public class ConsumeJmsBytesMessageTest extends ContextTestSupport {
         assertEquals("Wrong payload lentght", 3, bytes.length);
     }
 
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();

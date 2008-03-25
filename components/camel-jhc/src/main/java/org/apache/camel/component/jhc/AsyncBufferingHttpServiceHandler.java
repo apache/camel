@@ -16,16 +16,31 @@
  */
 package org.apache.camel.component.jhc;
 
-import org.apache.http.*;
-import org.apache.http.impl.DefaultHttpResponseFactory;
+import java.io.IOException;
+
+import org.apache.http.ConnectionReuseStrategy;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpResponseFactory;
+import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
+import org.apache.http.ProtocolVersion;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.nio.util.ByteBufferAllocator;
+import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.nio.NHttpServerConnection;
+import org.apache.http.nio.util.ByteBufferAllocator;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpParamsLinker;
-import org.apache.http.protocol.*;
-
-import java.io.IOException;
+import org.apache.http.protocol.BasicHttpProcessor;
+import org.apache.http.protocol.ExecutionContext;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpProcessor;
+import org.apache.http.protocol.HttpRequestHandler;
+import org.apache.http.protocol.ResponseConnControl;
+import org.apache.http.protocol.ResponseContent;
+import org.apache.http.protocol.ResponseDate;
+import org.apache.http.protocol.ResponseServer;
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,7 +51,7 @@ import java.io.IOException;
  */
 public class AsyncBufferingHttpServiceHandler extends BufferingHttpServiceHandler {
 
-    
+
     public AsyncBufferingHttpServiceHandler(final HttpParams params) {
         super(createDefaultProcessor(),
               new DefaultHttpResponseFactory(),
@@ -90,10 +105,10 @@ public class AsyncBufferingHttpServiceHandler extends BufferingHttpServiceHandle
 
             HttpRequestHandler handler = null;
             if (handlerResolver != null) {
-                String requestURI = request.getRequestLine().getUri();                
-                handler = handlerResolver.lookup(requestURI);                
+                String requestURI = request.getRequestLine().getUri();
+                handler = handlerResolver.lookup(requestURI);
             }
-            if (handler != null) {                
+            if (handler != null) {
                 if (handler instanceof AsyncHttpRequestHandler) {
                     ((AsyncHttpRequestHandler)handler).handle(request, context, new AsyncResponseHandler() {
                         public void sendResponse(HttpResponse response) throws IOException, HttpException {
@@ -119,7 +134,7 @@ public class AsyncBufferingHttpServiceHandler extends BufferingHttpServiceHandle
                     context.setAttribute(ExecutionContext.HTTP_RESPONSE, response);
                     handler.handle(request, response, context);
                     sendResponse(conn, response);
-                }    
+                }
             } else {
                 // add the default handler here
                 HttpResponse response = this.responseFactory.newHttpResponse(
@@ -127,7 +142,7 @@ public class AsyncBufferingHttpServiceHandler extends BufferingHttpServiceHandle
                                                                              HttpStatus.SC_OK,
                                                                              conn.getContext());
                 response.setStatusCode(HttpStatus.SC_NOT_IMPLEMENTED);
-                
+
             }
 
         } catch (HttpException ex) {
@@ -140,6 +155,6 @@ public class AsyncBufferingHttpServiceHandler extends BufferingHttpServiceHandle
             sendResponse(conn, response);
         }
 
-    }    
+    }
 
 }

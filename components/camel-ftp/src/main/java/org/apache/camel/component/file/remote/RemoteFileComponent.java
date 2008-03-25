@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.net.URI;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultComponent;
-
-import java.net.URI;
-import java.util.Map;
 
 public class RemoteFileComponent extends DefaultComponent<RemoteFileExchange> {
     private RemoteFileConfiguration configuration;

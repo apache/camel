@@ -22,7 +22,7 @@ import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 
 public interface AsyncResponseHandler {
-    
-     void sendResponse(HttpResponse response) throws IOException, HttpException;
-     
+
+    void sendResponse(HttpResponse response) throws IOException, HttpException;
+
 }

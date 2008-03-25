@@ -21,10 +21,10 @@ import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPConnectionClosedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPConnectionClosedException;
 
 public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
     private static final transient Log LOG = LogFactory.getLog(FtpProducer.class);
@@ -41,12 +41,12 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
     // TODO: is there a way to avoid copy-pasting the reconnect logic?
     public void process(Exchange exchange) throws Exception {
         connectIfNecessary();
-        // If the attempt to connect isn't successful, then the thrown 
+        // If the attempt to connect isn't successful, then the thrown
         // exception will signify that we couldn't deliver
         try {
             process(endpoint.createExchange(exchange));
         } catch (FTPConnectionClosedException e) {
-            // If the server disconnected us, then we must manually disconnect 
+            // If the server disconnected us, then we must manually disconnect
             // the client before attempting to reconnect
             LOG.warn("Disconnecting due to exception: " + e.toString());
             disconnect();
@@ -60,7 +60,7 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
             throw e;
         }
     }
-    
+
     // TODO: is there a way to avoid copy-pasting the reconnect logic?
     protected void connectIfNecessary() throws IOException {
         if (!client.isConnected()) {
@@ -69,7 +69,7 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
             LOG.info("Connected to " + endpoint.getConfiguration());
         }
     }
-    
+
     // TODO: is there a way to avoid copy-pasting the reconnect logic?
     public void disconnect() throws IOException {
         LOG.info("FtpProducer's client is being explicitly disconnected");
@@ -80,25 +80,23 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
         InputStream payload = exchange.getIn().getBody(InputStream.class);
         try {
             String fileName = createFileName(exchange.getIn(), endpoint.getConfiguration());
-            
+
             int lastPathIndex = fileName.lastIndexOf('/');
-            if (lastPathIndex != -1)
-            {
+            if (lastPathIndex != -1) {
                 String directory = fileName.substring(0, lastPathIndex);
                 if (!buildDirectory(client, directory)) {
                     LOG.warn("Couldn't buildDirectory: " + directory + " (either permissions deny it, or it already exists)");
                 }
             }
-            
+
             final boolean success = client.storeFile(fileName, payload);
             if (!success) {
                 throw new RuntimeCamelException("error sending file");
             }
-            
+
             RemoteFileConfiguration config = endpoint.getConfiguration();
             LOG.info("Sent: " + fileName + " to " + config.toString().substring(0, config.toString().indexOf(config.getFile())));
-        }
-        finally {
+        } finally {
             if (null != payload) {
                 payload.close();
             }

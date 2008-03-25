@@ -69,8 +69,7 @@ public class EndpointMessageListener implements MessageListener {
             if (out != null && !disableReplyTo) {
                 sendReply(replyDestination, message, exchange, out);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
     }

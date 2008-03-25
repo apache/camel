@@ -66,7 +66,7 @@ public class JpaIdempotentConsumerTest extends IdempotentConsumerTest {
         };
         // END SNIPPET: idempotent
     }
-    
+
     protected void cleanupRepository() {
         jpaTemplate = (JpaTemplate)applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 
@@ -77,8 +77,8 @@ public class JpaIdempotentConsumerTest extends IdempotentConsumerTest {
         transactionTemplate.execute(new TransactionCallback() {
             public Object doInTransaction(TransactionStatus arg0) {
                 List list = jpaTemplate.find(SELECT_ALL_STRING, PROCESSOR_NAME);
-                for (Object item: list) {
-                	jpaTemplate.remove(item);
+                for (Object item : list) {
+                    jpaTemplate.remove(item);
                 }
                 jpaTemplate.flush();
                 return Boolean.TRUE;

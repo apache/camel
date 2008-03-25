@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -23,9 +24,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+
+
 
 /**
  * @version $Revision$
