@@ -19,12 +19,12 @@ package org.apache.camel.component.http;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
  * Represents a HTTP exchange which exposes the underlying HTTP abtractions via
- * {@link #getRequest()} and {@link #getResponse()} 
+ * {@link #getRequest()} and {@link #getResponse()}
  *
  * @version $Revision$
  */

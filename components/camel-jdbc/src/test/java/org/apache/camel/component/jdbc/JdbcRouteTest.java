@@ -16,6 +16,13 @@
  */
 package org.apache.camel.component.jdbc;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.sql.DataSource;
+
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelTemplate;
@@ -24,12 +31,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.jndi.JndiContext;
-
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * @version $Revision$

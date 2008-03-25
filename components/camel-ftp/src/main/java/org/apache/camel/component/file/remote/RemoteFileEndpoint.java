@@ -18,8 +18,8 @@ package org.apache.camel.component.file.remote;
 
 import java.io.ByteArrayOutputStream;
 
-import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.impl.ScheduledPollEndpoint;
 
 public abstract class RemoteFileEndpoint<T extends RemoteFileExchange> extends ScheduledPollEndpoint<T> {
     private RemoteFileBinding binding;

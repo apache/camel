@@ -16,74 +16,57 @@
  */
 package org.apache.camel.component.jhc;
 
+import java.io.IOException;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.*;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpResponseFactory;
+import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
+import org.apache.http.ProtocolVersion;
 import org.apache.http.impl.DefaultHttpResponseFactory;
-import org.apache.http.impl.nio.DefaultServerIOEventDispatch;
-import org.apache.http.impl.nio.reactor.SSLServerIOEventDispatch;
-import org.apache.http.nio.*;
-import org.apache.http.nio.entity.ContentOutputStream;
-import org.apache.http.nio.util.ContentOutputBuffer;
+import org.apache.http.nio.NHttpConnection;
 import org.apache.http.nio.protocol.EventListener;
-import org.apache.http.nio.reactor.IOEventDispatch;
-import org.apache.http.nio.reactor.ListeningIOReactor;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpParamsLinker;
-import org.apache.http.protocol.*;
-import org.apache.http.util.EncodingUtils;
-import org.apache.http.util.concurrent.ThreadFactory;
-
-import javax.net.ssl.SSLContext;
-import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.io.UnsupportedEncodingException;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SelectionKey;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpRequestHandler;
 
 /**
- * Created by IntelliJ IDEA.
- * User: gnodet
- * Date: Sep 7, 2007
- * Time: 8:15:54 PM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: gnodet Date: Sep 7, 2007 Time: 8:15:54 PM To
+ * change this template use File | Settings | File Templates.
  */
 public class JhcConsumer extends DefaultConsumer<JhcExchange> {
 
-    private static Log LOG = LogFactory.getLog(JhcConsumer.class);
+    private static final Log LOG = LogFactory.getLog(JhcConsumer.class);
     private JhcServerEngine engine;
     private MyHandler handler;
-   
 
     public JhcConsumer(JhcEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        engine = JhcServerEngineFactory.getJhcServerEngine(endpoint.getParams(), 
-                                                           endpoint.getPort(),
-                                                           endpoint.getProtocol());
+        engine = JhcServerEngineFactory.getJhcServerEngine(endpoint.getParams(), endpoint.getPort(), endpoint
+            .getProtocol());
         handler = new MyHandler(endpoint.getParams(), endpoint.getPath());
-        
+
     }
 
     public JhcEndpoint getEndpoint() {
-        return (JhcEndpoint) super.getEndpoint();
+        return (JhcEndpoint)super.getEndpoint();
     }
 
     protected void doStart() throws Exception {
-        super.doStart();        
+        super.doStart();
         engine.register(handler.getPath() + "*", handler);
-        if(! engine.isStarted()) {
+        if (!engine.isStarted()) {
             engine.start();
         }
     }
@@ -98,7 +81,8 @@ public class JhcConsumer extends DefaultConsumer<JhcExchange> {
 
     class MyHttpRequestHandler implements HttpRequestHandler {
 
-        public void handle(HttpRequest httpRequest, HttpResponse httpResponse, HttpContext httpContext) throws HttpException, IOException {
+        public void handle(HttpRequest httpRequest, HttpResponse httpResponse, HttpContext httpContext)
+            throws HttpException, IOException {
             LOG.debug("handle");
         }
     }
@@ -137,37 +121,40 @@ public class JhcConsumer extends DefaultConsumer<JhcExchange> {
 
     }
 
-
     class MyHandler implements AsyncHttpRequestHandler {
         private final HttpParams params;
         private final HttpResponseFactory responseFactory;
         private final String path;
-        
+
         public MyHandler(HttpParams params, String path) {
             this(params, path, new DefaultHttpResponseFactory());
         }
+
         public MyHandler(HttpParams params, String path, HttpResponseFactory responseFactory) {
             this.params = params;
             this.path = path;
             this.responseFactory = responseFactory;
         }
-       
+
         public String getPath() {
             return path;
         }
-        public void handle(final HttpRequest request, final HttpContext context, final AsyncResponseHandler handler) throws HttpException, IOException {
+
+        public void handle(final HttpRequest request, final HttpContext context,
+                           final AsyncResponseHandler handler) throws HttpException, IOException {
             final Exchange exchange = getEndpoint().createExchange();
             exchange.getIn().setHeader("http.uri", request.getRequestLine().getUri());
             if (request instanceof HttpEntityEnclosingRequest) {
-                exchange.getIn().setBody(((HttpEntityEnclosingRequest) request).getEntity());
+                exchange.getIn().setBody(((HttpEntityEnclosingRequest)request).getEntity());
             }
             getAsyncProcessor().process(exchange, new AsyncCallback() {
                 public void done(boolean doneSynchronously) {
                     LOG.debug("handleExchange");
                     // create the default response to this request
                     ProtocolVersion httpVersion = (HttpVersion)request.getRequestLine().getProtocolVersion();
-                    
-                    HttpResponse response = responseFactory.newHttpResponse(httpVersion, HttpStatus.SC_OK, context);
+
+                    HttpResponse response = responseFactory.newHttpResponse(httpVersion, HttpStatus.SC_OK,
+                                                                            context);
                     HttpParamsLinker.link(response, params);
                     HttpEntity entity = exchange.getOut().getBody(HttpEntity.class);
                     response.setEntity(entity);
@@ -179,11 +166,13 @@ public class JhcConsumer extends DefaultConsumer<JhcExchange> {
                     }
                 }
             });
-            
+
         }
-        public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
+
+        public void handle(HttpRequest request, HttpResponse response, HttpContext context)
+            throws HttpException, IOException {
             // now we just handler the requset async, do nothing here
-            
+
         }
     }
 

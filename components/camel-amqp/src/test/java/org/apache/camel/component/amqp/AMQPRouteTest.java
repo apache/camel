@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.amqp;
 
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.qpid.client.transport.TransportConnection;
+
+import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
 
 /**
  * @version $Revision$
@@ -61,7 +63,7 @@ public class AMQPRouteTest extends ContextTestSupport {
         // lets create an in JVM broker
         TransportConnection.createVMBroker(1);
 
-    super.setUp();
+        super.setUp();
 
         resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
     }

@@ -16,15 +16,17 @@
  */
 package org.apache.camel.component.jms;
 
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.springframework.jms.listener.DefaultMessageListenerContainer;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
+
 
 /**
  * @version $Revision$

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
+
 import java.util.Map;
 
 import javax.jms.ConnectionFactory;
@@ -26,7 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.jms.requestor.Requestor;
 import org.apache.camel.impl.DefaultComponent;
-import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -37,6 +38,8 @@ import org.springframework.jms.listener.serversession.ServerSessionFactory;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
+import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+
 
 /**
  * A <a href="http://activemq.apache.org/jms.html">JMS Component</a>
@@ -119,7 +122,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
         if (configuration == null) {
             configuration = createConfiguration();
 
-            // If we are being configured with spring... 
+            // If we are being configured with spring...
             if (applicationContext != null) {
                 Map beansOfType = applicationContext.getBeansOfType(ConnectionFactory.class);
                 if (!beansOfType.isEmpty()) {
@@ -323,8 +326,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
         if (remaining.startsWith(QUEUE_PREFIX)) {
             pubSubDomain = false;
             remaining = removeStartingCharacters(remaining.substring(QUEUE_PREFIX.length()), '/');
-        }
-        else if (remaining.startsWith(TOPIC_PREFIX)) {
+        } else if (remaining.startsWith(TOPIC_PREFIX)) {
             pubSubDomain = true;
             remaining = removeStartingCharacters(remaining.substring(TOPIC_PREFIX.length()), '/');
         }
@@ -337,12 +339,11 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
         JmsEndpoint endpoint;
         if (pubSubDomain) {
             endpoint = new JmsEndpoint(uri, this, subject, pubSubDomain, newConfiguration);
-        }
-        else {
+        } else {
             endpoint = new JmsQueueEndpoint(uri, this, subject, newConfiguration);
         }
 
-        String selector = (String) parameters.remove("selector");
+        String selector = (String)parameters.remove("selector");
         if (selector != null) {
             endpoint.setSelector(selector);
         }

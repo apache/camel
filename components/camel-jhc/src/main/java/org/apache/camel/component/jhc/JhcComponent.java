@@ -16,44 +16,21 @@
  */
 package org.apache.camel.component.jhc;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.nio.reactor.ConnectingIOReactor;
-import org.apache.http.nio.reactor.IOEventDispatch;
-import org.apache.http.nio.reactor.SessionRequestCallback;
-import org.apache.http.nio.reactor.SessionRequest;
-import org.apache.http.nio.protocol.BufferingHttpClientHandler;
-import org.apache.http.nio.protocol.HttpRequestExecutionHandler;
-import org.apache.http.nio.protocol.EventListener;
-import org.apache.http.nio.NHttpConnection;
-import org.apache.http.util.concurrent.ThreadFactory;
-import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
-import org.apache.http.impl.nio.DefaultClientIOEventDispatch;
-import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.protocol.*;
-import org.apache.http.*;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.message.BasicHttpRequest;
-import org.apache.http.message.BasicHttpEntityEnclosingRequest;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.net.URI;
 import java.util.Map;
-import java.util.Iterator;
-import java.io.InterruptedIOException;
-import java.io.IOException;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.DefaultComponent;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
 
 public class JhcComponent extends DefaultComponent<JhcExchange> {
 
-    private static Log LOG = LogFactory.getLog(JhcComponent.class);
+    private static final Log LOG = LogFactory.getLog(JhcComponent.class);
 
     private HttpParams params;
 

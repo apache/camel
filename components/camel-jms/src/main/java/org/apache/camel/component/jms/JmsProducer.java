@@ -60,8 +60,7 @@ public class JmsProducer extends DefaultProducer {
             Requestor requestor;
             try {
                 requestor = endpoint.getRequestor();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeExchangeException(e, exchange);
             }
 
@@ -93,24 +92,20 @@ public class JmsProducer extends DefaultProducer {
             try {
                 Message message;
                 if (requestTimeout < 0) {
-                    message = (Message) future.get();
-                }
-                else {
-                    message = (Message) future.get(requestTimeout, TimeUnit.MILLISECONDS);
+                    message = (Message)future.get();
+                } else {
+                    message = (Message)future.get(requestTimeout, TimeUnit.MILLISECONDS);
                 }
                 if (message != null) {
                     exchange.setOut(new JmsMessage(message, endpoint.getBinding()));
-                }
-                else {
+                } else {
                     // lets set a timed out exception
                     exchange.setException(new ExchangeTimedOutException(exchange, requestTimeout));
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 exchange.setException(e);
             }
-        }
-        else {
+        } else {
             getInOnlyTemplate().send(endpoint.getDestination(), new MessageCreator() {
                 public Message createMessage(Session session) throws JMSException {
                     Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session);
@@ -125,7 +120,7 @@ public class JmsProducer extends DefaultProducer {
 
     /**
      * Preserved for backwards compatibility.
-     * 
+     *
      * @deprecated
      * @see #getInOnlyTemplate()
      */

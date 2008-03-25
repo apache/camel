@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,24 +27,31 @@ import org.apache.log4j.Logger;
  */
 public class ConditionalExceptionProcessor implements Processor {
 
-    private Logger log = Logger.getLogger( getClass() );
-    private int count = 0;
+    private Logger log = Logger.getLogger(getClass());
+    private int count;
 
-    public void process( Exchange exchange ) throws Exception {
+    public void process(Exchange exchange) throws Exception {
 
-        setCount( getCount() + 1 );
+        setCount(getCount() + 1);
 
-        AbstractTransactionTest.assertTrue( "Expected only 2 calls to process() but encountered " + getCount() + ".  There should be 1 for intentionally triggered rollback, and 1 for the redelivery.", getCount() <= 2 );
+        AbstractTransactionTest
+            .assertTrue(
+                        "Expected only 2 calls to process() but encountered "
+                            + getCount()
+                            + ".  There should be 1 for intentionally triggered rollback, and 1 for the redelivery.",
+                        getCount() <= 2);
 
         // should be printed 2 times due to one re-delivery after one failure
-        log.info( "Exchange[" + getCount() + "][" + ( ( getCount() <= 1 ) ? "Should rollback" : "Should succeed" ) + "] = " + exchange );
+        log.info("Exchange[" + getCount() + "][" + ((getCount() <= 1) ? "Should rollback" : "Should succeed")
+                 + "] = " + exchange);
 
         // force rollback on the second attempt
-        if (getCount() <= 1)
-            throw new Exception( "Rollback should be intentionally triggered: count[" + getCount() + "]." );
+        if (getCount() <= 1) {
+            throw new Exception("Rollback should be intentionally triggered: count[" + getCount() + "].");
+        }
     }
 
-    private void setCount( int count ) {
+    private void setCount(int count) {
 
         this.count = count;
     }

@@ -35,6 +35,8 @@ import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 import javax.xml.transform.TransformerException;
 
+import org.w3c.dom.Node;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.XmlConverter;
@@ -43,7 +45,8 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Node;
+
+
 
 /**
  * A Strategy used to convert between a Camel {@JmsExchange} and {@JmsMessage}
@@ -65,27 +68,21 @@ public class JmsBinding {
     public Object extractBodyFromJms(Exchange exchange, Message message) {
         try {
             if (message instanceof ObjectMessage) {
-                ObjectMessage objectMessage = (ObjectMessage) message;
+                ObjectMessage objectMessage = (ObjectMessage)message;
                 return objectMessage.getObject();
-            }
-            else if (message instanceof TextMessage) {
-                TextMessage textMessage = (TextMessage) message;
+            } else if (message instanceof TextMessage) {
+                TextMessage textMessage = (TextMessage)message;
                 return textMessage.getText();
-            }
-            else if (message instanceof MapMessage) {
-                return createMapFromMapMessage((MapMessage) message);
-            }
-            else if (message instanceof BytesMessage) {
+            } else if (message instanceof MapMessage) {
+                return createMapFromMapMessage((MapMessage)message);
+            } else if (message instanceof BytesMessage) {
                 return createByteArrayFromBytesMessage((BytesMessage)message);
-            }
-            else if (message instanceof StreamMessage) {
+            } else if (message instanceof StreamMessage) {
                 return message;
-            }
-            else {
+            } else {
                 return null;
             }
-        }
-        catch (JMSException e) {
+        } catch (JMSException e) {
             throw new RuntimeJmsException("Failed to extract body due to: " + e + ". Message: " + message, e);
         }
     }
@@ -94,7 +91,7 @@ public class JmsBinding {
         if (message.getBodyLength() > Integer.MAX_VALUE) {
             return null;
         }
-        byte[] result = new byte[(int) message.getBodyLength()];
+        byte[] result = new byte[(int)message.getBodyLength()];
         message.readBytes(result);
         return result;
     }
@@ -117,10 +114,11 @@ public class JmsBinding {
      * @return a newly created JMS Message instance containing the
      * @throws JMSException if the message could not be created
      */
-    public Message makeJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session) throws JMSException {
+    public Message makeJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session)
+        throws JMSException {
         Message answer = null;
         if (camelMessage instanceof JmsMessage) {
-            JmsMessage jmsMessage = (JmsMessage) camelMessage;
+            JmsMessage jmsMessage = (JmsMessage)camelMessage;
             answer = jmsMessage.getJmsMessage();
         }
         if (answer == null) {
@@ -136,11 +134,12 @@ public class JmsBinding {
     public void appendJmsProperties(Message jmsMessage, Exchange exchange) throws JMSException {
         appendJmsProperties(jmsMessage, exchange, exchange.getIn());
     }
-    
+
     /**
      * Appends the JMS headers from the Camel {@link JmsMessage}
      */
-    public void appendJmsProperties(Message jmsMessage, Exchange exchange, org.apache.camel.Message in) throws JMSException {
+    public void appendJmsProperties(Message jmsMessage, Exchange exchange, org.apache.camel.Message in)
+        throws JMSException {
         Set<Map.Entry<String, Object>> entries = in.getHeaders().entrySet();
         for (Map.Entry<String, Object> entry : entries) {
             String headerName = entry.getKey();
@@ -148,69 +147,69 @@ public class JmsBinding {
 
             if (headerName.startsWith("JMS") && !headerName.startsWith("JMSX")) {
                 if (headerName.equals("JMSCorrelationID")) {
-                    jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-                }
-                else if (headerName.equals("JMSCorrelationID")) {
-                    jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-                }
-                else if (headerName.equals("JMSReplyTo")) {
-                    jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class, headerValue));
-                }
-                else if (headerName.equals("JMSType")) {
+                    jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class,
+                                                                                headerValue));
+                } else if (headerName.equals("JMSCorrelationID")) {
+                    jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class,
+                                                                                headerValue));
+                } else if (headerName.equals("JMSReplyTo")) {
+                    jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class,
+                                                                          headerValue));
+                } else if (headerName.equals("JMSType")) {
                     jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-                }
-                else if (LOG.isDebugEnabled()) {
+                } else if (LOG.isDebugEnabled()) {
                     // The following properties are set by the MessageProducer
-                    //   JMSDeliveryMode, JMSDestination, JMSExpiration, JMSPriority,
+                    // JMSDeliveryMode, JMSDestination, JMSExpiration,
+                    // JMSPriority,
                     // The following are set on the underlying JMS provider
-                    //   JMSMessageID, JMSTimestamp, JMSRedelivered
+                    // JMSMessageID, JMSTimestamp, JMSRedelivered
                     LOG.debug("Ignoring JMS header: " + headerName + " with value: " + headerValue);
                 }
-            }
-            else if (shouldOutputHeader(in, headerName, headerValue)) {
+            } else if (shouldOutputHeader(in, headerName, headerValue)) {
                 jmsMessage.setObjectProperty(headerName, headerValue);
             }
         }
     }
 
-    protected Message createJmsMessage(Object body, Session session, CamelContext context) throws JMSException {
+    protected Message createJmsMessage(Object body, Session session, CamelContext context)
+        throws JMSException {
         if (body instanceof Node) {
             // lets convert the document to a String format
             try {
-                body = xmlConverter.toString((Node) body);
-            }
-            catch (TransformerException e) {
+                body = xmlConverter.toString((Node)body);
+            } catch (TransformerException e) {
                 JMSException jmsException = new JMSException(e.getMessage());
                 jmsException.setLinkedException(e);
-                throw jmsException;    
+                throw jmsException;
             }
         }
         if (body instanceof byte[]) {
             BytesMessage result = session.createBytesMessage();
-            result.writeBytes((byte[]) body);
+            result.writeBytes((byte[])body);
             return result;
         }
         if (body instanceof Map) {
             MapMessage result = session.createMapMessage();
-            Map<?, ?> map = (Map<?, ?>) body;
+            Map<?, ?> map = (Map<?, ?>)body;
             try {
                 populateMapMessage(result, map, context);
                 return result;
             } catch (JMSException e) {
-                // if MapMessage creation failed then fall back to Object Message
+                // if MapMessage creation failed then fall back to Object
+                // Message
             }
         }
         if (body instanceof String) {
-            return session.createTextMessage((String) body);
+            return session.createTextMessage((String)body);
         }
         if (body instanceof Serializable) {
-            return session.createObjectMessage((Serializable) body);
+            return session.createObjectMessage((Serializable)body);
         }
         return session.createMessage();
     }
 
     /**
-     * Populates a {@link MapMessage} from a {@link Map} instance. 
+     * Populates a {@link MapMessage} from a {@link Map} instance.
      */
     protected void populateMapMessage(MapMessage message, Map<?, ?> map, CamelContext context)
         throws JMSException {
@@ -251,22 +250,21 @@ public class JmsBinding {
     /**
      * Strategy to allow filtering of headers which are put on the JMS message
      */
-    protected boolean shouldOutputHeader(org.apache.camel.Message camelMessage, String headerName, Object headerValue) {
-        return headerValue != null && !getIgnoreJmsHeaders().contains(headerName) && ObjectHelper.isJavaIdentifier(headerName);
+    protected boolean shouldOutputHeader(org.apache.camel.Message camelMessage, String headerName,
+                                         Object headerValue) {
+        return headerValue != null && !getIgnoreJmsHeaders().contains(headerName)
+               && ObjectHelper.isJavaIdentifier(headerName);
     }
 
     /**
-     * Populate any JMS headers that should be excluded from being copied from an input message
-     * onto an outgoing message
+     * Populate any JMS headers that should be excluded from being copied from
+     * an input message onto an outgoing message
      */
     protected void populateIgnoreJmsHeaders(Set<String> set) {
         // ignore provider specified JMS extension headers
         // see page 39 of JMS 1.1 specification
-        String[] ignore = {
-                "JMSXUserID", "JMSXAppID",
-                "JMSXDeliveryCount", "JMSXProducerTXID", "JMSXConsumerTXID",
-                "JMSXRcvTimestamp", "JMSXState"
-        };
+        String[] ignore = {"JMSXUserID", "JMSXAppID", "JMSXDeliveryCount", "JMSXProducerTXID",
+                           "JMSXConsumerTXID", "JMSXRcvTimestamp", "JMSXState"};
         set.addAll(Arrays.asList(ignore));
     }
 }

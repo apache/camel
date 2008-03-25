@@ -44,12 +44,16 @@ public class PurchaseOrder {
     @Override
     public boolean equals(Object o) {
         if (o instanceof PurchaseOrder) {
-            PurchaseOrder that = (PurchaseOrder) o;
-            return ObjectHelper.equal(this.name, that.name) &&
-                    ObjectHelper.equal(this.amount, that.amount) &&
-                    ObjectHelper.equal(this.price, that.price);
+            PurchaseOrder that = (PurchaseOrder)o;
+            return ObjectHelper.equal(this.name, that.name) && ObjectHelper.equal(this.amount, that.amount)
+                   && ObjectHelper.equal(this.price, that.price);
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode() + (int)Math.round(price * 100) + (int)Math.round(amount * 100);
     }
 
     public double getAmount() {

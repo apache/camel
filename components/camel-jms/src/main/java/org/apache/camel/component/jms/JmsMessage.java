@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with JMS
- * 
+ *
  * @version $Revision:520964 $
  */
 public class JmsMessage extends DefaultMessage {
@@ -64,7 +64,7 @@ public class JmsMessage extends DefaultMessage {
 
     /**
      * Returns the underlying JMS message
-     * 
+     *
      * @return the underlying JMS message
      */
     public Message getJmsMessage() {
@@ -75,10 +75,9 @@ public class JmsMessage extends DefaultMessage {
         if (binding == null) {
             Exchange exchange = getExchange();
             if (exchange instanceof JmsExchange) {
-                JmsExchange jmsExchange = (JmsExchange) exchange;
+                JmsExchange jmsExchange = (JmsExchange)exchange;
                 return jmsExchange.getBinding();
-            }
-            else {
+            } else {
                 return new JmsBinding();
             }
         }
@@ -102,7 +101,7 @@ public class JmsMessage extends DefaultMessage {
 
     public Object getHeader(String name) {
         Object answer = null;
-        
+
         // we will exclude using JMS-prefixed headers here to avoid strangeness with some JMS providers
         // e.g. ActiveMQ returns the String not the Destination type for "JMSReplyTo"!
         if (jmsMessage != null && !name.startsWith("JMS")) {
@@ -150,8 +149,7 @@ public class JmsMessage extends DefaultMessage {
                 // TODO this works around a bug in the ActiveMQ property handling
                 map.put("JMSXGroupID", jmsMessage.getStringProperty("JMSXGroupID"));
 
-            }
-            catch (JMSException e) {
+            } catch (JMSException e) {
                 throw new MessageJMSPropertyAccessException(e);
             }
 

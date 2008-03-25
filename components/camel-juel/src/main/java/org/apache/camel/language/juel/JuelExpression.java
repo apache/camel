@@ -18,12 +18,21 @@ package org.apache.camel.language.juel;
 
 import java.util.Properties;
 
-import javax.el.*;
-
+import javax.el.ArrayELResolver;
+import javax.el.CompositeELResolver;
+import javax.el.ELContext;
+import javax.el.ELResolver;
+import javax.el.ExpressionFactory;
+import javax.el.ListELResolver;
+import javax.el.MapELResolver;
+import javax.el.ResourceBundleELResolver;
+import javax.el.ValueExpression;
 import de.odysseus.el.util.SimpleContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.ExpressionSupport;
+
+
 
 /**
  * The <a href="http://activemq.apache.org/camel/el.html">EL Language from JSP and JSF</a>

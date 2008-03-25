@@ -30,80 +30,74 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class MultiThreadedHttpGetTest extends ContextTestSupport {
 
     public void testHttpGetWithConversion() throws Exception {
-    	
-    	// In this scenario response stream is converted to String
-    	// so the stream has to be read to the end. When this happens
-    	// the associated connection is released automatically.
-    	
-    	String endpointName = "seda:withConversion";
+
+        // In this scenario response stream is converted to String
+        // so the stream has to be read to the end. When this happens
+        // the associated connection is released automatically.
+
+        String endpointName = "seda:withConversion";
         sendMessagesTo(endpointName, 5);
-    }
-    
-    public void testHttpGetWithoutConversion() throws Exception {
-    	
-    	// This is needed as by default there are 2 parallel
-    	// connections to some host and there is nothing that
-    	// closes the http connection here.
-    	
-    	context.getComponent("http", HttpComponent.class)
-    		.getHttpConnectionManager().getParams()
-    		.setDefaultMaxConnectionsPerHost(5);
-    	
-    	String endpointName = "seda:withoutConversion";
-        sendMessagesTo(endpointName, 5);
-    }
-    
-    public void testHttpGetWithExplicitStreamClose() throws Exception {
-    	
-    	// We close connections explicitely at the very end of the flow
-    	// (camel doesn't know when the stream is not needed any more)
-    	
-    	MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
-    	
-		for (int i = 0; i < 5; i++) {
-			mockEndpoint.expectedMessageCount(1);
-			template.sendBody("seda:withoutConversion", null);
-			mockEndpoint.assertIsSatisfied();
-			Object response = mockEndpoint.getReceivedExchanges().get(0)
-					.getIn().getBody();
-			InputStream responseStream = assertIsInstanceOf(InputStream.class,
-					response);
-			responseStream.close();
-			mockEndpoint.reset();
-		}    	
     }
 
-	protected void sendMessagesTo(String endpointName, int count) throws InterruptedException {
-		MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
+    public void testHttpGetWithoutConversion() throws Exception {
+
+        // This is needed as by default there are 2 parallel
+        // connections to some host and there is nothing that
+        // closes the http connection here.
+
+        context.getComponent("http", HttpComponent.class).getHttpConnectionManager().getParams()
+            .setDefaultMaxConnectionsPerHost(5);
+
+        String endpointName = "seda:withoutConversion";
+        sendMessagesTo(endpointName, 5);
+    }
+
+    public void testHttpGetWithExplicitStreamClose() throws Exception {
+
+        // We close connections explicitely at the very end of the flow
+        // (camel doesn't know when the stream is not needed any more)
+
+        MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
+
+        for (int i = 0; i < 5; i++) {
+            mockEndpoint.expectedMessageCount(1);
+            template.sendBody("seda:withoutConversion", null);
+            mockEndpoint.assertIsSatisfied();
+            Object response = mockEndpoint.getReceivedExchanges().get(0).getIn().getBody();
+            InputStream responseStream = assertIsInstanceOf(InputStream.class, response);
+            responseStream.close();
+            mockEndpoint.reset();
+        }
+    }
+
+    protected void sendMessagesTo(String endpointName, int count) throws InterruptedException {
+        MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(count);
 
         for (int i = 0; i < count; i++) {
-			template.sendBody(endpointName, null);
+            template.sendBody(endpointName, null);
         }
-        
+
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
-        	String body = exchange.getIn().getBody(String.class);
+            String body = exchange.getIn().getBody(String.class);
 
             log.debug("Body: " + body);
             assertNotNull("Should have a body!", body);
             assertTrue("body should contain: <html", body.contains("<html"));
         }
-	}
+    }
 
-    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("seda:withConversion").thread(5)
-                	.to("http://www.google.com/search")
-                	.convertBodyTo(String.class).to("mock:results");
-                
-                from("seda:withoutConversion").thread(5)
-                	.to("http://www.google.com/search")
-            		.to("mock:results");
+                from("seda:withConversion").thread(5).to("http://www.google.com/search")
+                    .convertBodyTo(String.class).to("mock:results");
+
+                from("seda:withoutConversion").thread(5).to("http://www.google.com/search")
+                    .to("mock:results");
             }
         };
     }

@@ -30,12 +30,12 @@ import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpExchange;
 import org.apache.camel.impl.DefaultProducer;
-
 import org.mortbay.io.Buffer;
 import org.mortbay.jetty.HttpFields;
+import org.mortbay.jetty.HttpFields.Field;
 import org.mortbay.jetty.HttpMethods;
 import org.mortbay.jetty.HttpURI;
-import org.mortbay.jetty.HttpFields.Field;
+
 import org.mortbay.jetty.client.HttpClient;
 import org.mortbay.jetty.client.HttpExchange.ContentExchange;
 
@@ -129,11 +129,11 @@ public class JettyHttpProducer extends DefaultProducer<HttpExchange> implements 
         }
 
         HttpBinding binding = ((HttpEndpoint)getEndpoint()).getBinding();
-        for (String name : in.getHeaders().keySet()) {            
+        for (String name : in.getHeaders().keySet()) {
             String value = in.getHeader(name, String.class);
-            if( "Content-Type".equals(name) ) {
+            if ("Content-Type".equals(name)) {
                 jettyExchange.setRequestContentType(value);
-            } else if (binding.shouldHeaderBePropagated(name, value)){
+            } else if (binding.shouldHeaderBePropagated(name, value)) {
                 jettyExchange.addRequestHeader(name, value);
             }
         }

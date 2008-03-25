@@ -16,12 +16,28 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.CamelTemplate;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.MessageDriven;
+import org.apache.camel.PollingConsumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Service;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.spring.util.ReflectionUtils;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
-import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -30,18 +46,14 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
+import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 
 /**
  * A post processor to perform injection of {@link Endpoint} and
  * {@link Producer} instances together with binding methods annotated with
  * {@link @MessageDriven} to a Camel consumer.
- * 
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "beanPostProcessor")
@@ -95,7 +107,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     /**
      * A strategy method to allow implementations to perform some custom JBI
      * based injection of the POJO
-     * 
+     *
      * @param bean the bean to be injected
      */
     protected void injectFields(final Object bean) {

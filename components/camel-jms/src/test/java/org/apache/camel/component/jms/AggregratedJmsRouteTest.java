@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 import javax.jms.ConnectionFactory;
 
@@ -30,6 +29,7 @@ import org.apache.camel.processor.BatchProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 public class AggregratedJmsRouteTest extends ContextTestSupport {
 
@@ -37,7 +37,7 @@ public class AggregratedJmsRouteTest extends ContextTestSupport {
     private String startEndpointUri = "jms:queue:test.a";
 
     /*
-     * negative recieve wait timeout for jms is blocking so timeout during processing does not hang 
+     * negative recieve wait timeout for jms is blocking so timeout during processing does not hang
      */
     public void testJmsBatchTimeoutExpiryWithAggregrationDelay() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
@@ -78,7 +78,8 @@ public class AggregratedJmsRouteTest extends ContextTestSupport {
                             fail("aggregration delay sleep inturrepted");
                         }
                         return newExchange;
-                    }}).to("mock:result");
+                    }
+                }).to("mock:result");
             }
         };
     }

@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,12 +16,12 @@
  */
 package org.apache.camel.converter.jaxb;
 
-import org.apache.camel.ExchangeTestSupport;
-import org.apache.camel.model.RouteContainer;
+import java.io.StringWriter;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-import java.io.StringWriter;
+
+import org.apache.camel.ExchangeTestSupport;
 
 /**
  * @version $Revision$
@@ -37,7 +36,7 @@ public class MessageTypeTest extends ExchangeTestSupport {
 
         log.info("headers: " + messageType.getHeaderMap());
         log.info("body: " + messageType.getBody());
-        
+
         dump(messageType);
     }
 

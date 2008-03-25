@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.irc;
 
-import org.apache.camel.Processor;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
@@ -25,7 +25,7 @@ import org.schwering.irc.lib.IRCUser;
 /**
  * Defines the <a href="http://activemq.apache.org/camel/irc.html">IRC Endpoint</a>
  *
- * @version $Revision:$
+ * @version $Revision$
  */
 public class IrcEndpoint extends DefaultEndpoint<IrcExchange> {
     private IrcBinding binding;

@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.jms;
 
+import javax.jms.Message;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
-
-import javax.jms.Message;
 
 /**
  * Represents an {@ilnk Exchange} for working with JMS messages while exposing the inbound and outbound JMS {@link Message}

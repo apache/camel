@@ -71,14 +71,15 @@ import org.apache.http.util.concurrent.ThreadFactory;
  * To change this template use File | Settings | File Templates.
  */
 public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncProcessor {
-
-    private static Log LOG = LogFactory.getLog(JhcProducer.class);
-    
-    private static final String HTTP_RESPONSE_CODE = "http.responseCode";
-    // This should be a set of lower-case strings 
+    public static final String HTTP_RESPONSE_CODE = "http.responseCode";
+    // This should be a set of lower-case strings
     public static final Set<String> HEADERS_TO_SKIP = new HashSet<String>(Arrays.asList(
-            "content-length", "content-type", HTTP_RESPONSE_CODE.toLowerCase())); 
-    
+            "content-length", "content-type", HTTP_RESPONSE_CODE.toLowerCase()));
+
+    private static final Log LOG = LogFactory.getLog(JhcProducer.class);
+
+
+
     private int nbThreads = 2;
     private ConnectingIOReactor ioReactor;
     private ThreadFactory threadFactory;
@@ -161,7 +162,7 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
             req = new BasicHttpEntityEnclosingRequest("POST", getEndpoint().getPath());
             ((BasicHttpEntityEnclosingRequest)req).setEntity(entity);
         }
-        
+
         // propagate headers as HTTP headers
         for (String headerName : exchange.getIn().getHeaders().keySet()) {
             String headerValue = exchange.getIn().getHeader(headerName, String.class);
@@ -169,7 +170,7 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
                 req.addHeader(headerName, headerValue);
             }
         }
-        
+
         return req;
     }
 
@@ -207,7 +208,7 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
         }
         return true;
     }
-    
+
     static class MySessionRequestCallback implements SessionRequestCallback {
 
         public void completed(SessionRequest sessionRequest) {
@@ -237,8 +238,8 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
 
     class MyHttpRequestExecutionHandler implements HttpRequestExecutionHandler {
 
-        private final static String REQUEST_SENT       = "request-sent";
-        private final static String RESPONSE_RECEIVED  = "response-received";
+        private static final String REQUEST_SENT       = "request-sent";
+        private static final String RESPONSE_RECEIVED  = "response-received";
 
         public void initalizeContext(HttpContext httpContext, Object o) {
             if (LOG.isDebugEnabled()) {
@@ -280,7 +281,7 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
 
         public void finalizeContext(HttpContext arg0) {
             // TODO Auto-generated method stub
-            
+
         }
     }
 

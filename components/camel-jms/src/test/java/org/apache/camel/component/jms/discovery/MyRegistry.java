@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,21 +16,21 @@
  */
 package org.apache.camel.component.jms.discovery;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * A simple POJO showing how to create a simple registry
- * 
+ *
  * @version $Revision$
  */
 public class MyRegistry {
     private static final transient Log LOG = LogFactory.getLog(MyRegistry.class);
 
-    private Map<String,Map> services = new HashMap<String, Map>();
+    private Map<String, Map> services = new HashMap<String, Map>();
 
     public void onEvent(Map heartbeat) {
         String key = (String) heartbeat.get("name");

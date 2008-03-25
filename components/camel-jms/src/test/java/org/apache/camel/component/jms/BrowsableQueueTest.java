@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
+
 import java.util.List;
 
 import javax.jms.ConnectionFactory;
@@ -24,13 +25,13 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+
 
 /**
  * @version $Revision$
@@ -42,7 +43,7 @@ public class BrowsableQueueTest extends ContextTestSupport {
     protected String componentName = "activemq";
     protected String startEndpointUri;
     protected int counter;
-    protected Object[] expectedBodies = { "body1", "body2" };
+    protected Object[] expectedBodies = {"body1", "body2"};
 
     public void testSendMessagesThenBrowseQueue() throws Exception {
         // send some messages
@@ -59,8 +60,8 @@ public class BrowsableQueueTest extends ContextTestSupport {
         int index = -1;
         for (Exchange exchange : list) {
             String actual = exchange.getIn().getBody(String.class);
-            LOG.debug("Received body: "+ actual);
-            
+            LOG.debug("Received body: " + actual);
+
             Object expected = expectedBodies[++index];
             assertEquals("Body: " + index, expected, actual);
         }

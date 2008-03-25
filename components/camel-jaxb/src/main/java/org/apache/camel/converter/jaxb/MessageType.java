@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,11 @@
  */
 package org.apache.camel.converter.jaxb;
 
-import org.apache.camel.Message;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,11 +29,8 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import org.apache.camel.Message;
 
 /**
  * Represents a JAXB2 representation of a Camel {@link Message}
@@ -52,8 +53,7 @@ public class MessageType {
             if (content != null) {
                 if (content.size() == 1) {
                     return content.get(0);
-                }
-                else {
+                } else {
                     return content;
                 }
             }
@@ -64,9 +64,8 @@ public class MessageType {
     public void setBody(Object body) {
         this.body = body;
         if (body instanceof List) {
-            content = (List) body;
-        }
-        else {
+            content = (List)body;
+        } else {
             content = new ArrayList();
             content.add(body);
         }
@@ -117,15 +116,12 @@ public class MessageType {
 
     protected HeaderType createHeader(String key, Object value) {
         if (value instanceof String) {
-            return new StringHeader(key, (String) value);
-        }
-        else if (value instanceof Integer) {
-            return new IntegerHeader(key, (Integer) value);
-        }
-        else if (value instanceof Long) {
-            return new LongHeader(key, (Long) value);
-        }
-        else {
+            return new StringHeader(key, (String)value);
+        } else if (value instanceof Integer) {
+            return new IntegerHeader(key, (Integer)value);
+        } else if (value instanceof Long) {
+            return new LongHeader(key, (Long)value);
+        } else {
             // lets convert to a String
             return new StringHeader(key, value.toString());
 

@@ -48,12 +48,13 @@ import static org.apache.camel.component.mock.MockEndpoint.assertWait;
 public class TransactedJmsRouteTest extends ContextTestSupport {
 
     private static final transient Log LOG = LogFactory.getLog(TransactedJmsRouteTest.class);
+    protected int assertTimeoutSeconds = 10;
     private MockEndpoint mockEndpointA;
     private MockEndpoint mockEndpointB;
     private ClassPathXmlApplicationContext spring;
     private MockEndpoint mockEndpointC;
     private MockEndpoint mockEndpointD;
-    protected int assertTimeoutSeconds = 10;
+
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -209,7 +210,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 
     /**
      * This test seems to be fail every other run.
-     * 
+     *
      * @throws Exception
      */
     public void disabledtestSenarioF() throws Exception {
@@ -236,7 +237,8 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
         assertIsSatisfied(mockEndpointA);
     }
 
-    public void TODO_testSenarioB() throws Exception {
+    //TODO should fix this test
+    public void xtestSenarioB() throws Exception {
         String expected = getName() + ": " + System.currentTimeMillis();
         mockEndpointA.expectedMessageCount(0);
         mockEndpointB.expectedMinimumMessageCount(2); // May be more since

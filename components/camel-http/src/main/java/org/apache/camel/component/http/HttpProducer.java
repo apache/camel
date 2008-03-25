@@ -36,7 +36,7 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 public class HttpProducer extends DefaultProducer<HttpExchange> implements Producer<HttpExchange> {
     public static final String HTTP_RESPONSE_CODE = "http.responseCode";
     public static final String QUERY = "org.apache.camel.component.http.query";
-    
+
     private HttpClient httpClient;
 
     public HttpProducer(HttpEndpoint endpoint) {
@@ -46,7 +46,7 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
 
     public void process(Exchange exchange) throws Exception {
         HttpMethod method = createMethod(exchange);
-        
+
         HttpBinding binding = ((HttpEndpoint)getEndpoint()).getBinding();
         // propagate headers as HTTP headers
         for (String headerName : exchange.getIn().getHeaders().keySet()) {
@@ -55,7 +55,7 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
                 method.addRequestHeader(headerName, headerValue);
             }
         }
-        
+
         int responseCode = httpClient.executeMethod(method);
 
         // lets store the result in the output message.
@@ -87,7 +87,7 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         RequestEntity requestEntity = createRequestEntity(exchange);
         if (requestEntity == null) {
             GetMethod method = new GetMethod(uri);
-            if (exchange.getIn().getHeader(QUERY) != null){
+            if (exchange.getIn().getHeader(QUERY) != null) {
                 method.setQueryString(exchange.getIn().getHeader(QUERY, String.class));
             }
             return method;

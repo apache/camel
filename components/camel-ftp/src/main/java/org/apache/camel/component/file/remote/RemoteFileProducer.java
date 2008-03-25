@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.impl.DefaultProducer;
@@ -44,8 +43,8 @@ public abstract class RemoteFileProducer<T extends RemoteFileExchange> extends D
         }
         return answer;
     }
-    
-    abstract protected void connectIfNecessary() throws Exception;
-    
-    abstract protected void disconnect() throws Exception;
+
+    protected abstract void connectIfNecessary() throws Exception;
+
+    protected abstract void disconnect() throws Exception;
 }

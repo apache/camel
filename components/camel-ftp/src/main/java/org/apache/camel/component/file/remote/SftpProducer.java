@@ -16,17 +16,19 @@
  */
 package org.apache.camel.component.file.remote;
 
+
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.apache.camel.Exchange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
+
+import org.apache.camel.Exchange;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
     private static final transient Log LOG = LogFactory.getLog(SftpProducer.class);
@@ -40,7 +42,7 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         this.endpoint = endpoint;
         this.session = session;
     }
-    
+
     // TODO: is there a way to avoid copy-pasting the reconnect logic?
     protected void connectIfNecessary() throws JSchException {
         if (channel == null || !channel.isConnected()) {
@@ -55,10 +57,9 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
             LOG.info("Connected to " + endpoint.getConfiguration().toString());
         }
     }
-    
+
     // TODO: is there a way to avoid copy-pasting the reconnect logic?
-    protected void disconnect() throws JSchException
-    {
+    protected void disconnect() throws JSchException {
         if (session != null) {
             LOG.info("Session is being explicitly disconnected");
             session.disconnect();
@@ -72,7 +73,7 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
     // TODO: is there a way to avoid copy-pasting the reconnect logic?
     public void process(Exchange exchange) throws Exception {
         connectIfNecessary();
-        // If the attempt to connect isn't successful, then the thrown 
+        // If the attempt to connect isn't successful, then the thrown
         // exception will signify that we couldn't deliver
         try {
             process(endpoint.createExchange(exchange));
@@ -97,20 +98,18 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         InputStream payload = exchange.getIn().getBody(InputStream.class);
         try {
             String fileName = createFileName(exchange.getIn(), endpoint.getConfiguration());
-            
+
             int lastPathIndex = fileName.lastIndexOf('/');
-            if (lastPathIndex != -1)
-            {
+            if (lastPathIndex != -1) {
                 boolean success = buildDirectory(channel, fileName.substring(0, lastPathIndex));
                 if (!success) {
                     LOG.warn("Couldn't buildDirectory: " + fileName.substring(0, lastPathIndex) + " (either permissions deny it, or it already exists)");
                 }
             }
-            
+
             channel.put(payload, fileName);
             LOG.info("Sent: " + fileName + " to " + endpoint.getConfiguration());
-        }
-        finally {
+        } finally {
             if (null != payload) {
                 payload.close();
             }

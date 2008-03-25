@@ -68,9 +68,8 @@ public class SftpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
         });
         return session;
     }
-    
-    public ChannelSftp createChannelSftp (Session session) throws JSchException
-    {
+
+    public ChannelSftp createChannelSftp(Session session) throws JSchException {
         final ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
         return channel;
     }

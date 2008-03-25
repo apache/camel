@@ -74,14 +74,14 @@ public class CamelContinuationServlet extends CamelServlet {
                 });
 
                 if (!sync) {
-                    
+
                     // Wait for the exchange to get processed.
                     // This might block until it completes or it might return via an exception and
                     // then this method is re-invoked once the the exchange has finished processing
-                    continuation.suspend(0); 
-                    
+                    continuation.suspend(0);
+
                 }
-                
+
                 // HC: The getBinding() is interesting because it illustrates the
                 // impedance miss-match between
                 // HTTP's stream oriented protocol, and Camels more message oriented
@@ -91,8 +91,8 @@ public class CamelContinuationServlet extends CamelServlet {
                 consumer.getBinding().writeResponse(exchange, response);
                 return;
             }
-            
-            if (continuation.isResumed() ) {
+
+            if (continuation.isResumed()) {
                 HttpExchange exchange = (HttpExchange)continuation.getObject();
                 // now lets output to the response
                 consumer.getBinding().writeResponse(exchange, response);

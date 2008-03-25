@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,8 +30,8 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.IOHelper;
 
 /**
- * A <a href="http://activemq.apache.org/camel/data-format.html">data format</a>
- * ({@link DataFormat}) using JAXB2 to marshal to and from XML
+ * A <a href="http://activemq.apache.org/camel/data-format.html">data format</a> ({@link DataFormat})
+ * using JAXB2 to marshal to and from XML
  *
  * @version $Revision$
  */
@@ -57,8 +56,7 @@ public class JaxbDataFormat implements DataFormat {
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException {
         try {
             getMarshaller().marshal(graph, stream);
-        }
-        catch (JAXBException e) {
+        } catch (JAXBException e) {
             throw IOHelper.createIOException(e);
         }
     }
@@ -66,14 +64,13 @@ public class JaxbDataFormat implements DataFormat {
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, ClassNotFoundException {
         try {
             return getUnmarshaller().unmarshal(stream);
-        }
-        catch (JAXBException e) {
+        } catch (JAXBException e) {
             throw IOHelper.createIOException(e);
         }
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public JAXBContext getContext() throws JAXBException {
         if (context == null) {
             context = createContext();
@@ -126,8 +123,7 @@ public class JaxbDataFormat implements DataFormat {
     protected JAXBContext createContext() throws JAXBException {
         if (contextPath != null) {
             return JAXBContext.newInstance(contextPath);
-        }
-        else {
+        } else {
             return JAXBContext.newInstance();
         }
     }

@@ -61,7 +61,8 @@ public class HttpGetTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setHeader(HttpProducer.QUERY,constant("hl=en&q=activemq")).to("http://www.google.com/search").to("mock:results");
+                from("direct:start").setHeader(HttpProducer.QUERY, constant("hl=en&q=activemq"))
+                    .to("http://www.google.com/search").to("mock:results");
             }
         };
     }

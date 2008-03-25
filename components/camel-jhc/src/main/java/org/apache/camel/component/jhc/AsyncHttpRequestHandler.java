@@ -24,10 +24,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 
-
 public interface AsyncHttpRequestHandler extends HttpRequestHandler {
-    
-    void handle(HttpRequest request, HttpContext context, AsyncResponseHandler handler) 
-    throws HttpException, IOException;
+
+    void handle(HttpRequest request, HttpContext context, AsyncResponseHandler handler) throws HttpException,
+        IOException;
 
 }

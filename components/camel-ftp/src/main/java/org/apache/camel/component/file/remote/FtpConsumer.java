@@ -26,18 +26,18 @@ import org.apache.camel.component.file.FileComponent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPConnectionClosedException;
+import org.apache.commons.net.ftp.FTPFile;
 
 public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     private static final transient Log LOG = LogFactory.getLog(FtpConsumer.class);
-    
+    private final FtpEndpoint endpoint;
     private boolean recursive = true;
     private String regexPattern = "";
     private long lastPollTime;
-    private final FtpEndpoint endpoint;
+
     private FTPClient client;
-    private boolean setNames = false;
+    private boolean setNames;
 
     public FtpConsumer(FtpEndpoint endpoint, Processor processor, FTPClient client) {
         super(endpoint, processor);
@@ -50,7 +50,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         this.endpoint = endpoint;
         this.client = client;
     }
-    
+
     // TODO: is there a way to avoid copy-pasting the reconnect logic?
     protected void connectIfNecessary() throws IOException {
         if (!client.isConnected()) {
@@ -59,7 +59,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             LOG.info("Connected to " + endpoint.getConfiguration());
         }
     }
-    
+
     // TODO: is there a way to avoid copy-pasting the reconnect logic?
     protected void disconnect() throws IOException {
         LOG.info("FtpConsumer's client is being explicitly disconnected");
@@ -69,7 +69,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     // TODO: is there a way to avoid copy-pasting the reconnect logic?
     protected void poll() throws Exception {
         connectIfNecessary();
-        // If the attempt to connect isn't successful, then the thrown 
+        // If the attempt to connect isn't successful, then the thrown
         // exception will signify that we couldn't poll
         try {
             final String fileName = endpoint.getConfiguration().getFile();
@@ -82,7 +82,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             }
             lastPollTime = System.currentTimeMillis();
         } catch (FTPConnectionClosedException e) {
-            // If the server disconnected us, then we must manually disconnect 
+            // If the server disconnected us, then we must manually disconnect
             // the client before attempting to reconnect
             LOG.warn("Disconnecting due to exception: " + e.toString());
             disconnect();

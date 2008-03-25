@@ -30,10 +30,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * @version $Revision$
@@ -76,17 +76,17 @@ public class ConsumeJmsMapMessageTest extends ContextTestSupport {
     public void testSendMapMessage() throws Exception {
 
         endpoint.expectedMessageCount(1);
-        
+
         Map<String, String> map = new HashMap<String, String>();
         map.put("foo", "abc");
         map.put("bar", "xyz");
-        
+
         template.sendBody("direct:test", map);
-        
+
         endpoint.assertIsSatisfied();
         assertCorrectMapReceived();
     }
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
