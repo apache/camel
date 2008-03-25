@@ -40,4 +40,16 @@ public class MinaComponentTest extends ContextTestSupport {
         }
     }
 
+    public void testMistypedProtocol() {
+        try {
+            // the protocol is mistyped as a colon is missing after tcp
+            template.setDefaultEndpointUri("mina:tcp//localhost:8080");
+            template.sendBody("mina:tcp//localhost:8080");
+            fail("Should have thrown a ResolveEndpointFailedException");
+        } catch (ResolveEndpointFailedException e) {
+            assertTrue("Should be an IAE exception", e.getCause() instanceof IllegalArgumentException);
+            assertEquals("Unrecognised MINA protocol: null for uri: mina:tcp//localhost:8080", e.getCause().getMessage());
+        }
+    }
+
 }
