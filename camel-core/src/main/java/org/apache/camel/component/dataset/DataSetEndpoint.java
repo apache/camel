@@ -50,7 +50,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
     public static void assertEquals(String description, Object expected, Object actual, Exchange exchange) {
         if (!ObjectHelper.equal(expected, actual)) {
-            throw new AssertionError(description + " does not match. Expected: " + expected + " but was: " + actual + " on  " + exchange);
+            throw new AssertionError(description + " does not match. Expected: " + expected + " but was: " + actual + " on  " + exchange + " with headers: " + exchange.getIn().getHeaders());
         }
     }
 
@@ -88,6 +88,14 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         return exchange;
     }
 
+    @Override
+    protected void waitForCompleteLatch() throws InterruptedException {
+        // TODO lets do a much better version of this!
+        long size = getDataSet().getSize();
+        size *= 4000;
+        setDefaulResultWaitMillis(size);
+        super.waitForCompleteLatch();
+    }
 
     // Properties
     //-------------------------------------------------------------------------
@@ -163,7 +171,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
     protected void assertMessageExpected(long index, Exchange expected, Exchange actual) throws Exception {
         long actualCounter = ExchangeHelper.getMandatoryHeader(actual, DataSet.INDEX_HEADER, Long.class);
-        assertEquals(DataSet.INDEX_HEADER, index, actualCounter, actual);
+        assertEquals("Header: " + DataSet.INDEX_HEADER, index, actualCounter, actual);
 
         getDataSet().assertMessageExpected(this, expected, actual, index);
     }

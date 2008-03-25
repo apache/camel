@@ -48,9 +48,9 @@ public class DataSetTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("dataset:foo").multicast().
                         to("mock:results").
-                        to("seda:foo");
+                        to("direct:foo");
 
-                from("seda:foo").to("dataset:foo");
+                from("direct:foo").to("dataset:foo");
             }
         };
     }
