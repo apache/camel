@@ -54,16 +54,6 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring</artifactId>
     </dependency>
-    <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-    </dependency>
-
-    <!-- for parsing the XML -->
-    <dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-impl</artifactId>
-    </dependency>
 
     <!-- for testing -->
     <dependency>
