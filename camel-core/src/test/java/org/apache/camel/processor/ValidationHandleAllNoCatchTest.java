@@ -43,7 +43,9 @@ public class ValidationHandleAllNoCatchTest extends ContextTestSupport {
 
     public void testInvalidMessage() throws Exception {
         validEndpoint.expectedMessageCount(0);
-        allEndpoint.expectedMessageCount(1);
+        
+        // allEndpoint receives 6 messages, as redelivery is involved
+        allEndpoint.expectedMessageCount(6);
 
         template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue");
 

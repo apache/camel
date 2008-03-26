@@ -85,9 +85,13 @@ public class TryProcessor extends ServiceSupport implements Processor {
 
     private void handleAll(Exchange exchange) {
         if (finallyProcessor != null) {
-            DeadLetterChannel.setFailureHandled(exchange, true);
+            Throwable lastException = exchange.getException();
+            exchange.setException(null);
             try {
                 finallyProcessor.process(exchange);
+                if (exchange.getException() == null) {
+                    exchange.setException(lastException);
+                }
             } catch (Exception e2) {
                 LOG.warn("Caught exception in finally block while handling other exception: " + e2, e2);
                 exchange.setException(e2);
