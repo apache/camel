@@ -25,7 +25,8 @@ import java.util.Map;
  * Endpoint</a> pattern and represents an endpoint that can send and receive
  * message exchanges
  * 
- * @see Exchange, Message
+ * @see Exchange
+ * @see Message
  * @version $Revision$
  */
 public interface Endpoint<E extends Exchange> {

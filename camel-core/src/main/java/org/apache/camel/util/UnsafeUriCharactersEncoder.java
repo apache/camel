@@ -17,9 +17,6 @@
 package org.apache.camel.util;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.CharacterCodingException;
 import java.util.BitSet;
 
 import org.apache.commons.logging.Log;
@@ -95,8 +92,5 @@ public final class UnsafeUriCharactersEncoder {
         sb.append(HEX_DIGITS[(b >> 4) & 0x0f]);
         sb.append(HEX_DIGITS[(b >> 0) & 0x0f]);
     }
-
-
-
 
 }
