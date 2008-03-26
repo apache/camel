@@ -27,7 +27,7 @@ import org.apache.camel.model.TryType;
  *
  * @author <a href="mailto:nsandhu@raleys.com">nsandhu</a>
  */
-public class ValidationHandleAllNoCatchTest extends ContextTestSupport {
+public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
     protected Processor validator = new MyValidator();
     protected MockEndpoint validEndpoint;
     protected MockEndpoint allEndpoint;
@@ -66,7 +66,7 @@ public class ValidationHandleAllNoCatchTest extends ContextTestSupport {
                 TryType tryType = from("direct:start").tryBlock().
                         process(validator).
                         to("mock:valid");
-                tryType.handleAll().to("mock:all");
+                tryType.finallyBlock().to("mock:all");
             }
         };
     }

@@ -75,15 +75,15 @@ public class TryProcessor extends ServiceSupport implements Processor {
             } catch (Throwable ex) {
                 throw new RuntimeCamelException(ex);
             } finally {
-                handleAll(exchange);
+                processFinally(exchange);
             }
         } else {
-            handleAll(exchange);
+            processFinally(exchange);
         }
 
     }
 
-    private void handleAll(Exchange exchange) {
+    private void processFinally(Exchange exchange) {
         if (finallyProcessor != null) {
             Throwable lastException = exchange.getException();
             exchange.setException(null);

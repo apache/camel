@@ -12,23 +12,24 @@ import org.apache.camel.builder.RouteBuilder;
  * @author <a href="mailto:nsandhu">nsandhu</a>
  * 
  */
-public class ValidationWithHandleAllPipelineTest extends ValidationTest {
+public class ValidationWithNestedFinallyBlockPipelineTest extends ValidationTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
                     .tryBlock()
-                        .process(validator)
-                        .setHeader("valid", constant(true))
+                        .to("direct:embedded")
                     .handle(ValidationException.class)
-                        .setHeader("valid", constant(false))
-                    .handleAll()
-                        .setBody(body())
-                        .choice()
-                        .when(header("valid").isEqualTo(true))
-                        .to("mock:valid")
-                        .otherwise()
                         .to("mock:invalid");
+                
+                from("direct:embedded")
+                    .errorHandler(noErrorHandler())
+                    .tryBlock()
+                        .process(validator)
+                        .to("mock:valid")
+                    .finallyBlock()
+                        .setHeader("valid", constant(false))
+                    .end();
             }
         };
     }

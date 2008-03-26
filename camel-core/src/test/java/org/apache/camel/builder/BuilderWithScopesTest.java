@@ -292,8 +292,8 @@ public class BuilderWithScopesTest extends TestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:a").tryBlock().process(validator).process(toProcessor)
-                    .handle(ValidationException.class).process(orderProcessor).handleAll()
-                    .process(orderProcessor2).process(orderProcessor3); // continuation of the handleAll clause
+                    .handle(ValidationException.class).process(orderProcessor).finallyBlock()
+                    .process(orderProcessor2).process(orderProcessor3); // continuation of the finallyBlock clause
             }
         };
     };
@@ -331,7 +331,7 @@ public class BuilderWithScopesTest extends TestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:a").tryBlock().process(validator).process(toProcessor)
-                    .handle(ValidationException.class).process(orderProcessor).handleAll()
+                    .handle(ValidationException.class).process(orderProcessor).finallyBlock()
                     .process(orderProcessor2).end().process(orderProcessor3);
             }
         };

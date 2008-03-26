@@ -76,7 +76,7 @@ public class TryType extends OutputType<TryType> {
         return this;
     }
 
-    public TryType handleAll() {
+    public TryType finallyBlock() {
         popBlock();
         FinallyType answer = new FinallyType();
         addOutput(answer);
