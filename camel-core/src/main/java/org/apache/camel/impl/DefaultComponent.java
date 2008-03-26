@@ -34,7 +34,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 
 /**
