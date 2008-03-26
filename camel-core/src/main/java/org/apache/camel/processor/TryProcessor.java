@@ -62,40 +62,27 @@ public class TryProcessor extends ServiceSupport implements Processor {
             if (e != null && DeadLetterChannel.isFailureHandled(exchange)) {
                 e = null;
             }
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             e = ex;
             exchange.setException(e);
         }
 
-        if (e != null) {
-            try {
+        Exception unexpected = null;
+        try {
+            if (e != null) {
+            	LOG.info("Caught exception while processing exchange.", e);
                 handleException(exchange, e);
-            } catch (Exception ex) {
-                throw ex;
-            } catch (Throwable ex) {
-                throw new RuntimeCamelException(ex);
-            } finally {
-                processFinally(exchange);
             }
-        } else {
             processFinally(exchange);
+        } catch (Exception ex) {
+        	unexpected = ex;
+        } catch (Throwable ex) {
+        	unexpected = new RuntimeCamelException(ex);
         }
 
-    }
-
-    private void processFinally(Exchange exchange) {
-        if (finallyProcessor != null) {
-            Throwable lastException = exchange.getException();
-            exchange.setException(null);
-            try {
-                finallyProcessor.process(exchange);
-                if (exchange.getException() == null) {
-                    exchange.setException(lastException);
-                }
-            } catch (Exception e2) {
-                LOG.warn("Caught exception in finally block while handling other exception: " + e2, e2);
-                exchange.setException(e2);
-            }
+        if (unexpected != null) {
+            LOG.warn("Caught exception inside catch clause.", unexpected);
+            throw unexpected;
         }
     }
 
@@ -115,20 +102,26 @@ public class TryProcessor extends ServiceSupport implements Processor {
                 localExchange.getIn().setHeader("caught.exception", e);
                 // give the rest of the pipeline another chance
                 localExchange.setException(null);
-                try {
-                    catchClause.process(localExchange);
-                    ExchangeHelper.copyResults(exchange, localExchange);
-                } catch (Exception e1) {
-                    LOG.warn("Caught exception inside catch clause: " + e1, e1);
-                    exchange.setException(e1);
-                }
+
+                // do not catch any exception here, let it propagate up
+                catchClause.process(localExchange);
+                localExchange.getIn().removeHeader("caught.exception");
+                ExchangeHelper.copyResults(exchange, localExchange);
                 return;
             }
         }
+    }
 
-        // unhandled exception
-        if (finallyProcessor == null) {
-            throw e;
+    protected void processFinally(Exchange exchange) throws Throwable {
+        if (finallyProcessor != null) {
+            Throwable lastException = exchange.getException();
+            exchange.setException(null);
+
+            // do not catch any exception here, let it propagate up
+           finallyProcessor.process(exchange);
+            if (exchange.getException() == null) {
+                exchange.setException(lastException);
+            }
         }
     }
 }
