@@ -23,7 +23,6 @@ import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 
 import org.apache.mina.common.IoAcceptor;
-import org.apache.mina.filter.LoggingFilter;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
@@ -42,27 +41,25 @@ public class ReverserServer {
 
     public void start() throws Exception {
         acceptor = new SocketAcceptor();
+
         // Prepare the configuration
         SocketAcceptorConfig cfg = new SocketAcceptorConfig();
         cfg.setReuseAddress(true);
-        cfg.getFilterChain().addLast("logger", new LoggingFilter());
-        cfg.getFilterChain().addLast(
-                "codec",
-                new ProtocolCodecFilter(new TextLineCodecFactory(Charset
-                        .forName("UTF-8"))));
+        Charset charset = Charset.forName("UTF-8");
+        cfg.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(charset)));
 
         // Bind
-        acceptor.bind(new InetSocketAddress(port),
-                new ReverseProtocolHandler(), cfg);
+        acceptor.bind(new InetSocketAddress(port), new ReverseProtocolHandler(), cfg);
 
-        System.out.println("Listening on port " + port);
+        // System.out.println("Listening on port " + port);
     }
     
-    public void stop() throws Exception{
+    public void stop() throws Exception {
         acceptor.unbindAll();
     }
     
-    public int getPort(){
+    public int getPort() {
         return port;
     }
+    
 }
