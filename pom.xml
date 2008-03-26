@@ -102,6 +102,11 @@
 
   <repositories>
     <repository>
+      <id>repo1.maven</id>
+      <name>Maven Central Repo</name>
+      <url>http://repo1.maven.org/maven2/</url>
+    </repository>
+    <repository>
       <id>apache.incubating.releases</id>
       <name>Apache Incubating Release Distribution Repository</name>
       <url>http://people.apache.org/repo/m2-incubating-repository</url>
