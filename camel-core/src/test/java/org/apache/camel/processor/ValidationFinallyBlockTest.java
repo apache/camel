@@ -24,11 +24,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.TryType;
 
 /**
- * Test handleAll
+ * Test finallyBlock
  *
  * @author <a href="mailto:nsandhu@raleys.com">nsandhu</a>
  */
-public class ValidationHandleAllTest extends ContextTestSupport {
+public class ValidationFinallyBlockTest extends ContextTestSupport {
     protected Processor validator = new MyValidator();
     protected MockEndpoint validEndpoint;
     protected MockEndpoint invalidEndpoint;
@@ -70,7 +70,7 @@ public class ValidationHandleAllTest extends ContextTestSupport {
                         process(validator).
                         to("mock:valid");
                 tryType.handle(ValidationException.class).to("mock:invalid");
-                tryType.handleAll().to("mock:all");
+                tryType.finallyBlock().to("mock:all");
             }
         };
     }
