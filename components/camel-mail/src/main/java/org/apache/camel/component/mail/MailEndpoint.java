@@ -20,11 +20,10 @@ import javax.mail.Folder;
 import javax.mail.Message;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.ScheduledPollEndpoint;
-
 import org.springframework.mail.javamail.JavaMailSender;
 
 /**
@@ -67,7 +66,7 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
 
     /**
      * Creates a consumer using the given processor and transport
-     * 
+     *
      * @param processor the processor to use to process the messages
      * @param folder the JavaMail Folder to use for inbound messages
      * @return a newly created consumer
@@ -100,7 +99,7 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
     /**
      * Sets the binding used to convert from a Camel message to and from a Mail
      * message
-     * 
+     *
      * @param binding the binding to use
      */
     public void setBinding(MailBinding binding) {

@@ -48,10 +48,9 @@ public class MultipleDestinationConsumeTest extends ContextTestSupport {
         MimeMessage message = new MimeMessage(mailSession);
         message.setText(body);
 
-        message.setRecipients(Message.RecipientType.TO, new Address[] {
-               new InternetAddress("james@localhost"), 
-               new InternetAddress("bar@localhost")
-            });
+        message.setRecipients(Message.RecipientType.TO,
+                              new Address[] {new InternetAddress("james@localhost"),
+                                             new InternetAddress("bar@localhost")});
 
         Transport.send(message);
 

@@ -51,9 +51,8 @@ public class MailConfiguration implements Cloneable {
      */
     public MailConfiguration copy() {
         try {
-            return (MailConfiguration) clone();
-        }
-        catch (CloneNotSupportedException e) {
+            return (MailConfiguration)clone();
+        } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
     }
@@ -87,8 +86,7 @@ public class MailConfiguration implements Cloneable {
         String fragment = uri.getFragment();
         if (fragment == null || fragment.length() == 0) {
             fragment = userInfo + "@" + host;
-        }
-        else {
+        } else {
             setFolderName(fragment);
         }
         setDestination(fragment);
