@@ -16,21 +16,23 @@
  */
 package org.apache.camel.component.mina;
 
+import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Exchange;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.WriteFuture;
-import org.apache.camel.Exchange;
-import org.apache.camel.CamelExchangeException;
 
 /**
  * Helper class used internally by camel-mina using Apache MINA.
  */
-public class MinaHelper {
+public final class MinaHelper {
 
-    private MinaHelper() {}
+    private MinaHelper() {
+        //Utility Class
+    }
 
     /**
      * Writes the given body to MINA session. Will wait until the body has been written.
-     * 
+     *
      * @param session   the MINA session
      * @param body      the body to write (send)
      * @param exchange  the mina exchange used for error reporting
@@ -45,5 +47,5 @@ public class MinaHelper {
             throw new CamelExchangeException("Could not write body", exchange);
         }
     }
-    
+
 }

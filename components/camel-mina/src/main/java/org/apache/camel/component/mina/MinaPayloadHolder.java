@@ -17,8 +17,8 @@
 package org.apache.camel.component.mina;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 
@@ -88,14 +88,9 @@ public class MinaPayloadHolder implements Serializable {
     }
 
     public String toString() {
-        return "MinaPayloadHolder{" +
-                "inBody=" + inBody +
-                ", outBody=" + outBody +
-                ", inHeaders=" + inHeaders +
-                ", outHeaders=" + outHeaders +
-                ", properties=" + properties +
-                ", exception=" + exception +
-                '}';
+        return "MinaPayloadHolder{" + "inBody=" + inBody + ", outBody=" + outBody + ", inHeaders="
+               + inHeaders + ", outHeaders=" + outHeaders + ", properties=" + properties + ", exception="
+               + exception + '}';
     }
 
 }

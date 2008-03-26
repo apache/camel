@@ -1,21 +1,18 @@
-/*
- *  Licensed to the Apache Software Foundation (ASF) under one
- *  or more contributor license agreements.  See the NOTICE file
- *  distributed with this work for additional information
- *  regarding copyright ownership.  The ASF licenses this file
- *  to you under the Apache License, Version 2.0 (the
- *  "License"); you may not use this file except in compliance
- *  with the License.  You may obtain a copy of the License at
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  KIND, either express or implied.  See the License for the
- *  specific language governing permissions and limitations
- *  under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.camel.component.mina;
 
@@ -28,6 +25,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.mina.transport.socket.nio.SocketConnector;
+
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
@@ -37,7 +35,7 @@ import static org.easymock.classextension.EasyMock.verify;
  */
 public class MinaProducerShutdownMockTest extends ContextTestSupport {
 
-    private static final String uri = "mina:tcp://localhost:6321?textline=true";
+    private static final String URI = "mina:tcp://localhost:6321?textline=true";
 
     public void testProducerShutdownTestingWithMock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -50,7 +48,7 @@ public class MinaProducerShutdownMockTest extends ContextTestSupport {
         replay(mockConnector);
 
         // normal camel code to get a producer
-        Endpoint endpoint = context.getEndpoint(uri);
+        Endpoint endpoint = context.getEndpoint(URI);
         Exchange exchange = endpoint.createExchange();
         Producer producer = endpoint.createProducer();
         producer.start();
@@ -75,7 +73,7 @@ public class MinaProducerShutdownMockTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(uri).to("mock:result");
+                from(URI).to("mock:result");
             }
         };
     }

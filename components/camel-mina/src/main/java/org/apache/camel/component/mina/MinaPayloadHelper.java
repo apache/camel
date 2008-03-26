@@ -28,7 +28,10 @@ import org.apache.camel.Exchange;
  * @see org.apache.camel.component.mina.MinaPayloadHolder
  * @version $Revision$
  */
-public class MinaPayloadHelper {
+public final class MinaPayloadHelper {
+    private MinaPayloadHelper() {
+        //Utility Class
+    }
 
     public static Object getIn(MinaEndpoint endpoint, Exchange exchange) {
         if (endpoint.isTransferExchange()) {

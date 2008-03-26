@@ -95,8 +95,12 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends ContextTestSupport {
                 return null;
             }
         } finally {
-            if (is != null) is.close();
-            if (os != null) os.close();
+            if (is != null) {
+                is.close();
+            }
+            if (os != null) {
+                os.close();
+            }
             soc.close();
         }
 

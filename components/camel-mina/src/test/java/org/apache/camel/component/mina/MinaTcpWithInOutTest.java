@@ -35,23 +35,23 @@ import org.apache.camel.impl.DefaultCamelContext;
  * @version $Revision$
  */
 public class MinaTcpWithInOutTest extends TestCase {
-	
+
     private String uri;
     private Exchange receivedExchange;
     private CountDownLatch latch;
     private CamelContext container;
-	
+
     public void testMinaRouteWithInOut() throws Exception {
-    	container = new DefaultCamelContext();
-    	latch = new CountDownLatch(1);
-    	uri = "mina:tcp://localhost:6321?textline=true";
+        container = new DefaultCamelContext();
+        latch = new CountDownLatch(1);
+        uri = "mina:tcp://localhost:6321?textline=true";
 
         ReverserServer server = new ReverserServer();
         server.start();
 
         container.addRoutes(createRouteBuilder());
         container.start();
-    	
+
         // now lets fire in a message
         Endpoint endpoint = container.getEndpoint("direct:x");
         Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
@@ -73,11 +73,11 @@ public class MinaTcpWithInOutTest extends TestCase {
         container.stop();
         server.stop();
     }
-    
+
     public void testMinaRouteWithInOutLazy() throws Exception {
-    	container = new DefaultCamelContext();
-    	latch = new CountDownLatch(1);
-    	uri = "mina:tcp://localhost:6321?textline=true&lazySessionCreation=true";
+        container = new DefaultCamelContext();
+        latch = new CountDownLatch(1);
+        uri = "mina:tcp://localhost:6321?textline=true&lazySessionCreation=true";
 
         container.addRoutes(createRouteBuilder());
         container.start();
@@ -85,7 +85,7 @@ public class MinaTcpWithInOutTest extends TestCase {
         // The server is activated after Camel to check if the lazyness is working
         ReverserServer server = new ReverserServer();
         server.start();
-        
+
         // now lets fire in a message
         Endpoint endpoint = container.getEndpoint("direct:x");
         Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
@@ -107,7 +107,7 @@ public class MinaTcpWithInOutTest extends TestCase {
         container.stop();
         server.stop();
     }
-    
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -121,5 +121,5 @@ public class MinaTcpWithInOutTest extends TestCase {
             }
         };
     }
-    
+
 }
