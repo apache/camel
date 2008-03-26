@@ -29,11 +29,14 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.IoConnector;
 import org.apache.mina.common.IoServiceConfig;
 import org.apache.mina.common.IoSession;
+import org.apache.mina.filter.LoggingFilter;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.ProtocolDecoder;
@@ -42,7 +45,6 @@ import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
-import org.apache.mina.filter.LoggingFilter;
 import org.apache.mina.transport.socket.nio.DatagramAcceptor;
 import org.apache.mina.transport.socket.nio.DatagramAcceptorConfig;
 import org.apache.mina.transport.socket.nio.DatagramConnector;
@@ -54,12 +56,10 @@ import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 import org.apache.mina.transport.vmpipe.VmPipeAcceptor;
 import org.apache.mina.transport.vmpipe.VmPipeAddress;
 import org.apache.mina.transport.vmpipe.VmPipeConnector;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Component for Apache MINA.
- * 
+ *
  * @version $Revision$
  *
  * @see org.apache.camel.Component
@@ -90,11 +90,9 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         if (protocol != null) {
             if (protocol.equals("tcp")) {
                 return createSocketEndpoint(uri, u, parameters);
-            }
-            else if (protocol.equals("udp") || protocol.equals("mcast") || protocol.equals("multicast")) {
+            } else if (protocol.equals("udp") || protocol.equals("mcast") || protocol.equals("multicast")) {
                 return createDatagramEndpoint(uri, u, parameters);
-            }
-            else if (protocol.equals("vm")) {
+            } else if (protocol.equals("vm")) {
                 return createVmEndpoint(uri, u);
             }
         }
@@ -126,7 +124,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         if (minaLogger) {
             connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
-        // TODO: CAMEL-396 override connector timeout to either default or timeout provided by end user: connectorConfig.setConnectTimeout(); 
+        // TODO: CAMEL-396 override connector timeout to either default or timeout provided by end user: connectorConfig.setConnectTimeout();
 
         // acceptor connectorConfig
         SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig();
@@ -158,10 +156,10 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
                 Charset encoding = getEncodingParameter(type, parameters);
                 codecFactory = new TextLineCodecFactory(encoding);
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug(type + ": Using TextLineCodecFactory: " + codecFactory + " using encoding: " + encoding);
+                    LOG.debug(type + ": Using TextLineCodecFactory: " + codecFactory + " using encoding: "
+                              + encoding);
                 }
-            }
-            else {
+            } else {
                 codecFactory = new ObjectSerializationCodecFactory();
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(type + ": Using ObjectSerializationCodecFactory: " + codecFactory);
@@ -316,5 +314,5 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
     protected void addCodecFactory(IoServiceConfig config, ProtocolCodecFactory codecFactory) {
         config.getFilterChain().addLast("codec", new ProtocolCodecFilter(codecFactory));
     }
-    
+
 }

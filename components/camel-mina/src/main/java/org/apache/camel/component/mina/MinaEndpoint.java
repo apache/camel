@@ -19,9 +19,9 @@ package org.apache.camel.component.mina;
 import java.net.SocketAddress;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.IoAcceptorConfig;
@@ -30,7 +30,7 @@ import org.apache.mina.common.IoConnectorConfig;
 import org.apache.mina.common.IoSession;
 
 /**
- * Endpoint for Camel MINA. 
+ * Endpoint for Camel MINA.
  *
  * @version $Revision$
  */
@@ -47,7 +47,10 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
     private final boolean lazySessionCreation;
     private final boolean transferExchange;
 
-    public MinaEndpoint(String endpointUri, MinaComponent component, SocketAddress address, IoAcceptor acceptor, IoAcceptorConfig acceptorConfig, IoConnector connector, IoConnectorConfig connectorConfig, boolean lazySessionCreation, long timeout, boolean transferExchange) {
+    public MinaEndpoint(String endpointUri, MinaComponent component, SocketAddress address,
+                        IoAcceptor acceptor, IoAcceptorConfig acceptorConfig, IoConnector connector,
+                        IoConnectorConfig connectorConfig, boolean lazySessionCreation, long timeout,
+                        boolean transferExchange) {
         super(endpointUri, component);
         this.address = address;
         this.acceptor = acceptor;
@@ -97,7 +100,7 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
     }
 
     public boolean isLazySessionCreation() {
-    	return lazySessionCreation;
+        return lazySessionCreation;
     }
 
     public IoAcceptorConfig getAcceptorConfig() {
@@ -119,5 +122,5 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
     public boolean isTransferExchange() {
         return transferExchange;
     }
-    
+
 }
