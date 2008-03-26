@@ -58,9 +58,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * The component for using Apache MINA.
+ * Component for Apache MINA.
  * 
  * @version $Revision$
+ *
+ * @see org.apache.camel.Component
  */
 public class MinaComponent extends DefaultComponent<MinaExchange> {
     private static final transient Log LOG = LogFactory.getLog(MinaComponent.class);
@@ -77,21 +79,27 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
 
     @Override
     protected Endpoint<MinaExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating MinaEndpoint from uri: " + uri);
+        }
+
         URI u = new URI(remaining);
 
         String protocol = u.getScheme();
-        if (protocol.equals("tcp")) {
-            return createSocketEndpoint(uri, u, parameters);
+        // if mistyped uri then protocol can be null
+        if (protocol != null) {
+            if (protocol.equals("tcp")) {
+                return createSocketEndpoint(uri, u, parameters);
+            }
+            else if (protocol.equals("udp") || protocol.equals("mcast") || protocol.equals("multicast")) {
+                return createDatagramEndpoint(uri, u, parameters);
+            }
+            else if (protocol.equals("vm")) {
+                return createVmEndpoint(uri, u);
+            }
         }
-        else if (protocol.equals("udp") || protocol.equals("mcast") || protocol.equals("multicast")) {
-            return createDatagramEndpoint(uri, u, parameters);
-        }
-        else if (protocol.equals("vm")) {
-            return createVmEndpoint(uri, u);
-        }
-        else {
-            throw new IllegalArgumentException("Unrecognised MINA protocol: " + protocol + " for uri: " + uri);
-        }
+        // protocol not resolved so error
+        throw new IllegalArgumentException("Unrecognised MINA protocol: " + protocol + " for uri: " + uri);
     }
 
     protected MinaEndpoint createVmEndpoint(String uri, URI connectUri) {
@@ -106,25 +114,32 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         SocketAddress address = new InetSocketAddress(connectUri.getHost(), connectUri.getPort());
         IoConnector connector = new SocketConnector();
 
-        // connector config
-        SocketConnectorConfig connectorConfig = new SocketConnectorConfig();
-        configureSocketCodecFactory(connectorConfig, parameters);
-        connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
-
-        // acceptor connectorConfig
-        SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig();
-        configureSocketCodecFactory(acceptorConfig, parameters);
-        acceptorConfig.setReuseAddress(true);
-        acceptorConfig.setDisconnectOnUnbind(true);
-        acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
-
         boolean lazySessionCreation = ObjectConverter.toBool(parameters.get("lazySessionCreation"));
         long timeout = getTimeoutParameter(parameters);
         boolean transferExchange = ObjectConverter.toBool(parameters.get("transferExchange"));
+        boolean sync = ObjectConverter.toBool(parameters.get("sync"));
+        boolean minaLogger = ObjectConverter.toBool(parameters.get("minaLogger"));
+
+        // connector config
+        SocketConnectorConfig connectorConfig = new SocketConnectorConfig();
+        configureSocketCodecFactory("MinaProducer", connectorConfig, parameters);
+        if (minaLogger) {
+            connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
+        }
+        // TODO: CAMEL-396 override connector timeout to either default or timeout provided by end user: connectorConfig.setConnectTimeout(); 
+
+        // acceptor connectorConfig
+        SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig();
+        configureSocketCodecFactory("MinaConsumer", acceptorConfig, parameters);
+        acceptorConfig.setReuseAddress(true);
+        acceptorConfig.setDisconnectOnUnbind(true);
+        if (minaLogger) {
+            acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
+        }
 
         MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout, transferExchange);
 
-        boolean sync = ObjectConverter.toBool(parameters.get("sync"));
+        // set sync or async mode after endpoint is created
         if (sync) {
             endpoint.setExchangePattern(ExchangePattern.InOut);
         } else {
@@ -134,19 +149,23 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         return endpoint;
     }
 
-    protected void configureSocketCodecFactory(IoServiceConfig config, Map parameters) {
-        ProtocolCodecFactory codecFactory = getCodecFactory(parameters);
+    protected void configureSocketCodecFactory(String type, IoServiceConfig config, Map parameters) {
+        ProtocolCodecFactory codecFactory = getCodecFactory(type, parameters);
 
         if (codecFactory == null) {
             boolean textline = ObjectConverter.toBool(parameters.get("textline"));
             if (textline) {
-                Charset encoding = getEncodingParameter(parameters);
+                Charset encoding = getEncodingParameter(type, parameters);
                 codecFactory = new TextLineCodecFactory(encoding);
-                LOG.debug("Using TextLineCodecFactory: " + codecFactory + " using encoding: " + encoding);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(type + ": Using TextLineCodecFactory: " + codecFactory + " using encoding: " + encoding);
+                }
             }
             else {
                 codecFactory = new ObjectSerializationCodecFactory();
-                LOG.debug("Using ObjectSerializationCodecFactory: " + codecFactory);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(type + ": Using ObjectSerializationCodecFactory: " + codecFactory);
+                }
             }
         }
 
@@ -158,23 +177,30 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         SocketAddress address = new InetSocketAddress(connectUri.getHost(), connectUri.getPort());
         IoConnector connector = new DatagramConnector();
 
-        DatagramConnectorConfig connectorConfig = new DatagramConnectorConfig();
-        configureDataGramCodecFactory(connectorConfig, parameters);
-        connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
-
-        DatagramAcceptorConfig acceptorConfig = new DatagramAcceptorConfig();
-        configureDataGramCodecFactory(acceptorConfig, parameters);
-        acceptorConfig.setDisconnectOnUnbind(true);
-        // reuse address is default true for datagram
-        acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
-
         boolean lazySessionCreation = ObjectConverter.toBool(parameters.get("lazySessionCreation"));
         long timeout = getTimeoutParameter(parameters);
         boolean transferExchange = false; // transfer exchange is not supported for datagram protocol
+        boolean sync = ObjectConverter.toBool(parameters.get("sync"));
+        boolean minaLogger = ObjectConverter.toBool(parameters.get("minaLogger"));
+
+        DatagramConnectorConfig connectorConfig = new DatagramConnectorConfig();
+        configureDataGramCodecFactory("MinaProducer", connectorConfig, parameters);
+        if (minaLogger) {
+            connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
+        }
+        // TODO: CAMEL-396 override connector timeout to either default or timeout provided by end user: connectorConfig.setConnectTimeout();
+
+        DatagramAcceptorConfig acceptorConfig = new DatagramAcceptorConfig();
+        configureDataGramCodecFactory("MinaConsumer", acceptorConfig, parameters);
+        acceptorConfig.setDisconnectOnUnbind(true);
+        // reuse address is default true for datagram
+        if (minaLogger) {
+            acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
+        }
 
         MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout, transferExchange);
 
-        boolean sync = ObjectConverter.toBool(parameters.get("sync"));
+        // set sync or async mode after endpoint is created
         if (sync) {
             endpoint.setExchangePattern(ExchangePattern.InOut);
         } else {
@@ -184,11 +210,13 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         return endpoint;
     }
 
-    private Charset getEncodingParameter(Map parameters) {
+    private Charset getEncodingParameter(String type, Map parameters) {
         String encoding = (String) parameters.get("encoding");
         if (encoding == null) {
             encoding = Charset.defaultCharset().name();
-            LOG.debug("No encoding parameter using default charset: " + encoding);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(type + ": No encoding parameter using default charset: " + encoding);
+            }
         }
         if (!Charset.isSupported(encoding)) {
             throw new IllegalArgumentException("The encoding: " + encoding + " is not supported");
@@ -215,9 +243,8 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
      * For datagrams the entire message is available as a single ByteBuffer so lets just pass those around by default
      * and try converting whatever they payload is into ByteBuffers unless some custom converter is specified
      */
-    protected void configureDataGramCodecFactory(IoServiceConfig config, Map parameters) {
-
-        ProtocolCodecFactory codecFactory = getCodecFactory(parameters);
+    protected void configureDataGramCodecFactory(String type, IoServiceConfig config, Map parameters) {
+        ProtocolCodecFactory codecFactory = getCodecFactory(type, parameters);
         if (codecFactory == null) {
             codecFactory = new ProtocolCodecFactory() {
                 public ProtocolEncoder getEncoder() throws Exception {
@@ -253,10 +280,12 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
             };
 
             // set the encoder used for this datagram codec factory
-            Charset encoding = getEncodingParameter(parameters);
+            Charset encoding = getEncodingParameter(type, parameters);
             encoder = encoding.newEncoder();
 
-            LOG.debug("Using CodecFactory: " + codecFactory + " using encoding: " + encoding);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(type + ": Using CodecFactory: " + codecFactory + " using encoding: " + encoding);
+            }
         }
 
         addCodecFactory(config, codecFactory);
@@ -267,20 +296,19 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         if (answer == null) {
             String value = convertTo(String.class, message);
             answer = ByteBuffer.allocate(value.length()).setAutoExpand(true);
-
-            if (value != null) {
-                answer.putString(value, encoder);
-            }
+            answer.putString(value, encoder);
         }
         return answer;
     }
 
-    protected ProtocolCodecFactory getCodecFactory(Map parameters) {
+    protected ProtocolCodecFactory getCodecFactory(String type, Map parameters) {
         ProtocolCodecFactory codecFactory = null;
         String codec = (String) parameters.get("codec");
         if (codec != null) {
             codecFactory = getCamelContext().getRegistry().lookup(codec, ProtocolCodecFactory.class);
-            LOG.debug("Using custom CodecFactory: " + codecFactory);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(type + ": Using custom CodecFactory: " + codecFactory);
+            }
         }
         return codecFactory;
     }

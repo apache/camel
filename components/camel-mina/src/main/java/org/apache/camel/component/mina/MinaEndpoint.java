@@ -62,6 +62,7 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
         this.transferExchange = transferExchange;
     }
 
+    @SuppressWarnings({"unchecked"})
     public Producer<MinaExchange> createProducer() throws Exception {
         return new MinaProducer(this);
     }

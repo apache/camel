@@ -16,27 +16,23 @@
  */
 package org.apache.camel.component.mina;
 
-import junit.framework.TestCase;
-import org.apache.camel.CamelContext;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
-
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.IOException;
 
 /**
  * To test camel-mina component using a TCP client that communicates using TCP socket communication.
  *
  * @version $Revision$
  */
-public class MinaTcpWithInOutUsingPlainSocketTest extends TestCase {
-
-    protected CamelContext container = new DefaultCamelContext();
+public class MinaTcpWithInOutUsingPlainSocketTest extends ContextTestSupport {
 
     private static final int PORT = 6333;
     // use parameter sync=true to force InOut pattern of the MinaExchange
@@ -72,7 +68,7 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends TestCase {
         assertNull("no data should be recieved", out);
     }
 
-    public void xtestExchangeFailedOutShouldBeNull() throws Exception {
+    public void testExchangeFailedOutShouldBeNull() throws Exception {
         String out = sendAndReceive("force-exception");
         assertTrue("out should not be the same as in when the exchange has failed", !"force-exception".equals(out));
         assertNull("no data should be retrieved", out);
@@ -117,18 +113,6 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends TestCase {
         }
 
         return sb.toString();
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        container.addRoutes(createRouteBuilder());
-        container.start();
-    }
-
-
-    @Override
-    protected void tearDown() throws Exception {
-        container.stop();
     }
 
     protected RouteBuilder createRouteBuilder() {

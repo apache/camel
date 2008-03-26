@@ -30,6 +30,7 @@ import org.apache.mina.common.IoSession;
  * @version $Rev$, $Date$,
  */
 public class ReverseProtocolHandler extends IoHandlerAdapter {
+    
     public void exceptionCaught(IoSession session, Throwable cause) {
         cause.printStackTrace();
         // Close connection when unexpected exception is caught.
@@ -47,4 +48,5 @@ public class ReverseProtocolHandler extends IoHandlerAdapter {
         // and write it back.
         session.write(buf.toString());
     }
+    
 }

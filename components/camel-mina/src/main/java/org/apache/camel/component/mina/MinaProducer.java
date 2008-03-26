@@ -20,10 +20,10 @@ import java.net.SocketAddress;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Producer;
 import org.apache.camel.CamelException;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
@@ -33,7 +33,7 @@ import org.apache.mina.common.IoConnector;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
-import org.apache.mina.common.WriteFuture;
+import org.apache.mina.transport.socket.nio.SocketConnector;
 
 /**
  * A {@link Producer} implementation for MINA
@@ -47,7 +47,10 @@ public class MinaProducer extends DefaultProducer {
     private CountDownLatch latch;
     private boolean lazySessionCreation;
     private long timeout;
+    private IoConnector connector;
+    private boolean sync;
 
+    @SuppressWarnings({"unchecked"})
     public MinaProducer(MinaEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
@@ -65,45 +68,43 @@ public class MinaProducer extends DefaultProducer {
 
         Object body = MinaPayloadHelper.getIn(endpoint, exchange);
         if (body == null) {
-            LOG.warn("No payload for exchange: " + exchange);
-        } else {
-            if (ExchangeHelper.isOutCapable(exchange)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Writing body: " + body);
-                }
+            LOG.warn("No payload to send for exchange: " + exchange);
+            return; // exit early since nothing to write
+        }
 
-                // write the body
-                latch = new CountDownLatch(1);
-                WriteFuture future = session.write(body);
-                future.join();
-                if (!future.isWritten()) {
-                    throw new ExchangeTimedOutException(exchange, timeout);
-                }
+        // if sync is true then we should also wait for a response (synchronous mode)
+        sync = ExchangeHelper.isOutCapable(exchange);
+        if (sync) {
+            // only initialize latch if we should get a response
+            latch = new CountDownLatch(1);
+        }
+        // write the body
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Writing body: " + body);
+        }
+        MinaHelper.writeBody(session, body, exchange);
 
-                // wait for response, consider timeout
-                latch.await(timeout, TimeUnit.MILLISECONDS);
-                if (latch.getCount() == 1) {
-                    throw new ExchangeTimedOutException(exchange, timeout);
-                }
+        if (sync) {
+            // wait for response, consider timeout
+            LOG.debug("Waiting for response");
+            latch.await(timeout, TimeUnit.MILLISECONDS);
+            if (latch.getCount() == 1) {
+                throw new ExchangeTimedOutException(exchange, timeout);
+            }
 
-                // did we get a response
-                ResponseHandler handler = (ResponseHandler) session.getHandler();
-                if (handler.getCause() != null) {
-                    throw new CamelException("Response Handler had an exception", handler.getCause());
-                } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Handler message: " + handler.getMessage());
-                    }
-                    MinaPayloadHelper.setOut(exchange, handler.getMessage());
-                }
+            // did we get a response
+            ResponseHandler handler = (ResponseHandler) session.getHandler();
+            if (handler.getCause() != null) {
+                throw new CamelException("Response Handler had an exception", handler.getCause());
             } else {
-                session.write(body);
+                MinaPayloadHelper.setOut(exchange, handler.getMessage());
             }
         }
     }
 
     @Override
     protected void doStart() throws Exception {
+        super.doStart();
         if (!lazySessionCreation) {
             openConnection();
         }
@@ -111,18 +112,35 @@ public class MinaProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (session != null) {
-            session.close().join(2000);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Stopping connector: " + connector + " at address: " + endpoint.getAddress());
         }
+
+        if (connector instanceof SocketConnector) {
+            // Change the worker timeout to 0 second to make the I/O thread quit soon when there's no connection to manage.
+            // Default worker timeout is 60 sec and therefore the client using MinaProducer can not terminate the JVM
+            // asap but must wait for the timeout to happend, so to speed this up we set the timeout to 0.
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Setting SocketConnector WorkerTimeout=0 to force MINA stopping its resources faster");
+            }
+            ((SocketConnector) connector).setWorkerTimeout(0);
+        }
+
+        if (session != null) {
+            session.close();
+        }
+        
+        super.doStop();
     }
 
     private void openConnection() {
         SocketAddress address = endpoint.getAddress();
-        IoConnector connector = endpoint.getConnector();
+        connector = endpoint.getConnector();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating connector to address: " + address + " using connector: " + connector + " timeout: " + timeout + " millis.");
         }
         IoHandler ioHandler = new ResponseHandler(endpoint);
+        // connect and wait until the connection is established
         ConnectFuture future = connector.connect(address, ioHandler, endpoint.getConnectorConfig());
         future.join();
         session = future.getSession();
@@ -161,13 +179,13 @@ public class MinaProducer extends DefaultProducer {
 
         @Override
         public void sessionClosed(IoSession session) throws Exception {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Session closed");
-            }
-
-            if (message == null) {
-                // session was closed but no message received. This is because the remote server had an internal error
-                // and could not return a proper response. We should count down to stop waiting for a response
+            if (sync && message == null) {
+                // sync=true (InOut mode) so we expected a message as reply but did not get one before the session is closed
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Session closed but no message received from address: " + this.endpoint.getAddress());
+                }
+                // session was closed but no message received. This could be because the remote server had an internal error
+                // and could not return a response. We should count down to stop waiting for a response
                 countDown();
             }
         }
@@ -181,7 +199,6 @@ public class MinaProducer extends DefaultProducer {
             if (ioSession != null) {
                 ioSession.close();
             }
-            countDown();
         }
 
         public Throwable getCause() {
