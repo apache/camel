@@ -21,7 +21,7 @@ import org.apache.camel.LanguageTestSupport;
 /**
  * @version $Revision$
  */
-public class OgnlTest  extends LanguageTestSupport {
+public class OgnlTest extends LanguageTestSupport {
     public void testOgnlExpressions() throws Exception {
         assertExpression("exchange", exchange);
         assertExpression("exchange.getIn().body", "<hello id='m123'>world!</hello>");
@@ -31,15 +31,15 @@ public class OgnlTest  extends LanguageTestSupport {
         assertExpression("getIn().headers.foo", "abc");
         assertExpression("request.headers.foo", "abc");
     }
-    
+
     public void testGetOutFalseKeepsNullOutMessage() throws Exception {
         assertExpression("exchange.getOut(false)", null);
         assertNull(exchange.getOut(false));
     }
-    
+
     public void testResponseCreatesOutMessage() throws Exception {
-       assertExpression("response.body", null);        
-       assertNotNull(exchange.getOut(false));
+        assertExpression("response.body", null);
+        assertNotNull(exchange.getOut(false));
     }
 
     protected String getLanguageName() {
