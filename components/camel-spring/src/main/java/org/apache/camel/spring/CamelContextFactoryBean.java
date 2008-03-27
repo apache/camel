@@ -33,9 +33,9 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.model.RouteBuilderRef;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteType;
-import org.apache.camel.model.RouteBuilderRef;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.spi.InstrumentationAgent;
 import org.apache.commons.logging.Log;
@@ -70,10 +70,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     @XmlElement(name = "package", required = false)
     private String[] packages = {};
     @XmlElements({
-        @XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false), 
-        @XmlElement(name = "template", type = CamelTemplateFactoryBean.class, required = false), 
+        @XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false),
+        @XmlElement(name = "template", type = CamelTemplateFactoryBean.class, required = false),
         @XmlElement(name = "proxy", type = CamelProxyFactoryType.class, required = false),
-        @XmlElement(name = "export", type = CamelServiceExporterType.class, required = false), 
+        @XmlElement(name = "export", type = CamelServiceExporterType.class, required = false),
         @XmlElement(name = "jmxAgent", required = false)})
     private List beans;
     @XmlElement(name = "routeBuilderRef", required = false)
@@ -152,8 +152,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             try {
                 LOG.debug("Starting the context now!");
                 getContext().start();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeCamelException(e);
             }
         }
@@ -275,9 +274,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      * Create the context
      */
     protected SpringCamelContext createContext() {
-    	SpringCamelContext ctx = new SpringCamelContext(getApplicationContext());
-    	ctx.setName(getId());
-    	return ctx;
+        SpringCamelContext ctx = new SpringCamelContext(getApplicationContext());
+        ctx.setName(getId());
+        return ctx;
     }
 
     /**

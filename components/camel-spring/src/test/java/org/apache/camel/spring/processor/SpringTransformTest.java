@@ -16,11 +16,12 @@
  */
 package org.apache.camel.spring.processor;
 
-import org.apache.camel.ContextTestSupport;
+
 import org.apache.camel.CamelContext;
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
  * @version $Revision$

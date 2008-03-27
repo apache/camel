@@ -25,6 +25,10 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
@@ -37,8 +41,8 @@ import org.apache.camel.model.loadbalancer.TopicLoadBalanceStrategy;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelContextFactoryBean;
-import org.apache.camel.spring.EndpointFactoryBean;
 import org.apache.camel.spring.CamelTemplateFactoryBean;
+import org.apache.camel.spring.EndpointFactoryBean;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.camel.spring.remoting.CamelServiceExporter;
 import org.apache.camel.util.ObjectHelper;
@@ -49,14 +53,14 @@ import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+
 
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
-    public static final String JAXB_PACKAGES = "org.apache.camel.spring:org.apache.camel.model:org.apache.camel.model.config:org.apache.camel.model.dataformat:org.apache.camel.model.language:org.apache.camel.model.loadbalancer";
+    public static final String JAXB_PACKAGES = "org.apache.camel.spring:org.apache.camel.model:org.apache.camel.model.config:"
+                                               + "org.apache.camel.model.dataformat:org.apache.camel.model.language:org.apache.camel.model.loadbalancer";
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(EndpointFactoryBean.class);
-    protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
+    protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(
+                                                                                      CamelBeanPostProcessor.class);
     protected Set<String> parserElementNames = new HashSet<String>();
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
@@ -74,12 +78,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("serialization", SerializationDataFormat.class);
         addBeanDefinitionParser("xmlBeans", XMLBeansDataFormat.class);
 
-        //load balancers
+        // load balancers
         addBeanDefinitionParser("roundRobin", RoundRobinLoadBalanceStrategy.class);
         addBeanDefinitionParser("random", RandomLoadBalanceStrategy.class);
         addBeanDefinitionParser("sticky", StickyLoadBalanceStrategy.class);
         addBeanDefinitionParser("topic", TopicLoadBalanceStrategy.class);
-        
+
         // TODO switch to use the above mechanism?
         registerParser("endpoint", endpointParser);
 
@@ -103,7 +107,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         registerParser(elementName, new ScriptDefinitionParser(engineName));
     }
 
-    protected void registerParser(String name, org.springframework.beans.factory.xml.BeanDefinitionParser parser) {
+    protected void registerParser(String name,
+                                  org.springframework.beans.factory.xml.BeanDefinitionParser parser) {
         parserElementNames.add(name);
         registerBeanDefinitionParser(name, parser);
     }
@@ -116,12 +121,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         try {
             binder = getJaxbContext().createBinder();
             return binder.unmarshal(element);
-/*
-            Unmarshaller unmarshaller = getJaxbContext().createUnmarshaller();
-            return unmarshaller.unmarshal(element);
-*/
-        }
-        catch (JAXBException e) {
+            /*
+             * Unmarshaller unmarshaller =
+             * getJaxbContext().createUnmarshaller(); return
+             * unmarshaller.unmarshal(element);
+             */
+        } catch (JAXBException e) {
             throw new BeanDefinitionStoreException("Failed to parse JAXB element: " + e, e);
         }
     }
@@ -158,7 +163,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             // now lets parse the routes
             Object value = parseUsingJaxb(element, parserContext);
             if (value instanceof CamelContextFactoryBean) {
-                CamelContextFactoryBean factoryBean = (CamelContextFactoryBean) value;
+                CamelContextFactoryBean factoryBean = (CamelContextFactoryBean)value;
                 builder.addPropertyValue("id", contextId);
                 builder.addPropertyValue("routes", factoryBean.getRoutes());
                 builder.addPropertyValue("builderRefs", factoryBean.getBuilderRefs());
@@ -174,24 +179,23 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             for (int i = 0; i < size; i++) {
                 Node child = list.item(i);
                 if (child instanceof Element) {
-                    Element childElement = (Element) child;
+                    Element childElement = (Element)child;
                     String localName = child.getLocalName();
                     if (localName.equals("beanPostProcessor")) {
                         createBeanPostProcessor(parserContext, contextId, childElement);
                         createdBeanPostProcessor = true;
-                    }
-                    else if (localName.equals("endpoint")) {
+                    } else if (localName.equals("endpoint")) {
                         BeanDefinition definition = endpointParser.parse(childElement, parserContext);
                         String id = childElement.getAttribute("id");
                         if (ObjectHelper.isNotNullAndNonEmpty(id)) {
                             // TODO we can zap this?
-                            definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
+                            definition.getPropertyValues()
+                                .addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
                             // definition.getPropertyValues().addPropertyValue("context",
                             // builder.getBeanDefinition());
                             parserContext.registerComponent(new BeanComponentDefinition(definition, id));
                         }
-                    }
-                    else {
+                    } else {
                         BeanDefinitionParser parser = parserMap.get(localName);
                         if (parser != null) {
                             BeanDefinition definition = parser.parse(childElement, parserContext);
@@ -221,10 +225,10 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         for (int i = 0; i < size; i++) {
             Node child = list.item(i);
             if (child instanceof Element) {
-                Element childElement = (Element) child;
+                Element childElement = (Element)child;
                 Object object = binder.getJAXBNode(child);
                 if (object instanceof NamespaceAware) {
-                    NamespaceAware namespaceAware = (NamespaceAware) object;
+                    NamespaceAware namespaceAware = (NamespaceAware)object;
                     if (namespaces == null) {
                         namespaces = new Namespaces(element);
                     }

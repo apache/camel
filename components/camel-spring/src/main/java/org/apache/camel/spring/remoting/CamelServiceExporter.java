@@ -16,13 +16,13 @@
  */
 package org.apache.camel.spring.remoting;
 
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.util.CamelContextHelper;
-import static org.apache.camel.util.ObjectHelper.notNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
@@ -30,6 +30,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.remoting.support.RemoteExporter;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A {@link FactoryBean} to create a proxy to a service exposing a given {@link #getServiceInterface()}

@@ -17,7 +17,6 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spring.config.XmlConfigTestSupport;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -25,9 +24,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version $Revision$
  */
 public class RouteBuilderRefTest extends XmlConfigTestSupport {
-  
+
     public void testUsingRouteBuilderRefInCamelXml() throws Exception {
-        ApplicationContext applicationContext = 
+        ApplicationContext applicationContext =
             new ClassPathXmlApplicationContext("org/apache/camel/spring/config/routeBuilderRef.xml");
 
         CamelContext context = (CamelContext) applicationContext.getBean("camel5");

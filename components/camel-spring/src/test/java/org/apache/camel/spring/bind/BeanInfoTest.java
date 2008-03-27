@@ -33,11 +33,13 @@ import org.apache.commons.logging.LogFactory;
  */
 public class BeanInfoTest extends TestCase {
     private static final Log LOG = LogFactory.getLog(BeanInfoTest.class);
-    private DefaultCamelContext camelContext = new DefaultCamelContext();
+    protected DefaultCamelContext camelContext = new DefaultCamelContext();
     protected Exchange exchange = new DefaultExchange(camelContext);
     protected DefaultParameterMappingStrategy strategy = new DefaultParameterMappingStrategy();
     protected ExampleBean bean = new ExampleBean();
     protected BeanInfo info;
+
+
 
     public void testFindsSingleMethodMatchingBody() throws Throwable {
         MethodInvocation invocation = info.createInvocation(bean, exchange);

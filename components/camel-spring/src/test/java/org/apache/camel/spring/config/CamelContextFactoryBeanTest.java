@@ -16,25 +16,18 @@
  */
 package org.apache.camel.spring.config;
 
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.TestSupport;
-import org.apache.camel.spring.config.XmlConfigTestSupport;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.FromType;
-import org.apache.camel.model.ProcessorType;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-
-import java.util.List;
 
 /**
  * @version $Revision$
@@ -61,7 +54,7 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
 
         // lets refresh to inject the applicationContext into beans
         applicationContext.refresh();
-        
+
         CamelContext context = (CamelContext) applicationContext.getBean("camel3");
         assertValidContext(context);
     }

@@ -33,21 +33,26 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.*;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * A Spring aware implementation of {@link org.apache.camel.CamelContext} which will
- * automatically register itself with Springs lifecycle methods plus allows
+ * A Spring aware implementation of {@link org.apache.camel.CamelContext} which
+ * will automatically register itself with Springs lifecycle methods plus allows
  * spring to be used to customize a any <a
  * href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
  * as well as supporting accessing components and beans via the Spring
  * {@link ApplicationContext}
- * 
+ *
  * @version $Revision$
  */
-public class SpringCamelContext extends DefaultCamelContext implements InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
+public class SpringCamelContext extends DefaultCamelContext implements InitializingBean, DisposableBean,
+    ApplicationContextAware, ApplicationListener {
     private static final transient Log LOG = LogFactory.getLog(SpringCamelContext.class);
     private ApplicationContext applicationContext;
     private EventEndpoint eventEndpoint;
@@ -59,7 +64,8 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         setApplicationContext(applicationContext);
     }
 
-    public static SpringCamelContext springCamelContext(ApplicationContext applicationContext) throws Exception {
+    public static SpringCamelContext springCamelContext(ApplicationContext applicationContext)
+        throws Exception {
         // lets try and look up a configured camel context in the context
         String[] names = applicationContext.getBeanNamesForType(SpringCamelContext.class);
         if (names.length == 1) {
@@ -95,9 +101,8 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
                 LOG.debug("Starting the CamelContext now that the ApplicationContext has started");
                 start();
             } catch (RuntimeException e) {
-                throw (e);
-            }
-            catch (Exception e) {
+                throw e;
+            } catch (Exception e) {
                 throw new RuntimeCamelException(e);
             }
             if (eventEndpoint != null) {
@@ -150,9 +155,9 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     protected Injector createInjector() {
         if (applicationContext instanceof ConfigurableApplicationContext) {
             return new SpringInjector((ConfigurableApplicationContext)applicationContext);
-        }
-        else {
-            LOG.warn("Cannot use SpringInjector as applicationContext is not a ConfigurableApplicationContext as its: " + applicationContext);
+        } else {
+            LOG.warn("Cannot use SpringInjector as applicationContext is not a ConfigurableApplicationContext as its: "
+                      + applicationContext);
             return super.createInjector();
         }
     }
