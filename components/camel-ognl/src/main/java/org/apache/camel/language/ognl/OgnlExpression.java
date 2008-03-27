@@ -25,9 +25,6 @@ import org.apache.camel.impl.ExpressionSupport;
 import org.apache.camel.language.ExpressionEvaluationException;
 import org.apache.camel.language.IllegalSyntaxException;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * An <a href="http://www.ognl.org/">OGNL</a> {@link Expression}
  *
