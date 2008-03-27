@@ -35,10 +35,7 @@ import org.osgi.framework.SynchronousBundleListener;
 import org.springframework.osgi.util.BundleDelegatingClassLoader;
 
 /**
- * Created by IntelliJ IDEA.
- * User: gnodet
- * Date: Sep 20, 2007
- * Time: 10:37:31 AM
+ * Created by IntelliJ IDEA. User: gnodet Date: Sep 20, 2007 Time: 10:37:31 AM
  * To change this template use File | Settings | File Templates.
  */
 public class OsgiComponentResolver implements ComponentResolver {
@@ -73,7 +70,7 @@ public class OsgiComponentResolver implements ComponentResolver {
         Bundle bundle;
         String path;
         String name;
-        Class  type;
+        Class type;
     }
 
     public OsgiComponentResolver(BundleContext bundleContext) {
@@ -91,11 +88,11 @@ public class OsgiComponentResolver implements ComponentResolver {
         for (int i = 0; i < previousBundles.length; i++) {
             int state = previousBundles[i].getState();
             if (state == Bundle.RESOLVED || state == Bundle.ACTIVE) {
-            	try {
-            		mayBeAddComponentFor(previousBundles[i]);
-            	} catch (Exception e) {
-            		LOG.error("Component " + previousBundles[i] + " not added due to " + e.toString(), e);
-            	}
+                try {
+                    mayBeAddComponentFor(previousBundles[i]);
+                } catch (Exception e) {
+                    LOG.error("Component " + previousBundles[i] + " not added due to " + e.toString(), e);
+                }
             }
         }
     }
@@ -104,7 +101,7 @@ public class OsgiComponentResolver implements ComponentResolver {
         Enumeration e = bundle.getEntryPaths("/META-INF/services/org/apache/camel/component/");
         if (e != null) {
             while (e.hasMoreElements()) {
-                String path = (String) e.nextElement();
+                String path = (String)e.nextElement();
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Found entry: " + path + " in bundle " + bundle.getSymbolicName());
                 }
@@ -147,7 +144,7 @@ public class OsgiComponentResolver implements ComponentResolver {
                 } catch (Exception ignore) {
                 }
             }
-            String classname = (String) properties.get("class");
+            String classname = (String)properties.get("class");
             ClassLoader loader = BundleDelegatingClassLoader.createBundleClassLoaderFor(entry.bundle);
             entry.type = loader.loadClass(classname);
         }
@@ -164,16 +161,15 @@ public class OsgiComponentResolver implements ComponentResolver {
             if (bean != null && LOG.isDebugEnabled()) {
                 LOG.debug("Found component: " + name + " in registry: " + bean);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
         }
         if (bean != null) {
             if (bean instanceof Component) {
-                return (Component) bean;
-            }
-            else {
-                throw new IllegalArgumentException("Bean with name: " + name + " in registry is not a Component: " + bean);
+                return (Component)bean;
+            } else {
+                throw new IllegalArgumentException("Bean with name: " + name
+                                                   + " in registry is not a Component: " + bean);
             }
         }
         // Check in OSGi bundles
@@ -181,17 +177,17 @@ public class OsgiComponentResolver implements ComponentResolver {
         Class type = null;
         try {
             type = getComponent(name);
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             throw new IllegalArgumentException("Invalid URI, no Component registered for scheme : " + name, e);
         }
         if (type == null) {
             return null;
         }
         if (Component.class.isAssignableFrom(type)) {
-            return (Component) context.getInjector().newInstance(type);
+            return (Component)context.getInjector().newInstance(type);
         } else {
-            throw new IllegalArgumentException("Type is not a Component implementation. Found: " + type.getName());
+            throw new IllegalArgumentException("Type is not a Component implementation. Found: "
+                                               + type.getName());
         }
     }
 

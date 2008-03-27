@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.quartz;
 
+import java.net.URI;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
@@ -29,12 +32,9 @@ import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 
-import java.net.URI;
-import java.util.Map;
-
 /**
  * A <a href="http://activemq.apache.org/camel/quartz.html">Quartz Component</a>
- * 
+ *
  * @version $Revision:520964 $
  */
 public class QuartzComponent extends DefaultComponent<QuartzExchange> {
