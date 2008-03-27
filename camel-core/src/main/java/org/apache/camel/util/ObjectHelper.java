@@ -182,6 +182,7 @@ public final class ObjectHelper {
         return answer;
     }
 
+
     /**
      * Returns true if the collection contains the specified value
      */
@@ -189,6 +190,10 @@ public final class ObjectHelper {
         if (collectionOrArray instanceof Collection) {
             Collection collection = (Collection)collectionOrArray;
             return collection.contains(value);
+        } else if (collectionOrArray instanceof String && value instanceof String) {
+            String str = (String) collectionOrArray;
+            String subStr = (String) value;
+            return str.contains(subStr);
         } else {
             Iterator iter = ObjectConverter.iterator(collectionOrArray);
             while (iter.hasNext()) {
