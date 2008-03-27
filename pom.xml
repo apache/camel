@@ -977,7 +977,7 @@
           </links>
           <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
-          <maxmemory>900m</maxmemory>
+          <maxmemory>500m</maxmemory>
           <source>1.5</source>
 
           <!-- TODO we can't aggregate as it won't find the CSS file :( -->
