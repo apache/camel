@@ -34,20 +34,11 @@ public class JmsRouteTest extends ContextTestSupport {
     protected String componentName = "activemq";
     protected String startEndpointUri;
 
-    public void testJmsRouteWithTextMessage() throws Exception {
-        String expectedBody = "Hello there!";
-
-        resultEndpoint.expectedBodiesReceived(expectedBody);
-        resultEndpoint.message(0).header("cheese").isEqualTo(123);
-
-        sendExchange(expectedBody);
-
-        resultEndpoint.assertIsSatisfied();
+    public void testSendAndReceiveMessage() throws Exception {
+        assertSendAndReceiveBody("Hello there!");
     }
 
-    public void testJmsRouteWithObjectMessage() throws Exception {
-        PurchaseOrder expectedBody = new PurchaseOrder("Beer", 10);
-
+    protected void assertSendAndReceiveBody(Object expectedBody) throws InterruptedException {
         resultEndpoint.expectedBodiesReceived(expectedBody);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
 
