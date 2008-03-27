@@ -56,14 +56,12 @@ public class DataSetConsumer extends DefaultConsumer<Exchange> {
                 if (delay > 0) {
                     try {
                         Thread.sleep(delay);
-                    }
-                    catch (InterruptedException e) {
+                    } catch (InterruptedException e) {
                         LOG.debug(e);
                     }
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOG.error(e);
         }
     }

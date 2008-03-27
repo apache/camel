@@ -83,9 +83,9 @@ public class TryType extends OutputType<TryType> {
      */
     @Deprecated
     public TryType handleAll() {
-    	return finallyBlock();
+        return finallyBlock();
     }
-    
+
     public TryType finallyBlock() {
         popBlock();
         FinallyType answer = new FinallyType();
