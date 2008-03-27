@@ -617,6 +617,12 @@
         <version>${spring-version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>javax.annotation</groupId>
+        <artifactId>jsr250-api</artifactId>
+        <version>1.0</version>
+      </dependency>
+
 
       <!-- optional mina dependencies -->
       <dependency>
