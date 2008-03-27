@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -59,6 +58,25 @@ public class DotMojo extends AbstractMavenReport {
      * Subdirectory for report.
      */
     protected static final String SUBDIRECTORY = "cameldoc";
+    //
+    // For running Camel embedded
+    //-------------------------------------------------------------------------
+    //
+    /**
+     * The duration to run the application for which by default is in milliseconds.
+     *
+     * @parameter expression="2s"
+     * @readonly
+     */
+    protected String duration;
+    /**
+     * Whether we should boot up camel with the META-INF/services/*.xml to generate the DOT file
+     *
+     * @parameter expression="true"
+     * @readonly
+     */
+    protected boolean runCamel;
+
     private String indexHtmlContent;
     /**
      * Reference to Maven 2 Project.
@@ -110,24 +128,6 @@ public class DotMojo extends AbstractMavenReport {
      * @component
      */
     private Renderer renderer;
-    //
-    // For running Camel embedded
-    //-------------------------------------------------------------------------
-    //
-    /**
-     * The duration to run the application for which by default is in milliseconds.
-     *
-     * @parameter expression="2s"
-     * @readonly
-     */
-    protected String duration;
-    /**
-     * Whether we should boot up camel with the META-INF/services/*.xml to generate the DOT file
-     *
-     * @parameter expression="true"
-     * @readonly
-     */
-    protected boolean runCamel;
 
     /**
      * @param locale report locale.
@@ -159,8 +159,7 @@ public class DotMojo extends AbstractMavenReport {
         this.execute(this.buildDirectory, Locale.getDefault());
         try {
             writeIndexHtmlFile("index.html", indexHtmlContent);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new MojoExecutionException("Failed: " + e, e);
         }
     }
@@ -175,12 +174,10 @@ public class DotMojo extends AbstractMavenReport {
             Sink kitchenSink = getSink();
             if (kitchenSink != null) {
                 kitchenSink.rawText(indexHtmlContent);
-            }
-            else {
+            } else {
                 writeIndexHtmlFile("index.html", indexHtmlContent);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             final MavenReportException ex = new MavenReportException(e.getMessage());
             ex.initCause(e.getCause());
             throw ex;
@@ -191,14 +188,13 @@ public class DotMojo extends AbstractMavenReport {
      * Executes DOT generator.
      *
      * @param outputDir report output directory.
-     * @param locale    report locale.
+     * @param locale report locale.
      * @throws MojoExecutionException if there were any execution errors.
      */
     protected void execute(final File outputDir, final Locale locale) throws MojoExecutionException {
         try {
             runCamelEmbedded(outputDir);
-        }
-        catch (DependencyResolutionRequiredException e) {
+        } catch (DependencyResolutionRequiredException e) {
             throw new MojoExecutionException("Failed: " + e, e);
         }
         outputDir.mkdirs();
@@ -209,14 +205,13 @@ public class DotMojo extends AbstractMavenReport {
         if (graphvizOutputTypes == null) {
             if (graphvizOutputType == null) {
                 graphvizOutputTypes = DEFAULT_GRAPHVIZ_OUTPUT_TYPES;
-            }
-            else {
-                graphvizOutputTypes = new String[]{graphvizOutputType};
+            } else {
+                graphvizOutputTypes = new String[] {graphvizOutputType};
             }
         }
         try {
             for (int i = 0; i < files.size(); i++) {
-                File file = (File) ((List) files).get(i);
+                File file = (File)((List)files).get(i);
 
                 StringWriter buffer = new StringWriter();
                 PrintWriter out = new PrintWriter(buffer);
@@ -246,11 +241,9 @@ public class DotMojo extends AbstractMavenReport {
                 }
                 writeIndexHtmlFile(name, content);
             }
-        }
-        catch (CommandLineException e) {
+        } catch (CommandLineException e) {
             throw new MojoExecutionException("Failed: " + e, e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new MojoExecutionException("Failed: " + e, e);
         }
     }
@@ -271,8 +264,7 @@ public class DotMojo extends AbstractMavenReport {
             mojo.setPluginContext(getPluginContext());
             try {
                 mojo.executeWithoutWrapping();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 getLog().error("Failed to run Camel embedded: " + e, e);
             }
         }
@@ -293,14 +285,12 @@ public class DotMojo extends AbstractMavenReport {
             out.println();
             if (content == null) {
                 out.write("<p>No EIP diagrams available</p>");
-            }
-            else {
+            } else {
                 out.write(content);
             }
             out.println("</body>");
             out.println("</html>");
-        }
-        finally {
+        } finally {
             String description = "Failed to close html output file";
             close(out, description);
         }
@@ -330,8 +320,7 @@ public class DotMojo extends AbstractMavenReport {
         if (closeable != null) {
             try {
                 closeable.close();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 getLog().warn(description + ": " + e);
             }
         }
@@ -370,8 +359,7 @@ public class DotMojo extends AbstractMavenReport {
         int idx = name.lastIndexOf(".");
         if (idx > 0) {
             return name.substring(0, idx);
-        }
-        else {
+        } else {
             return name;
         }
     }
@@ -379,8 +367,7 @@ public class DotMojo extends AbstractMavenReport {
     private void appendFiles(List<File> output, File file) {
         if (file.isDirectory()) {
             appendDirectory(output, file);
-        }
-        else {
+        } else {
             if (isValid(file)) {
                 output.add(file);
             }
@@ -407,16 +394,13 @@ public class DotMojo extends AbstractMavenReport {
                 String line = reader.readLine();
                 if (line == null) {
                     break;
-                }
-                else {
+                } else {
                     out.println(line);
                 }
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new MojoExecutionException("Failed: " + e, e);
-        }
-        finally {
+        } finally {
             close(reader, "cmapx file");
         }
     }
@@ -428,10 +412,7 @@ public class DotMojo extends AbstractMavenReport {
      * @return resource bundle
      */
     protected ResourceBundle getBundle(final Locale locale) {
-        return ResourceBundle.getBundle(
-                "camel-maven-plugin",
-                locale,
-                this.getClass().getClassLoader());
+        return ResourceBundle.getBundle("camel-maven-plugin", locale, this.getClass().getClassLoader());
     }
 
     protected Renderer getSiteRenderer() {
