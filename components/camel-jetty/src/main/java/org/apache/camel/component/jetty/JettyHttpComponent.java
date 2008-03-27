@@ -65,6 +65,8 @@ public class JettyHttpComponent extends HttpComponent {
     private Server server;
     private final HashMap<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
     private HttpClient httpClient;
+    private String sslKeyPassword = "";
+    private String sslPassword = "";
 
     @Override
     protected Endpoint<HttpExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
@@ -89,7 +91,10 @@ public class JettyHttpComponent extends HttpComponent {
             if (connectorRef == null) {
                 Connector connector;
                 if ("https".equals(endpoint.getProtocol())) {
-                    connector = new SslSocketConnector();
+                    SslSocketConnector socketConnector = new SslSocketConnector();
+                    socketConnector.setPassword(sslPassword);
+                    socketConnector.setKeyPassword(sslKeyPassword);
+                    connector = socketConnector;
                 } else {
                     connector = new SelectChannelConnector();
                 }
@@ -145,6 +150,22 @@ public class JettyHttpComponent extends HttpComponent {
 
     public void setServer(Server server) {
         this.server = server;
+    }
+
+    public String getSslKeyPassword() {
+        return sslKeyPassword;
+    }
+
+    public void setSslKeyPassword(String sslKeyPassword) {
+        this.sslKeyPassword = sslKeyPassword;
+    }
+
+    public String getSslPassword() {
+        return sslPassword;
+    }
+
+    public void setSslPassword(String sslPassword) {
+        this.sslPassword = sslPassword;
     }
 
     // Implementation methods
