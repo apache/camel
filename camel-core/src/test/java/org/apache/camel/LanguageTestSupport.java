@@ -36,6 +36,14 @@ public abstract class LanguageTestSupport extends ExchangeTestSupport {
 
     /**
      * Asserts that the given predicate expression evaluated on the current language and message
+     * exchange evaluates to false
+     */
+    protected void assertPredicateFails(String expression) {
+        assertPredicate(exchange, expression, false);
+    }
+
+    /**
+     * Asserts that the given predicate expression evaluated on the current language and message
      * exchange evaluates to the expected value
      */
     protected void assertPredicate(String expression, boolean expected) {

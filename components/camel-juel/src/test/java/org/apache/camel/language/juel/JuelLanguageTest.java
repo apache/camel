@@ -30,6 +30,11 @@ public class JuelLanguageTest extends LanguageTestSupport {
 
     public void testElPredicates() throws Exception {
         assertPredicate("${in.headers.foo.startsWith('a')}");
+        assertPredicate("${in.headers.foo == 'abc'}");
+        assertPredicateFails("${in.headers.foo == 'badString'}");
+
+        assertPredicate("${in.headers['foo'] == 'abc'}");
+        assertPredicateFails("${in.headers['foo'] == 'badString'}");
     }
 
     protected String getLanguageName() {
