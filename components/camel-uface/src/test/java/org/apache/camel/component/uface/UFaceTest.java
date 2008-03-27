@@ -20,12 +20,15 @@ package org.apache.camel.component.uface;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.ufacekit.ui.swing.databinding.swing.SwingRealm;
+import org.eclipse.core.databinding.observable.Realm;
 
 /**
  * @version $Revision$
  */
 public class UFaceTest extends ContextTestSupport {
+    // lets install a Realm to avoid null pointer exceptions
+    private Realm realm = new TestRealm();
+
     public void testUFaceEndpoints() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:results");
         endpoint.expectedMessageCount(1);
@@ -36,13 +39,20 @@ public class UFaceTest extends ContextTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        // Lets enable Swing as the Realm
-        SwingRealm.createDefault();
-
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("uface:a").to("uface:b").to("mock:results");
             }
         };
+    }
+
+    protected static class TestRealm extends Realm {
+        public TestRealm() {
+            Realm.setDefault(this);
+        }
+
+        public boolean isCurrent() {
+            return true;
+        }
     }
 }
