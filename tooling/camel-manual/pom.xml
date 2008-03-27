@@ -38,6 +38,7 @@
      <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>maven-html-to-pdf</artifactId>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <goals>
