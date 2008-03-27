@@ -37,7 +37,7 @@ public class HttpRouteTest extends ContextTestSupport {
     protected String expectedBody = "<hello>world!</hello>";
 
     public void testEndpoint() throws Exception {
-        MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:a");
         mockEndpoint.expectedBodiesReceived(expectedBody);
 
         invokeHttpEndpoint();
