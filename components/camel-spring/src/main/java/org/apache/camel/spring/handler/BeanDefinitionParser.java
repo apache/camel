@@ -16,14 +16,16 @@
  */
 package org.apache.camel.spring.handler;
 
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.core.Conventions;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
+
 
 /**
  * A base class for a parser for a bean.
@@ -124,6 +126,7 @@ public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
      * @param element        the XML element that was the source of the bean definition's metadata
      */
     protected void postProcess(BeanDefinitionBuilder beanDefinition, Element element) {
-	}
+
+    }
 
 }

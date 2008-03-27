@@ -18,17 +18,10 @@ package org.apache.camel.spring;
 
 import java.util.List;
 
-import org.apache.camel.CamelTemplate;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Route;
-import org.apache.camel.TestSupport;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.Route;
 import org.apache.camel.util.ObjectHelper;
-
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -56,7 +49,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
         }
     }
 
-        
+
     /**
      * Looks up the mandatory spring bean of the given name and type, failing if
      * it is not present or the correct type

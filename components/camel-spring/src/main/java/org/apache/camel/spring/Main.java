@@ -61,17 +61,24 @@ public class Main extends ServiceSupport {
             }
         });
 
-        addOption(new ParameterOption("a", "applicationContext", "Sets the classpath based pring ApplicationContext", "applicationContext") {
+        addOption(new ParameterOption("a", "applicationContext",
+            "Sets the classpath based pring ApplicationContext", "applicationContext") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setApplicationContextUri(parameter);
             }
         });
-        addOption(new ParameterOption("o", "outdir", "Sets the DOT output directory where the visual representations of the routes are generated", "dot") {
+        addOption(new ParameterOption("o", "outdir",
+            "Sets the DOT output directory where the visual representations of the routes are generated",
+            "dot") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setDotOutputDir(parameter);
             }
         });
-        addOption(new ParameterOption("d", "duration", "Sets the time duration that the applicaiton will run for, by default in milliseconds. You can use '10s' for 10 seconds etc", "duration") {
+        addOption(new ParameterOption(
+            "d",
+            "duration",
+            "Sets the time duration that the applicaiton will run for, by default in milliseconds. You can use '10s' for 10 seconds etc",
+            "duration") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 String value = parameter.toUpperCase();
                 if (value.endsWith("S")) {
@@ -104,8 +111,7 @@ public class Main extends ServiceSupport {
                 start();
                 waitUntilCompleted();
                 stop();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 LOG.error("Failed: " + e, e);
             }
         }
@@ -131,7 +137,8 @@ public class Main extends ServiceSupport {
         System.out.println();
 
         for (Option option : options) {
-            System.out.println("  " + option.getAbbreviation() + " or " + option.getFullName() + " = " + option.getDescription());
+            System.out.println("  " + option.getAbbreviation() + " or " + option.getFullName() + " = "
+                               + option.getDescription());
         }
     }
 
@@ -206,7 +213,8 @@ public class Main extends ServiceSupport {
     public abstract class ParameterOption extends Option {
         private String parameterName;
 
-        protected ParameterOption(String abbreviation, String fullName, String description, String parameterName) {
+        protected ParameterOption(String abbreviation, String fullName, String description,
+                                  String parameterName) {
             super(abbreviation, fullName, description);
             this.parameterName = parameterName;
         }
@@ -216,8 +224,7 @@ public class Main extends ServiceSupport {
                 System.err.println("Expected fileName for ");
                 showOptions();
                 completed();
-            }
-            else {
+            } else {
                 String parameter = remainingArgs.removeFirst();
                 doProcess(arg, parameter, remainingArgs);
             }
@@ -253,8 +260,8 @@ public class Main extends ServiceSupport {
     }
 
     /**
-     * Sets the duration to run the application for in milliseconds until it should be terminated.
-     * Defaults to -1. Any value <= 0 will run forever.
+     * Sets the duration to run the application for in milliseconds until it
+     * should be terminated. Defaults to -1. Any value <= 0 will run forever.
      *
      * @param duration
      */
@@ -278,9 +285,9 @@ public class Main extends ServiceSupport {
     }
 
     /**
-     * Sets the output directory of the generated DOT Files
-     * to show the visual representation of the routes.
-     * A null value disables the dot file generation
+     * Sets the output directory of the generated DOT Files to show the visual
+     * representation of the routes. A null value disables the dot file
+     * generation
      */
     public void setDotOutputDir(String dotOutputDir) {
         this.dotOutputDir = dotOutputDir;
@@ -327,12 +334,10 @@ public class Main extends ServiceSupport {
                     LOG.info("Waiting for: " + duration + " " + unit);
                     latch.await(duration, unit);
                     completed.set(true);
-                }
-                else {
+                } else {
                     latch.await();
                 }
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 LOG.debug("Caught: " + e);
             }
         }

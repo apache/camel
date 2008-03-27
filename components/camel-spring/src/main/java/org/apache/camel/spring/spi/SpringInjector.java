@@ -17,11 +17,7 @@
 package org.apache.camel.spring.spi;
 
 import org.apache.camel.spi.Injector;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**

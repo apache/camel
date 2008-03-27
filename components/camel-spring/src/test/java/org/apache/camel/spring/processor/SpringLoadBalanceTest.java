@@ -16,9 +16,11 @@
  */
 package org.apache.camel.spring.processor;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.LoadBalanceTest;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringLoadBalanceTest extends LoadBalanceTest {
     protected CamelContext createCamelContext() throws Exception {

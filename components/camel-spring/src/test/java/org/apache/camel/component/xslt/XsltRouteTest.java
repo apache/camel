@@ -18,9 +18,9 @@ package org.apache.camel.component.xslt;
 
 import java.util.List;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
-import org.apache.camel.Exchange;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**

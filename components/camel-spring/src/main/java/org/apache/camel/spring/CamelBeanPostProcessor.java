@@ -239,14 +239,14 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
             PollingConsumer pollingConsumer = endpoint.createPollingConsumer();
             startService(pollingConsumer);
             return pollingConsumer;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
     }
 
     /**
-     * A Factory method to create a started {@link Producer} to be injected into a POJO
+     * A Factory method to create a started {@link Producer} to be injected into
+     * a POJO
      */
     protected Producer createInjectionProducer(Endpoint endpoint) {
         try {
