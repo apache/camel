@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,25 +19,25 @@ package org.apache.camel.component.stream;
 import org.apache.camel.impl.DefaultMessage;
 
 public class StreamMessage extends DefaultMessage {
-	Object o;
+    Object o;
 
-	public StreamMessage(Object o) {
-		this.o = o;
-	}
+    public StreamMessage(Object o) {
+        this.o = o;
+    }
 
-	@Override
-	public String toString() {
-		return o.toString();
-	}
+    @Override
+    public String toString() {
+        return o.toString();
+    }
 
-	@Override
-	protected Object createBody() {
-		return o;
-	}
+    @Override
+    protected Object createBody() {
+        return o;
+    }
 
-	@Override
-	public Object getBody() {
-		return o;
-	}
+    @Override
+    public Object getBody() {
+        return o;
+    }
 
 }
