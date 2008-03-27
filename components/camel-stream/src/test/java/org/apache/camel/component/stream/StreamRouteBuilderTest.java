@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,37 +19,36 @@ package org.apache.camel.component.stream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.stream.StreamComponent;
 
 public class StreamRouteBuilderTest extends ContextTestSupport {
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		context = createCamelContext();
-	}
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        context = createCamelContext();
+    }
 
-	protected CamelContext createCamelContext() throws Exception {
-		CamelContext camelContext = super.createCamelContext();
-		camelContext.addComponent("stream", new StreamComponent());
-		return camelContext;
-	}
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+        camelContext.addComponent("stream", new StreamComponent());
+        return camelContext;
+    }
 
-	protected RouteBuilder createRouteBuilder() {
-		return new RouteBuilder() {
-			public void configure() {
-				from("direct:start").setHeader("stream", constant(System.out))
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("direct:start").setHeader("stream", constant(System.out))
                     .to("stream:err", "stream:out", "stream:file?file=/tmp/foo", "stream:header");
-				//from("stream:in").to("stream:out",
-					//	"stream:err?delay=5000");
-			}
-		};
-	}
+                // from("stream:in").to("stream:out",
+                // "stream:err?delay=5000");
+            }
+        };
+    }
 
-	public void testStringContent() {
-		template.sendBody("direct:start", "<content/>");
-	}
+    public void testStringContent() {
+        template.sendBody("direct:start", "<content/>");
+    }
 
-	public void testBinaryContent() {
-		template.sendBody("direct:start", new byte[] { 1, 2, 3, 4 });
-	}
+    public void testBinaryContent() {
+        template.sendBody("direct:start", new byte[] {1, 2, 3, 4});
+    }
 }
