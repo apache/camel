@@ -116,6 +116,7 @@
         <configuration>
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
+          <forkMode>pertest</forkMode>
         </configuration>
       </plugin>
 

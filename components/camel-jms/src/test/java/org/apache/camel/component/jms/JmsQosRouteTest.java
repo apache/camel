@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,6 +32,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
  */
 public class JmsQosRouteTest extends ContextTestSupport {
     protected String componentName = "activemq";
+    protected BrokerService brokerService;
 
     public void testJmsRoutePreserveQos() throws Exception {
         
@@ -67,13 +69,23 @@ public class JmsQosRouteTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
+        brokerService = new BrokerService();
+        brokerService.setPersistent(false);
+        brokerService.start();
+
         super.setUp();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        brokerService.stop();
     }
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost");
         camelContext.addComponent(componentName, jmsComponentClientAcknowledge(connectionFactory));
 
         return camelContext;
