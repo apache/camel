@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Implements try/catch/finally type processing
- * 
+ *
  * @version $Revision$
  */
 public class TryProcessor extends ServiceSupport implements Processor {
@@ -70,14 +70,14 @@ public class TryProcessor extends ServiceSupport implements Processor {
         Exception unexpected = null;
         try {
             if (e != null) {
-            	LOG.info("Caught exception while processing exchange.", e);
+                LOG.info("Caught exception while processing exchange.", e);
                 handleException(exchange, e);
             }
             processFinally(exchange);
         } catch (Exception ex) {
-        	unexpected = ex;
+            unexpected = ex;
         } catch (Throwable ex) {
-        	unexpected = new RuntimeCamelException(ex);
+            unexpected = new RuntimeCamelException(ex);
         }
 
         if (unexpected != null) {
@@ -118,7 +118,7 @@ public class TryProcessor extends ServiceSupport implements Processor {
             exchange.setException(null);
 
             // do not catch any exception here, let it propagate up
-           finallyProcessor.process(exchange);
+            finallyProcessor.process(exchange);
             if (exchange.getException() == null) {
                 exchange.setException(lastException);
             }
