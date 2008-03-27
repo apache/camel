@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,19 +16,21 @@
  */
 package org.apache.camel.dataformat.xstream;
 
+
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.QNameMap;
-import com.thoughtworks.xstream.io.xml.StaxWriter;
 import com.thoughtworks.xstream.io.xml.StaxReader;
+import com.thoughtworks.xstream.io.xml.StaxWriter;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.DataFormat;
@@ -40,7 +41,7 @@ import org.apache.camel.spi.DataFormat;
  *
  * @version $Revision$
  */
-public class XStreamDataFormat implements DataFormat{
+public class XStreamDataFormat implements DataFormat {
 
     private XStream xstream;
     private StaxConverter staxConverter;

@@ -16,15 +16,15 @@
  */
 package org.apache.camel.builder.saxon;
 
+import javax.naming.Context;
+
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.component.xquery.XQuery;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.xquery.XQuery;
 import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.util.jndi.JndiContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.naming.Context;
 
 /**
  * @version $Revision$

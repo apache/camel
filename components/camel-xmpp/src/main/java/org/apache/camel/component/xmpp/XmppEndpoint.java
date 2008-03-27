@@ -17,13 +17,12 @@
 package org.apache.camel.component.xmpp;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.jivesoftware.smack.AccountManager;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -33,7 +32,7 @@ import org.jivesoftware.smack.packet.Presence;
 
 /**
  * An XMPP Endpoint
- * 
+ *
  * @version $Revision:520964 $
  */
 public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
@@ -99,7 +98,7 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     /**
      * Sets the binding used to convert from a Camel message to and from an XMPP
      * message
-     * 
+     *
      * @param binding the binding to use
      */
     public void setBinding(XmppBinding binding) {

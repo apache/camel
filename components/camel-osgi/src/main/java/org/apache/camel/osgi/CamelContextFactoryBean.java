@@ -16,14 +16,14 @@
  */
 package org.apache.camel.osgi;
 
-import org.apache.camel.spring.SpringCamelContext;
-import org.osgi.framework.BundleContext;
-import org.springframework.osgi.context.BundleContextAware;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import org.apache.camel.spring.SpringCamelContext;
+import org.osgi.framework.BundleContext;
+import org.springframework.osgi.context.BundleContextAware;
 
 /**
  * Created by IntelliJ IDEA.

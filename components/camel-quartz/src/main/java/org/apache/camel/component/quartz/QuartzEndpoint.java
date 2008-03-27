@@ -20,16 +20,15 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -40,7 +39,7 @@ import org.quartz.Trigger;
 
 /**
  * A <a href="http://activemq.apache.org/quartz.html">Quartz Endpoint</a>
- * 
+ *
  * @version $Revision:520964 $
  */
 public class QuartzEndpoint extends DefaultEndpoint<QuartzExchange> {
@@ -101,7 +100,7 @@ public class QuartzEndpoint extends DefaultEndpoint<QuartzExchange> {
 
     /**
      * This method is invoked when a Quartz job is fired.
-     * 
+     *
      * @param jobExecutionContext the Quartz Job context
      */
     public void onJobExecute(JobExecutionContext jobExecutionContext) throws JobExecutionException {

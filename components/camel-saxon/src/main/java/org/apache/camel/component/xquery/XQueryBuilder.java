@@ -36,6 +36,8 @@ import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.Node;
+
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.Item;
@@ -59,7 +61,7 @@ import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Node;
+
 
 /**
  * Creates an XQuery builder
@@ -93,34 +95,30 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
             if (resultType != null) {
                 if (resultType.equals(String.class)) {
                     return evaluateAsString(exchange);
-                }
-                else if (resultType.isAssignableFrom(Collection.class)) {
+                } else if (resultType.isAssignableFrom(Collection.class)) {
                     return evaluateAsList(exchange);
-                }
-                else if (resultType.isAssignableFrom(Node.class)) {
+                } else if (resultType.isAssignableFrom(Node.class)) {
                     return evaluateAsDOM(exchange);
-                }
-                else {
+                } else {
                     // TODO figure out how to convert to the given type
                 }
             }
             switch (resultsFormat) {
-                case Bytes:
-                    return evaluateAsBytes(exchange);
-                case BytesSource:
-                    return evaluateAsBytesSource(exchange);
-                case DOM:
-                    return evaluateAsDOM(exchange);
-                case List:
-                    return evaluateAsList(exchange);
-                case StringSource:
-                    return evaluateAsStringSource(exchange);
-                case String:
-                default:
-                    return evaluateAsString(exchange);
+            case Bytes:
+                return evaluateAsBytes(exchange);
+            case BytesSource:
+                return evaluateAsBytesSource(exchange);
+            case DOM:
+                return evaluateAsDOM(exchange);
+            case List:
+                return evaluateAsList(exchange);
+            case StringSource:
+                return evaluateAsStringSource(exchange);
+            case String:
+            default:
+                return evaluateAsString(exchange);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeExpressionException(e);
         }
     }
@@ -175,8 +173,7 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
         try {
             List list = evaluateAsList(exchange);
             return matches(exchange, list);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeExpressionException(e);
         }
     }
@@ -187,8 +184,7 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
             if (!matches(exchange, list)) {
                 throw new AssertionError(this + " failed on " + exchange + " as evaluated: " + list);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new AssertionError(e);
         }
     }
@@ -380,8 +376,7 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
         Source source = null;
         if (item != null) {
             dynamicQueryContext.setContextItem(item);
-        }
-        else {
+        } else {
             source = in.getBody(Source.class);
             if (source == null) {
                 if (LOG.isDebugEnabled()) {

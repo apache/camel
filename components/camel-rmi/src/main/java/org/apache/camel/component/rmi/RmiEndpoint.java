@@ -25,10 +25,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.bean.BeanExchange;
 import org.apache.camel.impl.DefaultEndpoint;
 
