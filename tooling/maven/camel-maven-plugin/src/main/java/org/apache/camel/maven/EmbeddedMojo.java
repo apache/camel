@@ -16,9 +16,6 @@
  */
 package org.apache.camel.maven;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.mojo.exec.AbstractExecMojo;
-
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -27,6 +24,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.codehaus.mojo.exec.AbstractExecMojo;
 
 /**
  * Runs a CamelContext using any Spring XML configuration files found in
@@ -39,14 +39,6 @@ import java.util.List;
  * @execute phase="test-compile"
  */
 public class EmbeddedMojo extends AbstractExecMojo {
-    /**
-     * Project classpath.
-     *
-     * @parameter expression="${project.testClasspathElements}"
-     * @required
-     * @readonly
-     */
-    private List classpathElements;
     /**
      * The duration to run the application for which by default is in milliseconds.
      *
@@ -68,6 +60,15 @@ public class EmbeddedMojo extends AbstractExecMojo {
      * @readonly
      */
     protected boolean dotEnabled;
+    /**
+     * Project classpath.
+     *
+     * @parameter expression="${project.testClasspathElements}"
+     * @required
+     * @readonly
+     */
+    private List classpathElements;
+
 
     /**
      * This method will run the mojo
@@ -75,20 +76,19 @@ public class EmbeddedMojo extends AbstractExecMojo {
     public void execute() throws MojoExecutionException {
         try {
             executeWithoutWrapping();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new MojoExecutionException("Failed: " + e, e);
         }
     }
 
-    public void executeWithoutWrapping() throws MalformedURLException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, MojoExecutionException {
+    public void executeWithoutWrapping() throws MalformedURLException, ClassNotFoundException,
+        NoSuchMethodException, IllegalAccessException, MojoExecutionException {
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             ClassLoader newLoader = createClassLoader(null);
             Thread.currentThread().setContextClassLoader(newLoader);
             runCamel(newLoader);
-        }
-        finally {
+        } finally {
             Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
     }
@@ -141,7 +141,8 @@ public class EmbeddedMojo extends AbstractExecMojo {
     // Implementation methods
     //-------------------------------------------------------------------------
 
-    protected void runCamel(ClassLoader newLoader) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, MojoExecutionException {
+    protected void runCamel(ClassLoader newLoader) throws ClassNotFoundException, NoSuchMethodException,
+        IllegalAccessException, MojoExecutionException {
         getLog().debug("Running Camel in: " + newLoader);
         Class<?> type = newLoader.loadClass("org.apache.camel.spring.Main");
         Method method = type.getMethod("main", String[].class);
@@ -149,9 +150,8 @@ public class EmbeddedMojo extends AbstractExecMojo {
         getLog().debug("Starting the Camel Main with arguments: " + Arrays.asList(arguments));
 
         try {
-            method.invoke(null, new Object[]{arguments});
-        }
-        catch (InvocationTargetException e) {
+            method.invoke(null, new Object[] {arguments});
+        } catch (InvocationTargetException e) {
             Throwable t = e.getTargetException();
             throw new MojoExecutionException("Failed: " + t, t);
         }
@@ -159,10 +159,9 @@ public class EmbeddedMojo extends AbstractExecMojo {
 
     protected String[] createArguments() {
         if (dotEnabled) {
-            return new String[]{"-duration", duration, "-outdir", outputDirectory};
-        }
-        else {
-            return new String[]{"-duration", duration};
+            return new String[] {"-duration", duration, "-outdir", outputDirectory};
+        } else {
+            return new String[] {"-duration", duration};
         }
     }
 
@@ -172,7 +171,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
         int size = classpathElements.size();
         URL[] urls = new URL[size];
         for (int i = 0; i < size; i++) {
-            String name = (String) classpathElements.get(i);
+            String name = (String)classpathElements.get(i);
             File file = new File(name);
             urls[i] = file.toURL();
             getLog().debug("URL: " + urls[i]);

@@ -16,6 +16,21 @@
  */
 package org.apache.camel.maven;
 
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -37,25 +52,11 @@ import org.codehaus.mojo.exec.AbstractExecMojo;
 import org.codehaus.mojo.exec.ExecutableDependency;
 import org.codehaus.mojo.exec.Property;
 
-import java.io.File;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
 /**
  * Runs a CamelContext using any Spring XML configuration files found in
- * <code>META-INF/spring/*.xml</code> and <code>camel-*.xml</code> and starting up the context.
- * 
+ * <code>META-INF/spring/*.xml</code> and <code>camel-*.xml</code> and
+ * starting up the context.
+ *
  * @goal run
  * @requiresDependencyResolution runtime
  * @execute phase="test-compile"
@@ -71,7 +72,7 @@ public class RunMojo extends AbstractExecMojo {
 
     /**
      * The maven project.
-     * 
+     *
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -79,8 +80,8 @@ public class RunMojo extends AbstractExecMojo {
     protected MavenProject project;
 
     /**
-     * The duration to run the application for which by default is in milliseconds.
-     * A value <= 0 will 
+     * The duration to run the application for which by default is in
+     * milliseconds. A value <= 0 will
      *
      * @parameter expression="-1"
      * @readonly
@@ -88,7 +89,8 @@ public class RunMojo extends AbstractExecMojo {
     protected String duration;
 
     /**
-     * The DOT outputd irectory name used to generate the DOT diagram of the route definitions
+     * The DOT outputd irectory name used to generate the DOT diagram of the
+     * route definitions
      *
      * @parameter expression="${project.build.directory}/site/cameldoc"
      * @readonly
@@ -143,7 +145,7 @@ public class RunMojo extends AbstractExecMojo {
 
     /**
      * The main class to execute.
-     * 
+     *
      * @parameter expression="${camel.mainClass}"
      *            default-value="org.apache.camel.spring.Main"
      * @required
@@ -152,7 +154,7 @@ public class RunMojo extends AbstractExecMojo {
 
     /**
      * The class arguments.
-     * 
+     *
      * @parameter expression="${camel.applicationContext}"
      */
     private String[] arguments;
@@ -162,7 +164,7 @@ public class RunMojo extends AbstractExecMojo {
      * forked, some system properties required by the JVM cannot be passed here.
      * Use MAVEN_OPTS or the exec:exec instead. See the user guide for more
      * information.
-     * 
+     *
      * @parameter
      */
     private Property[] systemProperties;
@@ -171,7 +173,7 @@ public class RunMojo extends AbstractExecMojo {
      * Deprecated; this is not needed anymore. Indicates if mojo should be kept
      * running after the mainclass terminates. Usefull for serverlike apps with
      * deamonthreads.
-     * 
+     *
      * @parameter expression="${camel.keepAlive}" default-value="false"
      */
     private boolean keepAlive;
@@ -179,7 +181,7 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * Indicates if the project dependencies should be used when executing the
      * main class.
-     * 
+     *
      * @parameter expression="${camel.includeProjectDependencies}"
      *            default-value="true"
      */
@@ -192,7 +194,7 @@ public class RunMojo extends AbstractExecMojo {
      * useful when the project is not a java project. For example a mvn project
      * using the csharp plugins only expects to see dotnet libraries as
      * dependencies.
-     * 
+     *
      * @parameter expression="${camel.includePluginDependencies}"
      *            default-value="false"
      */
@@ -207,7 +209,7 @@ public class RunMojo extends AbstractExecMojo {
      * the executable's classpath. Whether a particular project dependency is a
      * dependency of the identified ExecutableDependency will be irrelevant to
      * its inclusion in the classpath.
-     * 
+     *
      * @parameter
      * @optional
      */
@@ -225,7 +227,7 @@ public class RunMojo extends AbstractExecMojo {
      * {@link #daemonThreadJoinTimeout} and
      * {@link #stopUnresponsiveDaemonThreads} for further tuning.
      * </p>
-     * 
+     *
      * @parameter expression="${camel.cleanupDaemonThreads} default-value="true"
      */
     private boolean cleanupDaemonThreads;
@@ -246,7 +248,7 @@ public class RunMojo extends AbstractExecMojo {
      * value has been chosen, but this default value <i>may change</i> in the
      * future based on user feedback.
      * </p>
-     * 
+     *
      * @parameter expression="${camel.daemonThreadJoinTimeout}"
      *            default-value="15000"
      */
@@ -266,7 +268,7 @@ public class RunMojo extends AbstractExecMojo {
      * <code>Timer</code> fixed, vote for <a
      * href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6336543">this
      * bug</a>.
-     * 
+     *
      * @parameter expression="${camel.stopUnresponsiveDaemonThreads}
      *            default-value="false"
      */
@@ -274,7 +276,7 @@ public class RunMojo extends AbstractExecMojo {
 
     /**
      * Deprecated this is not needed anymore.
-     * 
+     *
      * @parameter expression="${camel.killAfter}" default-value="-1"
      */
     private long killAfter;
@@ -283,14 +285,15 @@ public class RunMojo extends AbstractExecMojo {
 
     /**
      * Execute goal.
-     * 
+     *
      * @throws MojoExecutionException execution of the main class or one of the
      *                 threads it generated failed.
      * @throws MojoFailureException something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (killAfter != -1) {
-            getLog().warn("Warning: killAfter is now deprecated. Do you need it ? Please comment on MEXEC-6.");
+            getLog()
+                .warn("Warning: killAfter is now deprecated. Do you need it ? Please comment on MEXEC-6.");
         }
 
         // lets create the command line arguments to pass in...
@@ -302,7 +305,7 @@ public class RunMojo extends AbstractExecMojo {
         args.add("-d");
         args.add(duration);
         if (arguments != null) {
-        args.addAll(Arrays.asList(arguments));
+            args.addAll(Arrays.asList(arguments));
         }
         arguments = new String[args.size()];
         args.toArray(arguments);
@@ -325,7 +328,8 @@ public class RunMojo extends AbstractExecMojo {
         Thread bootstrapThread = new Thread(threadGroup, new Runnable() {
             public void run() {
                 try {
-                    Method main = Thread.currentThread().getContextClassLoader().loadClass(mainClass).getMethod("main", new Class[] {String[].class});
+                    Method main = Thread.currentThread().getContextClassLoader().loadClass(mainClass)
+                        .getMethod("main", new Class[] {String[].class});
                     if (!main.isAccessible()) {
                         getLog().debug("Setting accessibility to true in order to invoke main().");
                         main.setAccessible(true);
@@ -346,7 +350,9 @@ public class RunMojo extends AbstractExecMojo {
         // but it's too late since the termination condition (only daemon
         // threads) has been triggered.
         if (keepAlive) {
-            getLog().warn("Warning: keepAlive is now deprecated and obsolete. Do you need it? Please comment on MEXEC-6.");
+            getLog()
+                .warn(
+                      "Warning: keepAlive is now deprecated and obsolete. Do you need it? Please comment on MEXEC-6.");
             waitFor(0);
         }
 
@@ -429,7 +435,9 @@ public class RunMojo extends AbstractExecMojo {
         }
         // generally abnormal
         if (thread.isAlive()) {
-            getLog().warn("thread " + thread + " was interrupted but is still alive after waiting at least " + timeoutMsecs + "msecs");
+            getLog().warn(
+                          "thread " + thread + " was interrupted but is still alive after waiting at least "
+                              + timeoutMsecs + "msecs");
         }
     }
 
@@ -437,7 +445,8 @@ public class RunMojo extends AbstractExecMojo {
         long startTime = System.currentTimeMillis();
         Set uncooperativeThreads = new HashSet(); // these were not responsive
         // to interruption
-        for (Collection threads = getActiveThreads(threadGroup); !threads.isEmpty(); threads = getActiveThreads(threadGroup), threads.removeAll(uncooperativeThreads)) {
+        for (Collection threads = getActiveThreads(threadGroup); !threads.isEmpty(); threads = getActiveThreads(threadGroup), threads
+            .removeAll(uncooperativeThreads)) {
             // Interrupt all threads we know about as of this instant (harmless
             // if spuriously went dead (! isAlive())
             // or if something else interrupted it ( isInterrupted() ).
@@ -471,14 +480,20 @@ public class RunMojo extends AbstractExecMojo {
                     getLog().warn("thread " + thread + " will be Thread.stop()'ed");
                     thread.stop();
                 } else {
-                    getLog().warn("thread " + thread + " will linger despite being asked to die via interruption");
+                    getLog().warn(
+                                  "thread " + thread
+                                      + " will linger despite being asked to die via interruption");
                 }
             }
         }
         if (!uncooperativeThreads.isEmpty()) {
-            getLog().warn(
-                          "NOTE: " + uncooperativeThreads.size() + " thread(s) did not finish despite being asked to "
-                              + " via interruption. This is not a problem with exec:java, it is a problem with the running code." + " Although not serious, it should be remedied.");
+            getLog()
+                .warn(
+                      "NOTE: "
+                          + uncooperativeThreads.size()
+                          + " thread(s) did not finish despite being asked to "
+                          + " via interruption. This is not a problem with exec:java, it is a problem with the running code."
+                          + " Although not serious, it should be remedied.");
         } else {
             int activeCount = threadGroup.activeCount();
             if (activeCount != 0) {
@@ -486,7 +501,9 @@ public class RunMojo extends AbstractExecMojo {
                 // even log in future
                 Thread[] threadsArray = new Thread[1];
                 threadGroup.enumerate(threadsArray);
-                getLog().debug("strange; " + activeCount + " thread(s) still active in the group " + threadGroup + " such as " + threadsArray[0]);
+                getLog().debug(
+                               "strange; " + activeCount + " thread(s) still active in the group "
+                                   + threadGroup + " such as " + threadsArray[0]);
             }
         }
     }
@@ -518,7 +535,7 @@ public class RunMojo extends AbstractExecMojo {
 
     /**
      * Set up a classloader for the execution of the main class.
-     * 
+     *
      * @return the classloader
      * @throws MojoExecutionException
      */
@@ -532,7 +549,7 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * Add any relevant project dependencies to the classpath. Indirectly takes
      * includePluginDependencies and ExecutableDependency into consideration.
-     * 
+     *
      * @param path classpath of {@link java.net.URL} objects
      * @throws MojoExecutionException
      */
@@ -545,7 +562,9 @@ public class RunMojo extends AbstractExecMojo {
             Iterator iter = this.determineRelevantPluginDependencies().iterator();
             while (iter.hasNext()) {
                 Artifact classPathElement = (Artifact)iter.next();
-                getLog().debug("Adding plugin dependency artifact: " + classPathElement.getArtifactId() + " to classpath");
+                getLog().debug(
+                               "Adding plugin dependency artifact: " + classPathElement.getArtifactId()
+                                   + " to classpath");
                 path.add(classPathElement.getFile().toURL());
             }
         } catch (MalformedURLException e) {
@@ -557,7 +576,7 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * Add any relevant project dependencies to the classpath. Takes
      * includeProjectDependencies into consideration.
-     * 
+     *
      * @param path classpath of {@link java.net.URL} objects
      * @throws MojoExecutionException
      */
@@ -583,7 +602,9 @@ public class RunMojo extends AbstractExecMojo {
                 Iterator iter = dependencies.iterator();
                 while (iter.hasNext()) {
                     Artifact classPathElement = (Artifact)iter.next();
-                    getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId() + " to classpath");
+                    getLog().debug(
+                                   "Adding project dependency artifact: " + classPathElement.getArtifactId()
+                                       + " to classpath");
                     File file = classPathElement.getFile();
                     if (file != null) {
                         path.add(file.toURL());
@@ -605,9 +626,9 @@ public class RunMojo extends AbstractExecMojo {
         for (Iterator artifacts = getAllDependencies().iterator(); artifacts.hasNext();) {
             Artifact artifact = (Artifact)artifacts.next();
 
-            //if (artifact.getScope().equals(Artifact.SCOPE_SYSTEM)) {
-                systemScopeArtifacts.add(artifact);
-            //}
+            // if (artifact.getScope().equals(Artifact.SCOPE_SYSTEM)) {
+            systemScopeArtifacts.add(artifact);
+            // }
         }
         return systemScopeArtifacts;
     }
@@ -640,7 +661,8 @@ public class RunMojo extends AbstractExecMojo {
                 scope = Artifact.SCOPE_COMPILE;
             }
 
-            Artifact art = this.artifactFactory.createDependencyArtifact(groupId, artifactId, versionRange, type, classifier, scope, optional);
+            Artifact art = this.artifactFactory.createDependencyArtifact(groupId, artifactId, versionRange,
+                                                                         type, classifier, scope, optional);
 
             if (scope.equalsIgnoreCase(Artifact.SCOPE_SYSTEM)) {
                 art.setFile(new File(dependency.getSystemPath()));
@@ -665,7 +687,7 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * Determine all plugin dependencies relevant to the executable. Takes
      * includePlugins, and the executableDependency into consideration.
-     * 
+     *
      * @return a set of Artifact objects. (Empty set is returned if there are no
      *         relevant plugin dependencies.)
      * @throws MojoExecutionException
@@ -691,17 +713,18 @@ public class RunMojo extends AbstractExecMojo {
 
     /**
      * Get the artifact which refers to the POM of the executable artifact.
-     * 
+     *
      * @param executableArtifact this artifact refers to the actual assembly.
      * @return an artifact which refers to the POM of the executable artifact.
      */
     private Artifact getExecutablePomArtifact(Artifact executableArtifact) {
-        return this.artifactFactory.createBuildArtifact(executableArtifact.getGroupId(), executableArtifact.getArtifactId(), executableArtifact.getVersion(), "pom");
+        return this.artifactFactory.createBuildArtifact(executableArtifact.getGroupId(), executableArtifact
+            .getArtifactId(), executableArtifact.getVersion(), "pom");
     }
 
     /**
      * Examine the plugin dependencies to find the executable artifact.
-     * 
+     *
      * @return an artifact which refers to the actual executable tool (not a
      *         POM)
      * @throws MojoExecutionException
@@ -720,7 +743,10 @@ public class RunMojo extends AbstractExecMojo {
         }
 
         if (executableTool == null) {
-            throw new MojoExecutionException("No dependency of the plugin matches the specified executableDependency." + "  Specified executableToolAssembly is: " + executableDependency.toString());
+            throw new MojoExecutionException(
+                                             "No dependency of the plugin matches the specified executableDependency."
+                                                 + "  Specified executableToolAssembly is: "
+                                                 + executableDependency.toString());
         }
 
         return executableTool;
@@ -730,25 +756,34 @@ public class RunMojo extends AbstractExecMojo {
 
         Set executableDependencies;
         try {
-            MavenProject executableProject = this.projectBuilder.buildFromRepository(executablePomArtifact, this.remoteRepositories, this.localRepository);
+            MavenProject executableProject = this.projectBuilder.buildFromRepository(executablePomArtifact,
+                                                                                     this.remoteRepositories,
+                                                                                     this.localRepository);
 
             // get all of the dependencies for the executable project
             List dependencies = executableProject.getDependencies();
 
             // make Artifacts of all the dependencies
-            Set dependencyArtifacts = MavenMetadataSource.createArtifacts(this.artifactFactory, dependencies, null, null, null);
+            Set dependencyArtifacts = MavenMetadataSource.createArtifacts(this.artifactFactory, dependencies,
+                                                                          null, null, null);
 
             // not forgetting the Artifact of the project itself
             dependencyArtifacts.add(executableProject.getArtifact());
 
             // resolve all dependencies transitively to obtain a comprehensive
             // list of assemblies
-            ArtifactResolutionResult result = artifactResolver.resolveTransitively(dependencyArtifacts, executablePomArtifact, Collections.EMPTY_MAP, this.localRepository, this.remoteRepositories,
-                                                                                   metadataSource, null, Collections.EMPTY_LIST);
+            ArtifactResolutionResult result = artifactResolver.resolveTransitively(dependencyArtifacts,
+                                                                                   executablePomArtifact,
+                                                                                   Collections.EMPTY_MAP,
+                                                                                   this.localRepository,
+                                                                                   this.remoteRepositories,
+                                                                                   metadataSource, null,
+                                                                                   Collections.EMPTY_LIST);
             executableDependencies = result.getArtifacts();
 
         } catch (Exception ex) {
-            throw new MojoExecutionException("Encountered problems resolving dependencies of the executable " + "in preparation for its execution.", ex);
+            throw new MojoExecutionException("Encountered problems resolving dependencies of the executable "
+                                             + "in preparation for its execution.", ex);
         }
 
         return executableDependencies;
@@ -756,7 +791,7 @@ public class RunMojo extends AbstractExecMojo {
 
     /**
      * Stop program execution for nn millis.
-     * 
+     *
      * @param millis the number of millis-seconds to wait for, <code>0</code>
      *                stops program forever.
      */
