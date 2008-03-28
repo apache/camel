@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -51,7 +53,7 @@ public class Main extends ServiceSupport {
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private String dotOutputDir;
     private List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
-    private SpringCamelContext camelContext;
+    private List<SpringCamelContext> camelContexts = new ArrayList<SpringCamelContext>();
 
     public Main() {
         addOption(new Option("h", "help", "Displays the help screen") {
@@ -251,8 +253,8 @@ public class Main extends ServiceSupport {
         this.applicationContextUri = applicationContextUri;
     }
 
-    public SpringCamelContext getCamelContext() {
-        return camelContext;
+    public List<SpringCamelContext> getCamelContexts() {
+        return camelContexts;
     }
 
     public long getDuration() {
@@ -344,13 +346,25 @@ public class Main extends ServiceSupport {
     }
 
     protected void postProcessContext() throws Exception {
-        camelContext = SpringCamelContext.springCamelContext(applicationContext);
-        if (ObjectHelper.isNotNullAndNonEmpty(dotOutputDir)) {
-            RouteDotGenerator generator = new RouteDotGenerator(dotOutputDir);
-            LOG.info("Generating DOT file for routes: " + dotOutputDir + " for: " + camelContext);
-            generator.drawRoutes(camelContext);
+        Map<String,SpringCamelContext> map = applicationContext.getBeansOfType(SpringCamelContext.class);
+        Set<Map.Entry<String, SpringCamelContext>> entries = map.entrySet();
+        int size = entries.size();
+        for (Map.Entry<String, SpringCamelContext> entry : entries) {
+            String name = entry.getKey();
+            SpringCamelContext camelContext = entry.getValue();
+            camelContexts.add(camelContext);
+
+            String outputDir = dotOutputDir;
+            if (ObjectHelper.isNotNullAndNonEmpty(outputDir)) {
+                if (size > 1) {
+                    outputDir += "/" + name;
+                }
+                RouteDotGenerator generator = new RouteDotGenerator(outputDir);
+                LOG.info("Generating DOT file for routes: " + outputDir + " for: " + camelContext + " with name: " + name);
+                generator.drawRoutes(camelContext);
+            }
+            postProcesCamelContext(camelContext);
         }
-        postProcesCamelContext(camelContext);
     }
 
     protected void postProcesCamelContext(CamelContext camelContext) throws Exception {

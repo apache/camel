@@ -22,8 +22,16 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
 
-  <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
+  <camelContext id="main" xmlns="http://activemq.apache.org/camel/schema/spring">
     <package>org.apache.camel.example.docs</package>
+  </camelContext>
+
+  <camelContext id="otherRoutes" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+      <from uri="seda:other.a"/>
+      <to uri="seda:other.b"/>
+      <to uri="seda:other.c"/>
+    </route>
   </camelContext>
 
 </beans>

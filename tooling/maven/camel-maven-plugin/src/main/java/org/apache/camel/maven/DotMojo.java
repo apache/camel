@@ -25,9 +25,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.doxia.sink.Sink;
@@ -76,7 +78,6 @@ public class DotMojo extends AbstractMavenReport {
      * @readonly
      */
     protected boolean runCamel;
-
     private String indexHtmlContent;
     /**
      * Reference to Maven 2 Project.
@@ -158,8 +159,9 @@ public class DotMojo extends AbstractMavenReport {
     public void execute() throws MojoExecutionException {
         this.execute(this.buildDirectory, Locale.getDefault());
         try {
-            writeIndexHtmlFile("index.html", indexHtmlContent);
-        } catch (IOException e) {
+            writeIndexHtmlFile(outputDirectory, "index.html", indexHtmlContent);
+        }
+        catch (IOException e) {
             throw new MojoExecutionException("Failed: " + e, e);
         }
     }
@@ -174,10 +176,12 @@ public class DotMojo extends AbstractMavenReport {
             Sink kitchenSink = getSink();
             if (kitchenSink != null) {
                 kitchenSink.rawText(indexHtmlContent);
-            } else {
-                writeIndexHtmlFile("index.html", indexHtmlContent);
             }
-        } catch (Exception e) {
+            else {
+                writeIndexHtmlFile(outputDirectory, "index.html", indexHtmlContent);
+            }
+        }
+        catch (Exception e) {
             final MavenReportException ex = new MavenReportException(e.getMessage());
             ex.initCause(e.getCause());
             throw ex;
@@ -188,13 +192,14 @@ public class DotMojo extends AbstractMavenReport {
      * Executes DOT generator.
      *
      * @param outputDir report output directory.
-     * @param locale report locale.
+     * @param locale    report locale.
      * @throws MojoExecutionException if there were any execution errors.
      */
     protected void execute(final File outputDir, final Locale locale) throws MojoExecutionException {
         try {
             runCamelEmbedded(outputDir);
-        } catch (DependencyResolutionRequiredException e) {
+        }
+        catch (DependencyResolutionRequiredException e) {
             throw new MojoExecutionException("Failed: " + e, e);
         }
         outputDir.mkdirs();
@@ -205,17 +210,29 @@ public class DotMojo extends AbstractMavenReport {
         if (graphvizOutputTypes == null) {
             if (graphvizOutputType == null) {
                 graphvizOutputTypes = DEFAULT_GRAPHVIZ_OUTPUT_TYPES;
-            } else {
-                graphvizOutputTypes = new String[] {graphvizOutputType};
+            }
+            else {
+                graphvizOutputTypes = new String[]{graphvizOutputType};
             }
         }
         try {
-            for (int i = 0; i < files.size(); i++) {
-                File file = (File)((List)files).get(i);
+            Set<String> contextNames = new HashSet<String>();
+            for (File file : files) {
+                String contextName = file.getParentFile().getName();
+                contextNames.add(contextName);
+            }
+            boolean multipleCamelContexts = contextNames.size() > 1;
 
+            for (int i = 0, size = files.size(); i < size; i++) {
+                File file = files.get(i);
+
+                String contextName = null;
+                if (multipleCamelContexts) {
+                    contextName = file.getParentFile().getName();
+                }
                 StringWriter buffer = new StringWriter();
                 PrintWriter out = new PrintWriter(buffer);
-                printHtmlHeader(out);
+                printHtmlHeader(out, contextName);
                 printHtmlFileHeader(out, file);
                 for (int j = 0; j < graphvizOutputTypes.length; j++) {
                     String format = graphvizOutputTypes[j];
@@ -239,11 +256,34 @@ public class DotMojo extends AbstractMavenReport {
                     name = name.substring(0, idx);
                     name += ".html";
                 }
-                writeIndexHtmlFile(name, content);
+                writeIndexHtmlFile(file.getParentFile(), name, content);
             }
-        } catch (CommandLineException e) {
+
+            if (multipleCamelContexts) {
+                // lets generate an index page which lists each indiviual
+                // CamelContext file
+                StringWriter buffer = new StringWriter();
+                PrintWriter out = new PrintWriter(buffer);
+
+                out.println("<h1>Camel Contexts</h1>");
+                out.println();
+
+                out.println("<ul>");
+                for (String contextName : contextNames) {
+                    out.print("  <li><a href='");
+                    out.print(contextName);
+                    out.print("/routes.html'>");
+                    out.print(contextName);
+                    out.println("</a></li>");
+                }
+                out.println("</ul>");
+                indexHtmlContent = buffer.toString();
+            }
+        }
+        catch (CommandLineException e) {
             throw new MojoExecutionException("Failed: " + e, e);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new MojoExecutionException("Failed: " + e, e);
         }
     }
@@ -264,15 +304,15 @@ public class DotMojo extends AbstractMavenReport {
             mojo.setPluginContext(getPluginContext());
             try {
                 mojo.executeWithoutWrapping();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 getLog().error("Failed to run Camel embedded: " + e, e);
             }
         }
     }
 
-    protected void writeIndexHtmlFile(String fileName, String content) throws IOException {
-        //File dir = new File(outputDirectory, SUBDIRECTORY);
-        File dir = outputDirectory;
+    protected void writeIndexHtmlFile(File dir, String fileName, String content) throws IOException {
+        //File dir = outputDirectory;
         dir.mkdirs();
         File html = new File(dir, fileName);
         PrintWriter out = null;
@@ -285,19 +325,26 @@ public class DotMojo extends AbstractMavenReport {
             out.println();
             if (content == null) {
                 out.write("<p>No EIP diagrams available</p>");
-            } else {
+            }
+            else {
                 out.write(content);
             }
             out.println("</body>");
             out.println("</html>");
-        } finally {
+        }
+        finally {
             String description = "Failed to close html output file";
             close(out, description);
         }
     }
 
-    protected void printHtmlHeader(PrintWriter out) {
-        out.println("<h1>Camel EIP Patterns</h1>");
+    protected void printHtmlHeader(PrintWriter out, String contextName) {
+        if (contextName != null) {
+            out.println("<h1>EIP Patterns for CamelContext: " + contextName + "</h1>");
+        }
+        else {
+            out.println("<h1>Camel EIP Patterns</h1>");
+        }
         out.println();
     }
 
@@ -320,7 +367,8 @@ public class DotMojo extends AbstractMavenReport {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 getLog().warn(description + ": " + e);
             }
         }
@@ -359,7 +407,8 @@ public class DotMojo extends AbstractMavenReport {
         int idx = name.lastIndexOf(".");
         if (idx > 0) {
             return name.substring(0, idx);
-        } else {
+        }
+        else {
             return name;
         }
     }
@@ -367,7 +416,8 @@ public class DotMojo extends AbstractMavenReport {
     private void appendFiles(List<File> output, File file) {
         if (file.isDirectory()) {
             appendDirectory(output, file);
-        } else {
+        }
+        else {
             if (isValid(file)) {
                 output.add(file);
             }
@@ -394,13 +444,16 @@ public class DotMojo extends AbstractMavenReport {
                 String line = reader.readLine();
                 if (line == null) {
                     break;
-                } else {
+                }
+                else {
                     out.println(line);
                 }
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new MojoExecutionException("Failed: " + e, e);
-        } finally {
+        }
+        finally {
             close(reader, "cmapx file");
         }
     }
