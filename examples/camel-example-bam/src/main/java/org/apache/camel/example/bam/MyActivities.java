@@ -16,12 +16,9 @@
  */
 package org.apache.camel.example.bam;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.bam.ActivityBuilder;
 import org.apache.camel.bam.ProcessBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
