@@ -39,11 +39,11 @@ public class CsvRouteTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
 
-        // START SNIPPET: marshal-result
+        // START SNIPPET: marshalInput
         Map body = new HashMap();
         body.put("foo", "abc");
         body.put("bar", 123);
-        // END SNIPPET: marshal-result
+        // END SNIPPET: marshalInput
         template.sendBody("direct:start", body);
 
         resultEndpoint.assertIsSatisfied();
@@ -63,14 +63,14 @@ public class CsvRouteTest extends ContextTestSupport {
         endpoint.expectedMessageCount(1);
         endpoint.assertIsSatisfied();
         Exchange exchange = endpoint.getExchanges().get(0);
-        // START SNIPPET : unmarshal-result
+        // START SNIPPET : unmarshalResult
         List<List<String>> data = (List<List<String>>) exchange.getIn().getBody();
         for (List<String> line : data) {
             LOG.debug(
               String.format("%s has an IQ of %s and is currently %s",
                             line.get(0), line.get(1), line.get(2)));
         }
-        // END SNIPPET : unmarshal-result    
+        // END SNIPPET : unmarshalResult
     }
 
     protected RouteBuilder createRouteBuilder() {
