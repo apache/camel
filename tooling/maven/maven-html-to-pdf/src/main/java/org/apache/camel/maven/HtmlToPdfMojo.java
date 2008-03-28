@@ -205,6 +205,12 @@ public class HtmlToPdfMojo extends AbstractMojo {
             }
         };
 
+        getLog().info("About to execute PrinceXml (see www.princexml.com)");
+        String[] lines = cl.getCommandline();
+        for (String line : lines) {
+            getLog().info(line);
+        }
+
         int rc = CommandLineUtils.executeCommandLine(cl, out, out);
         if (rc == 0) {
             getLog().info("Stored: " + getPDFFileName());
