@@ -76,13 +76,23 @@
 
   <build>
     <plugins>
-                <!-- allows the example to be ran via 'mvn compile exec:java' -->
+      <!-- allows the example to be ran via 'mvn compile exec:java' -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <configuration>
           <mainClass>org.apache.camel.component.uface.swing.Main</mainClass>
           <includePluginDependencies>true</includePluginDependencies>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <!-- disable from CI builds due to some boxes not having a UI -->
+            <exclude>**/UFaceTest.*</exclude>
+          </excludes>
         </configuration>
       </plugin>
 
