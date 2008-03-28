@@ -17,6 +17,7 @@
 package org.apache.camel.bam;
 
 
+import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
@@ -41,6 +42,12 @@ public class BamRouteTest extends SpringTestSupport {
         template.sendBody("direct:a", "<hello id='123'>world!</hello>");
 
         overdueEndpoint.assertIsSatisfied();
+
+        // it was b that was the problem and thus send to the overdue endpoint
+        ActivityState state = overdueEndpoint.getExchanges().get(0).getIn().getBody(ActivityState.class);
+        assertNotNull(state);
+        assertEquals("123", state.getCorrelationKey());
+        assertEquals("b", state.getActivityDefinition().getName());
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
@@ -83,4 +90,5 @@ public class BamRouteTest extends SpringTestSupport {
     protected int getExpectedRouteCount() {
         return 0;
     }
+
 }

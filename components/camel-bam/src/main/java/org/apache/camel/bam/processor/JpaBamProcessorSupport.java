@@ -18,6 +18,8 @@ package org.apache.camel.bam.processor;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -40,6 +42,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     private static final transient Log LOG = LogFactory.getLog(JpaBamProcessorSupport.class);
 
+    private static final Lock lock = new ReentrantLock(); // lock used for concurrency issues
     private ActivityRules activityRules;
     private JpaTemplate template;
     private String findByKeyQuery;
@@ -107,23 +110,27 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     // Implementatiom methods
     // -----------------------------------------------------------------------
     protected T loadEntity(Exchange exchange, Object key) throws Exception {
-        T entity = findEntityByCorrelationKey(key);
-        if (entity == null) {
-            entity = createEntity(exchange, key);
-            setKeyProperty(entity, key);
-            ProcessDefinition definition = ProcessDefinition
-                .getRefreshedProcessDefinition(template, getActivityRules().getProcessRules()
-                    .getProcessDefinition());
-            setProcessDefinitionProperty(entity, definition);
-            template.persist(entity);
+        lock.lock();
+        try {
+            T entity = findEntityByCorrelationKey(key);
+            if (entity == null) {
+                entity = createEntity(exchange, key);
+                setKeyProperty(entity, key);
+                ProcessDefinition definition = ProcessDefinition
+                    .getRefreshedProcessDefinition(template, getActivityRules().getProcessRules()
+                        .getProcessDefinition());
+                setProcessDefinitionProperty(entity, definition);
+                template.persist(entity);
 
-            // Now we must flush to avoid concurrent updates clashing trying to
-            // insert the
-            // same row
-            LOG.debug("About to flush on entity: " + entity + " with key: " + key);
-            template.flush();
+                // Now we must flush to avoid concurrent updates clashing trying to
+                // insert the same row
+                LOG.debug("About to flush on entity: " + entity + " with key: " + key);
+                template.flush();
+            }
+            return entity;
+        } finally {
+            lock.unlock();
         }
-        return entity;
     }
 
     protected T findEntityByCorrelationKey(Object key) {
