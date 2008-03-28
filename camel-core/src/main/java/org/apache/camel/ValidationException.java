@@ -30,4 +30,7 @@ public class ValidationException extends CamelExchangeException {
         super(message, exchange);
     }
 
+    public ValidationException(String message, Exchange exchange, Throwable cause) {
+        super(message, exchange, cause);
+    }
 }

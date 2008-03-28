@@ -26,7 +26,12 @@ public class CamelExchangeException extends CamelException {
     private final Exchange exchange;
 
     public CamelExchangeException(String message, Exchange exchange) {
-        super(message + " on the exchange: " +  exchange);
+        super(createMessage(message, exchange));
+        this.exchange = exchange;
+    }
+
+    public CamelExchangeException(String message, Exchange exchange, Throwable cause) {
+        super(createMessage(message, exchange), cause);
         this.exchange = exchange;
     }
 
@@ -39,4 +44,7 @@ public class CamelExchangeException extends CamelException {
         return exchange;
     }
 
+    protected static String createMessage(String message, Exchange exchange) {
+        return message + " on the exchange: " + exchange;
+    }
 }
