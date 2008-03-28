@@ -76,17 +76,17 @@ public class CsvRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // START SNIPPET: marshal
+                // START SNIPPET: marshalRoute
                 from("direct:start").
                    marshal().csv().
                    to("mock:result");
-                // END SNIPPET: marshal
+                // END SNIPPET: marshalRoute
                 
-                // START SNIPPET: unmarshal
+                // START SNIPPET: unmarshalRoute
                 from("file:src/test/resources/daltons.csv?noop=true").
                    unmarshal().csv().
                    to("mock:daltons");
-                // END SNIPPET: unmarshal
+                // END SNIPPET: unmarshalRoute
             }
         };
     }
