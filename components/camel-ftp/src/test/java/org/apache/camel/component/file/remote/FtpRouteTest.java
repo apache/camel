@@ -61,7 +61,7 @@ public class FtpRouteTest extends ContextTestSupport {
 
         super.setUp();
 
-        resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        resultEndpoint = getMockEndpoint("mock:result");
     }
 
     @Override

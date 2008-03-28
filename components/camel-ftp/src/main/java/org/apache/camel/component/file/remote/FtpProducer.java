@@ -85,19 +85,20 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
             if (lastPathIndex != -1) {
                 String directory = fileName.substring(0, lastPathIndex);
                 if (!buildDirectory(client, directory)) {
-                    LOG.warn("Couldn't buildDirectory: " + directory + " (either permissions deny it, or it already exists)");
+                    LOG.warn("Couldn't build directory: " + directory + " (either permissions deny it, or it already exists)");
                 }
             }
 
             final boolean success = client.storeFile(fileName, payload);
             if (!success) {
-                throw new RuntimeCamelException("error sending file");
+                // TODO: Should we not have better exception for this?
+                throw new RuntimeCamelException("Error sending file: " + fileName);
             }
 
             RemoteFileConfiguration config = endpoint.getConfiguration();
             LOG.info("Sent: " + fileName + " to " + config.toString().substring(0, config.toString().indexOf(config.getFile())));
         } finally {
-            if (null != payload) {
+            if (payload != null) {
                 payload.close();
             }
         }
@@ -125,13 +126,21 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
         boolean atLeastOneSuccess = false;
         final StringBuilder sb = new StringBuilder(dirName.length());
         final String[] dirs = dirName.split("\\/");
+
         for (String dir : dirs) {
             sb.append(dir).append('/');
-            final boolean success = ftpClient.makeDirectory(sb.toString());
+            String directory = sb.toString();
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Trying to build directory: " + directory);
+            }
+            final boolean success = ftpClient.makeDirectory(directory);
+
             if (!atLeastOneSuccess && success) {
                 atLeastOneSuccess = true;
             }
         }
+
         return atLeastOneSuccess;
     }
 }
