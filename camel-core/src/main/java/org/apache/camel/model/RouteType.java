@@ -34,6 +34,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Route;
 import org.apache.camel.impl.RouteContext;
+import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -211,5 +212,21 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
             list.addAll(getInterceptors());
         }
 */
+    }
+
+    /**
+     * Disable stream caching for this Route.
+     */
+    public RouteType noStreamCaching() {
+        StreamCachingInterceptor.noStreamCaching(interceptors);
+        return this;
+    }
+
+    /**
+     * Enable stream caching for this Route.
+     */
+    public RouteType streamCaching() {
+        intercept(new StreamCachingInterceptor());
+        return this;
     }
 }
