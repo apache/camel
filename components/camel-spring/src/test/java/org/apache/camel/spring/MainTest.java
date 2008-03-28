@@ -42,8 +42,10 @@ public class MainTest extends TestCase {
         main.addRouteBuilder(builder);
         main.start();
 
-        SpringCamelContext camelContext = main.getCamelContext();
-        assertNotNull(camelContext);
+        List<SpringCamelContext> contextList = main.getCamelContexts();
+        assertNotNull(contextList);
+        assertEquals("size", 1, contextList.size());
+        SpringCamelContext camelContext = contextList.get(0);
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
         endpoint.expectedMessageCount(2);
