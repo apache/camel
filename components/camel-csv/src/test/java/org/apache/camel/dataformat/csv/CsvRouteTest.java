@@ -39,9 +39,11 @@ public class CsvRouteTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
 
+        // START SNIPPET: marshal-result
         Map body = new HashMap();
         body.put("foo", "abc");
         body.put("bar", 123);
+        // END SNIPPET: marshal-result
         template.sendBody("direct:start", body);
 
         resultEndpoint.assertIsSatisfied();
@@ -55,13 +57,36 @@ public class CsvRouteTest extends ContextTestSupport {
             assertEquals("text body", "abc,123", text.trim());
         }
     }
+    
+    public void testUnMarshal() throws Exception {
+        MockEndpoint endpoint = getMockEndpoint("mock:daltons");
+        endpoint.expectedMessageCount(1);
+        endpoint.assertIsSatisfied();
+        Exchange exchange = endpoint.getExchanges().get(0);
+        // START SNIPPET : unmarshal-result
+        List<List<String>> data = (List<List<String>>) exchange.getIn().getBody();
+        for (List<String> line : data) {
+            LOG.debug(
+              String.format("%s has an IQ of %s and is currently %s",
+                            line.get(0), line.get(1), line.get(2)));
+        }
+        // END SNIPPET : unmarshal-result    
+    }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                // START SNIPPET: marshal
                 from("direct:start").
-                        marshal().csv().
-                        to("mock:result");
+                   marshal().csv().
+                   to("mock:result");
+                // END SNIPPET: marshal
+                
+                // START SNIPPET: unmarshal
+                from("file:src/test/resources/daltons.csv?noop=true").
+                   unmarshal().csv().
+                   to("mock:daltons");
+                // END SNIPPET: unmarshal
             }
         };
     }
