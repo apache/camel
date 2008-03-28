@@ -219,4 +219,20 @@ public final class ProcessorBuilder {
             }
         };
     }
+    
+    /**
+     * Throws an exception
+     */
+    public static Processor throwException(final Exception ex) {
+        return new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                throw ex;
+            }
+
+            @Override
+            public String toString() {
+                return "throwException(" + ex.toString() +  ")";
+            }
+        };
+    }
 }

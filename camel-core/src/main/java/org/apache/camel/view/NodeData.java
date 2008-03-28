@@ -28,6 +28,7 @@ import org.apache.camel.model.FromType;
 import org.apache.camel.model.OtherwiseType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RecipientListType;
+import org.apache.camel.model.RoutingSlipType;
 import org.apache.camel.model.ResequencerType;
 import org.apache.camel.model.SplitterType;
 import org.apache.camel.model.ToType;
@@ -99,6 +100,11 @@ public class NodeData {
         } else if (node instanceof RecipientListType) {
             this.image = imagePrefix + "RecipientListIcon.png";
             this.nodeType = "Recipient List";
+	} else if (node instanceof RoutingSlipType) {            
+            this.image = imagePrefix + "RoutingSlipIcon.png";
+            this.nodeType = "Routing Slip";
+            this.url = "http://activemq.apache.org/camel/routing-slip.html";
+            this.tooltop = ((RoutingSlipType) node).getHeaderName();
         } else if (node instanceof SplitterType) {
             this.image = imagePrefix + "SplitterIcon.png";
             this.nodeType = "Splitter";

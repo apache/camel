@@ -81,6 +81,30 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo(route, "seda:b", "seda:c", "seda:d");
     }
 
+    public void testParseRoutingSlipXml() throws Exception {
+        RouteType route = assertOneRoute("routingSlip.xml");
+        assertFrom(route, "seda:a");
+        RoutingSlipType node = assertRoutingSlip(route);
+        assertEquals(RoutingSlipType.ROUTING_SLIP_HEADER, node.getHeaderName());
+        assertEquals(RoutingSlipType.DEFAULT_DELIMITER, node.getUriDelimiter());
+    }
+
+    public void testParseRoutingSlipWithHeaderSetXml() throws Exception {
+        RouteType route = assertOneRoute("routingSlipHeaderSet.xml");
+        assertFrom(route, "seda:a");
+        RoutingSlipType node = assertRoutingSlip(route);
+        assertEquals("theRoutingSlipHeader", node.getHeaderName());
+        assertEquals(RoutingSlipType.DEFAULT_DELIMITER, node.getUriDelimiter());       
+    }       
+    
+    public void testParseRoutingSlipWithHeaderAndDelimiterSetXml() throws Exception {
+        RouteType route = assertOneRoute("routingSlipHeaderAndDelimiterSet.xml");
+        assertFrom(route, "seda:a");
+        RoutingSlipType node = assertRoutingSlip(route);
+        assertEquals("theRoutingSlipHeader", node.getHeaderName());
+        assertEquals("#", node.getUriDelimiter());       
+    }   
+    
     //TODO get the test fixed
     public void xtestParseRouteWithInterceptorXml() throws Exception {
         RouteType route = assertOneRoute("routeWithInterceptor.xml");
@@ -200,6 +224,11 @@ public class XmlParseTest extends XmlTestSupport {
         ProcessorType<?> processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(RecipientListType.class, processor);
     }
+
+    protected RoutingSlipType assertRoutingSlip(ProcessorType<?> route) {
+        ProcessorType<?> processor = assertOneElement(route.getOutputs());
+        return assertIsInstanceOf(RoutingSlipType.class, processor);
+    }   
 
     protected ChoiceType assertChoice(ProcessorType<?> route) {
         ProcessorType<?> processor = assertOneElement(route.getOutputs());
