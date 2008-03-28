@@ -19,8 +19,6 @@ package org.apache.camel.bam.processor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-import javax.persistence.EntityExistsException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -28,8 +26,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -44,10 +40,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 public abstract class BamProcessorSupport<T> implements Processor {
     private static final transient Log LOG = LogFactory.getLog(BamProcessorSupport.class);
     private Class<T> entityType;
-    private Class primaryKeyType = String.class;
     private Expression<Exchange> correlationKeyExpression;
     private TransactionTemplate transactionTemplate;
-    private int maximumRetries = 30;
 
     protected BamProcessorSupport(TransactionTemplate transactionTemplate,
                                   Expression<Exchange> correlationKeyExpression) {
@@ -78,55 +72,24 @@ public abstract class BamProcessorSupport<T> implements Processor {
     }
 
     public void process(final Exchange exchange) {
-        Object entity = null;
-        for (int i = 0; entity == null && i < maximumRetries; i++) {
-            if (i > 0) {
-                LOG.info("Retry attempt due to duplicate row: " + i);
-            }
-            entity = transactionTemplate.execute(new TransactionCallback() {
-                public Object doInTransaction(TransactionStatus status) {
-                    try {
-                        Object key = getCorrelationKey(exchange);
+        Object entity = transactionTemplate.execute(new TransactionCallback() {
+            public Object doInTransaction(TransactionStatus status) {
+                try {
+                    Object key = getCorrelationKey(exchange);
 
-                        T entity = loadEntity(exchange, key);
+                    T entity = loadEntity(exchange, key);
 
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Correlation key: " + key + " with entity: " + entity);
-                        }
-                        processEntity(exchange, entity);
-
-                        return entity;
-                    } catch (JpaSystemException e) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Likely exception is due to duplicate row in concurrent setting: " + e,
-                                      e);
-                        }
-                        LOG.info("Attempt to insert duplicate row due to concurrency issue, so retrying: "
-                                 + e);
-                        return retryDueToDuplicate(status);
-                    } catch (DataIntegrityViolationException e) {
-                        Throwable throwable = e.getCause();
-                        if (throwable instanceof EntityExistsException) {
-                            LOG
-                                .info("Attempt to insert duplicate row due to concurrency issue, so retrying: "
-                                      + throwable);
-                            return retryDueToDuplicate(status);
-                        }
-                        return onError(status, throwable);
-                    } catch (Throwable e) {
-                        return onError(status, e);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Correlation key: " + key + " with entity: " + entity);
                     }
+                    processEntity(exchange, entity);
+
+                    return entity;
+                } catch (Exception e) {
+                    return onError(status, e);
                 }
-            });
-        }
-    }
-
-    public int getMaximumRetries() {
-        return maximumRetries;
-    }
-
-    public void setMaximumRetries(int maximumRetries) {
-        this.maximumRetries = maximumRetries;
+            }
+        });
     }
 
     // Properties
@@ -159,14 +122,10 @@ public abstract class BamProcessorSupport<T> implements Processor {
         return value;
     }
 
-    protected Object retryDueToDuplicate(TransactionStatus status) {
-        status.setRollbackOnly();
-        return null;
-    }
-
     protected Object onError(TransactionStatus status, Throwable e) {
         status.setRollbackOnly();
         LOG.error("Caught: " + e, e);
         throw new RuntimeCamelException(e);
     }
+    
 }
