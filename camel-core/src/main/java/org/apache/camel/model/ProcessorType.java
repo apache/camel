@@ -247,7 +247,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      *
      * @param coreSize the number of threads that will be used to process
      *                 messages in subsequent processors.
-     * @return a ThreadType builder that can be used to futher configure the
+     * @return a ThreadType builder that can be used to further configure the
      *         the thread pool.
      */
     public ThreadType thread(int coreSize) {
@@ -293,7 +293,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * Creates a predciate expression which only if it is true then the
+     * Creates a predicate expression which only if it is true then the
      * exchange is forwarded to the destination
      *
      * @return the clause used to create the filter expression
@@ -375,7 +375,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * href="http://activemq.apache.org/camel/recipient-list.html">Recipient
      * List</a> pattern.
      *
-     * @return the expression clasue for the expression used in the
+     * @return the expression clause for the expression used in the
      *                    {@link RecipientList} to decide the destinations
      */
     public ExpressionClause<ProcessorType<Type>> recipientList() {
@@ -385,6 +385,51 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
         answer.setExpression(clause);
         return clause;
     }
+
+    /**
+     * Creates a <a
+     * href="http://activemq.apache.org/camel/routing-slip.html">Routing
+     * Slip</a> pattern.
+     *
+     * @param header is the header that the {@link RoutingSlip} class will
+     * look in for the list of URIs to route the message to.
+     * @param uriDelimiter is the delimiter that will be used to split up
+     * the list of URIs in the routing slip.
+     */
+    public Type routingSlip(String header, String uriDelimiter) {
+        RoutingSlipType answer = new RoutingSlipType(header, uriDelimiter);
+        addOutput(answer);
+        return (Type) this;
+    }      
+    
+    /**
+     * Creates a <a
+     * href="http://activemq.apache.org/camel/routing-slip.html">Routing
+     * Slip</a> pattern.
+     *
+     * @param header is the header that the {@link RoutingSlip} class will
+     * look in for the list of URIs to route the message to. The list of URIs
+     * will be split based on the default delimiter 
+     * {@link RoutingSlipType#DEFAULT_DELIMITER}.
+     */
+    public Type routingSlip(String header) {
+        RoutingSlipType answer = new RoutingSlipType(header);
+        addOutput(answer);
+        return (Type) this;
+    }    
+
+    /**
+     * Creates a <a
+     * href="http://activemq.apache.org/camel/routing-slip.html">Routing
+     * Slip</a> pattern with the default header {@link RoutingSlipType#ROUTING_SLIP_HEADER}.
+     * The list of URIs in the header will be split based on the default delimiter 
+     * {@link RoutingSlipType#DEFAULT_DELIMITER}.
+     */
+    public Type routingSlip() {
+        RoutingSlipType answer = new RoutingSlipType();
+        addOutput(answer);
+        return (Type) this;
+    }     
 
     /**
      * Creates the <a
@@ -846,7 +891,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * Configures whether or not the error handler is inherited by every
      * processing node (or just the top most one)
      *
-     * @param condition the falg as to whether error handlers should be
+     * @param condition the flag as to whether error handlers should be
      *                  inherited or not
      * @return the current builder
      */

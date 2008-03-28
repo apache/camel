@@ -66,6 +66,9 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     private List expectedBodyValues;
     private List actualBodyValues;
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+    private String headerName;
+    private String headerValue;
+    private Object actualHeader;
 
     public MockEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -271,6 +274,23 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
         }
     }
 
+    /**
+     * Adds an expectation that the given header name & value are received by this
+     * endpoint
+     */
+    public void expectedHeaderReceived(String name, String value) {
+        this.headerName = name;
+        this.headerValue = value;
+
+        expects(new Runnable() {
+            public void run() {
+                assertTrue("No header with name " + headerName + " found.", actualHeader != null);
+                
+                assertEquals("Header of message", headerValue, actualHeader);
+            }
+        });
+    }   
+    
     /**
      * Adds an expectation that the given body values are received by this
      * endpoint
@@ -539,6 +559,10 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     protected void performAssertions(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
         Object actualBody = in.getBody();
+
+        if (headerName != null) {
+            actualHeader = in.getHeader(headerName);
+        }
 
         if (expectedBodyValues != null) {
             int index = actualBodyValues.size();

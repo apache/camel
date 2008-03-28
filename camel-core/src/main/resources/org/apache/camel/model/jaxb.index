@@ -40,6 +40,7 @@ ResequencerType
 RouteType
 RouteBuilderRef
 RoutesType
+RoutingSlipType
 ServiceActivationType
 SplitterType
 ThrottlerType
