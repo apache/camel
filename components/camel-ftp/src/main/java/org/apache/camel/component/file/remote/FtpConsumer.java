@@ -107,7 +107,8 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                     pollDirectory(getFullFileName(ftpFile));
                 }
             } else {
-                throw new RuntimeException("");
+                // TODO: Type can be symbolic link etc. so what should we do?
+                LOG.warn("Unsupported type of FTPFile: " + ftpFile + " not a file or directory");
             }
         }
     }
@@ -117,15 +118,8 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     }
 
     private void pollFile(FTPFile ftpFile) throws Exception {
-        if (ftpFile.getTimestamp().getTimeInMillis() > lastPollTime) { // TODO
-                                                                       // do we
-                                                                       // need
-                                                                       // to
-                                                                       // adjust
-                                                                       // the
-                                                                       // TZ?
-                                                                       // can
-                                                                       // we?
+        // TODO do we need to adjust the TZ? can we?
+        if (ftpFile.getTimestamp().getTimeInMillis() > lastPollTime) {
             if (isMatched(ftpFile)) {
                 final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 client.retrieveFile(ftpFile.getName(), byteArrayOutputStream);
