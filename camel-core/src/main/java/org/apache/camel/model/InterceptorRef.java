@@ -88,4 +88,14 @@ public class InterceptorRef extends InterceptorType {
             return "";
         }
     }
+    
+    /**
+     * Get the underlying {@link DelegateProcessor} implementation
+     * 
+     * @return the {@link DelegateProcessor}
+     */
+    @XmlTransient
+    public DelegateProcessor getInterceptor() {
+        return interceptor;
+    }
 }

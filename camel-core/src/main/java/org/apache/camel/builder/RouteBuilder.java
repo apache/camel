@@ -28,10 +28,13 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ChoiceType;
 import org.apache.camel.model.ExceptionType;
 import org.apache.camel.model.InterceptType;
+import org.apache.camel.model.InterceptorRef;
+import org.apache.camel.model.InterceptorType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.RoutesType;
 import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 
 /**
  * A <a href="http://activemq.apache.org/camel/dsl.html">Java DSL</a> which is
@@ -53,7 +56,6 @@ public abstract class RouteBuilder extends BuilderSupport {
     public RouteBuilder(CamelContext context) {
         super(context);
     }
-
 
     @Override
     public String toString() {
@@ -198,7 +200,21 @@ public abstract class RouteBuilder extends BuilderSupport {
     public RoutesType getRouteCollection() {
         return this.routeCollection;
     }
-
+    
+    /**
+     * Completely disable stream caching for all routes being defined in the same RouteBuilder after this. 
+     */
+    public void noStreamCaching() {
+        StreamCachingInterceptor.noStreamCaching(routeCollection.getInterceptors());
+    }
+    
+    /**
+     * Enable stream caching for all routes being defined in the same RouteBuilder after this call.
+     */
+    public void streamCaching() {
+        routeCollection.intercept(new StreamCachingInterceptor());
+    }
+    
     /**
      * Factory method
      */

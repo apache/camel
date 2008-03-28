@@ -226,4 +226,21 @@ public final class IOConverter {
             return new ObjectInputStream(stream);
         }
     }
+    
+    @Converter
+    public static byte[] toBytes(InputStream stream) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        copy(stream, bos);
+        return bos.toByteArray();
+    }
+
+    protected static void copy(InputStream stream, ByteArrayOutputStream bos) throws IOException {
+        byte[] data = new byte[4096];
+        int read = stream.read(data);
+        while (read != -1) {
+            bos.write(data, 0, read);
+            read = stream.read(data);
+        }
+        bos.flush();
+    }
 }
