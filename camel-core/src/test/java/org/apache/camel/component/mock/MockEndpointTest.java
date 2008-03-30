@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class MockEndpointTest extends ContextTestSupport {
 
     public void testAscendingMessagesPass() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectsAscending(header("counter").convertTo(Number.class));
 
         sendMessages(11, 12, 13, 14, 15);
@@ -34,7 +34,7 @@ public class MockEndpointTest extends ContextTestSupport {
     }
 
     public void testAscendingMessagesFail() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
         resultEndpoint.expectsAscending(header("counter").convertTo(Number.class));
 
         sendMessages(11, 12, 13, 15, 14);
@@ -43,7 +43,7 @@ public class MockEndpointTest extends ContextTestSupport {
     }
 
     public void testDescendingMessagesPass() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
         resultEndpoint.expectsDescending(header("counter").convertTo(Number.class));
 
         sendMessages(15, 14, 13, 12, 11);
@@ -52,7 +52,7 @@ public class MockEndpointTest extends ContextTestSupport {
     }
 
     public void testDescendingMessagesFail() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
         resultEndpoint.expectsDescending(header("counter").convertTo(Number.class));
 
         sendMessages(15, 14, 13, 11, 12);
@@ -61,7 +61,7 @@ public class MockEndpointTest extends ContextTestSupport {
     }
 
     public void testNoDuplicateMessagesPass() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
         resultEndpoint.expectsNoDuplicates(header("counter"));
 
         sendMessages(11, 12, 13, 14, 15);
@@ -70,7 +70,7 @@ public class MockEndpointTest extends ContextTestSupport {
     }
 
     public void testDuplicateMessagesFail() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
         resultEndpoint.expectsNoDuplicates(header("counter"));
 
         sendMessages(11, 12, 13, 14, 12);
@@ -78,24 +78,24 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.assertIsNotSatisfied();
     }
 
-    public void testExpetationsAfterMessagesArrivePass() throws Exception {
+    public void testExpectationsAfterMessagesArrivePass() throws Exception {
         sendMessages(11, 12, 13, 14, 12);
 
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
         resultEndpoint.expectedMessageCount(5);
         resultEndpoint.assertIsNotSatisfied();
     }
 
-    public void testExpetationsAfterMessagesArriveFail() throws Exception {
+    public void testExpectationsAfterMessagesArriveFail() throws Exception {
         sendMessages(11, 12, 13, 14, 12);
 
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(6);
         resultEndpoint.assertIsNotSatisfied();
     }
 
     public void testReset() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
         resultEndpoint.expectedMessageCount(2);
 
         sendMessages(11, 12);
@@ -110,11 +110,46 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    public void testExpectationOfHeader() throws InterruptedException {        
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.reset();
+        
+        // assert header & value are same
+        resultEndpoint.expectedHeaderReceived("header", "value");
+        sendHeader("header", "value");
+        resultEndpoint.assertIsSatisfied();
+        
+        resultEndpoint.reset();
+        
+        // assert failure when value is different
+        resultEndpoint.expectedHeaderReceived("header", "value1");
+        sendHeader("header", "value");
+        resultEndpoint.assertIsNotSatisfied();       
+
+        resultEndpoint.reset();
+
+        // assert failure when header name is different       
+        resultEndpoint.expectedHeaderReceived("header1", "value");
+        sendHeader("header", "value");
+        resultEndpoint.assertIsNotSatisfied();               
+        
+        resultEndpoint.reset();
+        
+        // assert failure when both header name & value are different
+        resultEndpoint.expectedHeaderReceived("header1", "value1");
+        sendHeader("header", "value");
+        resultEndpoint.assertIsNotSatisfied();                       
+    }
+    
     protected void sendMessages(int... counters) {
         for (int counter : counters) {
             template.sendBodyAndHeader("direct:a", "<message>" + counter + "</message>",
                     "counter", counter);
         }
+    }
+    
+    protected void sendHeader(String name, String value) {
+        template.sendBodyAndHeader("direct:a", "body", name, value);
     }
 
     protected RouteBuilder createRouteBuilder() {
