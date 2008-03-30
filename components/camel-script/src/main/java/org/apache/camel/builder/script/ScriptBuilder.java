@@ -125,9 +125,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     /**
-     * Creates a script builder for the named language and script
+     * Creates a script builder for the named language and script {@link Resource}
      * 
-     * @{link Resource}
      * @param language the language to use for the script
      * @param scriptResource the resource used to load the script
      * @return the builder
@@ -137,9 +136,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     /**
-     * Creates a script builder for the named language and script
-     * 
-     * @{link File}
+     * Creates a script builder for the named language and script {@link File}
+     *
      * @param language the language to use for the script
      * @param scriptFile the file used to load the script
      * @return the builder
@@ -149,9 +147,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     /**
-     * Creates a script builder for the named language and script
+     * Creates a script builder for the named language and script {@link URL}
      * 
-     * @{link URL}
      * @param language the language to use for the script
      * @param scriptURL the URL used to load the script
      * @return the builder
@@ -174,9 +171,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     /**
-     * Creates a script builder for the groovy script
-     * 
-     * @{link Resource}
+     * Creates a script builder for the groovy script {@link Resource}
+     *
      * @param scriptResource the resource used to load the script
      * @return the builder
      */
@@ -185,9 +181,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     /**
-     * Creates a script builder for the groovy script
+     * Creates a script builder for the groovy script {@link File}
      * 
-     * @{link File}
      * @param scriptFile the file used to load the script
      * @return the builder
      */
@@ -196,9 +191,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     /**
-     * Creates a script builder for the groovy script
+     * Creates a script builder for the groovy script {@link URL}
      * 
-     * @{link URL}
      * @param scriptURL the URL used to load the script
      * @return the builder
      */
@@ -231,9 +225,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     /**
-     * Creates a script builder for the JavaScript/ECMAScript script
-     * 
-     * @{link File}
+     * Creates a script builder for the JavaScript/ECMAScript script {@link File}
+     *
      * @param scriptFile the file used to load the script
      * @return the builder
      */
@@ -242,9 +235,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     /**
-     * Creates a script builder for the JavaScript/ECMAScript script
-     * 
-     * @{link URL}
+     * Creates a script builder for the JavaScript/ECMAScript script {@link URL}
+     *
      * @param scriptURL the URL used to load the script
      * @return the builder
      */
@@ -266,9 +258,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     /**
-     * Creates a script builder for the PHP script
-     * 
-     * @{link Resource}
+     * Creates a script builder for the PHP script {@link Resource}
+     *
      * @param scriptResource the resource used to load the script
      * @return the builder
      */
@@ -277,9 +268,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     /**
-     * Creates a script builder for the PHP script
-     * 
-     * @{link File}
+     * Creates a script builder for the PHP script {@link File}
+     *
      * @param scriptFile the file used to load the script
      * @return the builder
      */
@@ -288,9 +278,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     /**
-     * Creates a script builder for the PHP script
-     * 
-     * @{link URL}
+     * Creates a script builder for the PHP script {@link URL}
+     *
      * @param scriptURL the URL used to load the script
      * @return the builder
      */
@@ -312,9 +301,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     /**
-     * Creates a script builder for the Python script
-     * 
-     * @{link Resource}
+     * Creates a script builder for the Python script {@link Resource}
+     *
      * @param scriptResource the resource used to load the script
      * @return the builder
      */
@@ -323,9 +311,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     /**
-     * Creates a script builder for the Python script
-     * 
-     * @{link File}
+     * Creates a script builder for the Python script {@link File}
+     *
      * @param scriptFile the file used to load the script
      * @return the builder
      */
@@ -334,9 +321,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     /**
-     * Creates a script builder for the Python script
-     * 
-     * @{link URL}
+     * Creates a script builder for the Python script {@link URL}
+     *
      * @param scriptURL the URL used to load the script
      * @return the builder
      */
@@ -358,9 +344,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     /**
-     * Creates a script builder for the Ruby/JRuby script
-     * 
-     * @{link Resource}
+     * Creates a script builder for the Ruby/JRuby script {@link Resource}
+     *
      * @param scriptResource the resource used to load the script
      * @return the builder
      */
@@ -369,9 +354,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     /**
-     * Creates a script builder for the Ruby/JRuby script
-     * 
-     * @{link File}
+     * Creates a script builder for the Ruby/JRuby script {@link File}
+     *
      * @param scriptFile the file used to load the script
      * @return the builder
      */
@@ -380,9 +364,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     /**
-     * Creates a script builder for the Ruby/JRuby script
+     * Creates a script builder for the Ruby/JRuby script {@link URL}
      * 
-     * @{link URL}
      * @param scriptURL the URL used to load the script
      * @return the builder
      */

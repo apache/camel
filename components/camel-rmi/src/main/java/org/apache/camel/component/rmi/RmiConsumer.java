@@ -30,7 +30,7 @@ import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
- * A {@link Consumer} which uses RMI's {@see UnicastRemoteObject} to consume
+ * A {@link org.apache.camel.Consumer Consumer} which uses RMI's {@link UnicastRemoteObject} to consume
  * method invocations.
  * 
  * @version $Revision$

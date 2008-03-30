@@ -24,7 +24,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * Represents an {@ilnk Exchange} for working with Mail
+ * Represents an {@link Exchange} for working with Mail
  *
  * @version $Revision:520964 $
  */

@@ -24,7 +24,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * Represents an {@ilnk Exchange} for working with JMS messages while exposing the inbound and outbound JMS {@link Message}
+ * Represents an {@link Exchange} for working with JMS messages while exposing the inbound and outbound JMS {@link Message}
  * objects via {@link #getInMessage()} and {@link #getOutMessage()}
  *
  * @version $Revision:520964 $

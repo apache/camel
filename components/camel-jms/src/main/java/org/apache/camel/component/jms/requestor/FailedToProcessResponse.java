@@ -36,8 +36,6 @@ public class FailedToProcessResponse extends RuntimeCamelException {
 
     /**
      * The response message which caused the exception
-     *
-     * @return
      */
     public Message getResponse() {
         return response;

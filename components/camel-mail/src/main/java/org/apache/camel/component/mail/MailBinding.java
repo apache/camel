@@ -30,7 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.ObjectConverter;
 
 /**
- * A Strategy used to convert between a Camel {@Exchange} and {@Message} to and
+ * A Strategy used to convert between a Camel {@link Exchange} and {@link Message} to and
  * from a Mail {@link MimeMessage}
  * 
  * @version $Revision$
