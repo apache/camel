@@ -125,10 +125,10 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
     }
 
     /**
-     * Register a custom configuration strategy for new {@ilnk HttpClient} instances
+     * Register a custom configuration strategy for new {@link HttpClient} instances
      * created by producers or consumers such as to configure authentication mechanisms etc
      *
-     * @param httpClientConfigurer the strategy for configuring new {@ilnk HttpClient} instances
+     * @param httpClientConfigurer the strategy for configuring new {@link HttpClient} instances
      */
     public void setHttpClientConfigurer(HttpClientConfigurer httpClientConfigurer) {
         this.httpClientConfigurer = httpClientConfigurer;
