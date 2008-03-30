@@ -18,6 +18,7 @@ public class FromFtpToAsciiFileTest extends FtpRouteTest {
     }
 
     protected String createFtpUrl() {
+        port = "20013";
         return "ftp://admin@localhost:" + port + "/tmp3/camel?password=admin&binary=false";
     }
 
