@@ -101,7 +101,7 @@ public class NodeData {
             this.image = imagePrefix + "RecipientListIcon.png";
             this.nodeType = "Recipient List";
 	} else if (node instanceof RoutingSlipType) {            
-            this.image = imagePrefix + "RoutingSlipIcon.png";
+            this.image = imagePrefix + "RoutingTableIcon.png";
             this.nodeType = "Routing Slip";
             this.url = "http://activemq.apache.org/camel/routing-slip.html";
             this.tooltop = ((RoutingSlipType) node).getHeaderName();
