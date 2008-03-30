@@ -66,7 +66,7 @@ public class CamelDestinationTest extends CamelTestSupport {
         endpointInfo.setName(testEndpointQName);
         CamelDestination destination = new CamelDestination(null, bus, null, endpointInfo);
 
-        System.out.println("get the destination bean name" + destination.getBeanName());
+        assertEquals("{http://activemq.apache.org/camel-test}port.camel-destination", destination.getBeanName());
         CamelContext context = destination.getCamelContext();
 
         assertNotNull("The camel context which get from camel destination is not null", context);

@@ -58,8 +58,6 @@ public abstract class AbstractMessageInInterceptor<T extends Message>
         return Boolean.TRUE.equals(message.get(Message.REQUESTOR_ROLE));
     }
 
-   
-
     /**
      * Infer the OperationInfo from the XML Document and get the list of 
      * parts as DOM Element
@@ -127,8 +125,6 @@ public abstract class AbstractMessageInInterceptor<T extends Message>
     /**
      * This method is called to convert a incoming message format e.g Stax Stream
      * to a DOM Tree. Default Implementation converts Stax Stream to a DOM
-     * @param inMessage
-     * @param Document
      */
     protected Document createDOMMessage(T message) {
         Document doc = null;
@@ -148,8 +144,6 @@ public abstract class AbstractMessageInInterceptor<T extends Message>
 
     /**
      * This method is called on incoming to check if it is a fault.
-     * @param inMessage
-     * @param boolean
      */
     protected abstract boolean isFaultMessage(T message);
 
@@ -157,19 +151,13 @@ public abstract class AbstractMessageInInterceptor<T extends Message>
      * This method is called when the routing message interceptor has received a inbound message
      * It infers the binding operation by matching the root Element with a binding operation
      * from the service model.
-     * @param inMessage
-     * @param resultPayload
      */
     protected abstract BindingOperationInfo getBindingOperation(T inMessage, Document document);
 
     /**
      * This method is called when the routing message interceptor has intercepted a inbound
      * message as a DOM Content.  It retreives the message parts as DOM Element
-     * and returns a List<Element>
-     * @param inMessage
-     * @param rootElement
-     * @param bindingMessageInfo
-     * @return List<Element>
+     * and returns a List of Element.
      */
     protected abstract List<Element> getPartList(T inMessage, Element rootElement, BindingMessageInfo boi);
 
@@ -177,8 +165,6 @@ public abstract class AbstractMessageInInterceptor<T extends Message>
      * This method is called when the routing message interceptor has intercepted a inbound
      * message as a DOM Content.  It retreives the header parts as DOM Element
      * and returns a Element.
-     * @param inMessage
-     * @return Element
      */
     protected abstract Element getHeader(T inMessage);
 
