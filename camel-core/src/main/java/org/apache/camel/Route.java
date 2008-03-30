@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * A <a href="http://activemq.apache.org/camel/routes.html">Route</a>
  * defines the processing used on an inbound message exchange
- * from a specific {@see Endpoint} within a {@link CamelContext}
+ * from a specific {@link Endpoint} within a {@link CamelContext}
  *
  * @version $Revision$
  */
@@ -63,8 +63,6 @@ public class Route<E extends Exchange> {
     /**
      * This property map is used to associate information about
      * the route.
-     *
-     * @return
      */
     public Map<String, Object> getProperties() {
         return properties;

@@ -66,9 +66,9 @@ public class CamelNamingStrategy {
     }
 
     /**
-     * Implements the naming strategy for a {@see CamelContext}.
-     * The convention used for a {@see CamelContext} ObjectName is
-     * "<domain>:context=<context>,name=camel".
+     * Implements the naming strategy for a {@link CamelContext}.
+     * The convention used for a {@link CamelContext} ObjectName is:
+     * <tt>&lt;domain&gt;:context=&lt;context&gt;,name=camel</tt>
      *
      * @param context the camel context
      * @return generated ObjectName
@@ -83,9 +83,9 @@ public class CamelNamingStrategy {
     }
 
     /**
-     * Implements the naming strategy for a {@see ManagedEndpoint}.
-     * The convention used for a {@see ManagedEndpoint} ObjectName is
-     * "<domain>:context=<context>,type=Endpoints,endpoint=[urlPrefix]localPart".
+     * Implements the naming strategy for a {@link ManagedEndpoint}.
+     * The convention used for a {@link ManagedEndpoint} ObjectName is:
+     * <tt>&lt;domain&gt;:context=&lt;context&gt;,type=Services,endpoint=[urlPrefix]localPart</tt>
      *
      * @param mbean
      * @return generated ObjectName
@@ -104,10 +104,11 @@ public class CamelNamingStrategy {
     }
 
     /**
-     * Implements the naming strategy for a {@see ServiceSpport Service}.
-     * The convention used for a {@see Service} ObjectName is
-     * "<domain>:context=<context>,type=Services,endpoint=[urlPrefix]localPart".
+     * Implements the naming strategy for a {@link org.apache.camel.impl.ServiceSupport Service}.
+     * The convention used for a {@link org.apache.camel.Service Service} ObjectName is
+     * <tt>&lt;domain&gt;:context=&lt;context&gt;,type=Services,endpoint=[urlPrefix]localPart</tt>
      *
+     * @param context the camel context
      * @param mbean
      * @return generated ObjectName
      * @throws MalformedObjectNameException
@@ -123,9 +124,9 @@ public class CamelNamingStrategy {
 
 
     /**
-     * Implements the naming strategy for a {@see ManagedRoute}.
-     * The convention used for a {@see ManagedEndpoint} ObjectName is
-     * "<domain>:context=<context>,type=Routes,endpoint=[urlPrefix]localPart".
+     * Implements the naming strategy for a {@link ManagedRoute}.
+     * The convention used for a {@link ManagedEndpoint} ObjectName is:
+     * <tt>&lt;domain&gt;:context=&lt;context&gt;,type=Routes,endpoint=[urlPrefix]localPart</tt>
      *
      * @param mbean
      * @return generated ObjectName
@@ -153,12 +154,13 @@ public class CamelNamingStrategy {
     }
 
     /**
-     * Implements the naming strategy for a {@see PerformanceCounter}.
-     * The convention used for a {@see ManagedEndpoint} ObjectName is
-     * "<domain>:context=<context>,type=Routes,endpoint=[urlPrefix]localPart".
+     * Implements the naming strategy for a {@link PerformanceCounter}.
+     * The convention used for a {@link ManagedEndpoint} ObjectName is:
+     * <tt>&lt;domain&gt;:context=&lt;context&gt;,type=Routes,endpoint=[urlPrefix]localPart</tt>
+     *
+     * @param context the camel context
      * @param mbean
      * @param routeContext
-     *
      * @return generated ObjectName
      * @throws MalformedObjectNameException
      */

@@ -20,7 +20,7 @@ import javax.management.Notification;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
- * A {@link Message} for a JMX Notification
+ * A {@link org.apache.camel.Message Message} for a JMX Notification
  * 
  * @version $Revision$
  */

@@ -25,17 +25,13 @@ import javax.xml.bind.annotation.XmlElementRef;
  */
 public interface RouteContainer {
     /**
-     * A list of routes
-     *
-     * @return
+     * Returns the routes
      */
     @XmlElementRef
     List<RouteType> getRoutes();
 
     /**
      * Sets the routes to use
-     *
-     * @param routes
      */
     void setRoutes(List<RouteType> routes);
 }

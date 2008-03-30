@@ -62,7 +62,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
      *
      * @param endpointUri the endpoint URI to send the exchange to
      * @param processor   the transformer used to populate the new exchange
-     * @{link Processor} to populate the exchange
+     * {@link Processor} to populate the exchange
      */
     public E send(String endpointUri, Processor processor) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
@@ -74,7 +74,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
      *
      * @param endpointUri the endpoint URI to send the exchange to
      * @param processor   the transformer used to populate the new exchange
-     * @{link Processor} to populate the exchange.  The callback
+     * {@link Processor} to populate the exchange.  The callback
      * will be called when the exchange is completed.
      */
     public E send(String endpointUri, Processor processor, AsyncCallback callback) {
@@ -89,7 +89,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
      * @param pattern     the message {@link ExchangePattern} such as
      *                    {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
      * @param processor   the transformer used to populate the new exchange
-     * @{link Processor} to populate the exchange
+     * {@link Processor} to populate the exchange
      */
     public E send(String endpointUri, ExchangePattern pattern, Processor processor) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
@@ -113,7 +113,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
      *
      * @param endpoint  the endpoint to send the exchange to
      * @param processor the transformer used to populate the new exchange
-     * @{link Processor} to populate the exchange
+     * {@link Processor} to populate the exchange
      */
     public E send(Endpoint<E> endpoint, Processor processor) {
         return producerCache.send(endpoint, processor);
@@ -124,7 +124,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
      *
      * @param endpoint  the endpoint to send the exchange to
      * @param processor the transformer used to populate the new exchange
-     * @{link Processor} to populate the exchange.  The callback
+     * {@link Processor} to populate the exchange.  The callback
      * will be called when the exchange is completed.
      */
     public E send(Endpoint<E> endpoint, Processor processor, AsyncCallback callback) {
@@ -138,7 +138,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
      * @param pattern   the message {@link ExchangePattern} such as
      *                  {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
      * @param processor the transformer used to populate the new exchange
-     * @{link Processor} to populate the exchange
+     * {@link Processor} to populate the exchange
      */
     public E send(Endpoint<E> endpoint, ExchangePattern pattern, Processor processor) {
         return producerCache.send(endpoint, pattern, processor);
@@ -392,7 +392,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
      * Sends an exchange to the default endpoint using a supplied
      *
      * @param processor the transformer used to populate the new exchange
-     * @{link Processor} to populate the exchange
+     * {@link Processor} to populate the exchange
      */
     public E send(Processor processor) {
         return send(getMandatoryDefaultEndpoint(), processor);

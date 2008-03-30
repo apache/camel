@@ -56,11 +56,9 @@ public class DefaultConsumer<E extends Exchange> extends ServiceSupport implemen
     }
 
     /**
-     * Provides an {@see AsyncProcessor} interface to the configured
+     * Provides an {@link AsyncProcessor} interface to the configured
      * processor on the consumer.  If the processor does not implement
      * the interface, it will be adapted so that it does.  
-     * 
-     * @return
      */
     public AsyncProcessor getAsyncProcessor() {
         if (asyncProcessor == null) {

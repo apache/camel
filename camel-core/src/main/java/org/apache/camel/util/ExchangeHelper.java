@@ -253,7 +253,6 @@ public final class ExchangeHelper {
      *
      * @param exchange the exchange to make available
      * @param map      the map to populate
-     * @return a Map populated with the require dvariables
      */
     public static void populateVariableMap(Exchange exchange, Map map) {
         map.put("exchange", exchange);

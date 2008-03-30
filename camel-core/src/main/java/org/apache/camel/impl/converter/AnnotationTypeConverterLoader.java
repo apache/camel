@@ -67,11 +67,10 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
     /**
      * Finds the names of the packages to search for on the classpath looking
-     * for text files on the classpath at the
+     * for text files on the classpath at the {@link #META_INF_SERVICES} location.
      *
      * @return a collection of packages to search for
-     * @throws IOException
-     * @{link #META_INF_SERVICES} location
+     * @throws IOException is thrown for IO relatede errors
      */
     protected String[] findPackageNames() throws IOException {
         Set<String> packages = new HashSet<String>();

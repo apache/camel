@@ -102,9 +102,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.registry = registry;
     }
 
-    /**
-     * Gets the name of the this context.
-     */
     public String getName() {
         return name;
     }
@@ -116,9 +113,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.name = name;
     }
 
-    /**
-     * Adds a component to the container.
-     */
     public void addComponent(String componentName, final Component component) {
         if (component == null) {
             throw new IllegalArgumentException("Component cannot be null");
@@ -167,28 +161,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
-    /**
-     * Removes a previously added component.
-     *
-     * @param componentName
-     * @return the previously added component or null if it had not been
-     *         previously added.
-     */
     public Component removeComponent(String componentName) {
         synchronized (components) {
             return components.remove(componentName);
         }
     }
 
-    /**
-     * Gets the a previously added component by name or lazily creates the
-     * component using the factory Callback.
-     *
-     * @param componentName
-     * @param factory used to create a new component instance if the component
-     *                was not previously added.
-     * @return
-     */
     public Component getOrCreateComponent(String componentName, Callable<Component> factory) {
         synchronized (components) {
             Component component = components.get(componentName);
@@ -239,9 +217,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return oldEndpoint;
     }
 
-    /**
-     * Resolves the given URI to an endpoint
-     */
     public Endpoint getEndpoint(String uri) {
         Endpoint answer;
         synchronized (endpoints) {
@@ -352,9 +327,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     // Helper methods
     // -----------------------------------------------------------------------
 
-    /**
-     * Resolves a language for creating expressions
-     */
     public Language resolveLanguage(String language) {
         return getLanguageResolver().resolveLanguage(language, this);
     }

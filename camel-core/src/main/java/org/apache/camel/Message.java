@@ -28,12 +28,14 @@ import java.util.Map;
 public interface Message {
 
     /**
+     * Returns the id of the message
+     *
      * @return the id of the message
      */
     String getMessageId();
 
     /**
-     * set the id of the message
+     * Sets the id of the message
      *
      * @param messageId
      */
@@ -41,15 +43,13 @@ public interface Message {
 
     /**
      * Returns the exchange this message is related to
-     *
-     * @return
      */
     Exchange getExchange();
 
     /**
      * Accesses a specific header
      *
-     * @param name
+     * @param name  name of header
      * @return object header associated with the name
      */
     Object getHeader(String name);

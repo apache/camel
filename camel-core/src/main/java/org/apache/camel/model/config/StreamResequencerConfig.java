@@ -82,10 +82,8 @@ public class StreamResequencerConfig {
      * values for <code>capacity</code> and <code>timeout</code>. Elements
      * of the sequence are compared using the {@link DefaultExchangeComparator}.
      * 
-     * @param capacity
-     *            capacity of the resequencer's inbound queue.
-     * @param timeout.
-     *            minimum time to wait for missing elements (messages).
+     * @param capacity   capacity of the resequencer's inbound queue.
+     * @param timeout    minimum time to wait for missing elements (messages).
      */
     public StreamResequencerConfig(int capacity, long timeout) {
         this(capacity, timeout, new DefaultExchangeComparator());
@@ -97,10 +95,8 @@ public class StreamResequencerConfig {
      * of the sequence are compared with the given
      * {@link ExpressionResultComparator}.
      * 
-     * @param capacity
-     *            capacity of the resequencer's inbound queue.
-     * @param timeout.
-     *            minimum time to wait for missing elements (messages).
+     * @param capacity   capacity of the resequencer's inbound queue.
+     * @param timeout    minimum time to wait for missing elements (messages).
      */
     public StreamResequencerConfig(int capacity, long timeout, ExpressionResultComparator<Exchange> comparator) {
         this.capacity = capacity;

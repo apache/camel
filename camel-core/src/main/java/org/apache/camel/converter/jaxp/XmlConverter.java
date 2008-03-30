@@ -418,13 +418,6 @@ public class XmlConverter {
 
     /**
      * Create a DOM element from the given source.
-     *
-     * @param source
-     * @return
-     * @throws TransformerException
-     * @throws ParserConfigurationException
-     * @throws IOException
-     * @throws SAXException
      */
     @Converter
     public Element toDOMElement(Source source) throws TransformerException, ParserConfigurationException, IOException, SAXException {
@@ -436,10 +429,6 @@ public class XmlConverter {
      * Create a DOM element from the DOM node.
      * Simply cast if the node is an Element, or
      * return the root element if it is a Document.
-     *
-     * @param node
-     * @return
-     * @throws TransformerException
      */
     @Converter
     public Element toDOMElement(Node node) throws TransformerException {
@@ -528,13 +517,6 @@ public class XmlConverter {
 
     /**
      * Create a DOM document from the given source.
-     *
-     * @param source
-     * @return
-     * @throws TransformerException
-     * @throws ParserConfigurationException
-     * @throws IOException
-     * @throws SAXException
      */
     @Converter
     public Document toDOMDocument(Source source) throws TransformerException, ParserConfigurationException, IOException, SAXException {
@@ -548,11 +530,6 @@ public class XmlConverter {
      * if the node is an root element, retrieve its
      * owner element or create a new document and import
      * the node.
-     *
-     * @param node
-     * @return
-     * @throws ParserConfigurationException
-     * @throws TransformerException
      */
     @Converter
     public Document toDOMDocument(Node node) throws ParserConfigurationException, TransformerException {

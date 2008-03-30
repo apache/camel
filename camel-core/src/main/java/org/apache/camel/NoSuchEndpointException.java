@@ -19,8 +19,9 @@ package org.apache.camel;
 
 /**
  * A runtime exception thrown if a routing processor such as a
- * {@link RecipientList} is unable to resolve an {@link Endpoint} from a URI.
- * 
+ * {@link org.apache.camel.processor.RecipientList RecipientList} is unable to resolve an
+ * {@link Endpoint} from a URI.
+ *
  * @version $Revision$
  */
 public class NoSuchEndpointException extends RuntimeCamelException {

@@ -73,7 +73,7 @@ public interface CamelContext extends Service {
      *
      * @param componentName the name of the component
      * @param factory       used to create a new component instance if the component was not previously added.
-     * @return
+     * @return the component
      */
     Component getOrCreateComponent(String componentName, Callable<Component> factory);
 
@@ -81,16 +81,16 @@ public interface CamelContext extends Service {
     //-----------------------------------------------------------------------
 
     /**
-     * Resolves the given URI to an {@see Endpoint}.  If the URI has a singleton endpoint
-     * registered, then the singleton is returned.  Otherwise, a new {@see Endpoint} is created
+     * Resolves the given URI to an {@link Endpoint}.  If the URI has a singleton endpoint
+     * registered, then the singleton is returned.  Otherwise, a new {@link Endpoint} is created
      * and if the endpoint is a singleton it is registered as a singleton endpoint.
      */
     Endpoint getEndpoint(String uri);
 
     /**
-     * Resolves the given URI to an {@see Endpoint} of the specified type.
+     * Resolves the given URI to an {@link Endpoint} of the specified type.
      * If the URI has a singleton endpoint registered, then the singleton is returned.
-     * Otherwise, a new {@see Endpoint} is created and if the endpoint is a
+     * Otherwise, a new {@link Endpoint} is created and if the endpoint is a
      * singleton it is registered as a singleton endpoint.
      */
     <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType);
@@ -131,8 +131,6 @@ public interface CamelContext extends Service {
 
     /**
      * Returns the current routes in this context
-     *
-     * @return the current routes in this context
      */
     List<Route> getRoutes();
 
@@ -170,7 +168,6 @@ public interface CamelContext extends Service {
 
     /**
      * Returns the converter of exchanges from one type to another
-     * @return
      */
     ExchangeConverter getExchangeConverter();
 

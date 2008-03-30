@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * A default implementation of {@link ExceptionHandler} which uses a {@link Logger} to
- * log to an arbitrary {@link Log} with some {@link LoggingLevel}
+ * log to an arbitrary {@link org.apache.commons.logging.Log Log} with some {@link LoggingLevel}
  *
  * @version $Revision$
  */
