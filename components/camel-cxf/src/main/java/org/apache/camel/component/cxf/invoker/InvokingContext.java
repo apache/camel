@@ -27,16 +27,12 @@ public interface InvokingContext {
      * This method is called when the router is preparing an outbound message
      * (orignated from the router's client) to be sent to the target CXF server.
      * It sets the content in the given (out) message object.
-     * @param content
      */
     void setRequestOutMessageContent(Message message, Map<Class, Object> contents);
 
     /**
      * This method is call when the CxfClient receives a response from a CXF server and needs
      * to extract the response object from the message.
-     * @param exchange
-     * @param responseContext
-     * @return response object
      */
     Object getResponseObject(Exchange exchange, Map<String, Object> responseContext);
 
@@ -44,8 +40,6 @@ public interface InvokingContext {
      * This method is called when the routing interceptor has received a response message
      * from the target CXF server and needs to set the response in the outgoing message
      * that is to be sent to the client.
-     * @param outMessage
-     * @param resultPayload
      */
     void setResponseContent(Message outMessage, Object resultPayload);
 
@@ -53,8 +47,6 @@ public interface InvokingContext {
      * This method is called when the routing interceptor has intercepted a message from
      * the client and needs to extract the request content from the message.  It retreives
      * and receives the request content from the incoming message.
-     * @param inMessage
-     * @return the request contents from client
      */
     Map<Class, Object> getRequestContent(Message inMessage);
 

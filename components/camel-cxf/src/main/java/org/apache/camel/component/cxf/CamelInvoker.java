@@ -24,7 +24,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.camel.ExchangePattern;
-import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.MethodDispatcher;
 import org.apache.cxf.helpers.CastUtils;
@@ -49,13 +48,12 @@ public class CamelInvoker implements Invoker, MessageInvoker {
     * This method is called when the incoming message is to
     * be passed into the camel processor. The return value is the response
     * from the processor
-    * @param inMessage
     */
     public void invoke(Exchange exchange) {
         Message inMessage = exchange.getInMessage();
 
         //TODO set the request context here
-        CxfEndpoint endpoint = (CxfEndpoint) cxfConsumer.getEndpoint();
+        CxfEndpoint endpoint = cxfConsumer.getEndpoint();
         CxfExchange cxfExchange = endpoint.createExchange(inMessage);
         try {
             cxfConsumer.getProcessor().process(cxfExchange);
@@ -124,22 +122,16 @@ public class CamelInvoker implements Invoker, MessageInvoker {
      * This method is called when the incoming pojo or WebServiceProvider invocation is called
      * from the service invocation interceptor. The return value is the response
      * from the processor
-     * @param inMessage
-     * @return outMessage
      */
     public Object invoke(Exchange exchange, Object o) {
-
-        CxfEndpoint endpoint = (CxfEndpoint) cxfConsumer.getEndpoint();
+        CxfEndpoint endpoint = cxfConsumer.getEndpoint();
 
         Object params = null;
-
-
         if (o instanceof List) {
             params = CastUtils.cast((List<?>)o);
         } else if (o != null) {
             params = new MessageContentsList(o);
         }
-
 
         CxfExchange cxfExchange = endpoint.createExchange(exchange.getInMessage());
 

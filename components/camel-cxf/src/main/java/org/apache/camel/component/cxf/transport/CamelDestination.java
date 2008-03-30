@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelTemplate;
 import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfConstants;
@@ -56,7 +57,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     Consumer consumer;
     String camelDestinationUri;
     private CamelTemplate<Exchange> camelTemplate;
-    private org.apache.camel.Endpoint distinationEndpoint;
+    private Endpoint distinationEndpoint;
 
     public CamelDestination(CamelContext camelContext, Bus bus, ConduitInitiator ci, EndpointInfo info) throws IOException {
         super(bus, getTargetReference(info, bus), info);
@@ -92,7 +93,8 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             consumer.start();
 
         } catch (Exception ex) {
-            getLogger().log(Level.SEVERE, "Camel connect failed with EException : ", ex);
+            // TODO: Is it okay just to log severe errors such as this?
+            getLogger().log(Level.SEVERE, "Camel connect failed with Exception : ", ex);
         }
     }
 
@@ -100,8 +102,8 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         try {
             consumer.stop();
         } catch (Exception e) {
-            // TODO need to handle the exception somewhere
-            e.printStackTrace();
+            // TODO: Is it okay just to log severe errors such as this?
+            getLogger().log(Level.SEVERE, "Camel stop failed with Exception : ", e);
         }
     }
 
@@ -217,8 +219,8 @@ public class CamelDestination extends AbstractDestination implements Configurabl
      * Mark message as a partial message.
      *
      * @param partialResponse the partial response message
-     * @param the decoupled target
-     * @return true iff partial responses are supported
+     * @param decoupledTarget the decoupled target
+     * @return <tt>true</tt> if partial responses is supported
      */
     protected boolean markPartialResponse(Message partialResponse,
                                        EndpointReferenceType decoupledTarget) {
