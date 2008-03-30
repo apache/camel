@@ -29,6 +29,7 @@ import org.apache.camel.spi.UnitOfWork;
  * @version $Revision$
  */
 public interface Exchange {
+    
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
      *
@@ -98,7 +99,7 @@ public interface Exchange {
      * Returns the outbound message, lazily creating one if one has not already
      * been associated with this exchange. If you want to inspect this property
      * but not force lazy creation then invoke the {@link #getOut(boolean)}
-     * method passing in null
+     * method passing in <tt>false</tt>
      *
      * @return the response
      */
@@ -130,7 +131,9 @@ public interface Exchange {
      * Returns the fault message; optionally lazily creating one if one has
      * not been associated with this exchange
      *
-     * @return the response
+     * @param lazyCreate <tt>true</tt> will lazy create the fault message
+     *
+     * @return the fault
      */
     Message getFault(boolean lazyCreate);
 
@@ -144,7 +147,7 @@ public interface Exchange {
     /**
      * Sets the exception associated with this exchange
      *
-     * @param e
+     * @param e  the caused exception
      */
     void setException(Throwable e);
 
@@ -166,8 +169,6 @@ public interface Exchange {
 
     /**
      * Creates a new exchange instance with empty messages, headers and properties
-     *
-     * @return
      */
     Exchange newInstance();
 
@@ -179,9 +180,8 @@ public interface Exchange {
 
     /**
      * Copies the data into this exchange from the given exchange
-     * <p/>
-     * #param source is the source from which headers and messages will be
-     * copied
+     * 
+     * @param source is the source from which headers and messages will be copied
      */
     void copyFrom(Exchange source);
 

@@ -33,7 +33,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * Sends an exchange to the default endpoint using a supplied
      *
      * @param processor the transformer used to populate the new exchange
-     * @{link Processor} to populate the exchange
+     * {@link Processor} to populate the exchange
      */
     E send(Processor processor);
 
@@ -81,7 +81,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      *
      * @param endpointUri the endpoint URI to send the exchange to
      * @param processor   the transformer used to populate the new exchange
-     * @{link Processor} to populate the exchange
+     * {@link Processor} to populate the exchange
      */
     E send(String endpointUri, Processor processor);
 
@@ -92,7 +92,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * @param pattern     the message {@link ExchangePattern} such as
      *                    {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
      * @param processor   the transformer used to populate the new exchange
-     * @{link Processor} to populate the exchange
+     * {@link Processor} to populate the exchange
      */
     E send(String endpointUri, ExchangePattern pattern, Processor processor);
 
@@ -109,7 +109,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      *
      * @param endpoint  the endpoint to send the exchange to
      * @param processor the transformer used to populate the new exchange
-     * @{link Processor} to populate the exchange
+     * {@link Processor} to populate the exchange
      */
     E send(Endpoint<E> endpoint, Processor processor);
 
@@ -120,7 +120,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * @param pattern   the message {@link ExchangePattern} such as
      *                  {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
      * @param processor the transformer used to populate the new exchange
-     * @{link Processor} to populate the exchange
+     * {@link Processor} to populate the exchange
      */
     E send(Endpoint<E> endpoint, ExchangePattern pattern, Processor processor);
 

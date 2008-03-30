@@ -206,9 +206,7 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
 
     /**
      * Allows derived classes to set a lazily created expressionType instance
-     * such as if using the {@link ExpressionClause#
-     *
-     * @param expressionType
+     * such as if using the {@link ExpressionClause}
      */
     protected void setExpressionType(ExpressionType expressionType) {
         this.expressionType = expressionType;

@@ -45,10 +45,6 @@ public abstract class ErrorHandlerSupport extends ServiceSupport implements Erro
 
     /**
      * Attempts to invoke the handler for this particular exception if one is available
-     *
-     * @param exchange
-     * @param exception
-     * @return
      */
     protected boolean customProcessorForException(Exchange exchange, Throwable exception) throws Exception {
         ExceptionType policy = getExceptionPolicy(exchange, exception);

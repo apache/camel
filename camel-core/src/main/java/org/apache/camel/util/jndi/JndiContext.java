@@ -146,11 +146,6 @@ public class JndiContext implements Context, Serializable {
      * from the next context, plus the context it just created (if it in fact
      * created it). (the names are suitably extended by the segment originally
      * lopped off).
-     *
-     * @param name
-     * @param value
-     * @return
-     * @throws javax.naming.NamingException
      */
     protected Map internalBind(String name, Object value) throws NamingException {
         assert name != null && name.length() > 0;

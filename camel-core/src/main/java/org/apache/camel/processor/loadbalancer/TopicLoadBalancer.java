@@ -38,10 +38,11 @@ public class TopicLoadBalancer extends LoadBalancerSupport {
 
     /**
      * Strategy method to copy the exchange before sending to another endpoint.
-     * Derived classes such as the {@link Pipeline} will not clone the exchange
+     * Derived classes such as the {@link org.apache.camel.processor.Pipeline Pipeline}
+     * will not clone the exchange
      * 
      * @param processor the processor that will send the exchange
-     * @param exchange
+     * @param exchange  the exchange
      * @return the current exchange if no copying is required such as for a
      *         pipeline otherwise a new copy of the exchange is returned.
      */

@@ -89,8 +89,6 @@ public abstract class MessageSupport implements Message {
 
     /**
      * Returns a new instance
-     * 
-     * @return
      */
     public abstract Message newInstance();
 

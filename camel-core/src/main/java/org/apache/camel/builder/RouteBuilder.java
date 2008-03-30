@@ -38,9 +38,7 @@ import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 
 /**
  * A <a href="http://activemq.apache.org/camel/dsl.html">Java DSL</a> which is
- * used to build {@link Route} instances in a
- *
- * @{link CamelContext} for smart routing.
+ * used to build {@link Route} instances in a {@link CamelContext} for smart routing.
  *
  * @version $Revision$
  */
@@ -121,8 +119,6 @@ public abstract class RouteBuilder extends BuilderSupport {
     /**
      * Adds a route for an interceptor; use the {@link ProcessorType#proceed()} method
      * to continue processing the underying route being intercepted.
-     *
-     * @return
      */
     public InterceptType intercept() {
         return routeCollection.intercept();

@@ -72,7 +72,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
 
     /**
      * Sends an exchange to an endpoint using a supplied
-     * @{link Processor} to populate the exchange
+     * {@link Processor} to populate the exchange
      *
      * @param endpoint the endpoint to send the exchange to
      * @param processor the transformer used to populate the new exchange
@@ -89,7 +89,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
 
     /**
      * Sends an exchange to an endpoint using a supplied
-     * @{link Processor} to populate the exchange.  The callback
+     * {@link Processor} to populate the exchange.  The callback
      * will be called when the exchange is completed.
      *
      * @param endpoint the endpoint to send the exchange to
@@ -118,7 +118,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
 
     /**
      * Sends an exchange to an endpoint using a supplied
-     * @{link Processor} to populate the exchange
+     * {@link Processor} to populate the exchange
      *
      * @param endpoint the endpoint to send the exchange to
      * @param pattern the message {@link ExchangePattern} such as

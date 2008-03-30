@@ -46,10 +46,6 @@ public final class CamelContextHelper {
     /**
      * Returns the mandatory endpoint for the given URI or the
      * {@link org.apache.camel.NoSuchEndpointException} is thrown
-     *
-     * @param camelContext
-     * @param uri
-     * @return
      */
     public static Endpoint getMandatoryEndpoint(CamelContext camelContext, String uri)
         throws NoSuchEndpointException {
@@ -147,10 +143,6 @@ public final class CamelContextHelper {
 
     /**
      * Resolves the given language name into a {@link Language} or throws an exception if it could not be converted
-     *
-     * @param camelContext
-     * @param languageName
-     * @return
      */
     public static Language resolveMandatoryLanguage(CamelContext camelContext, String languageName) {
         notNull(camelContext, "camelContext");

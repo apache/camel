@@ -17,7 +17,7 @@
 package org.apache.camel;
 
 /**
- * An exception caused by a specific message {@ilnk Exchange}
+ * An exception caused by a specific message {@link Exchange}
  *
  * @version $Revision$
  */
@@ -37,8 +37,6 @@ public class CamelExchangeException extends CamelException {
 
     /**
      * Returns the exchange which caused the exception
-     *
-     * @return the exchange which caused the exception
      */
     public Exchange getExchange() {
         return exchange;

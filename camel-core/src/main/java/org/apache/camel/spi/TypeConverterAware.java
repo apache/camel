@@ -22,7 +22,8 @@ import org.apache.camel.TypeConverter;
  * An interface for an object which is interested in being injected with the root {@link TypeConverter}
  * such as for implementing a fallback type converter
  *
- * @see DefaultTypeConverter#addFallbackConverter(TypeConverter) 
+ * @see org.apache.camel.impl.converter.DefaultTypeConverter#addFallbackConverter(TypeConverter)
+ *         DefaultTypeConverter.addFallbackConverter
  * @version $Revision$
  */
 public interface TypeConverterAware {

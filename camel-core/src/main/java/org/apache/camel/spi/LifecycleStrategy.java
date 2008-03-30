@@ -27,27 +27,27 @@ import org.apache.camel.impl.RouteContext;
 
 public interface LifecycleStrategy {
     /**
-     * Notification on adding a {@see CamelContext}.
+     * Notification on adding a {@link CamelContext}.
      */
     void onContextCreate(CamelContext context);
 
     /**
-     * Notification on adding an {@see Endpoint}.
+     * Notification on adding an {@link Endpoint}.
      */
     void onEndpointAdd(Endpoint<? extends Exchange> endpoint);
 
     /**
-     * Notification on adding a {@see Service}.
+     * Notification on adding a {@link Service}.
      */
     void onServiceAdd(CamelContext context, Service service);
 
     /**
-     * Notification on adding {@see Route}(s).
+     * Notification on adding {@link Route}(s).
      */
     void onRoutesAdd(Collection<Route> routes);
 
     /**
-     * Notification on adding {@see RouteContext}(s).
+     * Notification on adding {@link RouteContext}(s).
      *
      * @param routeContext
      */

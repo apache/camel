@@ -172,14 +172,14 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * interfering with each other.
      * @param aggregationStrategy the strategy used to aggregate responses for
      *          every part
-     * @param pralleProcessing if is true camel will fork thread to call the endpoint producer
+     * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @return the multicast type
      */
-    public MulticastType multicast(AggregationStrategy aggregationStrategy, boolean paralleProcessing) {
+    public MulticastType multicast(AggregationStrategy aggregationStrategy, boolean parallelProcessing) {
         MulticastType answer = new MulticastType();
         addOutput(answer);
         answer.setAggregationStrategy(aggregationStrategy);
-        answer.setParallelProcessing(true);
+        answer.setParallelProcessing(parallelProcessing);
         return answer;
     }
 
@@ -391,8 +391,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * href="http://activemq.apache.org/camel/routing-slip.html">Routing
      * Slip</a> pattern.
      *
-     * @param header is the header that the {@link RoutingSlip} class will
-     * look in for the list of URIs to route the message to.
+     * @param header is the header that the {@link org.apache.camel.processor.RoutingSlip RoutingSlip}
+     * class will look in for the list of URIs to route the message to.
      * @param uriDelimiter is the delimiter that will be used to split up
      * the list of URIs in the routing slip.
      */
@@ -407,8 +407,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * href="http://activemq.apache.org/camel/routing-slip.html">Routing
      * Slip</a> pattern.
      *
-     * @param header is the header that the {@link RoutingSlip} class will
-     * look in for the list of URIs to route the message to. The list of URIs
+     * @param header is the header that the {@link org.apache.camel.processor.RoutingSlip RoutingSlip}
+     * class will look in for the list of URIs to route the message to. The list of URIs
      * will be split based on the default delimiter 
      * {@link RoutingSlipType#DEFAULT_DELIMITER}.
      */
@@ -569,19 +569,15 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
      * pattern where a batch of messages are processed (up to a maximum amount
      * or until some timeout is reached) and messages for the same correlation
-     * key are combined together using some kind of
-     * {@link AggregationStrategy ) (by default the latest message is used) to compress many message exchanges
-     * into a smaller number of exchanges. <p/> A good example of this is stock
-     * market data; you may be receiving 30,000 messages/second and you may want
-     * to throttle it right down so that multiple messages for the same stock
-     * are combined (or just the latest message is used and older prices are
-     * discarded). Another idea is to combine line item messages together into a
-     * single invoice message.
-     *
-     * @param correlationExpression the expression used to calculate the
-     *                              correlation key. For a JMS message this could be the
-     *                              expression <code>header("JMSDestination")</code> or
-     *                              <code>header("JMSCorrelationID")</code>
+     * key are combined together using some kind of {@link AggregationStrategy}
+     * (by default the latest message is used) to compress many message exchanges
+     * into a smaller number of exchanges.
+     * <p/>
+     * A good example of this is stock market data; you may be receiving 30,000
+     * messages/second and you may want to throttle it right down so that multiple
+     * messages for the same stock are combined (or just the latest message is used
+     * and older prices are discarded). Another idea is to combine line item messages
+     * together into a single invoice message.
      */
     public ExpressionClause<AggregatorType> aggregator() {
         AggregatorType answer = new AggregatorType();
@@ -594,14 +590,15 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
      * pattern where a batch of messages are processed (up to a maximum amount
      * or until some timeout is reached) and messages for the same correlation
-     * key are combined together using some kind of
-     * {@link AggregationStrategy ) (by default the latest message is used) to compress many message exchanges
-     * into a smaller number of exchanges. <p/> A good example of this is stock
-     * market data; you may be receiving 30,000 messages/second and you may want
-     * to throttle it right down so that multiple messages for the same stock
-     * are combined (or just the latest message is used and older prices are
-     * discarded). Another idea is to combine line item messages together into a
-     * single invoice message.
+     * key are combined together using some kind of {@link AggregationStrategy}
+     * (by default the latest message is used) to compress many message exchanges
+     * into a smaller number of exchanges.
+     * <p/>
+     * A good example of this is stock market data; you may be receiving 30,000
+     * messages/second and you may want to throttle it right down so that multiple
+     * messages for the same stock are combined (or just the latest message is used
+     * and older prices are discarded). Another idea is to combine line item messages
+     * together into a single invoice message.
      *
      * @param aggregationStrategy the strategy used for the aggregation
      */
@@ -627,18 +624,19 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * Creates the <a
+     * Creates an <a
      * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
      * pattern where a batch of messages are processed (up to a maximum amount
      * or until some timeout is reached) and messages for the same correlation
-     * key are combined together using some kind of
-     * {@link AggregationStrategy ) (by default the latest message is used) to compress many message exchanges
-     * into a smaller number of exchanges. <p/> A good example of this is stock
-     * market data; you may be receiving 30,000 messages/second and you may want
-     * to throttle it right down so that multiple messages for the same stock
-     * are combined (or just the latest message is used and older prices are
-     * discarded). Another idea is to combine line item messages together into a
-     * single invoice message.
+     * key are combined together using some kind of {@link AggregationStrategy}
+     * (by default the latest message is used) to compress many message exchanges
+     * into a smaller number of exchanges.
+     * <p/>
+     * A good example of this is stock market data; you may be receiving 30,000
+     * messages/second and you may want to throttle it right down so that multiple
+     * messages for the same stock are combined (or just the latest message is used
+     * and older prices are discarded). Another idea is to combine line item messages
+     * together into a single invoice message.
      *
      * @param correlationExpression the expression used to calculate the
      *                              correlation key. For a JMS message this could be the
@@ -652,18 +650,19 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     }
 
     /**
-     * Creates the <a
+     * Creates an <a
      * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
      * pattern where a batch of messages are processed (up to a maximum amount
      * or until some timeout is reached) and messages for the same correlation
-     * key are combined together using some kind of
-     * {@link AggregationStrategy ) (by default the latest message is used) to compress many message exchanges
-     * into a smaller number of exchanges. <p/> A good example of this is stock
-     * market data; you may be receiving 30,000 messages/second and you may want
-     * to throttle it right down so that multiple messages for the same stock
-     * are combined (or just the latest message is used and older prices are
-     * discarded). Another idea is to combine line item messages together into a
-     * single invoice message.
+     * key are combined together using some kind of {@link AggregationStrategy}
+     * (by default the latest message is used) to compress many message exchanges
+     * into a smaller number of exchanges.
+     * <p/>
+     * A good example of this is stock market data; you may be receiving 30,000
+     * messages/second and you may want to throttle it right down so that multiple
+     * messages for the same stock are combined (or just the latest message is used
+     * and older prices are discarded). Another idea is to combine line item messages
+     * together into a single invoice message.
      *
      * @param correlationExpression the expression used to calculate the
      *                              correlation key. For a JMS message this could be the
@@ -837,8 +836,6 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     /**
      * Trace logs the exchange before it goes to the next processing step using
      * the {@link #DEFAULT_TRACE_CATEGORY} logging category.
-     *
-     * @return
      */
     public Type trace() {
         return trace(DEFAULT_TRACE_CATEGORY);
@@ -849,7 +846,6 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * the specified logging category.
      *
      * @param category the logging category trace messages will sent to.
-     * @return
      */
     public Type trace(String category) {
         final Log log = LogFactory.getLog(category);
@@ -1289,8 +1285,6 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
 
     /**
      * Returns a label to describe this node such as the expression if some kind of expression node
-     *
-     * @return
      */
     public String getLabel() {
         return "";

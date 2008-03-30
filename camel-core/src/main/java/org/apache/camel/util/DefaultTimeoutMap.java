@@ -171,9 +171,6 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
 
     /**
      * A hook to allow derivations to avoid evicting the current entry
-     *
-     * @param entry
-     * @return
      */
     protected boolean isValidForEviction(TimeoutMapEntry entry) {
         return true;
