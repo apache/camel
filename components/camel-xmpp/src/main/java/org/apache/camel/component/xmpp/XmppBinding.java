@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.jivesoftware.smack.packet.Message;
 
 /**
- * A Strategy used to convert between a Camel {@XmppExchange} and {@XmppMessage} to and from a
+ * A Strategy used to convert between a Camel {@link XmppExchange} and {@link XmppMessage} to and from a
  * XMPP {@link Message}
  *
  * @version $Revision$

@@ -29,7 +29,7 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.RosterPacket;
 
 /**
- * A {@link Consumer} which listens to XMPP packets
+ * A {@link org.apache.camel.Consumer Consumer} which listens to XMPP packets
  * 
  * @version $Revision$
  */
@@ -69,6 +69,7 @@ public class XmppConsumer extends DefaultConsumer<XmppExchange> implements Packe
                 e.printStackTrace();
             }
         } else if (packet instanceof RosterPacket) {
+            // TODO: what to do with a RosterPacket other than debug logging it
             RosterPacket rosterPacket = (RosterPacket)packet;
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Roster packet with : " + rosterPacket.getRosterItemCount() + " item(s)");
