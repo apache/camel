@@ -77,8 +77,6 @@ public abstract class SpringRouteBuilder extends RouteBuilder {
      * Returns the application context which has been configured via the
      * {@link #setApplicationContext(ApplicationContext)} method or from the
      * underlying {@link SpringCamelContext}
-     * 
-     * @return
      */
     public ApplicationContext getApplicationContext() {
         if (applicationContext == null) {

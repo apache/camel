@@ -24,7 +24,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.jivesoftware.smack.packet.Message;
 
 /**
- * Represents an {@ilnk Exchange} for working with XMPP
+ * Represents an {@link Exchange} for working with XMPP
  *
  * @version $Revision:520964 $
  */

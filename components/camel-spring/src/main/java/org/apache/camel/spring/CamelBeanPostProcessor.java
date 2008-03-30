@@ -52,7 +52,7 @@ import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 /**
  * A post processor to perform injection of {@link Endpoint} and
  * {@link Producer} instances together with binding methods annotated with
- * {@link @MessageDriven} to a Camel consumer.
+ * {@link MessageDriven @MessageDriven} to a Camel consumer.
  *
  * @version $Revision$
  */
