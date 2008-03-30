@@ -49,7 +49,7 @@ import org.apache.commons.logging.LogFactory;
 
 
 /**
- * A Strategy used to convert between a Camel {@JmsExchange} and {@JmsMessage}
+ * A Strategy used to convert between a Camel {@link JmsExchange} and {@link JmsMessage}
  * to and from a JMS {@link Message}
  *
  * @version $Revision$
@@ -62,8 +62,9 @@ public class JmsBinding {
     /**
      * Extracts the body from the JMS message
      *
-     * @param exchange
-     * @param message
+     * @param exchange the exchange
+     * @param message  the message to extract its body
+     * @return the body, can be <tt>null</tt>
      */
     public Object extractBodyFromJms(Exchange exchange, Message message) {
         try {
