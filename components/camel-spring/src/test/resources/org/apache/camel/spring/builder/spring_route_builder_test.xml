@@ -232,5 +232,17 @@
   </camelContext>
   <!-- END SNIPPET: idempotent -->
 
+  <!--
+     from("direct:c").routingSlip("aRoutingSlipHeader", "#");
+  -->
+  <!-- START SNIPPET: routingslip -->
+  <camelContext id="buildRoutingSlip" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+      <from uri="direct:c"/>
+      <routingSlip headerName="aRoutingSlipHeader" uriDelimiter="#"/>
+    </route>
+  </camelContext>
+  <!-- END SNIPPET: routingslip -->
+
 </beans>
         <!-- END SNIPPET: example -->
