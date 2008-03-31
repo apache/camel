@@ -82,6 +82,13 @@ public class DotMojo extends AbstractMavenReport {
      */
     protected boolean runCamel;
     /**
+     * Should we try run the DOT executable on the generated .DOT file to generate images
+     *
+     * @parameter expression="true"
+     * @readonly
+     */
+    protected boolean useDot;
+    /**
      * Reference to Maven 2 Project.
      *
      * @parameter expression="${project}"
@@ -240,7 +247,7 @@ public class DotMojo extends AbstractMavenReport {
                     String format = graphvizOutputTypes[j];
                     String generated = convertFile(file, format);
 
-                    if (format.equals("cmapx")) {
+                    if (generated != null && format.equals("cmapx")) {
                         // lets include the generated file inside the html
                         addFileToBuffer(out, new File(generated));
                     }
@@ -378,8 +385,11 @@ public class DotMojo extends AbstractMavenReport {
 
     protected String convertFile(File file, String format) throws CommandLineException {
         Log log = getLog();
+        if (!useDot) {
+            log.info("DOT generation disabled");
+            return null;
+        }
         if (this.executable == null || this.executable.length() == 0) {
-
             log.warn( "Parameter <executable/> was not set in the pom.xml.  Skipping conversion." );
             return null;
         }
