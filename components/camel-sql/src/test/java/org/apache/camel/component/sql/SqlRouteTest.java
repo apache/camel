@@ -36,86 +36,81 @@ public class SqlRouteTest extends ContextTestSupport {
     protected String url = "jdbc:hsqldb:mem:camel_jdbc";
     protected String user = "sa";
     protected String password = "";
-	private DataSource ds;
+    private DataSource ds;
 
     public void testSimpleBody() throws Exception {
-    	MockEndpoint mock = getMockEndpoint("mock:result");
-    	mock.expectedMessageCount(1);
-    	template.sendBody("direct:simple", "GPL");
-    	mock.assertIsSatisfied();
-    	List received = assertIsInstanceOf(List.class,
-    			mock.getReceivedExchanges().get(0).getIn().getBody());
-    	Map row = assertIsInstanceOf(Map.class, received.get(0));
-    	assertEquals("Linux", row.get("PROJECT"));
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        template.sendBody("direct:simple", "GPL");
+        mock.assertIsSatisfied();
+        List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        Map row = assertIsInstanceOf(Map.class, received.get(0));
+        assertEquals("Linux", row.get("PROJECT"));
     }
 
     public void testListBody() throws Exception {
-    	MockEndpoint mock = getMockEndpoint("mock:result");
-    	mock.expectedMessageCount(1);
-    	List<Object> body = new ArrayList<Object>();
-    	body.add("ASF");
-    	body.add("Camel");
-    	template.sendBody("direct:list", body);
-    	mock.assertIsSatisfied();
-    	List received = assertIsInstanceOf(List.class,
-    			mock.getReceivedExchanges().get(0).getIn().getBody());
-    	Map row = assertIsInstanceOf(Map.class, received.get(0));
-    	assertEquals(1, row.get("ID"));
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        List<Object> body = new ArrayList<Object>();
+        body.add("ASF");
+        body.add("Camel");
+        template.sendBody("direct:list", body);
+        mock.assertIsSatisfied();
+        List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        Map row = assertIsInstanceOf(Map.class, received.get(0));
+        assertEquals(1, row.get("ID"));
     }
-    
+
     public void testListResult() throws Exception {
-    	MockEndpoint mock = getMockEndpoint("mock:result");
-    	mock.expectedMessageCount(1);
-    	List<Object> body = new ArrayList<Object>();
-    	body.add("ASF");
-    	template.sendBody("direct:simple", body);
-    	mock.assertIsSatisfied();
-    	List received = assertIsInstanceOf(List.class,
-    			mock.getReceivedExchanges().get(0).getIn().getBody());
-    	assertEquals(2, received.size());
-    	Map row1 = assertIsInstanceOf(Map.class, received.get(0));
-    	assertEquals("Camel", row1.get("PROJECT"));
-    	Map row2 = assertIsInstanceOf(Map.class, received.get(1));
-    	assertEquals("AMQ", row2.get("PROJECT"));
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        List<Object> body = new ArrayList<Object>();
+        body.add("ASF");
+        template.sendBody("direct:simple", body);
+        mock.assertIsSatisfied();
+        List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals(2, received.size());
+        Map row1 = assertIsInstanceOf(Map.class, received.get(0));
+        assertEquals("Camel", row1.get("PROJECT"));
+        Map row2 = assertIsInstanceOf(Map.class, received.get(1));
+        assertEquals("AMQ", row2.get("PROJECT"));
     }
-    
+
     protected void setUp() throws Exception {
-    	Class.forName(driverClass);
+        Class.forName(driverClass);
         super.setUp();
-        
+
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
         jdbcTemplate.execute("create table projects (id integer primary key,"
-        		+ "project varchar(10), license varchar(5))");
+                             + "project varchar(10), license varchar(5))");
         jdbcTemplate.execute("insert into projects values (1, 'Camel', 'ASF')");
         jdbcTemplate.execute("insert into projects values (2, 'AMQ', 'ASF')");
         jdbcTemplate.execute("insert into projects values (3, 'Linux', 'GPL')");
     }
 
     protected void tearDown() throws Exception {
-    	super.tearDown();
-    	JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
-    	jdbcTemplate.execute("drop table projects");
+        super.tearDown();
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+        jdbcTemplate.execute("drop table projects");
     }
-    
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
             public void configure() {
-            	ds = new SingleConnectionDataSource(url, user, password, true);
-            	
-            	getContext().getComponent("sql", SqlComponent.class).setDataSource(ds);
-            	
-                from("direct:simple")
-                	.to("sql:select * from projects where license = # order by id")
-                	.to("mock:result");
-                
+                ds = new SingleConnectionDataSource(url, user, password, true);
+
+                getContext().getComponent("sql", SqlComponent.class).setDataSource(ds);
+
+                from("direct:simple").to("sql:select * from projects where license = # order by id")
+                    .to("mock:result");
+
                 from("direct:list")
-	            	.to("sql:select * from projects where license = # and project = # order by id")
-	            	.to("mock:result");
+                    .to("sql:select * from projects where license = # and project = # order by id")
+                    .to("mock:result");
 
             }
         };
-	}
-    
-    
+    }
+
 }

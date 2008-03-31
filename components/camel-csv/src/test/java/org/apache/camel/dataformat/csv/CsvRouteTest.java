@@ -14,6 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.dataformat.csv;
 
 import java.util.HashMap;
@@ -57,7 +73,7 @@ public class CsvRouteTest extends ContextTestSupport {
             assertEquals("text body", "abc,123", text.trim());
         }
     }
-    
+
     public void testUnMarshal() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:daltons");
         endpoint.expectedMessageCount(1);
@@ -66,9 +82,8 @@ public class CsvRouteTest extends ContextTestSupport {
         // START SNIPPET : unmarshalResult
         List<List<String>> data = (List<List<String>>) exchange.getIn().getBody();
         for (List<String> line : data) {
-            LOG.debug(
-              String.format("%s has an IQ of %s and is currently %s",
-                            line.get(0), line.get(1), line.get(2)));
+            LOG.debug(String.format("%s has an IQ of %s and is currently %s",
+                                    line.get(0), line.get(1), line.get(2)));
         }
         // END SNIPPET : unmarshalResult
     }
@@ -78,14 +93,14 @@ public class CsvRouteTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: marshalRoute
                 from("direct:start").
-                   marshal().csv().
-                   to("mock:result");
+                    marshal().csv().
+                    to("mock:result");
                 // END SNIPPET: marshalRoute
-                
+
                 // START SNIPPET: unmarshalRoute
                 from("file:src/test/resources/daltons.csv?noop=true").
-                   unmarshal().csv().
-                   to("mock:daltons");
+                    unmarshal().csv().
+                    to("mock:daltons");
                 // END SNIPPET: unmarshalRoute
             }
         };

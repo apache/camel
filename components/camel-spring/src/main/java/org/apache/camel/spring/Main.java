@@ -346,7 +346,7 @@ public class Main extends ServiceSupport {
     }
 
     protected void postProcessContext() throws Exception {
-        Map<String,SpringCamelContext> map = applicationContext.getBeansOfType(SpringCamelContext.class);
+        Map<String, SpringCamelContext> map = applicationContext.getBeansOfType(SpringCamelContext.class);
         Set<Map.Entry<String, SpringCamelContext>> entries = map.entrySet();
         int size = entries.size();
         for (Map.Entry<String, SpringCamelContext> entry : entries) {
@@ -360,7 +360,8 @@ public class Main extends ServiceSupport {
                     outputDir += "/" + name;
                 }
                 RouteDotGenerator generator = new RouteDotGenerator(outputDir);
-                LOG.info("Generating DOT file for routes: " + outputDir + " for: " + camelContext + " with name: " + name);
+                LOG.info("Generating DOT file for routes: " + outputDir + " for: " + camelContext
+                         + " with name: " + name);
                 generator.drawRoutes(camelContext);
             }
             postProcesCamelContext(camelContext);
