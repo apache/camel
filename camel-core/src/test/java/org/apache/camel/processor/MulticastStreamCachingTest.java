@@ -36,7 +36,7 @@ public class MulticastStreamCachingTest extends ContextTestSupport {
     protected MockEndpoint x;
     protected MockEndpoint y;
     protected MockEndpoint z;
-    
+
     public void testSendingAMessageUsingMulticastConvertsToReReadable() throws Exception {
         x.expectedBodiesReceived("<input/>+output");
         y.expectedBodiesReceived("<input/>+output");
@@ -45,11 +45,11 @@ public class MulticastStreamCachingTest extends ContextTestSupport {
         template.send("direct:a", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
-				in.setBody(new StreamSource(new StringReader("<input/>")));
+                in.setBody(new StreamSource(new StringReader("<input/>")));
                 in.setHeader("foo", "bar");
             }
         });
-        
+
         assertMockEndpointsSatisifed();
     }
 

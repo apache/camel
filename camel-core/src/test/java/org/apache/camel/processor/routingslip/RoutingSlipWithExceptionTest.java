@@ -31,9 +31,9 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
 
     protected static final String ANSWER = "answer";
     protected static final String ROUTING_SLIP_HEADER = "routingSlipHeader";
+    protected MyBean myBean = new MyBean();
     private MockEndpoint endEndpoint;
     private MockEndpoint exceptionEndpoint;
-    protected MyBean myBean = new MyBean();
     private MockEndpoint exceptionSettingEndpoint;
 
     public void testNoException() throws Exception {
@@ -43,7 +43,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
         sendRoutingSlipWithNoExceptionThrowingComponent();
 
         assertEndpointsSatisfied();
-    }       
+    }
 
     public void testWithExceptionThrowingComponentFirstInList() throws Exception {
         endEndpoint.expectedMessageCount(0);
@@ -52,7 +52,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
         sendRoutingSlipWithExceptionThrowingComponentFirstInList();
 
         assertEndpointsSatisfied();
-    }           
+    }
 
     public void testWithExceptionThrowingComponentSecondInList() throws Exception {
         endEndpoint.expectedMessageCount(0);
@@ -61,20 +61,20 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
         sendRoutingSlipWithExceptionThrowingComponentSecondInList();
 
         assertEndpointsSatisfied();
-    }              
-    
+    }
+
     public void testWithExceptionSettingComponentFirstInList() throws Exception {
         endEndpoint.expectedMessageCount(0);
-        exceptionEndpoint.expectedMessageCount(1);      
+        exceptionEndpoint.expectedMessageCount(1);
 
         sendRoutingSlipWithExceptionSettingComponentFirstInList();
 
         assertEndpointsSatisfied();
-    }           
+    }
 
     public void testWithExceptionSettingComponentSecondInList() throws Exception {
         endEndpoint.expectedMessageCount(0);
-        exceptionEndpoint.expectedMessageCount(1);      
+        exceptionEndpoint.expectedMessageCount(1);
 
         sendRoutingSlipWithExceptionSettingComponentSecondInList();
 
@@ -83,9 +83,9 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
 
     private void assertEndpointsSatisfied() throws InterruptedException {
         MockEndpoint.assertIsSatisfied(5, TimeUnit.SECONDS, endEndpoint, exceptionEndpoint);
-    }           
-    
-    
+    }
+
+
     protected void sendRoutingSlipWithExceptionThrowingComponentFirstInList() {
         template.sendBodyAndHeader("direct:start", ANSWER, ROUTING_SLIP_HEADER,
                 "myBean?method=throwException,mock:x");
@@ -94,37 +94,37 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     protected void sendRoutingSlipWithExceptionThrowingComponentSecondInList() {
         template.sendBodyAndHeader("direct:start", ANSWER, ROUTING_SLIP_HEADER,
                 "mock:a,myBean?method=throwException");
-    }   
-    
+    }
+
     protected void sendRoutingSlipWithNoExceptionThrowingComponent() {
         template.sendBodyAndHeader("direct:start", ANSWER, ROUTING_SLIP_HEADER,
                 "mock:a");
-    }   
+    }
 
     protected void sendRoutingSlipWithExceptionSettingComponentFirstInList() {
         template.sendBodyAndHeader("direct:start", ANSWER, ROUTING_SLIP_HEADER,
                 "mock:exceptionSetting,mock:a");
-    }   
+    }
 
     protected void sendRoutingSlipWithExceptionSettingComponentSecondInList() {
         template.sendBodyAndHeader("direct:start", ANSWER, ROUTING_SLIP_HEADER,
                 "mock:a,mock:exceptionSetting");
-    }   
-       
+    }
+
     @Override
     protected void setUp() throws Exception {
-        super.setUp();    
-        
-        endEndpoint = resolveMandatoryEndpoint("mock:noexception", MockEndpoint.class);        
-        exceptionEndpoint = resolveMandatoryEndpoint("mock:exception", MockEndpoint.class); 
-        exceptionSettingEndpoint = resolveMandatoryEndpoint("mock:exceptionSetting", MockEndpoint.class);        
+        super.setUp();
+
+        endEndpoint = resolveMandatoryEndpoint("mock:noexception", MockEndpoint.class);
+        exceptionEndpoint = resolveMandatoryEndpoint("mock:exception", MockEndpoint.class);
+        exceptionSettingEndpoint = resolveMandatoryEndpoint("mock:exceptionSetting", MockEndpoint.class);
 
         exceptionSettingEndpoint.whenAnyExchangeReceived(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.setException(new Exception("Throw me!"));
             }
-        });      
-        
+        });
+
         Object lookedUpBean = context.getRegistry().lookup("myBean");
         assertSame("Lookup of 'myBean' should return same object!", myBean, lookedUpBean);
     }
@@ -135,19 +135,19 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
         answer.bind("myBean", myBean);
         return answer;
     }
-    
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").
-                tryBlock().
-                  routingSlip().
-                  to("mock:noexception").
-                handle(Exception.class).to("mock:exception");
+                    tryBlock().
+                        routingSlip().to("mock:noexception").
+                        handle(Exception.class).
+                    to("mock:exception");
             }
         };
-    }    
-    
+    }
+
     public static class MyBean {
         public MyBean() {
         }
@@ -155,5 +155,5 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
         public void throwException() throws Exception {
             throw new Exception("Throw me!");
         }
-    }        
+    }
 }

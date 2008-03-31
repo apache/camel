@@ -26,7 +26,7 @@ public class RoutingSlipTest extends ContextTestSupport {
     protected static final String ROUTING_SLIP_HEADER = "routingSlipHeader";
 
     public void testUpdatingOfRoutingSlipAllDefaults()
-            throws Exception {
+        throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");
         MockEndpoint z = getMockEndpoint("mock:z");
@@ -56,7 +56,7 @@ public class RoutingSlipTest extends ContextTestSupport {
         sendBody("direct:b", "aRoutingSlipHeader", ",");
 
         assertMockEndpointsSatisifed();
-    }    
+    }
 
     public void testUpdatingOfRoutingSlipHeaderAndDelimiterSet() throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
@@ -72,8 +72,8 @@ public class RoutingSlipTest extends ContextTestSupport {
         sendBody("direct:c", "aRoutingSlipHeader", "#");
 
         assertMockEndpointsSatisifed();
-    }       
-    
+    }
+
     public void testMessagePassingThrough() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedMessageCount(1);
@@ -81,7 +81,7 @@ public class RoutingSlipTest extends ContextTestSupport {
         sendBody("direct:a", ROUTING_SLIP_HEADER, ",");
 
         assertMockEndpointsSatisifed();
-    }    
+    }
 
     public void testEmptyRoutingSlip() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:end");
@@ -89,7 +89,7 @@ public class RoutingSlipTest extends ContextTestSupport {
 
         sendBodyWithEmptyRoutingSlip();
 
-        assertMockEndpointsSatisifed();       
+        assertMockEndpointsSatisifed();
     }
 
     public void testNoRoutingSlip() throws Exception {
@@ -98,29 +98,29 @@ public class RoutingSlipTest extends ContextTestSupport {
 
         sendBodyWithNoRoutingSlip();
 
-        assertMockEndpointsSatisifed();       
-    }   
-    
+        assertMockEndpointsSatisifed();
+    }
+
     protected void sendBody(String endpoint, String header, String delimiter) {
         template.sendBodyAndHeader(endpoint, ANSWER, header,
                "mock:x" + delimiter + "mock:y" + delimiter + "mock:z");
-    }      
-    
+    }
+
     protected void sendBodyWithEmptyRoutingSlip() {
         template.sendBodyAndHeader("direct:a", ANSWER, ROUTING_SLIP_HEADER, "");
     }
 
     protected void sendBodyWithNoRoutingSlip() {
         template.sendBody("direct:a", ANSWER);
-    } 
-    
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:a").routingSlip().to("mock:end");
                 // END SNIPPET: e1
-                
+
                 // START SNIPPET: e2
                 from("direct:b").routingSlip("aRoutingSlipHeader");
                 // END SNIPPET: e2

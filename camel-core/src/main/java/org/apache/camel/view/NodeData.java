@@ -14,12 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.view;
 
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 import org.apache.camel.model.AggregatorType;
 import org.apache.camel.model.ChoiceType;
@@ -28,15 +43,14 @@ import org.apache.camel.model.FromType;
 import org.apache.camel.model.OtherwiseType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RecipientListType;
-import org.apache.camel.model.RoutingSlipType;
 import org.apache.camel.model.ResequencerType;
+import org.apache.camel.model.RoutingSlipType;
 import org.apache.camel.model.SplitterType;
 import org.apache.camel.model.ToType;
 import org.apache.camel.model.WhenType;
 
 import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
-
 /**
  * Represents a node in the EIP diagram tree
  *
@@ -100,7 +114,7 @@ public class NodeData {
         } else if (node instanceof RecipientListType) {
             this.image = imagePrefix + "RecipientListIcon.png";
             this.nodeType = "Recipient List";
-	} else if (node instanceof RoutingSlipType) {            
+        } else if (node instanceof RoutingSlipType) {
             this.image = imagePrefix + "RoutingTableIcon.png";
             this.nodeType = "Routing Slip";
             this.url = "http://activemq.apache.org/camel/routing-slip.html";

@@ -1,4 +1,3 @@
-
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -27,7 +26,7 @@ import org.apache.camel.model.InterceptorType;
 import org.apache.camel.processor.Interceptor;
 
 /**
- * {@link Interceptor} that converts a message into a re-readable format 
+ * {@link Interceptor} that converts a message into a re-readable format
  */
 public class StreamCachingInterceptor extends Interceptor {
 
@@ -48,16 +47,16 @@ public class StreamCachingInterceptor extends Interceptor {
         this();
         setProcessor(processor);
     }
-    
+
     /**
      * Remove this interceptor from the given list of interceptors
      * @param interceptors the list of interceptos
      */
     public static void noStreamCaching(List<InterceptorType> interceptors) {
-        for (int i = 0 ; i < interceptors.size() ; i++) {
+        for (int i = 0; i < interceptors.size(); i++) {
             InterceptorType interceptor = interceptors.get(i);
-            if (interceptor instanceof InterceptorRef && 
-                ((InterceptorRef) interceptor).getInterceptor() instanceof StreamCachingInterceptor) {
+            if (interceptor instanceof InterceptorRef
+                && ((InterceptorRef)interceptor).getInterceptor() instanceof StreamCachingInterceptor) {
                 interceptors.remove(interceptor);
             }
         }
