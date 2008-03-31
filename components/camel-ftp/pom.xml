@@ -72,12 +72,16 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+<!--
+    ## Should not depend on a SNAPSHOT version; tests disabled 
+       pending an ftpserver release
     <dependency>
       <groupId>org.apache.ftpserver</groupId>
       <artifactId>ftpserver-core</artifactId>
       <version>1.0-incubator-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
+-->
     <dependency>
       <groupId>backport-util-concurrent</groupId>
       <artifactId>backport-util-concurrent</artifactId>
@@ -98,6 +102,19 @@
 
   <build>
     <plugins>
+      <!-- Exclude tests from buld due to dependency on SNAPSHOT version of 
+           apache ftpserver.  Reenable after a proper release of ftpserver!!! -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+          <testExcludes>
+            <exclude>**/*Test.*</exclude>
+          </testExcludes>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
