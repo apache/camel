@@ -93,7 +93,7 @@
       <unpack>false</unpack>
       <scope>runtime</scope>
       <includes>
-        <include>org.apache.camel:camel-activemq</include>
+        <include>org.apache.camel:camel-amqp</include>
         <include>org.apache.camel:camel-atom</include>
         <include>org.apache.camel:camel-bam</include>
         <include>org.apache.camel:camel-core</include>
@@ -105,8 +105,10 @@
         <include>org.apache.camel:camel-ibatis</include>
         <include>org.apache.camel:camel-irc</include>
         <include>org.apache.camel:camel-jaxb</include>
+        <include>org.apache.camel:camel-jcr</include>
         <include>org.apache.camel:camel-jdbc</include>
         <include>org.apache.camel:camel-jetty</include>
+        <include>org.apache.camel:camel-jhc</include>
         <include>org.apache.camel:camel-jing</include>
         <include>org.apache.camel:camel-jms</include>
         <include>org.apache.camel:camel-josql</include>
@@ -114,15 +116,20 @@
         <include>org.apache.camel:camel-juel</include>
         <include>org.apache.camel:camel-jxpath</include>
         <include>org.apache.camel:camel-mail</include>
+        <include>org.apache.camel:camel-mina</include>
         <include>org.apache.camel:camel-msv</include>
         <include>org.apache.camel:camel-ognl</include>
+        <include>org.apache.camel:camel-osgi</include>
         <include>org.apache.camel:camel-quartz</include>
         <include>org.apache.camel:camel-rmi</include>
-        <include>org.apache.camel:camel-mina</include>
         <include>org.apache.camel:camel-saxon</include>
         <include>org.apache.camel:camel-script</include>
         <include>org.apache.camel:camel-spring</include>
+        <include>org.apache.camel:camel-sql</include>
+        <include>org.apache.camel:camel-stream</include>
         <include>org.apache.camel:camel-stringtemplate</include>
+        <include>org.apache.camel:camel-swing</include>
+        <include>org.apache.camel:camel-uface</include>
         <include>org.apache.camel:camel-velocity</include>
         <include>org.apache.camel:camel-xmlbeans</include>
         <include>org.apache.camel:camel-xmpp</include>
