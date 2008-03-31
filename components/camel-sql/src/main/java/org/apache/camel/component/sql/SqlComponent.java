@@ -11,7 +11,7 @@
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing pejdbcssions and
+ * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 package org.apache.camel.component.sql;
@@ -30,23 +30,22 @@ import org.apache.camel.impl.DefaultExchange;
  */
 public class SqlComponent extends DefaultComponent<DefaultExchange> {
 
-	private DataSource dataSource;
+    private DataSource dataSource;
 
-	public SqlComponent() {
-	}
+    public SqlComponent() {
+    }
 
-	public SqlComponent(CamelContext context) {
-		super(context);
-	}
+    public SqlComponent(CamelContext context) {
+        super(context);
+    }
 
-	@Override
-	protected Endpoint<DefaultExchange> createEndpoint(String uri,
-			String remaining, Map parameters) throws Exception {
-		return new SqlEndpoint(uri, remaining.replaceAll("#", "?"), this,
-				dataSource);
-	}
+    @Override
+    protected Endpoint<DefaultExchange> createEndpoint(String uri, String remaining, Map parameters)
+        throws Exception {
+        return new SqlEndpoint(uri, remaining.replaceAll("#", "?"), this, dataSource);
+    }
 
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 }

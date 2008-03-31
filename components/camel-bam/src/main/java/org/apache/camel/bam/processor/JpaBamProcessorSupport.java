@@ -42,7 +42,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     private static final transient Log LOG = LogFactory.getLog(JpaBamProcessorSupport.class);
 
-    private static final Lock lock = new ReentrantLock(); // lock used for concurrency issues
+    private static final Lock LOCK = new ReentrantLock(); // lock used for concurrency issues
     private ActivityRules activityRules;
     private JpaTemplate template;
     private String findByKeyQuery;
@@ -110,7 +110,7 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     // Implementatiom methods
     // -----------------------------------------------------------------------
     protected T loadEntity(Exchange exchange, Object key) throws Exception {
-        lock.lock();
+        LOCK.lock();
         try {
             T entity = findEntityByCorrelationKey(key);
             if (entity == null) {
@@ -129,7 +129,7 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
             }
             return entity;
         } finally {
-            lock.unlock();
+            LOCK.unlock();
         }
     }
 

@@ -19,13 +19,11 @@ package org.apache.camel.component.uface;
 
 import java.util.List;
 
-import org.apache.camel.component.list.ListEndpoint;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.list.ListEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.WritableList;
 
 /**
  * @version $Revision$
