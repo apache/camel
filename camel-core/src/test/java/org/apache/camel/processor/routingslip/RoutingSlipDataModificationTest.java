@@ -31,13 +31,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class RoutingSlipDataModificationTest extends ContextTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(RoutingSlipDataModificationTest.class);
     protected static final String ANSWER = "answer";
     protected static final String ROUTING_SLIP_HEADER = "routingSlipHeader";
+    private static final transient Log LOG = LogFactory.getLog(RoutingSlipDataModificationTest.class);
     protected MyBean myBean = new MyBean(ROUTING_SLIP_HEADER);
 
     public void testModificationOfDataAlongRoute()
-            throws Exception {
+        throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");
         MockEndpoint z = getMockEndpoint("mock:z");
@@ -50,12 +50,12 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
 
         assertMockEndpointsSatisifed();
     }
-    
+
     protected void sendBody() {
         template.sendBodyAndHeader("direct:a", ANSWER, ROUTING_SLIP_HEADER,
                 "mock:x,bean:myBean?method=modifyData,mock:y,mock:z");
     }
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -70,7 +70,7 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
         answer.bind("myBean", myBean);
         return answer;
     }
-    
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -79,7 +79,7 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
                 // END SNIPPET: example
             }
         };
-    }    
+    }
 
     public static class MyBean {
         private String routingSlipHeader;
@@ -92,11 +92,11 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
         }
 
         public String modifyData(
-            @Body String body, 
-            @Headers Map<String, Object> headers, 
+            @Body String body,
+            @Headers Map<String, Object> headers,
             @OutHeaders Map<String, Object> outHeaders) {
             outHeaders.put(routingSlipHeader, headers.get(routingSlipHeader));
             return body + body;
         }
-    }    
+    }
 }

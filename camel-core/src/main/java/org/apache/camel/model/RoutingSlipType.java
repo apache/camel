@@ -33,18 +33,18 @@ import org.apache.camel.processor.RoutingSlip;
 public class RoutingSlipType extends ProcessorType<ProcessorType> {
     public static final String ROUTING_SLIP_HEADER = "routingSlipHeader";
     public static final String DEFAULT_DELIMITER = ",";
-    
+
     @XmlAttribute
     private String headerName;
     @XmlAttribute
     private String uriDelimiter;
-    
+
     public RoutingSlipType() {
-        this(ROUTING_SLIP_HEADER, DEFAULT_DELIMITER);       
-    }   
-    
+        this(ROUTING_SLIP_HEADER, DEFAULT_DELIMITER);
+    }
+
     public RoutingSlipType(String headerName) {
-        this(headerName, DEFAULT_DELIMITER);       
+        this(headerName, DEFAULT_DELIMITER);
     }
 
     public RoutingSlipType(String headerName, String uriDelimiter) {
@@ -54,15 +54,14 @@ public class RoutingSlipType extends ProcessorType<ProcessorType> {
 
     @Override
     public String toString() {
-        return "RoutingSlip[ headerName=" + getHeaderName() 
-        + " uriDelimiter=" + getUriDelimiter() + "]";
+        return "RoutingSlip[ headerName=" + getHeaderName() + " uriDelimiter=" + getUriDelimiter() + "]";
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         return new RoutingSlip(getHeaderName(), getUriDelimiter());
     }
-    
+
     @Override
     public List<ProcessorType<?>> getOutputs() {
         return Collections.EMPTY_LIST;
