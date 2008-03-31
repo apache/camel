@@ -37,6 +37,7 @@ public class HttpBinding {
     public static final Set<String> DEFAULT_HEADERS_TO_IGNORE = new HashSet<String>(Arrays.asList(
             "content-length", "content-type", HttpProducer.HTTP_RESPONSE_CODE.toLowerCase()));
     private Set<String> ignoredHeaders = DEFAULT_HEADERS_TO_IGNORE;
+    private boolean useReaderForPayload = true;
 
     /**
      * Writes the exchange to the servlet response
@@ -90,7 +91,12 @@ public class HttpBinding {
     public Object parseBody(HttpMessage httpMessage) throws IOException {
         // lets assume the body is a reader
         HttpServletRequest request = httpMessage.getRequest();
-        return request.getReader();
+        if (isUseReaderForPayload()) {
+            return request.getReader();
+        }
+        else {
+            return request.getInputStream();
+        }
     }
 
     /*
@@ -120,5 +126,19 @@ public class HttpBinding {
 
     public Set<String> getIgnoredHeaders() {
         return ignoredHeaders;
+    }
+
+    public boolean isUseReaderForPayload() {
+        return useReaderForPayload;
+    }
+
+    /**
+     * Should the {@link HttpServletRequest#getReader()} be exposed as the payload of input messages in the Camel
+     * {@link Message#getBody()} or not. If false then the {@link HttpServletRequest#getInputStream()} will be exposed.
+     *
+     * @param useReaderForPayload
+     */
+    public void setUseReaderForPayload(boolean useReaderForPayload) {
+        this.useReaderForPayload = useReaderForPayload;
     }
 }
