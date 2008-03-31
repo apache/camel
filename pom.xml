@@ -195,12 +195,12 @@
   </distributionManagement>
 
   <modules>
-    <module>apache-camel</module>
     <module>camel-core</module>
     <module>components</module>
     <module>examples</module>
     <module>tooling</module>
     <module>tests</module>
+    <module>apache-camel</module>
   </modules>
 
   <scm>
@@ -215,17 +215,23 @@
       <!-- Camel jars -->
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-amqp</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-atom</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-bam</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-core</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -291,7 +297,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jface</artifactId>
+        <artifactId>camel-jhc</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -301,22 +307,17 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jhc</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jms</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jpa</artifactId>
+        <artifactId>camel-josql</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-josql</artifactId>
+        <artifactId>camel-jpa</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -351,6 +352,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-osgi</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-quartz</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -381,12 +387,17 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-stringtemplate</artifactId>
+        <artifactId>camel-sql</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-stream</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-stringtemplate</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -427,6 +438,53 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xstream</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-bam</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-cxf</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-docs</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-etl</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-jms-file</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-osgi</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-spring</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-spring-xquery</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-manual</artifactId>
         <version>${project.version}</version>
       </dependency>
 
