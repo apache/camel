@@ -24,7 +24,7 @@
 
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-parent</artifactId>
-  <version>1.3-SNAPSHOT</version>
+  <version>1.3.0</version>
   <packaging>pom</packaging>
   <name>Camel</name>
   <description>Camel Parent POM</description>
