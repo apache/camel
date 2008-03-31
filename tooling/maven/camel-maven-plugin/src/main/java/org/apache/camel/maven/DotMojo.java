@@ -375,9 +375,14 @@ public class DotMojo extends AbstractMavenReport {
     }
 
     protected String convertFile(File file, String format) throws CommandLineException {
-        String generatedFileName = removeFileExtension(file.getAbsolutePath()) + "." + format;
         Log log = getLog();
+        if (this.executable == null || this.executable.length() == 0) {
 
+            log.warn( "Parameter <executable/> was not set in the pom.xml.  Skipping conversion." );
+            return null;
+        }
+
+        String generatedFileName = removeFileExtension(file.getAbsolutePath()) + "." + format;
         Commandline cl = new Commandline();
         cl.setExecutable(executable);
         cl.createArgument().setValue("-T" + format);
