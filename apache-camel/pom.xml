@@ -189,10 +189,12 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-swing</artifactId>
     </dependency>
+<!--
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-testng</artifactId>
     </dependency>
+-->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-uface</artifactId>
