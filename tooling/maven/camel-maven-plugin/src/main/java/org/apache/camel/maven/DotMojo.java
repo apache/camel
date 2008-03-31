@@ -60,6 +60,9 @@ public class DotMojo extends AbstractMavenReport {
      * Subdirectory for report.
      */
     protected static final String SUBDIRECTORY = "cameldoc";
+
+    private String indexHtmlContent;
+
     //
     // For running Camel embedded
     //-------------------------------------------------------------------------
@@ -78,7 +81,6 @@ public class DotMojo extends AbstractMavenReport {
      * @readonly
      */
     protected boolean runCamel;
-    private String indexHtmlContent;
     /**
      * Reference to Maven 2 Project.
      *
