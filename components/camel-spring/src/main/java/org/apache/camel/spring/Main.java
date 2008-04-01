@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -33,6 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.RouteDotGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -52,6 +54,7 @@ public class Main extends ServiceSupport {
     private long duration = -1;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private String dotOutputDir;
+    private boolean aggregateDot;
     private List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
     private List<SpringCamelContext> camelContexts = new ArrayList<SpringCamelContext>();
 
@@ -64,23 +67,30 @@ public class Main extends ServiceSupport {
         });
 
         addOption(new ParameterOption("a", "applicationContext",
-            "Sets the classpath based pring ApplicationContext", "applicationContext") {
+                "Sets the classpath based pring ApplicationContext", "applicationContext") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setApplicationContextUri(parameter);
             }
         });
         addOption(new ParameterOption("o", "outdir",
-            "Sets the DOT output directory where the visual representations of the routes are generated",
-            "dot") {
+                "Sets the DOT output directory where the visual representations of the routes are generated",
+                "dot") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setDotOutputDir(parameter);
             }
         });
+        addOption(new ParameterOption("ad", "aggregate-dot",
+                "Aggregates all routes (in addition to individual route generation) into one context to create one monolithic DOT file for visual representations the entire system.",
+                "aggregate-dot") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                setAggregateDot("true".equals(parameter));
+            }
+        });
         addOption(new ParameterOption(
-            "d",
-            "duration",
-            "Sets the time duration that the applicaiton will run for, by default in milliseconds. You can use '10s' for 10 seconds etc",
-            "duration") {
+                "d",
+                "duration",
+                "Sets the time duration that the applicaiton will run for, by default in milliseconds. You can use '10s' for 10 seconds etc",
+                "duration") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 String value = parameter.toUpperCase();
                 if (value.endsWith("S")) {
@@ -113,7 +123,8 @@ public class Main extends ServiceSupport {
                 start();
                 waitUntilCompleted();
                 stop();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 LOG.error("Failed: " + e, e);
             }
         }
@@ -140,7 +151,7 @@ public class Main extends ServiceSupport {
 
         for (Option option : options) {
             System.out.println("  " + option.getAbbreviation() + " or " + option.getFullName() + " = "
-                               + option.getDescription());
+                    + option.getDescription());
         }
     }
 
@@ -216,7 +227,7 @@ public class Main extends ServiceSupport {
         private String parameterName;
 
         protected ParameterOption(String abbreviation, String fullName, String description,
-                                  String parameterName) {
+                String parameterName) {
             super(abbreviation, fullName, description);
             this.parameterName = parameterName;
         }
@@ -226,7 +237,8 @@ public class Main extends ServiceSupport {
                 System.err.println("Expected fileName for ");
                 showOptions();
                 completed();
-            } else {
+            }
+            else {
                 String parameter = remainingArgs.removeFirst();
                 doProcess(arg, parameter, remainingArgs);
             }
@@ -303,6 +315,14 @@ public class Main extends ServiceSupport {
         this.routeBuilders = routeBuilders;
     }
 
+    public void setAggregateDot(boolean aggregateDot) {
+        this.aggregateDot = aggregateDot;
+    }
+
+    public boolean isAggregateDot() {
+        return aggregateDot;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
     protected void doStart() throws Exception {
@@ -336,10 +356,12 @@ public class Main extends ServiceSupport {
                     LOG.info("Waiting for: " + duration + " " + unit);
                     latch.await(duration, unit);
                     completed.set(true);
-                } else {
+                }
+                else {
                     latch.await();
                 }
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 LOG.debug("Caught: " + e);
             }
         }
@@ -353,19 +375,59 @@ public class Main extends ServiceSupport {
             String name = entry.getKey();
             SpringCamelContext camelContext = entry.getValue();
             camelContexts.add(camelContext);
-
-            String outputDir = dotOutputDir;
-            if (ObjectHelper.isNotNullAndNonEmpty(outputDir)) {
-                if (size > 1) {
-                    outputDir += "/" + name;
-                }
-                RouteDotGenerator generator = new RouteDotGenerator(outputDir);
-                LOG.info("Generating DOT file for routes: " + outputDir + " for: " + camelContext
-                         + " with name: " + name);
-                generator.drawRoutes(camelContext);
-            }
+            generateDot(name, camelContext, size);
             postProcesCamelContext(camelContext);
         }
+
+        if (isAggregateDot()) {
+
+            generateDot("aggregate", aggregateSpringCamelContext(applicationContext), 1);
+        }
+    }
+
+    protected void generateDot(String name, SpringCamelContext camelContext, int size) throws IOException {
+        String outputDir = dotOutputDir;
+        if (ObjectHelper.isNotNullAndNonEmpty(outputDir)) {
+            if (size > 1) {
+                outputDir += "/" + name;
+            }
+            RouteDotGenerator generator = new RouteDotGenerator(outputDir);
+            LOG.info("Generating DOT file for routes: " + outputDir + " for: " + camelContext + " with name: " + name);
+            generator.drawRoutes(camelContext);
+        }
+    }
+
+    /**
+     * Used for aggregate dot generation
+     *
+     * @param applicationContext
+     * @return
+     * @throws Exception
+     */
+    private static SpringCamelContext aggregateSpringCamelContext(ApplicationContext applicationContext) throws Exception {
+        SpringCamelContext aggregateCamelContext = new SpringCamelContext() {
+            /**
+             *  Don't actually start this, it is merely fabricated for dot generation.
+             * @see org.apache.camel.impl.DefaultCamelContext#shouldStartRoutes()
+             */
+            protected boolean shouldStartRoutes() {
+
+                return false;
+            }
+        };
+
+        // look up all configured camel contexts
+        String[] names = applicationContext.getBeanNamesForType(SpringCamelContext.class);
+        for (String name : names) {
+
+            SpringCamelContext next = (SpringCamelContext) applicationContext.getBean(name, SpringCamelContext.class);
+            //            aggregateCamelContext.addRoutes( next.getRoutes() );
+            aggregateCamelContext.addRouteDefinitions(next.getRouteDefinitions());
+        }
+        // Don't actually start this, it is merely fabricated for dot generation.
+        //        answer.setApplicationContext( applicationContext );
+        //        answer.afterPropertiesSet();
+        return aggregateCamelContext;
     }
 
     protected void postProcesCamelContext(CamelContext camelContext) throws Exception {
