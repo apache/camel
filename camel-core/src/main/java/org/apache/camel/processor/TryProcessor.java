@@ -73,15 +73,26 @@ public class TryProcessor extends ServiceSupport implements Processor {
                 LOG.info("Caught exception while processing exchange.", e);
                 handleException(exchange, e);
             }
-            processFinally(exchange);
         } catch (Exception ex) {
             unexpected = ex;
         } catch (Throwable ex) {
             unexpected = new RuntimeCamelException(ex);
+        } finally {
+        	try {
+				processFinally(exchange);
+        	} catch (Exception ex) {
+                unexpected = ex;
+            } catch (Throwable ex) {
+                unexpected = new RuntimeCamelException(ex);
+            }
+            if (unexpected != null) {
+                LOG.warn("Caught exception inside processFinally clause.", unexpected);
+                throw unexpected;
+            }
         }
 
         if (unexpected != null) {
-            LOG.warn("Caught exception inside catch clause.", unexpected);
+            LOG.warn("Caught exception inside handle clause.", unexpected);
             throw unexpected;
         }
     }
