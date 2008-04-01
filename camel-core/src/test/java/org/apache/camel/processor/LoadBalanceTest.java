@@ -39,8 +39,10 @@ public class LoadBalanceTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                // START SNIPPET: example
                 from("direct:start").loadBalance().
                 roundRobin().to("mock:x", "mock:y", "mock:z");
+                // END SNIPPET: example
             };
         };
     }
