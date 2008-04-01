@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -61,6 +62,13 @@ public class EmbeddedMojo extends AbstractExecMojo {
      */
     protected boolean dotEnabled;
     /**
+     * Allows the routes from multiple contexts to be aggregated into one DOT file (in addition to the individual files)
+     *
+     * @parameter expression="false"
+     * @readonly
+     */
+    protected boolean dotAggregationEnabled;
+    /**
      * Project classpath.
      *
      * @parameter expression="${project.testClasspathElements}"
@@ -69,26 +77,27 @@ public class EmbeddedMojo extends AbstractExecMojo {
      */
     private List classpathElements;
 
-
     /**
      * This method will run the mojo
      */
     public void execute() throws MojoExecutionException {
         try {
             executeWithoutWrapping();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new MojoExecutionException("Failed: " + e, e);
         }
     }
 
     public void executeWithoutWrapping() throws MalformedURLException, ClassNotFoundException,
-        NoSuchMethodException, IllegalAccessException, MojoExecutionException {
+            NoSuchMethodException, IllegalAccessException, MojoExecutionException {
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             ClassLoader newLoader = createClassLoader(null);
             Thread.currentThread().setContextClassLoader(newLoader);
             runCamel(newLoader);
-        } finally {
+        }
+        finally {
             Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
     }
@@ -138,11 +147,19 @@ public class EmbeddedMojo extends AbstractExecMojo {
         this.duration = duration;
     }
 
+    public boolean isDotAggregationEnabled() {
+        return dotAggregationEnabled;
+    }
+
+    public void setDotAggregationEnabled(boolean dotAggregationEnabled) {
+        this.dotAggregationEnabled = dotAggregationEnabled;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
     protected void runCamel(ClassLoader newLoader) throws ClassNotFoundException, NoSuchMethodException,
-        IllegalAccessException, MojoExecutionException {
+            IllegalAccessException, MojoExecutionException {
         getLog().debug("Running Camel in: " + newLoader);
         Class<?> type = newLoader.loadClass("org.apache.camel.spring.Main");
         Method method = type.getMethod("main", String[].class);
@@ -150,19 +167,33 @@ public class EmbeddedMojo extends AbstractExecMojo {
         getLog().debug("Starting the Camel Main with arguments: " + Arrays.asList(arguments));
 
         try {
-            method.invoke(null, new Object[] {arguments});
-        } catch (InvocationTargetException e) {
+            method.invoke(null, new Object[]{arguments});
+        }
+        catch (InvocationTargetException e) {
             Throwable t = e.getTargetException();
             throw new MojoExecutionException("Failed: " + t, t);
         }
     }
 
     protected String[] createArguments() {
-        if (dotEnabled) {
-            return new String[] {"-duration", duration, "-outdir", outputDirectory};
-        } else {
-            return new String[] {"-duration", duration};
+
+        ArrayList<String> args = new ArrayList<String>(5);
+        if (isDotEnabled()) {
+
+            args.add("-outdir");
+            args.add(getOutputDirectory());
         }
+
+        if (isDotAggregationEnabled()) {
+
+            args.add("-aggregate-dot");
+            args.add("true");
+        }
+
+        args.add("-duration");
+        args.add(getDuration());
+
+        return (String[]) args.toArray(new String[0]);
     }
 
     protected ClassLoader createClassLoader(ClassLoader parent) throws MalformedURLException {
@@ -171,7 +202,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
         int size = classpathElements.size();
         URL[] urls = new URL[size];
         for (int i = 0; i < size; i++) {
-            String name = (String)classpathElements.get(i);
+            String name = (String) classpathElements.get(i);
             File file = new File(name);
             urls[i] = file.toURL();
             getLog().debug("URL: " + urls[i]);

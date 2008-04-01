@@ -60,9 +60,7 @@ public class DotMojo extends AbstractMavenReport {
      * Subdirectory for report.
      */
     protected static final String SUBDIRECTORY = "cameldoc";
-
     private String indexHtmlContent;
-
     //
     // For running Camel embedded
     //-------------------------------------------------------------------------
@@ -113,6 +111,13 @@ public class DotMojo extends AbstractMavenReport {
      */
     private File outputDirectory;
     /**
+     * In the case of multiple camel contexts, setting aggregate == true will aggregate all
+     * into a monolithic context, otherwise they will be processed independently.
+     *
+     * @parameter
+     */
+    private String aggregate;
+    /**
      * GraphViz executable location; visualization (images) will be
      * generated only if you install this program and set this property to the
      * executable dot (dot.exe on Win).
@@ -162,6 +167,14 @@ public class DotMojo extends AbstractMavenReport {
         return SUBDIRECTORY + "/index";
     }
 
+    public String getAggregate() {
+        return aggregate;
+    }
+
+    public void setAggregate(String aggregate) {
+        this.aggregate = aggregate;
+    }
+
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
      */
@@ -205,6 +218,7 @@ public class DotMojo extends AbstractMavenReport {
      * @throws MojoExecutionException if there were any execution errors.
      */
     protected void execute(final File outputDir, final Locale locale) throws MojoExecutionException {
+
         try {
             runCamelEmbedded(outputDir);
         }
@@ -230,42 +244,19 @@ public class DotMojo extends AbstractMavenReport {
                 String contextName = file.getParentFile().getName();
                 contextNames.add(contextName);
             }
+
             boolean multipleCamelContexts = contextNames.size() > 1;
 
             for (int i = 0, size = files.size(); i < size; i++) {
                 File file = files.get(i);
-
                 String contextName = null;
                 if (multipleCamelContexts) {
                     contextName = file.getParentFile().getName();
                 }
-                StringWriter buffer = new StringWriter();
-                PrintWriter out = new PrintWriter(buffer);
-                printHtmlHeader(out, contextName);
-                printHtmlFileHeader(out, file);
-                for (int j = 0; j < graphvizOutputTypes.length; j++) {
-                    String format = graphvizOutputTypes[j];
-                    String generated = convertFile(file, format);
 
-                    if (generated != null && format.equals("cmapx")) {
-                        // lets include the generated file inside the html
-                        addFileToBuffer(out, new File(generated));
-                    }
-                }
-                printHtmlFileFooter(out, file);
-                printHtmlFooter(out);
+                getLog().info("Generating contextName: " + contextName + " file: " + file + "");
 
-                String content = buffer.toString();
-                String name = file.getName();
-                if (name.equalsIgnoreCase("routes.dot") || i == 0) {
-                    indexHtmlContent = content;
-                }
-                int idx = name.lastIndexOf(".");
-                if (idx >= 0) {
-                    name = name.substring(0, idx);
-                    name += ".html";
-                }
-                writeIndexHtmlFile(file.getParentFile(), name, content);
+                generate(i, file, contextName);
             }
 
             if (multipleCamelContexts) {
@@ -297,6 +288,37 @@ public class DotMojo extends AbstractMavenReport {
         }
     }
 
+    private void generate(int index, File file, String contextName) throws CommandLineException, MojoExecutionException, IOException {
+
+        StringWriter buffer = new StringWriter();
+        PrintWriter out = new PrintWriter(buffer);
+        printHtmlHeader(out, contextName);
+        printHtmlFileHeader(out, file);
+        for (int j = 0; j < graphvizOutputTypes.length; j++) {
+            String format = graphvizOutputTypes[j];
+            String generated = convertFile(file, format);
+
+            if (format.equals("cmapx") && generated != null) {
+                // lets include the generated file inside the html
+                addFileToBuffer(out, new File(generated));
+            }
+        }
+        printHtmlFileFooter(out, file);
+        printHtmlFooter(out);
+
+        String content = buffer.toString();
+        String name = file.getName();
+        if (name.equalsIgnoreCase("routes.dot") || index == 0) {
+            indexHtmlContent = content;
+        }
+        int idx = name.lastIndexOf(".");
+        if (idx >= 0) {
+            name = name.substring(0, idx);
+            name += ".html";
+        }
+        writeIndexHtmlFile(file.getParentFile(), name, content);
+    }
+
     protected void runCamelEmbedded(File outputDir) throws DependencyResolutionRequiredException {
         if (runCamel) {
             getLog().info("Running Camel embedded to load META-INF/spring/*.xml files");
@@ -307,6 +329,10 @@ public class DotMojo extends AbstractMavenReport {
             EmbeddedMojo mojo = new EmbeddedMojo();
             mojo.setClasspathElements(list);
             mojo.setDotEnabled(true);
+            if ("true".equals(getAggregate())) {
+
+                mojo.setDotAggregationEnabled(true);
+            }
             mojo.setOutputDirectory(outputDirectory.getAbsolutePath());
             mojo.setDuration(duration);
             mojo.setLog(getLog());
@@ -390,7 +416,7 @@ public class DotMojo extends AbstractMavenReport {
             return null;
         }
         if (this.executable == null || this.executable.length() == 0) {
-            log.warn( "Parameter <executable/> was not set in the pom.xml.  Skipping conversion." );
+            log.warn("Parameter <executable/> was not set in the pom.xml.  Skipping conversion.");
             return null;
         }
 
