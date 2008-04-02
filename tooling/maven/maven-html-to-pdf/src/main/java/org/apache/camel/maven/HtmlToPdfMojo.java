@@ -39,21 +39,23 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.tidy.Tidy;
 
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
-import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.codehaus.plexus.util.cli.Commandline.Argument;
+import org.codehaus.plexus.util.cli.StreamConsumer;
+
+
 
 /**
  * Goal which extracts the content div from the html page and converts to PDF
  * using Prince
- * 
+ *
  * @goal compile
  * @phase compile
  */
@@ -61,7 +63,7 @@ public class HtmlToPdfMojo extends AbstractMojo {
 
     /**
      * The URL to the confluence page to convert.
-     * 
+     *
      * @parameter expression="${page}"
      *            default-value="http://cwiki.apache.org/confluence/display/CAMEL/Index"
      * @required
@@ -70,7 +72,7 @@ public class HtmlToPdfMojo extends AbstractMojo {
 
     /**
      * The output file name for the pdf.
-     * 
+     *
      * @parameter expression="${pdf}"
      *            default-value="${project.build.directory}/site/manual/${project.artifactId}-${project.version}.pdf"
      */
@@ -78,14 +80,14 @@ public class HtmlToPdfMojo extends AbstractMojo {
 
     /**
      * The css style sheets that should be linked.
-     * 
+     *
      * @parameter
      */
     private String[] styleSheets;
 
     /**
      * Content that should be added in the head element of the html file.
-     * 
+     *
      * @parameter
      */
     private String head;
@@ -94,14 +96,14 @@ public class HtmlToPdfMojo extends AbstractMojo {
      * The first div with who's class matches the contentDivClass will be
      * assumed to be the content section of the HTML and is what will be used as
      * the content in the PDF.
-     * 
+     *
      * @parameter default-value="wiki-content"
      */
     private String contentDivClass = "wiki-content";
 
     /**
      * Arguments that should be passed to the prince html to pdf processor.
-     * 
+     *
      * @parameter
      */
     private String[] princeArgs;
@@ -110,7 +112,7 @@ public class HtmlToPdfMojo extends AbstractMojo {
      * If there is an error converting the HTML to PDF should the build fail?
      * default to false since this requires the prince tool to be installed and
      * on the PATH of the system.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean errorOnConverionFailure;
@@ -118,14 +120,14 @@ public class HtmlToPdfMojo extends AbstractMojo {
     /**
      * If there is an error downloading the HTML should the build fail? default
      * to false since this usually requires the user to be online.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean errorOnDownloadFailure;
 
     /**
      * The maven project.
-     * 
+     *
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -139,14 +141,14 @@ public class HtmlToPdfMojo extends AbstractMojo {
 
     /**
      * The type used when attaching the artifact to the deployment.
-     * 
+     *
      * @parameter default-value="pdf"
      */
     private String type;
 
     /**
      * Classifier to add to the artifact generated.
-     * 
+     *
      * @parameter
      */
     private String classifier;

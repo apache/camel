@@ -16,18 +16,12 @@
  */
 package org.apache.camel.spring.processor;
 
-import java.net.URL;
-
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.CamelTemplate;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-
-import static org.apache.camel.builder.xml.XsltBuilder.xslt;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @version $Revision$

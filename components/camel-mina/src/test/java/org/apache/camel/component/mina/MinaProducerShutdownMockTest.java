@@ -42,7 +42,7 @@ public class MinaProducerShutdownMockTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello World");
 
 
-        // create our mock and record expected behaviour = that worker timeout should be set to 0
+        // create our mock and record expected behavior = that worker timeout should be set to 0
         SocketConnector mockConnector = createMock(SocketConnector.class);
         mockConnector.setWorkerTimeout(0);
         replay(mockConnector);

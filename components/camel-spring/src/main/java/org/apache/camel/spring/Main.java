@@ -123,8 +123,7 @@ public class Main extends ServiceSupport {
                 start();
                 waitUntilCompleted();
                 stop();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 LOG.error("Failed: " + e, e);
             }
         }
@@ -237,8 +236,7 @@ public class Main extends ServiceSupport {
                 System.err.println("Expected fileName for ");
                 showOptions();
                 completed();
-            }
-            else {
+            } else {
                 String parameter = remainingArgs.removeFirst();
                 doProcess(arg, parameter, remainingArgs);
             }
@@ -356,12 +354,10 @@ public class Main extends ServiceSupport {
                     LOG.info("Waiting for: " + duration + " " + unit);
                     latch.await(duration, unit);
                     completed.set(true);
-                }
-                else {
+                } else {
                     latch.await();
                 }
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 LOG.debug("Caught: " + e);
             }
         }
