@@ -30,7 +30,7 @@ import javax.xml.ws.WebServiceProvider;
 // END SNIPPET: e1
 /**
  * This class is used by Camel just for getting the endpoint configuration
- * parameters. All the requests aimed at this class would be intercepted routed
+ * parameters. All the requests aimed at this class are intercepted and routed
  * to the camel route specified. The route has to set the appropriate response
  * message for the service to work.
  */
@@ -38,8 +38,8 @@ import javax.xml.ws.WebServiceProvider;
 public class GreeterProvider implements Provider<SOAPMessage> {
 
     public SOAPMessage invoke(SOAPMessage message) {
-        // request should not come here as camel route would intercept the call
-        // before this is invoked.
+        // Requests should not come here as the Camel route will
+        // intercept the call before this is invoked.
         throw new UnsupportedOperationException("Placeholder method");
     }
 

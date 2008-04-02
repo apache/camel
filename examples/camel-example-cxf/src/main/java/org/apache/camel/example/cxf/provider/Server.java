@@ -26,7 +26,7 @@ public class Server {
     Endpoint endpoint;
 
     public void start() throws Exception {
-        // setup the camel context using spring
+        // Setup the Camel context using Spring
         SpringBusFactory bf = new SpringBusFactory();
         BusFactory.setDefaultBus(null);
         Bus bus = bf.createBus("/org/apache/camel/example/cxf/provider/CamelCXFRouteConfig.xml");
