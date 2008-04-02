@@ -16,8 +16,14 @@
  */
 package org.apache.camel.model;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -37,6 +43,10 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 public class SplitterType extends ExpressionNode {
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
+    @XmlAttribute(required = false)
+    private Boolean parallelProcessing;
+    @XmlTransient
+    private ThreadPoolExecutor threadPoolExecutor;
     
     public SplitterType() {
     }
@@ -60,7 +70,11 @@ public class SplitterType extends ExpressionNode {
         if (aggregationStrategy == null) {
             aggregationStrategy = new UseLatestAggregationStrategy();
         }
-        return new Splitter(getExpression().createExpression(routeContext), childProcessor, aggregationStrategy);
+        if (threadPoolExecutor == null) {
+            threadPoolExecutor = new ThreadPoolExecutor(4, 16, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue());
+        }
+        return new Splitter(getExpression().createExpression(routeContext), childProcessor, aggregationStrategy,
+                isParallelProcessing(), threadPoolExecutor);
     }
     
     public AggregationStrategy getAggregationStrategy() {
@@ -69,5 +83,21 @@ public class SplitterType extends ExpressionNode {
 
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
+    }
+    
+    public boolean isParallelProcessing() {
+        return parallelProcessing != null ? parallelProcessing : false;
+    }
+
+    public void setParallelProcessing(boolean parallelProcessing) {
+        this.parallelProcessing = parallelProcessing;
+    }
+
+    public ThreadPoolExecutor getThreadPoolExecutor() {
+        return threadPoolExecutor;
+    }
+
+    public void setThreadPoolExecutor(ThreadPoolExecutor threadPoolExecutor) {
+        this.threadPoolExecutor = threadPoolExecutor;
     }
 }
