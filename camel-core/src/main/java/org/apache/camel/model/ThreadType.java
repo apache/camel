@@ -17,7 +17,6 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -36,29 +35,28 @@ import org.apache.camel.processor.ThreadProcessor;
 
 /**
  * Represents an XML &lt;thread/&gt; element
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "thread")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThreadType extends ProcessorType<ProcessorType> {
-
-    @XmlAttribute
-    private int coreSize = 1;
-    @XmlAttribute
-    private boolean daemon = true;
-    @XmlAttribute
-    private long keepAliveTime;
-    @XmlAttribute
-    private int maxSize = 1;
-    @XmlAttribute
+    @XmlAttribute(required = false)
+    private Integer coreSize = 1;
+    @XmlAttribute(required = false)
+    private Boolean daemon = Boolean.TRUE;
+    @XmlAttribute(required = false)
+    private Long keepAliveTime;
+    @XmlAttribute(required = false)
+    private Integer maxSize = 1;
+    @XmlAttribute(required = false)
     private String name = "Thread Processor";
-    @XmlAttribute
-    private int priority = Thread.NORM_PRIORITY;
-    @XmlAttribute
-    private long stackSize;
+    @XmlAttribute(required = false)
+    private Integer priority = Thread.NORM_PRIORITY;
+    @XmlAttribute(required = false)
+    private Long stackSize;
     @XmlElementRef
     private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
-
     @XmlTransient
     private BlockingQueue<Runnable> taskQueue;
     @XmlTransient
@@ -98,13 +96,23 @@ public class ThreadType extends ProcessorType<ProcessorType> {
 
         ThreadProcessor thread = new ThreadProcessor();
         thread.setExecutor(executor);
-        thread.setCoreSize(coreSize);
-        thread.setDaemon(daemon);
-        thread.setKeepAliveTime(keepAliveTime);
-        thread.setMaxSize(maxSize);
+        if (coreSize != null) {
+            thread.setCoreSize(coreSize);
+        }
+        if (daemon != null) {
+            thread.setDaemon(daemon);
+        }
+        if (keepAliveTime != null) {
+            thread.setKeepAliveTime(keepAliveTime);
+        }
+        if (maxSize != null) {
+            thread.setMaxSize(maxSize);
+        }
         thread.setName(name);
         thread.setPriority(priority);
-        thread.setStackSize(stackSize);
+        if (stackSize != null) {
+            thread.setStackSize(stackSize);
+        }
         thread.setTaskQueue(taskQueue);
         thread.setThreadGroup(threadGroup);
 
