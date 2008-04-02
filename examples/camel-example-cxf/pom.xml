@@ -63,6 +63,12 @@
     </dependency>
 
     <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.8.1</version>      
+    </dependency>
+
+    <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
       <version>2.0.1</version>
@@ -105,7 +111,7 @@
       <plugin>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-codegen-plugin</artifactId>
-        <version>2.0.2-incubator</version>
+        <version>${cxf-version}</version>
         <executions>
           <execution>
             <id>generate-sources</id>
@@ -126,7 +132,7 @@
       </plugin>
 
 
-      <!-- allows the example to be ran via 'mvn compile exec:java' -->
+      <!-- Allows the example to be run via 'mvn compile exec:java' -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>

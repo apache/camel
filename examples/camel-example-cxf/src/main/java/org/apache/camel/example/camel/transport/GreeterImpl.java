@@ -43,7 +43,7 @@ public class GreeterImpl implements Greeter {
         LOG.info("Executing operation greetMe");
         System.out.println("Executing operation greetMe");
         System.out.println("Message received: " + me + "\n");
-        return "Hello " + me + "form " + suffix;
+        return "Hello " + me + " from " + suffix;
     }
 
     /* (non-Javadoc)

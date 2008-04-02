@@ -31,19 +31,19 @@ import javax.xml.soap.SOAPPart;
 import org.apache.camel.Exchange;
 
 /**
- * A simple bean demonstrating processing of SOAPMessage routed by CAMEL
+ * A simple bean demonstrating the processing of a SOAPMessage routed by Camel
  *
  */
 //START SNIPPET: e1
 public class TesterBean {
 
     public SOAPMessage processSOAP(Exchange exchange) {
-        // since the camel-cxf endpoint use list to store the parameters
-        // and bean component use bodyAs expression to get the value
-        // we need to do deal the parameters ourself
+        // Since the Camel-CXF endpoint uses a list to store the parameters
+        // and bean component uses the bodyAs expression to get the value
+        // we'll need to deal with the parameters ourself
         SOAPMessage soapMessage = (SOAPMessage)exchange.getIn().getBody(List.class).get(0);
         if (soapMessage == null) {
-            System.out.println("Incoming null message deteced...");
+            System.out.println("Incoming null message detected...");
             return createDefaultSoapMessage("Greetings from Apache Camel!!!!", "null");
         }
 

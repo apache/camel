@@ -29,8 +29,8 @@ import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPBinding;
 
 /**
- * A simple client that uses JaxWS Dispatch API to call a service endpoint
- * exposed in a servlet container.
+ * A simple client that uses the JAX-WS Dispatch API to call 
+ * a service endpoint exposed in a servlet container.
  */
 public final class Client {
 
@@ -42,10 +42,10 @@ public final class Client {
     }
 
     public void invoke() throws Exception {
-        // Qnames for service as defined in wsdl.
+        // Service Qname as defined in the WSDL.
         QName serviceName = new QName("http://apache.org/hello_world_soap_http", "SOAPService");
 
-        // QName for Port As defined in wsdl.
+        // Port QName as defined in the WSDL.
         QName portName = new QName("http://apache.org/hello_world_soap_http", "SoapOverHttpRouter");
 
         // Create a dynamic Service instance
@@ -82,7 +82,7 @@ public final class Client {
         SOAPMessage reply = null;
 
         try {
-            // Invoke Endpoint Operation and read response
+            // Invoke endpoint operation and read response
             reply = dispatch.invoke(request);
         } catch (WebServiceException wse) {
             wse.printStackTrace();

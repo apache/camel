@@ -26,8 +26,8 @@ import org.apache.camel.example.jms.JmsBroker;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * An example class for demonstrating camel works as Router.
- * This example shows how camel can route a SOAP over HTTP client's request
+ * An example for demonstrating how Camel works as a Router.
+ * This example shows how Camel can route a SOAP client's HTTP request
  * to a SOAP over JMS Service.
  *
  */
@@ -53,7 +53,7 @@ public final class CamelCxfExample {
         // START SNIPPET: e1
         CamelContext context = new DefaultCamelContext();
         // END SNIPPET: e1
-        // set up the jms broker and the CXF SOAP over JMS server
+        // Set up the JMS broker and the CXF SOAP over JMS server
         // START SNIPPET: e2
         JmsBroker broker = new JmsBroker();
         Server server = new Server();
@@ -69,15 +69,15 @@ public final class CamelCxfExample {
                 }
             });
             // END SNIPPET: e3
-            // Staring the routing context
+            // Starting the routing context
             // Using the CXF Client to kick off the invocations
             // START SNIPPET: e4
             context.start();
             Client client = new Client(ROUTER_ADDRESS + "?wsdl");
             // END SNIPPET: e4
-            // Now everything is set up - lets start the context
+            // Now everything is set up - let's start the context
 
-            client.invock();
+            client.invoke();
             Thread.sleep(1000);
             context.stop();
         } catch (Exception ex) {

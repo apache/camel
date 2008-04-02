@@ -33,7 +33,7 @@ public final class CamelTransportExample {
             // set the client's service access point
             Client client = new Client("http://localhost:9090/GreeterContext/GreeterPort");
             // invoking the services
-            client.invock();
+            client.invoke();
 
             Thread.sleep(1000);
 

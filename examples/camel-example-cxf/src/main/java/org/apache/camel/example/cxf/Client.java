@@ -50,7 +50,7 @@ public final class Client {
 
 
 
-    public void invock() throws Exception {
+    public void invoke() throws Exception {
 
         System.out.println("Acquiring router port ...");
         Greeter port = soapService.getSoapOverHttpRouter();

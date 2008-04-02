@@ -17,9 +17,9 @@
 package org.apache.camel.example.cxf.provider;
 
 /**
- * An example demonstrating routing of messages to JAXWS WebServiceProvider
- * Endpoint through the camel route. The message could be SOAPEnvelope or Plain
- * XML over HTTP or as defined by the JaxWS specification.
+ * An example demonstrating routing of messages to a JAXWS WebServiceProvider
+ * endpoint through a Camel route. The message could be either a SOAP envelope 
+ * or plain XML over HTTP as defined by the JAX-WS specification.
  */
 public final class CamelCxfExample {
 
@@ -35,7 +35,7 @@ public final class CamelCxfExample {
             server.start();
             // set the client's service access point
             Client client = new Client("http://localhost:9000/GreeterContext/SOAPMessageService");
-            // invoking the services
+            // invoke the services
             client.invoke();
 
         } catch (Exception ex) {

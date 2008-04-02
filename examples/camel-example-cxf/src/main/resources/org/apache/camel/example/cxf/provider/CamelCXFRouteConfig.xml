@@ -29,8 +29,8 @@
     <!-- START SNIPPET: example -->
 
     <!--
-    If you want to run this example in Tomcat container which need to used servlet transoprt,
-    please repalce the cxf-extension-http-jetty.xml with cxf-servlet.xml
+    If you want to run this example in a Tomcat container which needs the servlet transport,
+    please replace the cxf-extension-http-jetty.xml with cxf-servlet.xml
     -->
 
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
