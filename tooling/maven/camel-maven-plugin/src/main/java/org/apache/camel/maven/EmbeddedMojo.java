@@ -83,21 +83,19 @@ public class EmbeddedMojo extends AbstractExecMojo {
     public void execute() throws MojoExecutionException {
         try {
             executeWithoutWrapping();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new MojoExecutionException("Failed: " + e, e);
         }
     }
 
     public void executeWithoutWrapping() throws MalformedURLException, ClassNotFoundException,
-            NoSuchMethodException, IllegalAccessException, MojoExecutionException {
+        NoSuchMethodException, IllegalAccessException, MojoExecutionException {
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             ClassLoader newLoader = createClassLoader(null);
             Thread.currentThread().setContextClassLoader(newLoader);
             runCamel(newLoader);
-        }
-        finally {
+        } finally {
             Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
     }
@@ -159,7 +157,8 @@ public class EmbeddedMojo extends AbstractExecMojo {
     //-------------------------------------------------------------------------
 
     protected void runCamel(ClassLoader newLoader) throws ClassNotFoundException, NoSuchMethodException,
-            IllegalAccessException, MojoExecutionException {
+        IllegalAccessException, MojoExecutionException {
+
         getLog().debug("Running Camel in: " + newLoader);
         Class<?> type = newLoader.loadClass("org.apache.camel.spring.Main");
         Method method = type.getMethod("main", String[].class);
@@ -167,9 +166,8 @@ public class EmbeddedMojo extends AbstractExecMojo {
         getLog().debug("Starting the Camel Main with arguments: " + Arrays.asList(arguments));
 
         try {
-            method.invoke(null, new Object[]{arguments});
-        }
-        catch (InvocationTargetException e) {
+            method.invoke(null, new Object[] {arguments});
+        } catch (InvocationTargetException e) {
             Throwable t = e.getTargetException();
             throw new MojoExecutionException("Failed: " + t, t);
         }

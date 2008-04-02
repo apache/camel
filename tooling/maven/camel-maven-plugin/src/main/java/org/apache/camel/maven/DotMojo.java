@@ -44,8 +44,9 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
 /**
- * Runs Camel embedded with META-INF/services/*.xml spring files to try create DOT files for the
- * routing rules, then converts the DOT files into another format such as PNG
+ * Runs Camel embedded with META-INF/services/*.xml spring files to try create
+ * DOT files for the routing rules, then converts the DOT files into another
+ * format such as PNG
  *
  * @version $Revision$
  * @goal dot
@@ -60,27 +61,29 @@ public class DotMojo extends AbstractMavenReport {
      * Subdirectory for report.
      */
     protected static final String SUBDIRECTORY = "cameldoc";
-    private String indexHtmlContent;
     //
     // For running Camel embedded
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     //
     /**
-     * The duration to run the application for which by default is in milliseconds.
+     * The duration to run the application for which by default is in
+     * milliseconds.
      *
      * @parameter expression="2s"
      * @readonly
      */
     protected String duration;
     /**
-     * Whether we should boot up camel with the META-INF/services/*.xml to generate the DOT file
+     * Whether we should boot up camel with the META-INF/services/*.xml to
+     * generate the DOT file
      *
      * @parameter expression="true"
      * @readonly
      */
     protected boolean runCamel;
     /**
-     * Should we try run the DOT executable on the generated .DOT file to generate images
+     * Should we try run the DOT executable on the generated .DOT file to
+     * generate images
      *
      * @parameter expression="true"
      * @readonly
@@ -111,22 +114,24 @@ public class DotMojo extends AbstractMavenReport {
      */
     private File outputDirectory;
     /**
-     * In the case of multiple camel contexts, setting aggregate == true will aggregate all
-     * into a monolithic context, otherwise they will be processed independently.
+     * In the case of multiple camel contexts, setting aggregate == true will
+     * aggregate all into a monolithic context, otherwise they will be processed
+     * independently.
      *
      * @parameter
      */
     private String aggregate;
     /**
-     * GraphViz executable location; visualization (images) will be
-     * generated only if you install this program and set this property to the
-     * executable dot (dot.exe on Win).
+     * GraphViz executable location; visualization (images) will be generated
+     * only if you install this program and set this property to the executable
+     * dot (dot.exe on Win).
      *
      * @parameter expression="dot"
      */
     private String executable;
     /**
-     * Graphviz output types. Default is png. Possible values: png, jpg, gif, svg.
+     * Graphviz output types. Default is png. Possible values: png, jpg, gif,
+     * svg.
      *
      * @required
      */
@@ -143,6 +148,8 @@ public class DotMojo extends AbstractMavenReport {
      * @component
      */
     private Renderer renderer;
+
+    private String indexHtmlContent;
 
     /**
      * @param locale report locale.
@@ -182,8 +189,7 @@ public class DotMojo extends AbstractMavenReport {
         this.execute(this.buildDirectory, Locale.getDefault());
         try {
             writeIndexHtmlFile(outputDirectory, "index.html", indexHtmlContent);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new MojoExecutionException("Failed: " + e, e);
         }
     }
@@ -198,12 +204,10 @@ public class DotMojo extends AbstractMavenReport {
             Sink kitchenSink = getSink();
             if (kitchenSink != null) {
                 kitchenSink.rawText(indexHtmlContent);
-            }
-            else {
+            } else {
                 writeIndexHtmlFile(outputDirectory, "index.html", indexHtmlContent);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             final MavenReportException ex = new MavenReportException(e.getMessage());
             ex.initCause(e.getCause());
             throw ex;
@@ -214,15 +218,14 @@ public class DotMojo extends AbstractMavenReport {
      * Executes DOT generator.
      *
      * @param outputDir report output directory.
-     * @param locale    report locale.
+     * @param locale report locale.
      * @throws MojoExecutionException if there were any execution errors.
      */
     protected void execute(final File outputDir, final Locale locale) throws MojoExecutionException {
 
         try {
             runCamelEmbedded(outputDir);
-        }
-        catch (DependencyResolutionRequiredException e) {
+        } catch (DependencyResolutionRequiredException e) {
             throw new MojoExecutionException("Failed: " + e, e);
         }
         outputDir.mkdirs();
@@ -233,9 +236,8 @@ public class DotMojo extends AbstractMavenReport {
         if (graphvizOutputTypes == null) {
             if (graphvizOutputType == null) {
                 graphvizOutputTypes = DEFAULT_GRAPHVIZ_OUTPUT_TYPES;
-            }
-            else {
-                graphvizOutputTypes = new String[]{graphvizOutputType};
+            } else {
+                graphvizOutputTypes = new String[] {graphvizOutputType};
             }
         }
         try {
@@ -246,8 +248,8 @@ public class DotMojo extends AbstractMavenReport {
             }
 
             boolean multipleCamelContexts = contextNames.size() > 1;
-
-            for (int i = 0, size = files.size(); i < size; i++) {
+            int size = files.size();
+            for (int i = 0; i < size; i++) {
                 File file = files.get(i);
                 String contextName = null;
                 if (multipleCamelContexts) {
@@ -279,16 +281,15 @@ public class DotMojo extends AbstractMavenReport {
                 out.println("</ul>");
                 indexHtmlContent = buffer.toString();
             }
-        }
-        catch (CommandLineException e) {
+        } catch (CommandLineException e) {
             throw new MojoExecutionException("Failed: " + e, e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new MojoExecutionException("Failed: " + e, e);
         }
     }
 
-    private void generate(int index, File file, String contextName) throws CommandLineException, MojoExecutionException, IOException {
+    private void generate(int index, File file, String contextName) throws CommandLineException,
+        MojoExecutionException, IOException {
 
         StringWriter buffer = new StringWriter();
         PrintWriter out = new PrintWriter(buffer);
@@ -339,15 +340,14 @@ public class DotMojo extends AbstractMavenReport {
             mojo.setPluginContext(getPluginContext());
             try {
                 mojo.executeWithoutWrapping();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 getLog().error("Failed to run Camel embedded: " + e, e);
             }
         }
     }
 
     protected void writeIndexHtmlFile(File dir, String fileName, String content) throws IOException {
-        //File dir = outputDirectory;
+        // File dir = outputDirectory;
         dir.mkdirs();
         File html = new File(dir, fileName);
         PrintWriter out = null;
@@ -360,14 +360,12 @@ public class DotMojo extends AbstractMavenReport {
             out.println();
             if (content == null) {
                 out.write("<p>No EIP diagrams available</p>");
-            }
-            else {
+            } else {
                 out.write(content);
             }
             out.println("</body>");
             out.println("</html>");
-        }
-        finally {
+        } finally {
             String description = "Failed to close html output file";
             close(out, description);
         }
@@ -376,8 +374,7 @@ public class DotMojo extends AbstractMavenReport {
     protected void printHtmlHeader(PrintWriter out, String contextName) {
         if (contextName != null) {
             out.println("<h1>EIP Patterns for CamelContext: " + contextName + "</h1>");
-        }
-        else {
+        } else {
             out.println("<h1>Camel EIP Patterns</h1>");
         }
         out.println();
@@ -402,8 +399,7 @@ public class DotMojo extends AbstractMavenReport {
         if (closeable != null) {
             try {
                 closeable.close();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 getLog().warn(description + ": " + e);
             }
         }
@@ -450,8 +446,7 @@ public class DotMojo extends AbstractMavenReport {
         int idx = name.lastIndexOf(".");
         if (idx > 0) {
             return name.substring(0, idx);
-        }
-        else {
+        } else {
             return name;
         }
     }
@@ -459,8 +454,7 @@ public class DotMojo extends AbstractMavenReport {
     private void appendFiles(List<File> output, File file) {
         if (file.isDirectory()) {
             appendDirectory(output, file);
-        }
-        else {
+        } else {
             if (isValid(file)) {
                 output.add(file);
             }
@@ -487,16 +481,13 @@ public class DotMojo extends AbstractMavenReport {
                 String line = reader.readLine();
                 if (line == null) {
                     break;
-                }
-                else {
+                } else {
                     out.println(line);
                 }
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new MojoExecutionException("Failed: " + e, e);
-        }
-        finally {
+        } finally {
             close(reader, "cmapx file");
         }
     }
