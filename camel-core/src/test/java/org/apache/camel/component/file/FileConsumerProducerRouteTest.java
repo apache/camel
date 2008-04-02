@@ -27,7 +27,7 @@ public class FileConsumerProducerRouteTest extends ContextTestSupport {
     public void testFileRoute() throws Exception {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedMessageCount(2);
-        result.setDefaulResultWaitMillis(10000);
+        result.setResultWaitTime(10000);
 
         result.assertIsSatisfied();
     }

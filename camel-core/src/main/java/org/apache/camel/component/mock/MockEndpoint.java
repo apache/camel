@@ -61,7 +61,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     private List<Runnable> tests;
     private CountDownLatch latch;
     private long sleepForEmptyTest;
-    private long defaulResultWaitMillis;
+    private long resultWaitTime;
     private int expectedMinimumCount;
     private List expectedBodyValues;
     private List actualBodyValues;
@@ -69,6 +69,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     private String headerName;
     private String headerValue;
     private Object actualHeader;
+    private Processor reporter;
 
     public MockEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -151,6 +152,11 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
             }
         };
     }
+
+    public void reset() {
+        init();
+    }
+
 
     // Testing API
     // -------------------------------------------------------------------------
@@ -250,12 +256,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
      *                expected by this endpoint
      */
     public void expectedMessageCount(int expectedCount) {
-        this.expectedCount = expectedCount;
-        if (expectedCount <= 0) {
-            latch = null;
-        } else {
-            latch = new CountDownLatch(expectedCount);
-        }
+        setExpectedMessageCount(expectedCount);
     }
 
     /**
@@ -266,12 +267,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
      *                expected by this endpoint
      */
     public void expectedMinimumMessageCount(int expectedCount) {
-        this.expectedMinimumCount = expectedCount;
-        if (expectedCount <= 0) {
-            latch = null;
-        } else {
-            latch = new CountDownLatch(expectedMinimumCount);
-        }
+        setMinimumExpectedMessageCount(expectedCount);
     }
 
     /**
@@ -511,22 +507,63 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
         this.sleepForEmptyTest = sleepForEmptyTest;
     }
 
-    public long getDefaulResultWaitMillis() {
-        return defaulResultWaitMillis;
+    public long getResultWaitTime() {
+        return resultWaitTime;
     }
 
     /**
      * Sets the maximum amount of time the {@link #assertIsSatisfied()} will
      * wait on a latch until it is satisfied
      */
-    public void setDefaulResultWaitMillis(long defaulResultWaitMillis) {
-        this.defaulResultWaitMillis = defaulResultWaitMillis;
+    public void setResultWaitTime(long resultWaitTime) {
+        this.resultWaitTime = resultWaitTime;
     }
 
-    public void reset() {
-        init();
+    /**
+     * Specifies the expected number of message exchanges that should be
+     * received by this endpoint
+     *
+     * @param expectedCount the number of message exchanges that should be
+     *                expected by this endpoint
+     */
+    public void setExpectedMessageCount(int expectedCount) {
+        this.expectedCount = expectedCount;
+        if (expectedCount <= 0) {
+            latch = null;
+        } else {
+            latch = new CountDownLatch(expectedCount);
+        }
     }
 
+    /**
+     * Specifies the minimum number of expected message exchanges that should be
+     * received by this endpoint
+     *
+     * @param expectedCount the number of message exchanges that should be
+     *                expected by this endpoint
+     */
+    public void setMinimumExpectedMessageCount(int expectedCount) {
+        this.expectedMinimumCount = expectedCount;
+        if (expectedCount <= 0) {
+            latch = null;
+        } else {
+            latch = new CountDownLatch(expectedMinimumCount);
+        }
+    }
+
+    public Processor getReporter() {
+        return reporter;
+    }
+
+    /**
+     * Allows a processor to added to the endpoint to report on progress of the test
+     */
+    public void setReporter(Processor reporter) {
+        this.reporter = reporter;
+    }
+
+    // Implementation methods
+    // -------------------------------------------------------------------------
     private void init() {
         expectedCount = -1;
         counter = 0;
@@ -536,18 +573,19 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
         tests = new CopyOnWriteArrayList<Runnable>();
         latch = null;
         sleepForEmptyTest = 1000L;
-        defaulResultWaitMillis = 20000L;
+        resultWaitTime = 20000L;
         expectedMinimumCount = -1;
         expectedBodyValues = null;
         actualBodyValues = new ArrayList();
     }
 
-    // Implementation methods
-    // -------------------------------------------------------------------------
     protected synchronized void onExchange(Exchange exchange) {
         try {
-            performAssertions(exchange);
+            if (reporter != null) {
+                reporter.process(exchange);
+            }
 
+            performAssertions(exchange);
         } catch (Throwable e) {
             failures.add(e);
         }
@@ -593,8 +631,8 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
         }
 
         // now lets wait for the results
-        LOG.debug("Waiting on the latch for: " + defaulResultWaitMillis + " millis");
-        latch.await(defaulResultWaitMillis, TimeUnit.MILLISECONDS);
+        LOG.debug("Waiting on the latch for: " + resultWaitTime + " millis");
+        latch.await(resultWaitTime, TimeUnit.MILLISECONDS);
     }
 
     protected void assertEquals(String message, Object expectedValue, Object actualValue) {
