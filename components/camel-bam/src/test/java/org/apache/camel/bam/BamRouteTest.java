@@ -59,7 +59,7 @@ public class BamRouteTest extends SpringTestSupport {
         super.setUp();
 
         overdueEndpoint = getMockEndpoint("mock:overdue");
-        overdueEndpoint.setDefaulResultWaitMillis(8000);
+        overdueEndpoint.setResultWaitTime(8000);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

@@ -20,10 +20,12 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.LoggingLevel;
+import org.apache.camel.processor.ThroughputLogger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -35,7 +37,15 @@ public class LogComponent extends DefaultComponent<Exchange> {
 
     protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         LoggingLevel level = getLoggingLevel(parameters);
-        Logger logger = new Logger(remaining, level);
+        Object value = parameters.remove("groupSize");
+
+        Logger logger;
+        if (value != null) {
+            logger = new ThroughputLogger(remaining, level, ObjectConverter.toInteger(value));
+        }
+        else {
+            logger = new Logger(remaining, level);
+        }
 
         return new ProcessorEndpoint(uri, this, logger);
     }

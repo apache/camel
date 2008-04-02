@@ -93,13 +93,12 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         // TODO lets do a much better version of this!
         long size = getDataSet().getSize();
         size *= 4000;
-        setDefaulResultWaitMillis(size);
+        setResultWaitTime(size);
         super.waitForCompleteLatch();
     }
 
     // Properties
     //-------------------------------------------------------------------------
-
 
     public DataSet getDataSet() {
         return dataSet;
@@ -131,11 +130,8 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         this.produceDelay = produceDelay;
     }
 
-
     // Implementation methods
     //-------------------------------------------------------------------------
-
-
 
     @Override
     protected void performAssertions(Exchange actual) throws Exception {
@@ -147,7 +143,9 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         Exchange expected = createExchange(index);
 
         // now lets assert that they are the same
-        LOG.debug("Received message: " + index + " = " + actual);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Received message: " + index + " = " + actual);
+        }
 
         assertMessageExpected(index, expected, actual);
 

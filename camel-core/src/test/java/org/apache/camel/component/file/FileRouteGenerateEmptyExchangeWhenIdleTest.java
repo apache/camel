@@ -31,7 +31,7 @@ public class FileRouteGenerateEmptyExchangeWhenIdleTest extends ContextTestSuppo
     public void testFileRoute() throws Exception {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedMinimumMessageCount(2);
-        result.setDefaulResultWaitMillis(5000);
+        result.setResultWaitTime(5000);
 
         template.sendBodyAndHeader(uri, expectedBody, "cheese", 123);
 

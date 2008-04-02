@@ -54,7 +54,7 @@ public class FileAsyncRouteTest extends ContextTestSupport {
     public void testFileRoute() throws Exception {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedBodiesReceived(expectedBody);
-        result.setDefaulResultWaitMillis(5000);
+        result.setResultWaitTime(5000);
 
         template.sendBodyAndHeader(uri, expectedBody, "cheese", 123);
 
