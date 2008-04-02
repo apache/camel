@@ -17,6 +17,8 @@
 package org.apache.camel.processor;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -35,7 +37,7 @@ public class SplitterTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("James", "Guillaume", "Hiram", "Rob");
 
-        template.send("direct:a", new Processor() {
+        template.send("direct:seqential", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody("James,Guillaume,Hiram,Rob");
@@ -58,7 +60,7 @@ public class SplitterTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("James", "Guillaume", "Hiram", "Rob", "Roman");
 
-        Exchange result = template.send("direct:a", new Processor() {
+        Exchange result = template.send("direct:seqential", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody("James,Guillaume,Hiram,Rob,Roman");
@@ -74,7 +76,7 @@ public class SplitterTest extends ContextTestSupport {
     }
     
     public void testEmptyBody() {
-        Exchange result = template.send("direct:a", new Processor() {
+        Exchange result = template.send("direct:seqential", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader("foo", "bar");
             }
@@ -83,10 +85,64 @@ public class SplitterTest extends ContextTestSupport {
         assertNull(result.getOut(false));
     }
     
+    public void testSendingAMessageUsingMulticastReceivesItsOwnExchangeParallel() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        
+        resultEndpoint.expectsNoDuplicates(body());
+        resultEndpoint.expectedMessageCount(4);
+        
+        template.send("direct:parallel", new Processor() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                in.setBody("James,Guillaume,Hiram,Rob");
+                in.setHeader("foo", "bar");
+            }
+        });
+
+        assertMockEndpointsSatisifed();
+
+        List<Exchange> list = resultEndpoint.getReceivedExchanges();
+        
+        Set<Integer> numbersFound = new TreeSet<Integer>();
+        
+        final String[] NAMES = {"James", "Guillaume", "Hiram", "Rob"};
+        
+        for (int i = 0; i < 4; i++) {
+            Exchange exchange = list.get(i);
+            Message in = exchange.getIn();
+            Integer splitCounter = in.getHeader(Splitter.SPLIT_COUNTER, Integer.class);
+            numbersFound.add(splitCounter);
+            assertEquals(NAMES[splitCounter], in.getBody());
+            assertMessageHeader(in, Splitter.SPLIT_SIZE, 4);
+        }
+        
+        assertEquals(4, numbersFound.size());
+    }
+
+    public void testSpliterWithAggregationStrategyParallel() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedMessageCount(5);
+
+        Exchange result = template.send("direct:parallel", new Processor() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                in.setBody("James,Guillaume,Hiram,Rob,Roman");
+                in.setHeader("foo", "bar");
+            }
+        });
+
+        assertMockEndpointsSatisifed();
+        Message out = result.getOut();
+
+        assertMessageHeader(out, "foo", "bar");
+        assertEquals((Integer)5, result.getProperty("aggregated", Integer.class));
+    }
+    
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").splitter(body().tokenize(","), new UseLatestAggregationStrategy()).to("mock:result");
+                from("direct:seqential").splitter(body().tokenize(","), new UseLatestAggregationStrategy()).to("mock:result");
+                from("direct:parallel").splitter(body().tokenize(","), new MyAggregationStrategy(), true).to("mock:result");
             }
         };
     }

@@ -20,6 +20,8 @@ package org.apache.camel.processor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
@@ -46,6 +48,26 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version $Revision$
  */
 public class MulticastProcessor extends ServiceSupport implements Processor {
+    static class ProcessorExchangePair {
+        private final Processor processor;
+        private final Exchange exchange;
+        
+        public ProcessorExchangePair(Processor processor, Exchange exchange) {
+            this.processor = processor;
+            this.exchange = exchange;
+        }
+
+        public Processor getProcessor() {
+            return processor;
+        }
+
+        public Exchange getExchange() {
+            return exchange;
+        }
+        
+        
+    }
+
     private Collection<Processor> processors;
     private AggregationStrategy aggregationStrategy;
     private boolean isParallelProcessing;
@@ -121,13 +143,18 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         Exchange result = null;
+
+        List<ProcessorExchangePair> pairs = createProcessorExchangePairs(exchange);
+        
         // Parallel Processing the producer
         if (isParallelProcessing) {
-            Exchange[] exchanges = new Exchange[processors.size()];
-            final CountDownLatch completedExchanges = new CountDownLatch(exchanges.length);
+            Exchange[] exchanges = new Exchange[pairs.size()];
+            final CountDownLatch completedExchanges = new CountDownLatch(pairs.size());
             int i = 0;
-            for (Processor producer : processors) {
-                exchanges[i] = copyExchangeStrategy(producer, exchange);
+            for (ProcessorExchangePair pair : pairs) {
+                Processor producer = pair.getProcessor();
+                exchanges[i] = pair.getExchange();
+                updateNewExchange(exchanges[i], i, pairs);
                 ProcessCall call = new ProcessCall(exchanges[i], producer, new AsyncCallback() {
                     public void done(boolean doneSynchronously) {
                         completedExchanges.countDown();
@@ -150,21 +177,40 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
 
         } else {
             // we call the producer one by one sequentially
-            for (Processor producer : processors) {
-                Exchange copy = copyExchangeStrategy(producer, exchange);
-                producer.process(copy);
+            int i = 0;
+            for (ProcessorExchangePair pair : pairs) {
+                Processor producer = pair.getProcessor();
+                Exchange subExchange = pair.getExchange();
+                updateNewExchange(subExchange, i, pairs);
+                
+                producer.process(subExchange);
                 if (aggregationStrategy != null) {
                     if (result == null) {
-                        result = copy;
+                        result = subExchange;
                     } else {
-                        result = aggregationStrategy.aggregate(result, copy);
+                        result = aggregationStrategy.aggregate(result, subExchange);
                     }
                 }
+                i++;
             }
         }
         if (result != null) {
             ExchangeHelper.copyResults(exchange, result);
         }
+    }
+
+    protected void updateNewExchange(Exchange exchange, int i, List<ProcessorExchangePair> allPairs) {
+        // No updates needed
+    }
+
+    protected List<ProcessorExchangePair> createProcessorExchangePairs(
+        Exchange exchange) {
+        List<ProcessorExchangePair> result = new ArrayList<ProcessorExchangePair>(processors.size());
+        Processor[] processorsArray = processors.toArray(new Processor[0]);
+        for (int i = 0; i < processorsArray.length; i++) {
+            result.add(new ProcessorExchangePair(processorsArray[i], exchange.copy()));
+        }
+        return result;
     }
 
     protected void doStop() throws Exception {
@@ -197,16 +243,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
         return processors;
     }
 
-    /**
-     * Strategy method to copy the exchange before sending to another endpoint.
-     * Derived classes such as the {@link Pipeline} will not clone the exchange
-     *
-     * @param processor the processor that will send the exchange
-     * @param exchange
-     * @return the current exchange if no copying is required such as for a
-     *         pipeline otherwise a new copy of the exchange is returned.
-     */
-    protected Exchange copyExchangeStrategy(Processor processor, Exchange exchange) {
-        return exchange.copy();
+    public AggregationStrategy getAggregationStrategy() {
+        return aggregationStrategy;
     }
 }

@@ -17,19 +17,21 @@
 package org.apache.camel.processor;
 
 
+import static org.apache.camel.util.ObjectHelper.notNull;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.ObjectConverter;
-import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.CollectionHelper;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ServiceHelper;
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Implements a dynamic <a
@@ -39,60 +41,55 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  *
  * @version $Revision$
  */
-public class Splitter extends ServiceSupport implements Processor {
+public class Splitter extends MulticastProcessor implements Processor {
     public static final String SPLIT_SIZE = "org.apache.camel.splitSize";
     public static final String SPLIT_COUNTER = "org.apache.camel.splitCounter";
 
-    private final Processor processor;
     private final Expression expression;
-    private final AggregationStrategy aggregationStrategy;
 
     public Splitter(Expression expression, Processor destination, AggregationStrategy aggregationStrategy) {
-        this.processor = destination;
+        this(expression, destination, aggregationStrategy, false, null);
+    }
+
+    public Splitter(Expression expression, Processor destination,
+            AggregationStrategy aggregationStrategy,
+            boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor) {
+        super(Collections.singleton(destination), aggregationStrategy, parallelProcessing, threadPoolExecutor);
+        
         this.expression = expression;
-        this.aggregationStrategy = aggregationStrategy;
-        notNull(destination, "destination");
         notNull(expression, "expression");
-        notNull(aggregationStrategy, "aggregationStrategy");
+        notNull(destination, "destination");
     }
 
     @Override
     public String toString() {
-        return "Splitter[on: " + expression + " to: " + processor + " aggregate: " + aggregationStrategy + "]";
+        return "Splitter[on: " + expression + " to: " + getProcessors().iterator().next() + " aggregate: " + getAggregationStrategy() + "]";
     }
 
-    public void process(Exchange exchange) throws Exception {
+    @Override
+    protected List<ProcessorExchangePair> createProcessorExchangePairs(
+        Exchange exchange) {
         Object value = expression.evaluate(exchange);
-        Integer size = CollectionHelper.size(value);
-        Iterator iter = ObjectConverter.iterator(value);
-        int counter = 0;
-        Exchange result = null;
-        while (iter.hasNext()) {
+        Integer collectionSize = CollectionHelper.size(value);
+        List<ProcessorExchangePair> result;
+        if (collectionSize != null) {
+            result = new ArrayList<ProcessorExchangePair>(collectionSize);
+        } else {
+            result = new ArrayList<ProcessorExchangePair>();
+        }
+        for (Iterator<Object> iter = ObjectConverter.iterator(value); iter.hasNext(); ) {
             Object part = iter.next();
             Exchange newExchange = exchange.copy();
             Message in = newExchange.getIn();
             in.setBody(part);
-            if (size != null) {
-                in.setHeader(SPLIT_SIZE, size);
-            }
-            in.setHeader(SPLIT_COUNTER, counter++);
-            processor.process(newExchange);
-            if (result == null) {
-                result = newExchange;
-            } else {
-                result = aggregationStrategy.aggregate(result, newExchange);
-            }
+            result.add(new ProcessorExchangePair(getProcessors().iterator().next(), newExchange));
         }
-        if (result != null) {
-            ExchangeHelper.copyResults(exchange, result);
-        }
+        return result;
     }
 
-    protected void doStart() throws Exception {
-        ServiceHelper.startServices(processor);
-    }
-
-    protected void doStop() throws Exception {
-        ServiceHelper.stopServices(processor);
+    @Override
+    protected void updateNewExchange(Exchange exchange, int i, List<ProcessorExchangePair> allPairs) {
+        exchange.getIn().setHeader(SPLIT_COUNTER, i);
+        exchange.getIn().setHeader(SPLIT_SIZE, allPairs.size());
     }
 }
