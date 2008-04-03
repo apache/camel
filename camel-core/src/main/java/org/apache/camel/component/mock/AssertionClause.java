@@ -57,7 +57,6 @@ public abstract class AssertionClause implements Runnable {
     /**
      * Returns a predicate and value builder for headers on an exchange
      */
-
     public ValueBuilder<Exchange> header(String name) {
         Expression<Exchange> expression = headerExpression(name);
         return new PredicateValueBuilder(expression);
@@ -66,7 +65,6 @@ public abstract class AssertionClause implements Runnable {
     /**
      * Returns a predicate and value builder for the inbound body on an exchange
      */
-
     public PredicateValueBuilder body() {
         Expression<Exchange> expression = bodyExpression();
         return new PredicateValueBuilder(expression);
@@ -76,7 +74,6 @@ public abstract class AssertionClause implements Runnable {
      * Returns a predicate and value builder for the inbound message body as a
      * specific type
      */
-
     public <T> PredicateValueBuilder bodyAs(Class<T> type) {
         Expression<Exchange> expression = bodyExpression(type);
         return new PredicateValueBuilder(expression);
@@ -86,7 +83,6 @@ public abstract class AssertionClause implements Runnable {
      * Returns a predicate and value builder for the outbound body on an
      * exchange
      */
-
     public PredicateValueBuilder outBody() {
         Expression<Exchange> expression = bodyExpression();
         return new PredicateValueBuilder(expression);
@@ -96,7 +92,6 @@ public abstract class AssertionClause implements Runnable {
      * Returns a predicate and value builder for the outbound message body as a
      * specific type
      */
-
     public <T> PredicateValueBuilder outBody(Class<T> type) {
         Expression<Exchange> expression = bodyExpression(type);
         return new PredicateValueBuilder(expression);
