@@ -54,7 +54,7 @@
 
   <build>
     <plugins>
-      <!-- allows the routes to be ran via 'mvn camel:run' -->
+      <!-- Allows the routes to be run via 'mvn camel:run' -->
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
