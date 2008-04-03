@@ -16,18 +16,10 @@
  */
 package org.apache.camel.component.jms;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.QueueBrowser;
-import javax.jms.Session;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.BrowsableEndpoint;
-import org.springframework.jms.core.BrowserCallback;
 import org.springframework.jms.core.JmsOperations;
 
 /**
@@ -37,10 +29,18 @@ import org.springframework.jms.core.JmsOperations;
  */
 public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint<JmsExchange> {
     private int maximumBrowseSize = -1;
+    private final QueueBrowseStrategy queueBrowseStrategy;
+
 
     public JmsQueueEndpoint(String uri, JmsComponent component, String destination,
-                            JmsConfiguration configuration) {
+            JmsConfiguration configuration) {
+        this(uri, component, destination, configuration, createQueueBrowseStrategy());
+    }
+
+    public JmsQueueEndpoint(String uri, JmsComponent component, String destination,
+            JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
         super(uri, component, destination, false, configuration);
+        this.queueBrowseStrategy = queueBrowseStrategy;
     }
 
     public int getMaximumBrowseSize() {
@@ -58,21 +58,21 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint<J
     public List<Exchange> getExchanges() {
         String queue = getDestination();
         JmsOperations template = getConfiguration().createInOnlyTemplate(false, queue);
+        return queueBrowseStrategy.browse(template, queue, this);
+    }
 
-        // TODO not the best implementation in the world as we have to browse
-        // the entire queue, which could be massive
-        final List<Exchange> answer = new ArrayList<Exchange>();
-        template.browse(queue, new BrowserCallback() {
-            public Object doInJms(Session session, QueueBrowser browser) throws JMSException {
-                Enumeration iter = browser.getEnumeration();
-                while (iter.hasMoreElements()) {
-                    Message message = (Message)iter.nextElement();
-                    JmsExchange exchange = createExchange(message);
-                    answer.add(exchange);
-                }
-                return answer;
-            }
-        });
+    protected static QueueBrowseStrategy createQueueBrowseStrategy() {
+        QueueBrowseStrategy answer = null;
+        try {
+            answer = JmsComponent.tryCreateDefaultQueueBrowseStrategy();
+        }
+        catch (Throwable e) {
+            throw new IllegalArgumentException("Could not create a QueueBrowseStrategy, maybe you are using spring 2.0.x? Cause: " + e, e);
+        }
+        if (answer == null) {
+            throw new IllegalArgumentException("Could not create a QueueBrowseStrategy, maybe you are using spring 2.0.x?");
+        }
         return answer;
     }
+    
 }
