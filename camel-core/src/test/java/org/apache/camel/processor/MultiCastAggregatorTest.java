@@ -47,7 +47,7 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
             url = "direct:sequential";
         }
 
-        Exchange result = template.send(url, new Processor() {
+        Exchange exchange = template.send(url, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody("input");
@@ -56,8 +56,8 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
         });
 
 
-        assertNotNull("We should get result here", result);
-        assertEquals("Can't get the right result", "inputx+inputy+inputz", result.getOut().getBody(String.class));
+        assertNotNull("We should get result here", exchange);
+        assertEquals("Can't get the right result", "inputx+inputy+inputz", exchange.getOut().getBody(String.class));
 
         assertMockEndpointsSatisifed();
     }
@@ -133,8 +133,10 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
+                // START SNIPPET: example
+                // The message will be parallely sent to the endpoints
                 from("direct:parallel").multicast(new BodyOutAggregatingStrategy(), true).to("direct:x", "direct:y", "direct:z");
-
+                // Mulitcast the message in a sequential way
                 from("direct:sequential").multicast(new BodyOutAggregatingStrategy()).to("direct:x", "direct:y", "direct:z");
 
                 from("direct:x").process(new AppendingProcessor("x")).to("direct:aggregater");
@@ -143,6 +145,7 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
 
                 from("direct:aggregater").aggregator(header("cheese"), new BodyInAggregatingStrategy()).
                 completedPredicate(header("aggregated").isEqualTo(3)).to("mock:result");
+                // END SNIPPET: example
             }
         };
 
