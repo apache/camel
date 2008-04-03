@@ -78,9 +78,9 @@ public class TryProcessor extends ServiceSupport implements Processor {
         } catch (Throwable ex) {
             unexpected = new RuntimeCamelException(ex);
         } finally {
-        	try {
-				processFinally(exchange);
-        	} catch (Exception ex) {
+            try {
+                processFinally(exchange);
+            } catch (Exception ex) {
                 unexpected = ex;
             } catch (Throwable ex) {
                 unexpected = new RuntimeCamelException(ex);
