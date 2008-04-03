@@ -45,7 +45,7 @@
     <property name="persistenceUnitName" value="bam"/>
   </bean>
 
-  <!-- lets show a simple UI to browse the database -->
+  <!-- let's show a simple UI to browse the database -->
   <bean id="databaseExplorer" class="org.apache.camel.spring.util.MainRunner" lazy-init="false">
     <property name="main" value="org.hsqldb.util.DatabaseManagerSwing"/>
     <property name="args">

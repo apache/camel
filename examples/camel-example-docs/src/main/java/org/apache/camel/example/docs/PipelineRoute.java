@@ -19,7 +19,7 @@ package org.apache.camel.example.docs;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * A simple pipilne example
+ * A simple pipeline example
  *
  * @version $Revision$
  */

@@ -48,7 +48,7 @@ public class CustomerTransformer {
         String user = doc.getUser();
         CustomerEntity customer = findCustomerByName(user);
 
-        // lets convert information from the document into the entity bean
+        // let's convert information from the document into the entity bean
 
         customer.setFirstName(doc.getFirstName());
         customer.setSurname(doc.getLastName());

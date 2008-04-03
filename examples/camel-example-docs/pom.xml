@@ -39,7 +39,7 @@
       <artifactId>camel-spring</artifactId>
     </dependency>
 
-    <!-- lets use log4j -->
+    <!-- let's use log4j -->
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
@@ -61,7 +61,7 @@
   <build>
     <plugins>
 
-      <!-- allows the example to be ran via 'mvn camel:run' -->
+      <!-- Allows the example to be run via 'mvn camel:run' -->
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
@@ -72,7 +72,7 @@
 
   <reporting>
     <plugins>
-      <!-- lets generate nice PNG / SVG diagrams from our routes -->
+      <!-- let's generate nice PNG / SVG diagrams from our routes -->
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>

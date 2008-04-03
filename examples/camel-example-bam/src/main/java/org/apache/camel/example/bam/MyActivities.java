@@ -38,14 +38,14 @@ public class MyActivities extends ProcessBuilder {
 
     public void configure() throws Exception {
 
-        // lets define some activities, correlating on an XPath on the message bodies
+        // let's define some activities, correlating on an XPath on the message bodies
         ActivityBuilder purchaseOrder = activity("file:src/data/purchaseOrders?noop=true")
                 .correlate(xpath("/purchaseOrder/@id").stringResult());
 
         ActivityBuilder invoice = activity("file:src/data/invoices?noop=true")
                 .correlate(xpath("/invoice/@purchaseOrderId").stringResult());
 
-        // now lets add some BAM rules
+        // now let's add some BAM rules
         invoice.starts().after(purchaseOrder.completes())
                 .expectWithin(seconds(1))
                 .errorIfOver(seconds(2)).to("log:org.apache.camel.example.bam.BamFailures?level=error");
