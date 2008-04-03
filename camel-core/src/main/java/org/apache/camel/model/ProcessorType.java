@@ -34,6 +34,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Message;
 import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.DataFormatClause;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
@@ -50,6 +51,7 @@ import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
+import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
@@ -1205,21 +1207,27 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * Converts the IN message body to the specified type
      */
     public Type convertBodyTo(Class type) {
-        return process(ProcessorBuilder.setBody(Builder.body().convertTo(type)));
+        return process(new ConvertBodyProcessor(type));
     }
 
     /**
      * Converts the OUT message body to the specified type
+     *
+     * @deprecated Please use {@link #convertBodyTo(Class)} instead
      */
     public Type convertOutBodyTo(Class type) {
-        return process(ProcessorBuilder.setOutBody(Builder.outBody().convertTo(type)));
+        // TODO deprecate method?
+        //return process(ProcessorBuilder.setOutBody(Builder.outBody().convertTo(type)));
+        return process(new ConvertBodyProcessor(type));
     }
 
     /**
      * Converts the FAULT message body to the specified type
      */
     public Type convertFaultBodyTo(Class type) {
-        return process(ProcessorBuilder.setFaultBody(Builder.faultBody().convertTo(type)));
+        // TODO deprecate method?
+        //return process(ProcessorBuilder.setFaultBody(Builder.faultBody().convertTo(type)));
+        return process(new ConvertBodyProcessor(type));
     }
 
     // DataFormat support
