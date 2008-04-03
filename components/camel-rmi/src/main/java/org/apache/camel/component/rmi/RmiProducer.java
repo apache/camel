@@ -36,6 +36,10 @@ public class RmiProducer extends DefaultProducer<BeanExchange> {
         super(endpoint);
         BeanHolder holder = new RmiRegistryBean(endpoint.getContext(), endpoint.getName(), endpoint.getRegistry());
         beanProcessor = new BeanProcessor(holder);
+        String method = endpoint.getMethod();
+        if (method != null) {
+            beanProcessor.setMethod(method);
+        }
     }
 
     public void process(Exchange exchange) throws Exception {

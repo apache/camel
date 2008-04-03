@@ -41,6 +41,7 @@ public class RmiEndpoint extends DefaultEndpoint<BeanExchange> {
     private ClassLoader classLoader;
     private URI uri;
     private int port;
+    private String method;
 
     protected RmiEndpoint(String endpointUri, RmiComponent component) throws URISyntaxException {
         super(endpointUri, component);
@@ -118,4 +119,11 @@ public class RmiEndpoint extends DefaultEndpoint<BeanExchange> {
         this.port = port;
     }
 
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
 }
