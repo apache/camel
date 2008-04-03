@@ -93,15 +93,14 @@ public class HttpBinding {
         HttpServletRequest request = httpMessage.getRequest();
         if (isUseReaderForPayload()) {
             return request.getReader();
-        }
-        else {
+        } else {
             return request.getInputStream();
         }
     }
 
     /*
-     * Exclude a set of headers from responses and new requests as all headers get
-     * propagated between exchanges by default
+     * Exclude a set of headers from responses and new requests as all headers
+     * get propagated between exchanges by default
      */
     public boolean shouldHeaderBePropagated(String headerName, String headerValue) {
         if (headerValue == null) {
