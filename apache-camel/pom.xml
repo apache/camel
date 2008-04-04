@@ -181,22 +181,22 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-stringtemplate</artifactId>
     </dependency>
-<!--
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-supercsv</artifactId>
-    </dependency>
--->
+    <!--
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-supercsv</artifactId>
+        </dependency>
+    -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-swing</artifactId>
     </dependency>
-<!--
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-testng</artifactId>
-    </dependency>
--->
+    <!--
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-testng</artifactId>
+        </dependency>
+    -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-uface</artifactId>
@@ -251,12 +251,12 @@
       <artifactId>camel-example-spring-xquery</artifactId>
     </dependency>
 
-<!--
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-manual</artifactId>
-    </dependency>
--->
+    <!--
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-manual</artifactId>
+        </dependency>
+    -->
 
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -324,48 +324,6 @@
           <forkMode>pertest</forkMode>
         </configuration>
       </plugin>
-      <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <executions>
-             <execution>
-                 <id>unpack-camel-core-javadoc</id>
-                  <phase>package</phase>
-                  <goals>
-                      <goal>unpack</goal>
-                  </goals>
-                  <configuration>
-                    <outputDirectory>${project.build.directory}/javadoc/camel-core</outputDirectory>
-                    <artifactItems>
-                      <artifactItem>
-                          <groupId>${pom.groupId}</groupId>
-                          <artifactId>camel-core</artifactId>
-                          <classifier>javadoc</classifier>
-                          <version>${pom.version}</version>
-                          </artifactItem>
-                      </artifactItems>
-                   </configuration>
-              </execution>
-              <execution>
-                 <id>unpack-camel-spring-javadoc</id>
-                  <phase>package</phase>
-                  <goals>
-                      <goal>unpack</goal>
-                  </goals>
-                  <configuration>
-                    <outputDirectory>${project.build.directory}/javadoc/camel-spring</outputDirectory>
-                    <artifactItems>
-                      <artifactItem>
-                          <groupId>${pom.groupId}</groupId>
-                          <artifactId>camel-spring</artifactId>
-                          <classifier>javadoc</classifier>
-                          <version>${pom.version}</version>
-                          </artifactItem>
-                      </artifactItems>
-                   </configuration>
-              </execution>
-           </executions>
-       </plugin>
       <!--
       <plugin>
         <groupId>org.apache.activemq</groupId>
@@ -496,11 +454,57 @@
     </plugins>
   </build>
   <profiles>
-  <!--
     <profile>
       <id>release</id>
       <build>
         <plugins>
+
+          <!-- we only generate the javadoc jars when running the release profile -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>unpack-camel-core-javadoc</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${project.build.directory}/javadoc/camel-core</outputDirectory>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>${pom.groupId}</groupId>
+                      <artifactId>camel-core</artifactId>
+                      <classifier>javadoc</classifier>
+                      <version>${pom.version}</version>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+              <execution>
+                <id>unpack-camel-spring-javadoc</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${project.build.directory}/javadoc/camel-spring</outputDirectory>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>${pom.groupId}</groupId>
+                      <artifactId>camel-spring</artifactId>
+                      <classifier>javadoc</classifier>
+                      <version>${pom.version}</version>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+
+<!--
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
@@ -534,10 +538,10 @@
               </execution>
             </executions>
           </plugin>
+-->
         </plugins>
       </build>
     </profile>
-    -->
     <profile>
       <id>assembly-src</id>
       <build>
@@ -576,6 +580,7 @@
         </plugins>
       </build>
     </profile>
+
   </profiles>
 
 </project>
