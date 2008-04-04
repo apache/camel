@@ -23,7 +23,7 @@ import java.util.Set;
 import org.apache.cxf.message.Message;
 
 /**
- * The binding of how Camel messages get mapped to Apache CXF and back again
+ * The binding/mapping of Camel messages to Apache CXF and back again
  *
  * @version $Revision$
  */
@@ -49,11 +49,10 @@ public class CxfBinding {
     public Message createCxfMessage(CxfExchange exchange) {
         Message answer = exchange.getInMessage();
 
-        // CXF uses the stax which is based on the stream API to parser the XML,
-        // so
-        // the CXF transport is also based on the stream API.
+        // CXF uses StAX which is based on the stream API to parse the XML,
+        // so the CXF transport is also based on the stream API.
         // And the interceptors are also based on the stream API,
-        // so lets use an InputStream to host the CXF on wire message.
+        // so let's use an InputStream to host the CXF on wire message.
 
         CxfMessage in = exchange.getIn();
         Object body = in.getBody(InputStream.class);
@@ -64,7 +63,7 @@ public class CxfBinding {
             answer.setContent(InputStream.class, body);
             // we need copy context
         } else if (body instanceof List) {
-            // just set the operation's parament
+            // just set the operation's parameter
             answer.setContent(List.class, body);
             // just set the method name
             answer.put(CxfConstants.OPERATION_NAME, (String)in.getHeader(CxfConstants.OPERATION_NAME));

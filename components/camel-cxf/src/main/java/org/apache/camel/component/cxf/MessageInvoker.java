@@ -28,7 +28,7 @@ public interface MessageInvoker {
      * This method is called when the incoming message is to be passed into the
      * camel processor. The return value is the response from the processor
      *
-     * @param exchange the cxf exchange which holds the in and out message
+     * @param exchange the CXF exchange which holds the in and out message
      */
     void invoke(Exchange exchange);
 

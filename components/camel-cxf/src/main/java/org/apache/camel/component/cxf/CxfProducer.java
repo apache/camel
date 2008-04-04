@@ -65,7 +65,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         if (dataFormat.equals(DataFormat.POJO)) {
             client = createClientFormClientFactoryBean(null);
         } else {
-            // create CxfClient for message
+            // Create CxfClient for message
             client = createClientForStreamMessge();
         }
     }
@@ -92,8 +92,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         if (dataFormat.equals(DataFormat.MESSAGE)) {
             features.add(new MessageDataFormatFeature());
             // features.add(new LoggingFeature());
-        }
-        if (dataFormat.equals(DataFormat.PAYLOAD)) {
+        } else if (dataFormat.equals(DataFormat.PAYLOAD)) {
             features.add(new PayLoadDataFormatFeature());
             // features.add(new LoggingFeature());
         }
@@ -102,7 +101,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         return createClientFormClientFactoryBean(cfb);
     }
 
-    // If cfb is null ,we will try to find a right cfb to use.
+    // If cfb is null, we will try to find the right cfb to use.
     private Client createClientFormClientFactoryBean(ClientFactoryBean cfb) throws CamelException {
         Bus bus = BusFactory.getDefaultBus();
         if (endpoint.isSpringContextEndpoint()) {
@@ -121,7 +120,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         } else { // set up the clientFactoryBean by using URI information
             if (null != endpoint.getServiceClass()) {
                 try {
-                    // we need to choice the right front end to create the
+                    // We need to choose the right front end to create the
                     // clientFactoryBean
                     Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this
                         .getClass());
@@ -145,9 +144,8 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                 if (null != endpoint.getWsdlURL()) {
                     cfb.setWsdlURL(endpoint.getWsdlURL());
                 } else {
-                    // throw the exception for insufficiency of the endpoint
-                    // info
-                    throw new CamelException("Insufficiency of the endpoint info");
+                    // Throw an exception indicating insufficient endpoint info
+                    throw new CamelException("Not enough information to create a CXF endpoint. (Provide WSDL url or service class name.)");
                 }
             }
             if (endpoint.getServiceName() != null) {

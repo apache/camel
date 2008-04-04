@@ -46,7 +46,7 @@ public class CamelInvoker implements Invoker, MessageInvoker {
 
     /**
     * This method is called when the incoming message is to
-    * be passed into the camel processor. The return value is the response
+    * be passed into the Camel processor. The return value is the response
     * from the processor
     */
     public void invoke(Exchange exchange) {
@@ -62,7 +62,7 @@ public class CamelInvoker implements Invoker, MessageInvoker {
             throw new Fault(ex);
         }
 
-        // make sure the client has return back the message
+        // make sure the client has returned back the message
         copybackExchange(cxfExchange, exchange);
 
         Message outMessage = exchange.getOutMessage();

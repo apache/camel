@@ -25,7 +25,7 @@ import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.Destination;
 
 /**
- * An {@link Exchange} for working with Apache CXF which expoes the underlying
+ * An {@link Exchange} for working with Apache CXF which exposes the underlying
  * CXF messages via {@link #getInMessage()} and {@link #getOutMessage()} along with the
  * {@link #getExchange()}
  *

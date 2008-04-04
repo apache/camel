@@ -25,7 +25,7 @@ import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * A simple class to wrap an existing processor (synchronous or asynchronous)
- * with two synchronous processor that will be executed before and after the
+ * with two synchronous processors that will be executed before and after the
  * main processor.
  */
 public class AsyncProcessorDecorator implements AsyncProcessor {
