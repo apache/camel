@@ -52,11 +52,6 @@ public class HttpConverter {
     }
 
     @Converter
-    public ServletInputStream toInputStream(HttpMessage message) throws IOException {
-        return toServletInputStream(message);
-    }
-
-    @Converter
     public BufferedReader toReader(HttpMessage message) throws IOException {
         HttpServletRequest request = toServletRequest(message);
         if (request != null) {
