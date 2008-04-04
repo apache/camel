@@ -37,7 +37,7 @@ import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.transport.MessageObserver;
 
 /**
- * A CXF based soap consumer.
+ * A CXF based SOAP consumer (client).
  * The consumer will delegate to another endpoint for the transport layer
  * and will provide SOAP support on top of it.
  */
@@ -115,8 +115,8 @@ public class CxfSoapConsumer implements Consumer {
     protected void processSoapConsumerOut(Exchange exchange) throws Exception {
         LOG.info("processSoapConsumerOut: " + exchange);
 
-        // TODO check if the message is oneway message
-        // Get the method name form the soap endpoint
+        // TODO check if the message is one-way message
+        // Get the method name from the soap endpoint
         org.apache.cxf.message.Message outMessage = CxfSoapBinding.getCxfOutMessage(exchange, false);
         org.apache.cxf.message.Exchange cxfExchange = outMessage.getExchange();
         InterceptorChain chain = OutgoingChainInterceptor.getOutInterceptorChain(cxfExchange);

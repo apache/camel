@@ -27,7 +27,7 @@ public final class CxfSoapBinding {
     private CxfSoapBinding() {
 
     }
-    //TODO using the type converter to do this kind of thing
+    //TODO use the type converter to do this kind of thing
     public static org.apache.cxf.message.Message getCxfInMessage(org.apache.camel.Exchange exchange, boolean isClient) {
         MessageImpl answer = new MessageImpl();
         org.apache.cxf.message.Exchange cxfExchange = exchange.getProperty(CxfConstants.CXF_EXCHANGE,

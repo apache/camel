@@ -17,8 +17,8 @@
 package org.apache.camel.component.cxf;
 
 /**
- * The data format the user expoects to see at the camel cxf components.  It can be
- * configured as a property (DataFormat) in the Camel cxf endpoint.
+ * The data format the user expects to see at the Camel CXF components.  It can be
+ * configured as a property (DataFormat) in the Camel CXF endpoint.
  */
 public enum DataFormat {
 

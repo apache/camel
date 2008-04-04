@@ -40,7 +40,7 @@ public class CxfComponent extends DefaultComponent<CxfExchange> {
 
     @Override
     protected Endpoint<CxfExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        // now we need to add the address, endpoint name, wsdl url or the SEI to build up a endpoint
+        // Now we need to add the address, endpoint name, WSDL url or the SEI to build up an endpoint
         CxfEndpoint result = new CxfEndpoint(uri, remaining, this);
         setProperties(result, parameters);
         // we can check the endpoint integration here

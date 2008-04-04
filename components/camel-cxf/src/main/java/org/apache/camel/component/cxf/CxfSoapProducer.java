@@ -72,7 +72,7 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
                     }
                 });
 
-        //create the endpoint and setup the intercepters
+        //create the endpoint and setup the interceptors
         Class sei = CxfEndpointUtils.getSEIClass(endpoint.getServiceClass());
         ClientFactoryBean cfb = CxfEndpointUtils.getClientFactoryBean(sei);
         if (sei == null) {

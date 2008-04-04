@@ -68,7 +68,7 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
                 svrBean.setEndpointName(cxfEndpointBean.getEndpointName());
             }
 
-        } else { // setup the serverFactoryBean with the URI paraments
+        } else { // setup the serverFactoryBean with the URI parameters
             Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
             svrBean = CxfEndpointUtils.getServerFactoryBean(serviceClass);
             isWebServiceProvider = CxfEndpointUtils.hasAnnotation(serviceClass, WebServiceProvider.class);
@@ -88,7 +88,7 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
 
         svrBean.setInvoker(new CamelInvoker(this));
 
-        // apply the feature here
+        // apply feature here
         if (!dataFormat.equals(DataFormat.POJO) && !isWebServiceProvider) {
             List<AbstractFeature> features = new ArrayList<AbstractFeature>();
 
@@ -96,8 +96,7 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
                 features.add(new PayLoadDataFormatFeature());
                 // adding the logging feature here for debug
                 //features.add(new LoggingFeature());
-            }
-            if (dataFormat.equals(DataFormat.MESSAGE)) {
+            } else if (dataFormat.equals(DataFormat.MESSAGE)) {
                 features.add(new MessageDataFormatFeature());
                 //features.add(new LoggingFeature());
             }

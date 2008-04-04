@@ -54,7 +54,7 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
         this.address = address;
         if (address.startsWith(CxfConstants.SPRING_CONTEXT_ENDPOINT)) {
             isSpringContextEndpoint = true;
-            //get the bean from spring context
+            // Get the bean from the Spring context
             beanId = address.substring(CxfConstants.SPRING_CONTEXT_ENDPOINT.length());
             if (beanId.startsWith("//")) {
                 beanId = beanId.substring(2);
