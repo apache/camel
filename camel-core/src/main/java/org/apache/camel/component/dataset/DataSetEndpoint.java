@@ -42,6 +42,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private long produceDelay = -1;
     private long consumeDelay = -1;
     private long startTime;
+    private long preloadSize = 0;
 
     public DataSetEndpoint(String endpointUri, Component component, DataSet dataSet) {
         super(endpointUri, component);
@@ -106,6 +107,17 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
     public void setDataSet(DataSet dataSet) {
         this.dataSet = dataSet;
+    }
+
+    public long getPreloadSize() {
+        return preloadSize;
+    }
+
+    /**
+     * Sets how many messages should be preloaded (sent) before the route completes its initialisation
+     */
+    public void setPreloadSize(long preloadSize) {
+        this.preloadSize = preloadSize;
     }
 
     public long getConsumeDelay() {
