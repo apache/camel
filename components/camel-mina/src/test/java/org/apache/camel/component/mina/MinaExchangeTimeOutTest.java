@@ -33,7 +33,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class MinaExchangeTimeOutTest extends ContextTestSupport {
 
-    private static final int PORT = 6335;
+    private static final int PORT = 6336;
     protected String uri = "mina:tcp://localhost:" + PORT + "?textline=true&sync=true";
 
     public void testDefaultTimeOut() {
