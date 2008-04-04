@@ -17,9 +17,8 @@
  */
 package org.apache.camel.processor;
 
-import java.util.concurrent.atomic.AtomicInteger;
-import java.text.MessageFormat;
 import java.text.NumberFormat;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
 import org.apache.commons.logging.Log;
@@ -30,8 +29,11 @@ import org.apache.commons.logging.Log;
 public class ThroughputLogger extends Logger {
     private int groupSize = 100;
     private long startTime;
+    private long groupStartTime;
     private AtomicInteger receivedCounter = new AtomicInteger();
     private NumberFormat numberFormat = NumberFormat.getNumberInstance();
+    private String action = "Received";
+    private String logMessage;
 
     public ThroughputLogger() {
     }
@@ -73,6 +75,7 @@ public class ThroughputLogger extends Logger {
         }
         int receivedCount = receivedCounter.incrementAndGet();
         if (receivedCount % groupSize == 0) {
+            logMessage = createLogMessage(exchange, receivedCount);
             super.process(exchange);
         }
     }
@@ -96,17 +99,40 @@ public class ThroughputLogger extends Logger {
         this.numberFormat = numberFormat;
     }
 
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
     @Override
     protected Object logMessage(Exchange exchange) {
+        return logMessage;
+    }
+
+    protected String createLogMessage(Exchange exchange, int receivedCount) {
         long time = System.currentTimeMillis();
-        long elapsed = time - startTime;
-        startTime = time;
+        if (groupStartTime == 0) {
+            groupStartTime = startTime;
+        }
 
-        // timeOneMessage = time / group
-        // messagePerSend = 1000 / timeOneMessage
-        double rate = groupSize * 1000.0;
-        rate /= elapsed;
+        double rate = messagesPerSecond(groupSize, groupStartTime, time);
+        double average = messagesPerSecond(receivedCount, startTime, time);
 
-        return "Received: " + receivedCounter.get() + " messages so far. Last group took: " + elapsed + " millis which is: " + numberFormat.format(rate) + " messages per second";
+        groupStartTime = time;
+
+        return getAction() + ": " + receivedCount + " messages so far. Last group took: " + (time - groupStartTime)
+                + " millis which is: " + numberFormat.format(rate)
+                + " messages per second. average: " + numberFormat.format(average);
+    }
+
+    // timeOneMessage = elapsed / messageCount
+    // messagePerSend = 1000 / timeOneMessage
+    protected double messagesPerSecond(long messageCount, long startTime, long endTime) {
+        double rate = messageCount * 1000.0;
+        rate /= endTime - startTime;
+        return rate;
     }
 }
