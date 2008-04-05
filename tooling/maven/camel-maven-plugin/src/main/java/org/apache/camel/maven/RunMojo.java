@@ -153,9 +153,16 @@ public class RunMojo extends AbstractExecMojo {
     private String mainClass;
 
     /**
+     * The application context uri that spring want to gets.
+     *
+     * @parameter expression="${camel.applicationContextUri}"
+     */
+    private String applicationContextUri;
+
+    /**
      * The class arguments.
      *
-     * @parameter expression="${camel.applicationContext}"
+     * @parameter expression="${camel.arguments}"
      */
     private String[] arguments;
 
@@ -302,6 +309,12 @@ public class RunMojo extends AbstractExecMojo {
             args.add("-o");
             args.add(dotDir);
         }
+
+        if (applicationContextUri != null) {
+            args.add("-a");
+            args.add(applicationContextUri);
+        }
+
         args.add("-d");
         args.add(duration);
         if (arguments != null) {
