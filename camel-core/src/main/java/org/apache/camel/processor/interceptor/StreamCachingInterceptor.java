@@ -49,8 +49,9 @@ public class StreamCachingInterceptor extends Interceptor {
     }
 
     /**
-     * Remove this interceptor from the given list of interceptors
-     * @param interceptors the list of interceptos
+     * Remove the {@link StreamCachingInterceptor} type of interceptor from the given list of interceptors
+     *
+     * @param interceptors the list of interceptors
      */
     public static void noStreamCaching(List<InterceptorType> interceptors) {
         for (int i = 0; i < interceptors.size(); i++) {
