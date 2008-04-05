@@ -94,7 +94,7 @@ public class DirectoryCreateIssueTest extends TestSupport {
             }
         });
 
-        Thread.sleep(2 * 1000);
+        Thread.sleep(8 * 1000);
         for (int i = 0; i < numFiles; i++) {
             assertTrue((new File(path + "/file" + i + ".txt")).isFile());
         }
