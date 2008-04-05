@@ -38,18 +38,18 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
     public static class MyPolicyException extends Exception {
     }
 
+    // START SNIPPET customExceptionPolicyStrategyMyPolicy
     public static class MyPolicy implements ExceptionPolicyStrategy {
 
         public ExceptionType getExceptionPolicy(Map<Class, ExceptionType> exceptionPolicices,
                                                 Exchange exchange,
                                                 Throwable exception) {
-            // We forced a CamelException in the test below but our custom policy will
-            // override and let MyPolicyException handle it instead
+            // This is just an example that always forces the exception type configured
+            // with MyPolicyException to win.
             return exceptionPolicices.get(MyPolicyException.class);
         }
     }
-
-
+    // END SNIPPET customExceptionPolicyStrategyMyPolicy
 
     public void testCustomPolicy() throws Exception {
         MockEndpoint mock = getMockEndpoint(errorQueue);
