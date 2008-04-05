@@ -38,7 +38,7 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
     public static class MyPolicyException extends Exception {
     }
 
-    // START SNIPPET customExceptionPolicyStrategyMyPolicy
+    // START SNIPPET e2
     public static class MyPolicy implements ExceptionPolicyStrategy {
 
         public ExceptionType getExceptionPolicy(Map<Class, ExceptionType> exceptionPolicices,
@@ -49,7 +49,7 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
             return exceptionPolicices.get(MyPolicyException.class);
         }
     }
-    // END SNIPPET customExceptionPolicyStrategyMyPolicy
+    // END SNIPPET e2
 
     public void testCustomPolicy() throws Exception {
         MockEndpoint mock = getMockEndpoint(errorQueue);
@@ -63,8 +63,8 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            // START SNIPPET e1
             public void configure() throws Exception {
-                // START SNIPPET customExceptionPolicyStrategy
                 // configure the error handler to use my policy instead of the default from Camel
                 errorHandler(deadLetterChannel().exceptionPolicyStrategy(new MyPolicy()));
 
@@ -77,7 +77,7 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
                     .maximumRedeliveries(3)
                     .setHeader(MESSAGE_INFO, "Damm a Camel exception")
                     .to(errorQueue);
-                // END SNIPPET customExceptionPolicyStrategy
+                // END SNIPPET e1
 
                 from("direct:a").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
