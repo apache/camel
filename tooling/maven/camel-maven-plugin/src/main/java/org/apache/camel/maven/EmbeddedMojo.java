@@ -68,6 +68,13 @@ public class EmbeddedMojo extends AbstractExecMojo {
      * @readonly
      */
     protected boolean dotAggregationEnabled;
+
+    /**
+     * The application context uri that spring wants to get.
+     *
+     * @parameter expression="${camel.applicationContextUri}"
+     */
+    protected String applicationContextUri;
     /**
      * Project classpath.
      *
@@ -186,6 +193,11 @@ public class EmbeddedMojo extends AbstractExecMojo {
 
             args.add("-aggregate-dot");
             args.add("true");
+        }
+
+        if (applicationContextUri != null) {
+            args.add("-applicationContext");
+            args.add(applicationContextUri);
         }
 
         args.add("-duration");
