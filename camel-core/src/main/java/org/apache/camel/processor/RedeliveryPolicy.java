@@ -26,7 +26,17 @@ import java.util.Random;
  * the redeliveries before being sent to a <a
  * href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter
  * Channel</a>
- * 
+ * <p>
+ * The default values is:
+ * <ul>
+ *   <li>maximumRedeliveries = 6</li>
+ *   <li>initialRedeliveryDelay = 1000L</li>
+ *   <li>backOffMultiplier = 2</li>
+ *   <li>useExponentialBackOff = false</li>
+ *   <li>collisionAvoidanceFactor = 0.15d</li>
+ *   <li>useCollisionAvoidance = false</li>
+ * </ul>
+ *
  * @version $Revision$
  */
 public class RedeliveryPolicy implements Cloneable, Serializable {
