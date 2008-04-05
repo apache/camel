@@ -30,55 +30,55 @@ import org.apache.commons.jxpath.JXPathException;
  */
 public class JXPathExpression extends ExpressionSupport<Exchange> {
 
-	private String expression;
-	private CompiledExpression compiledExpression;
-	private final Class<?> type;
+    private String expression;
+    private CompiledExpression compiledExpression;
+    private final Class<?> type;
 
-	/**
-	 * Creates a new JXPathExpression instance
-	 * 
-	 * @param expression the JXPath expression to be evaluated
-	 * @param type the expected result type
-	 */
-	public JXPathExpression(String expression, Class<?> type) {
-		super();
-		this.expression = expression;
-		this.type = type;
-	}
+    /**
+     * Creates a new JXPathExpression instance
+     * 
+     * @param expression the JXPath expression to be evaluated
+     * @param type the expected result type
+     */
+    public JXPathExpression(String expression, Class<?> type) {
+        super();
+        this.expression = expression;
+        this.type = type;
+    }
 
-    
+
     public Object evaluate(Exchange exchange) {
-		try {
+        try {
             JXPathContext context = JXPathContext.newContext(exchange);
             Object result = getJXPathExpression().getValue(context, type);
-			assertResultType(exchange, result);
-			return result;
-		} catch (JXPathException e) {
-			throw new ExpressionEvaluationException(this, exchange, e);
-		}
-	}
+            assertResultType(exchange, result);
+            return result;
+        } catch (JXPathException e) {
+            throw new ExpressionEvaluationException(this, exchange, e);
+        }
+    }
 
-	/*
-	 * Check if the result is of the specified type
-	 */
-	private void assertResultType(Exchange exchange, Object result) {
-		if (!type.isAssignableFrom(result.getClass())) {
-			throw new JXPathException("JXPath result type is " + result.getClass() + " instead of required type " + type);
-		}
-	}
+    /*
+     * Check if the result is of the specified type
+     */
+    private void assertResultType(Exchange exchange, Object result) {
+        if (result != null && !type.isAssignableFrom(result.getClass())) {
+            throw new JXPathException("JXPath result type is " + result.getClass() + " instead of required type " + type);
+        }
+    }
 
-	@Override
-	protected String assertionFailureMessage(Exchange exchange) {
-		return expression.toString();
-	}
-	
-	/*
-	 * Get a compiled expression instance for better performance
-	 */
-	private synchronized CompiledExpression getJXPathExpression() {
-		if (compiledExpression == null) {
-			compiledExpression = JXPathContext.compile(expression);
-		}
-		return compiledExpression;
-	}
+    @Override
+    protected String assertionFailureMessage(Exchange exchange) {
+        return expression.toString();
+    }
+
+    /*
+     * Get a compiled expression instance for better performance
+     */
+    private synchronized CompiledExpression getJXPathExpression() {
+        if (compiledExpression == null) {
+            compiledExpression = JXPathContext.compile(expression);
+        }
+        return compiledExpression;
+    }
 }

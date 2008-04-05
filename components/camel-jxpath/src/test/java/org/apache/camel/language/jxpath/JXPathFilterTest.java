@@ -39,6 +39,14 @@ public class JXPathFilterTest extends ContextTestSupport {
 
         assertMockEndpointsSatisifed();
     }
+    
+    public void testSendNullMessage() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+
+        sendBody("direct:start", new PersonBean(null, "Tampa"));
+
+        assertMockEndpointsSatisifed();
+    }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
