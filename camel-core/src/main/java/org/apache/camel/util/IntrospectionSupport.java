@@ -345,6 +345,7 @@ public final class IntrospectionSupport {
                 }
                 map.put(field.getName(), o);
             } catch (Throwable e) {
+                // TODO: LOG or rethrow
                 e.printStackTrace();
             }
         }
