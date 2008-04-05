@@ -37,7 +37,7 @@ public class HttpBinding {
     public static final Set<String> DEFAULT_HEADERS_TO_IGNORE = new HashSet<String>(Arrays.asList(
             "content-length", "content-type", HttpProducer.HTTP_RESPONSE_CODE.toLowerCase()));
     private Set<String> ignoredHeaders = DEFAULT_HEADERS_TO_IGNORE;
-    private boolean useReaderForPayload = false;
+    private boolean useReaderForPayload;
 
     /**
      * Writes the exchange to the servlet response
