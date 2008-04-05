@@ -40,6 +40,13 @@ public class BeanWithJXPathInjectionTest extends ContextTestSupport {
         assertEquals("bean foo: " + myBean, "James", myBean.name);
         assertNotNull("Should pass body as well", myBean.body);
     }
+    
+    public void testSendNullMessage() throws Exception {
+        template.sendBody("direct:in", new PersonBean(null, "London"));
+
+        assertEquals("bean foo: " + myBean, null, myBean.name);
+        assertNotNull("Should pass body as well", myBean.body);        
+    }
 
     @Override
     protected Context createJndiContext() throws Exception {
