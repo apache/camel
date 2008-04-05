@@ -23,7 +23,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.file.strategy.DefaultFileRenamer;
 import org.apache.camel.component.file.strategy.FileProcessStrategyFactory;
 import org.apache.camel.component.file.strategy.FileProcessStrategySupport;
 import org.apache.camel.component.file.strategy.NoOpFileProcessStrategy;
@@ -58,41 +57,27 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
         this.file = file;
     }
 
-    /**
-     * @return a Producer
-     * @throws Exception
-     * @see org.apache.camel.Endpoint#createProducer()
-     */
     public Producer<FileExchange> createProducer() throws Exception {
         Producer<FileExchange> result = new FileProducer(this);
         return result;
     }
 
-    /**
-     * @param file
-     * @return a Consumer
-     * @throws Exception
-     * @see org.apache.camel.Endpoint#createConsumer(org.apache.camel.Processor)
-     */
-    public Consumer<FileExchange> createConsumer(Processor file) throws Exception {
-        Consumer<FileExchange> result = new FileConsumer(this, file);
+    public Consumer<FileExchange> createConsumer(Processor processor) throws Exception {
+        Consumer<FileExchange> result = new FileConsumer(this, processor);
         configureConsumer(result);
         return result;
     }
 
     /**
-     * @param file
-     * @return a FileExchange
-     * @see org.apache.camel.Endpoint#createExchange()
+     * Create a new exchange for communicating with this endpoint
+     *
+     * @param file  the file
+     * @return the created exchange
      */
     public FileExchange createExchange(File file) {
         return new FileExchange(getContext(), getExchangePattern(), file);
     }
 
-    /**
-     * @return an Exchange
-     * @see org.apache.camel.Endpoint#createExchange()
-     */
     public FileExchange createExchange() {
         return createExchange(getFile());
     }
@@ -125,16 +110,10 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
         return true;
     }
 
-    /**
-     * @return the autoCreate
-     */
     public boolean isAutoCreate() {
         return this.autoCreate;
     }
 
-    /**
-     * @param autoCreate the autoCreate to set
-     */
     public void setAutoCreate(boolean autoCreate) {
         this.autoCreate = autoCreate;
     }
@@ -151,7 +130,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      * Sets the strategy to be used when the file has been processed such as
      * deleting or renaming it etc.
      *
-     * @param fileProcessStrategy the new stategy to use
+     * @param fileProcessStrategy the new strategy to use
      */
     public void setFileStrategy(FileProcessStrategy fileProcessStrategy) {
         this.fileProcessStrategy = fileProcessStrategy;
@@ -179,10 +158,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
 
     /**
      * Sets the name postfix appended to moved files. For example to rename all
-     * the files from * to *.done set this value to ".done"
-     *
-     * @param moveNamePostfix
-     * @see DefaultFileRenamer#setNamePostfix(String)
+     * the files from <tt>*</tt> to <tt>*.done</tt> set this value to <tt>.done</tt>
      */
     public void setMoveNamePostfix(String moveNamePostfix) {
         this.moveNamePostfix = moveNamePostfix;
@@ -194,10 +170,8 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
 
     /**
      * Sets the name prefix appended to moved files. For example to move
-     * processed files into a hidden directory called ".camel" set this value to
-     * ".camel/"
-     *
-     * @see DefaultFileRenamer#setNamePrefix(String)
+     * processed files into a hidden directory called <tt>.camel</tt> set this value to
+     * <tt>.camel/</tt>
      */
     public void setMoveNamePrefix(String moveNamePrefix) {
         this.moveNamePrefix = moveNamePrefix;
@@ -208,7 +182,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     }
 
     /**
-     * Sets the excluded file name prefixes, such as "." for hidden files which
+     * Sets the excluded file name prefixes, such as <tt>"."</tt> for hidden files which
      * are excluded by default
      */
     public void setExcludedNamePrefixes(String[] excludedNamePrefixes) {
@@ -234,8 +208,6 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     /**
      * If set to true then the default {@link FileProcessStrategy} will be to use the
      * {@link NoOpFileProcessStrategy} to not move or copy processed files
-     *
-     * @param noop
      */
     public void setNoop(boolean noop) {
         this.noop = noop;
@@ -278,11 +250,11 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
         this.ignoreFileNameHeader = ignoreFileNameHeader;
     }
 
-
     /**
      * A strategy method to lazily create the file strategy
      */
     protected FileProcessStrategy createFileStrategy() {
         return FileProcessStrategyFactory.createFileProcessStrategy(isNoop(), isDelete(), isLock(), moveNamePrefix, moveNamePostfix);
     }
+
 }
