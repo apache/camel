@@ -23,14 +23,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
-
 /**
  * @version $Revision$
  */
 public class DeadLetterChannelTest extends ContextTestSupport {
     protected Endpoint<Exchange> startEndpoint;
-    protected MockEndpoint deadEndpoint; 
+    protected MockEndpoint deadEndpoint;
     protected MockEndpoint successEndpoint;
     protected int failUntilAttempt = 2;
     protected String body = "<hello>world!</hello>";
@@ -88,18 +86,13 @@ public class DeadLetterChannelTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").errorHandler(
-                                                  deadLetterChannel("mock:failed").maximumRedeliveries(2)
-                                                      .initialRedeliveryDelay(1)
-                                                      .loggingLevel(LoggingLevel.DEBUG)
+                    deadLetterChannel("mock:failed").maximumRedeliveries(2)
+                        .initialRedeliveryDelay(1)
+                        .loggingLevel(LoggingLevel.DEBUG)
 
                 ).process(processor);
-
-                /*
-                 * TODO - currently process().to() results in two separate
-                 * operations which have their own error handler
-                 * 
-                 * .to("mock:success");
-                 */
+                // TODO - currently process().to() results in two separate operations which have their own error handler
+                // to("mock:success");
             }
         };
     }

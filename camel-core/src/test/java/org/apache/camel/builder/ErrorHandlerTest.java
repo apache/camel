@@ -60,7 +60,7 @@ public class ErrorHandlerTest extends TestSupport {
         }
     }
 
-    public void   testOverloadingTheHandlerOnASingleRoute() throws Exception {
+    public void testOverloadingTheHandlerOnASingleRoute() throws Exception {
 
         // START SNIPPET: e2
         RouteBuilder builder = new RouteBuilder() {
@@ -174,4 +174,5 @@ public class ErrorHandlerTest extends TestSupport {
             log.debug("Found sendProcessor: " + sendProcessor);
         }
     }
+
 }

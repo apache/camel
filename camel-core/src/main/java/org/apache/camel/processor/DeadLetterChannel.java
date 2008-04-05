@@ -23,6 +23,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.ExceptionType;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -62,16 +63,18 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     private Logger logger;
 
     public DeadLetterChannel(Processor output, Processor deadLetter) {
-        this(output, deadLetter, new RedeliveryPolicy(), DeadLetterChannel.createDefaultLogger());
+        this(output, deadLetter, new RedeliveryPolicy(), DeadLetterChannel.createDefaultLogger(),
+            ErrorHandlerSupport.createDefaultExceptionPolicyStrategy());
     }
 
-    public DeadLetterChannel(Processor output, Processor deadLetter, RedeliveryPolicy redeliveryPolicy, Logger logger) {
+    public DeadLetterChannel(Processor output, Processor deadLetter, RedeliveryPolicy redeliveryPolicy, Logger logger, ExceptionPolicyStrategy exceptionPolicyStrategy) {
         this.deadLetter = deadLetter;
         this.output = output;
         this.outputAsync = AsyncProcessorTypeConverter.convert(output);
 
         this.redeliveryPolicy = redeliveryPolicy;
         this.logger = logger;
+        setExceptionPolicy(exceptionPolicyStrategy);
     }
 
     public static <E extends Exchange> Logger createDefaultLogger() {
@@ -163,7 +166,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 callback.done(true);
                 return true;
             }
-            // error occured so loop back around.....
+            // error occurred so loop back around.....
         }
 
     }
@@ -261,7 +264,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 Thread.sleep(redeliveryDelay);
             } catch (InterruptedException e) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Thread interupted: " + e, e);
+                    LOG.debug("Thread interrupted: " + e, e);
                 }
             }
         }
