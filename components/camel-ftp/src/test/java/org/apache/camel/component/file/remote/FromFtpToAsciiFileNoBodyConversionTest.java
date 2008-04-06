@@ -18,34 +18,34 @@ package org.apache.camel.component.file.remote;
 
 import java.io.File;
 
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.FileComponent;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for consuming files from a FTP Server to files where we want to use the filename
- * from the FTPServer instead of explicit setting a filename using the file headername option.
+ * Unit testing a FTP ASCII transfer that Camel provides the needed conversion to String from
+ * the input stream. 
  */
-public class FromFtpToFileNoFileNameHeaderTest extends FtpServerTestSupport {
+public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport {
 
-    private String port = "20015";
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp3/camel?password=admin&binary=false";
+    private String port = "20016";
+    private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp6/camel?password=admin&binary=false";
 
-    public void testCorrectFilename() throws Exception {
+    public void testFromFtpToAsciiFileNoBodyConversion() throws Exception {
+
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
-        resultEndpoint.expectedBodiesReceived("Hello World from FTPServer");
-        resultEndpoint.assertIsSatisfied();
+        resultEndpoint.expectedBodiesReceived("Hello ASCII from FTPServer");
 
         // wait until the file producer has written the file
         Thread.sleep(1000);
 
         // assert the file
-        File file = new File("target/ftptest/hello.txt");
-        assertTrue("The file should exists", file.exists());
+        File file = new File("target/ftptest/helloascii.txt");
+        assertTrue("The ASCII file should exists", file.exists());
         assertTrue("File size wrong", file.length() > 10);
 
         // let some time pass to let the consumer etc. properly do its business before closing
@@ -67,8 +67,8 @@ public class FromFtpToFileNoFileNameHeaderTest extends FtpServerTestSupport {
         // test that we can pool and store as a local file
         Endpoint endpoint = context.getEndpoint(ftpUrl);
         Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody("Hello World from FTPServer");
-        exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "hello.txt");
+        exchange.getIn().setBody("Hello ASCII from FTPServer");
+        exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "helloascii.txt");
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);
@@ -79,9 +79,7 @@ public class FromFtpToFileNoFileNameHeaderTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 String fileUrl = "file:target/ftptest/?append=false&noop=true";
-                // we do not set any filename in the header propery so the filename should be the one
-                // from the FTP server we downloaded
-                from(ftpUrl).convertBodyTo(String.class).to(fileUrl).to("mock:result");
+                from(ftpUrl).to(fileUrl, "mock:result");
             }
         };
     }
