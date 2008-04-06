@@ -36,6 +36,11 @@ public class RemoteFileConverter {
     }
 
     @Converter
+    public static String toString(ByteArrayOutputStream os) {
+        return os.toString();
+    }
+
+    @Converter
     public static InputStream toInputStream(ByteArrayOutputStream os) {
         return new ByteArrayInputStream(os.toByteArray());
     }

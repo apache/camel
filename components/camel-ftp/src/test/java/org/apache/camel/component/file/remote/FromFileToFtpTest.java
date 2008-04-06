@@ -33,7 +33,7 @@ public class FromFileToFtpTest extends FtpServerTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         // let some time pass to let the consumer etc. properly do its business before closing
-        Thread.sleep(2000);
+        Thread.sleep(1000);
     }
 
     public String getPort() {
