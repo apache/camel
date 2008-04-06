@@ -36,6 +36,9 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
         resultEndpoint.expectedMinimumMessageCount(1);
         resultEndpoint.expectedBodiesReceived("Hello World from FTPServer");
         resultEndpoint.assertIsSatisfied();
+
+        // let some time pass to let the consumer etc. properly do its business before closing
+        Thread.sleep(2000);
     }
 
     public String getPort() {
