@@ -48,6 +48,9 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
         File file = new File("target/ftptest/deleteme.jpg");
         assertTrue("The binary file should exists", file.exists());
         assertTrue("Logo size wrong", file.length() > 10000);
+
+        // let some time pass to let the consumer etc. properly do its business before closing
+        Thread.sleep(2000);
     }
 
     public String getPort() {

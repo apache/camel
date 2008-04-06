@@ -38,6 +38,9 @@ public class FromFtpToMockTest extends FtpServerTestSupport {
 
         template.sendBodyAndHeader(ftpUrl, expectedBody, "cheese", 123);
         resultEndpoint.assertIsSatisfied();
+
+        // let some time pass to let the consumer etc. properly do its business before closing
+        Thread.sleep(2000);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

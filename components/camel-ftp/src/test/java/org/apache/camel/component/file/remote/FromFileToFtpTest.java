@@ -27,10 +27,13 @@ public class FromFileToFtpTest extends FtpServerTestSupport {
     private String port = "20011";
     private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp2/camel?password=admin";
 
-    public void testFtpRoute() throws Exception {
+    public void testFromFileToFtp() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
         resultEndpoint.assertIsSatisfied();
+
+        // let some time pass to let the consumer etc. properly do its business before closing
+        Thread.sleep(2000);
     }
 
     public String getPort() {

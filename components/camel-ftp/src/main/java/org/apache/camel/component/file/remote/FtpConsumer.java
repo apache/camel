@@ -52,8 +52,8 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         this.client = client;
     }
 
-    // TODO: is there a way to avoid copy-pasting the reconnect logic?
     protected void connectIfNecessary() throws IOException {
+        // TODO: is there a way to avoid copy-pasting the reconnect logic?
         if (!client.isConnected()) {
             LOG.warn("FtpConsumer's client isn't connected, trying to reconnect...");
             endpoint.connect(client);
@@ -61,13 +61,11 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         }
     }
 
-    // TODO: is there a way to avoid copy-pasting the reconnect logic?
     protected void disconnect() throws IOException {
         LOG.info("FtpConsumer's client is being explicitly disconnected");
         endpoint.disconnect(client);
     }
 
-    // TODO: is there a way to avoid copy-pasting the reconnect logic?
     protected void poll() throws Exception {
         connectIfNecessary();
         // If the attempt to connect isn't successful, then the thrown

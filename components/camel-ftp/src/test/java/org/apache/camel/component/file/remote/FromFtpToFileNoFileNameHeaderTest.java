@@ -44,6 +44,9 @@ public class FromFtpToFileNoFileNameHeaderTest extends FtpServerTestSupport {
         File file = new File("target/ftptest/hello.txt");
         assertTrue("The file should exists", file.exists());
         assertTrue("File size wrong", file.length() > 10);
+
+        // let some time pass to let the consumer etc. properly do its business before closing
+        Thread.sleep(2000);
     }
 
     public String getPort() {
