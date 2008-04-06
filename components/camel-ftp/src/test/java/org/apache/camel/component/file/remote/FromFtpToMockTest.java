@@ -22,29 +22,34 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class FromFileToFtpTest extends FtpServerTestSupport {
-
-    private String port = "20011";
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp2/camel?password=admin";
+public class FromFtpToMockTest extends FtpServerTestSupport {
+    protected MockEndpoint resultEndpoint;
+    protected String expectedBody = "Hello there!";
+    protected String port = "20010";
+    protected String ftpUrl = "ftp://admin@localhost:" + port + "/tmp/camel?password=admin";
 
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
-        resultEndpoint.expectedMinimumMessageCount(1);
-        resultEndpoint.assertIsSatisfied();
-    }
+        resultEndpoint.expectedBodiesReceived(expectedBody);
 
-    public String getPort() {
-        return port;
+        // TODO when we support multiple marshallers for messages
+        // we can support passing headers over files using serialized/XML files
+        //resultEndpoint.message(0).header("cheese").isEqualTo(123);
+
+        template.sendBodyAndHeader(ftpUrl, expectedBody, "cheese", 123);
+        resultEndpoint.assertIsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file:src/main/data?noop=true").to(ftpUrl);
-
                 from(ftpUrl).to("mock:result");
             }
         };
+    }
+
+    public String getPort() {
+        return port;
     }
 
 }
