@@ -31,13 +31,14 @@ import org.apache.commons.net.ftp.FTPFile;
 
 public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     private static final transient Log LOG = LogFactory.getLog(FtpConsumer.class);
-    private final FtpEndpoint endpoint;
-    private boolean recursive = true;
-    private String regexPattern = "";
-    private long lastPollTime;
 
+    private final FtpEndpoint endpoint;
+    private long lastPollTime;
     private FTPClient client;
-    private boolean setNames;
+
+    private boolean recursive = true;
+    private String regexPattern;
+    private boolean setNames = true;
 
     public FtpConsumer(FtpEndpoint endpoint, Processor processor, FTPClient client) {
         super(endpoint, processor);
@@ -121,14 +122,19 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         // TODO do we need to adjust the TZ? can we?
         if (ftpFile.getTimestamp().getTimeInMillis() > lastPollTime) {
             if (isMatched(ftpFile)) {
+                String fullFileName = getFullFileName(ftpFile);
                 final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 client.retrieveFile(ftpFile.getName(), byteArrayOutputStream);
-                RemoteFileExchange exchange = endpoint.createExchange(getFullFileName(ftpFile), byteArrayOutputStream);
+                RemoteFileExchange exchange = endpoint.createExchange(fullFileName, byteArrayOutputStream);
 
                 if (isSetNames()) {
-                    String relativePath = getFullFileName(ftpFile).substring(endpoint.getConfiguration().getFile().length());
-                    if (relativePath.startsWith("/")) {
-                        relativePath = relativePath.substring(1);
+                    // set the filename in the special header filename marker to the ftp filename
+                    String ftpBasePath = endpoint.getConfiguration().getFile();
+                    String relativePath = fullFileName.substring(ftpBasePath.length() + 1);
+                    relativePath = relativePath.replaceFirst("/", "");
+
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Setting exchange filename to " + relativePath);
                     }
                     exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, relativePath);
                 }
@@ -141,7 +147,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     protected boolean isMatched(FTPFile file) {
         boolean result = true;
         if (regexPattern != null && regexPattern.length() > 0) {
-            result = file.getName().matches(getRegexPattern());
+            result = file.getName().matches(regexPattern);
         }
         return result;
     }
