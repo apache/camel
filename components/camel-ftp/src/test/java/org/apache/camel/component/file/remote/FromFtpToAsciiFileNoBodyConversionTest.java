@@ -31,8 +31,8 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport {
 
-    private String port = "20016";
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp6/camel?password=admin&binary=false";
+    private String port = "20012";
+    private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp5/camel?password=admin&binary=false";
 
     public void testFromFtpToAsciiFileNoBodyConversion() throws Exception {
 
@@ -44,7 +44,7 @@ public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport
         Thread.sleep(1000);
 
         // assert the file
-        File file = new File("target/ftptest/helloascii.txt");
+        File file = new File("target/ftptest/ascii.txt");
         assertTrue("The ASCII file should exists", file.exists());
         assertTrue("File size wrong", file.length() > 10);
 
@@ -68,7 +68,7 @@ public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport
         Endpoint endpoint = context.getEndpoint(ftpUrl);
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello ASCII from FTPServer");
-        exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "helloascii.txt");
+        exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "ascii.txt");
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);
