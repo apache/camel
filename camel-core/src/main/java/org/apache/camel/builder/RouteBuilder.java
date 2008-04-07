@@ -28,8 +28,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ChoiceType;
 import org.apache.camel.model.ExceptionType;
 import org.apache.camel.model.InterceptType;
-import org.apache.camel.model.InterceptorRef;
-import org.apache.camel.model.InterceptorType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.RoutesType;
@@ -43,7 +41,7 @@ import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
  * @version $Revision$
  */
 public abstract class RouteBuilder extends BuilderSupport {
-    private AtomicBoolean initalized = new AtomicBoolean(false);
+    private AtomicBoolean initialized = new AtomicBoolean(false);
     private RoutesType routeCollection = new RoutesType();
     private List<Route> routes = new ArrayList<Route>();
 
@@ -99,8 +97,7 @@ public abstract class RouteBuilder extends BuilderSupport {
      * Configures whether or not the error handler is inherited by every
      * processing node (or just the top most one)
      *
-     * @param value the flag as to whether error handlers should be inherited or
-     *                not
+     * @param value the flag as to whether error handlers should be inherited or not
      * @return the current builder
      */
     public RouteBuilder inheritErrorHandler(boolean value) {
@@ -118,7 +115,7 @@ public abstract class RouteBuilder extends BuilderSupport {
 
     /**
      * Adds a route for an interceptor; use the {@link ProcessorType#proceed()} method
-     * to continue processing the underying route being intercepted.
+     * to continue processing the underlying route being intercepted.
      */
     public InterceptType intercept() {
         return routeCollection.intercept();
@@ -174,7 +171,7 @@ public abstract class RouteBuilder extends BuilderSupport {
     // Implementation methods
     // -----------------------------------------------------------------------
     protected void checkInitialized() throws Exception {
-        if (initalized.compareAndSet(false, true)) {
+        if (initialized.compareAndSet(false, true)) {
             configure();
             populateRoutes(routes);
         }
