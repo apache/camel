@@ -718,8 +718,9 @@ public class JmsConfiguration implements Cloneable {
             if (taskExecutor != null) {
                 listenerContainer.setTaskExecutor(taskExecutor);
             }
-            if (transactionManager != null) {
-                listenerContainer.setTransactionManager(transactionManager);
+            PlatformTransactionManager tm = getTransactionManager();
+            if (tm != null) {
+                listenerContainer.setTransactionManager(tm);
             } else if (transacted) {
                 throw new IllegalArgumentException(
                                                    "Property transacted is enabled but a transactionManager was not injected!");
