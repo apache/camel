@@ -24,8 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.ExceptionType;
-import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.processor.exceptionpolicy.DefaultExceptionPolicyStrategy;
+import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 
 /**
  * Support class for {@link ErrorHandler} implementations.

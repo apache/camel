@@ -24,17 +24,17 @@ public class ValidationWithErrorInHandleAndFinallyBlockTest extends ValidationTe
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                	.errorHandler(noErrorHandler())
+                    .errorHandler(noErrorHandler())
                     .tryBlock()
                         .process(validator)
                     .handle(ValidationException.class)
                         .process(validator)
                     .finallyBlock()
-                    	.choice()
-                    	.when(header("foo").isEqualTo("bar"))
-                    	.to("mock:valid")
-                    	.otherwise()
-                    	.to("mock:invalid");
+                        .choice()
+                        .when(header("foo").isEqualTo("bar"))
+                        .to("mock:valid")
+                        .otherwise()
+                        .to("mock:invalid");
             }
         };
     }

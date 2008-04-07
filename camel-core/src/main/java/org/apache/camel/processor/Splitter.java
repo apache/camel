@@ -16,9 +16,6 @@
  */
 package org.apache.camel.processor;
 
-
-import static org.apache.camel.util.ObjectHelper.notNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -33,6 +30,7 @@ import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.CollectionHelper;
 
+import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * Implements a dynamic <a
  * href="http://activemq.apache.org/camel/splitter.html">Splitter</a> pattern
@@ -55,7 +53,7 @@ public class Splitter extends MulticastProcessor implements Processor {
             AggregationStrategy aggregationStrategy,
             boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor) {
         super(Collections.singleton(destination), aggregationStrategy, parallelProcessing, threadPoolExecutor);
-        
+
         this.expression = expression;
         notNull(expression, "expression");
         notNull(destination, "destination");
@@ -77,7 +75,8 @@ public class Splitter extends MulticastProcessor implements Processor {
         } else {
             result = new ArrayList<ProcessorExchangePair>();
         }
-        for (Iterator<Object> iter = ObjectConverter.iterator(value); iter.hasNext(); ) {
+        Iterator<Object> iter = ObjectConverter.iterator(value);
+        while (iter.hasNext()) {
             Object part = iter.next();
             Exchange newExchange = exchange.copy();
             Message in = newExchange.getIn();

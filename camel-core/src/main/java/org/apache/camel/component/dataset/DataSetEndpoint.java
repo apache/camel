@@ -42,7 +42,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private long produceDelay = -1;
     private long consumeDelay = -1;
     private long startTime;
-    private long preloadSize = 0;
+    private long preloadSize;
 
     public DataSetEndpoint(String endpointUri, Component component, DataSet dataSet) {
         super(endpointUri, component);

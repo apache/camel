@@ -34,8 +34,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Message;
-import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.DataFormatClause;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
@@ -47,11 +45,11 @@ import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.model.language.LanguageExpression;
+import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
-import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
@@ -402,8 +400,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
         RoutingSlipType answer = new RoutingSlipType(header, uriDelimiter);
         addOutput(answer);
         return (Type) this;
-    }      
-    
+    }
+
     /**
      * Creates a <a
      * href="http://activemq.apache.org/camel/routing-slip.html">Routing
@@ -411,27 +409,27 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      *
      * @param header is the header that the {@link org.apache.camel.processor.RoutingSlip RoutingSlip}
      * class will look in for the list of URIs to route the message to. The list of URIs
-     * will be split based on the default delimiter 
+     * will be split based on the default delimiter
      * {@link RoutingSlipType#DEFAULT_DELIMITER}.
      */
     public Type routingSlip(String header) {
         RoutingSlipType answer = new RoutingSlipType(header);
         addOutput(answer);
         return (Type) this;
-    }    
+    }
 
     /**
      * Creates a <a
      * href="http://activemq.apache.org/camel/routing-slip.html">Routing
      * Slip</a> pattern with the default header {@link RoutingSlipType#ROUTING_SLIP_HEADER}.
-     * The list of URIs in the header will be split based on the default delimiter 
+     * The list of URIs in the header will be split based on the default delimiter
      * {@link RoutingSlipType#DEFAULT_DELIMITER}.
      */
     public Type routingSlip() {
         RoutingSlipType answer = new RoutingSlipType();
         addOutput(answer);
         return (Type) this;
-    }     
+    }
 
     /**
      * Creates the <a
@@ -578,7 +576,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
         return ExpressionClause.createAndSetExpression(answer);
     }
 
-    
+
     /**
      * Creates the <a
      * href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>
