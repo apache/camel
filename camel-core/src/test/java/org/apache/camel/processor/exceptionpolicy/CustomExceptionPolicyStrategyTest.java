@@ -33,7 +33,7 @@ import org.apache.camel.model.ExceptionType;
 public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
 
     private static final String MESSAGE_INFO = "messageInfo";
-    private static final String errorQueue = "mock:error";
+    private static final String ERROR_QUEUE = "mock:error";
 
     public static class MyPolicyException extends Exception {
     }
@@ -52,7 +52,7 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
     // END SNIPPET e2
 
     public void testCustomPolicy() throws Exception {
-        MockEndpoint mock = getMockEndpoint(errorQueue);
+        MockEndpoint mock = getMockEndpoint(ERROR_QUEUE);
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm my policy exception");
 
@@ -71,12 +71,12 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
                 exception(MyPolicyException.class)
                     .maximumRedeliveries(1)
                     .setHeader(MESSAGE_INFO, "Damm my policy exception")
-                    .to(errorQueue);
+                    .to(ERROR_QUEUE);
 
                 exception(CamelException.class)
                     .maximumRedeliveries(3)
                     .setHeader(MESSAGE_INFO, "Damm a Camel exception")
-                    .to(errorQueue);
+                    .to(ERROR_QUEUE);
                 // END SNIPPET e1
 
                 from("direct:a").process(new Processor() {

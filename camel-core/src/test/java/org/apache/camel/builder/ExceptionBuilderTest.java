@@ -34,12 +34,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class ExceptionBuilderTest extends ContextTestSupport {
 
     private static final String MESSAGE_INFO = "messageInfo";
-    private static final String errorQueue = "mock:error";
-    private static final String businessErrorQueue = "mock:badBusiness";
-    private static final String securityErrorQueue = "mock:securitError";
+    private static final String ERROR_QUEUE = "mock:error";
+    private static final String BUSINESS_ERROR_QUEUE = "mock:badBusiness";
+    private static final String SECURITY_ERROR_QUEUE = "mock:securityError";
 
     public void testNPE() throws Exception {
-        MockEndpoint mock = getMockEndpoint(errorQueue);
+        MockEndpoint mock = getMockEndpoint(ERROR_QUEUE);
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm a NPE");
 
@@ -49,7 +49,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
     }
 
     public void testIOException() throws Exception {
-        MockEndpoint mock = getMockEndpoint(errorQueue);
+        MockEndpoint mock = getMockEndpoint(ERROR_QUEUE);
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm somekind of IO exception");
 
@@ -59,7 +59,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
     }
 
     public void testException() throws Exception {
-        MockEndpoint mock = getMockEndpoint(errorQueue);
+        MockEndpoint mock = getMockEndpoint(ERROR_QUEUE);
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm just exception");
 
@@ -69,7 +69,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
     }
 
     public void testMyBusinessException() throws Exception {
-        MockEndpoint mock = getMockEndpoint(businessErrorQueue);
+        MockEndpoint mock = getMockEndpoint(BUSINESS_ERROR_QUEUE);
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm my business is not going to well");
 
@@ -80,7 +80,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
 
     public void testSecurityConfiguredWithTwoExceptions() throws Exception {
         // test that we also handles a configuration with 2 or more exceptions
-        MockEndpoint mock = getMockEndpoint(securityErrorQueue);
+        MockEndpoint mock = getMockEndpoint(SECURITY_ERROR_QUEUE);
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm some security error");
 
@@ -102,7 +102,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
                 exception(NullPointerException.class)
                     .maximumRedeliveries(1)
                     .setHeader(MESSAGE_INFO, "Damm a NPE")
-                    .to(errorQueue);
+                    .to(ERROR_QUEUE);
 
                 exception(IOException.class)
                     .initialRedeliveryDelay(5000L)
@@ -110,25 +110,25 @@ public class ExceptionBuilderTest extends ContextTestSupport {
                     .backOffMultiplier(1.0)
                     .useExponentialBackOff()
                     .setHeader(MESSAGE_INFO, "Damm somekind of IO exception")
-                    .to(errorQueue);
+                    .to(ERROR_QUEUE);
 
                 exception(Exception.class)
                     .initialRedeliveryDelay(1000L)
                     .maximumRedeliveries(2)
                     .setHeader(MESSAGE_INFO, "Damm just exception")
-                    .to(errorQueue);
+                    .to(ERROR_QUEUE);
                 // END SNIPPET: exceptionBuilder1
 
                 exception(MyBaseBusinessException.class)
                     .initialRedeliveryDelay(1000L)
                     .maximumRedeliveries(3)
                     .setHeader(MESSAGE_INFO, "Damm my business is not going to well")
-                    .to(businessErrorQueue);
+                    .to(BUSINESS_ERROR_QUEUE);
 
                 exception(GeneralSecurityException.class).exception(KeyException.class)
                     .maximumRedeliveries(1)
                     .setHeader(MESSAGE_INFO, "Damm some security error")
-                    .to(securityErrorQueue);
+                    .to(SECURITY_ERROR_QUEUE);
 
 
                 from("direct:a").process(new Processor() {

@@ -42,8 +42,7 @@ public class LogComponent extends DefaultComponent<Exchange> {
         Logger logger;
         if (value != null) {
             logger = new ThroughputLogger(remaining, level, ObjectConverter.toInteger(value));
-        }
-        else {
+        } else {
             logger = new Logger(remaining, level);
         }
 

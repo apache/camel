@@ -21,9 +21,9 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.processor.ThroughputLogger;
 
 /**
  * A factory of {@link MockEndpoint} instances

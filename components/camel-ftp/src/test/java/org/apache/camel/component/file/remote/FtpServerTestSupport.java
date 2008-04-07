@@ -19,11 +19,11 @@ package org.apache.camel.component.file.remote;
 import java.util.Properties;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.ConfigurableFtpServerContext;
-import org.apache.ftpserver.interfaces.FtpServerContext;
+import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.config.PropertiesConfiguration;
 import org.apache.ftpserver.ftplet.Configuration;
+import org.apache.ftpserver.interfaces.FtpServerContext;
 
 /**
  * Base class for unit testing using a FTPServer

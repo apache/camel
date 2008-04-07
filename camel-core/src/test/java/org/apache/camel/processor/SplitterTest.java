@@ -74,23 +74,23 @@ public class SplitterTest extends ContextTestSupport {
         assertMessageHeader(out, "foo", "bar");
         assertMessageHeader(out, Splitter.SPLIT_COUNTER, 4);
     }
-    
+
     public void testEmptyBody() {
         Exchange result = template.send("direct:seqential", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader("foo", "bar");
             }
         });
-        
+
         assertNull(result.getOut(false));
     }
-    
+
     public void testSendingAMessageUsingMulticastReceivesItsOwnExchangeParallel() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
-        
+
         resultEndpoint.expectsNoDuplicates(body());
         resultEndpoint.expectedMessageCount(4);
-        
+
         template.send("direct:parallel", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
@@ -102,20 +102,20 @@ public class SplitterTest extends ContextTestSupport {
         assertMockEndpointsSatisifed();
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
-        
+
         Set<Integer> numbersFound = new TreeSet<Integer>();
-        
-        final String[] NAMES = {"James", "Guillaume", "Hiram", "Rob"};
-        
+
+        final String[] names = {"James", "Guillaume", "Hiram", "Rob"};
+
         for (int i = 0; i < 4; i++) {
             Exchange exchange = list.get(i);
             Message in = exchange.getIn();
             Integer splitCounter = in.getHeader(Splitter.SPLIT_COUNTER, Integer.class);
             numbersFound.add(splitCounter);
-            assertEquals(NAMES[splitCounter], in.getBody());
+            assertEquals(names[splitCounter], in.getBody());
             assertMessageHeader(in, Splitter.SPLIT_SIZE, 4);
         }
-        
+
         assertEquals(4, numbersFound.size());
     }
 
@@ -137,7 +137,7 @@ public class SplitterTest extends ContextTestSupport {
         assertMessageHeader(out, "foo", "bar");
         assertEquals((Integer)5, result.getProperty("aggregated", Integer.class));
     }
-    
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
