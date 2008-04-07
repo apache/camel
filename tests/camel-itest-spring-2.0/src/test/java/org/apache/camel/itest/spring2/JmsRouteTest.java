@@ -22,8 +22,9 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 import org.apache.camel.component.mock.MockEndpoint;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+
 
 /**
  * @version $Revision$

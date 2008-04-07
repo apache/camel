@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.Converter;
-
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.ByteArrayInputStream;
+
+import org.apache.camel.Converter;
 
 /**
  * A set of converter methods for working with remote file types
@@ -28,7 +28,10 @@ import java.io.ByteArrayInputStream;
  * @version $Revision$
  */
 @Converter
-public class RemoteFileConverter {
+public final class RemoteFileConverter {
+    private RemoteFileConverter() {
+        // Helper Class
+    }
 
     @Converter
     public static byte[] toByteArray(ByteArrayOutputStream os) {
@@ -44,5 +47,5 @@ public class RemoteFileConverter {
     public static InputStream toInputStream(ByteArrayOutputStream os) {
         return new ByteArrayInputStream(os.toByteArray());
     }
-    
+
 }

@@ -65,8 +65,7 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint<J
         QueueBrowseStrategy answer = null;
         try {
             answer = JmsComponent.tryCreateDefaultQueueBrowseStrategy();
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             throw new IllegalArgumentException("Could not create a QueueBrowseStrategy, maybe you are using spring 2.0.x? Cause: " + e, e);
         }
         if (answer == null) {
@@ -74,5 +73,5 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint<J
         }
         return answer;
     }
-    
+
 }

@@ -17,8 +17,6 @@
 package org.apache.camel.language.jxpath;
 
 import org.apache.camel.LanguageTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.language.ExpressionEvaluationException;
 
 /**
@@ -29,61 +27,59 @@ public class JXPathTest extends LanguageTestSupport {
     protected PersonBean body = new PersonBean("James", "London");
 
     /**
-	 * Test JXPath expressions
-	 */
-	public void testJXPathExpressions() throws Exception {
-		assertExpression(".", exchange);
-		assertExpression("./in/body", "<hello id='m123'>world!</hello>");
-		assertExpression("in/body", "<hello id='m123'>world!</hello>");
-		assertExpression("in/headers", exchange.getIn().getHeaders());
-		assertExpression("in/headers/@foo", "abc");
-	}
-	
-	/**
-	 * Test JXPath predicates
-	 */
-	public void testJXPathPredicates() throws Exception {
-		assertPredicate("in/headers/@foo = 'abc'");
-	}
-	
-	/**
-	 * Test exceptions being thrown appropriately
-	 */
-	public void testExceptions() throws Exception {
-		assertInvalidExpression(".@.");
-		assertInvalidExpression("ins/body");
-		//assertInvalidPredicate("in/body");
-	}
-/*
-    @Override
-    protected void populateExchange(Exchange exchange) {
-        Message in = exchange.getIn();
-        in.setHeader("foo", "abc");
-        in.setHeader("bar", 123);
-        in.setBody(body);
-    }*/
+     * Test JXPath expressions
+     */
+    public void testJXPathExpressions() throws Exception {
+        assertExpression(".", exchange);
+        assertExpression("./in/body", "<hello id='m123'>world!</hello>");
+        assertExpression("in/body", "<hello id='m123'>world!</hello>");
+        assertExpression("in/headers", exchange.getIn().getHeaders());
+        assertExpression("in/headers/@foo", "abc");
+    }
+
+    /**
+     * Test JXPath predicates
+     */
+    public void testJXPathPredicates() throws Exception {
+        assertPredicate("in/headers/@foo = 'abc'");
+    }
+
+    /**
+     * Test exceptions being thrown appropriately
+     */
+    public void testExceptions() throws Exception {
+        assertInvalidExpression(".@.");
+        assertInvalidExpression("ins/body");
+        // assertInvalidPredicate("in/body");
+    }
+
+    /*
+     * @Override protected void populateExchange(Exchange exchange) { Message in =
+     * exchange.getIn(); in.setHeader("foo", "abc"); in.setHeader("bar", 123);
+     * in.setBody(body); }
+     */
 
     private void assertInvalidExpression(String expression) {
-		try {
-			assertExpression(expression, null);
-			fail("Expected an ExpressionEvaluationException");
-		} catch (ExpressionEvaluationException e) {
-			//nothing to do -- test success
-		}
-	}
-	
-	private void assertInvalidPredicate(String predicate) {
-		try {
-			assertPredicate(predicate);
-			fail("Expected an ExpressionEvaluationException");
-		} catch (ExpressionEvaluationException e) {
-			//nothing to do -- test success
-		}		
-	}
+        try {
+            assertExpression(expression, null);
+            fail("Expected an ExpressionEvaluationException");
+        } catch (ExpressionEvaluationException e) {
+            // nothing to do -- test success
+        }
+    }
 
-	@Override
-	protected String getLanguageName() {
-		return "jxpath";
-	}
+    private void assertInvalidPredicate(String predicate) {
+        try {
+            assertPredicate(predicate);
+            fail("Expected an ExpressionEvaluationException");
+        } catch (ExpressionEvaluationException e) {
+            //nothing to do -- test success
+        }
+    }
+
+    @Override
+    protected String getLanguageName() {
+        return "jxpath";
+    }
 
 }
