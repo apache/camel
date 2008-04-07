@@ -44,7 +44,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
                                             Throwable exception) {
         // the goal is to find the exception with the same/closet inheritance level as the target exception being thrown
         int targetLevel = getInheritanceLevel(exception.getClass());
-        // candidate is the best candidate found so far
+        // candidate is the best candidate found so far to return
         ExceptionType candidate = null;
         // difference in inheritance level between the current candidate and the thrown exception (target level)
         int candidateDiff = Integer.MAX_VALUE;
@@ -57,6 +57,14 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
             // must be instance of check to ensure that the clazz is one type of the thrown exception
             if (clazz.isInstance(exception)) {
+
+                // exact match
+                if (clazz.equals(exception.getClass())) {
+                    candidate = type;
+                    break;
+                }
+
+                // not an exact match so find the best candidate
                 int level = getInheritanceLevel(clazz);
                 int diff = targetLevel - level;
 
