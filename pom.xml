@@ -44,7 +44,7 @@
     <jetty-version>6.1.7</jetty-version>
     <slf4j-version>1.3.0</slf4j-version>
     <openjpa-version>0.9.6-incubating</openjpa-version>
-    <spring-version>2.5.1</spring-version>
+    <spring-version>2.5.3</spring-version>
     <mina-version>1.1.6</mina-version>
     <uface-version>1.0-m1</uface-version>
 
