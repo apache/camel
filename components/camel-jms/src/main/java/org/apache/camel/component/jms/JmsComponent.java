@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-
 import java.util.Map;
 
 import javax.jms.ConnectionFactory;
@@ -27,7 +26,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.jms.requestor.Requestor;
 import org.apache.camel.impl.DefaultComponent;
-
+import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -38,10 +39,8 @@ import org.springframework.jms.listener.serversession.ServerSessionFactory;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
+
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * A <a href="http://activemq.apache.org/jms.html">JMS Component</a>
@@ -49,16 +48,16 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision:520964 $
  */
 public class JmsComponent extends DefaultComponent<JmsExchange> implements ApplicationContextAware {
-    private static final transient Log LOG = LogFactory.getLog(JmsComponent.class);
-    
+
     public static final String QUEUE_PREFIX = "queue:";
     public static final String TOPIC_PREFIX = "topic:";
+    private static final transient Log LOG = LogFactory.getLog(JmsComponent.class);
+    private static final String DEFAULT_QUEUE_BROWSE_STRATEGY = "org.apache.camel.component.jms.DefaultQueueBrowseStrategy";
     private JmsConfiguration configuration;
     private ApplicationContext applicationContext;
     private Requestor requestor;
     private QueueBrowseStrategy queueBrowseStrategy;
     private boolean attemptedToCreateQueueBrowserStrategy;
-    private static final String DEFAULT_QUEUE_BROWSE_STRATEGY = "org.apache.camel.component.jms.DefaultQueueBrowseStrategy";
 
     public JmsComponent() {
     }
@@ -116,16 +115,16 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
         return jmsComponentTransacted(connectionFactory, transactionManager);
     }
 
-    public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory, PlatformTransactionManager transactionManager) {
+    public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory,
+                                                      PlatformTransactionManager transactionManager) {
         JmsConfiguration template = new JmsConfiguration(connectionFactory);
         template.setTransactionManager(transactionManager);
         template.setTransacted(true);
         return jmsComponent(template);
     }
 
-
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public JmsConfiguration getConfiguration() {
         if (configuration == null) {
@@ -135,12 +134,13 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
             if (applicationContext != null) {
                 Map beansOfType = applicationContext.getBeansOfType(ConnectionFactory.class);
                 if (!beansOfType.isEmpty()) {
-                    ConnectionFactory cf = (ConnectionFactory) beansOfType.values().iterator().next();
+                    ConnectionFactory cf = (ConnectionFactory)beansOfType.values().iterator().next();
                     configuration.setConnectionFactory(cf);
                 }
                 beansOfType = applicationContext.getBeansOfType(DestinationResolver.class);
                 if (!beansOfType.isEmpty()) {
-                    DestinationResolver destinationResolver = (DestinationResolver) beansOfType.values().iterator().next();
+                    DestinationResolver destinationResolver = (DestinationResolver)beansOfType.values()
+                        .iterator().next();
                     configuration.setDestinationResolver(destinationResolver);
                 }
             }
@@ -323,9 +323,10 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
                 attemptedToCreateQueueBrowserStrategy = true;
                 try {
                     queueBrowseStrategy = tryCreateDefaultQueueBrowseStrategy();
-                }
-                catch (Throwable e) {
-                    LOG.warn("Could not instantiate the QueueBrowseStrategy are you using Spring 2.0.x by any chance? Error: " + e, e);
+                } catch (Throwable e) {
+                    LOG.warn(
+                             "Could not instantiate the QueueBrowseStrategy are you using Spring 2.0.x by any chance? Error: "
+                                 + e, e);
                 }
             }
         }
@@ -337,7 +338,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @Override
     protected void doStop() throws Exception {
@@ -348,7 +349,8 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
     }
 
     @Override
-    protected Endpoint<JmsExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint<JmsExchange> createEndpoint(String uri, String remaining, Map parameters)
+        throws Exception {
 
         boolean pubSubDomain = false;
         if (remaining.startsWith(QUEUE_PREFIX)) {
@@ -399,9 +401,11 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
     }
 
     /**
-     * Attempts to instantiate the default {@link QueueBrowseStrategy} which should work fine if Spring 2.5.x or later is
-     * on the classpath but this will fail if 2.0.x are on the classpath. We can continue to operate on this version
-     * we just cannot support the browsable queues supported by {@link JmsQueueEndpoint}
+     * Attempts to instantiate the default {@link QueueBrowseStrategy} which
+     * should work fine if Spring 2.5.x or later is on the classpath but this
+     * will fail if 2.0.x are on the classpath. We can continue to operate on
+     * this version we just cannot support the browsable queues supported by
+     * {@link JmsQueueEndpoint}
      *
      * @return the queue browse strategy or null if it cannot be supported
      */
@@ -409,11 +413,11 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
         // lets try instantiate the default implementation
         Class<?> type = ObjectHelper.loadClass(DEFAULT_QUEUE_BROWSE_STRATEGY);
         if (type == null) {
-            LOG.warn("Could not load class: " + DEFAULT_QUEUE_BROWSE_STRATEGY + " maybe you are on Spring 2.0.x?");
+            LOG.warn("Could not load class: " + DEFAULT_QUEUE_BROWSE_STRATEGY
+                     + " maybe you are on Spring 2.0.x?");
             return null;
-        }
-        else {
-            return (QueueBrowseStrategy) ObjectHelper.newInstance(type);
+        } else {
+            return (QueueBrowseStrategy)ObjectHelper.newInstance(type);
         }
     }
 }

@@ -22,16 +22,17 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
 
 /**
- * <a href="http://commons.apache.org/jxpath/">JXPath</a> {@link Language} provider
+ * <a href="http://commons.apache.org/jxpath/">JXPath</a> {@link Language}
+ * provider
  */
 public class JXPathLanguage implements Language {
 
-	public Expression<Exchange> createExpression(String expression) {
-		return new JXPathExpression(expression, Object.class);
-	}
+    public Expression<Exchange> createExpression(String expression) {
+        return new JXPathExpression(expression, Object.class);
+    }
 
-	public Predicate<Exchange> createPredicate(String predicate) {
-		return new JXPathExpression(predicate, Boolean.class);
-	}
+    public Predicate<Exchange> createPredicate(String predicate) {
+        return new JXPathExpression(predicate, Boolean.class);
+    }
 
 }

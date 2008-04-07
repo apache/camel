@@ -18,16 +18,16 @@ package org.apache.camel.component.file.remote;
 
 import java.io.File;
 
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * Unit testing a FTP ASCII transfer that Camel provides the needed conversion to String from
- * the input stream. 
+ * the input stream.
  */
 public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport {
 
