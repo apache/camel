@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
@@ -39,14 +37,6 @@ public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
         resultEndpoint.expectedBodiesReceived("Hello ASCII from FTPServer");
-
-        // wait until the file producer has written the file
-        Thread.sleep(1000);
-
-        // assert the file
-        File file = new File("target/ftptest/ascii.txt");
-        assertTrue("The ASCII file should exists", file.exists());
-        assertTrue("File size wrong", file.length() > 10);
 
         // let some time pass to let the consumer etc. properly do its business before closing
         Thread.sleep(1000);
