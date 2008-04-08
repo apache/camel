@@ -43,7 +43,7 @@ public class CxfComponent extends DefaultComponent<CxfExchange> {
         // Now we need to add the address, endpoint name, WSDL url or the SEI to build up an endpoint
         CxfEndpoint result = new CxfEndpoint(uri, remaining, this);
         setProperties(result, parameters);
-        // we can check the endpoint integration here
+        // We can check the endpoint integration here
         return result;
     }
 
