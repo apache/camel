@@ -31,26 +31,18 @@ import org.apache.camel.builder.RouteBuilder;
  *
  * @version $Revision$
  */
-public class MinaExchangeTimeOutTest extends ContextTestSupport {
+public class MinaExchangeDefaultTimeOutTest extends ContextTestSupport {
 
-    private static final int PORT = 6336;
+    private static final int PORT = 6338;
     protected String uri = "mina:tcp://localhost:" + PORT + "?textline=true&sync=true";
 
-    public void testUsingTimeoutParameter() throws Exception {
-
-        // use a timeout value of 2 seconds (timeout is in millis) so we should actually get a response in this test
-        Endpoint endpoint = this.context.getEndpoint("mina:tcp://localhost:" + PORT + "?textline=true&sync=true&timeout=2000");
-        Producer producer = endpoint.createProducer();
-        producer.start();
-        Exchange exchange = producer.createExchange();
-        exchange.getIn().setBody("Hello World");
+    public void testDefaultTimeOut() {
         try {
-            producer.process(exchange);
-            fail("Should have thrown an ExchangeTimedOutException wrapped in a RuntimeCamelException");
-        } catch (Exception e) {
-            assertTrue("Should have thrown an ExchangeTimedOutException", e instanceof ExchangeTimedOutException);
+            String result = (String)template.requestBody(uri, "Hello World");
+            assertEquals("Okay I will be faster in the future", result);
+        } catch (RuntimeCamelException e) {
+            fail("Should not get a RuntimeCamelException");
         }
-        producer.stop();
     }
 
     protected RouteBuilder createRouteBuilder() {
