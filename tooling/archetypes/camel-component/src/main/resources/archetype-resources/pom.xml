@@ -27,7 +27,7 @@
   <packaging>jar</packaging>
   <version>${version}</version>
 
-  <name>A Camel Route</name>
+  <name>A Camel Component</name>
   <url>http://www.myorganization.org</url>
 
   <properties>
