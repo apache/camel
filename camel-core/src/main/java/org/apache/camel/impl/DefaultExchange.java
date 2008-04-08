@@ -40,7 +40,7 @@ public class DefaultExchange implements Exchange {
     private Message out;
     private Message fault;
     private Throwable exception;
-    private String exchangeId = DefaultExchange.DEFAULT_ID_GENERATOR.generateId();
+    private String exchangeId;
     private UnitOfWork unitOfWork;
     private ExchangePattern pattern;
 
@@ -233,6 +233,9 @@ public class DefaultExchange implements Exchange {
     }
 
     public String getExchangeId() {
+        if (exchangeId == null) {
+            exchangeId = DefaultExchange.DEFAULT_ID_GENERATOR.generateId();
+        }
         return exchangeId;
     }
 

@@ -103,7 +103,8 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
      * @param exchange the exchange to send
      */
     public E send(Endpoint<E> endpoint, E exchange) {
-        E convertedExchange = endpoint.createExchange(exchange);
+        //E convertedExchange = endpoint.createExchange(exchange);
+        E convertedExchange = exchange;
         producerCache.send(endpoint, convertedExchange);
         return convertedExchange;
     }
