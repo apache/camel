@@ -23,7 +23,7 @@
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.4-SNAPSHOT</version>
   </parent>
   
   <artifactId>maven-camel-converters</artifactId>
