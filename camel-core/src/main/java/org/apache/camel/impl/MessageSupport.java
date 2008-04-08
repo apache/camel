@@ -35,7 +35,7 @@ public abstract class MessageSupport implements Message {
     private static final UuidGenerator DEFALT_ID_GENERATOR = new UuidGenerator();
     private Exchange exchange;
     private Object body;
-    private String messageId = DEFALT_ID_GENERATOR.generateId();
+    private String messageId;
 
     public Object getBody() {
         if (body == null) {
@@ -117,6 +117,9 @@ public abstract class MessageSupport implements Message {
      * @return the messageId
      */
     public String getMessageId() {
+        if (messageId == null) {
+            messageId = createMessageId();
+        }
         return this.messageId;
     }
 
@@ -125,5 +128,12 @@ public abstract class MessageSupport implements Message {
      */
     public void setMessageId(String messageId) {
         this.messageId = messageId;
+    }
+
+    /**
+     * Lets allow implementations to auto-create a messageId
+     */
+    protected String createMessageId() {
+        return DEFALT_ID_GENERATOR.generateId();
     }
 }
