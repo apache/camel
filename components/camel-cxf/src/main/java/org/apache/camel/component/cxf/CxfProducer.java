@@ -171,8 +171,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
     }
 
     public void process(CxfExchange exchange) {
-        CxfBinding cxfBinding = endpoint.getBinding();
-        Message inMessage = cxfBinding.createCxfMessage(exchange);
+        Message inMessage = CxfBinding.createCxfMessage(exchange);
         try {
             if (dataFormat.equals(DataFormat.POJO)) {
                 // InputStream is = m.getContent(InputStream.class);
@@ -195,10 +194,10 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                             result = client.invoke(operation, parameters.toArray());
                         }
                         response.setContent(Object[].class, result);
-                        cxfBinding.storeCxfResponse(exchange, response);
+                        CxfBinding.storeCxfResponse(exchange, response);
                     } catch (Exception ex) {
                         response.setContent(Exception.class, ex);
-                        cxfBinding.storeCxfFault(exchange, response);
+                        CxfBinding.storeCxfFault(exchange, response);
                     }
                 } else {
                     throw new RuntimeCamelException("Can't find the operation name in the message!");
@@ -248,10 +247,10 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                     invokingContext.setResponseContent(response, result);
                     // copy the response context to the response
                     response.putAll(responseContext);
-                    cxfBinding.storeCxfResponse(exchange, response);
+                    CxfBinding.storeCxfResponse(exchange, response);
                 } catch (Exception e) {
                     response.setContent(Exception.class, e);
-                    cxfBinding.storeCxfFault(exchange, response);
+                    CxfBinding.storeCxfFault(exchange, response);
                 }
             }
         } catch (Exception e) {
