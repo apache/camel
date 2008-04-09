@@ -27,7 +27,10 @@ import org.apache.cxf.message.Message;
  *
  * @version $Revision$
  */
-public class CxfBinding {
+public final class CxfBinding {
+    private CxfBinding() {
+        // Helper class
+    }
     public static Object extractBodyFromCxf(CxfExchange exchange, Message message) {
         // TODO how do we choose a format?
         return getBody(message);
@@ -46,7 +49,7 @@ public class CxfBinding {
         return null;
     }
 
-    public Message createCxfMessage(CxfExchange exchange) {
+    public static Message createCxfMessage(CxfExchange exchange) {
         Message answer = exchange.getInMessage();
 
         // CXF uses StAX which is based on the stream API to parse the XML,
@@ -75,7 +78,7 @@ public class CxfBinding {
     }
 
 
-    public void storeCxfResponse(CxfExchange exchange, Message response) {
+    public static void storeCxfResponse(CxfExchange exchange, Message response) {
         // no need to process headers as we use the CXF message
         CxfMessage out = exchange.getOut();
         if (response != null) {
@@ -84,14 +87,14 @@ public class CxfBinding {
         }
     }
 
-    public void storeCxfResponse(CxfExchange exchange, Object response) {
+    public static void storeCxfResponse(CxfExchange exchange, Object response) {
         CxfMessage out = exchange.getOut();
         if (response != null) {
             out.setBody(response);
         }
     }
 
-    public void storeCxfFault(CxfExchange exchange, Message message) {
+    public static void storeCxfFault(CxfExchange exchange, Message message) {
         CxfMessage fault = exchange.getFault();
         if (fault != null) {
             fault.setBody(getBody(message));

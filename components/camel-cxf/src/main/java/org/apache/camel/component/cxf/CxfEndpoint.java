@@ -135,17 +135,6 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
         return serviceName;
     }
 
-    public CxfBinding getBinding() {
-        if (binding == null) {
-            binding = new CxfBinding();
-        }
-        return binding;
-    }
-
-    public void setBinding(CxfBinding binding) {
-        this.binding = binding;
-    }
-
     public boolean isInOut() {
         return inOut;
     }
