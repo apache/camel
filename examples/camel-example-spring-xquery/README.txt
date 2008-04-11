@@ -7,10 +7,29 @@ This example shows how to
  * transform messages using XQuery
  * use Spring XML to configure all routing rules and components
 
-The example consumes messages from a directory, transforms them, then sends them to a queue.
+The example consumes messages from a directory, transforms them, then sends
+them to a queue. It can be run using either Maven or Ant.
 
-To run the example type
+To run the example using Maven, type
   mvn camel:run
+
+To run the example with Ant
+  a. You need to have Apache ActiveMQ and Saxon installed. They can be
+  downloaded from the following locations
+    Apache ActiveMQ
+    http://activemq.apache.org/ 
+    Saxon 8.7 
+    http://saxon.sourceforge.net/
+    
+  b. Export / Set home directories for the above as follows 
+    UNIX 
+    export ACTIVEMQ_HOME=<path to ActiveMQ install directory>
+    export SAXON_HOME=<path to Saxon install directory> 
+    Windows 
+    set ACTIVEMQ_HOME=<path to ActiveMQ install directory> 
+    set SAXON_HOME=<path to Saxon install directory>
+    
+  c. To Run the example using Ant, type ant
 
 You can see the routing rules by looking at the the Spring XML configuration
 at src/main/resources/META-INF/spring
@@ -21,8 +40,8 @@ For the latest & greatest documentation on how to use this example please see
 If you hit any problems please let us know on the Camel Forums
   http://activemq.apache.org/camel/discussion-forums.html
 
-Please help us make Apache Camel better - we appreciate any feedback you may have.
-Enjoy!
+Please help us make Apache Camel better - we appreciate any feedback you may
+have.  Enjoy!
 
 ------------------------
 The Camel riders!
