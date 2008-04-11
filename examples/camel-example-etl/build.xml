@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<project name="camel-example-etl" default="run" basedir=".">
+
+  <import file="../common_build.xml"/>
+
+  <fail unless="env.HIBERNATE_CORE_HOME" message="You must download hibernate core and set HIBERNATE_CORE_HOME to run this demo."/>
+  <fail unless="env.HIBERNATE_EM_HOME" message="You must download hibernate entity manager and set HIBERNATE_EM_HOME to run this demo."/>
+  <fail unless="env.HSQLDB_HOME" message="You must download HSQLDB and set HSQLDB_HOME to run this demo."/>
+  <fail unless="env.JUEL_HOME" message="You must download Juel and set JUEL_HOME to run this demo."/>
+
+  <property name="project.name" value="camel-example-etl"/>
+
+  <property name="juel.home" value="${env.JUEL_HOME}"/>
+  
+  <path id="sample.build.classpath">
+    <fileset dir="${camel.lib}">
+      <include name="**/camel-juel-*.jar"/>
+      <include name="**/camel-jpa-*.jar"/>
+      <include name="**/camel-jaxb-*.jar"/>
+      <include name="**/commons-collections-*.jar"/>
+      <exclude name="**/*-tests.jar"/>
+    </fileset>
+    <fileset dir="${juel.home}">
+      <include name="**/juel-*.jar"/>
+    </fileset>
+    <path refid="camel.spring.classpath"/>
+    <path refid="hibernate.classpath"/>
+  </path>
+  
+  <target name="run" depends="build" description="Compile and run the sample">
+    <camelrun mainClass="org.apache.camel.example.etl.Main"/>
+  </target>
+
+</project>
