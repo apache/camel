@@ -139,15 +139,15 @@
     <attribute name="mainClass" default="org.apache.camel.spring.Main"/>
     <element name="arguments" optional="true"/>
     <sequential>
-      <property name="sampleclasspath" refid="sample.run.classpath"/>
-      <!--
-      <echo message="running with classpath: ${sampleclasspath}"/>
-      -->
       <path id="sample.run.classpath">
         <pathelement location="${build.classes.dir}"/>
         <path refid="sample.build.classpath"/>
         <path refid="log4j.classpath"/>
       </path>
+      <!--
+      <property name="sampleclasspath" refid="sample.run.classpath"/>
+      <echo message="running with classpath: ${sampleclasspath}"/>
+      -->
 
       <java classname="@{mainClass}"
         fork="true" 
