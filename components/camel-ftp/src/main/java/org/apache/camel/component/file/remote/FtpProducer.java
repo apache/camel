@@ -29,8 +29,8 @@ import org.apache.commons.net.ftp.FTPConnectionClosedException;
 public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
     private static final transient Log LOG = LogFactory.getLog(FtpProducer.class);
 
-    FtpEndpoint endpoint;
-    private final FTPClient client;
+    private FtpEndpoint endpoint;
+    private FTPClient client;
 
     public FtpProducer(FtpEndpoint endpoint, FTPClient client) {
         super(endpoint);

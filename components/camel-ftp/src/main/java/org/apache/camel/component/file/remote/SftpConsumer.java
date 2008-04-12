@@ -54,7 +54,6 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         this.session = session;
     }
 
-    // TODO: is there a way to avoid copy-pasting the reconnect logic?
     protected void connectIfNecessary() throws JSchException {
         if (channel == null || !channel.isConnected()) {
             if (session == null || !session.isConnected()) {
@@ -69,7 +68,6 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         }
     }
 
-    // TODO: is there a way to avoid copy-pasting the reconnect logic?
     protected void disconnect() throws JSchException {
         if (session != null) {
             LOG.info("Session is being explicitly disconnected");
@@ -81,8 +79,8 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         }
     }
 
-    // TODO: is there a way to avoid copy-pasting the reconnect logic?
     protected void poll() throws Exception {
+        // TODO: is there a way to avoid copy-pasting the reconnect logic?
         connectIfNecessary();
         // If the attempt to connect isn't successful, then the thrown
         // exception will signify that we couldn't poll
