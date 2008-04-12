@@ -26,12 +26,12 @@
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
     <version>1.4-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
   </parent>
 
-  <artifactId>apache-camel</artifactId>
-  <name>Camel :: Assembly</name>
-  <description>Apache Camel Assembly</description>
-  <packaging>pom</packaging>
+  <artifactId>camel-bundle</artifactId>
+  <name>Camel :: Assembly :: Bundle</name>
+  <description>Apache Camel Bundle</description>
 
   <properties>
     <maven.test.skip>true</maven.test.skip>
@@ -39,20 +39,11 @@
     <shade.version>1.0</shade.version>
   </properties>
 
-  <modules>
-    <module>bundle</module>
-  </modules>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-bundle</artifactId>
-      <version>${pom.version}</version>
     </dependency>
 
     <dependency>
@@ -325,238 +316,61 @@
 
   <build>
     <plugins>
+      <!--
       <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkMode>pertest</forkMode>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>4.1-incubator</version>
         <executions>
           <execution>
-            <id>copy-bundle-jar</id>
-            <phase>package</phase>
+            <phase>compile</phase>
             <goals>
-              <goal>copy</goal>
+              <goal>createbundle</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.directory}</outputDirectory>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>${pom.groupId}</groupId>
-                  <artifactId>camel-bundle</artifactId>
-                  <version>${pom.version}</version>
-                  <destFileName>${pom.artifactId}-${pom.version}.jar</destFileName>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>      
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.1</version>
-        <executions>
-          <execution>
-            <id>unix-bin</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/descriptors/unix-bin.xml</descriptor>
-              </descriptors>
-              <finalName>${pom.artifactId}-${pom.version}</finalName>
-              <appendAssemblyId>false</appendAssemblyId>
-            </configuration>
-          </execution>
-          <execution>
-            <id>windows-bin</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/descriptors/windows-bin.xml</descriptor>
-              </descriptors>
-              <finalName>${pom.artifactId}-${pom.version}</finalName>
-              <appendAssemblyId>false</appendAssemblyId>
-            </configuration>
-          </execution>
-          <execution>
-            <id>unix-src</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/descriptors/unix-src.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-          <execution>
-            <id>windows-src</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/descriptors/windows-src.xml</descriptor>
-              </descriptors>
+              <includes>camel-bam,camel-core,camel-cxf,camel-csv,camel-ftp,came-groovy,
+                camel-http,camel-ibatis,camel-irc,camel-jaxb,camel-jdbc,camel-jing,camel-jms,
+                camel-jhc,camel-josql,camel-juel,camel-jetty,camel-jcr,
+                camel-jpa,camel-mail,camel-mina,camel-msv,camel-ognl,camel-quartz,camel-rmi,
+                camel-saxon,camel-script,camel-spring,camel-stringtemplate, camel-stream,
+                camel-velocity,camel-xmlbeans,camel-xmpp,commons-logging</includes>
             </configuration>
           </execution>
         </executions>
       </plugin>
+      -->    
       <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>maven-camel-converters</artifactId>
-        <version>${project.version}</version>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${shade.version}</version>
         <executions>
           <execution>
-            <id>camel-converters</id>
+            <phase>package</phase>
             <goals>
-              <goal>report</goal>
+              <goal>shade</goal>
             </goals>
+            <configuration>
+              <shadedGroupFilter>org.apache.camel</shadedGroupFilter>
+              <shadedArtifactAttached>false</shadedArtifactAttached>
+              <createSourcesJar>${createSourcesJar}</createSourcesJar>
+              <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+              <createDependencyReducedPom>true</createDependencyReducedPom>
+
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/spring.handlers</resource>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/spring.schemas</resource>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/services/org/apache/camel/TypeConverter</resource>
+                </transformer>
+              </transformers>
+            </configuration>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-
-          <!-- we only generate the javadoc jars when running the release profile -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>unpack-camel-core-javadoc</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>unpack</goal>
-                </goals>
-                <configuration>
-                  <outputDirectory>${project.build.directory}/javadoc/camel-core</outputDirectory>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>${pom.groupId}</groupId>
-                      <artifactId>camel-core</artifactId>
-                      <classifier>javadoc</classifier>
-                      <version>${pom.version}</version>
-                    </artifactItem>
-                  </artifactItems>
-                </configuration>
-              </execution>
-              <execution>
-                <id>unpack-camel-spring-javadoc</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>unpack</goal>
-                </goals>
-                <configuration>
-                  <outputDirectory>${project.build.directory}/javadoc/camel-spring</outputDirectory>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>${pom.groupId}</groupId>
-                      <artifactId>camel-spring</artifactId>
-                      <classifier>javadoc</classifier>
-                      <version>${pom.version}</version>
-                    </artifactItem>
-                  </artifactItems>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-
-
-<!--
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.1</version>
-
-            <executions>
-              <execution>
-                <id>download-website</id>
-                <phase>compile</phase>
-                <configuration>
-                  <tasks>
-
-                    <exec executable="rsync">
-                      <arg value="-ave"/>
-                      <arg value="ssh"/>
-                      <arg value="people.apache.org:/www/activemq.apache.org/camel/"/>
-                      <arg value="${basedir}/target/website/"/>
-                    </exec>
-
-                    <echo message="Replaceing absolute links with relative ones"/>
-                    <replace dir="${basedir}/target/website">
-                      <replacefilter token="http://activemq.apache.org/camel/maven/" value="maven/"/>
-                      <replacefilter token="http://activemq.apache.org/camel/styles/" value="styles/"/>
-                    </replace>
-
-                  </tasks>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
--->
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>assembly-src</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <version>2.1</version>
-            <executions>
-              <execution>
-                <id>unix-src</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>attached</goal>
-                </goals>
-                <configuration>
-                  <descriptors>
-                    <descriptor>src/main/descriptors/unix-src.xml</descriptor>
-                  </descriptors>
-                </configuration>
-              </execution>
-              <execution>
-                <id>windows-src</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>attached</goal>
-                </goals>
-                <configuration>
-                  <descriptors>
-                    <descriptor>src/main/descriptors/windows-src.xml</descriptor>
-                  </descriptors>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-  </profiles>
-
 </project>
