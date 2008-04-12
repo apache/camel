@@ -193,9 +193,22 @@ public class XsltBuilder implements Processor {
 
     /**
      * Sets the XSLT transformer from a Source
+     *
+     * @param source  the source
+     * @throws TransformerConfigurationException is thrown if creating a XSLT transformer failed.
      */
     public void setTransformerSource(Source source) throws TransformerConfigurationException {
-        setTransformer(converter.getTransformerFactory().newTransformer(source));
+    	 // Check that the call to newTransformer() returns a valid transformer instance.
+    	 // In case of an xslt parse error, it will return null and we should stop the
+    	 // deployment and raise an exception as the route will not be setup properly.
+    	Transformer transformer = converter.getTransformerFactory().newTransformer(source);
+    	if (transformer != null) {
+    		setTransformer(transformer);
+    	} else {
+    		throw new TransformerConfigurationException("Error creating XSLT transformer. " +
+    				"This is most likely be caused by an XML parse error. " + 
+    				"Please verify your XSLT file configured.");
+    	} 
     }
 
     /**
