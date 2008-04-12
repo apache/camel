@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class FileProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(FileProducer.class);
-    private final FileEndpoint endpoint;
+    private FileEndpoint endpoint;
 
     public FileProducer(FileEndpoint endpoint) {
         super(endpoint);
@@ -50,10 +50,6 @@ public class FileProducer extends DefaultProducer {
         return (FileEndpoint) super.getEndpoint();
     }
 
-    /**
-     * @param exchange
-     * @see org.apache.camel.Processor#process(Exchange)
-     */
     public void process(Exchange exchange) throws Exception {
         // TODO is it really worth using a FileExchange as the core type?
         FileExchange fileExchange = endpoint.createExchange(exchange);
@@ -68,9 +64,11 @@ public class FileProducer extends DefaultProducer {
             endpoint.configureMessage(endpoint.getFile(), out);
             return;
         }
+
         InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
         File file = createFileName(exchange.getIn());
         buildDirectory(file);
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("About to write to: " + file + " from exchange: " + exchange);
         }
@@ -82,6 +80,7 @@ public class FileProducer extends DefaultProducer {
             } else {
                 fc = new FileOutputStream(file).getChannel();
             }
+
             int size = getEndpoint().getBufferSize();
             byte[] buffer = new byte[size];
             ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
@@ -114,47 +113,17 @@ public class FileProducer extends DefaultProducer {
                 }
             }
         }
-        /*
-        ByteBuffer payload = exchange.getIn().getBody(ByteBuffer.class);
-        if (payload == null) {
-            InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
-            payload = ExchangeHelper.convertToMandatoryType(exchange, ByteBuffer.class, in);
-        }
-        payload.flip();
-        File file = createFileName(exchange);
-        buildDirectory(file);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating file: " + file);
-        }
-        FileChannel fc = null;
-        try {
-            if (getEndpoint().isAppend()) {
-                fc = new RandomAccessFile(file, "rw").getChannel();
-                fc.position(fc.size());
-            }
-            else {
-                fc = new FileOutputStream(file).getChannel();
-            }
-            fc.write(payload);
-        }
-        catch (Throwable e) {
-            LOG.error("Failed to write to File: " + file, e);
-        }
-        finally {
-            if (fc != null) {
-                fc.close();
-            }
-        }
-        */
     }
 
     protected File createFileName(Message message) {
         File answer;
-        File endpointFile = endpoint.getFile();
+
         String name = null;
         if (!endpoint.isIgnoreFileNameHeader()) {
             name = message.getHeader(FileComponent.HEADER_FILE_NAME, String.class);
         }
+
+        File endpointFile = endpoint.getFile();
         if (endpointFile.isDirectory()) {
             if (name != null) {
                 answer = new File(endpointFile, name);
@@ -171,6 +140,7 @@ public class FileProducer extends DefaultProducer {
                 answer = new File(endpointFile, name);
             }
         }
+
         return answer;
     }
 
@@ -183,4 +153,5 @@ public class FileProducer extends DefaultProducer {
             dir.mkdirs();
         }
     }
+
 }

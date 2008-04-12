@@ -42,16 +42,10 @@ public class FileExchange extends DefaultExchange {
         this.file = file;
     }
 
-    /**
-     * @return the file
-     */
     public File getFile() {
         return this.file;
     }
 
-    /**
-     * @param file the file to set
-     */
     public void setFile(File file) {
         this.file = file;
     }
@@ -59,4 +53,5 @@ public class FileExchange extends DefaultExchange {
     public Exchange newInstance() {
         return new FileExchange(this, getFile());
     }
+
 }

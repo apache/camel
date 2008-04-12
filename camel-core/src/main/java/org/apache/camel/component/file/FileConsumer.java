@@ -26,20 +26,24 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * For consuming files.
+ *
  * @version $Revision$
  */
 public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private static final transient Log LOG = LogFactory.getLog(FileConsumer.class);
-    ConcurrentHashMap<File, File> filesBeingProcessed = new ConcurrentHashMap<File, File>();
-    boolean generateEmptyExchangeWhenIdle;
-    private final FileEndpoint endpoint;
+
+    private FileEndpoint endpoint;
+    private ConcurrentHashMap<File, File> filesBeingProcessed = new ConcurrentHashMap<File, File>();
+    private ConcurrentHashMap<File, Long> fileSizes = new ConcurrentHashMap<File, Long>();
+
+    private boolean generateEmptyExchangeWhenIdle;
     private boolean recursive = true;
     private String regexPattern = "";
-    private long lastPollTime;
 
+    private long lastPollTime;
     private int unchangedDelay;
     private boolean unchangedSize;
-    private ConcurrentHashMap<File, Long> fileSizes = new ConcurrentHashMap<File, Long>();
 
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -59,8 +63,10 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     }
 
     /**
-     * @param fileOrDirectory
-     * @param processDir
+     * Pools the given file or directory for files to process.
+     *
+     * @param fileOrDirectory  file or directory
+     * @param processDir  recursive
      * @return the number of files processed or being processed async.
      */
     protected int pollFileOrDirectory(File fileOrDirectory, boolean processDir) {
@@ -71,8 +77,8 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
             if (isValidFile(fileOrDirectory)) {
                 LOG.debug("Polling directory " + fileOrDirectory);
                 File[] files = fileOrDirectory.listFiles();
-                for (int i = 0; i < files.length; i++) {
-                    rc += pollFileOrDirectory(files[i], isRecursive()); // self-recursion
+                for (File file : files) {
+                    rc += pollFileOrDirectory(file, isRecursive()); // self-recursion
                 }
             }
             return rc;
@@ -83,8 +89,10 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     }
 
     /**
-     * @param file
-     * @return the number of files processed or being processed async.
+     * Polls the given file
+     *
+     * @param file  the file
+     * @return returns 1 if the file was processed, 0 otherwise.
      */
     protected int pollFile(final File file) {
 
@@ -123,13 +131,12 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
             if (processStrategy.begin(endpoint, exchange, file)) {
 
                 // Use the async processor interface so that processing of
-                // the
-                // exchange can happen asynchronously
+                // the exchange can happen asynchronously
                 getAsyncProcessor().process(exchange, new AsyncCallback() {
                     public void done(boolean sync) {
                         if (exchange.getException() == null) {
                             try {
-                                processStrategy.commit(endpoint, (FileExchange)exchange, file);
+                                processStrategy.commit(endpoint, exchange, file);
                             } catch (Exception e) {
                                 handleException(e);
                             }
@@ -154,8 +161,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     protected boolean isValidFile(File file) {
         boolean result = false;
         if (file != null && file.exists()) {
-            // TODO: maybe use a configurable strategy instead of the
-            // hardcoded one based on last file change
+            // TODO: maybe use a configurable strategy instead of the hardcoded one based on last file change
             if (isMatched(file) && isUnchanged(file)) {
                 result = true;
             }
@@ -184,7 +190,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
             if (isUnchangedSize()) {
                 long prevFileSize = (fileSizes.get(file) == null) ? 0 : fileSizes.get(file).longValue();
                 sizeDifference = file.length() - prevFileSize;
-                sizeCheck = 0 == sizeDifference;
+                sizeCheck = (sizeDifference == 0);
             }
 
             boolean answer = lastModifiedCheck && sizeCheck;
@@ -233,30 +239,18 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         return true;
     }
 
-    /**
-     * @return the recursive
-     */
     public boolean isRecursive() {
         return this.recursive;
     }
 
-    /**
-     * @param recursive the recursive to set
-     */
     public void setRecursive(boolean recursive) {
         this.recursive = recursive;
     }
 
-    /**
-     * @return the regexPattern
-     */
     public String getRegexPattern() {
         return this.regexPattern;
     }
 
-    /**
-     * @param regexPattern the regexPattern to set
-     */
     public void setRegexPattern(String regexPattern) {
         this.regexPattern = regexPattern;
     }

@@ -121,7 +121,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     public FileProcessStrategy getFileStrategy() {
         if (fileProcessStrategy == null) {
             fileProcessStrategy = createFileStrategy();
-            LOG.debug("" + this + " using strategy: " + fileProcessStrategy);
+            LOG.debug("Using file process strategy: " + fileProcessStrategy);
         }
         return fileProcessStrategy;
     }
@@ -220,8 +220,6 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     /**
      * When writing do we append to the end of the file, or replace it?
      * The default is to append
-     *
-     * @param append whether to append (or replace)
      */
     public void setAppend(boolean append) {
         this.append = append;
