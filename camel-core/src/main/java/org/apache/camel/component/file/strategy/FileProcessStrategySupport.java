@@ -22,7 +22,6 @@ import java.nio.channels.Channel;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.FileExchange;
 import org.apache.camel.component.file.FileProcessStrategy;
@@ -31,6 +30,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * Base class for {@link org.apache.camel.component.file.FileProcessStrategy} implementation to extend.
+ *
  * @version $Revision$
  */
 public abstract class FileProcessStrategySupport implements FileProcessStrategy {

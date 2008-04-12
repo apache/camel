@@ -19,6 +19,8 @@ package org.apache.camel.component.file.strategy;
 import java.io.File;
 
 /**
+ * Camel default file renamer.
+ *
  * @version $Revision$
  */
 public class DefaultFileRenamer implements FileRenamer {
@@ -70,7 +72,6 @@ public class DefaultFileRenamer implements FileRenamer {
     public void setNamePrefix(String namePrefix) {
         this.namePrefix = namePrefix;
     }
-
 
     protected String renameFileName(File file) {
         StringBuffer buffer = new StringBuffer();
