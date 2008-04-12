@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
     private static final transient Log LOG = LogFactory.getLog(SftpProducer.class);
 
-    SftpEndpoint endpoint;
+    private SftpEndpoint endpoint;
     private ChannelSftp channel;
     private Session session;
 
@@ -43,7 +43,6 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         this.session = session;
     }
 
-    // TODO: is there a way to avoid copy-pasting the reconnect logic?
     protected void connectIfNecessary() throws JSchException {
         if (channel == null || !channel.isConnected()) {
             if (session == null || !session.isConnected()) {
@@ -58,7 +57,6 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         }
     }
 
-    // TODO: is there a way to avoid copy-pasting the reconnect logic?
     protected void disconnect() throws JSchException {
         if (session != null) {
             LOG.info("Session is being explicitly disconnected");
@@ -70,8 +68,8 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         }
     }
 
-    // TODO: is there a way to avoid copy-pasting the reconnect logic?
     public void process(Exchange exchange) throws Exception {
+        // TODO: is there a way to avoid copy-pasting the reconnect logic?
         connectIfNecessary();
         // If the attempt to connect isn't successful, then the thrown
         // exception will signify that we couldn't deliver
@@ -101,16 +99,17 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
 
             int lastPathIndex = fileName.lastIndexOf('/');
             if (lastPathIndex != -1) {
-                boolean success = buildDirectory(channel, fileName.substring(0, lastPathIndex));
+                String directory = fileName.substring(0, lastPathIndex);
+                 boolean success = buildDirectory(channel, directory);
                 if (!success) {
-                    LOG.warn("Couldn't buildDirectory: " + fileName.substring(0, lastPathIndex) + " (either permissions deny it, or it already exists)");
+                    LOG.warn("Couldn't build directory: " + directory + " (either permissions deny it, or it already exists)");
                 }
             }
 
             channel.put(payload, fileName);
             LOG.info("Sent: " + fileName + " to " + endpoint.getConfiguration());
         } finally {
-            if (null != payload) {
+            if (payload != null) {
                 payload.close();
             }
         }
@@ -134,21 +133,26 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         super.doStop();
     }
 
-    protected static boolean buildDirectory(ChannelSftp sftpClient, String dirName) throws IOException {
+    protected static boolean buildDirectory(ChannelSftp sftpClient, String dirName)
+        throws IOException, SftpException {
+        
         boolean atLeastOneSuccess = false;
         final StringBuilder sb = new StringBuilder(dirName.length());
         final String[] dirs = dirName.split("\\/");
         for (String dir : dirs) {
             sb.append(dir).append('/');
-            try {
-                sftpClient.mkdir(sb.toString());
-                if (!atLeastOneSuccess) {
-                    atLeastOneSuccess = true;
-                }
-            } catch (SftpException e) {
-                // TODO: not sure what to do here...
+            String directory = sb.toString();
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Trying to build directory: " + directory);
+            }
+            sftpClient.mkdir(directory);
+            if (!atLeastOneSuccess) {
+                atLeastOneSuccess = true;
             }
         }
+
         return atLeastOneSuccess;
     }
+    
 }

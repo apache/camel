@@ -32,7 +32,7 @@ import org.apache.commons.net.ftp.FTPFile;
 public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     private static final transient Log LOG = LogFactory.getLog(FtpConsumer.class);
 
-    private final FtpEndpoint endpoint;
+    private FtpEndpoint endpoint;
     private long lastPollTime;
     private FTPClient client;
 
