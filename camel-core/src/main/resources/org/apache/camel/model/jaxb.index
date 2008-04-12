@@ -19,6 +19,7 @@ BeanRef
 CatchType
 ChoiceType
 CompletedPredicate
+ConvertBodyType
 DelayerType
 ExceptionType
 FilterType
@@ -42,6 +43,7 @@ RouteBuilderRef
 RoutesType
 RoutingSlipType
 ServiceActivationType
+SetHeaderType
 SplitterType
 ThrottlerType
 ThreadType

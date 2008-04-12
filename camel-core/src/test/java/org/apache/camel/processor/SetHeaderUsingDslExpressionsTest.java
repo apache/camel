@@ -86,7 +86,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
         assertMockEndpointsSatisifed();
     }
 
-    public void testUseBodyExpresion() throws Exception {
+    public void testUseBodyExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start").
@@ -100,7 +100,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
         assertMockEndpointsSatisifed();
     }
 
-    public void testUseBodyAsTypeExpresion() throws Exception {
+    public void testUseBodyAsTypeExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start").

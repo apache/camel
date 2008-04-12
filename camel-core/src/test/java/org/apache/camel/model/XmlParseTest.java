@@ -81,6 +81,42 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo(route, "seda:b", "seda:c", "seda:d");
     }
 
+    public void testParseSetHeaderXml() throws Exception {
+        RouteType route = assertOneRoute("setHeader.xml");
+        assertFrom(route, "seda:a");
+        SetHeaderType node = assertSetHeader(route);
+        assertEquals("oldBodyValue", node.getHeaderName());
+        assertExpression(node.getExpression(), "simple", "body");
+        assertChildTo(route, "mock:b", 1);
+    }   
+
+    public void testParseSetHeaderWithChildProcessorXml() throws Exception {
+        RouteType route = assertOneRoute("setHeaderWithChildProcessor.xml");
+        assertFrom(route, "seda:a");
+        SetHeaderType node = assertSetHeader(route);
+        assertEquals("oldBodyValue", node.getHeaderName());
+        assertExpression(node.getExpression(), "simple", "body");
+        assertChildTo(node, "mock:b");
+    }
+
+    public void testParseSetHeaderToConstantXml() throws Exception {
+        RouteType route = assertOneRoute("setHeaderToConstant.xml");
+        assertFrom(route, "seda:a");
+        SetHeaderType node = assertSetHeader(route);
+        assertEquals("theHeader", node.getHeaderName());
+        assertEquals("a value", node.getValue());
+        assertEquals("", node.getExpression().getExpression());
+        assertChildTo(route, "mock:b", 1);
+    }       
+
+    public void testParseConvertBodyXml() throws Exception {
+        RouteType route = assertOneRoute("convertBody.xml");
+        assertFrom(route, "seda:a");
+        ConvertBodyType node = assertConvertBody(route);
+        assertEquals("java.lang.Integer", node.getType());
+        assertEquals(Integer.class, node.getTypeClass());
+    } 
+    
     public void testParseRoutingSlipXml() throws Exception {
         RouteType route = assertOneRoute("routingSlip.xml");
         assertFrom(route, "seda:a");
@@ -209,6 +245,11 @@ public class XmlParseTest extends XmlTestSupport {
         }
     }
 
+    protected void assertChildTo(ProcessorType route, String uri, int toIdx) {
+        List<ProcessorType<?>> list = route.getOutputs();
+        assertTo("to and idx=" + toIdx, list.get(toIdx), uri);
+    }
+
     protected void assertProcessor(ProcessorType<?> route, String processorRef) {
         ProcessorType<?> processor = assertOneElement(route.getOutputs());
         ProcessorRef to = assertIsInstanceOf(ProcessorRef.class, processor);
@@ -225,11 +266,21 @@ public class XmlParseTest extends XmlTestSupport {
         return assertIsInstanceOf(RecipientListType.class, processor);
     }
 
+    protected ConvertBodyType assertConvertBody(ProcessorType<?> route) {
+        ProcessorType<?> processor = assertOneElement(route.getOutputs());
+        return assertIsInstanceOf(ConvertBodyType.class, processor);
+    }   
+    
     protected RoutingSlipType assertRoutingSlip(ProcessorType<?> route) {
         ProcessorType<?> processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(RoutingSlipType.class, processor);
     }   
 
+    protected SetHeaderType assertSetHeader(ProcessorType<?> route) {
+        ProcessorType<?> processor = route.getOutputs().get(0);
+        return assertIsInstanceOf(SetHeaderType.class, processor);
+    }    
+    
     protected ChoiceType assertChoice(ProcessorType<?> route) {
         ProcessorType<?> processor = assertOneElement(route.getOutputs());
         return assertIsInstanceOf(ChoiceType.class, processor);

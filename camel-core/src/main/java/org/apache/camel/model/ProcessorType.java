@@ -50,6 +50,7 @@ import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
+import org.apache.camel.processor.SetHeaderProcessor;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
@@ -1108,7 +1109,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      */
     public ExpressionClause<ProcessorType<Type>> setHeader(String name) {
         ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
-        process(ProcessorBuilder.setHeader(name, clause));
+        SetHeaderType answer = new SetHeaderType(name, clause);
+        addOutput(answer);
         return clause;
     }
 
@@ -1116,14 +1118,18 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * Adds a processor which sets the header on the IN message
      */
     public Type setHeader(String name, Expression expression) {
-        return process(ProcessorBuilder.setHeader(name, expression));
+        SetHeaderType answer = new SetHeaderType(name, expression);
+        addOutput(answer);
+        return (Type) this;
     }
 
     /**
      * Adds a processor which sets the header on the IN message to the given value
      */
     public Type setHeader(String name, String value) {
-        return (Type) setHeader(name).constant(value);
+        SetHeaderType answer = new SetHeaderType(name, value);
+        addOutput(answer);
+        return (Type) this;
     }
 
     /**
@@ -1205,7 +1211,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * Converts the IN message body to the specified type
      */
     public Type convertBodyTo(Class type) {
-        return process(new ConvertBodyProcessor(type));
+        addOutput(new ConvertBodyType(type));
+        return (Type) this;
     }
 
     /**
