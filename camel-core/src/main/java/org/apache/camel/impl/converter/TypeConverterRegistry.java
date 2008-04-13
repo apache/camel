@@ -24,7 +24,7 @@ import org.apache.camel.spi.Injector;
  */
 public interface TypeConverterRegistry {
     /**
-     * Allows a new type converter to be bregistered
+     * Allows a new type converter to be registered
      *
      * @param toType        the type to convert to
      * @param fromType      the type to convert from
