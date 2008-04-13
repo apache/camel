@@ -17,7 +17,7 @@
   limitations under the License.
 -->
 
-<project name="camel-example-docs" default="run" basedir=".">
+<project name="camel-example-docs" default="camel.dot" basedir=".">
 
   <import file="../common_build.xml"/>
 
@@ -33,13 +33,9 @@
         <arg value="-duration"/>
         <arg value="2s"/>
         <arg value="-o"/>
-        <arg value="${build.dir}/site/cameldoc"/>
+        <arg value="${cameldoc.dir}"/>
       </arguments>
     </camelrun>
-    <generatedot dotFileDir="${build.dir}/site/cameldoc/main" outputType="svg"/>
-    <generatedot dotFileDir="${build.dir}/site/cameldoc/main" outputType="cmapx"/>
-    <generatedot dotFileDir="${build.dir}/site/cameldoc/otherRoutes" outputType="svg"/>
-    <generatedot dotFileDir="${build.dir}/site/cameldoc/otherRoutes" outputType="cmapx"/>
   </target>
 
 </project>

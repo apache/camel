@@ -33,7 +33,7 @@
         <arg value="-duration"/>
         <arg value="8s"/>
         <arg value="-o"/>
-        <arg value="${build.dir}/site/cameldoc"/>
+        <arg value="${cameldoc.dir}"/>
       </arguments>
     </camelrun>
   </target>
