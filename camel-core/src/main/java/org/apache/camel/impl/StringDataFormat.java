@@ -19,8 +19,6 @@ package org.apache.camel.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
@@ -28,20 +26,42 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
- * The <a href="http://activemq.apache.org/camel/data-format.html">data format</a>
- * using Java Serialiation.
+ * The text based <a href="http://activemq.apache.org/camel/data-format.html">data format</a> supporting
+ * charset encoding.
  *
  * @version $Revision$
  */
 public class StringDataFormat implements DataFormat {
+
+    private String charset;
+
+    public StringDataFormat(String charset) {
+        this.charset = charset;
+    }
+
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException {
         String text = ExchangeHelper.convertToType(exchange, String.class, graph);
-        Writer out = new OutputStreamWriter(stream);
-        out.write(text);
-        out.flush();
+
+        byte[] bytes;
+        if (charset != null) {
+            bytes = text.getBytes(charset);
+        } else {
+            bytes = text.getBytes();
+        }
+        stream.write(bytes);
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, ClassNotFoundException {
-        return IOConverter.toString(stream);
+        byte[] bytes = IOConverter.toBytes(stream);
+
+        String answer;
+        if (charset != null) {
+            answer = new String(bytes, charset);
+        } else {
+            answer = new String(bytes);
+        }
+
+        return answer;
     }
+    
 }

@@ -119,7 +119,16 @@ public class DataFormatClause<T extends ProcessorType> {
      * Uses the String data format
      */
     public T string() {
-        return dataFormat(new StringDataFormat());
+        return string(null);
+    }
+
+    /**
+     * Uses the String data format supporting encoding using given charset
+     */
+    public T string(String charset) {
+        StringDataFormat sdf = new StringDataFormat();
+        sdf.setCharset(charset);
+        return dataFormat(sdf);
     }
 
     /**
