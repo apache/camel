@@ -23,6 +23,7 @@
   <property name="build.dir" location="${basedir}/target"/>
   <property name="build.classes.dir" location="${build.dir}/classes"/>
   <property name="build.test.classes.dir" location="${build.dir}/test-classes"/>
+  <property name="cameldoc.dir" location="${build.dir}/site/cameldoc"/> 
   
   <property name="build.src.dir" location="${basedir}/src/main/java"/>
   <property name="build.test.dir" location="${basedir}/src/test/java"/>
@@ -156,41 +157,43 @@
         <arguments/> 
         <sysproperty key="java.util.logging.config.file" value="${build.classes.dir}/logging.properties"/>
       </java>
+  
+      <condition property="has.cameldoc">
+        <available file="${cameldoc.dir}"/>
+      </condition>
     </sequential>
   </macrodef>
   
-  <condition property="shell.command" value="cmd.exe">
-    <os family="windows"/>
-  </condition>
-  <property name="shell.command" value="/bin/bash"/>
   <condition property="shell.suffix" value=".exe">
     <os family="windows"/>
   </condition>
   <property name="shell.suffix" value=""/>
-  <condition property="shell.arg" value="/c">
-    <os family="windows"/>
-  </condition>
-  <property name="shell.arg" value="-c"/>
-  <!-- Define shell.file because dot on windows doesn't seem to
-       like the wildcard "*.dot". -->
-  <condition property="shell.file" value="routes.dot">
-    <os family="windows"/>
-  </condition>
-  <property name="shell.file" value="*.dot"/>
   
   <!-- This macro assumes the dot executable is on your path. -->
-  <macrodef name="generatedot">
-    <attribute name="dotFileDir"/>
-    <attribute name="dotFile" default="${shell.file}"/>
+  <macrodef name="cameldot">
+    <attribute name="dotFileDir" default="${cameldoc.dir}"/>
     <attribute name="outputType" default="svg"/>
     <sequential>
-      <exec executable="${shell.command}">
-        <arg value="${shell.arg}"/>
-        <arg value="dot${shell.suffix} -T @{outputType} -O @{dotFileDir}/@{dotFile}"/>
-      </exec>
+      <apply executable="dot${shell.suffix}">
+        <arg value="-T@{outputType}"/>
+        <arg value="-O"/>
+        <fileset dir="@{dotFileDir}">
+          <patternset>
+            <include name="**/*.dot"/>
+          </patternset>
+        </fileset>
+      </apply>
     </sequential>
   </macrodef>
-
+  
+  <target name="camel.dot" depends="run" if="has.cameldoc" 
+    description="Output visualization">
+    <cameldot outputType="svg"/>
+    <!--
+    <cameldot outputType="cmapx"/>
+    -->
+  </target>
+  
   <target name="clean">
     <delete dir="${build.test.classes.dir}"/>
     <delete dir="${build.classes.dir}"/>
