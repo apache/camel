@@ -19,7 +19,7 @@ package org.apache.camel.spring.config;
 import org.apache.camel.CamelTemplate;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class TemplateUsingBean {
     private CamelTemplate template;

@@ -28,7 +28,7 @@ import javax.el.PropertyNotFoundException;
 /**
  * An extension of the JUEL {@link BeanELResolver} which also supports the resolving of methods
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class BeanAndMethodELResolver extends BeanELResolver {
     public BeanAndMethodELResolver() {

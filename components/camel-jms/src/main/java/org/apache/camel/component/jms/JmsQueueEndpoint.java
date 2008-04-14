@@ -25,7 +25,7 @@ import org.springframework.jms.core.JmsOperations;
 /**
  * An endpoint for a JMS Queue which is also browsable
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint<JmsExchange> {
     private int maximumBrowseSize = -1;

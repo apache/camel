@@ -17,7 +17,7 @@
 package org.apache.camel.language.jxpath;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class PersonBean {
     private String name;

@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @version $Revision: 630568 $
+ * @version $Revision$
  */
 public class BeanWithJXPathInjectionTest extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(BeanWithJXPathInjectionTest.class);
