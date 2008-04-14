@@ -50,7 +50,6 @@ import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
-import org.apache.camel.processor.SetHeaderProcessor;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
@@ -73,11 +72,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     private LinkedList<Block> blocks = new LinkedList<Block>();
     private ProcessorType<? extends ProcessorType> parent;
 
-    // else to use an
-    // optional
-    // attribute in
-    // JAXB2
-
+    // else to use an optional attribute in JAXB2
     public abstract List<ProcessorType<?>> getOutputs();
 
 
@@ -880,6 +875,11 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
                 break;
             }
         }
+        
+        if (this instanceof InterceptType) {
+        	proceed = ((InterceptType) this).getProceed();
+        }
+        
         if (proceed == null) {
             throw new IllegalArgumentException("Cannot use proceed() without being within an intercept() block");
         }
