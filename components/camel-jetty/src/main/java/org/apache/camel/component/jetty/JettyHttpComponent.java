@@ -65,8 +65,10 @@ public class JettyHttpComponent extends HttpComponent {
     private Server server;
     private final HashMap<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
     private HttpClient httpClient;
-    private String sslKeyPassword = "";
-    private String sslPassword = "";
+    private String sslKeyPassword;
+    private String sslPassword;
+    private String sslKeystore;
+    private SslSocketConnector sslSocketConnector;
 
     @Override
     protected Endpoint<HttpExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
@@ -91,10 +93,7 @@ public class JettyHttpComponent extends HttpComponent {
             if (connectorRef == null) {
                 Connector connector;
                 if ("https".equals(endpoint.getProtocol())) {
-                    SslSocketConnector socketConnector = new SslSocketConnector();
-                    socketConnector.setPassword(sslPassword);
-                    socketConnector.setKeyPassword(sslKeyPassword);
-                    connector = socketConnector;
+                    connector = getSslSocketConnector();
                 } else {
                     connector = new SelectChannelConnector();
                 }
@@ -167,7 +166,33 @@ public class JettyHttpComponent extends HttpComponent {
     public void setSslPassword(String sslPassword) {
         this.sslPassword = sslPassword;
     }
+    
+    public void setKeystore(String sslKeystore) {
+        this.sslKeystore = sslKeystore;  
+    }
+    
+    public String getKeystore() {
+        return sslKeystore;  
+    }
 
+    public synchronized SslSocketConnector getSslSocketConnector() {
+        if (sslSocketConnector == null) {
+            sslSocketConnector = new SslSocketConnector();
+            // with default null values, jetty ssl system properties
+            // and console will be read by jetty implementation
+            sslSocketConnector.setPassword(sslPassword);
+            sslSocketConnector.setKeyPassword(sslKeyPassword);
+            if (sslKeystore != null) {
+                sslSocketConnector.setKeystore(sslKeystore);
+            }
+        }
+        return sslSocketConnector;
+    }
+    
+    public void setSslSocketConnector(SslSocketConnector connector) {
+        sslSocketConnector = connector;
+    }
+    
     // Implementation methods
     // -------------------------------------------------------------------------
 
