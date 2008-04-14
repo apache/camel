@@ -31,7 +31,7 @@ import org.springframework.jms.core.JmsOperations;
 
 /**
  * A default implementation of queue browsing using the Spring 2.5.x {@link BrowserCallback}
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
 

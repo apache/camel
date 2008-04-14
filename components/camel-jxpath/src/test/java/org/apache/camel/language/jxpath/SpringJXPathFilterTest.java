@@ -24,7 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
- * @version $Revision: 630568 $
+ * @version $Revision$
  */
 @ContextConfiguration
 public class SpringJXPathFilterTest extends AbstractJUnit38SpringContextTests {

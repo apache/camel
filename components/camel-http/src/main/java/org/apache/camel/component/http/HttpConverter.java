@@ -28,7 +28,7 @@ import org.apache.camel.Converter;
  * Some converter methods making it easy to convert the body of a message to servlet types or to switch between
  * the underlying {@link ServletInputStream} or {@link BufferedReader} payloads etc.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @Converter
 public class HttpConverter {

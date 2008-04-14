@@ -21,7 +21,7 @@ import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: 35332 $
+ * @version $Revision$
  */
 public class XQueryWithExplicitTypeTest extends SpringTestSupport {
     protected MockEndpoint raleighEndpoint;

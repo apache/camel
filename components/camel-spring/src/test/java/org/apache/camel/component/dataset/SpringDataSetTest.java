@@ -23,7 +23,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @ContextConfiguration
 public class SpringDataSetTest extends AbstractJUnit38SpringContextTests {
