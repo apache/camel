@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A processor which converts the payload of the input message to be of the given type
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ConvertBodyProcessor implements Processor {
     private static final transient Log LOG = LogFactory.getLog(ConvertBodyProcessor.class);

@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.commons.logging.Log;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ThroughputLogger extends Logger {
     private int groupSize = 100;

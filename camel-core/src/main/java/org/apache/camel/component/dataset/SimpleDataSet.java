@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
  * A simple DataSet that allows a static payload to be used to create each message exchange
  * along with using a pluggable transformer to randomize the message.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SimpleDataSet extends DataSetSupport {
     private Object defaultBody = "<hello>world!</hello>";

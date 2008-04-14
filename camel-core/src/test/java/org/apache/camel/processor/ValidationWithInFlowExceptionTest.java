@@ -20,7 +20,7 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision: 630568 $
+ * @version $Revision$
  */
 public class ValidationWithInFlowExceptionTest extends ValidationTest {
     protected RouteBuilder createRouteBuilder() {
