@@ -22,13 +22,11 @@ import org.apache.cxf.BusFactory;
 /**
  * Test for throwing the CustomizedException from Camel CXF consumer with MESSAGE DataFormat
  */
-public class CxfMessageCustomizedExceptionTest extends CxfCustmerizedExceptionTest {
+public class CxfMessageCustomizedExceptionTest extends CxfCustomizedExceptionTest {
 
     @Override
     protected void setUp() throws Exception {
         routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&DataFormat=MESSAGE";
         super.setUp();
-
     }
-
 }
