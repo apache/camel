@@ -48,10 +48,11 @@
     </dependency>
 
 
-    <!-- to allow Spring annotations to be used; could replace with the micro-jar later -->
+    <!-- to allow Spring annotations to be used -->
     <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>spring</artifactId>
+      <artifactId>spring-context</artifactId>
+	  <version>${spring-version}</version>  
       <optional>true</optional>
       <scope>compile</scope>
     </dependency>
@@ -75,6 +76,12 @@
     <dependency>
       <groupId>org.easymock</groupId>
       <artifactId>easymockclassextension</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+      <version>${spring-version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
