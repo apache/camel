@@ -25,13 +25,6 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.osgi.framework.BundleContext;
 import org.springframework.osgi.context.BundleContextAware;
 
-/**
- * Created by IntelliJ IDEA.
- * User: gnodet
- * Date: Sep 20, 2007
- * Time: 10:31:52 AM
- * To change this template use File | Settings | File Templates.
- */
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContextFactoryBean implements BundleContextAware {

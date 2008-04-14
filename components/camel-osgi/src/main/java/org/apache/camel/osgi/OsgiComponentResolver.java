@@ -34,10 +34,6 @@ import org.osgi.framework.BundleEvent;
 import org.osgi.framework.SynchronousBundleListener;
 import org.springframework.osgi.util.BundleDelegatingClassLoader;
 
-/**
- * Created by IntelliJ IDEA. User: gnodet Date: Sep 20, 2007 Time: 10:37:31 AM
- * To change this template use File | Settings | File Templates.
- */
 public class OsgiComponentResolver implements ComponentResolver {
 
     private static final transient Log LOG = LogFactory.getLog(OsgiComponentResolver.class);
