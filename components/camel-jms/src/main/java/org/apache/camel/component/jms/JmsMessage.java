@@ -57,8 +57,7 @@ public class JmsMessage extends DefaultMessage {
     public String toString() {
         if (jmsMessage != null) {
             return "JmsMessage: " + jmsMessage;
-        }
-        else {
+        } else {
             return "JmsMessage: " + getBody();
         }
     }
@@ -96,8 +95,7 @@ public class JmsMessage extends DefaultMessage {
             if (exchange instanceof JmsExchange) {
                 JmsExchange jmsExchange = (JmsExchange) exchange;
                 return jmsExchange.getBinding();
-            }
-            else {
+            } else {
                 return new JmsBinding();
             }
         }
@@ -120,8 +118,7 @@ public class JmsMessage extends DefaultMessage {
         if (jmsMessage != null && !name.startsWith("JMS")) {
             try {
                 answer = jmsMessage.getObjectProperty(name);
-            }
-            catch (JMSException e) {
+            } catch (JMSException e) {
                 throw new MessagePropertyAccessException(name, e);
             }
         }
@@ -162,16 +159,14 @@ public class JmsMessage extends DefaultMessage {
 
                 // TODO this works around a bug in the ActiveMQ property handling
                 map.put("JMSXGroupID", jmsMessage.getStringProperty("JMSXGroupID"));
-            }
-            catch (JMSException e) {
+            } catch (JMSException e) {
                 throw new MessageJMSPropertyAccessException(e);
             }
 
             Enumeration names;
             try {
                 names = jmsMessage.getPropertyNames();
-            }
-            catch (JMSException e) {
+            } catch (JMSException e) {
                 throw new MessagePropertyNamesAccessException(e);
             }
             while (names.hasMoreElements()) {
@@ -179,8 +174,7 @@ public class JmsMessage extends DefaultMessage {
                 try {
                     Object value = jmsMessage.getObjectProperty(name);
                     map.put(name, value);
-                }
-                catch (JMSException e) {
+                } catch (JMSException e) {
                     throw new MessagePropertyAccessException(name, e);
                 }
             }
@@ -202,11 +196,9 @@ public class JmsMessage extends DefaultMessage {
         String result;
         if (destination == null) {
             result = "null destination!" + File.separator;
-        }
-        else if (destination instanceof Topic) {
+        } else if (destination instanceof Topic) {
             result = "topic" + File.separator + ((Topic) destination).getTopicName() + File.separator;
-        }
-        else {
+        } else {
             result = "queue" + File.separator + ((Queue) destination).getQueueName() + File.separator;
         }
         return result;

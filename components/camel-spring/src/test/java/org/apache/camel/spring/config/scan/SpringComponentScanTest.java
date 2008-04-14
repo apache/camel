@@ -27,20 +27,19 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringComponentScanTest extends ContextTestSupport {
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		ApplicationContext c = new ClassPathXmlApplicationContext(
-				"org/apache/camel/spring/config/scan/componentScan.xml");
-		context = (CamelContext) c.getBean("camelContext");
-		template = new CamelTemplate<Exchange>(context);
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        ApplicationContext c = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/scan/componentScan.xml");
+        context = (CamelContext)c.getBean("camelContext");
+        template = new CamelTemplate<Exchange>(context);
 
-	}
+    }
 
-	public void testSpringComponentScanFeature() throws InterruptedException {
-		template.sendBody("direct:start", "request");
-		MockEndpoint mock = getMockEndpoint("mock:end");
-		mock.expectedMessageCount(1);
-		mock.assertIsSatisfied();
-	}
+    public void testSpringComponentScanFeature() throws InterruptedException {
+        template.sendBody("direct:start", "request");
+        MockEndpoint mock = getMockEndpoint("mock:end");
+        mock.expectedMessageCount(1);
+        mock.assertIsSatisfied();
+    }
 }

@@ -190,7 +190,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
             if (isUnchangedSize()) {
                 long prevFileSize = (fileSizes.get(file) == null) ? 0 : fileSizes.get(file).longValue();
                 sizeDifference = file.length() - prevFileSize;
-                sizeCheck = (sizeDifference == 0);
+                sizeCheck = sizeDifference == 0;
             }
 
             boolean answer = lastModifiedCheck && sizeCheck;

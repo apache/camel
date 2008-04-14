@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,9 +18,7 @@ package org.apache.camel.component.ibatis;
 
 import java.util.Iterator;
 
-import com.ibatis.sqlmap.client.SqlMapClient;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultProducer;
 
@@ -46,8 +43,7 @@ public class IBatisProducer extends DefaultProducer {
         if (body == null) {
             // must be a poll so lets do a query
             endpoint.query(exchange.getOut(true));
-        }
-        else {
+        } else {
             String operation = getOperationName(exchange);
 
             // lets handle arrays or collections of objects

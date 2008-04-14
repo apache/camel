@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,15 +39,15 @@ public class SetHeaderProcessor extends DelegateProcessor implements Processor {
             Processor childProcessor) {
         super(childProcessor);
         this.name = name;
-        this.expression = expression;        
+        this.expression = expression;
     }
 
     public void process(Exchange exchange) throws Exception {
         Object value = expression.evaluate(exchange);
         if (value == null) {
-            LOG.warn("Expression: " + expression 
+            LOG.warn("Expression: " + expression
                     + " on exchange: " + exchange + " evaluated to null.");
-        }        
+        }
         exchange.getIn().setHeader(name, value);
         super.process(exchange);
     }
@@ -56,5 +55,5 @@ public class SetHeaderProcessor extends DelegateProcessor implements Processor {
     @Override
     public String toString() {
         return "setHeader(" + name + ", " + expression + ")";
-    }       
+    }
 }

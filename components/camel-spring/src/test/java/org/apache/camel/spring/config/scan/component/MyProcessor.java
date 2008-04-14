@@ -24,8 +24,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class MyProcessor implements Processor {
 
-	public void process(Exchange exchange) throws Exception {
-		exchange.getIn().setBody("foo");
-	}
+    public void process(Exchange exchange) throws Exception {
+        exchange.getIn().setBody("foo");
+    }
 
 }

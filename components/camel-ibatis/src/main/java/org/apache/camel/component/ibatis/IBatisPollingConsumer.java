@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,10 +16,6 @@
  */
 package org.apache.camel.component.ibatis;
 
-import java.sql.SQLException;
-import java.util.List;
-
-import com.ibatis.sqlmap.client.SqlMapClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
@@ -51,8 +46,7 @@ public class IBatisPollingConsumer extends PollingConsumerSupport {
             Message in = exchange.getIn();
             endpoint.query(in);
             return exchange;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeCamelException("Failed to poll: " + endpoint + ". Reason: " + e, e);
         }
     }

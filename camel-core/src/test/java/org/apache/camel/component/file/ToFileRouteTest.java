@@ -19,10 +19,10 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.JndiRegistry;
 
 /**
  * For documentation how to write files using the FileProducer.
@@ -74,5 +74,5 @@ public class ToFileRouteTest extends ContextTestSupport {
 
     }
     // END SNIPPET: e1
-    
+
 }
