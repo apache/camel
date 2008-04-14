@@ -36,7 +36,7 @@
   <properties>
     <maven.test.skip>true</maven.test.skip>
     <createSourcesJar>false</createSourcesJar>
-    <shade.version>1.0</shade.version>
+    <shade.version>1.0.1</shade.version>
   </properties>
 
 
@@ -191,6 +191,12 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-swing</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.ufacekit</groupId>
+          <artifactId>org.ufacekit.ui.swing</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!--
         <dependency>
@@ -221,97 +227,12 @@
 
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-bam</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-cxf</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-docs</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-etl</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-jms-file</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-osgi</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-spring</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-example-spring-xquery</artifactId>
-    </dependency>
-
-    <!--
-        <dependency>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-manual</artifactId>
-        </dependency>
-    -->
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
       <type>test-jar</type>
       <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
 
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging-api</artifactId>
-      <optional>false</optional>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jms_1.1_spec</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>apache-activemq</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-j2ee-management_1.0_spec</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-j2ee-jacc_1.0_spec</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpcore</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpcore-nio</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpcore-niossl</artifactId>
-      <optional>true</optional>
-    </dependency>
   </dependencies>
 
   <build>
@@ -355,7 +276,14 @@
               <createSourcesJar>${createSourcesJar}</createSourcesJar>
               <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
               <createDependencyReducedPom>true</createDependencyReducedPom>
-
+              <filters>
+                <filter>
+                  <artifact>org.apache.camel:camel-bundle</artifact>
+                  <excludes>
+                    <exclude>org/apache/camel/**</exclude>
+                  </excludes>
+                </filter>
+              </filters>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                   <resource>META-INF/spring.handlers</resource>
