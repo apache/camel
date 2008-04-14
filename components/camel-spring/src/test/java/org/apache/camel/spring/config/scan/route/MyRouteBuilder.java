@@ -23,16 +23,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class MyRouteBuilder extends RouteBuilder {
 
-	MyProcessor component;
+    MyProcessor component;
 
-	@Override
-	public void configure() throws Exception {
-		from("direct:start").process(component).to("mock:end");
-	}
+    @Override
+    public void configure() throws Exception {
+        from("direct:start").process(component).to("mock:end");
+    }
 
-	@Autowired
-	public void setComponent(MyProcessor component) {
-		this.component = component;
-	}
+    @Autowired
+    public void setComponent(MyProcessor component) {
+        this.component = component;
+    }
 
 }

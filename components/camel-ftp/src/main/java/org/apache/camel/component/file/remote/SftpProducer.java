@@ -100,7 +100,7 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
             int lastPathIndex = fileName.lastIndexOf('/');
             if (lastPathIndex != -1) {
                 String directory = fileName.substring(0, lastPathIndex);
-                 boolean success = buildDirectory(channel, directory);
+                boolean success = buildDirectory(channel, directory);
                 if (!success) {
                     LOG.warn("Couldn't build directory: " + directory + " (either permissions deny it, or it already exists)");
                 }
@@ -135,7 +135,7 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
 
     protected static boolean buildDirectory(ChannelSftp sftpClient, String dirName)
         throws IOException, SftpException {
-        
+
         boolean atLeastOneSuccess = false;
         final StringBuilder sb = new StringBuilder(dirName.length());
         final String[] dirs = dirName.split("\\/");
@@ -154,5 +154,5 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
 
         return atLeastOneSuccess;
     }
-    
+
 }

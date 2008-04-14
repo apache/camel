@@ -43,7 +43,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * Creates a <a href="http://activemq.apache.org/camel/processor.html">Processor</a>
  * which performs an XSLT transformation of the IN message body
- * 
+ *
  * @version $Revision$
  */
 public class XsltBuilder implements Processor {
@@ -198,17 +198,17 @@ public class XsltBuilder implements Processor {
      * @throws TransformerConfigurationException is thrown if creating a XSLT transformer failed.
      */
     public void setTransformerSource(Source source) throws TransformerConfigurationException {
-    	 // Check that the call to newTransformer() returns a valid transformer instance.
-    	 // In case of an xslt parse error, it will return null and we should stop the
-    	 // deployment and raise an exception as the route will not be setup properly.
-    	Transformer transformer = converter.getTransformerFactory().newTransformer(source);
-    	if (transformer != null) {
-    		setTransformer(transformer);
-    	} else {
-    		throw new TransformerConfigurationException("Error creating XSLT transformer. " +
-    				"This is most likely be caused by an XML parse error. " + 
-    				"Please verify your XSLT file configured.");
-    	} 
+        // Check that the call to newTransformer() returns a valid transformer instance.
+        // In case of an xslt parse error, it will return null and we should stop the
+        // deployment and raise an exception as the route will not be setup properly.
+        Transformer transformer = converter.getTransformerFactory().newTransformer(source);
+        if (transformer != null) {
+            setTransformer(transformer);
+        } else {
+            throw new TransformerConfigurationException("Error creating XSLT transformer. "
+                    + "This is most likely be caused by an XML parse error. "
+                    + "Please verify your XSLT file configured.");
+        }
     }
 
     /**
