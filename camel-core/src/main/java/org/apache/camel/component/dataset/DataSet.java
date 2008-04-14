@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 /**
  * Represents a strategy for testing endpoints with canned data.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface DataSet {
     String INDEX_HEADER = "camelDataSetIndex";

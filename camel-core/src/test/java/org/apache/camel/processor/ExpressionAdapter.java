@@ -24,7 +24,7 @@ import org.apache.camel.impl.ExpressionSupport;
  * A helper class for developers wishing to implement an {@link Expression} using Java code with a minimum amount
  * of code to write so that the developer only needs to implement the {@link #evaluate(Exchange)} method.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class ExpressionAdapter extends ExpressionSupport<Exchange> {
     public abstract Object evaluate(Exchange exchange);

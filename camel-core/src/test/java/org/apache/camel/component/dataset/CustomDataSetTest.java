@@ -29,7 +29,7 @@ import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class CustomDataSetTest extends ContextTestSupport {
     protected DataSet dataSet = new DataSetSupport() {

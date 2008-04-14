@@ -22,7 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DataSetConsumeTest extends ContextTestSupport {
     protected SimpleDataSet dataSet = new SimpleDataSet(20);

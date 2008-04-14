@@ -33,7 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private static final transient Log LOG = LogFactory.getLog(DataSetEndpoint.class);
