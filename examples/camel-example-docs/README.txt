@@ -12,11 +12,15 @@ visualisation feature
 To run the example using Maven and generate the documentation type
   mvn camel:dot
 
+The reports should be generated in
+  target/site/cameldoc/index.html
+
 To run the example using Ant and generate the documentation type
   ant
 
-The reports should be generated in
-  target/site/cameldoc/index.html
+If the dot executable is in your path, .svg images will be generated for
+any .dot files under
+  target/site/cameldoc
 
 You can see the routing rules by looking at the java code in the
 src/main/java directory and the Spring XML configuration file in
@@ -30,5 +34,6 @@ may have.  Enjoy!
 
 ------------------------
 The Camel riders!
+
 
 

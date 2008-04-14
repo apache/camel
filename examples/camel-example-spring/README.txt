@@ -23,6 +23,9 @@ To run the example with Ant
 
   c. To Run the example using Ant, type
     ant
+  or to run the example and generate visualization graphs (refer to
+  http://activemq.apache.org/camel/visualisation.html), type
+    ant camel.dot
 
 You can see the routing rules by looking at the java code in the
 src/main/java directory and the Spring XML configuration lives in
@@ -39,5 +42,6 @@ may have.  Enjoy!
 
 ------------------------
 The Camel riders!
+
 
 
