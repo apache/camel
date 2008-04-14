@@ -39,8 +39,8 @@ public class InterceptorLogTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // lets log all steps in all routes (must use proceed to let the exchange gots by its
-                // normal route path instead of swalling it here by our interception
+                // lets log all steps in all routes (must use proceed to let the exchange continue its
+                // normal route path instead of swallowing it here by our intercepter.
                 intercept().to("log:foo").proceed();
 
                 from("seda:foo").to("seda:bar");
