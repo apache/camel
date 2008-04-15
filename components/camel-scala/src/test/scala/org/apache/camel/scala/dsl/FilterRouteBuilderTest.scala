@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.scala.dsl;
+ 
+import org.apache.camel.scala.dsl.RouteBuilder.routes;
 
 class FilterRouteBuilderTest extends ScalaTestSupport {
 
@@ -26,34 +28,33 @@ class FilterRouteBuilderTest extends ScalaTestSupport {
 
   def testFilterWithAlternatives() = {
     "mock:b" expect {_.expectedMessageCount(1)}
-    "mock:b" expect {_.expectedMessageCount(1)}
-    "mock:d" expect {_.expectedMessageCount(2)}
-    "mock:e" expect {_.expectedMessageCount(0)}
-    "mock:f" expect {_.expectedMessageCount(2)}
-    "direct:b" ! ("<hello/>", "<hellos/>")
+    "mock:c" expect {_.expectedMessageCount(1)}
+    "mock:d" expect {_.expectedMessageCount(3)}
+    "mock:e" expect {_.expectedMessageCount(2)}
+    "direct:b" ! ("<hello/>", "<hellos/>", "<hallo/>")
     "mock:b" assert()
     "mock:c" assert()
     "mock:d" assert()
     "mock:e" assert()
-    "mock:f" assert()
   }
 
   override protected def createRouteBuilder() =
     new RouteBuilder {
+       //START SNIPPET: simple
        "direct:a" when(_.in == "<hello/>") to "mock:a"
+       //END SNIPPET: simple
 
+       //START SNIPPET: alternatives
        "direct:b" ==> {
-         when(_.in == "<hello/>") then {
-           to ("mock:b")
-           --> ("mock:c")
-         }
          when(_.in == "<hallo/>") {
-           to ("mock:e")
+           --> ("mock:b")
+           to ("mock:c")
          } otherwise {
-           to ("mock:f")
+           to ("mock:e")
          }
          to ("mock:d")
        }
+       //END SNIPPET: alternatives
     }.print
 
 }

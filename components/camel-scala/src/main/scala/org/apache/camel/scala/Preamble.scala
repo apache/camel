@@ -14,30 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala;
 
-import org.apache.camel.scala.ScalaTestSupport
+/**
+ * Trait containing common implicit conversion definitions
+ */
+trait Preamble {
 
-class BasicRouteBuilderTest extends ScalaTestSupport {
+  implicit def exchangeWrapper(exchange: Exchange[T] forSome {type T}) = new RichExchange(exchange)
 
-  def testBasicRouteArrowSyntax() = assertBasicRoute("direct:a", "mock:a")
-  def testBasicRouteTextSyntax() = assertBasicRoute("direct:b", "mock:b")
-
-  def assertBasicRoute(from: String, to: String) = {
-    to expect {
-      _.expectedMessageCount(1)
-    }
-    from ! "<hello/>"
-    to assert
-  }
-
-  override protected def createRouteBuilder() = new MyRouteBuilder
-  
-  //START SNIPPET: basic
-  class MyRouteBuilder extends RouteBuilder {
-    "direct:a" --> "mock:a"
-    "direct:b" to "mock:b"      
-  }
-  //END SNIPPET: basic
-  
 }

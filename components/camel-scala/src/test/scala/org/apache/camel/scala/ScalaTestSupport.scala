@@ -20,11 +20,10 @@ import org.apache.camel.ContextTestSupport
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.scala.dsl._
 
-abstract class ScalaTestSupport extends ContextTestSupport with RouteBuilderSupport {
+abstract class ScalaTestSupport extends ContextTestSupport with RouteBuilderSupport with Preamble {
 
   implicit def stringToUri(uri:String) = new RichTestUri(uri, this)
   implicit def mockWrapper(endpoint: MockEndpoint) = new RichMockEndpoint(endpoint)
-  implicit def exchangeWrapper(exchange: Exchange[T] forSome {type T}) = new RichExchange(exchange)
 
   def assert(uri: String) = getMockEndpoint(uri).assertIsSatisfied
 

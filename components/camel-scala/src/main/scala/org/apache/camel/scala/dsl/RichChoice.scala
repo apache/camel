@@ -20,11 +20,6 @@ import org.apache.camel.model.ChoiceType
 
 class RichChoiceType(val choice: ChoiceType, val builder:RouteBuilder) {
 
-  def then(block: => Unit) : ChoiceType = {
-    builder.build(choice, block)
-    choice
-  }
-
   def when(test: Exchange => Boolean)(block: => Unit) : ChoiceType = {
     choice
   }
