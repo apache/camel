@@ -35,9 +35,12 @@ class PipelineRouteBuilderTest extends ScalaTestSupport {
 
   override protected def createRouteBuilder() =
     new RouteBuilder {
+       //START SNIPPET: simple
        "direct:a" --> "mock:a" --> "mock:b"
        "direct:c" to "mock:c" to "mock:d"
+       //END SNIPPET: simple
 
+       //START SNIPPET: block
        "direct:e" ==> {
          --> ("mock:e")
          --> ("mock:f")
@@ -47,6 +50,7 @@ class PipelineRouteBuilderTest extends ScalaTestSupport {
          to ("mock:g")
          to ("mock:h")
        }
+       //END SNIPPET: block
     }.print
 
 }

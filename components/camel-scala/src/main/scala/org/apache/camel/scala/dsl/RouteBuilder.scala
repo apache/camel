@@ -24,7 +24,7 @@ import collection.mutable.Stack
 /**
   Scala RouteBuilder implementation
   */
-class RouteBuilder {
+class RouteBuilder extends Preamble {
 
   val builder = new org.apache.camel.builder.RouteBuilder {
     override def configure() =  {}
@@ -35,7 +35,6 @@ class RouteBuilder {
   implicit def stringToUri(uri:String) : RichUriString = new RichUriString(uri, this)
   implicit def choiceWrapper(choice: ChoiceType) = new RichChoiceType(choice, this);
   implicit def processorWrapper(processor: ProcessorType[T] forSome {type T}) = new RichProcessor(processor)
-  implicit def exchangeWrapper(exchange: Exchange) = new RichExchange(exchange)
 
   def print() = {
     println(builder)
@@ -80,5 +79,11 @@ class RouteBuilder {
       case _ => throw new Exception("otherwise is only supported in a choice block or after a when statement")
     }
   }
+}
 
+object RouteBuilder {
+  
+  def routes(definitions: => Unit) = new RouteBuilder {
+    definitions
+  }
 }

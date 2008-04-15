@@ -22,10 +22,10 @@ import org.apache.camel.model.ProcessorType
 class RichUriString(uri:String, builder:RouteBuilder) {
 
   def to(targets: String*) : ProcessorType[T] forSome {type T} = {
+    val from = builder.from(uri)
     targets.length match {
-      case 1 => builder.from(uri).to(targets(0))
+      case 1 => from.to(targets(0))
       case _ => {
-        val from = builder.from(uri)
         val multicast = from.multicast
         for (target <- targets) multicast.to(target)
         from

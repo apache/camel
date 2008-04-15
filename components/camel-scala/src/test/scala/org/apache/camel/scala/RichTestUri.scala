@@ -21,9 +21,7 @@ import org.apache.camel.component.mock.MockEndpoint
 class RichTestUri(uri: String, support: ScalaTestSupport) {
 
   def !(messages: Any*) = {
-    for (message <- messages) {
-      support.getTemplate().sendBody(uri, message)
-    }
+    messages.foreach(support.getTemplate().sendBody(uri, _))
   }
 
   def expect(block: MockEndpoint => Unit) = {

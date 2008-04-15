@@ -14,9 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl
+package org.apache.camel.scala
 
 import org.apache.camel.Exchange
+
+/**
+ * Rich wrapper for Camel's Exchange implementations
+ */
 
 class RichExchange(val exchange : Exchange) {
 
