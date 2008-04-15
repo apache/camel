@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.cxf;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,9 +31,6 @@ import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
 
 public class CxfCustomizedExceptionTest extends ContextTestSupport {
 
