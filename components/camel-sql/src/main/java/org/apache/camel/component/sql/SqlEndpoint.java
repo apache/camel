@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sql;
 
+import java.util.Map;
+
 import javax.sql.DataSource;
 
 import org.apache.camel.Component;
@@ -24,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -39,9 +42,10 @@ public class SqlEndpoint extends DefaultEndpoint<DefaultExchange> {
 
     private String query;
 
-    public SqlEndpoint(String uri, String query, Component component, DataSource dataSource) {
+    public SqlEndpoint(String uri, String query, Component component, DataSource dataSource, Map parameters) throws Exception {
         super(uri, component);
         this.jdbcTemplate = new JdbcTemplate(dataSource);
+        IntrospectionSupport.setProperties(jdbcTemplate, parameters, "template.");
         this.query = query;
     }
 

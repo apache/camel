@@ -42,7 +42,7 @@ public class SqlComponent extends DefaultComponent<DefaultExchange> {
     @Override
     protected Endpoint<DefaultExchange> createEndpoint(String uri, String remaining, Map parameters)
         throws Exception {
-        return new SqlEndpoint(uri, remaining.replaceAll("#", "?"), this, dataSource);
+        return new SqlEndpoint(uri, remaining.replaceAll("#", "?"), this, dataSource, parameters);
     }
 
     public void setDataSource(DataSource dataSource) {

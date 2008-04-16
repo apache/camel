@@ -60,6 +60,15 @@ public class SqlRouteTest extends ContextTestSupport {
         Map row = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals(1, row.get("ID"));
     }
+    
+    public void testBadNumberOfParameter() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        template.sendBody("direct:list", "ASF");
+        mock.assertIsSatisfied();
+        List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals(0, received.size());
+    }
 
     public void testListResult() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -74,6 +83,19 @@ public class SqlRouteTest extends ContextTestSupport {
         assertEquals("Camel", row1.get("PROJECT"));
         Map row2 = assertIsInstanceOf(Map.class, received.get(1));
         assertEquals("AMQ", row2.get("PROJECT"));
+    }
+    
+    public void testListLimitedResult() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        List<Object> body = new ArrayList<Object>();
+        body.add("ASF");
+        template.sendBody("direct:simpleLimited", body);
+        mock.assertIsSatisfied();
+        List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals(1, received.size());
+        Map row1 = assertIsInstanceOf(Map.class, received.get(0));
+        assertEquals("Camel", row1.get("PROJECT"));
     }
 
     protected void setUp() throws Exception {
@@ -107,6 +129,10 @@ public class SqlRouteTest extends ContextTestSupport {
 
                 from("direct:list")
                     .to("sql:select * from projects where license = # and project = # order by id")
+                    .to("mock:result");
+                
+                from("direct:simpleLimited")
+                    .to("sql:select * from projects where license = # order by id?template.maxRows=1")
                     .to("mock:result");
 
             }
