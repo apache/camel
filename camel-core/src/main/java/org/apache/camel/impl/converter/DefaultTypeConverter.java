@@ -164,8 +164,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
             // lets test for arrays
             if (fromType.isArray() && !fromType.getComponentType().isPrimitive()) {
-                // TODO can we try walking the inheritence-tree for the element
-                // types?
+                // TODO can we try walking the inheritance-tree for the element types?
                 if (!fromType.equals(Object[].class)) {
                     fromSuperClass = Object[].class;
 
@@ -217,7 +216,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
                     typeConverterLoader.load(this);
                 }
 
-                // lets try load any other failback converters
+                // lets try load any other fallback converters
                 try {
                     loadFallbackTypeConverters();
                 } catch (NoFactoryAvailableException e) {
