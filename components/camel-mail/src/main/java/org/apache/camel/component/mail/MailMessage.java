@@ -63,8 +63,6 @@ public class MailMessage extends DefaultMessage {
 
     /**
      * Returns the underlying Mail message
-     * 
-     * @return the underlying Mail message
      */
     public Message getMessage() {
         return mailMessage;
