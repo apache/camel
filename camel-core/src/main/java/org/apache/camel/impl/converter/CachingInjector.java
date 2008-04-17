@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
-
-import org.apache.camel.impl.converter.TypeConverterRegistry;
+package org.apache.camel.impl.converter;
 
 /**
- * A caching proxy so that a single 
+ * A caching proxy
+ *
  * @version $Revision$
  */
 public class CachingInjector<T> {
@@ -40,6 +39,6 @@ public class CachingInjector<T> {
     }
 
     protected T createInstance(Class<T> t) {
-        return (T) repository.getInjector().newInstance(t);
+        return repository.getInjector().newInstance(t);
     }
 }

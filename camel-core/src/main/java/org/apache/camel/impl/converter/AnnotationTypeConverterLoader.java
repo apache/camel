@@ -34,7 +34,6 @@ import static java.lang.reflect.Modifier.isStatic;
 
 import org.apache.camel.Converter;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.CachingInjector;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResolverUtil;
 import org.apache.commons.logging.Log;
@@ -70,7 +69,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
      * for text files on the classpath at the {@link #META_INF_SERVICES} location.
      *
      * @return a collection of packages to search for
-     * @throws IOException is thrown for IO relatede errors
+     * @throws IOException is thrown for IO related errors
      */
     protected String[] findPackageNames() throws IOException {
         Set<String> packages = new HashSet<String>();
