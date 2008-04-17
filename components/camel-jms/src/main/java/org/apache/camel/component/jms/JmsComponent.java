@@ -241,6 +241,14 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
         getConfiguration().setMessageTimestampEnabled(messageTimestampEnabled);
     }
 
+    public void setAlwaysCopyMessage(boolean alwaysCopyMessage) {
+    	getConfiguration().setAlwaysCopyMessage(alwaysCopyMessage);
+    }
+    
+    public void setUseMessageIDAsCorrelationID(boolean useMessageIDAsCorrelationID) {
+        getConfiguration().setUseMessageIDAsCorrelationID(useMessageIDAsCorrelationID);
+    }
+
     public void setPriority(int priority) {
         getConfiguration().setPriority(priority);
     }
@@ -301,7 +309,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
         getConfiguration().setDestinationResolver(destinationResolver);
     }
 
-    public Requestor getRequestor() throws Exception {
+    public synchronized Requestor getRequestor() throws Exception {
         if (requestor == null) {
             requestor = new Requestor(getConfiguration(), getExecutorService());
             requestor.start();
@@ -361,7 +369,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
             remaining = removeStartingCharacters(remaining.substring(TOPIC_PREFIX.length()), '/');
         }
 
-        final String subject = convertPathToActualDestination(remaining);
+        final String subject = convertPathToActualDestination(remaining, parameters);
 
         // lets make sure we copy the configuration as each endpoint can
         // customize its own version
@@ -386,7 +394,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
      * A strategy method allowing the URI destination to be translated into the
      * actual JMS destination name (say by looking up in JNDI or something)
      */
-    protected String convertPathToActualDestination(String path) {
+    protected String convertPathToActualDestination(String path, Map parameters) {
         return path;
     }
 

@@ -93,10 +93,16 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
         Object[] keys = null;
         synchronized (map) {
             Set keySet = map.keySet();
-            keys = new String[keySet.size()];
+            keys = new Object[keySet.size()];
             keySet.toArray(keys);
         }
         return keys;
+    }
+    
+    public int size() {
+        synchronized (map) {
+            return map.size();
+        }
     }
 
     /**

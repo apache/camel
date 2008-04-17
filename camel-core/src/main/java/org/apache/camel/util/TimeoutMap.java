@@ -39,6 +39,7 @@ public interface TimeoutMap extends Runnable {
      */
     Object[] getKeys();
 
+    int size();
     /**
      * Adds the key value pair into the map such that some time after the given
      * timeout the entry will be evicted

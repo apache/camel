@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.jms.requestor;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
@@ -31,6 +34,9 @@ import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.DefaultTimeoutMap;
 import org.apache.camel.util.TimeoutMap;
+import org.apache.camel.util.UuidGenerator;
+import org.apache.camel.component.jms.JmsProducer;
+import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap.DeferredMessageSentCallback;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.task.TaskExecutor;
@@ -45,32 +51,83 @@ import org.springframework.jms.support.destination.DestinationResolver;
 public class Requestor extends ServiceSupport implements MessageListener {
     private static final transient Log LOG = LogFactory.getLog(Requestor.class);
     private final JmsConfiguration configuration;
+    private ScheduledExecutorService executorService;
     private AbstractMessageListenerContainer listenerContainer;
     private TimeoutMap requestMap;
+    private Map<JmsProducer, DeferredRequestReplyMap> producerDeferredRequestReplyMap;
+    private TimeoutMap deferredRequestMap;
+    private TimeoutMap deferredReplyMap;
     private Destination replyTo;
-
+    private long maxRequestTimeout = -1;
+    private static UuidGenerator uuidGenerator;
+    
     public Requestor(JmsConfiguration configuration, ScheduledExecutorService executorService) {
         this.configuration = configuration;
+        this.executorService = executorService;
         requestMap = new DefaultTimeoutMap(executorService, configuration.getRequestMapPurgePollTimeMillis());
+        producerDeferredRequestReplyMap = new HashMap<JmsProducer, DeferredRequestReplyMap>();
+        deferredRequestMap = new DefaultTimeoutMap(executorService, configuration.getRequestMapPurgePollTimeMillis());
+        deferredReplyMap = new DefaultTimeoutMap(executorService, configuration.getRequestMapPurgePollTimeMillis());
+    }
+    
+    public synchronized DeferredRequestReplyMap getDeferredRequestReplyMap(JmsProducer producer) {
+        DeferredRequestReplyMap map = producerDeferredRequestReplyMap.get(producer);
+        if (map == null) {
+            map = new DeferredRequestReplyMap(this, producer, deferredRequestMap, deferredReplyMap); 
+            producerDeferredRequestReplyMap.put(producer, map);
+        }
+        if (maxRequestTimeout == -1) {
+            maxRequestTimeout = producer.getRequestTimeout();
+        } else if (maxRequestTimeout < producer.getRequestTimeout()) {
+            maxRequestTimeout = producer.getRequestTimeout();
+        }
+        return map;
+    }
+    
+    public synchronized void removeDeferredRequestReplyMap(JmsProducer producer) {
+        producerDeferredRequestReplyMap.remove(producer);
+        if (maxRequestTimeout == producer.getRequestTimeout()) {
+            long max = -1;
+            for (Map.Entry<JmsProducer, DeferredRequestReplyMap> entry : producerDeferredRequestReplyMap.entrySet()) {
+                if (max < entry.getKey().getRequestTimeout()) {
+                    max = entry.getKey().getRequestTimeout();
+                }
+            }
+            maxRequestTimeout = max;
+        }
+    }
+    
+    public synchronized long getMaxRequestTimeout() {
+        return maxRequestTimeout;
+    }
+    
+    public TimeoutMap getRequestMap() {
+        return requestMap;
+    }
+    
+    public TimeoutMap getDeferredRequestMap() {
+        return deferredRequestMap;
+    }
+    
+    public TimeoutMap getDeferredReplyMap() {
+        return deferredReplyMap;
     }
 
     public FutureTask getReceiveFuture(String correlationID, long requestTimeout) {
         FutureTask future = null;
-/*
-            // Deal with async handlers...
-
-            Object currentHandler = requestMap.get(correlationID);
-            if (currentHandler instanceof AsyncReplyHandler) {
-                AsyncReplyHandler handler = (AsyncReplyHandler) currentHandler;
-                future = handler.newResultHandler();
-            }
-*/
 
         if (future == null) {
             FutureHandler futureHandler = new FutureHandler();
             future = futureHandler;
             requestMap.put(correlationID, futureHandler, requestTimeout);
         }
+        return future;
+    }
+
+    public FutureTask getReceiveFuture(DeferredMessageSentCallback callback) {
+        FutureTask future = new FutureHandler();
+        DeferredRequestReplyMap map = callback.getDeferredRequestReplyMap();
+        map.put(callback, future);
         return future;
     }
 
@@ -81,23 +138,24 @@ public class Requestor extends ServiceSupport implements MessageListener {
                 LOG.warn("Ignoring message with no correlationID! " + message);
                 return;
             }
-
             // lets notify the monitor for this response
             Object handler = requestMap.get(correlationID);
-            if (handler == null) {
-                LOG.warn("Response received for unknown correlationID: " + correlationID + " request: "
-                         + message);
-            } else if (handler instanceof ReplyHandler) {
-                ReplyHandler replyHandler = (ReplyHandler)handler;
+            if (handler != null && handler instanceof ReplyHandler) {
+                ReplyHandler replyHandler = (ReplyHandler) handler;
                 boolean complete = replyHandler.handle(message);
                 if (complete) {
                     requestMap.remove(correlationID);
                 }
+            } else {
+                DeferredRequestReplyMap.processDeferredRequests(
+                        this, deferredRequestMap, deferredReplyMap, 
+                        correlationID, getMaxRequestTimeout(), message);
             }
         } catch (JMSException e) {
             throw new FailedToProcessResponse(message, e);
         }
     }
+    
 
     public AbstractMessageListenerContainer getListenerContainer() {
         if (listenerContainer == null) {
@@ -166,5 +224,12 @@ public class Requestor extends ServiceSupport implements MessageListener {
             answer.setExceptionListener(exceptionListener);
         }
         return answer;
+    }
+    
+    public static synchronized UuidGenerator getUuidGenerator() {
+        if (uuidGenerator == null) {
+            uuidGenerator = new UuidGenerator();
+        }
+        return uuidGenerator;
     }
 }

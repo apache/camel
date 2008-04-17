@@ -88,7 +88,7 @@ public class EndpointMessageListener implements MessageListener {
     // -------------------------------------------------------------------------
     public JmsBinding getBinding() {
         if (binding == null) {
-            binding = new JmsBinding();
+            binding = new JmsBinding(endpoint);
         }
         return binding;
     }
@@ -161,10 +161,14 @@ public class EndpointMessageListener implements MessageListener {
             public Message createMessage(Session session) throws JMSException {
                 Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, session);
 
-                // lets preserve any correlation ID
-                String correlationID = message.getJMSCorrelationID();
-                if (correlationID != null) {
-                    reply.setJMSCorrelationID(correlationID);
+                if (endpoint.getConfiguration().isUseMessageIDAsCorrelationID()) {
+                    String messageID = exchange.getIn().getHeader("JMSMessageID", String.class);
+                	reply.setJMSCorrelationID(messageID);
+                } else {
+                    String correlationID = message.getJMSCorrelationID();
+                    if (correlationID != null) {
+                        reply.setJMSCorrelationID(correlationID);
+                    }
                 }
 
                 if (LOG.isDebugEnabled()) {

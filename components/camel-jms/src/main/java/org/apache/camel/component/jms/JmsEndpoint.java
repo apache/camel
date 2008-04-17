@@ -123,7 +123,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     // -------------------------------------------------------------------------
     public JmsBinding getBinding() {
         if (binding == null) {
-            binding = new JmsBinding();
+            binding = new JmsBinding(this);
         }
         return binding;
     }
@@ -161,7 +161,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
         return false;
     }
 
-    public Requestor getRequestor() throws Exception {
+    public synchronized Requestor getRequestor() throws Exception {
         if (requestor == null) {
             requestor = component.getRequestor();
         }
