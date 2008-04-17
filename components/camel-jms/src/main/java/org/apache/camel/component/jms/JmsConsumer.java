@@ -30,12 +30,13 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
  */
 public class JmsConsumer extends DefaultConsumer<JmsExchange> {
     private final AbstractMessageListenerContainer listenerContainer;
+    private EndpointMessageListener messageListener;
 
     public JmsConsumer(JmsEndpoint endpoint, Processor processor, AbstractMessageListenerContainer listenerContainer) {
         super(endpoint, processor);
         this.listenerContainer = listenerContainer;
 
-        MessageListener messageListener = createMessageListener(endpoint, processor);
+        createMessageListener(endpoint, processor);
         this.listenerContainer.setMessageListener(messageListener);
     }
 
@@ -43,10 +44,13 @@ public class JmsConsumer extends DefaultConsumer<JmsExchange> {
         return listenerContainer;
     }
 
-    protected MessageListener createMessageListener(JmsEndpoint endpoint, Processor processor) {
-        EndpointMessageListener messageListener = new EndpointMessageListener(endpoint, processor);
-        messageListener.setBinding(endpoint.getBinding());
+    public EndpointMessageListener getEndpointMessageListener() {
         return messageListener;
+    }
+    
+    protected void createMessageListener(JmsEndpoint endpoint, Processor processor) {
+        messageListener = new EndpointMessageListener(endpoint, processor);
+        messageListener.setBinding(endpoint.getBinding());
     }
 
     @Override

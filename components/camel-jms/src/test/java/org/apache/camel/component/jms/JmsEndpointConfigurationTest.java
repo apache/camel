@@ -18,12 +18,15 @@ package org.apache.camel.component.jms;
 
 
 import javax.jms.ConnectionFactory;
+import javax.jms.DeliveryMode;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.springframework.jms.core.JmsOperations;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
@@ -83,6 +86,20 @@ public class JmsEndpointConfigurationTest extends ContextTestSupport {
     public void testCacheConsumerEnabledForTopic() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:topic:Foo.Bar");
         assertCacheLevel(endpoint, DefaultMessageListenerContainer.CACHE_CONSUMER);
+    }
+    
+    public void testReplyToPesistentDelivery() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo");
+        endpoint.getConfiguration().setDeliveryPersistent(true);
+        endpoint.getConfiguration().setReplyToDeliveryPersistent(false);
+        JmsProducer producer = endpoint.createProducer();
+        JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
+        JmsOperations operations = consumer.getEndpointMessageListener().getTemplate();
+        assertTrue(operations instanceof JmsTemplate);
+        JmsTemplate template = (JmsTemplate)operations;
+        assertTrue("Wrong delivery mode on reply template; expected  " 
+                     + " DeliveryMode.NON_PERSISTENT but was DeliveryMode.PERSISTENT", 
+                     template.getDeliveryMode() == DeliveryMode.NON_PERSISTENT);
     }
 
     protected void assertCacheLevel(JmsEndpoint endpoint, int expected) throws Exception {

@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -26,12 +27,18 @@ import javax.jms.Session;
 import javax.jms.TopicPublisher;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.jms.requestor.Requestor;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PackageHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.JmsTemplate102;
+import org.springframework.jms.core.MessageCreator;
+import org.springframework.jms.core.SessionCallback;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer102;
@@ -40,14 +47,18 @@ import org.springframework.jms.listener.SimpleMessageListenerContainer102;
 import org.springframework.jms.listener.serversession.ServerSessionFactory;
 import org.springframework.jms.listener.serversession.ServerSessionMessageListenerContainer;
 import org.springframework.jms.listener.serversession.ServerSessionMessageListenerContainer102;
+import org.springframework.jms.support.JmsUtils;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.util.Assert;
+
 
 /**
  * @version $Revision$
  */
 public class JmsConfiguration implements Cloneable {
+    private static final transient Log LOG = LogFactory.getLog(JmsConfiguration.class);
     protected static final String TRANSACTED = "TRANSACTED";
     protected static final String CLIENT_ACKNOWLEDGE = "CLIENT_ACKNOWLEDGE";
     protected static final String AUTO_ACKNOWLEDGE = "AUTO_ACKNOWLEDGE";
@@ -83,6 +94,7 @@ public class JmsConfiguration implements Cloneable {
     private boolean useVersion102;
     private Boolean explicitQosEnabled;
     private boolean deliveryPersistent = true;
+    private boolean replyToDeliveryPersistent = true;
     private long timeToLive = -1;
     private MessageConverter messageConverter;
     private boolean messageIdEnabled = true;
@@ -97,6 +109,9 @@ public class JmsConfiguration implements Cloneable {
     private long requestMapPurgePollTimeMillis = 1000L;
     private boolean disableReplyTo;
     private boolean eagerLoadingOfProperties;
+    // Always make a JMS message copy when it's passed to Producer
+    private boolean alwaysCopyMessage = false;
+    private boolean useMessageIDAsCorrelationID = false;
 
     public JmsConfiguration() {
     }
@@ -129,7 +144,145 @@ public class JmsConfiguration implements Cloneable {
         }
         return answer;
     }
+    
+    public static interface MessageSentCallback {
+        public void sent(Message message);
+    }
+    
+    public static class CamelJmsTemplate extends JmsTemplate {
+        private JmsConfiguration config;
+        
+        public CamelJmsTemplate(JmsConfiguration config, ConnectionFactory connectionFactory) {
+            super(connectionFactory);
+            this.config = config;
+        }
+        
+        public void send(final String destinationName, 
+                         final MessageCreator messageCreator, 
+                         final MessageSentCallback callback) throws JmsException {
+            execute(new SessionCallback() {
+                public Object doInJms(Session session) throws JMSException {
+                    Destination destination = resolveDestinationName(session, destinationName);
+                    Assert.notNull(messageCreator, "MessageCreator must not be null");
+                    MessageProducer producer = createProducer(session, destination);
+                    Message message = null;
+                    try {
+                        message = messageCreator.createMessage(session);
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Sending created message: " + message);
+                        }
+                        doSend(producer, message);
+                        // Check commit - avoid commit call within a JTA transaction.
+                        if (session.getTransacted() && isSessionLocallyTransacted(session)) {
+                            // Transacted session created by this template -> commit.
+                            JmsUtils.commitIfNecessary(session);
+                        }
+                    }
+                    finally {
+                        JmsUtils.closeMessageProducer(producer);
+                    }
+                    if (message != null && callback != null) {
+                        callback.sent(message);
+                    }
+                    return null;
+                }
+            }, false);
+        }
 
+        /**
+         * Override so we can support preserving the Qos settings that have
+         * been set on the message.
+         */
+        @Override
+        protected void doSend(MessageProducer producer, Message message) throws JMSException {
+            if (config.isPreserveMessageQos()) {
+                long ttl = message.getJMSExpiration();
+                if (ttl != 0) {
+                    ttl = ttl - System.currentTimeMillis();
+                    // Message had expired.. so set the ttl as small as
+                    // possible
+                    if (ttl <= 0) {
+                        ttl = 1;
+                    }
+                }
+                producer.send(message, message.getJMSDeliveryMode(), message.getJMSPriority(), ttl);
+            }
+            else {
+                super.doSend(producer, message);
+            }
+        }
+    }
+    
+    public static class CamelJmsTeemplate102 extends JmsTemplate102 {
+        private JmsConfiguration config;
+        
+        public CamelJmsTeemplate102(JmsConfiguration config, ConnectionFactory connectionFactory, boolean pubSubDomain) {
+            super(connectionFactory, pubSubDomain);
+            this.config = config;
+        }
+        
+        public void send(final String destinationName, 
+                final MessageCreator messageCreator, 
+                final MessageSentCallback callback) throws JmsException {
+           execute(new SessionCallback() {
+               public Object doInJms(Session session) throws JMSException {
+                   Destination destination = resolveDestinationName(session, destinationName);
+                   Assert.notNull(messageCreator, "MessageCreator must not be null");
+                   MessageProducer producer = createProducer(session, destination);
+                   Message message = null;
+                   try {
+                       message = messageCreator.createMessage(session);
+                       if (logger.isDebugEnabled()) {
+                           logger.debug("Sending created message: " + message);
+                       }
+                       doSend(producer, message);
+                       // Check commit - avoid commit call within a JTA transaction.
+                       if (session.getTransacted() && isSessionLocallyTransacted(session)) {
+                           // Transacted session created by this template -> commit.
+                           JmsUtils.commitIfNecessary(session);
+                       }
+                   }
+                   finally {
+                       JmsUtils.closeMessageProducer(producer);
+                   }
+                   if (message != null && callback != null) {
+                       callback.sent(message);
+                   }
+                   return null;
+               }
+           }, false);
+        }
+        
+        /**
+         * Override so we can support preserving the Qos settings that have
+         * been set on the message.
+         */
+        @Override
+        protected void doSend(MessageProducer producer, Message message) throws JMSException {
+            if (config.isPreserveMessageQos()) {
+                long ttl = message.getJMSExpiration();
+                if (ttl != 0) {
+                    ttl = ttl - System.currentTimeMillis();
+                    // Message had expired.. so set the ttl as small as
+                    // possible
+                    if (ttl <= 0) {
+                        ttl = 1;
+                    }
+                }
+                if (isPubSubDomain()) {
+                    ((TopicPublisher) producer).publish(message, message.getJMSDeliveryMode(), 
+                                                        message.getJMSPriority(), ttl);
+                } else {
+                    ((QueueSender) producer).send(message, message.getJMSDeliveryMode(), 
+                                                  message.getJMSPriority(), ttl);
+                }
+            }
+            else {
+                super.doSend(producer, message);
+            }
+        }
+    }
+    
     public JmsOperations createInOnlyTemplate(boolean pubSubDomain, String destination) {
 
         if (jmsOperations != null) {
@@ -138,60 +291,9 @@ public class JmsConfiguration implements Cloneable {
 
         ConnectionFactory factory = getTemplateConnectionFactory();
 
-        // I whish the spring templates had built in support for preserving the
-        // message
-        // qos when doing a send. :(
-        JmsTemplate template = useVersion102 ? new JmsTemplate102(factory, pubSubDomain) {
-            /**
-             * Override so we can support preserving the Qos settings that have
-             * been set on the message.
-             */
-            @Override
-            protected void doSend(MessageProducer producer, Message message) throws JMSException {
-                if (preserveMessageQos) {
-                    long ttl = message.getJMSExpiration();
-                    if (ttl != 0) {
-                        ttl = ttl - System.currentTimeMillis();
-                        // Message had expired.. so set the ttl as small as
-                        // possible
-                        if (ttl <= 0) {
-                            ttl = 1;
-                        }
-                    }
-                    if (isPubSubDomain()) {
-                        ((TopicPublisher)producer).publish(message, message.getJMSDeliveryMode(), message
-                            .getJMSPriority(), ttl);
-                    } else {
-                        ((QueueSender)producer).send(message, message.getJMSDeliveryMode(), message
-                            .getJMSPriority(), ttl);
-                    }
-                } else {
-                    super.doSend(producer, message);
-                }
-            }
-        } : new JmsTemplate(factory) {
-            /**
-             * Override so we can support preserving the Qos settings that have
-             * been set on the message.
-             */
-            @Override
-            protected void doSend(MessageProducer producer, Message message) throws JMSException {
-                if (preserveMessageQos) {
-                    long ttl = message.getJMSExpiration();
-                    if (ttl != 0) {
-                        ttl = ttl - System.currentTimeMillis();
-                        // Message had expired.. so set the ttl as small as
-                        // possible
-                        if (ttl <= 0) {
-                            ttl = 1;
-                        }
-                    }
-                    producer.send(message, message.getJMSDeliveryMode(), message.getJMSPriority(), ttl);
-                } else {
-                    super.doSend(producer, message);
-                }
-            }
-        };
+        JmsTemplate template = useVersion102 ? 
+                new CamelJmsTeemplate102(this, factory, pubSubDomain) 
+                : new CamelJmsTemplate(this, factory);
 
         template.setPubSubDomain(pubSubDomain);
         if (destinationResolver != null) {
@@ -499,6 +601,14 @@ public class JmsConfiguration implements Cloneable {
         configuredQoS();
     }
 
+    public boolean isReplyToDeliveryPersistent() {
+        return replyToDeliveryPersistent;
+    }
+
+    public void setReplyToDeliveryPersistent(boolean replyToDeliveryPersistent) {
+        this.replyToDeliveryPersistent = replyToDeliveryPersistent;
+    }
+
     public long getTimeToLive() {
         return timeToLive;
     }
@@ -531,7 +641,7 @@ public class JmsConfiguration implements Cloneable {
     public void setMessageTimestampEnabled(boolean messageTimestampEnabled) {
         this.messageTimestampEnabled = messageTimestampEnabled;
     }
-
+   
     public int getPriority() {
         return priority;
     }
@@ -760,6 +870,15 @@ public class JmsConfiguration implements Cloneable {
         if (isEagerLoadingOfProperties()) {
             listener.setEagerLoadingOfProperties(true);
         }
+        // REVISIT: We really ought to change the model and let JmsProducer 
+        // and JmsConsumer have their own JmsConfiguration instance
+        // This way producer's and consumer's QoS can differ and be 
+        // independently configured 
+        JmsOperations operations = listener.getTemplate();
+        if (operations instanceof JmsTemplate) {
+            JmsTemplate template = (JmsTemplate)operations;
+            template.setDeliveryPersistent(isReplyToDeliveryPersistent());
+        }
     }
     protected AbstractMessageListenerContainer chooseMessageListenerContainerImplementation() {
         // TODO we could allow a spring container to auto-inject these objects?
@@ -851,4 +970,20 @@ public class JmsConfiguration implements Cloneable {
         }
     }
 
+
+	public boolean isAlwaysCopyMessage() {
+		return alwaysCopyMessage;
+	}
+
+	public void setAlwaysCopyMessage(boolean alwaysCopyMessage) {
+		this.alwaysCopyMessage = alwaysCopyMessage;
+	}
+
+	public boolean isUseMessageIDAsCorrelationID() {
+		return useMessageIDAsCorrelationID;
+	}
+
+	public void setUseMessageIDAsCorrelationID(boolean useMessageIDAsCorrelationID) {
+		this.useMessageIDAsCorrelationID = useMessageIDAsCorrelationID;
+	}
 }

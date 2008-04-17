@@ -56,9 +56,16 @@ import org.apache.commons.logging.LogFactory;
  */
 public class JmsBinding {
     private static final transient Log LOG = LogFactory.getLog(JmsBinding.class);
+    private JmsEndpoint endpoint;
     private Set<String> ignoreJmsHeaders;
     private XmlConverter xmlConverter = new XmlConverter();
 
+    public JmsBinding() {
+    }
+
+    public JmsBinding(JmsEndpoint endpoint) {
+    	this.endpoint = endpoint;
+    }
     /**
      * Extracts the body from the JMS message
      *
@@ -118,7 +125,8 @@ public class JmsBinding {
     public Message makeJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session)
         throws JMSException {
         Message answer = null;
-        if (camelMessage instanceof JmsMessage) {
+        boolean alwaysCopy = (endpoint != null) ? endpoint.getConfiguration().isAlwaysCopyMessage() : false; 
+        if (!alwaysCopy && camelMessage instanceof JmsMessage) {
             JmsMessage jmsMessage = (JmsMessage)camelMessage;
             answer = jmsMessage.getJmsMessage();
         }
