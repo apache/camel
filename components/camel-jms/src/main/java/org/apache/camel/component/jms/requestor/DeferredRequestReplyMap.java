@@ -21,8 +21,8 @@ import java.util.concurrent.FutureTask;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
-import org.apache.camel.component.jms.JmsProducer;
 import org.apache.camel.component.jms.JmsConfiguration.MessageSentCallback;
+import org.apache.camel.component.jms.JmsProducer;
 import org.apache.camel.util.TimeoutMap;
 import org.apache.camel.util.UuidGenerator;
 import org.apache.commons.logging.Log;
@@ -39,29 +39,29 @@ public class DeferredRequestReplyMap  {
         private DeferredRequestReplyMap map;
         private String transitionalID;
         private Object monitor;
-       
+
         public DeferredMessageSentCallback(DeferredRequestReplyMap map, UuidGenerator uuidGenerator, Object monitor) {
             transitionalID = uuidGenerator.generateId();
             this.map = map;
             this.monitor = monitor;
         }
-        
+
         public DeferredRequestReplyMap getDeferredRequestReplyMap() {
             return map;
         }
-        
+
         public String getID() {
             return transitionalID;
         }
-        
+
         public void sent(Message message) {
             map.processDeferredReplies(monitor, getID(), message);
         }
     }
-    
-    public DeferredRequestReplyMap(Requestor requestor, 
-                                   JmsProducer producer, 
-                                   TimeoutMap deferredRequestMap, 
+
+    public DeferredRequestReplyMap(Requestor requestor,
+                                   JmsProducer producer,
+                                   TimeoutMap deferredRequestMap,
                                    TimeoutMap deferredReplyMap) {
         this.requestor = requestor;
         this.producer = producer;
@@ -76,18 +76,18 @@ public class DeferredRequestReplyMap  {
     public DeferredMessageSentCallback createDeferredMessageSentCallback() {
         return new DeferredMessageSentCallback(this, getUuidGenerator(), requestor);
     }
-    
+
     public void put(DeferredMessageSentCallback callback, FutureTask futureTask) {
         deferredRequestMap.put(callback.getID(), futureTask, getRequestTimeout());
     }
 
     public void processDeferredRequests(String correlationID, Message inMessage) {
-        processDeferredRequests(requestor, deferredRequestMap, deferredReplyMap, 
+        processDeferredRequests(requestor, deferredRequestMap, deferredReplyMap,
                                 correlationID, requestor.getMaxRequestTimeout(), inMessage);
     }
 
-    public static void processDeferredRequests(Object monitor, 
-                                               TimeoutMap requestMap,  
+    public static void processDeferredRequests(Object monitor,
+                                               TimeoutMap requestMap,
                                                TimeoutMap replyMap,
                                                String correlationID,
                                                long timeout,
@@ -114,7 +114,7 @@ public class DeferredRequestReplyMap  {
             }
         }
     }
-    
+
     public void processDeferredReplies(Object monitor, String transitionalID, Message outMessage) {
         synchronized (monitor) {
             try {
@@ -125,7 +125,7 @@ public class DeferredRequestReplyMap  {
                 deferredRequestMap.remove(transitionalID);
                 String correlationID = outMessage.getJMSMessageID();
                 Object in = deferredReplyMap.get(correlationID);
-                
+
                 if (in != null && in instanceof Message) {
                     Message inMessage = (Message)in;
                     if (handler instanceof ReplyHandler) {
@@ -147,7 +147,7 @@ public class DeferredRequestReplyMap  {
             }
         }
     }
-    
+
     protected UuidGenerator getUuidGenerator() {
         return producer.getUuidGenerator();
     }

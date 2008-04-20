@@ -163,7 +163,7 @@ public class EndpointMessageListener implements MessageListener {
 
                 if (endpoint.getConfiguration().isUseMessageIDAsCorrelationID()) {
                     String messageID = exchange.getIn().getHeader("JMSMessageID", String.class);
-                	reply.setJMSCorrelationID(messageID);
+                    reply.setJMSCorrelationID(messageID);
                 } else {
                     String correlationID = message.getJMSCorrelationID();
                     if (correlationID != null) {

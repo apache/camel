@@ -58,11 +58,11 @@ import org.springframework.util.Assert;
  * @version $Revision$
  */
 public class JmsConfiguration implements Cloneable {
-    private static final transient Log LOG = LogFactory.getLog(JmsConfiguration.class);
     protected static final String TRANSACTED = "TRANSACTED";
     protected static final String CLIENT_ACKNOWLEDGE = "CLIENT_ACKNOWLEDGE";
     protected static final String AUTO_ACKNOWLEDGE = "AUTO_ACKNOWLEDGE";
     protected static final String DUPS_OK_ACKNOWLEDGE = "DUPS_OK_ACKNOWLEDGE";
+    private static final transient Log LOG = LogFactory.getLog(JmsConfiguration.class);
     private JmsOperations jmsOperations;
     private DestinationResolver destinationResolver;
     private ConnectionFactory connectionFactory;
@@ -110,8 +110,8 @@ public class JmsConfiguration implements Cloneable {
     private boolean disableReplyTo;
     private boolean eagerLoadingOfProperties;
     // Always make a JMS message copy when it's passed to Producer
-    private boolean alwaysCopyMessage = false;
-    private boolean useMessageIDAsCorrelationID = false;
+    private boolean alwaysCopyMessage;
+    private boolean useMessageIDAsCorrelationID;
 
     public JmsConfiguration() {
     }
@@ -144,21 +144,21 @@ public class JmsConfiguration implements Cloneable {
         }
         return answer;
     }
-    
+
     public static interface MessageSentCallback {
-        public void sent(Message message);
+        void sent(Message message);
     }
-    
+
     public static class CamelJmsTemplate extends JmsTemplate {
         private JmsConfiguration config;
-        
+
         public CamelJmsTemplate(JmsConfiguration config, ConnectionFactory connectionFactory) {
             super(connectionFactory);
             this.config = config;
         }
-        
-        public void send(final String destinationName, 
-                         final MessageCreator messageCreator, 
+
+        public void send(final String destinationName,
+                         final MessageCreator messageCreator,
                          final MessageSentCallback callback) throws JmsException {
             execute(new SessionCallback() {
                 public Object doInJms(Session session) throws JMSException {
@@ -177,8 +177,7 @@ public class JmsConfiguration implements Cloneable {
                             // Transacted session created by this template -> commit.
                             JmsUtils.commitIfNecessary(session);
                         }
-                    }
-                    finally {
+                    } finally {
                         JmsUtils.closeMessageProducer(producer);
                     }
                     if (message != null && callback != null) {
@@ -206,53 +205,53 @@ public class JmsConfiguration implements Cloneable {
                     }
                 }
                 producer.send(message, message.getJMSDeliveryMode(), message.getJMSPriority(), ttl);
-            }
-            else {
+            } else {
                 super.doSend(producer, message);
             }
         }
     }
-    
+
     public static class CamelJmsTeemplate102 extends JmsTemplate102 {
         private JmsConfiguration config;
-        
+
         public CamelJmsTeemplate102(JmsConfiguration config, ConnectionFactory connectionFactory, boolean pubSubDomain) {
             super(connectionFactory, pubSubDomain);
             this.config = config;
         }
-        
-        public void send(final String destinationName, 
-                final MessageCreator messageCreator, 
+
+        public void send(final String destinationName,
+                final MessageCreator messageCreator,
                 final MessageSentCallback callback) throws JmsException {
-           execute(new SessionCallback() {
-               public Object doInJms(Session session) throws JMSException {
-                   Destination destination = resolveDestinationName(session, destinationName);
-                   Assert.notNull(messageCreator, "MessageCreator must not be null");
-                   MessageProducer producer = createProducer(session, destination);
-                   Message message = null;
-                   try {
-                       message = messageCreator.createMessage(session);
-                       if (logger.isDebugEnabled()) {
-                           logger.debug("Sending created message: " + message);
-                       }
-                       doSend(producer, message);
-                       // Check commit - avoid commit call within a JTA transaction.
-                       if (session.getTransacted() && isSessionLocallyTransacted(session)) {
-                           // Transacted session created by this template -> commit.
-                           JmsUtils.commitIfNecessary(session);
-                       }
-                   }
-                   finally {
-                       JmsUtils.closeMessageProducer(producer);
-                   }
-                   if (message != null && callback != null) {
-                       callback.sent(message);
-                   }
-                   return null;
-               }
-           }, false);
+            execute(new SessionCallback() {
+                public Object doInJms(Session session) throws JMSException {
+                    Destination destination = resolveDestinationName(session, destinationName);
+                    Assert.notNull(messageCreator, "MessageCreator must not be null");
+                    MessageProducer producer = createProducer(session, destination);
+                    Message message = null;
+                    try {
+                        message = messageCreator.createMessage(session);
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Sending created message: " + message);
+                        }
+                        doSend(producer, message);
+                        // Check commit - avoid commit call within a JTA
+                        // transaction.
+                        if (session.getTransacted() && isSessionLocallyTransacted(session)) {
+                            // Transacted session created by this template ->
+                            // commit.
+                            JmsUtils.commitIfNecessary(session);
+                        }
+                    } finally {
+                        JmsUtils.closeMessageProducer(producer);
+                    }
+                    if (message != null && callback != null) {
+                        callback.sent(message);
+                    }
+                    return null;
+                }
+            }, false);
         }
-        
+
         /**
          * Override so we can support preserving the Qos settings that have
          * been set on the message.
@@ -270,19 +269,18 @@ public class JmsConfiguration implements Cloneable {
                     }
                 }
                 if (isPubSubDomain()) {
-                    ((TopicPublisher) producer).publish(message, message.getJMSDeliveryMode(), 
+                    ((TopicPublisher) producer).publish(message, message.getJMSDeliveryMode(),
                                                         message.getJMSPriority(), ttl);
                 } else {
-                    ((QueueSender) producer).send(message, message.getJMSDeliveryMode(), 
+                    ((QueueSender) producer).send(message, message.getJMSDeliveryMode(),
                                                   message.getJMSPriority(), ttl);
                 }
-            }
-            else {
+            } else {
                 super.doSend(producer, message);
             }
         }
     }
-    
+
     public JmsOperations createInOnlyTemplate(boolean pubSubDomain, String destination) {
 
         if (jmsOperations != null) {
@@ -291,9 +289,9 @@ public class JmsConfiguration implements Cloneable {
 
         ConnectionFactory factory = getTemplateConnectionFactory();
 
-        JmsTemplate template = useVersion102 ? 
-                new CamelJmsTeemplate102(this, factory, pubSubDomain) 
-                : new CamelJmsTemplate(this, factory);
+        JmsTemplate template = useVersion102
+            ? new CamelJmsTeemplate102(this, factory, pubSubDomain)
+            : new CamelJmsTemplate(this, factory);
 
         template.setPubSubDomain(pubSubDomain);
         if (destinationResolver != null) {
@@ -641,7 +639,7 @@ public class JmsConfiguration implements Cloneable {
     public void setMessageTimestampEnabled(boolean messageTimestampEnabled) {
         this.messageTimestampEnabled = messageTimestampEnabled;
     }
-   
+
     public int getPriority() {
         return priority;
     }
@@ -870,10 +868,10 @@ public class JmsConfiguration implements Cloneable {
         if (isEagerLoadingOfProperties()) {
             listener.setEagerLoadingOfProperties(true);
         }
-        // REVISIT: We really ought to change the model and let JmsProducer 
+        // REVISIT: We really ought to change the model and let JmsProducer
         // and JmsConsumer have their own JmsConfiguration instance
-        // This way producer's and consumer's QoS can differ and be 
-        // independently configured 
+        // This way producer's and consumer's QoS can differ and be
+        // independently configured
         JmsOperations operations = listener.getTemplate();
         if (operations instanceof JmsTemplate) {
             JmsTemplate template = (JmsTemplate)operations;
@@ -971,19 +969,19 @@ public class JmsConfiguration implements Cloneable {
     }
 
 
-	public boolean isAlwaysCopyMessage() {
-		return alwaysCopyMessage;
-	}
+    public boolean isAlwaysCopyMessage() {
+        return alwaysCopyMessage;
+    }
 
-	public void setAlwaysCopyMessage(boolean alwaysCopyMessage) {
-		this.alwaysCopyMessage = alwaysCopyMessage;
-	}
+    public void setAlwaysCopyMessage(boolean alwaysCopyMessage) {
+        this.alwaysCopyMessage = alwaysCopyMessage;
+    }
 
-	public boolean isUseMessageIDAsCorrelationID() {
-		return useMessageIDAsCorrelationID;
-	}
+    public boolean isUseMessageIDAsCorrelationID() {
+        return useMessageIDAsCorrelationID;
+    }
 
-	public void setUseMessageIDAsCorrelationID(boolean useMessageIDAsCorrelationID) {
-		this.useMessageIDAsCorrelationID = useMessageIDAsCorrelationID;
-	}
+    public void setUseMessageIDAsCorrelationID(boolean useMessageIDAsCorrelationID) {
+        this.useMessageIDAsCorrelationID = useMessageIDAsCorrelationID;
+    }
 }

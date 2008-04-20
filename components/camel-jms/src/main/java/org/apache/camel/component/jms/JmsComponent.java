@@ -242,9 +242,9 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
     }
 
     public void setAlwaysCopyMessage(boolean alwaysCopyMessage) {
-    	getConfiguration().setAlwaysCopyMessage(alwaysCopyMessage);
+        getConfiguration().setAlwaysCopyMessage(alwaysCopyMessage);
     }
-    
+
     public void setUseMessageIDAsCorrelationID(boolean useMessageIDAsCorrelationID) {
         getConfiguration().setUseMessageIDAsCorrelationID(useMessageIDAsCorrelationID);
     }
