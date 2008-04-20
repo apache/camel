@@ -64,7 +64,7 @@ public class JmsBinding {
     }
 
     public JmsBinding(JmsEndpoint endpoint) {
-    	this.endpoint = endpoint;
+        this.endpoint = endpoint;
     }
     /**
      * Extracts the body from the JMS message
@@ -125,7 +125,7 @@ public class JmsBinding {
     public Message makeJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session)
         throws JMSException {
         Message answer = null;
-        boolean alwaysCopy = (endpoint != null) ? endpoint.getConfiguration().isAlwaysCopyMessage() : false; 
+        boolean alwaysCopy = (endpoint != null) ? endpoint.getConfiguration().isAlwaysCopyMessage() : false;
         if (!alwaysCopy && camelMessage instanceof JmsMessage) {
             JmsMessage jmsMessage = (JmsMessage)camelMessage;
             answer = jmsMessage.getJmsMessage();

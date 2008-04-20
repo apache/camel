@@ -16,16 +16,16 @@
  */
 package org.apache.camel.impl;
 
-import java.io.InputStream;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.TestSupport;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * Unit test of the string data format.

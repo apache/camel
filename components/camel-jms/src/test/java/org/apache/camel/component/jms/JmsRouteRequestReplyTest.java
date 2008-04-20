@@ -51,9 +51,9 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
     protected static AtomicBoolean inited = new AtomicBoolean(false);
     protected static Map<String, ContextBuilder> contextBuilders = new HashMap<String, ContextBuilder>();
     protected static Map<String, RouteBuilder> routeBuilders = new HashMap<String, RouteBuilder>();
-    
+
     private interface ContextBuilder {
-        public CamelContext buildContext(CamelContext context) throws Exception;
+        CamelContext buildContext(CamelContext context) throws Exception;
     }
 
     public static class SingleNodeDeadEndRouteBuilder extends RouteBuilder {
@@ -103,10 +103,10 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
 
     protected static void init() {
         if (inited.compareAndSet(false, true)) {
-            
+
             ContextBuilder contextBuilderMessageID = new ContextBuilder() {
                 public CamelContext buildContext(CamelContext context) throws Exception {
-                    ConnectionFactory connectionFactory = 
+                    ConnectionFactory connectionFactory =
                         new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
                     JmsComponent jmsComponent = jmsComponentClientAcknowledge(connectionFactory);
                     jmsComponent.setUseMessageIDAsCorrelationID(true);
@@ -115,10 +115,10 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
                     return context;
                 }
             };
-            
+
             ContextBuilder contextBuilderCorrelationID = new ContextBuilder() {
                 public CamelContext buildContext(CamelContext context) throws Exception {
-                    ConnectionFactory connectionFactory = 
+                    ConnectionFactory connectionFactory =
                         new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
                     JmsComponent jmsComponent = jmsComponentClientAcknowledge(connectionFactory);
                     jmsComponent.setUseMessageIDAsCorrelationID(false);
@@ -127,10 +127,10 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
                     return context;
                 }
             };
-    
+
             ContextBuilder contextBuilderCorrelationIDDiffComp = new ContextBuilder() {
                 public CamelContext buildContext(CamelContext context) throws Exception {
-                    ConnectionFactory connectionFactory = 
+                    ConnectionFactory connectionFactory =
                         new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
                     JmsComponent jmsComponent = jmsComponentClientAcknowledge(connectionFactory);
                     jmsComponent.setUseMessageIDAsCorrelationID(false);
@@ -143,8 +143,8 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
                     return context;
                 }
             };
-    
-            
+
+
             contextBuilders.put("testUseMessageIDAsCorrelationID", contextBuilderMessageID);
             contextBuilders.put("testUseCorrelationID", contextBuilderCorrelationID);
             contextBuilders.put("testUseMessageIDAsCorrelationIDMultiNode", contextBuilderMessageID);
@@ -152,7 +152,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
             contextBuilders.put("testUseCorrelationIDMultiNodeDiffComponents", contextBuilderCorrelationIDDiffComp);
             contextBuilders.put("testUseMessageIDAsCorrelationIDTimeout", contextBuilderMessageID);
             contextBuilders.put("testUseCorrelationIDTimeout", contextBuilderMessageID);
-            
+
             routeBuilders.put("testUseMessageIDAsCorrelationID", new SingleNodeRouteBuilder());
             routeBuilders.put("testUseCorrelationID", new SingleNodeRouteBuilder());
             routeBuilders.put("testUseMessageIDAsCorrelationIDMultiNode", new MultiNodeRouteBuilder());
@@ -162,26 +162,26 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
             routeBuilders.put("testUseCorrelationIDTimeout", new SingleNodeDeadEndRouteBuilder());
         }
     }
-    
+
     public class Task extends Thread {
         private AtomicInteger counter;
         private boolean ok = true;
         private String message = "";
-        
+
         public Task(AtomicInteger counter) {
             this.counter = counter;
         }
-        
+
         public void run() {
             for (int i = 0; i < maxCalls; i++) {
                 int callId = counter.incrementAndGet();
                 Object reply = template.requestBody(endpoingUriA, request + "-" + callId);
                 if (!reply.equals(expectedReply + "-" + callId)) {
                     ok = false;
-                    message = "Unexpected reply. Expected: '" + expectedReply  + "-" + callId 
-                              + "'; Received: '" +  reply +"'"; 
+                    message = "Unexpected reply. Expected: '" + expectedReply  + "-" + callId
+                              + "'; Received: '" +  reply + "'";
                 }
-            }            
+            }
         }
         public void assertSuccess() {
             assertTrue(message, ok);
@@ -201,9 +201,9 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
     public void testUseCorrelationID() throws Exception {
         runRequestReplyThreaded();
     }
-    
+
     public void testUseMessageIDAsCorrelationIDMultiNode() throws Exception {
-         runRequestReplyThreaded();
+        runRequestReplyThreaded();
     }
 
     public void testUseCorrelationIDTimeout() throws Exception {
@@ -223,28 +223,28 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
         Thread.sleep(c.getConfiguration().getRequestMapPurgePollTimeMillis());
         assertTrue(c.getRequestor().getDeferredRequestMap().size() == 0);
     }
- 
+
     public void testUseCorrelationIDMultiNodeDiffComponents() throws Exception {
         runRequestReplyThreaded();
     }
- 
+
     /*
      * REVISIT: This currently fails because there is a single instance of Requestor per JmsComponent
      * which shares requestMap amongst JmsProducers. This is a problem in case where the same correlationID
      * value travels between nodes serviced by the same JmsComponent:
      * client -> producer1 -> corrId -> consumer1 -> producer2 -> corrId -> consumer
      * producer1 (Bum! @) <- corrId <- consumer1 <- producer2 <- corrId <- reply
-     * 
+     *
      * @ - The request entry for corrId was already removed from JmsProducer shared requestMap
-     * 
+     *
      * Possible ways to solve this: Each JmsProducer gets its own replyTo destination
-     * 
+     *
 
         public void testUseCorrelationIDMultiNode() throws Exception {
             runRequestReplyThreaded();
         }
     */
-    
+
     protected void runRequestReplyThreaded() throws Exception {
         final AtomicInteger counter = new AtomicInteger(-1);
         Task[] tasks = new Task[maxTasks];
@@ -258,7 +258,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
             tasks[i].assertSuccess();
         }
     }
-    
+
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         return contextBuilders.get(getName()).buildContext(camelContext);
