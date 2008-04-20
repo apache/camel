@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+
+	<!-- ===================================================================== -->
+	<!--  APPENDERS			                                                   -->
+	<!-- ===================================================================== -->
+
+	<!-- SERVER CONSOLE LOG -->
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<param name="Threshold" value="INFO" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p [%c] %m%n" />
+		</layout>
+	</appender>
+
+	<!-- ===================================================================== -->
+	<!--  CATEGORIES				                                           -->
+	<!-- ===================================================================== -->
+
+	<!-- LeadX -->
+	<logger name="org.example">
+		<level value="DEBUG"/>
+	</logger>
+
+	<!-- Libraries -->
+	<logger name="org.springframework">
+		<level value="INFO" />
+	</logger>
+	
+	<!-- ===================================================================== -->
+	<!--  ROOT				                                  		           -->
+	<!-- ===================================================================== -->
+
+	<root>
+		<appender-ref ref="CONSOLE" />
+	</root>
+
+</log4j:configuration>
