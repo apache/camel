@@ -17,6 +17,8 @@
 package org.apache.camel.component.jms;
 
 import javax.jms.Message;
+import javax.jms.TemporaryQueue;
+import javax.jms.TemporaryTopic;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
@@ -109,14 +111,14 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
      * Factory method for creating a new template for InOnly message exchanges
      */
     public JmsOperations createInOnlyTemplate() {
-        return configuration.createInOnlyTemplate(pubSubDomain, destination);
+        return configuration.createInOnlyTemplate(this, pubSubDomain, destination);
     }
 
     /**
      * Factory method for creating a new template for InOut message exchanges
      */
     public JmsOperations createInOutTemplate() {
-        return configuration.createInOutTemplate(pubSubDomain, destination, getRequestTimeout());
+        return configuration.createInOutTemplate(this, pubSubDomain, destination, getRequestTimeout());
     }
 
     // Properties
@@ -178,7 +180,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
 
     /**
      * Sets the timeout in milliseconds which requests should timeout after
-     * 
+     *
      * @param requestTimeout
      */
     public void setRequestTimeout(long requestTimeout) {
@@ -189,6 +191,54 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
         return pubSubDomain;
     }
 
-    // Implementation methods
-    //-------------------------------------------------------------------------
+    /**
+     * Lazily loads the temporary queue type if one has not been explicitly configured
+     * via calling the {@link JmsProviderMetadata#setTemporaryQueueType(Class)}
+     * on the {@link #getConfiguration()} instance
+     */
+    public Class<? extends TemporaryQueue> getTemporaryQueueType() {
+        JmsProviderMetadata metadata = getProviderMetadata();
+        JmsOperations template = getMetadataJmsOperations();
+        return metadata.getTemporaryQueueType(template);
+    }
+
+    /**
+     * Lazily loads the temporary topic type if one has not been explicitly configured
+     * via calling the {@link JmsProviderMetadata#setTemporaryTopicType(Class)}
+     * on the {@link #getConfiguration()} instance
+     */
+    public Class<? extends TemporaryTopic> getTemporaryTopicType() {
+        JmsOperations template = getMetadataJmsOperations();
+        JmsProviderMetadata metadata = getProviderMetadata();
+        return metadata.getTemporaryTopicType(template);
+    }
+
+    /**
+     * Returns the provider metadata
+     */
+    protected JmsProviderMetadata getProviderMetadata() {
+        JmsConfiguration conf = getConfiguration();
+        JmsProviderMetadata metadata = conf.getProviderMetadata();
+        return metadata;
+    }
+
+    /**
+     * Returns the {@link JmsOperations} used for metadata operations such as creating temporary destinations
+     */
+    protected JmsOperations getMetadataJmsOperations() {
+        JmsOperations template = getConfiguration().getMetadataJmsOperations(this);
+        if (template == null) {
+            throw new IllegalArgumentException("No Metadata JmsTemplate supplied!");
+        }
+        return template;
+    }
+
+    public void checkValidTemplate(JmsTemplate template) {
+        if (template.getDestinationResolver() == null) {
+            if (this instanceof DestinationEndpoint) {
+                final DestinationEndpoint destinationEndpoint = (DestinationEndpoint) this;
+                template.setDestinationResolver(JmsConfiguration.createDestinationResolver(destinationEndpoint));
+            }
+        }
+    }
 }

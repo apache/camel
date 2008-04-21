@@ -27,7 +27,6 @@ import javax.jms.Session;
 import javax.jms.TopicPublisher;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.jms.requestor.Requestor;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PackageHelper;
 import org.apache.commons.logging.Log;
@@ -112,6 +111,8 @@ public class JmsConfiguration implements Cloneable {
     // Always make a JMS message copy when it's passed to Producer
     private boolean alwaysCopyMessage;
     private boolean useMessageIDAsCorrelationID;
+    private JmsProviderMetadata providerMetadata = new JmsProviderMetadata();
+    private JmsOperations metadataJmsOperations;
 
     public JmsConfiguration() {
     }
@@ -131,19 +132,6 @@ public class JmsConfiguration implements Cloneable {
         }
     }
 
-    /**
-     * Creates a JmsOperations object used for request/response using a request
-     * timeout value
-     */
-    public JmsOperations createInOutTemplate(boolean pubSubDomain, String destination, long requestTimeout) {
-        JmsOperations answer = createInOnlyTemplate(pubSubDomain, destination);
-        if (answer instanceof JmsTemplate && requestTimeout > 0) {
-            JmsTemplate jmsTemplate = (JmsTemplate)answer;
-            jmsTemplate.setExplicitQosEnabled(true);
-            jmsTemplate.setTimeToLive(requestTimeout);
-        }
-        return answer;
-    }
 
     public static interface MessageSentCallback {
         void sent(Message message);
@@ -281,7 +269,25 @@ public class JmsConfiguration implements Cloneable {
         }
     }
 
-    public JmsOperations createInOnlyTemplate(boolean pubSubDomain, String destination) {
+
+    /**
+     * Creates a {@link JmsOperations} object used for request/response using a request
+     * timeout value
+     */
+    public JmsOperations createInOutTemplate(JmsEndpoint endpoint, boolean pubSubDomain, String destination, long requestTimeout) {
+        JmsOperations answer = createInOnlyTemplate(endpoint, pubSubDomain, destination);
+        if (answer instanceof JmsTemplate && requestTimeout > 0) {
+            JmsTemplate jmsTemplate = (JmsTemplate)answer;
+            jmsTemplate.setExplicitQosEnabled(true);
+            jmsTemplate.setTimeToLive(requestTimeout);
+        }
+        return answer;
+    }
+
+    /**
+     * Creates a {@link JmsOperations} object used for one way messaging
+     */
+    public JmsOperations createInOnlyTemplate(JmsEndpoint endpoint, boolean pubSubDomain, String destination) {
 
         if (jmsOperations != null) {
             return jmsOperations;
@@ -296,6 +302,12 @@ public class JmsConfiguration implements Cloneable {
         template.setPubSubDomain(pubSubDomain);
         if (destinationResolver != null) {
             template.setDestinationResolver(destinationResolver);
+            if (endpoint instanceof DestinationEndpoint) {
+                LOG.debug("You are overloading the destinationResolver property on a DestinationEndpoint; are you sure you want to do that?");
+            }
+        } else if (endpoint instanceof DestinationEndpoint) {
+            DestinationEndpoint destinationEndpoint = (DestinationEndpoint) endpoint;
+            template.setDestinationResolver(createDestinationResolver(destinationEndpoint));
         }
         template.setDefaultDestinationName(destination);
 
@@ -388,7 +400,7 @@ public class JmsConfiguration implements Cloneable {
 
     /**
      * Sets the connection factory to be used for sending messages via the
-     * {@link JmsTemplate} via {@link #createInOnlyTemplate(boolean, String)}
+     * {@link JmsTemplate} via {@link #createInOnlyTemplate(JmsEndpoint,boolean, String)}
      *
      * @param templateConnectionFactory the connection factory for sending
      *                messages
@@ -746,15 +758,58 @@ public class JmsConfiguration implements Cloneable {
     public void setRequestMapPurgePollTimeMillis(long requestMapPurgePollTimeMillis) {
         this.requestMapPurgePollTimeMillis = requestMapPurgePollTimeMillis;
     }
+    public JmsProviderMetadata getProviderMetadata() {
+        return providerMetadata;
+    }
+
+    /**
+     * Allows the provider metadata to be explicitly configured. Typically this is not required
+     * and Camel will auto-detect the provider metadata from the underlying provider.
+     */
+    public void setProviderMetadata(JmsProviderMetadata providerMetadata) {
+        this.providerMetadata = providerMetadata;
+    }
+
+    public JmsOperations getMetadataJmsOperations(JmsEndpoint endpoint) {
+        if (metadataJmsOperations == null) {
+            metadataJmsOperations = getJmsOperations();
+            if (metadataJmsOperations == null) {
+                metadataJmsOperations = createInOnlyTemplate(endpoint, false, null);
+            }
+        }
+        return metadataJmsOperations;
+    }
+
+    /**
+     * Sets the {@link JmsOperations} used to deduce the {@link JmsProviderMetadata} details which if none
+     * is customized one is lazily created on demand
+     *
+     * @param metadataJmsOperations
+     */
+    public void setMetadataJmsOperations(JmsOperations metadataJmsOperations) {
+        this.metadataJmsOperations = metadataJmsOperations;
+    }
 
 
     // Implementation methods
     // -------------------------------------------------------------------------
 
+    public static DestinationResolver createDestinationResolver(final DestinationEndpoint destinationEndpoint) {
+        return new DestinationResolver() {
+            public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain) throws JMSException {
+                return destinationEndpoint.getJmsDestination(session);
+            }
+        };
+    }
+
+
     protected void configureMessageListenerContainer(AbstractMessageListenerContainer container,
                                                      JmsEndpoint endpoint) {
         container.setConnectionFactory(getListenerConnectionFactory());
-        if (destinationResolver != null) {
+        if (endpoint instanceof DestinationEndpoint) {
+            container.setDestinationResolver(createDestinationResolver((DestinationEndpoint) endpoint));
+        }
+        else if (destinationResolver != null) {
             container.setDestinationResolver(destinationResolver);
         }
         if (autoStartup) {
