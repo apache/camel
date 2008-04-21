@@ -51,6 +51,9 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
 
     public static final String QUEUE_PREFIX = "queue:";
     public static final String TOPIC_PREFIX = "topic:";
+    public static final String TEMP_QUEUE_PREFIX = "temp:queue:";
+    public static final String TEMP_TOPIC_PREFIX = "temp:topic:";
+
     private static final transient Log LOG = LogFactory.getLog(JmsComponent.class);
     private static final String DEFAULT_QUEUE_BROWSE_STRATEGY = "org.apache.camel.component.jms.DefaultQueueBrowseStrategy";
     private JmsConfiguration configuration;
@@ -361,12 +364,21 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
         throws Exception {
 
         boolean pubSubDomain = false;
+        boolean tempDestination = false;
         if (remaining.startsWith(QUEUE_PREFIX)) {
             pubSubDomain = false;
             remaining = removeStartingCharacters(remaining.substring(QUEUE_PREFIX.length()), '/');
         } else if (remaining.startsWith(TOPIC_PREFIX)) {
             pubSubDomain = true;
             remaining = removeStartingCharacters(remaining.substring(TOPIC_PREFIX.length()), '/');
+        } else if (remaining.startsWith(TEMP_QUEUE_PREFIX)) {
+            pubSubDomain = false;
+            tempDestination = true;
+            remaining = removeStartingCharacters(remaining.substring(TEMP_QUEUE_PREFIX.length()), '/');
+        } else if (remaining.startsWith(TEMP_TOPIC_PREFIX)) {
+            pubSubDomain = true;
+            tempDestination = true;
+            remaining = removeStartingCharacters(remaining.substring(TEMP_TOPIC_PREFIX.length()), '/');
         }
 
         final String subject = convertPathToActualDestination(remaining, parameters);
@@ -376,10 +388,18 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
         JmsConfiguration newConfiguration = getConfiguration().copy();
         JmsEndpoint endpoint;
         QueueBrowseStrategy strategy = getQueueBrowseStrategy();
-        if (pubSubDomain || strategy == null) {
-            endpoint = new JmsEndpoint(uri, this, subject, pubSubDomain, newConfiguration);
+        if (pubSubDomain) {
+            if (tempDestination) {
+                endpoint = new JmsTemporaryTopicEndpoint(uri, this, subject, newConfiguration);
+            } else {
+                endpoint = new JmsEndpoint(uri, this, subject, pubSubDomain, newConfiguration);
+            }
         } else {
-            endpoint = new JmsQueueEndpoint(uri, this, subject, newConfiguration, strategy);
+            if (tempDestination) {
+                endpoint = new JmsTemporaryQueueEndpoint(uri, this, subject, newConfiguration, strategy);
+            } else {
+                endpoint = new JmsQueueEndpoint(uri, this, subject, newConfiguration, strategy);
+            }
         }
 
         String selector = (String)parameters.remove("selector");
