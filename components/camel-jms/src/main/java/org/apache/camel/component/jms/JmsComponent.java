@@ -58,7 +58,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
     private static final String DEFAULT_QUEUE_BROWSE_STRATEGY = "org.apache.camel.component.jms.DefaultQueueBrowseStrategy";
     private JmsConfiguration configuration;
     private ApplicationContext applicationContext;
-    private Requestor requestor;
+    private volatile Requestor requestor;
     private QueueBrowseStrategy queueBrowseStrategy;
     private boolean attemptedToCreateQueueBrowserStrategy;
 
@@ -314,8 +314,10 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
 
     public synchronized Requestor getRequestor() throws Exception {
         if (requestor == null) {
-            requestor = new Requestor(getConfiguration(), getExecutorService());
-            requestor.start();
+        	synchronized (this) {
+                requestor = new Requestor(getConfiguration(), getExecutorService());
+                requestor.start();
+        	}
         }
         return requestor;
     }
