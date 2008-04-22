@@ -16,16 +16,11 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.ProcessorType
-
-class RichProcessor(processor : ProcessorType[T] forSome {type T}, builder: RouteBuilder) {
-
-  def -->(uri: String) = processor.to(uri)
+/**
+ * Scala implementation for an Apache Camel Expression
+ */
+class ScalaExpression(val expression: Exchange => Any) extends Expression[Exchange] {
   
-  def splitter(expression: Exchange => Any) = processor.splitter(new ScalaExpression(expression))
-  
-  def as(target: Class[T] forSome {type T}) = processor.convertBodyTo(target).asInstanceOf[ProcessorType[T] forSome {type T}]
-  
-  def apply(block: => Unit) = builder.build(processor, block)
+  def evaluate(exchange: Exchange) = expression(exchange).asInstanceOf[Object]
 
 }

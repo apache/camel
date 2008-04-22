@@ -26,5 +26,8 @@ class RichMockEndpoint(endpoint: MockEndpoint) {
     endpoint.expectedBodiesReceived(list)
   }
 
+  def count : Int = endpoint.getExpectedCount
+  
+  def count_=(count: Int) = endpoint.expectedMessageCount(count)
 }
 

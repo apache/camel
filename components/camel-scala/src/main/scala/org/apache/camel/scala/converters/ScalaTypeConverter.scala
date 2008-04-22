@@ -14,18 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.converters;
 
-import org.apache.camel.model.ProcessorType
+import _root_.scala.xml.Elem
 
-class RichProcessor(processor : ProcessorType[T] forSome {type T}, builder: RouteBuilder) {
+import org.apache.camel.Converter
+import org.apache.camel.converter.jaxp.XmlConverter
 
-  def -->(uri: String) = processor.to(uri)
+/**
+ * Converter implementation for supporting some common Scala types within Apache Camel
+ */
+@Converter object ScalaTypeConverter {
   
-  def splitter(expression: Exchange => Any) = processor.splitter(new ScalaExpression(expression))
+   val converter = new XmlConverter()
   
-  def as(target: Class[T] forSome {type T}) = processor.convertBodyTo(target).asInstanceOf[ProcessorType[T] forSome {type T}]
-  
-  def apply(block: => Unit) = builder.build(processor, block)
+   @Converter
+   def convertToDocument(xml: Elem) = converter.toDOMDocument(xml.toString)
 
 }
