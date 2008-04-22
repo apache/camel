@@ -37,12 +37,11 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public class MultipleDestinationConsumeTest extends ContextTestSupport {
-    protected MockEndpoint resultEndpoint;
-    protected String body = "hello world!";
-    protected Session mailSession;
+    private String body = "hello world!";
+    private Session mailSession;
 
     public void testSendAndReceiveMails() throws Exception {
-        resultEndpoint = getMockEndpoint("mock:result");
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
 
         MimeMessage message = new MimeMessage(mailSession);
@@ -60,14 +59,18 @@ public class MultipleDestinationConsumeTest extends ContextTestSupport {
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
 
         org.apache.camel.Message in = exchange.getIn();
-        log.debug("Received: " + in.getBody());
-
-        String text = in.getBody(String.class);
-        log.debug("Has headers: " + in.getHeaders());
+        assertNotNull("Should have headers", in.getHeaders());
 
         MailExchange mailExchange = (MailExchange) exchange;
         Message inMessage = mailExchange.getIn().getMessage();
         assertNotNull("In message has no JavaMail message!", inMessage);
+
+        String text = in.getBody(String.class);
+        assertEquals("mail body", body, text);
+
+        String to = in.getHeader("TO", String.class);
+        assertEquals("TO Header", "james@localhost, bar@localhost", to);
+
         Enumeration iter = inMessage.getAllHeaders();
         while (iter.hasMoreElements()) {
             Header header = (Header) iter.nextElement();
@@ -75,13 +78,6 @@ public class MultipleDestinationConsumeTest extends ContextTestSupport {
             log.debug("Header: " + header.getName() + " has value: " + ObjectHelper.asString(value));
         }
 
-        assertEquals("body", body, text);
-        Object value = in.getHeader("TO");
-        assertEquals("TO Header", "james@localhost, bar@localhost", value);
-/*
-        List list = assertIsInstanceOf(List.class, value);
-        assertEquals("to list", 2, list.size());
-*/
     }
 
     @Override

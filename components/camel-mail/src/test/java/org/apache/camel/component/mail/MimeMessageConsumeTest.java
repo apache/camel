@@ -36,11 +36,10 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision$
  */
 public class MimeMessageConsumeTest extends ContextTestSupport {
-    protected MockEndpoint resultEndpoint;
-    protected String body = "hello world!";
+    private String body = "hello world!";
 
     public void testSendAndReceiveMails() throws Exception {
-        resultEndpoint = getMockEndpoint("mock:result");
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
 
         Properties properties = new Properties();
@@ -53,17 +52,13 @@ public class MimeMessageConsumeTest extends ContextTestSupport {
 
         Transport.send(message);
 
-
-
         // lets test the receive worked
         resultEndpoint.assertIsSatisfied();
 
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
 
-        log.info("Received: " + exchange.getIn().getBody());
-
         String text = exchange.getIn().getBody(String.class);
-        assertEquals("body", body, text);
+        assertEquals("mail body", body, text);
     }
 
     /**

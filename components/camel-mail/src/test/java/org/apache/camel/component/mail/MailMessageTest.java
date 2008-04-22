@@ -31,27 +31,21 @@ import org.apache.camel.Endpoint;
  * @version $Revision$
  */
 public class MailMessageTest extends ContextTestSupport {
-    protected Session mailSession;
-    protected MimeMessage mimeMessage;
-    protected MailEndpoint endpoint;
-    protected String body = "Hello World!";
+    private Session mailSession;
+    private MimeMessage mimeMessage;
+    private MailEndpoint endpoint;
+    private String body = "Hello World!";
 
     public void testMailMessageHandlesMultipleHeaders() throws Exception {
         mimeMessage.setRecipients(Message.RecipientType.TO, new Address[] {new InternetAddress("james@localhost"), new InternetAddress("bar@localhost")});
 
         MailExchange exchange = endpoint.createExchange(mimeMessage);
         MailMessage in = exchange.getIn();
-        String value = in.getHeader("TO", String.class);
-        assertEquals("value", "james@localhost, bar@localhost", value);
-        /*
-         * String[] values = assertIsInstanceOf(String[].class, header);
-         * log.debug("Found values: " + ObjectHelper.asString(values));
-         * assertEquals("Size", 2, values.length); assertEquals("values[0]",
-         * "james@localhost", values[0]); assertEquals("values[1]",
-         * "bar@localhost", values[1]);
-         */
 
-        assertEquals("body", body, in.getBody());
+        assertEquals("mail body", body, in.getBody());
+
+        String to = in.getHeader("TO", String.class);
+        assertEquals("should have 2 receivers", "james@localhost, bar@localhost", to);
     }
 
     public void testMailMessageHandlesSingleHeader() throws Exception {

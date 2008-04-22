@@ -18,7 +18,6 @@ package org.apache.camel.component.mail;
 
 import java.io.IOException;
 import java.util.HashMap;
-
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
@@ -27,19 +26,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
 import org.jvnet.mock_javamail.Mailbox;
-
-import static org.apache.camel.util.ObjectHelper.asString;
 
 /**
  * @version $Revision$
  */
 public class MailRouteTest extends ContextTestSupport {
-    private MockEndpoint resultEndpoint;
 
     public void testSendAndReceiveMails() throws Exception {
-        resultEndpoint = getMockEndpoint("mock:result");
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("hello world!");
 
         HashMap<String, Object> headers = new HashMap<String, Object>();
@@ -49,8 +44,7 @@ public class MailRouteTest extends ContextTestSupport {
         // lets test the first sent worked
         assertMailboxReceivedMessages("route-test-james@localhost");
 
-        // lets sleep to check that the mail poll does not redeliver duplicate
-        // mails
+        // lets sleep to check that the mail poll does not redeliver duplicate mails
         Thread.sleep(3000);
 
         // lets test the receive worked
@@ -70,7 +64,9 @@ public class MailRouteTest extends ContextTestSupport {
 
         Message message = mailbox.get(0);
         assertNotNull(name + " should have received at least one mail!", message);
-        logMessage(message);
+        assertEquals("hello world!", message.getContent());
+        assertEquals("camel@localhost", message.getFrom()[0].toString());
+        assertEquals(name, message.getRecipients(RecipientType.TO)[0].toString());
     }
 
     @Override
@@ -84,7 +80,4 @@ public class MailRouteTest extends ContextTestSupport {
         };
     }
 
-    protected void logMessage(Message message) throws IOException, MessagingException {
-        log.info("Received: " + message.getContent() + " from: " + asString(message.getFrom()) + " to: " + asString(message.getRecipients(RecipientType.TO)));
-    }
 }
