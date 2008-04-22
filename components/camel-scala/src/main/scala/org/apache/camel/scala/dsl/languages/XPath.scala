@@ -14,18 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl.languages;
 
-import org.apache.camel.model.ProcessorType
+import org.apache.camel.builder.xml.XPathBuilder
 
-class RichProcessor(processor : ProcessorType[T] forSome {type T}, builder: RouteBuilder) {
-
-  def -->(uri: String) = processor.to(uri)
+/**
+ * Trait to improve XPath support for Scala DSL
+ */
+trait XPath {
   
-  def splitter(expression: Exchange => Any) = processor.splitter(new ScalaExpression(expression))
-  
-  def as(target: Class[T] forSome {type T}) = processor.convertBodyTo(target).asInstanceOf[ProcessorType[T] forSome {type T}]
-  
-  def apply(block: => Unit) = builder.build(processor, block)
+  def xpath(path: String) = XPathBuilder.xpath(path)
 
+  implicit def exchangeToXpath(exchange: Exchange) = new RichXPathExchange(exchange)
+  
+  class RichXPathExchange(exchange: Exchange) {
+    
+    def xpath(xpath: String) : Any = {
+      val builder = new XPathBuilder[Exchange](xpath)
+      builder.evaluate(exchange)
+    }
+    
+  }
+  
 }

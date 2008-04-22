@@ -17,6 +17,7 @@
 package org.apache.camel.scala.dsl;
 
 import org.apache.camel.model.FilterType
+import org.apache.camel.model.SplitterType
 import org.apache.camel.model.ProcessorType
 
 class RichUriString(uri:String, builder:RouteBuilder) {
@@ -41,6 +42,11 @@ class RichUriString(uri:String, builder:RouteBuilder) {
   def when(filter: Exchange => Boolean) : FilterType =
     builder.from(uri).filter(new WhenPredicate(filter))
 
+  def splitter(expression: Exchange => Any) : SplitterType = { 
+    println("configuring splitter with " + expression)
+    builder.from(uri).splitter(new ScalaExpression(expression))
+  }
 
-
+  def as(target: Class[T] forSome {type T}) = builder.from(uri).convertBodyTo(target)
+  
 }

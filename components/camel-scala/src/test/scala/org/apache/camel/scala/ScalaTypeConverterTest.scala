@@ -14,18 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala;
 
-import org.apache.camel.model.ProcessorType
+import junit.framework.TestCase
+import junit.framework.Assert._
 
-class RichProcessor(processor : ProcessorType[T] forSome {type T}, builder: RouteBuilder) {
+import org.apache.camel.impl.ReflectionInjector
+import org.apache.camel.impl.converter.DefaultTypeConverter
 
-  def -->(uri: String) = processor.to(uri)
+import org.w3c.dom.Document
+
+/**
+ * Test case for ScalaTypeConverter
+ */
+class ScalaTypeConverterTest extends TestCase {
   
-  def splitter(expression: Exchange => Any) = processor.splitter(new ScalaExpression(expression))
+  val converter = new DefaultTypeConverter(new ReflectionInjector())
   
-  def as(target: Class[T] forSome {type T}) = processor.convertBodyTo(target).asInstanceOf[ProcessorType[T] forSome {type T}]
-  
-  def apply(block: => Unit) = builder.build(processor, block)
+  def testDocumentConverter = {
+    val result = converter.convertTo(classOf[Document], <persons/>)
+    assertNotNull(result)
+    assertNotNull(result.getElementsByTagName("persons"))
+  }
 
 }

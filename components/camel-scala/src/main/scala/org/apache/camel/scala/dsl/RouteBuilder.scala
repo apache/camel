@@ -34,7 +34,7 @@ class RouteBuilder extends Preamble {
 
   implicit def stringToUri(uri:String) : RichUriString = new RichUriString(uri, this)
   implicit def choiceWrapper(choice: ChoiceType) = new RichChoiceType(choice, this);
-  implicit def processorWrapper(processor: ProcessorType[T] forSome {type T}) = new RichProcessor(processor)
+  implicit def processorWrapper(processor: ProcessorType[T] forSome {type T}) = new RichProcessor(processor, this)
 
   def print() = {
     println(builder)
@@ -79,6 +79,10 @@ class RouteBuilder extends Preamble {
       case _ => throw new Exception("otherwise is only supported in a choice block or after a when statement")
     }
   }
+  
+  def splitter(expression: Exchange => Any) = stack.top.splitter(new ScalaExpression(expression))
+  
+  def as[T](toType: Class[T]) = stack.top.convertBodyTo(toType)
 }
 
 object RouteBuilder {
