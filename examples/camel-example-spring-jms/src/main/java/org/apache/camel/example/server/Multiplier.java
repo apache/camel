@@ -14,23 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.example.server;
-
-import org.apache.camel.builder.RouteBuilder;
+package org.apache.camel.example.server;
 
 /**
  * @author martin.gilday
  */
-public class ServerRoutes extends RouteBuilder {
+public interface Multiplier {
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Multiplies the given number by a pre-defined constant.
      *
-     * @see org.apache.camel.builder.RouteBuilder#configure()
+     * @param originalNumber The number to be multiplied
+     * @return The result of the multiplication
      */
-    @Override
-    public void configure() throws Exception {
-        from("jms:queue:numbers").beanRef("multiplier", "multiply");
-    }
+    int multiply(int originalNumber);
 
 }

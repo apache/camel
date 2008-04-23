@@ -14,40 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.example.server;
+package org.apache.camel.example.client;
 
+import org.apache.camel.CamelTemplate;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.component.jms.JmsExchange;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
+ * Requires that the JMS broker is running, as well as CamelServer
+ *
  * @author martin.gilday
  */
-public final class CamelServer {
-    private CamelServer() {
-        // the main class
+public final class CamelClient {
+
+    private CamelClient() {
+        // The main class
     }
 
-    /**
-     * @param args
-     */
     public static void main(final String[] args) {
-        JmsBroker broker = new JmsBroker();
 
-        try {
-            broker.start();
-            ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/spring/camel-server.xml");
-            Thread.sleep(5 * 60 * 1000);
-        } catch (Exception e) {
-            // get the exception
-            e.printStackTrace();
-        } finally {
-            try {
-                broker.stop();
-            } catch (Exception e) {
-                // do nothing here
-            }
-            System.exit(0);
-        }
+        ApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
+        CamelTemplate<JmsExchange> camelTemplate = (CamelTemplate)context.getBean("camelTemplate");
+
+        int response = (Integer)camelTemplate.sendBody("jms:queue:numbers", ExchangePattern.InOut, 22);
+        System.out.println("Invoking the multiply with 22, the result is " + response);
+        System.exit(0);
 
     }
 

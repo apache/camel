@@ -14,30 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.example.client;
+package org.apache.camel.example.server;
 
-import org.example.server.Multiplier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Requires that the JMS broker is running, as well as CamelServer
- *
  * @author martin.gilday
  */
-public final class CamelClientRemoting {
-
-    private CamelClientRemoting() {
+public final class CamelServer {
+    private CamelServer() {
         // the main class
     }
 
+    /**
+     * @param args
+     */
     public static void main(final String[] args) {
+        JmsBroker broker = new JmsBroker();
 
-        ApplicationContext context = new ClassPathXmlApplicationContext("camel-client-remoting.xml");
-        Multiplier multiplier = (Multiplier)context.getBean("multiplierProxy");
-        int response = multiplier.multiply(22);
-        System.out.println("Invoking the multiply with 22, the result is " + response);
-        System.exit(0);
+        try {
+            broker.start();
+            ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/spring/camel-server.xml");
+            Thread.sleep(5 * 60 * 1000);
+        } catch (Exception e) {
+            // get the exception
+            e.printStackTrace();
+        } finally {
+            try {
+                broker.stop();
+            } catch (Exception e) {
+                // do nothing here
+            }
+            System.exit(0);
+        }
 
     }
 
