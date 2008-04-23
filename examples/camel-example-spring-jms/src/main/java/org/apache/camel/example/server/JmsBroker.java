@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.example.server;
+package org.apache.camel.example.server;
 
 import java.io.File;
 

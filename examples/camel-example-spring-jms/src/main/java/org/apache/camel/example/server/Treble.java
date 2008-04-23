@@ -14,19 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.example.server;
+package org.apache.camel.example.server;
+
+import org.springframework.stereotype.Service;
 
 /**
  * @author martin.gilday
  */
-public interface Multiplier {
+@Service(value = "multiplier")
+public class Treble implements Multiplier {
 
-    /**
-     * Multiplies the given number by a pre-defined constant.
+    /*
+     * (non-Javadoc)
      *
-     * @param originalNumber The number to be multiplied
-     * @return The result of the multiplication
+     * @see org.example.server.Multiplier#multiply(int)
      */
-    int multiply(int originalNumber);
+    public int multiply(final int originalNumber) {
+        return originalNumber * 3;
+    }
 
 }

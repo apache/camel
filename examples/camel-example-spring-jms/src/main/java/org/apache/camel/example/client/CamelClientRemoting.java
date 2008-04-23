@@ -14,23 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.example.server;
+package org.apache.camel.example.client;
 
-import org.springframework.stereotype.Service;
+import org.apache.camel.example.server.Multiplier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
+ * Requires that the JMS broker is running, as well as CamelServer
+ *
  * @author martin.gilday
  */
-@Service(value = "multiplier")
-public class Treble implements Multiplier {
+public final class CamelClientRemoting {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.example.server.Multiplier#multiply(int)
-     */
-    public int multiply(final int originalNumber) {
-        return originalNumber * 3;
+    private CamelClientRemoting() {
+        // the main class
+    }
+
+    public static void main(final String[] args) {
+
+        ApplicationContext context = new ClassPathXmlApplicationContext("camel-client-remoting.xml");
+        Multiplier multiplier = (Multiplier)context.getBean("multiplierProxy");
+        int response = multiplier.multiply(22);
+        System.out.println("Invoking the multiply with 22, the result is " + response);
+        System.exit(0);
+
     }
 
 }
