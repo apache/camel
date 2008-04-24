@@ -74,7 +74,8 @@ public class MailComponentTest extends ContextTestSupport {
     }
 
     public void testManyConfigurations() throws Exception {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:30/subject?password=secret&from=me@camelriders.org&DeleteProcessedMessages=false&defaultEncoding=iso-8859-1&folderName=riders");
+        MailEndpoint endpoint = resolveMandatoryEndpoint(
+            "smtp://james@myhost:30/subject?password=secret&from=me@camelriders.org&DeleteProcessedMessages=false&defaultEncoding=iso-8859-1&folderName=riders");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("getProtocol()", "smtp", config.getProtocol());
         assertEquals("getHost()", "myhost", config.getHost());

@@ -16,13 +16,18 @@
  */
 package org.apache.camel;
 
+import java.net.URL;
+
+import javax.activation.DataHandler;
+import javax.activation.URLDataSource;
+
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import junit.framework.TestCase;
-
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
 
 /**
  * @version $Revision$
@@ -50,6 +55,11 @@ public class BodyAndHeaderConvertTest extends TestCase {
 
         // TODO better conversion example when the property editor support is added
     }
+    
+    public void testConversionOfMessageAttachments() throws Exception {
+        DataHandler handler = exchange.getIn().getAttachment("att");
+        assertNotNull("attachment got lost", handler);
+    }
 
     @Override
     protected void setUp() throws Exception {
@@ -59,5 +69,6 @@ public class BodyAndHeaderConvertTest extends TestCase {
         Message message = exchange.getIn();
         message.setBody("<hello>world!</hello>");
         message.setHeader("bar", 567);
+        message.addAttachment("att", new DataHandler(new URLDataSource(new URL("http://activemq.apache.org/camel/message.html"))));
     }
 }

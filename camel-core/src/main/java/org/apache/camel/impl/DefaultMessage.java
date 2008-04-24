@@ -18,6 +18,9 @@ package org.apache.camel.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import javax.activation.DataHandler;
 
 import org.apache.camel.Message;
 
@@ -28,6 +31,7 @@ import org.apache.camel.Message;
  */
 public class DefaultMessage extends MessageSupport {
     private Map<String, Object> headers;
+    private Map<String, DataHandler> attachments;
 
     @Override
     public String toString() {
@@ -94,5 +98,80 @@ public class DefaultMessage extends MessageSupport {
      * @param map is the empty header map to populate
      */
     protected void populateInitialHeaders(Map<String, Object> map) {
+    }
+
+    /**
+     * A factory method to lazily create the attachments to make it easy to
+     * create efficient Message implementations which only construct and
+     * populate the Map on demand
+     *
+     * @return return a newly constructed Map
+     */
+    protected Map<String, DataHandler> createAttachments() {
+        HashMap<String, DataHandler> map = new HashMap<String, DataHandler>();
+        populateInitialAttachments(map);
+        return map;
+    }
+
+    /**
+     * A strategy method populate the initial set of attachments on an inbound
+     * message from an underlying binding
+     *
+     * @param map is the empty attachment map to populate
+     */
+    protected void populateInitialAttachments(Map<String, DataHandler> map) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.camel.Message#addAttachment(java.lang.String, javax.activation.DataHandler)
+     */
+    public void addAttachment(String id, DataHandler content) {
+        if (attachments == null) {
+            attachments = createAttachments();
+        }
+        attachments.put(id, content);
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.camel.Message#getAttachment(java.lang.String)
+     */
+    public DataHandler getAttachment(String id) {
+        return getAttachments().get(id);
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.camel.Message#getAttachmentNames()
+     */
+    public Set<String> getAttachmentNames() {
+        if (attachments == null) {
+            attachments = createAttachments();
+        }
+        return attachments.keySet();
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.camel.Message#removeAttachment(java.lang.String)
+     */
+    public void removeAttachment(String id) {
+        if (attachments != null && attachments.containsKey(id)) {
+            attachments.remove(id);
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.camel.Message#getAttachments()
+     */
+    public Map<String, DataHandler> getAttachments() {
+        if (attachments == null) {
+            attachments = createAttachments();
+        }
+        return attachments;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.camel.Message#setAttachments(java.util.Map)
+     */
+    public void setAttachments(Map<String, DataHandler> attachments) {
+        this.attachments = attachments;
     }
 }

@@ -25,10 +25,10 @@ import org.apache.camel.util.UuidGenerator;
  * A base class for implementation inheritence providing the core
  * {@link Message} body handling features but letting the derived class deal
  * with headers.
- * 
+ *
  * Unless a specific provider wishes to do something particularly clever with
  * headers you probably want to just derive from {@link DefaultMessage}
- * 
+ *
  * @version $Revision$
  */
 public abstract class MessageSupport implements Message {
@@ -87,6 +87,7 @@ public abstract class MessageSupport implements Message {
         setMessageId(that.getMessageId());
         setBody(that.getBody());
         getHeaders().putAll(that.getHeaders());
+        getAttachments().putAll(that.getAttachments());
     }
 
     public Exchange getExchange() {
@@ -105,7 +106,7 @@ public abstract class MessageSupport implements Message {
     /**
      * A factory method to allow a provider to lazily create the message body
      * for inbound messages from other sources
-     * 
+     *
      * @return the value of the message body or null if there is no value
      *         available
      */
