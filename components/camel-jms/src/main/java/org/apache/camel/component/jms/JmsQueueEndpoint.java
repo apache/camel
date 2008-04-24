@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.BrowsableEndpoint;
@@ -77,8 +77,8 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint<J
         try {
             answer = JmsComponent.tryCreateDefaultQueueBrowseStrategy();
         } catch (Throwable e) {
-            LOG.debug("Caught exception trying to create default QueueBrowseStrategy. " +
-                    "This could be due to spring 2.0.x on classpath? Cause: " + e, e);
+            LOG.debug("Caught exception trying to create default QueueBrowseStrategy. "
+                      + "This could be due to spring 2.0.x on classpath? Cause: " + e, e);
         }
         if (answer == null) {
             LOG.warn("Cannot browse queues as no QueueBrowseStrategy specified. Are you using Spring 2.0.x by any chance? If you upgrade to 2.5.x or later then queue browsing is supported");

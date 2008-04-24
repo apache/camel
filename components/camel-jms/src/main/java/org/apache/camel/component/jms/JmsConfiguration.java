@@ -808,8 +808,7 @@ public class JmsConfiguration implements Cloneable {
         container.setConnectionFactory(getListenerConnectionFactory());
         if (endpoint instanceof DestinationEndpoint) {
             container.setDestinationResolver(createDestinationResolver((DestinationEndpoint) endpoint));
-        }
-        else if (destinationResolver != null) {
+        } else if (destinationResolver != null) {
             container.setDestinationResolver(destinationResolver);
         }
         if (autoStartup) {
