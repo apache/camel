@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,12 +17,12 @@
 package org.apache.camel.component.jms;
 
 import javax.jms.Destination;
-import javax.jms.Session;
 import javax.jms.JMSException;
+import javax.jms.Session;
 
 /**
- * An optional interface that a {@link JmsEndpoint} may implement to return the underlying
- * {@link Destination} object
+ * An optional interface that a {@link JmsEndpoint} may implement to return the
+ * underlying {@link Destination} object
  *
  * @version $Revision: 1.1 $
  */
