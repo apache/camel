@@ -17,6 +17,9 @@
 package org.apache.camel;
 
 import java.util.Map;
+import java.util.Set;
+
+import javax.activation.DataHandler;
 
 /**
  * Implements the <a
@@ -132,4 +135,47 @@ public interface Message {
      * Copies the contents of the other message into this message
      */
     void copyFrom(Message message);
+    /**
+     * returns the attachment specified by the id
+     *
+     * @param id        the id under which the attachment is stored
+     * @return          the data handler for this attachment or null
+     */
+    DataHandler getAttachment(String id);
+
+    /**
+     * returns a set of attachment names of the message
+     *
+     * @return  a set of attachment names
+     */
+    Set<String> getAttachmentNames();
+
+    /**
+     * removes the attachment specified by the id
+     *
+     * @param id        the id of the attachment to remove
+     */
+    void removeAttachment(String id);
+
+    /**
+     * adds an attachment to the message using the id
+     *
+     * @param id        the id to store the attachment under
+     * @param content   the data handler for the attachment
+     */
+    void addAttachment(String id, DataHandler content);
+
+    /**
+     * returns all attachments of the message
+     *
+     * @return  the attachments in a map or null
+     */
+    Map<String, DataHandler> getAttachments();
+
+    /**
+     * Set all the attachments associated with this message
+     *
+     * @param attachments
+     */
+    void setAttachments(Map<String, DataHandler> attachments);
 }
