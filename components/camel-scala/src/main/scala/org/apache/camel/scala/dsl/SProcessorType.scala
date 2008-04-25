@@ -14,25 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala
+package org.apache.camel.scala.dsl;
 
-import org.apache.camel.Exchange
+import org.apache.camel.model.ProcessorType
+import org.apache.camel.scala.builder.RouteBuilder
 
-/**
- * Rich wrapper for Camel's Exchange implementations
- */
-class RichExchange(val exchange : Exchange) {
-
-  def in : Any = exchange.getIn().getBody()
-
-  def in(header:String) : Any = exchange.getIn().getHeader(header)
-
-  def in[T](target:Class[T]) : T = exchange.getIn().getBody(target)
-
-  def out : Any = exchange.getOut().getBody()
-
-  def out(header:String) : Any = exchange.getOut().getHeader(header)
-
-  def out_=(message:Any) = exchange.getOut().setBody(message)
+class SProcessorType(val target: ProcessorType[P] forSome {type P})(implicit val builder: RouteBuilder) extends ScalaDsl with Wrapper[ProcessorType[P] forSome {type P}] {
+  
+  val unwrap = target
 
 }

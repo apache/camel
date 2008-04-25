@@ -17,6 +17,7 @@
 package org.apache.camel.scala.dsl;
 
 import org.apache.camel.scala.ScalaTestSupport
+import scala.builder.RouteBuilder
 
 class BasicRouteBuilderTest extends ScalaTestSupport {
 

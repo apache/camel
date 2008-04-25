@@ -14,25 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala
+package org.apache.camel.scala.dsl;
 
-import org.apache.camel.Exchange
+import org.apache.camel.model.ChoiceType
+import org.apache.camel.scala.builder.RouteBuilder
 
-/**
- * Rich wrapper for Camel's Exchange implementations
- */
-class RichExchange(val exchange : Exchange) {
-
-  def in : Any = exchange.getIn().getBody()
-
-  def in(header:String) : Any = exchange.getIn().getHeader(header)
-
-  def in[T](target:Class[T]) : T = exchange.getIn().getBody(target)
-
-  def out : Any = exchange.getOut().getBody()
-
-  def out(header:String) : Any = exchange.getOut().getHeader(header)
-
-  def out_=(message:Any) = exchange.getOut().setBody(message)
+class SChoiceType(val target: ChoiceType)(implicit val builder: RouteBuilder) extends ScalaDsl with Wrapper[ChoiceType] {
+  
+  val unwrap = target
+  
+  override def otherwise = {
+    target.otherwise
+    this
+  }
+  
+  override def when(filter: Exchange => Boolean) = {
+    target.when(new WhenPredicate(filter))
+    this
+  }
 
 }

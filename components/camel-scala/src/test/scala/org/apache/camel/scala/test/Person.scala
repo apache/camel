@@ -14,25 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala
-
-import org.apache.camel.Exchange
+package org.apache.camel.scala.test;
 
 /**
- * Rich wrapper for Camel's Exchange implementations
+ * Just a simple Person test class
  */
-class RichExchange(val exchange : Exchange) {
-
-  def in : Any = exchange.getIn().getBody()
-
-  def in(header:String) : Any = exchange.getIn().getHeader(header)
-
-  def in[T](target:Class[T]) : T = exchange.getIn().getBody(target)
-
-  def out : Any = exchange.getOut().getBody()
-
-  def out(header:String) : Any = exchange.getOut().getHeader(header)
-
-  def out_=(message:Any) = exchange.getOut().setBody(message)
-
+abstract class Person {
+  def canVote : Boolean
+}
+case class Adult(name: String) extends Person {
+  def canVote = true
+}
+case class Toddler(name: String) extends Person {
+  def canVote = false
 }

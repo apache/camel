@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.scala.dsl;
+ 
+import scala.builder.RouteBuilder
 
 class ContentBasedRouterTest extends ScalaTestSupport {
 

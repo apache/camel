@@ -14,25 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala
+package org.apache.camel.scala.dsl.languages;
 
-import org.apache.camel.Exchange
+import org.apache.camel.builder.xml.XPathBuilder
 
 /**
- * Rich wrapper for Camel's Exchange implementations
+ * Trait to improve JXPath support for Scala DSL
  */
-class RichExchange(val exchange : Exchange) {
-
-  def in : Any = exchange.getIn().getBody()
-
-  def in(header:String) : Any = exchange.getIn().getHeader(header)
-
-  def in[T](target:Class[T]) : T = exchange.getIn().getBody(target)
-
-  def out : Any = exchange.getOut().getBody()
-
-  def out(header:String) : Any = exchange.getOut().getHeader(header)
-
-  def out_=(message:Any) = exchange.getOut().setBody(message)
-
+trait JXPath {
+  
+  implicit def exchangeToJXpath(exchange: Exchange) = new RichJXPathExchange(exchange)
+  
+  class RichJXPathExchange(val exchange: Exchange) {
+    
+    val language = exchange.getContext().resolveLanguage("jxpath")
+    
+    def jxpath(jxpath: String) : Any = 
+      language.createExpression(jxpath).evaluate(exchange)
+    
+  }
+  
 }
