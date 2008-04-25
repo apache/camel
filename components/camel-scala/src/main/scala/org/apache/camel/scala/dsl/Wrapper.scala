@@ -14,25 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala
-
-import org.apache.camel.Exchange
+package org.apache.camel.scala.dsl;
 
 /**
- * Rich wrapper for Camel's Exchange implementations
+ * Wraps a given type T and supports unwrapping it on demand
  */
-class RichExchange(val exchange : Exchange) {
+trait Wrapper[T] {
 
-  def in : Any = exchange.getIn().getBody()
-
-  def in(header:String) : Any = exchange.getIn().getHeader(header)
-
-  def in[T](target:Class[T]) : T = exchange.getIn().getBody(target)
-
-  def out : Any = exchange.getOut().getBody()
-
-  def out(header:String) : Any = exchange.getOut().getHeader(header)
-
-  def out_=(message:Any) = exchange.getOut().setBody(message)
-
+  val unwrap : T
+  
 }

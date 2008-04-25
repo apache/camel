@@ -16,8 +16,11 @@
  */
 package org.apache.camel.scala.dsl;
 
-trait RouteBuilderSupport {
+import org.apache.camel.model.SplitterType
+import org.apache.camel.scala.builder.RouteBuilder
 
-  implicit def scalaToJavaBuilder(scalaBuilder: org.apache.camel.scala.dsl.RouteBuilder) = scalaBuilder.builder
+class SSplitterType(val target: SplitterType)(implicit val builder: RouteBuilder) extends ScalaDsl with Wrapper[SplitterType] {
+  
+  val unwrap = target
 
 }

@@ -23,11 +23,9 @@ import org.apache.camel.builder.xml.XPathBuilder
  */
 trait XPath {
   
-  def xpath(path: String) = XPathBuilder.xpath(path)
-
   implicit def exchangeToXpath(exchange: Exchange) = new RichXPathExchange(exchange)
   
-  class RichXPathExchange(exchange: Exchange) {
+  class RichXPathExchange(val exchange: Exchange) {
     
     def xpath(xpath: String) : Any = {
       val builder = new XPathBuilder[Exchange](xpath)

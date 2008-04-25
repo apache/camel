@@ -16,6 +16,8 @@
  */
 package org.apache.camel.scala.dsl;
 
+import scala.builder.RouteBuilder
+ 
 class PipelineRouteBuilderTest extends ScalaTestSupport {
 
   def testPipelineWithArrows() = testPipeline("direct:a", "mock:a", "mock:b")

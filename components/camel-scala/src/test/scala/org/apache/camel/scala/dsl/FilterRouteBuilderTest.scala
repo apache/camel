@@ -16,7 +16,7 @@
  */
 package org.apache.camel.scala.dsl;
  
-import org.apache.camel.scala.dsl.RouteBuilder.routes;
+import scala.builder.RouteBuilder
 
 class FilterRouteBuilderTest extends ScalaTestSupport {
 
@@ -41,7 +41,7 @@ class FilterRouteBuilderTest extends ScalaTestSupport {
   override protected def createRouteBuilder() =
     new RouteBuilder {
        //START SNIPPET: simple
-       "direct:a" when(_.in == "<hello/>") to "mock:a"
+       "direct:a" when(_.in == "<hello/>") to("mock:a")
        //END SNIPPET: simple
 
        //START SNIPPET: alternatives
