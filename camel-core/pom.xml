@@ -114,6 +114,7 @@
           <excludes>
             <!-- TODO FIXME ASAP -->
             <exclude>**/MultiCastAggregatorTest.*</exclude>
+            <exclude>**/InterceptorLogTest.*</exclude>
           </excludes>
         </configuration>
       </plugin>

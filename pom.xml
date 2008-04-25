@@ -952,9 +952,6 @@
           <!--forkMode>pertest</forkMode-->
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
-          <includes>
-            <include>**/*Test.java</include>
-          </includes>
         </configuration>
       </plugin>
     </plugins>
