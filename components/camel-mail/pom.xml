@@ -67,7 +67,6 @@
             <artifactId>mail</artifactId>
         </dependency>
 
-
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -92,6 +91,12 @@
             <artifactId>log4j</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
     </dependencies>
 
 </project>
