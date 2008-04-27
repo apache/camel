@@ -51,10 +51,10 @@ public class MailSubjectTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:a").setHeader("subject", subject).to("smtp:localhost?username=james");
+                from("direct:a").setHeader("subject", subject).to("smtp://james@localhost");
                 // END SNIPPET: e1
 
-                from("pop3:localhost?username=james").to("mock:result");
+                from("pop3://localhost?username=james&password=secret").to("mock:result");
             }
         };
     }
