@@ -52,8 +52,10 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
 
     public Consumer<MailExchange> createConsumer(Processor processor) throws Exception {
         JavaMailConnection connection = configuration.createJavaMailConnection(this);
+
         String protocol = getConfiguration().getProtocol();
-        // TODO: Why do we change protocol from smtp to pop3?
+        // replace smtp with pop3 since we are creating a consumer and thus we need to use pop3 as protocol
+        // as stmp is only for sending
         if (protocol.equals("smtp")) {
             protocol = "pop3";
         }
@@ -62,6 +64,7 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
         if (folder == null) {
             throw new IllegalArgumentException("No folder for protocol: " + protocol + " and name: " + folderName);
         }
+
         return createConsumer(processor, folder);
     }
 
