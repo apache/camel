@@ -7,7 +7,8 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-spring-integration</artifactId>
-  <name>The Camel Spring integration component</name>
+  <name>Camel :: Spring Integration</name>
+  <description>Camel Spring Integration support</description>
   <packaging>bundle</packaging>
 
   <properties>
