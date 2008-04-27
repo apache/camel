@@ -46,6 +46,7 @@ public class MailConfiguration implements Cloneable {
     private String folderName = DEFAULT_FOLDER_NAME;
     private boolean deleteProcessedMessages = true;
     private boolean ignoreUriScheme = false;
+    private boolean processOnlyUnseenMessages = false;
 
     public MailConfiguration() {
     }
@@ -231,5 +232,13 @@ public class MailConfiguration implements Cloneable {
 
     public void setIgnoreUriScheme(boolean ignoreUriScheme) {
         this.ignoreUriScheme = ignoreUriScheme;
+    }
+
+    public boolean isProcessOnlyUnseenMessages() {
+        return processOnlyUnseenMessages;
+    }
+
+    public void setProcessOnlyUnseenMessages(boolean processOnlyUnseenMessages) {
+        this.processOnlyUnseenMessages = processOnlyUnseenMessages;
     }
 }

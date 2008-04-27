@@ -22,6 +22,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.event.MessageCountEvent;
 import javax.mail.event.MessageCountListener;
+import javax.mail.search.FlagTerm;
 
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
@@ -31,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A {@link org.apache.camel.Consumer Consumer} which consumes messages from JavaMail using a
  * {@link javax.mail.Transport Transport} and dispatches them to the {@link Processor}
- * 
+ *
  * @version $Revision$
  */
 public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements MessageCountListener {
@@ -48,14 +49,15 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        ensureFolderIsOpen();
         folder.addMessageCountListener(this);
     }
 
     @Override
     protected void doStop() throws Exception {
         folder.removeMessageCountListener(this);
-        folder.close(true);
+        if (folder.isOpen()) {
+            folder.close(true);
+        }
         super.doStop();
     }
 
@@ -65,8 +67,11 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements
             try {
                 if (!message.getFlags().contains(Flags.Flag.DELETED)) {
                     processMessage(message);
-
-                    flagMessageDeleted(message);
+                    flagMessageProcessed(message);
+                } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Skipping message as it was flagged as DELETED: " + message);
+                    }
                 }
             } catch (MessagingException e) {
                 handleException(e);
@@ -78,11 +83,7 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements
         Message[] messages = event.getMessages();
         for (Message message : messages) {
             if (LOG.isDebugEnabled()) {
-                try {
-                    LOG.debug("Removing message: " + message.getSubject());
-                } catch (MessagingException e) {
-                    LOG.debug("Ignored: " + e);
-                }
+                LOG.debug("Removed message number " + message.getMessageNumber());
             }
         }
     }
@@ -90,21 +91,38 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements
     protected void poll() throws Exception {
         ensureFolderIsOpen();
 
-        int count = folder.getMessageCount();
-        if (count > 0) {
-            Message[] messages = folder.getMessages();
-            MessageCountEvent event = new MessageCountEvent(folder, MessageCountEvent.ADDED, true, messages);
-            messagesAdded(event);
-        } else if (count == -1) {
-            throw new MessagingException("Folder: " + folder.getFullName() + " is closed");
-        }
+        try {
+            int count = folder.getMessageCount();
+            if (count > 0) {
+                Message[] messages;
 
-        folder.close(true);
+                // TODO: add unit test for this new property and add it to wiki documentation
+                // should we process all messages or only unseen messages
+                if (endpoint.getConfiguration().isProcessOnlyUnseenMessages()) {
+                    messages = folder.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
+                } else {
+                    messages = folder.getMessages();
+                }
+
+                MessageCountEvent event = new MessageCountEvent(folder, MessageCountEvent.ADDED, true, messages);
+                messagesAdded(event);
+            } else if (count == -1) {
+                throw new MessagingException("Folder: " + folder.getFullName() + " is closed");
+            }
+        } finally {
+            // need to ensure we release resources
+            if (folder.isOpen()) {
+                folder.close(true);
+            }
+        }
     }
 
     protected void processMessage(Message message) {
         try {
             MailExchange exchange = endpoint.createExchange(message);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Processing message " + message);
+            }
             getProcessor().process(exchange);
         } catch (Throwable e) {
             handleException(e);
@@ -117,7 +135,7 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements
         }
     }
 
-    protected void flagMessageDeleted(Message message) throws MessagingException {
+    protected void flagMessageProcessed(Message message) throws MessagingException {
         if (endpoint.getConfiguration().isDeleteProcessedMessages()) {
             message.setFlag(Flags.Flag.DELETED, true);
         } else {
