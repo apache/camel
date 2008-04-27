@@ -41,6 +41,7 @@ import org.apache.camel.converter.ObjectConverter;
  * @version $Revision$
  */
 public class MailBinding {
+    
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange) {
         try {
             appendHeadersFromCamel(mimeMessage, exchange, exchange.getIn());
@@ -62,9 +63,8 @@ public class MailBinding {
                 mimeMessage.setText(exchange.getIn().getBody(String.class));
             }
         } catch (Exception e) {
-            throw new RuntimeMailException(
-                                           "Failed to populate body due to: " + e + ". Exchange: " + exchange,
-                                           e);
+            throw new RuntimeMailException("Failed to populate body due to: " + e.getMessage() +
+                ". Exchange: " + exchange, e);
         }
     }
 
@@ -74,15 +74,13 @@ public class MailBinding {
 
     /**
      * Extracts the body from the Mail message
-     * 
-     * @param exchange
-     * @param message
      */
     public Object extractBodyFromMail(MailExchange exchange, Message message) {
         try {
             return message.getContent();
         } catch (Exception e) {
-            throw new RuntimeMailException("Failed to extract body due to: " + e + ". Message: " + message, e);
+            throw new RuntimeMailException("Failed to extract body due to: " + e.getMessage() +
+                ". Exchange: " + exchange + ". Message: " + message, e);
         }
     }
 
@@ -129,7 +127,7 @@ public class MailBinding {
         textBodyPart.setContent(exchange.getIn().getBody(String.class), "text/plain");
         multipart.addBodyPart(textBodyPart);
 
-        BodyPart messageBodyPart = null;
+        BodyPart messageBodyPart;
 
         Set<Map.Entry<String, DataHandler>> entries = camelMessage.getAttachments().entrySet();
         for (Map.Entry<String, DataHandler> entry : entries) {
@@ -170,8 +168,7 @@ public class MailBinding {
     }
 
     /**
-     * Strategy to allow filtering of attachments which are put on the Mail
-     * message
+     * Strategy to allow filtering of attachments which are put on the Mail message
      */
     protected boolean shouldOutputAttachment(org.apache.camel.Message camelMessage, String headerName,
                                              DataHandler headerValue) {

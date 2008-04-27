@@ -25,44 +25,76 @@ import org.apache.camel.Endpoint;
 public class MailComponentTest extends ContextTestSupport {
 
     public void testMailEndpointsAreConfiguredProperlyWhenUsingSmtp() throws Exception {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:30/subject");
+        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:25/subject");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("getProtocol()", "smtp", config.getProtocol());
         assertEquals("getHost()", "myhost", config.getHost());
-        assertEquals("getPort()", 30, config.getPort());
+        assertEquals("getPort()", 25, config.getPort());
         assertEquals("getUsername()", "james", config.getUsername());
         assertEquals("getDestination()", "james@myhost", config.getDestination());
         assertEquals("folder", "INBOX", config.getFolderName());
     }
 
     public void testMailEndpointsAreConfiguredProperlyWhenUsingImap() throws Exception {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("imap://james@myhost:30/subject");
+        MailEndpoint endpoint = resolveMandatoryEndpoint("imap://james@myhost:143/subject");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("getProtocol()", "imap", config.getProtocol());
         assertEquals("getHost()", "myhost", config.getHost());
-        assertEquals("getPort()", 30, config.getPort());
+        assertEquals("getPort()", 143, config.getPort());
         assertEquals("getUsername()", "james", config.getUsername());
         assertEquals("getDestination()", "james@myhost", config.getDestination());
         assertEquals("folder", "INBOX", config.getFolderName());
     }
 
     public void testMailEndpointsAreConfiguredProperlyWhenUsingPop() throws Exception {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("pop3://james@myhost:30/subject");
+        MailEndpoint endpoint = resolveMandatoryEndpoint("pop3://james@myhost:110/subject");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("getProtocol()", "pop3", config.getProtocol());
         assertEquals("getHost()", "myhost", config.getHost());
-        assertEquals("getPort()", 30, config.getPort());
+        assertEquals("getPort()", 110, config.getPort());
         assertEquals("getUsername()", "james", config.getUsername());
         assertEquals("getDestination()", "james@myhost", config.getDestination());
         assertEquals("folder", "INBOX", config.getFolderName());
     }
 
-    public void testDefaultConfiguration() throws Exception {
+    public void testDefaultSMTPConfiguration() throws Exception {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost?password=secret");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("getProtocol()", "smtp", config.getProtocol());
         assertEquals("getHost()", "myhost", config.getHost());
-        assertEquals("getPort()", -1, config.getPort());
+        assertEquals("getPort()", MailUtils.DEFAULT_PORT_SMTP, config.getPort());
+        assertEquals("getUsername()", "james", config.getUsername());
+        assertEquals("getDestination()", "james@myhost", config.getDestination());
+        assertEquals("folder", "INBOX", config.getFolderName());
+        assertEquals("encoding", null, config.getDefaultEncoding());
+        assertEquals("from", "camel@localhost", config.getFrom());
+        assertEquals("password", "secret", config.getPassword());
+        assertEquals(true, config.isDeleteProcessedMessages());
+        assertEquals(false, config.isIgnoreUriScheme());
+    }
+
+    public void testDefaultPOP3Configuration() throws Exception {
+        MailEndpoint endpoint = resolveMandatoryEndpoint("pop3://james@myhost?password=secret");
+        MailConfiguration config = endpoint.getConfiguration();
+        assertEquals("getProtocol()", "pop3", config.getProtocol());
+        assertEquals("getHost()", "myhost", config.getHost());
+        assertEquals("getPort()", MailUtils.DEFAULT_PORT_POP3, config.getPort());
+        assertEquals("getUsername()", "james", config.getUsername());
+        assertEquals("getDestination()", "james@myhost", config.getDestination());
+        assertEquals("folder", "INBOX", config.getFolderName());
+        assertEquals("encoding", null, config.getDefaultEncoding());
+        assertEquals("from", "camel@localhost", config.getFrom());
+        assertEquals("password", "secret", config.getPassword());
+        assertEquals(true, config.isDeleteProcessedMessages());
+        assertEquals(false, config.isIgnoreUriScheme());
+    }
+
+    public void testDefaultIMAPConfiguration() throws Exception {
+        MailEndpoint endpoint = resolveMandatoryEndpoint("imap://james@myhost?password=secret");
+        MailConfiguration config = endpoint.getConfiguration();
+        assertEquals("getProtocol()", "imap", config.getProtocol());
+        assertEquals("getHost()", "myhost", config.getHost());
+        assertEquals("getPort()", MailUtils.DEFAULT_PORT_IMAP, config.getPort());
         assertEquals("getUsername()", "james", config.getUsername());
         assertEquals("getDestination()", "james@myhost", config.getDestination());
         assertEquals("folder", "INBOX", config.getFolderName());
@@ -74,8 +106,8 @@ public class MailComponentTest extends ContextTestSupport {
     }
 
     public void testManyConfigurations() throws Exception {
-        MailEndpoint endpoint = resolveMandatoryEndpoint(
-            "smtp://james@myhost:30/subject?password=secret&from=me@camelriders.org&DeleteProcessedMessages=false&defaultEncoding=iso-8859-1&folderName=riders");
+        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:30/subject?password=secret"
+            + "&from=me@camelriders.org&DeleteProcessedMessages=false&defaultEncoding=iso-8859-1&folderName=riders");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("getProtocol()", "smtp", config.getProtocol());
         assertEquals("getHost()", "myhost", config.getHost());
@@ -87,6 +119,38 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("from", "me@camelriders.org", config.getFrom());
         assertEquals("password", "secret", config.getPassword());
         assertEquals(false, config.isDeleteProcessedMessages());
+        assertEquals(false, config.isIgnoreUriScheme());
+    }
+
+    public void testDestination() {
+        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:25/?password=secret&destination=someone@outthere.com&folderName=XXX");
+        MailConfiguration config = endpoint.getConfiguration();
+        assertEquals("getProtocol()", "smtp", config.getProtocol());
+        assertEquals("getHost()", "myhost", config.getHost());
+        assertEquals("getPort()", 25, config.getPort());
+        assertEquals("getUsername()", "james", config.getUsername());
+        assertEquals("getDestination()", "someone@outthere.com", config.getDestination());
+        assertEquals("folder", "XXX", config.getFolderName());
+        assertEquals("encoding", null, config.getDefaultEncoding());
+        assertEquals("from", "camel@localhost", config.getFrom());
+        assertEquals("password", "secret", config.getPassword());
+        assertEquals(true, config.isDeleteProcessedMessages());
+        assertEquals(false, config.isIgnoreUriScheme());
+    }
+
+    public void testNoUserInfoButUsername() {
+        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://myhost:25/?password=secret&username=james");
+        MailConfiguration config = endpoint.getConfiguration();
+        assertEquals("getProtocol()", "smtp", config.getProtocol());
+        assertEquals("getHost()", "myhost", config.getHost());
+        assertEquals("getPort()", 25, config.getPort());
+        assertEquals("getUsername()", "james", config.getUsername());
+        assertEquals("getDestination()", null, config.getDestination());
+        assertEquals("folder", "INBOX", config.getFolderName());
+        assertEquals("encoding", null, config.getDefaultEncoding());
+        assertEquals("from", "camel@localhost", config.getFrom());
+        assertEquals("password", "secret", config.getPassword());
+        assertEquals(true, config.isDeleteProcessedMessages());
         assertEquals(false, config.isIgnoreUriScheme());
     }
 
