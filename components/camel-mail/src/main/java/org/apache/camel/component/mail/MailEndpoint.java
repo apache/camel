@@ -53,6 +53,7 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
     public Consumer<MailExchange> createConsumer(Processor processor) throws Exception {
         JavaMailConnection connection = configuration.createJavaMailConnection(this);
         String protocol = getConfiguration().getProtocol();
+        // TODO: Why do we change protocol from smtp to pop3?
         if (protocol.equals("smtp")) {
             protocol = "pop3";
         }

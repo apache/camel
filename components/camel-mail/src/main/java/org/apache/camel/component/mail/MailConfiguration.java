@@ -29,19 +29,23 @@ import org.apache.camel.RuntimeCamelException;
  * @version $Revision$
  */
 public class MailConfiguration implements Cloneable {
-    private String defaultEncoding;
-    private String host;
+
+    public static final String DEFAULT_FOLDER_NAME = "INBOX";
+    public static final String DEFAULT_FROM = "camel@localhost";
+
     private Properties javaMailProperties;
-    private String password;
     private String protocol;
-    private Session session;
-    private String username;
+    private String host;
     private int port = -1;
+    private String username;
+    private String password;
+    private Session session;
+    private String defaultEncoding;
+    private String from = DEFAULT_FROM;
     private String destination;
-    private String from = "camel@localhost";
+    private String folderName = DEFAULT_FOLDER_NAME;
     private boolean deleteProcessedMessages = true;
-    private String folderName = "INBOX";
-    private boolean ignoreUriScheme;
+    private boolean ignoreUriScheme = false;
 
     public MailConfiguration() {
     }
@@ -69,27 +73,23 @@ public class MailConfiguration implements Cloneable {
                 setProtocol(scheme);
             }
         }
+
         String userInfo = uri.getUserInfo();
         if (userInfo != null) {
             setUsername(userInfo);
+
+            // set default destination to userInfo@host for backwards compatibility
+            // can be overridden by URI parameters
+            setDestination(userInfo + "@" + host);
         }
+
         int port = uri.getPort();
         if (port >= 0) {
             setPort(port);
-        }
-
-        // we can either be invoked with
-        // mailto:address
-        // or
-        // smtp:user@host:port/name@address
-
-        String fragment = uri.getFragment();
-        if (fragment == null || fragment.length() == 0) {
-            fragment = userInfo + "@" + host;
         } else {
-            setFolderName(fragment);
+            // resolve default port if no port number was provided
+            setPort(MailUtils.getDefaultPortForProtocol(uri.getScheme()));
         }
-        setDestination(fragment);
     }
 
     public JavaMailConnection createJavaMailConnection(MailEndpoint mailEndpoint) {
@@ -97,7 +97,6 @@ public class MailConfiguration implements Cloneable {
         if (defaultEncoding != null) {
             answer.setDefaultEncoding(defaultEncoding);
         }
-        // answer.setDefaultFileTypeMap(fileTypeMap);
         if (host != null) {
             answer.setHost(host);
         }
