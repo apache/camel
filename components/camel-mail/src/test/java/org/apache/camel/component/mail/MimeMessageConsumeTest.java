@@ -18,7 +18,6 @@ package org.apache.camel.component.mail;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.Iterator;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -70,10 +69,11 @@ public class MimeMessageConsumeTest extends ContextTestSupport {
         assertEquals("mail body", body, text);
 
         assertNotNull("attachments got lost", exchange.getIn().getAttachments());
-        Iterator<String> keyIt = exchange.getIn().getAttachmentNames().iterator();
-        while (keyIt.hasNext()) {
-            DataHandler dh = exchange.getIn().getAttachment(keyIt.next());
-            log.info("Found attachment: " + dh.getName());
+        for (String s : exchange.getIn().getAttachmentNames()) {
+            DataHandler dh = exchange.getIn().getAttachment(s);
+            assertEquals("log4j.properties", dh.getName());
+            Object content = dh.getContent();
+            assertNotNull("Content should not be empty", content);
         }
     }
 
@@ -99,7 +99,7 @@ public class MimeMessageConsumeTest extends ContextTestSupport {
         mixed.addBodyPart(plainPart);
         mixed.addBodyPart(htmlPart);
 
-        DataSource ds = null;
+        DataSource ds;
         try {
             File f = new File(getClass().getResource("/log4j.properties").toURI());
             ds = new FileDataSource(f);
@@ -108,7 +108,7 @@ public class MimeMessageConsumeTest extends ContextTestSupport {
         }
         DataHandler dh = new DataHandler(ds);
 
-        BodyPart attachmentBodyPart = null;
+        BodyPart attachmentBodyPart;
         // Create another body part
         attachmentBodyPart = new MimeBodyPart();
         // Set the data handler to the attachment
