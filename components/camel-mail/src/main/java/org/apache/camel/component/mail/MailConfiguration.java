@@ -186,6 +186,11 @@ public class MailConfiguration implements Cloneable {
 
     public void setUsername(String username) {
         this.username = username;
+        if (destination == null) {
+            // set default destination to username@host for backwards compatibility
+            // can be overridden by URI parameters
+            setDestination(username + "@" + host);
+        }
     }
 
     public String getDestination() {

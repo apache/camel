@@ -50,6 +50,11 @@ public class MailBinding {
             if (destination != null) {
                 mimeMessage.setRecipients(Message.RecipientType.TO, destination);
             }
+            // must have a destination otherwise we do not know where to send the mail
+            if (mimeMessage.getAllRecipients() == null) {
+                throw new IllegalArgumentException("The MineMessage does not have any recipients set. "
+                    + "Add a destination (Recipient.TO) to the MailConfiguration.");
+            }
 
             if (empty(mimeMessage.getFrom())) {
                 // lets default the address to the endpoint destination

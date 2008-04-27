@@ -145,7 +145,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("getHost()", "myhost", config.getHost());
         assertEquals("getPort()", 25, config.getPort());
         assertEquals("getUsername()", "james", config.getUsername());
-        assertEquals("getDestination()", null, config.getDestination());
+        assertEquals("getDestination()", "james@myhost", config.getDestination());
         assertEquals("folder", "INBOX", config.getFolderName());
         assertEquals("encoding", null, config.getDefaultEncoding());
         assertEquals("from", "camel@localhost", config.getFrom());

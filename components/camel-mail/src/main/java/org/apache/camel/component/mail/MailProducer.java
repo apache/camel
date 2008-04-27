@@ -44,6 +44,9 @@ public class MailProducer extends DefaultProducer<MailExchange> {
         sender.send(new MimeMessagePreparator() {
             public void prepare(MimeMessage mimeMessage) throws Exception {
                 endpoint.getBinding().populateMailMessage(endpoint, mimeMessage, exchange);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Sending MineMessage: MessageID=" + mimeMessage.getMessageID());
+                }
             }
         });
     }
