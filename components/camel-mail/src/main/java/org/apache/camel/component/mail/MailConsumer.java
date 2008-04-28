@@ -96,7 +96,6 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements
             if (count > 0) {
                 Message[] messages;
 
-                // TODO: add unit test for this new property and add it to wiki documentation
                 // should we process all messages or only unseen messages
                 if (endpoint.getConfiguration().isProcessOnlyUnseenMessages()) {
                     messages = folder.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
