@@ -91,15 +91,6 @@
       <artifactId>activemq-core</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- Since activemq 5.0.0 still use the activeio-core 3.1-SNAPSHOT,
-         Now we use 3.0.0-incubator version to avoid the building failure
-     -->
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activeio-core</artifactId>
-      <version>3.0.0-incubator</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-spring</artifactId>
