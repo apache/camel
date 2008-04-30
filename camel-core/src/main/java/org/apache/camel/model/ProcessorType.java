@@ -1084,26 +1084,48 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     public Type setBody(Expression expression) {
         return process(ProcessorBuilder.setBody(expression));
     }
-
+   
     /**
      * Adds a processor which sets the body on the OUT message
+     * 
+     * @deprecated Please use {@link #transform(Expression)} instead
      */
     public Type setOutBody(Expression expression) {
-        return process(ProcessorBuilder.setOutBody(expression));
+        return transform(expression);
+    }
+
+    /**
+     * Adds a processor which sets the body on the OUT message
+     *
+     * @deprecated Please use {@link #transform()} instead
+     */
+    public ExpressionClause<ProcessorType<Type>> setOutBody() {
+        return transform();
+    }
+    
+    /**
+     * Adds a processor which sets the body on the OUT message
+     */
+    public Type transform(Expression expression) {
+        TransformType answer = new TransformType(expression);
+        addOutput(answer);
+        return (Type) this;
     }
 
     /**
      * Adds a processor which sets the body on the OUT message
      */
-    public ExpressionClause<ProcessorType<Type>> setOutBody() {
-        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
-        process(ProcessorBuilder.setOutBody(clause));
+    public ExpressionClause<ProcessorType<Type>> transform() {
+        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>(
+                (Type) this);
+        TransformType answer = new TransformType(clause);
+        addOutput(answer);
         return clause;
-    }
-
+    }             
+    
     /**
-     * Adds a processor which sets the body on the FAULT message
-     */
+	 * Adds a processor which sets the body on the FAULT message
+	 */
     public Type setFaultBody(Expression expression) {
         return process(ProcessorBuilder.setFaultBody(expression));
     }

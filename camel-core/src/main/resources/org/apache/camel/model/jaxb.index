@@ -49,6 +49,7 @@ ThrottlerType
 ThreadType
 ThrowFaultType
 ToType
+TransformType
 TryType
 UnmarshalType
 WhenType

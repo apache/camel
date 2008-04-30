@@ -81,6 +81,14 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo(route, "seda:b", "seda:c", "seda:d");
     }
 
+    public void testParseTransformXml() throws Exception {
+        RouteType route = assertOneRoute("transform.xml");
+        assertFrom(route, "direct:start");
+        TransformType node = assertTransform(route);
+        assertExpression(node.getExpression(), "simple", "${in.body} extra data!");
+        assertChildTo(route, "mock:end", 1);
+    }    
+    
     public void testParseSetHeaderXml() throws Exception {
         RouteType route = assertOneRoute("setHeader.xml");
         assertFrom(route, "seda:a");
@@ -280,6 +288,11 @@ public class XmlParseTest extends XmlTestSupport {
         ProcessorType<?> processor = route.getOutputs().get(0);
         return assertIsInstanceOf(SetHeaderType.class, processor);
     }    
+
+    protected TransformType assertTransform(ProcessorType<?> route) {
+        ProcessorType<?> processor = route.getOutputs().get(0);
+        return assertIsInstanceOf(TransformType.class, processor);
+    }       
     
     protected ChoiceType assertChoice(ProcessorType<?> route) {
         ProcessorType<?> processor = assertOneElement(route.getOutputs());
