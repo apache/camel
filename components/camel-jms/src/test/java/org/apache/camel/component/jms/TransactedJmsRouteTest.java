@@ -206,6 +206,8 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
     protected void tearDown() throws Exception {
         super.tearDown();
         spring.destroy();
+        // Waiting for the broker shutdown
+        Thread.sleep(2000);
     }
 
     /**
