@@ -35,15 +35,9 @@ public class MailProcessOnlyUnseenMessagesTest extends ContextTestSupport {
 
         sendBody("direct:a", "Message 3");
 
-        // let Camel have time to consume and process the mailbox
-        Thread.sleep(1000);
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        // TODO: below fails for Mail component, maybe a converter is missing
-        //mock.expectedBodiesReceived("Message 3");
-        String body = mock.assertExchangeReceived(0).getIn().getBody(String.class);
-        assertEquals("Message 3", body);
+        mock.expectedBodiesReceived("Message 3");
         mock.assertIsSatisfied();
     }
 
@@ -68,7 +62,6 @@ public class MailProcessOnlyUnseenMessagesTest extends ContextTestSupport {
         folder.close(true);
     }
 
-
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -83,6 +76,5 @@ public class MailProcessOnlyUnseenMessagesTest extends ContextTestSupport {
             }
         };
     }
-
 
 }

@@ -27,17 +27,16 @@ import javax.mail.internet.MimeMultipart;
 import org.apache.camel.Converter;
 
 /**
+ * JavaMail specific converters.
+ *
  * @version $Revision$
  */
 @Converter
 public class MailConverters {
+
     /**
-     * Converts the given JavaMail message to a String body
-     *
-     * @param message the message
-     * @return the String content
-     * @throws MessagingException
-     * @throws IOException
+     * Converts the given JavaMail message to a String body.
+     * Can return null.
      */
     @Converter
     public String toString(Message message) throws MessagingException, IOException {
@@ -55,6 +54,10 @@ public class MailConverters {
         return null;
     }
 
+    /**
+     * Converts the given JavaMail multipart to a String body, where the contenttype of the multipart
+     * must be text based (ie start with text). Can return null.
+     */
     @Converter
     public static String toString(Multipart multipart) throws MessagingException, IOException {
         int size = multipart.getCount();
