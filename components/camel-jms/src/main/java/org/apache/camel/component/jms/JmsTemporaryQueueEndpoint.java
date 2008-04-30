@@ -28,7 +28,7 @@ import org.springframework.jms.core.SessionCallback;
  * A <a href="http://activemq.apache.org/jms.html">JMS Endpoint</a>
  * for working with a {@link TemporaryQueue}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 // TODO need to be really careful to always use the same Connection otherwise the destination goes stale
 public class JmsTemporaryQueueEndpoint extends JmsQueueEndpoint implements DestinationEndpoint {
