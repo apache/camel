@@ -45,8 +45,8 @@ public class MailConfiguration implements Cloneable {
     private String destination;
     private String folderName = DEFAULT_FOLDER_NAME;
     private boolean deleteProcessedMessages = true;
-    private boolean ignoreUriScheme = false;
-    private boolean processOnlyUnseenMessages = false;
+    private boolean ignoreUriScheme;
+    private boolean processOnlyUnseenMessages;
 
     public MailConfiguration() {
     }

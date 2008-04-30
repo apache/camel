@@ -37,11 +37,11 @@ import org.apache.camel.converter.ObjectConverter;
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and {@link Message} to and
  * from a Mail {@link MimeMessage}
- * 
+ *
  * @version $Revision$
  */
 public class MailBinding {
-    
+
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange) {
         try {
             appendHeadersFromCamel(mimeMessage, exchange, exchange.getIn());
@@ -68,8 +68,8 @@ public class MailBinding {
                 mimeMessage.setText(exchange.getIn().getBody(String.class));
             }
         } catch (Exception e) {
-            throw new RuntimeMailException("Failed to populate body due to: " + e.getMessage() +
-                ". Exchange: " + exchange, e);
+            throw new RuntimeMailException("Failed to populate body due to: " + e.getMessage()
+                                           + ". Exchange: " + exchange, e);
         }
     }
 
@@ -84,8 +84,8 @@ public class MailBinding {
         try {
             return message.getContent();
         } catch (Exception e) {
-            throw new RuntimeMailException("Failed to extract body due to: " + e.getMessage() +
-                ". Exchange: " + exchange + ". Message: " + message, e);
+            throw new RuntimeMailException("Failed to extract body due to: " + e.getMessage()
+                                           + ". Exchange: " + exchange + ". Message: " + message, e);
         }
     }
 
@@ -122,7 +122,7 @@ public class MailBinding {
     protected void appendAttachmentsFromCamel(MimeMessage mimeMessage, Exchange exchange,
                                               org.apache.camel.Message camelMessage)
         throws MessagingException {
-        
+
         // Create a Multipart
         MimeMultipart multipart = new MimeMultipart();
 

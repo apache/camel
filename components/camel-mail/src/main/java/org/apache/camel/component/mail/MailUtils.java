@@ -23,7 +23,7 @@ package org.apache.camel.component.mail;
  *
  * @version $Revision$
  */
-public class MailUtils {
+public final class MailUtils {
 
     public static final int DEFAULT_PORT_SMTP = 25;
     public static final int DEFAULT_PORT_SMTPS = 465;
@@ -79,5 +79,5 @@ public class MailUtils {
     }
 
     // TODO: Add public method for aiding mail message logging
-    
+
 }
