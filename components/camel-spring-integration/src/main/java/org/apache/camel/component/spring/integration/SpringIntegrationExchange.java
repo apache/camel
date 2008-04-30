@@ -27,7 +27,7 @@ import org.apache.camel.impl.DefaultExchange;
  * An {@link Exchange} for working with Spring Integration endpoints which exposes the underlying
  * Spring messages via {@link #getInMessage()} and {@link #getOutMessage()}
  *
- * @version $Revision
+ * @version $Revision$
  */
 public class SpringIntegrationExchange  extends DefaultExchange {
 

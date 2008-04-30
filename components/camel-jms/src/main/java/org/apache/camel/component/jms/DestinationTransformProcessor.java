@@ -19,7 +19,7 @@ package org.apache.camel.component.jms;
 /**
  * A processor which is capable of transforming the
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DestinationTransformProcessor {
 }

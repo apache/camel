@@ -32,8 +32,8 @@ import org.springframework.integration.config.MessageBusParser;
  * A producer of exchanges for the Spring Integration
  * Please specify the outputChannel in the endpoint url for this producer.
  * If the message pattern is inOut, the inputChannel property
- * should be set for the receive the response message.
- * @version $Revision
+ * should be set for receiving the response message.
+ * @version $Revision$
  */
 public class SpringIntegrationProducer extends DefaultProducer<SpringIntegrationExchange> {
     private static final transient Log LOG = LogFactory.getLog(SpringIntegrationProducer.class);

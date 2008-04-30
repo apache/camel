@@ -29,7 +29,7 @@ import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsProviderMetadata;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class JmsProviderTest extends ContextTestSupport {
     public void testTemporaryDestinationTypes() throws Exception {

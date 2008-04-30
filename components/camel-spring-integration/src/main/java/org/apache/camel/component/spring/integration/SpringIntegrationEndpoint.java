@@ -29,7 +29,7 @@ import org.springframework.integration.channel.MessageChannel;
 /**
  * Defines the <a href="http://activemq.apache.org/camel/springIntergration.html">Spring Intergration Endpoint</a>
  *
- * @version $Revision
+ * @version $Revision$
  */
 public class SpringIntegrationEndpoint extends DefaultEndpoint<SpringIntegrationExchange> {
     private static final Log LOG = LogFactory.getLog(SpringIntegrationEndpoint.class);
