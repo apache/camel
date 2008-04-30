@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A <a href="http://activemq.apache.org/camel/simple.html>simple language</a>
- * which maps simple property style notations to acces headers and bodies.
+ * which maps simple property style notations to access headers and bodies.
  * Examples of supported expressions are <p/>
  * <ul>
  * <li>in.header.foo or header.foo to access an inbound header called 'foo'</li>
