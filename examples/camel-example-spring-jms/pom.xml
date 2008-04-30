@@ -27,18 +27,17 @@
   
   <artifactId>camel-example-spring-jms</artifactId>
   <name>Camel :: Example :: Spring :: JMS </name>
-  <description>An example using Spring XML to talk to the JMS server  </description>
+  <description>An example using Spring XML to talk to the JMS server</description>
  
  <dependencies>
     <dependency>
       <groupId>log4j</groupId>
-	<artifactId>log4j</artifactId>
+      <artifactId>log4j</artifactId>
       <version>1.2.14</version>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-all</artifactId>
-      <version>5.0.0</version>
+      <artifactId>activemq-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
