@@ -82,6 +82,10 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         return component;
     }
 
+    public void setContext(CamelContext context) {
+        this.context = context;
+    }
+
     /**
      * @return the executor
      */

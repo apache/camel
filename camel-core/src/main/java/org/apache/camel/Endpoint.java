@@ -24,7 +24,7 @@ import java.util.Map;
  * href="http://activemq.apache.org/camel/message-endpoint.html">Message
  * Endpoint</a> pattern and represents an endpoint that can send and receive
  * message exchanges
- * 
+ *
  * @see Exchange
  * @see Message
  * @version $Revision$
@@ -66,14 +66,14 @@ public interface Endpoint<E extends Exchange> {
 
     /**
      * Returns the context which created the endpoint
-     * 
+     *
      * @return the context which created the endpoint
      */
     CamelContext getContext();
 
     /**
      * Creates a new producer which is used send messages into the endpoint
-     * 
+     *
      * @return a newly created producer
      */
     Producer<E> createProducer() throws Exception;
@@ -83,7 +83,7 @@ public interface Endpoint<E extends Exchange> {
      * href="http://activemq.apache.org/camel/event-driven-consumer.html">Event
      * Driven Consumer</a> which consumes messages from the endpoint using the
      * given processor
-     * 
+     *
      * @return a newly created consumer
      */
     Consumer<E> createConsumer(Processor processor) throws Exception;
@@ -98,11 +98,13 @@ public interface Endpoint<E extends Exchange> {
      * rather than using the <a
      * href="http://activemq.apache.org/camel/event-driven-consumer.html">Event
      * Based Consumer</a> returned by {@link #createConsumer(Processor)}
-     * 
+     *
      * @return a newly created pull consumer
      * @throws Exception if the pull consumer could not be created
      */
     PollingConsumer<E> createPollingConsumer() throws Exception;
-    
+
     void configureProperties(Map options);
+
+    void setContext(CamelContext context);
 }
