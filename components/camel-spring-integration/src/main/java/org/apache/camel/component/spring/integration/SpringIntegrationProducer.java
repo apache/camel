@@ -33,7 +33,7 @@ import org.springframework.integration.config.MessageBusParser;
  * Please specify the outputChannel in the endpoint url for this producer.
  * If the message pattern is inOut, the inputChannel property
  * should be set for the receive the response message.
- * @version
+ * @version $Revision
  */
 public class SpringIntegrationProducer extends DefaultProducer<SpringIntegrationExchange> {
     private static final transient Log LOG = LogFactory.getLog(SpringIntegrationProducer.class);
@@ -48,16 +48,24 @@ public class SpringIntegrationProducer extends DefaultProducer<SpringIntegration
         super(endpoint);
         this.endpoint = endpoint;
         context = (SpringCamelContext) endpoint.getContext();
-        outputChannelName = endpoint.getDefaultChannel();
-        channelRegistry = (ChannelRegistry) context.getApplicationContext().getBean(MessageBusParser.MESSAGE_BUS_BEAN_NAME);
-        if (ObjectHelper.isNullOrBlank(outputChannelName)) {
-            outputChannelName = endpoint.getInputChannel();
-        }
-        if (ObjectHelper.isNullOrBlank(outputChannelName)) {
-            throw new RuntimeCamelException("Can't find the right outputChannelName,"
-                                            + "please check the endpoint uri outputChannel part!");
+        if (context != null && endpoint.getMessageChannel() == null) {
+            outputChannelName = endpoint.getDefaultChannel();
+            channelRegistry = (ChannelRegistry) context.getApplicationContext().getBean(MessageBusParser.MESSAGE_BUS_BEAN_NAME);
+            if (ObjectHelper.isNullOrBlank(outputChannelName)) {
+                outputChannelName = endpoint.getInputChannel();
+            }
+            if (ObjectHelper.isNullOrBlank(outputChannelName)) {
+                throw new RuntimeCamelException("Can't find the right outputChannelName,"
+                                                + "please check the endpoint uri outputChannel part!");
+            } else {
+                outputChannel = (MessageChannel) channelRegistry.lookupChannel(outputChannelName);
+            }
         } else {
-            outputChannel = (MessageChannel) channelRegistry.lookupChannel(outputChannelName);
+            if (endpoint.getMessageChannel() != null) {
+                outputChannel = endpoint.getMessageChannel();
+            } else {
+                throw new RuntimeCamelException("Can't find the right message channel, please check your configuration.");
+            }
         }
         if (endpoint.isInOut()) {
             endpoint.setExchangePattern(ExchangePattern.InOut);

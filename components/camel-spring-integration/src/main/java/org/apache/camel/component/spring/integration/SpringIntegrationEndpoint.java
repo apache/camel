@@ -16,35 +16,37 @@
  */
 package org.apache.camel.component.spring.integration;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
+import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.integration.channel.MessageChannel;
 
 /**
  * Defines the <a href="http://activemq.apache.org/camel/springIntergration.html">Spring Intergration Endpoint</a>
  *
- * @version
+ * @version $Revision
  */
 public class SpringIntegrationEndpoint extends DefaultEndpoint<SpringIntegrationExchange> {
     private static final Log LOG = LogFactory.getLog(SpringIntegrationEndpoint.class);
     private String inputChannel;
     private String outputChannel;
     private String defaultChannel;
+    private MessageChannel messageChannel;
     private boolean inOut;
 
     public SpringIntegrationEndpoint(String uri, String channel, SpringIntegrationComponent component) {
         super(uri, component);
         defaultChannel = channel;
+    }
+
+    public SpringIntegrationEndpoint(String uri, MessageChannel channel, CamelContext context) {
+        super(uri, context);
+        messageChannel = channel;
     }
 
     public Producer<SpringIntegrationExchange> createProducer() throws Exception {
@@ -81,6 +83,10 @@ public class SpringIntegrationEndpoint extends DefaultEndpoint<SpringIntegration
 
     public String getDefaultChannel() {
         return defaultChannel;
+    }
+
+    public MessageChannel getMessageChannel() {
+        return messageChannel;
     }
 
     public boolean isSingleton() {

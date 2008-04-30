@@ -17,13 +17,11 @@
 
 package org.apache.camel.component.spring.integration;
 
-/**
- * The bean class which implements the business logical
- */
-public class HelloWorldService {
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-    public String sayHello(String name) {
-        return "Hello " + name;
+
+public class SpringIntegrationChannelConverterTest extends SpringIntegrationOneWayConsumerTest {
+    public ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/spring/integration/springChannelConverter.xml");
     }
-
 }

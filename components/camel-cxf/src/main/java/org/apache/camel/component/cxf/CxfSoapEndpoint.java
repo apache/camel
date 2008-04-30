@@ -154,4 +154,8 @@ public class CxfSoapEndpoint implements Endpoint {
     public QName getServiceName() {
         return serviceName;
     }
+
+    public void setContext(CamelContext context) {
+        endpoint.setContext(context);
+    }
 }
