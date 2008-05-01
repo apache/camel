@@ -41,6 +41,7 @@
     <module>camel-cxf</module>
     <module>camel-ftp</module>
     <module>camel-groovy</module>
+    <module>camel-hamcrest</module>
     <module>camel-http</module>
     <module>camel-ibatis</module>
     <module>camel-irc</module>
