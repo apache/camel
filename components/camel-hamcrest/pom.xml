@@ -30,7 +30,7 @@
 
   <artifactId>camel-hamcrest</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: JUnit</name>
+  <name>Camel :: Hamcrest</name>
   <description>Camel Hamcrest support</description>
 
   <properties>
@@ -48,6 +48,11 @@
     </dependency>
 
     <!-- testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
