@@ -174,4 +174,11 @@ public class DefaultMessage extends MessageSupport {
     public void setAttachments(Map<String, DataHandler> attachments) {
         this.attachments = attachments;
     }
+
+    /**
+     * Returns true if the headers have been mutated in some way
+     */
+    protected boolean hasPopulatedHeaders() {
+        return headers != null;
+    }
 }

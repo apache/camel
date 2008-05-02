@@ -128,7 +128,9 @@ public class JmsBinding {
         boolean alwaysCopy = (endpoint != null) ? endpoint.getConfiguration().isAlwaysCopyMessage() : false;
         if (!alwaysCopy && camelMessage instanceof JmsMessage) {
             JmsMessage jmsMessage = (JmsMessage)camelMessage;
-            answer = jmsMessage.getJmsMessage();
+            if (! jmsMessage.shouldCreateNewMessage()) {
+                answer = jmsMessage.getJmsMessage();
+            }
         }
         if (answer == null) {
             answer = createJmsMessage(camelMessage.getBody(), session, exchange.getContext());
@@ -154,29 +156,33 @@ public class JmsBinding {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
 
-            if (headerName.startsWith("JMS") && !headerName.startsWith("JMSX")) {
-                if (headerName.equals("JMSCorrelationID")) {
-                    jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class,
-                                                                                headerValue));
-                } else if (headerName.equals("JMSCorrelationID")) {
-                    jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class,
-                                                                                headerValue));
-                } else if (headerName.equals("JMSReplyTo")) {
-                    jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class,
-                                                                          headerValue));
-                } else if (headerName.equals("JMSType")) {
-                    jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-                } else if (LOG.isDebugEnabled()) {
-                    // The following properties are set by the MessageProducer
-                    // JMSDeliveryMode, JMSDestination, JMSExpiration,
-                    // JMSPriority,
-                    // The following are set on the underlying JMS provider
-                    // JMSMessageID, JMSTimestamp, JMSRedelivered
-                    LOG.debug("Ignoring JMS header: " + headerName + " with value: " + headerValue);
-                }
-            } else if (shouldOutputHeader(in, headerName, headerValue)) {
-                jmsMessage.setObjectProperty(headerName, headerValue);
+            appendJmsProperty(jmsMessage, exchange, in, headerName, headerValue);
+        }
+    }
+
+    public void appendJmsProperty(Message jmsMessage, Exchange exchange, org.apache.camel.Message in, String headerName, Object headerValue) throws JMSException {
+        if (headerName.startsWith("JMS") && !headerName.startsWith("JMSX")) {
+            if (headerName.equals("JMSCorrelationID")) {
+                jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class,
+                                                                            headerValue));
+            } else if (headerName.equals("JMSCorrelationID")) {
+                jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class,
+                                                                            headerValue));
+            } else if (headerName.equals("JMSReplyTo")) {
+                jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class,
+                                                                      headerValue));
+            } else if (headerName.equals("JMSType")) {
+                jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
+            } else if (LOG.isDebugEnabled()) {
+                // The following properties are set by the MessageProducer
+                // JMSDeliveryMode, JMSDestination, JMSExpiration,
+                // JMSPriority,
+                // The following are set on the underlying JMS provider
+                // JMSMessageID, JMSTimestamp, JMSRedelivered
+                LOG.debug("Ignoring JMS header: " + headerName + " with value: " + headerValue);
             }
+        } else if (shouldOutputHeader(in, headerName, headerValue)) {
+            jmsMessage.setObjectProperty(headerName, headerValue);
         }
     }
 
