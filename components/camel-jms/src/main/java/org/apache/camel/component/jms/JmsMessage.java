@@ -133,6 +133,13 @@ public class JmsMessage extends DefaultMessage {
         return new JmsMessage();
     }
 
+    /**
+     * Returns true if a new JMS message instance should be created to send to the next component
+     */
+    public boolean shouldCreateNewMessage() {
+        return super.hasPopulatedHeaders();
+    }
+
     @Override
     protected Object createBody() {
         if (jmsMessage != null) {
