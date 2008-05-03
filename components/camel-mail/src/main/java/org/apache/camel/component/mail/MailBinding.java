@@ -123,6 +123,8 @@ public class MailBinding {
                                               org.apache.camel.Message camelMessage)
         throws MessagingException {
 
+        // TODO: Use spring mail support to add the attachment
+
         // Create a Multipart
         MimeMultipart multipart = new MimeMultipart();
 

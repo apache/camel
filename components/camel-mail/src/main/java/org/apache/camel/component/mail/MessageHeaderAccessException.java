@@ -19,6 +19,7 @@ package org.apache.camel.component.mail;
 import javax.mail.MessagingException;
 
 /**
+ * @deprecated we should not use runtime exception for the attachment binding
  * @version $Revision:520964 $
  */
 public class MessageHeaderAccessException extends RuntimeMailException {

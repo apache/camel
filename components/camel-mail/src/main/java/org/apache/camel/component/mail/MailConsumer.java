@@ -20,14 +20,15 @@ import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.event.MessageCountEvent;
-import javax.mail.event.MessageCountListener;
+import javax.mail.Store;
+import javax.mail.FolderNotFoundException;
 import javax.mail.search.FlagTerm;
 
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
  * A {@link org.apache.camel.Consumer Consumer} which consumes messages from JavaMail using a
@@ -35,61 +36,53 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements MessageCountListener {
+public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
     private static final transient Log LOG = LogFactory.getLog(MailConsumer.class);
     private final MailEndpoint endpoint;
-    private final Folder folder;
+    private final JavaMailSenderImpl sender;
+    private Folder folder;
+    private Store store;
 
-    public MailConsumer(MailEndpoint endpoint, Processor processor, Folder folder) {
+    public MailConsumer(MailEndpoint endpoint, Processor processor, JavaMailSenderImpl sender) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        this.folder = folder;
+        this.sender = sender;
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        folder.addMessageCountListener(this);
+
+        MailConfiguration config = endpoint.getConfiguration();
+        store = sender.getSession().getStore(config.getProtocol());
+        store.connect(config.getHost(), config.getPort(), config.getUsername(), config.getPassword());
+
+        folder = store.getFolder(config.getFolderName());
+        if (folder == null || !folder.exists()) {
+            throw new FolderNotFoundException(folder, "Folder not found or invalid: " + config.getFolderName());
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
-        folder.removeMessageCountListener(this);
         if (folder.isOpen()) {
             folder.close(true);
         }
+        if (store.isConnected()) {
+            store.close();
+        }
+
         super.doStop();
     }
 
-    public void messagesAdded(MessageCountEvent event) {
-        Message[] messages = event.getMessages();
-        for (Message message : messages) {
-            try {
-                if (!message.getFlags().contains(Flags.Flag.DELETED)) {
-                    processMessage(message);
-                    flagMessageProcessed(message);
-                } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Skipping message as it was flagged as DELETED: " + message);
-                    }
-                }
-            } catch (MessagingException e) {
-                handleException(e);
-            }
-        }
-    }
-
-    public void messagesRemoved(MessageCountEvent event) {
-        Message[] messages = event.getMessages();
-        for (Message message : messages) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Removed message number " + message.getMessageNumber());
-            }
-        }
-    }
-
     protected void poll() throws Exception {
-        ensureFolderIsOpen();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Polling mailfolder " + folder.getFullName() + " at host " + endpoint.getConfiguration().getHost());
+        }
+        // ensure folder is open
+        if (!folder.isOpen()) {
+            folder.open(Folder.READ_WRITE);
+        }
 
         try {
             int count = folder.getMessageCount();
@@ -103,8 +96,8 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements
                     messages = folder.getMessages();
                 }
 
-                MessageCountEvent event = new MessageCountEvent(folder, MessageCountEvent.ADDED, true, messages);
-                messagesAdded(event);
+                processMessages(messages);
+
             } else if (count == -1) {
                 throw new MessagingException("Folder: " + folder.getFullName() + " is closed");
             }
@@ -116,24 +109,36 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> implements
         }
     }
 
-    protected void processMessage(Message message) {
-        try {
-            MailExchange exchange = endpoint.createExchange(message);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Processing message " + message);
+    /**
+     * Process all the messages
+     */
+    protected void processMessages(Message[] messages) throws Exception {
+        for (Message message : messages) {
+            if (!message.getFlags().contains(Flags.Flag.DELETED)) {
+                processMessage(message);
+                flagMessageProcessed(message);
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Skipping message as it was flagged as DELETED: " + MailUtils.dumpMessage(message));
+                }
             }
-            getProcessor().process(exchange);
-        } catch (Throwable e) {
-            handleException(e);
         }
     }
 
-    protected void ensureFolderIsOpen() throws MessagingException {
-        if (!folder.isOpen()) {
-            folder.open(Folder.READ_WRITE);
+    /**
+     * Strategy to process the mail message.
+     */
+    protected void processMessage(Message message) throws Exception {
+        MailExchange exchange = endpoint.createExchange(message);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Processing message: " + MailUtils.dumpMessage(message));
         }
+        getProcessor().process(exchange);
     }
 
+    /**
+     * Strategy to flag the message after being processed.
+     */
     protected void flagMessageProcessed(Message message) throws MessagingException {
         if (endpoint.getConfiguration().isDeleteProcessedMessages()) {
             message.setFlag(Flags.Flag.DELETED, true);

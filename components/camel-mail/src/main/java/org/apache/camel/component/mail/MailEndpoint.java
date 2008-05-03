@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.mail;
 
-import javax.mail.Folder;
 import javax.mail.Message;
 
 import org.apache.camel.Consumer;
@@ -25,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
  * @version $Revision:520964 $
@@ -39,7 +39,7 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
     }
 
     public Producer<MailExchange> createProducer() throws Exception {
-        JavaMailSender sender = configuration.createJavaMailConnection(this);
+        JavaMailSender sender = configuration.createJavaMailSender();
         return createProducer(sender);
     }
 
@@ -51,36 +51,19 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
     }
 
     public Consumer<MailExchange> createConsumer(Processor processor) throws Exception {
-        JavaMailConnection connection = configuration.createJavaMailConnection(this);
-
-        String protocol = getConfiguration().getProtocol();
-        // replace smtp with pop3 since we are creating a consumer and thus we need to use pop3 as protocol
-        // as stmp is only for sending
-        if (protocol.equals("smtp")) {
-            protocol = "pop3";
-        }
-        String folderName = getConfiguration().getFolderName();
-        Folder folder = connection.getFolder(protocol, folderName);
-        if (folder == null) {
-            throw new IllegalArgumentException("No folder for protocol: " + protocol + " and name: " + folderName);
-        }
-
-        return createConsumer(processor, folder);
+        JavaMailSenderImpl sender = configuration.createJavaMailSender();
+        return createConsumer(processor, sender);
     }
 
     /**
-     * Creates a consumer using the given processor and transport
-     *
-     * @param processor the processor to use to process the messages
-     * @param folder the JavaMail Folder to use for inbound messages
-     * @return a newly created consumer
-     * @throws Exception if the consumer cannot be created
+     * Creates a consumer using the given processor and sender
      */
-    public Consumer<MailExchange> createConsumer(Processor processor, Folder folder) throws Exception {
-        MailConsumer answer = new MailConsumer(this, processor, folder);
+    public Consumer<MailExchange> createConsumer(Processor processor, JavaMailSenderImpl sender) throws Exception {
+        MailConsumer answer = new MailConsumer(this, processor, sender);
         configureConsumer(answer);
         return answer;
     }
+
 
     @Override
     public MailExchange createExchange(ExchangePattern pattern) {

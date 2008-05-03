@@ -130,7 +130,7 @@ public class MimeMessageConsumeTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("smtp://james@localhost").convertBodyTo(String.class).to("mock:result");
+                from("pop3://james@localhost").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

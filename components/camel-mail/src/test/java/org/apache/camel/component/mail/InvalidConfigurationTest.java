@@ -16,15 +16,26 @@
  */
 package org.apache.camel.component.mail;
 
-/**
- *
- * @deprecated we should not use runtime exception for the attachment binding
- * @version $Revision:520964 $
- */
-public class RuntimeMailException extends RuntimeException {
-    private static final long serialVersionUID = -2141493732308871761L;
+import javax.mail.NoSuchProviderException;
 
-    public RuntimeMailException(String message, Throwable cause) {
-        super(message, cause);
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
+import org.apache.camel.PollingConsumer;
+
+/**
+ * Unit test for various invalid configurations etc.
+ */
+public class InvalidConfigurationTest extends ContextTestSupport {
+
+    public void testSMTPCanNotBeUsedForConsumingMails() throws Exception {
+        Endpoint endpoint = this.context.getEndpoint("smtp://localhost?username=james");
+        PollingConsumer consumer = endpoint.createPollingConsumer();
+        try {
+            consumer.start();
+            fail("Should have thrown NoSuchProviderException as stmp protocol can not be used for consuming mails");
+        } catch (NoSuchProviderException e) {
+            // expected
+        }
     }
+
 }
