@@ -73,7 +73,7 @@ public class MailRecipientsTest extends ContextTestSupport {
                 // BCC: someone@somewhere.org
                 String recipients = "&To=camel@riders.org,easy@riders.org&CC=me@you.org&BCC=someone@somewhere.org";
 
-                from("direct:a").to("smtp:james@mymailserver.com?password=secret&From=james@apache.org" + recipients);
+                from("direct:a").to("smtp://james@mymailserver.com?password=secret&From=james@apache.org" + recipients);
                 // END SNIPPET: e1
             }
         };
