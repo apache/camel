@@ -93,7 +93,7 @@ public class MultipleDestinationConsumeTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("smtp://james@localhost?password=foo").convertBodyTo(String.class).to("mock:result");
+                from("pop3://james@localhost?password=foo").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

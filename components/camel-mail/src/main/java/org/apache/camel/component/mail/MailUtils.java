@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.mail;
 
+import java.text.DateFormat;
+import java.util.Date;
+import javax.mail.Address;
+import javax.mail.MessagingException;
+import javax.mail.Message;
+
 /**
  * Mail utility class.
  * <p>
@@ -78,6 +84,50 @@ public final class MailUtils {
         return port;
     }
 
-    // TODO: Add public method for aiding mail message logging
+    /**
+     * Gets a log dump of the given message that can be used for tracing etc.
+     *
+     * @param message the Mail message
+     * @return a log string with important fields dumped
+     * @throws MessagingException can be thrown by the Mail API
+     */
+    public static String dumpMessage(Message message) throws MessagingException {
+        StringBuilder sb = new StringBuilder();
+
+        int number = message.getMessageNumber();
+        sb.append("messageNumber=[").append(number).append("]");
+
+        Address[] from = message.getFrom();
+        if (from != null) {
+            for (Address adr : from) {
+                sb.append(", from=[").append(adr).append("]");
+            }
+        }
+
+        Address[] to = message.getRecipients(Message.RecipientType.TO);
+        if (to != null) {
+            for (Address adr : to) {
+                sb.append(", to=[").append(adr).append("]");
+            }
+        }
+
+        // TODO: Maybe we need to get the subject from the header properties
+        String subject = message.getSubject();
+        if (subject != null) {
+            sb.append(", subject=[").append(subject).append("]");
+        }
+
+        Date sentDate = message.getSentDate();
+        if (sentDate != null) {
+            sb.append(", sentDate=[").append(DateFormat.getDateTimeInstance().format(sentDate)).append("]");
+        }
+
+        Date receivedDate = message.getReceivedDate();
+        if (receivedDate != null) {
+            sb.append(", receivedDate=[").append(DateFormat.getDateTimeInstance().format(receivedDate)).append("]");
+        }
+
+        return sb.toString();
+    }
 
 }

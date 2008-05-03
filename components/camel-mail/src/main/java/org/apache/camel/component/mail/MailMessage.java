@@ -123,15 +123,12 @@ public class MailMessage extends DefaultMessage {
                     String name = header.getName();
                     CollectionHelper.appendValue(map, name, value);
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 throw new MessageHeaderNamesAccessException(e);
             }
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.impl.DefaultMessage#populateInitialAttachments(java.util.Map)
-     */
     @Override
     protected void populateInitialAttachments(Map<String, DataHandler> map) {
         if (mailMessage != null) {
@@ -152,12 +149,13 @@ public class MailMessage extends DefaultMessage {
     }
 
     /**
-     * parses the attachments of the mail message and puts them to the message
+     * Parses the attachments of the mail message and puts them to the message
      *
      * @param map       the attachments map
      * @throws javax.mail.MessagingException
      */
     protected void extractAttachments(Map<String, DataHandler> map) throws javax.mail.MessagingException {
+        // TODO: Reuse spring mail support to handle the attachment
         // now convert the mail attachments and put it to the msg
         Multipart mp;
         Object content;

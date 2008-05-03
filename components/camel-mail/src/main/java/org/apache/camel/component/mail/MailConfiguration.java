@@ -22,6 +22,7 @@ import java.util.Properties;
 import javax.mail.Session;
 
 import org.apache.camel.RuntimeCamelException;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
  * Represents the configuration data for communicating over email
@@ -93,8 +94,8 @@ public class MailConfiguration implements Cloneable {
         }
     }
 
-    public JavaMailConnection createJavaMailConnection(MailEndpoint mailEndpoint) {
-        JavaMailConnection answer = new JavaMailConnection();
+    protected JavaMailSenderImpl createJavaMailSender() {
+        JavaMailSenderImpl answer = new JavaMailSenderImpl();
         if (defaultEncoding != null) {
             answer.setDefaultEncoding(defaultEncoding);
         }

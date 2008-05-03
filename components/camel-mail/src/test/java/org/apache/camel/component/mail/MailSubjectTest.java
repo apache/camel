@@ -17,8 +17,6 @@
 package org.apache.camel.component.mail;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -29,21 +27,13 @@ public class MailSubjectTest extends ContextTestSupport {
     private String subject = "Camel rocks";
 
     public void testMailSubject() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-
         String body = "Hello Claus.\nYes it does.\n\nRegards James.";
-
         template.sendBody("direct:a", body);
 
-        // need some time for camel to consume mail
-        Thread.sleep(1000);
-
-        Exchange exchange = mock.assertExchangeReceived(0);
-        Message in = exchange.getIn();
-        assertEquals("body", body, in.getBody(String.class));
-        assertEquals("subject", subject, in.getHeader("subject", String.class));
-
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived("subject", subject);
+        mock.expectedBodiesReceived(body);
         mock.assertIsSatisfied();
     }
 
