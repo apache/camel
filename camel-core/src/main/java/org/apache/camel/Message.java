@@ -135,8 +135,9 @@ public interface Message {
      * Copies the contents of the other message into this message
      */
     void copyFrom(Message message);
+
     /**
-     * returns the attachment specified by the id
+     * Returns the attachment specified by the id
      *
      * @param id        the id under which the attachment is stored
      * @return          the data handler for this attachment or null
@@ -144,21 +145,21 @@ public interface Message {
     DataHandler getAttachment(String id);
 
     /**
-     * returns a set of attachment names of the message
+     * Returns a set of attachment names of the message
      *
      * @return  a set of attachment names
      */
     Set<String> getAttachmentNames();
 
     /**
-     * removes the attachment specified by the id
+     * Removes the attachment specified by the id
      *
      * @param id        the id of the attachment to remove
      */
     void removeAttachment(String id);
 
     /**
-     * adds an attachment to the message using the id
+     * Adds an attachment to the message using the id
      *
      * @param id        the id to store the attachment under
      * @param content   the data handler for the attachment
@@ -166,7 +167,7 @@ public interface Message {
     void addAttachment(String id, DataHandler content);
 
     /**
-     * returns all attachments of the message
+     * Returns all attachments of the message
      *
      * @return  the attachments in a map or null
      */
@@ -178,4 +179,9 @@ public interface Message {
      * @param attachments
      */
     void setAttachments(Map<String, DataHandler> attachments);
+
+    /**
+     * Returns <tt>true</tt> if this message has any attachments.
+     */
+    boolean hasAttachments();
 }

@@ -122,9 +122,6 @@ public class DefaultMessage extends MessageSupport {
     protected void populateInitialAttachments(Map<String, DataHandler> map) {
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.Message#addAttachment(java.lang.String, javax.activation.DataHandler)
-     */
     public void addAttachment(String id, DataHandler content) {
         if (attachments == null) {
             attachments = createAttachments();
@@ -132,16 +129,10 @@ public class DefaultMessage extends MessageSupport {
         attachments.put(id, content);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.Message#getAttachment(java.lang.String)
-     */
     public DataHandler getAttachment(String id) {
         return getAttachments().get(id);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.Message#getAttachmentNames()
-     */
     public Set<String> getAttachmentNames() {
         if (attachments == null) {
             attachments = createAttachments();
@@ -149,18 +140,12 @@ public class DefaultMessage extends MessageSupport {
         return attachments.keySet();
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.Message#removeAttachment(java.lang.String)
-     */
     public void removeAttachment(String id) {
         if (attachments != null && attachments.containsKey(id)) {
             attachments.remove(id);
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.Message#getAttachments()
-     */
     public Map<String, DataHandler> getAttachments() {
         if (attachments == null) {
             attachments = createAttachments();
@@ -168,11 +153,12 @@ public class DefaultMessage extends MessageSupport {
         return attachments;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.Message#setAttachments(java.util.Map)
-     */
     public void setAttachments(Map<String, DataHandler> attachments) {
         this.attachments = attachments;
+    }
+
+    public boolean hasAttachments() {
+        return this.attachments != null && this.attachments.size() > 0;
     }
 
     /**
@@ -181,4 +167,5 @@ public class DefaultMessage extends MessageSupport {
     protected boolean hasPopulatedHeaders() {
         return headers != null;
     }
+    
 }
