@@ -25,8 +25,16 @@
         <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
     </bean>
 
+    <bean id="jmsConnectionFactory-1" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+    </bean>
+
     <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
+    </bean>
+
+    <bean id="jmsTransactionManager-1" class="org.springframework.jms.connection.JmsTransactionManager">
+        <property name="connectionFactory" ref="jmsConnectionFactory-1"/>
     </bean>
 
     <bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">
@@ -36,8 +44,19 @@
         <property name="concurrentConsumers" value="1"/>
     </bean>
 
+    <bean id="jmsConfig-1" class="org.apache.camel.component.jms.JmsConfiguration">
+        <property name="connectionFactory" ref="jmsConnectionFactory-1"/>
+        <property name="transactionManager" ref="jmsTransactionManager-1"/>
+        <property name="transacted" value="true"/>
+        <property name="concurrentConsumers" value="1"/>
+    </bean>
+
     <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
         <property name="configuration" ref="jmsConfig"/>
+    </bean>
+
+    <bean id="activemq-1" class="org.apache.camel.component.jms.JmsComponent">
+        <property name="configuration" ref="jmsConfig-1"/>
     </bean>
 
     <bean id="PROPAGATION_REQUIRED_POLICY" class="org.apache.camel.spring.spi.SpringTransactionPolicy">

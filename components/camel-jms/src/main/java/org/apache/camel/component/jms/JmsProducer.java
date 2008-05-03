@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -27,9 +28,12 @@ import javax.jms.Session;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.FailedToCreateProducerException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.jms.JmsConfiguration.CamelJmsTemplate;
 import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap;
+import org.apache.camel.component.jms.requestor.PersistentReplyToRequestor;
 import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap.DeferredMessageSentCallback;
 import org.apache.camel.component.jms.requestor.Requestor;
 import org.apache.camel.impl.DefaultProducer;
@@ -50,10 +54,32 @@ public class JmsProducer extends DefaultProducer {
     private JmsOperations inOutTemplate;
     private UuidGenerator uuidGenerator;
     private DeferredRequestReplyMap deferredRequestReplyMap;
+    private Requestor requestor;
+    RequestorAffinity affinity;
+    private AtomicBoolean started = new AtomicBoolean(false);
+    
+    private enum RequestorAffinity {
+        PER_COMPONENT(0),
+        PER_ENDPOINT(1),
+        PER_PRODUCER(2);
+        private int value;
+        private RequestorAffinity(int value) {
+            this.value = value;
+        }
+    };
 
     public JmsProducer(JmsEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
+        JmsConfiguration c = endpoint.getConfiguration();
+        affinity = RequestorAffinity.PER_PRODUCER;
+        if (c.getReplyTo() != null) {
+            if (c.getReplyToTempDestinationAffinity().equals(c.REPLYTO_TEMP_DEST_AFFINITY_PER_ENDPOINT)) {
+                affinity = RequestorAffinity.PER_ENDPOINT;
+            } else if (c.getReplyToTempDestinationAffinity().equals(c.REPLYTO_TEMP_DEST_AFFINITY_PER_COMPONENT)) {
+                affinity = RequestorAffinity.PER_COMPONENT;
+            }
+        }
     }
 
     public long getRequestTimeout() {
@@ -62,12 +88,57 @@ public class JmsProducer extends DefaultProducer {
 
     protected void doStart() throws Exception {
         super.doStart();
-        deferredRequestReplyMap = endpoint.getRequestor().getDeferredRequestReplyMap(this);
     }
 
+    protected void testAndSetRequestor() throws RuntimeCamelException {
+        if (started.get() == false) {
+            synchronized (this) {
+                if (started.get() == true) {
+                    return;
+                }
+                try {
+                    JmsConfiguration c = endpoint.getConfiguration();
+                    if (c.getReplyTo() != null) {
+                        requestor = new PersistentReplyToRequestor(endpoint.getConfiguration(), 
+                                                                   endpoint.getExecutorService());
+                        requestor.start();
+                    } else {
+                        if (affinity == RequestorAffinity.PER_PRODUCER) {
+                            requestor = new Requestor(endpoint.getConfiguration(), 
+                                                      endpoint.getExecutorService());
+                            requestor.start();
+                        } else if (affinity == RequestorAffinity.PER_ENDPOINT) {
+                            requestor = endpoint.getRequestor();
+                        } else if (affinity == RequestorAffinity.PER_COMPONENT) {
+                            requestor = ((JmsComponent)endpoint.getComponent()).getRequestor();
+                        }
+                    }
+                } catch (Exception e) {
+                    throw new FailedToCreateProducerException(endpoint, e);
+                }
+                deferredRequestReplyMap = requestor.getDeferredRequestReplyMap(this);
+                started.set(true);
+            }
+        }
+    }
+    
+    protected void testAndUnsetRequestor() throws Exception  {
+        if (started.get() == true) {
+            synchronized (this) {
+                if (started.get() == false) {
+                    return;
+                }
+                requestor.removeDeferredRequestReplyMap(this);
+                if (affinity == RequestorAffinity.PER_PRODUCER) {
+                    requestor.stop();
+                }
+                started.set(false);
+            }
+        }
+    }
+    
     protected void doStop() throws Exception {
-        endpoint.getRequestor().removeDeferredRequestReplyMap(this);
-        deferredRequestReplyMap = null;
+        testAndUnsetRequestor();
         super.doStop();
     }
 
@@ -75,21 +146,20 @@ public class JmsProducer extends DefaultProducer {
         final org.apache.camel.Message in = exchange.getIn();
 
         if (exchange.getPattern().isOutCapable()) {
-            // create a temporary queue and consumer for responses...
+            
+            testAndSetRequestor();
+            
             // note due to JMS transaction semantics we cannot use a single transaction
             // for sending the request and receiving the response
-            final Requestor requestor;
-            try {
-                requestor = endpoint.getRequestor();
-            } catch (Exception e) {
-                throw new RuntimeExchangeException(e, exchange);
-            }
-
             final Destination replyTo = requestor.getReplyTo();
-
+            
+            if (replyTo == null) {
+                throw new RuntimeExchangeException("Failed to resolve replyTo destination", exchange);
+            }
+            
             final boolean msgIdAsCorrId = endpoint.getConfiguration().isUseMessageIDAsCorrelationID();
             String correlationId = in.getHeader("JMSCorrelationID", String.class);
-
+            
             if (correlationId == null && !msgIdAsCorrId) {
                 in.setHeader("JMSCorrelationID", getUuidGenerator().generateId());
             }
@@ -102,6 +172,7 @@ public class JmsProducer extends DefaultProducer {
                 public Message createMessage(Session session) throws JMSException {
                     Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session);
                     message.setJMSReplyTo(replyTo);
+                    requestor.setReplyToSelectorHeader(in, message);
 
                     FutureTask future = null;
                     future = (!msgIdAsCorrId)
@@ -116,6 +187,8 @@ public class JmsProducer extends DefaultProducer {
                     return message;
                 }
             }, callback);
+            
+            setMessageId(exchange);
 
             // lets wait and return the response
             long requestTimeout = endpoint.getRequestTimeout();
@@ -159,9 +232,27 @@ public class JmsProducer extends DefaultProducer {
                     return message;
                 }
             });
+            
+            setMessageId(exchange);            
         }
     }
 
+    protected void setMessageId(Exchange exchange) {
+        if (!(exchange instanceof JmsExchange)) {
+            return;
+        }
+        try {
+            JmsExchange jmsExchange = JmsExchange.class.cast(exchange); 
+            JmsMessage out = jmsExchange.getOut(false);
+            if (out != null) {
+                out.setMessageId(out.getJmsMessage().getJMSMessageID());
+            }
+        } catch (JMSException e) {
+            LOG.warn("Unable to retrieve JMSMessageID from outgoing JMS Message and " 
+                     + "set it into Camel's MessageId", e);
+        }
+    }
+    
     /**
      * Preserved for backwards compatibility.
      *

@@ -128,7 +128,7 @@ public class JmsBinding {
         boolean alwaysCopy = (endpoint != null) ? endpoint.getConfiguration().isAlwaysCopyMessage() : false;
         if (!alwaysCopy && camelMessage instanceof JmsMessage) {
             JmsMessage jmsMessage = (JmsMessage)camelMessage;
-            if (! jmsMessage.shouldCreateNewMessage()) {
+            if (!jmsMessage.shouldCreateNewMessage()) {
                 answer = jmsMessage.getJmsMessage();
             }
         }

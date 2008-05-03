@@ -42,7 +42,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     private String selector;
     private JmsConfiguration configuration;
     private Requestor requestor;
-    private long requestTimeout = 20000L;
+    private long requestTimeout;
 
     public JmsEndpoint(String uri, JmsComponent component, String destination, boolean pubSubDomain, JmsConfiguration configuration) {
         super(uri, component);
@@ -50,6 +50,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
         this.configuration = configuration;
         this.destination = destination;
         this.pubSubDomain = pubSubDomain;
+        this.requestTimeout = configuration.getRequestTimeout();
     }
 
     public JmsProducer createProducer() throws Exception {
@@ -86,9 +87,6 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     public JmsConsumer createConsumer(Processor processor, AbstractMessageListenerContainer listenerContainer) throws Exception {
         listenerContainer.setDestinationName(destination);
         listenerContainer.setPubSubDomain(pubSubDomain);
-        if (selector != null) {
-            listenerContainer.setMessageSelector(selector);
-        }
         return new JmsConsumer(this, processor, listenerContainer);
     }
 
@@ -165,7 +163,8 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
 
     public synchronized Requestor getRequestor() throws Exception {
         if (requestor == null) {
-            requestor = component.getRequestor();
+            requestor = new Requestor(getConfiguration(), getExecutorService());
+            requestor.start();
         }
         return requestor;
     }

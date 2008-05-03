@@ -30,9 +30,15 @@ public class ConditionalExceptionProcessor implements Processor {
     private Logger log = Logger.getLogger(getClass());
     private int count;
 
+    public ConditionalExceptionProcessor() {
+        
+    }
+    
     public void process(Exchange exchange) throws Exception {
 
         setCount(getCount() + 1);
+        
+        // System.out.println(this + "; getCount() = " + getCount());
 
         AbstractTransactionTest
             .assertTrue(

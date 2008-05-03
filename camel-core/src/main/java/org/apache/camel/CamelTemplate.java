@@ -440,6 +440,17 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
         this.useEndpointCache = useEndpointCache;
     }
 
+    public <T extends Endpoint<?>> T getResolvedEndpoint(String endpointUri, Class<T> expectedClass) {
+        Endpoint<?> e = null;
+        synchronized (endpointCache) {
+            e = endpointCache.get(endpointUri);
+        }
+        if (e != null && expectedClass.isAssignableFrom(e.getClass())) {
+            return expectedClass.asSubclass(expectedClass).cast(e);
+        }
+        return null;
+    }
+    
     // Implementation methods
     // -----------------------------------------------------------------------
 

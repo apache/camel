@@ -35,6 +35,8 @@ import org.springframework.jms.core.MessageCreator;
  * A JMS {@link MessageListener} which can be used to delegate processing to a
  * Camel endpoint.
  *
+ * Note that instance of this object has to be thread safe (reentrant)
+ * 
  * @version $Revision$    ;';;;
  */
 public class EndpointMessageListener implements MessageListener {
@@ -111,7 +113,7 @@ public class EndpointMessageListener implements MessageListener {
         this.eagerLoadingOfProperties = eagerLoadingOfProperties;
     }
 
-    public JmsOperations getTemplate() {
+    public synchronized JmsOperations getTemplate() {
         if (template == null) {
             template = endpoint.createInOnlyTemplate();
         }

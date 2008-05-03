@@ -56,9 +56,10 @@ public class Requestor extends ServiceSupport implements MessageListener {
     private TimeoutMap requestMap;
     private Map<JmsProducer, DeferredRequestReplyMap> producerDeferredRequestReplyMap;
     private TimeoutMap deferredRequestMap;
-    private TimeoutMap deferredReplyMap;
+    private TimeoutMap deferredReplyMap;    
     private Destination replyTo;
     private long maxRequestTimeout = -1;
+    private long replyToResolverTimeout = 5000;
 
 
     public Requestor(JmsConfiguration configuration, ScheduledExecutorService executorService) {
@@ -75,17 +76,21 @@ public class Requestor extends ServiceSupport implements MessageListener {
         if (map == null) {
             map = new DeferredRequestReplyMap(this, producer, deferredRequestMap, deferredReplyMap);
             producerDeferredRequestReplyMap.put(producer, map);
-        }
-        if (maxRequestTimeout == -1) {
-            maxRequestTimeout = producer.getRequestTimeout();
-        } else if (maxRequestTimeout < producer.getRequestTimeout()) {
-            maxRequestTimeout = producer.getRequestTimeout();
+            if (maxRequestTimeout == -1) {
+                maxRequestTimeout = producer.getRequestTimeout();
+            } else if (maxRequestTimeout < producer.getRequestTimeout()) {
+                maxRequestTimeout = producer.getRequestTimeout();
+            }
         }
         return map;
     }
 
     public synchronized void removeDeferredRequestReplyMap(JmsProducer producer) {
-        producerDeferredRequestReplyMap.remove(producer);
+        DeferredRequestReplyMap map = producerDeferredRequestReplyMap.remove(producer);
+        if (map == null) {
+            // already removed;
+            return;
+        }
         if (maxRequestTimeout == producer.getRequestTimeout()) {
             long max = -1;
             for (Map.Entry<JmsProducer, DeferredRequestReplyMap> entry : producerDeferredRequestReplyMap.entrySet()) {
@@ -114,26 +119,30 @@ public class Requestor extends ServiceSupport implements MessageListener {
     }
 
     public FutureTask getReceiveFuture(String correlationID, long requestTimeout) {
-        FutureTask future = null;
-
-        if (future == null) {
-            FutureHandler futureHandler = new FutureHandler();
-            future = futureHandler;
-            requestMap.put(correlationID, futureHandler, requestTimeout);
-        }
+        FutureHandler future = createFutureHandler(correlationID);
+        requestMap.put(correlationID, future, requestTimeout);
         return future;
     }
 
     public FutureTask getReceiveFuture(DeferredMessageSentCallback callback) {
-        FutureTask future = new FutureHandler();
+        FutureHandler future = createFutureHandler(callback);
         DeferredRequestReplyMap map = callback.getDeferredRequestReplyMap();
         map.put(callback, future);
         return future;
+    }
+    
+    protected FutureHandler createFutureHandler(String correlationID) {
+        return new FutureHandler();
+    }
+
+    protected FutureHandler createFutureHandler(DeferredMessageSentCallback callback) {
+        return new FutureHandler();
     }
 
     public void onMessage(Message message) {
         try {
             String correlationID = message.getJMSCorrelationID();
+            // System.out.println("Requestor.onMessage: correlationID " + correlationID);
             if (correlationID == null) {
                 LOG.warn("Ignoring message with no correlationID! " + message);
                 return;
@@ -169,6 +178,15 @@ public class Requestor extends ServiceSupport implements MessageListener {
     }
 
     public Destination getReplyTo() {
+        synchronized(this) {
+            try {
+                if (replyTo == null) {
+                    wait(replyToResolverTimeout);
+                }
+            } catch (Throwable e) {
+                // eat it
+            }
+        }
         return replyTo;
     }
 
@@ -179,11 +197,13 @@ public class Requestor extends ServiceSupport implements MessageListener {
     // Implementation methods
     //-------------------------------------------------------------------------
 
+    @Override
     protected void doStart() throws Exception {
         AbstractMessageListenerContainer container = getListenerContainer();
         container.afterPropertiesSet();
     }
 
+    @Override
     protected void doStop() throws Exception {
         if (listenerContainer != null) {
             listenerContainer.stop();
@@ -191,6 +211,10 @@ public class Requestor extends ServiceSupport implements MessageListener {
         }
     }
 
+    protected Requestor getOutterInstance() {
+        return this;
+    }
+    
     protected AbstractMessageListenerContainer createListenerContainer() {
         SimpleMessageListenerContainer answer = configuration.isUseVersion102()
             ? new SimpleMessageListenerContainer102() : new SimpleMessageListenerContainer();
@@ -199,8 +223,15 @@ public class Requestor extends ServiceSupport implements MessageListener {
 
             public Destination resolveDestinationName(Session session, String destinationName,
                                                       boolean pubSubDomain) throws JMSException {
-                TemporaryQueue queue = session.createTemporaryQueue();
-                replyTo = queue;
+                TemporaryQueue queue = null;
+                synchronized (getOutterInstance()) {
+                    try {
+                        queue = session.createTemporaryQueue();
+                        setReplyTo(queue);
+                    } finally {
+                        getOutterInstance().notifyAll();                        
+                    }
+                }
                 return queue;
             }
         });
@@ -231,5 +262,13 @@ public class Requestor extends ServiceSupport implements MessageListener {
             uuidGenerator = new UuidGenerator();
         }
         return uuidGenerator;
+    }
+
+    protected JmsConfiguration getConfiguration() {
+        return configuration;
+    }
+    
+    public void setReplyToSelectorHeader(org.apache.camel.Message in, Message jmsIn) throws JMSException {
+        // complete
     }
 }
