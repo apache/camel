@@ -111,7 +111,6 @@ public final class MailUtils {
             }
         }
 
-        // TODO: Maybe we need to get the subject from the header properties
         String subject = message.getSubject();
         if (subject != null) {
             sb.append(", subject=[").append(subject).append("]");
