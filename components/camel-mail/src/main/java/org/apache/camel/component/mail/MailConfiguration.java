@@ -18,10 +18,12 @@ package org.apache.camel.component.mail;
 
 import java.net.URI;
 import java.util.Properties;
+import java.util.Map;
+import java.util.HashMap;
 
 import javax.mail.Session;
+import javax.mail.Message;
 
-import org.apache.camel.RuntimeCamelException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
@@ -29,7 +31,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  *
  * @version $Revision$
  */
-public class MailConfiguration implements Cloneable {
+public class MailConfiguration {
 
     public static final String DEFAULT_FOLDER_NAME = "INBOX";
     public static final String DEFAULT_FROM = "camel@localhost";
@@ -43,24 +45,13 @@ public class MailConfiguration implements Cloneable {
     private Session session;
     private String defaultEncoding;
     private String from = DEFAULT_FROM;
-    private String destination;
     private String folderName = DEFAULT_FOLDER_NAME;
     private boolean deleteProcessedMessages = true;
     private boolean ignoreUriScheme;
     private boolean processOnlyUnseenMessages;
+    private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
 
     public MailConfiguration() {
-    }
-
-    /**
-     * Returns a copy of this configuration
-     */
-    public MailConfiguration copy() {
-        try {
-            return (MailConfiguration)clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeCamelException(e);
-        }
     }
 
     public void configure(URI uri) {
@@ -82,7 +73,8 @@ public class MailConfiguration implements Cloneable {
 
             // set default destination to userInfo@host for backwards compatibility
             // can be overridden by URI parameters
-            setDestination(userInfo + "@" + host);
+            String address = userInfo + "@" + host;
+            recipients.put(Message.RecipientType.TO, address);
         }
 
         int port = uri.getPort();
@@ -188,19 +180,32 @@ public class MailConfiguration implements Cloneable {
 
     public void setUsername(String username) {
         this.username = username;
-        if (destination == null) {
+        if (! recipients.containsKey(Message.RecipientType.TO)) {
             // set default destination to username@host for backwards compatibility
             // can be overridden by URI parameters
-            setDestination(username + "@" + host);
+            String address = username + "@" + host;
+            recipients.put(Message.RecipientType.TO, address);
         }
     }
 
+    /**
+     * Gets the destination (recipient <tt>To</tt> email address).
+     *
+     * @deprecated use {@link #getRecipients()}
+     */
     public String getDestination() {
-        return destination;
+        // for backwards compatibility
+        return recipients.get(Message.RecipientType.TO);
     }
 
+    /**
+     * Sets the destination (recipient <tt>To</tt> email address).
+     *
+     * @deprecated use {@link #setTo(String)}
+     */
     public void setDestination(String destination) {
-        this.destination = destination;
+        // for backwards compatibility
+        recipients.put(Message.RecipientType.TO, destination);
     }
 
     public String getFrom() {
@@ -242,4 +247,30 @@ public class MailConfiguration implements Cloneable {
     public void setProcessOnlyUnseenMessages(boolean processOnlyUnseenMessages) {
         this.processOnlyUnseenMessages = processOnlyUnseenMessages;
     }
+
+    /**
+     * Sets the <tt>To</tt> email address. Separate multiple email addresses with comma.
+     */
+    public void setTo(String address) {
+        recipients.put(Message.RecipientType.TO, address);
+    }
+
+    /**
+     * Sets the <tt>CC</tt> email address. Separate multiple email addresses with comma.
+     */
+    public void setCC(String address) {
+        recipients.put(Message.RecipientType.CC, address);
+    }
+
+    /**
+     * Sets the <tt>BCC</tt> email address. Separate multiple email addresses with comma.
+     */
+    public void setBCC(String address) {
+        recipients.put(Message.RecipientType.BCC, address);
+    }
+
+    public Map<Message.RecipientType, String> getRecipients() {
+        return recipients;
+    }
+
 }

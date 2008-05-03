@@ -46,14 +46,21 @@ public class MailBinding {
         try {
             appendHeadersFromCamel(mimeMessage, exchange, exchange.getIn());
 
-            String destination = endpoint.getConfiguration().getDestination();
-            if (destination != null) {
-                mimeMessage.setRecipients(Message.RecipientType.TO, destination);
+            // set the recipients (receives) of the mail
+            Map<Message.RecipientType, String> recipients = endpoint.getConfiguration().getRecipients();
+            if (recipients.containsKey(Message.RecipientType.TO)) {
+                mimeMessage.setRecipients(Message.RecipientType.TO, recipients.get(Message.RecipientType.TO));
             }
-            // must have a destination otherwise we do not know where to send the mail
+            if (recipients.containsKey(Message.RecipientType.CC)) {
+                mimeMessage.setRecipients(Message.RecipientType.CC, recipients.get(Message.RecipientType.CC));
+            }
+            if (recipients.containsKey(Message.RecipientType.BCC)) {
+                mimeMessage.setRecipients(Message.RecipientType.BCC, recipients.get(Message.RecipientType.BCC));
+            }
+
+            // must have at least one recipients otherwise we do not know where to send the mail
             if (mimeMessage.getAllRecipients() == null) {
-                throw new IllegalArgumentException("The MineMessage does not have any recipients set. "
-                    + "Add a destination (Recipient.TO) to the MailConfiguration.");
+                throw new IllegalArgumentException("The mail message does not have any recipients set.");
             }
 
             if (empty(mimeMessage.getFrom())) {

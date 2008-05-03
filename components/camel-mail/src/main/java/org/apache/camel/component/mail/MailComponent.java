@@ -59,7 +59,7 @@ public class MailComponent extends DefaultComponent<MailExchange> {
     @Override
     protected Endpoint<MailExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
 
-        MailConfiguration config = getConfiguration().copy();
+        MailConfiguration config = new MailConfiguration();
         config.configure(new URI(uri));
 
         // lets make sure we copy the configuration as each endpoint can customize its own version
