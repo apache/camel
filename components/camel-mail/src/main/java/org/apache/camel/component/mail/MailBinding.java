@@ -18,20 +18,19 @@ package org.apache.camel.component.mail;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-
 import javax.activation.DataHandler;
 import javax.mail.Address;
-import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.BodyPart;
 import javax.mail.Part;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.ObjectConverter;
 
 /**
@@ -42,46 +41,39 @@ import org.apache.camel.converter.ObjectConverter;
  */
 public class MailBinding {
 
-    public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange) {
-        try {
-            appendHeadersFromCamel(mimeMessage, exchange, exchange.getIn());
+    public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange)
+        throws MessagingException {
 
-            // set the recipients (receives) of the mail
-            Map<Message.RecipientType, String> recipients = endpoint.getConfiguration().getRecipients();
-            if (recipients.containsKey(Message.RecipientType.TO)) {
-                mimeMessage.setRecipients(Message.RecipientType.TO, recipients.get(Message.RecipientType.TO));
-            }
-            if (recipients.containsKey(Message.RecipientType.CC)) {
-                mimeMessage.setRecipients(Message.RecipientType.CC, recipients.get(Message.RecipientType.CC));
-            }
-            if (recipients.containsKey(Message.RecipientType.BCC)) {
-                mimeMessage.setRecipients(Message.RecipientType.BCC, recipients.get(Message.RecipientType.BCC));
-            }
+        appendHeadersFromCamel(mimeMessage, exchange, exchange.getIn());
 
-            // must have at least one recipients otherwise we do not know where to send the mail
-            if (mimeMessage.getAllRecipients() == null) {
-                throw new IllegalArgumentException("The mail message does not have any recipients set.");
-            }
-
-            if (empty(mimeMessage.getFrom())) {
-                // lets default the address to the endpoint destination
-                String from = endpoint.getConfiguration().getFrom();
-                mimeMessage.setFrom(new InternetAddress(from));
-            }
-
-            if (exchange.getIn().getAttachments() != null && exchange.getIn().getAttachments().size() > 0) {
-                appendAttachmentsFromCamel(mimeMessage, exchange, exchange.getIn());
-            } else {
-                mimeMessage.setText(exchange.getIn().getBody(String.class));
-            }
-        } catch (Exception e) {
-            throw new RuntimeMailException("Failed to populate body due to: " + e.getMessage()
-                                           + ". Exchange: " + exchange, e);
+        // set the recipients (receivers) of the mail
+        Map<Message.RecipientType, String> recipients = endpoint.getConfiguration().getRecipients();
+        if (recipients.containsKey(Message.RecipientType.TO)) {
+            mimeMessage.setRecipients(Message.RecipientType.TO, recipients.get(Message.RecipientType.TO));
         }
-    }
+        if (recipients.containsKey(Message.RecipientType.CC)) {
+            mimeMessage.setRecipients(Message.RecipientType.CC, recipients.get(Message.RecipientType.CC));
+        }
+        if (recipients.containsKey(Message.RecipientType.BCC)) {
+            mimeMessage.setRecipients(Message.RecipientType.BCC, recipients.get(Message.RecipientType.BCC));
+        }
 
-    protected boolean empty(Address[] addresses) {
-        return addresses == null || addresses.length == 0;
+        // must have at least one recipients otherwise we do not know where to send the mail
+        if (mimeMessage.getAllRecipients() == null) {
+            throw new IllegalArgumentException("The mail message does not have any recipients set.");
+        }
+
+        if (empty(mimeMessage.getFrom())) {
+            // lets default the address to the endpoint destination
+            String from = endpoint.getConfiguration().getFrom();
+            mimeMessage.setFrom(new InternetAddress(from));
+        }
+
+        if (exchange.getIn().hasAttachments()) {
+            appendAttachmentsFromCamel(mimeMessage, exchange, exchange.getIn());
+        } else {
+            mimeMessage.setText(exchange.getIn().getBody(String.class));
+        }
     }
 
     /**
@@ -91,8 +83,8 @@ public class MailBinding {
         try {
             return message.getContent();
         } catch (Exception e) {
-            throw new RuntimeMailException("Failed to extract body due to: " + e.getMessage()
-                                           + ". Exchange: " + exchange + ". Message: " + message, e);
+            throw new RuntimeCamelException("Failed to extract body due to: " + e.getMessage()
+                + ". Exchange: " + exchange + ". Message: " + message, e);
         }
     }
 
@@ -100,9 +92,10 @@ public class MailBinding {
      * Appends the Mail headers from the Camel {@link MailMessage}
      */
     protected void appendHeadersFromCamel(MimeMessage mimeMessage, Exchange exchange,
-                                          org.apache.camel.Message camelMessage) throws MessagingException {
-        Set<Map.Entry<String, Object>> entries = camelMessage.getHeaders().entrySet();
-        for (Map.Entry<String, Object> entry : entries) {
+                                          org.apache.camel.Message camelMessage)
+        throws MessagingException {
+
+        for (Map.Entry<String, Object> entry : camelMessage.getHeaders().entrySet()) {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
             if (headerValue != null) {
@@ -130,8 +123,6 @@ public class MailBinding {
                                               org.apache.camel.Message camelMessage)
         throws MessagingException {
 
-        // TODO: Use spring mail support to add the attachment
-
         // Create a Multipart
         MimeMultipart multipart = new MimeMultipart();
 
@@ -141,20 +132,17 @@ public class MailBinding {
         textBodyPart.setContent(exchange.getIn().getBody(String.class), "text/plain");
         multipart.addBodyPart(textBodyPart);
 
-        BodyPart messageBodyPart;
-
-        Set<Map.Entry<String, DataHandler>> entries = camelMessage.getAttachments().entrySet();
-        for (Map.Entry<String, DataHandler> entry : entries) {
-            String attName = entry.getKey();
-            DataHandler attValue = entry.getValue();
-            if (attValue != null) {
-                if (shouldOutputAttachment(camelMessage, attName, attValue)) {
+        for (Map.Entry<String, DataHandler> entry : camelMessage.getAttachments().entrySet()) {
+            String attachmentFilename = entry.getKey();
+            DataHandler handler = entry.getValue();
+            if (handler != null) {
+                if (shouldOutputAttachment(camelMessage, attachmentFilename, handler)) {
                     // Create another body part
-                    messageBodyPart = new MimeBodyPart();
+                    BodyPart messageBodyPart = new MimeBodyPart();
                     // Set the data handler to the attachment
-                    messageBodyPart.setDataHandler(attValue);
+                    messageBodyPart.setDataHandler(handler);
                     // Set the filename
-                    messageBodyPart.setFileName(attName);
+                    messageBodyPart.setFileName(attachmentFilename);
                     // Set Disposition
                     messageBodyPart.setDisposition(Part.ATTACHMENT);
                     // Add part to multipart
@@ -162,30 +150,31 @@ public class MailBinding {
                 }
             }
         }
+
         // Put parts in message
         mimeMessage.setContent(multipart);
     }
 
     /**
-     * Converts the given object value to a String
-     */
-    protected String asString(Exchange exchange, Object value) {
-        return exchange.getContext().getTypeConverter().convertTo(String.class, value);
-    }
-
-    /**
      * Strategy to allow filtering of headers which are put on the Mail message
      */
-    protected boolean shouldOutputHeader(org.apache.camel.Message camelMessage, String headerName,
-                                         Object headerValue) {
+    protected boolean shouldOutputHeader(org.apache.camel.Message camelMessage, String headerName, Object headerValue) {
         return true;
     }
 
     /**
      * Strategy to allow filtering of attachments which are put on the Mail message
      */
-    protected boolean shouldOutputAttachment(org.apache.camel.Message camelMessage, String headerName,
-                                             DataHandler headerValue) {
+    protected boolean shouldOutputAttachment(org.apache.camel.Message camelMessage, String attachmentFilename, DataHandler handler) {
         return true;
     }
+
+    private static boolean empty(Address[] addresses) {
+        return addresses == null || addresses.length == 0;
+    }
+
+    private static String asString(Exchange exchange, Object value) {
+        return exchange.getContext().getTypeConverter().convertTo(String.class, value);
+    }
+
 }
