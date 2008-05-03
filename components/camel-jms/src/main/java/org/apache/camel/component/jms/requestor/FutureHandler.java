@@ -28,9 +28,10 @@ import javax.jms.Message;
  *
  * @version $Revision$
  */
-public class FutureHandler extends FutureTask implements ReplyHandler {
-    private static final Callable EMPTY_CALLABLE = new Callable() {
-        public Object call() throws Exception {
+public class FutureHandler extends FutureTask<Message> implements ReplyHandler {
+    
+    private static final Callable<Message> EMPTY_CALLABLE = new Callable<Message>() {
+        public Message call() throws Exception {
             return null;
         }
     };
@@ -39,7 +40,7 @@ public class FutureHandler extends FutureTask implements ReplyHandler {
         super(EMPTY_CALLABLE);
     }
 
-    public synchronized void set(Object result) {
+    public synchronized void set(Message result) {
         super.set(result);
     }
 

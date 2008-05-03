@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
+import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
@@ -57,10 +59,20 @@ import org.springframework.util.Assert;
  * @version $Revision$
  */
 public class JmsConfiguration implements Cloneable {
+    
+    public static final String QUEUE_PREFIX = "queue:";
+    public static final String TOPIC_PREFIX = "topic:";
+    public static final String TEMP_QUEUE_PREFIX = "temp:queue:";
+    public static final String TEMP_TOPIC_PREFIX = "temp:topic:";
+
     protected static final String TRANSACTED = "TRANSACTED";
     protected static final String CLIENT_ACKNOWLEDGE = "CLIENT_ACKNOWLEDGE";
     protected static final String AUTO_ACKNOWLEDGE = "AUTO_ACKNOWLEDGE";
     protected static final String DUPS_OK_ACKNOWLEDGE = "DUPS_OK_ACKNOWLEDGE";
+    protected static final String REPLYTO_TEMP_DEST_AFFINITY_PER_COMPONENT = "component";
+    protected static final String REPLYTO_TEMP_DEST_AFFINITY_PER_ENDPOINT = "endpoint";
+    protected static final String REPLYTO_TEMP_DEST_AFFINITY_PER_PRODUCER = "producer";
+    
     private static final transient Log LOG = LogFactory.getLog(JmsConfiguration.class);
     private JmsOperations jmsOperations;
     private DestinationResolver destinationResolver;
@@ -87,6 +99,7 @@ public class JmsConfiguration implements Cloneable {
     private String cacheLevelName;
     private long recoveryInterval = -1;
     private long receiveTimeout = -1;
+    private long requestTimeout = 20000L;
     private int idleTaskExecutionLimit = 1;
     private int maxConcurrentConsumers = 1;
     // JmsTemplate only
@@ -113,6 +126,14 @@ public class JmsConfiguration implements Cloneable {
     private boolean useMessageIDAsCorrelationID;
     private JmsProviderMetadata providerMetadata = new JmsProviderMetadata();
     private JmsOperations metadataJmsOperations;
+    // defines the component created temporary replyTo destination sharing strategy:
+    // possible values are: "component", "endpoint", "producer"
+    // component - a single temp queue is shared among all producers for a given component instance
+    // endpoint - a single temp queue is shared among all producers for a given endpoint instance
+    // producer - a single temp queue is created per producer
+    private String replyToTempDestinationAffinity = REPLYTO_TEMP_DEST_AFFINITY_PER_ENDPOINT;
+    private String replyToDestination;
+    private String replyToDestinationSelectorName;
 
     public JmsConfiguration() {
     }
@@ -846,6 +867,10 @@ public class JmsConfiguration implements Cloneable {
             }
         }
 
+        if (endpoint.getSelector() != null && endpoint.getSelector().length() != 0) {
+            container.setMessageSelector(endpoint.getSelector());
+        }
+        
         if (container instanceof DefaultMessageListenerContainer) {
             // this includes DefaultMessageListenerContainer102
             DefaultMessageListenerContainer listenerContainer = (DefaultMessageListenerContainer)container;
@@ -932,7 +957,8 @@ public class JmsConfiguration implements Cloneable {
             template.setDeliveryPersistent(isReplyToDeliveryPersistent());
         }
     }
-    protected AbstractMessageListenerContainer chooseMessageListenerContainerImplementation() {
+    
+    public AbstractMessageListenerContainer chooseMessageListenerContainerImplementation() {
         // TODO we could allow a spring container to auto-inject these objects?
         switch (consumerType) {
         case Simple:
@@ -1037,5 +1063,49 @@ public class JmsConfiguration implements Cloneable {
 
     public void setUseMessageIDAsCorrelationID(boolean useMessageIDAsCorrelationID) {
         this.useMessageIDAsCorrelationID = useMessageIDAsCorrelationID;
+    }
+
+    public String getReplyToTempDestinationAffinity() {
+        return replyToTempDestinationAffinity;
+    }
+
+    public void setReplyToTempDestinationAffinity(
+            String replyToTempDestinationAffinity) {
+        this.replyToTempDestinationAffinity = replyToTempDestinationAffinity;
+    }
+
+    public long getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    public void setRequestTimeout(long requestTimeout) {
+        this.requestTimeout = requestTimeout;
+    }
+
+    public String getReplyTo() {
+        return replyToDestination;
+    }
+
+    public void setReplyTo(String replyToDestination) {
+        if (!replyToDestination.startsWith(QUEUE_PREFIX)) {
+            throw new IllegalArgumentException("ReplyTo destination value has to be of type queue; "
+                                              + "e.g: \"queue:replyQueue\"");
+        }
+        this.replyToDestination = 
+            removeStartingCharacters(replyToDestination.substring(QUEUE_PREFIX.length()), '/');
+    }
+
+    public String getReplyToDestinationSelectorName() {
+        return replyToDestinationSelectorName;
+    }
+
+    public void setReplyToDestinationSelectorName(String replyToDestinationSelectorName) {
+        this.replyToDestinationSelectorName = replyToDestinationSelectorName;
+        // in case of consumer -> producer and a named replyTo correlation selector
+        // message passthough is impossible as we need to set the value of selector into 
+        // outgoing message, which would be read-only if passthough were to remain enabled
+        if (replyToDestinationSelectorName != null) {
+            setAlwaysCopyMessage(true);
+        }
     }
 }

@@ -49,11 +49,6 @@ import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
  */
 public class JmsComponent extends DefaultComponent<JmsExchange> implements ApplicationContextAware {
 
-    public static final String QUEUE_PREFIX = "queue:";
-    public static final String TOPIC_PREFIX = "topic:";
-    public static final String TEMP_QUEUE_PREFIX = "temp:queue:";
-    public static final String TEMP_TOPIC_PREFIX = "temp:topic:";
-
     private static final transient Log LOG = LogFactory.getLog(JmsComponent.class);
     private static final String DEFAULT_QUEUE_BROWSE_STRATEGY = "org.apache.camel.component.jms.DefaultQueueBrowseStrategy";
     private JmsConfiguration configuration;
@@ -365,20 +360,20 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
 
         boolean pubSubDomain = false;
         boolean tempDestination = false;
-        if (remaining.startsWith(QUEUE_PREFIX)) {
+        if (remaining.startsWith(JmsConfiguration.QUEUE_PREFIX)) {
             pubSubDomain = false;
-            remaining = removeStartingCharacters(remaining.substring(QUEUE_PREFIX.length()), '/');
-        } else if (remaining.startsWith(TOPIC_PREFIX)) {
+            remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.QUEUE_PREFIX.length()), '/');
+        } else if (remaining.startsWith(JmsConfiguration.TOPIC_PREFIX)) {
             pubSubDomain = true;
-            remaining = removeStartingCharacters(remaining.substring(TOPIC_PREFIX.length()), '/');
-        } else if (remaining.startsWith(TEMP_QUEUE_PREFIX)) {
+            remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.TOPIC_PREFIX.length()), '/');
+        } else if (remaining.startsWith(JmsConfiguration.TEMP_QUEUE_PREFIX)) {
             pubSubDomain = false;
             tempDestination = true;
-            remaining = removeStartingCharacters(remaining.substring(TEMP_QUEUE_PREFIX.length()), '/');
-        } else if (remaining.startsWith(TEMP_TOPIC_PREFIX)) {
+            remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.TEMP_QUEUE_PREFIX.length()), '/');
+        } else if (remaining.startsWith(JmsConfiguration.TEMP_TOPIC_PREFIX)) {
             pubSubDomain = true;
             tempDestination = true;
-            remaining = removeStartingCharacters(remaining.substring(TEMP_TOPIC_PREFIX.length()), '/');
+            remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.TEMP_TOPIC_PREFIX.length()), '/');
         }
 
         final String subject = convertPathToActualDestination(remaining, parameters);

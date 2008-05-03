@@ -107,6 +107,11 @@ public class JmsMessage extends DefaultMessage {
     }
 
     public void setJmsMessage(Message jmsMessage) {
+        try {
+            setMessageId(jmsMessage.getJMSMessageID());
+        } catch (JMSException e) {
+            LOG.warn("Unable to retrieve JMSMessageID from JMS Message", e);
+        }
         this.jmsMessage = jmsMessage;
     }
 

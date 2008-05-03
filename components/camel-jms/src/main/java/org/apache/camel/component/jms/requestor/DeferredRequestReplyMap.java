@@ -38,6 +38,7 @@ public class DeferredRequestReplyMap  {
     public static class DeferredMessageSentCallback implements MessageSentCallback {
         private DeferredRequestReplyMap map;
         private String transitionalID;
+        private Message message;
         private Object monitor;
 
         public DeferredMessageSentCallback(DeferredRequestReplyMap map, UuidGenerator uuidGenerator, Object monitor) {
@@ -54,7 +55,12 @@ public class DeferredRequestReplyMap  {
             return transitionalID;
         }
 
+        public Message getMessage() {
+            return message;
+        }
+        
         public void sent(Message message) {
+            this.message = message;
             map.processDeferredReplies(monitor, getID(), message);
         }
     }
@@ -124,6 +130,7 @@ public class DeferredRequestReplyMap  {
                 }
                 deferredRequestMap.remove(transitionalID);
                 String correlationID = outMessage.getJMSMessageID();
+                // System.out.println("DeferredRequestReplyMap.processDeferredReplies: sent messageID = " + correlationID);
                 Object in = deferredReplyMap.get(correlationID);
 
                 if (in != null && in instanceof Message) {
