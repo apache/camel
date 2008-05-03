@@ -29,6 +29,7 @@ import javax.mail.Part;
 
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.CollectionHelper;
+import org.apache.camel.RuntimeCamelException;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with Mail
@@ -82,7 +83,7 @@ public class MailMessage extends DefaultMessage {
             try {
                 answer = mailMessage.getHeader(name);
             } catch (MessagingException e) {
-                throw new MessageHeaderAccessException(name, e);
+                throw new RuntimeCamelException("Error accessing header: " + name, e);
             }
         }
         if (answer == null) {
@@ -110,21 +111,16 @@ public class MailMessage extends DefaultMessage {
     @Override
     protected void populateInitialHeaders(Map<String, Object> map) {
         if (mailMessage != null) {
-            Enumeration names;
             try {
-                names = mailMessage.getAllHeaders();
-            } catch (MessagingException e) {
-                throw new MessageHeaderNamesAccessException(e);
-            }
-            try {
+                Enumeration names = mailMessage.getAllHeaders();
                 while (names.hasMoreElements()) {
                     Header header = (Header)names.nextElement();
                     String value = header.getValue();
                     String name = header.getName();
                     CollectionHelper.appendValue(map, name, value);
                 }
-            } catch (Exception e) {
-                throw new MessageHeaderNamesAccessException(e);
+            } catch (MessagingException e) {
+                throw new RuntimeCamelException("Error accessing headers due to: " + e.getMessage(), e);
             }
         }
     }
@@ -133,9 +129,9 @@ public class MailMessage extends DefaultMessage {
     protected void populateInitialAttachments(Map<String, DataHandler> map) {
         if (mailMessage != null) {
             try {
-                extractAttachments(map);
-            } catch (MessagingException ex) {
-                throw new RuntimeMailException("Error populating the initial mail message attachments", ex);
+                extractAttachments(mailMessage, map);
+            } catch (Exception e) {
+                throw new RuntimeCamelException("Error populating the initial mail message attachments", e);
             }
         }
     }
@@ -149,48 +145,32 @@ public class MailMessage extends DefaultMessage {
     }
 
     /**
-     * Parses the attachments of the mail message and puts them to the message
+     * Parses the attachments of the given mail message and adds them to the map
      *
-     * @param map       the attachments map
-     * @throws javax.mail.MessagingException
+     * @param  message  the mail message with attachments
+     * @param  map      the map to add found attachments (attachmentFilename is the key)
      */
-    protected void extractAttachments(Map<String, DataHandler> map) throws javax.mail.MessagingException {
-        // TODO: Reuse spring mail support to handle the attachment
-        // now convert the mail attachments and put it to the msg
-        Multipart mp;
-        Object content;
-
-        try {
-            content = this.mailMessage.getContent();
-
-            if (content instanceof Multipart) {
-                // mail with attachment
-                mp = (Multipart)content;
-                int nbMP = mp.getCount();
-                for (int i = 0; i < nbMP; i++) {
-                    Part part = mp.getBodyPart(i);
-                    String disposition = part.getDisposition();
-
-                    if (disposition != null
-                        && (disposition.equalsIgnoreCase(Part.ATTACHMENT) || disposition
-                            .equalsIgnoreCase(Part.INLINE))) {
+    protected static void extractAttachments(Message message, Map<String, DataHandler> map)
+        throws javax.mail.MessagingException, IOException {
+        
+        Object content = message.getContent();
+        if (content instanceof Multipart) {
+            // mail with attachment
+            Multipart mp = (Multipart)content;
+            for (int i = 0; i < mp.getCount(); i++) {
+                Part part = mp.getBodyPart(i);
+                String disposition = part.getDisposition();
+                if (disposition != null) {
+                    if (disposition.equalsIgnoreCase(Part.ATTACHMENT) || disposition.equalsIgnoreCase(Part.INLINE)) {
                         // only add named attachments
                         if (part.getFileName() != null) {
-                            // Parts marked with a disposition of
-                            // Part.ATTACHMENT
-                            // from part.getDisposition() are clearly
-                            // attachments
-                            DataHandler att = part.getDataHandler();
-                            // this is clearly a attachment
-                            CollectionHelper.appendValue(map, part.getFileName(), att);
+                            // Parts marked with a disposition of Part.ATTACHMENT are clearly attachments
+                            CollectionHelper.appendValue(map, part.getFileName(), part.getDataHandler());
                         }
                     }
                 }
             }
-        } catch (MessagingException e) {
-            throw new javax.mail.MessagingException("Error while setting content on normalized message", e);
-        } catch (IOException e) {
-            throw new javax.mail.MessagingException("Error while fetching content", e);
         }
     }
+
 }
