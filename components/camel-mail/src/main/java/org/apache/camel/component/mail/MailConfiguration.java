@@ -51,6 +51,7 @@ public class MailConfiguration {
     private boolean processOnlyUnseenMessages;
     private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
     private int fetchSize = -1;
+    private boolean debugMode;
 
     public MailConfiguration() {
     }
@@ -89,6 +90,10 @@ public class MailConfiguration {
 
     protected JavaMailSenderImpl createJavaMailSender() {
         JavaMailSenderImpl answer = new JavaMailSenderImpl();
+
+        // sets the debug mode of the underlying mail framework
+        answer.getSession().setDebug(debugMode);
+
         if (defaultEncoding != null) {
             answer.setDefaultEncoding(defaultEncoding);
         }
@@ -280,5 +285,13 @@ public class MailConfiguration {
 
     public void setFetchSize(int fetchSize) {
         this.fetchSize = fetchSize;
+    }
+
+    public boolean isDebugMode() {
+        return debugMode;
+    }
+
+    public void setDebugMode(boolean debugMode) {
+        this.debugMode = debugMode;
     }
 }
