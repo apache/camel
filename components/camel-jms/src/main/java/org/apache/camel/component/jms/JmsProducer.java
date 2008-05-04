@@ -33,8 +33,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.jms.JmsConfiguration.CamelJmsTemplate;
 import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap;
-import org.apache.camel.component.jms.requestor.PersistentReplyToRequestor;
 import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap.DeferredMessageSentCallback;
+import org.apache.camel.component.jms.requestor.PersistentReplyToRequestor;
 import org.apache.camel.component.jms.requestor.Requestor;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.Out;
@@ -49,15 +49,16 @@ import org.springframework.jms.core.MessageCreator;
  */
 public class JmsProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(JmsProducer.class);
+    RequestorAffinity affinity;
     private final JmsEndpoint endpoint;
     private JmsOperations inOnlyTemplate;
     private JmsOperations inOutTemplate;
     private UuidGenerator uuidGenerator;
     private DeferredRequestReplyMap deferredRequestReplyMap;
     private Requestor requestor;
-    RequestorAffinity affinity;
     private AtomicBoolean started = new AtomicBoolean(false);
-    
+
+
     private enum RequestorAffinity {
         PER_COMPONENT(0),
         PER_ENDPOINT(1),
@@ -91,41 +92,40 @@ public class JmsProducer extends DefaultProducer {
     }
 
     protected void testAndSetRequestor() throws RuntimeCamelException {
-        if (started.get() == false) {
+        if (!started.get()) {
             synchronized (this) {
-                if (started.get() == true) {
-                    return;
-                }
-                try {
-                    JmsConfiguration c = endpoint.getConfiguration();
-                    if (c.getReplyTo() != null) {
-                        requestor = new PersistentReplyToRequestor(endpoint.getConfiguration(), 
-                                                                   endpoint.getExecutorService());
-                        requestor.start();
-                    } else {
-                        if (affinity == RequestorAffinity.PER_PRODUCER) {
-                            requestor = new Requestor(endpoint.getConfiguration(), 
-                                                      endpoint.getExecutorService());
+                if (!started.get()) {
+                    try {
+                        JmsConfiguration c = endpoint.getConfiguration();
+                        if (c.getReplyTo() != null) {
+                            requestor = new PersistentReplyToRequestor(endpoint.getConfiguration(),
+                                                                       endpoint.getExecutorService());
                             requestor.start();
-                        } else if (affinity == RequestorAffinity.PER_ENDPOINT) {
-                            requestor = endpoint.getRequestor();
-                        } else if (affinity == RequestorAffinity.PER_COMPONENT) {
-                            requestor = ((JmsComponent)endpoint.getComponent()).getRequestor();
+                        } else {
+                            if (affinity == RequestorAffinity.PER_PRODUCER) {
+                                requestor = new Requestor(endpoint.getConfiguration(),
+                                                          endpoint.getExecutorService());
+                                requestor.start();
+                            } else if (affinity == RequestorAffinity.PER_ENDPOINT) {
+                                requestor = endpoint.getRequestor();
+                            } else if (affinity == RequestorAffinity.PER_COMPONENT) {
+                                requestor = ((JmsComponent)endpoint.getComponent()).getRequestor();
+                            }
                         }
+                    } catch (Exception e) {
+                        throw new FailedToCreateProducerException(endpoint, e);
                     }
-                } catch (Exception e) {
-                    throw new FailedToCreateProducerException(endpoint, e);
+                    deferredRequestReplyMap = requestor.getDeferredRequestReplyMap(this);
+                    started.set(true);
                 }
-                deferredRequestReplyMap = requestor.getDeferredRequestReplyMap(this);
-                started.set(true);
             }
         }
     }
-    
+
     protected void testAndUnsetRequestor() throws Exception  {
-        if (started.get() == true) {
+        if (started.get()) {
             synchronized (this) {
-                if (started.get() == false) {
+                if (!started.get()) {
                     return;
                 }
                 requestor.removeDeferredRequestReplyMap(this);
@@ -136,7 +136,7 @@ public class JmsProducer extends DefaultProducer {
             }
         }
     }
-    
+
     protected void doStop() throws Exception {
         testAndUnsetRequestor();
         super.doStop();
@@ -146,20 +146,20 @@ public class JmsProducer extends DefaultProducer {
         final org.apache.camel.Message in = exchange.getIn();
 
         if (exchange.getPattern().isOutCapable()) {
-            
+
             testAndSetRequestor();
-            
+
             // note due to JMS transaction semantics we cannot use a single transaction
             // for sending the request and receiving the response
             final Destination replyTo = requestor.getReplyTo();
-            
+
             if (replyTo == null) {
                 throw new RuntimeExchangeException("Failed to resolve replyTo destination", exchange);
             }
-            
+
             final boolean msgIdAsCorrId = endpoint.getConfiguration().isUseMessageIDAsCorrelationID();
             String correlationId = in.getHeader("JMSCorrelationID", String.class);
-            
+
             if (correlationId == null && !msgIdAsCorrId) {
                 in.setHeader("JMSCorrelationID", getUuidGenerator().generateId());
             }
@@ -187,7 +187,7 @@ public class JmsProducer extends DefaultProducer {
                     return message;
                 }
             }, callback);
-            
+
             setMessageId(exchange);
 
             // lets wait and return the response
@@ -232,8 +232,8 @@ public class JmsProducer extends DefaultProducer {
                     return message;
                 }
             });
-            
-            setMessageId(exchange);            
+
+            setMessageId(exchange);
         }
     }
 
@@ -242,17 +242,17 @@ public class JmsProducer extends DefaultProducer {
             return;
         }
         try {
-            JmsExchange jmsExchange = JmsExchange.class.cast(exchange); 
+            JmsExchange jmsExchange = JmsExchange.class.cast(exchange);
             JmsMessage out = jmsExchange.getOut(false);
             if (out != null) {
                 out.setMessageId(out.getJmsMessage().getJMSMessageID());
             }
         } catch (JMSException e) {
-            LOG.warn("Unable to retrieve JMSMessageID from outgoing JMS Message and " 
+            LOG.warn("Unable to retrieve JMSMessageID from outgoing JMS Message and "
                      + "set it into Camel's MessageId", e);
         }
     }
-    
+
     /**
      * Preserved for backwards compatibility.
      *

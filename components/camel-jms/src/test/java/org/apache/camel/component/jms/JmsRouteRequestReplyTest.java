@@ -37,13 +37,13 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
  * @version $Revision$
  */
 public class JmsRouteRequestReplyTest extends ContextTestSupport {
-    protected static String REPLY_TO_DESTINATION_SELECTOR_NAME = "camelProducer";
+    protected static final String REPLY_TO_DESTINATION_SELECTOR_NAME = "camelProducer";
     protected static String componentName = "amq";
     protected static String componentName1 = "amq1";
     protected static String endpoingUriA = componentName + ":queue:test.a";
     protected static String endpointUriB = componentName + ":queue:test.b";
     protected static String endpointUriB1 = componentName1 + ":queue:test.b";
-    // note that the replyTo both A and B endpoints share the persistent replyTo queue, 
+    // note that the replyTo both A and B endpoints share the persistent replyTo queue,
     // which is one more way to verify that reply listeners of A and B endpoints don't steal each other messages
     protected static String endpoingtReplyToUriA = componentName + ":queue:test.a?replyTo=queue:test.a.reply";
     protected static String endpoingtReplyToUriB = componentName + ":queue:test.b?replyTo=queue:test.a.reply";
@@ -59,7 +59,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
     private interface ContextBuilder {
         CamelContext buildContext(CamelContext context) throws Exception;
     }
-    
+
     public static class SingleNodeDeadEndRouteBuilder extends RouteBuilder {
         public void configure() throws Exception {
             from(endpoingUriA).process(new Processor() {
@@ -101,7 +101,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
                     Message in = e.getIn();
                     Message out = e.getOut(true);
                     String selectorValue = in.getHeader(REPLY_TO_DESTINATION_SELECTOR_NAME, String.class);
-                    String request = in.getBody(String.class);                    
+                    String request = in.getBody(String.class);
                     out.setHeader(REPLY_TO_DESTINATION_SELECTOR_NAME, selectorValue);
                     out.setBody(expectedReply + request.substring(request.indexOf('-')));
                 }
@@ -120,7 +120,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
             });
         }
     };
-    
+
     public static class ContextBuilderMessageID implements ContextBuilder {
         public CamelContext buildContext(CamelContext context) throws Exception {
             ConnectionFactory connectionFactory =
@@ -134,9 +134,9 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
              */
             context.addComponent(componentName, jmsComponent);
             return context;
-        }        
+        }
     };
-    
+
     public static class ContextBuilderMessageIDReplyToTempDestinationAffinity extends ContextBuilderMessageID {
         private String affinity;
         public ContextBuilderMessageIDReplyToTempDestinationAffinity(String affinity) {
@@ -154,9 +154,9 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
         if (inited.compareAndSet(false, true)) {
 
             ContextBuilder contextBuilderMessageID = new ContextBuilderMessageID();
-            ContextBuilder contextBuilderMessageIDReplyToTempDestinationPerComponent = 
+            ContextBuilder contextBuilderMessageIDReplyToTempDestinationPerComponent =
                 new ContextBuilderMessageIDReplyToTempDestinationAffinity("component");
-            ContextBuilder contextBuilderMessageIDReplyToTempDestinationPerProducer = 
+            ContextBuilder contextBuilderMessageIDReplyToTempDestinationPerProducer =
                 new ContextBuilderMessageIDReplyToTempDestinationAffinity("producer");
 
             ContextBuilder contextBuilderCorrelationID = new ContextBuilder() {
@@ -187,7 +187,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
                     return context;
                 }
             };
-            
+
             ContextBuilder contextBuilderCorrelationIDNamedReplyToSelector = new ContextBuilder() {
                 public CamelContext buildContext(CamelContext context) throws Exception {
                     ConnectionFactory connectionFactory =
@@ -201,7 +201,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
                 }
             };
 
-            
+
             ContextBuilder contextBuilderCorrelationIDDiffComp = new ContextBuilder() {
                 public CamelContext buildContext(CamelContext context) throws Exception {
                     ConnectionFactory connectionFactory =
@@ -238,25 +238,25 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
             contextBuilders.put("testUseMessageIDAsCorrelationID", contextBuilderMessageID);
             contextBuilders.put("testUseMessageIDAsCorrelationIDReplyToTempDestinationPerComponent",
                                  contextBuilderMessageIDReplyToTempDestinationPerComponent);
-            contextBuilders.put("testUseMessageIDAsCorrelationIDReplyToTempDestinationPerProducer", 
+            contextBuilders.put("testUseMessageIDAsCorrelationIDReplyToTempDestinationPerProducer",
                                  contextBuilderMessageIDReplyToTempDestinationPerProducer);
-            
+
             contextBuilders.put("testUseCorrelationID", contextBuilderCorrelationID);
             contextBuilders.put("testUseMessageIDAsCorrelationIDMultiNode", contextBuilderMessageID);
             contextBuilders.put("testUseCorrelationIDMultiNode", contextBuilderCorrelationID);
 
             contextBuilders.put("testUseMessageIDAsCorrelationIDPersistReplyToMultiNode", contextBuilderMessageID);
             contextBuilders.put("testUseCorrelationIDPersistReplyToMultiNode", contextBuilderCorrelationID);
-            
+
             contextBuilders.put("testUseMessageIDAsCorrelationIDPersistMultiReplyToMultiNode", contextBuilderMessageID);
             contextBuilders.put("testUseCorrelationIDPersistMultiReplyToMultiNode", contextBuilderCorrelationID);
-            
-            contextBuilders.put("testUseMessageIDAsCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode", 
+
+            contextBuilders.put("testUseMessageIDAsCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode",
                                  contextBuilderMessageIDNamedReplyToSelector);
-            
-            contextBuilders.put("testUseCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode", 
+
+            contextBuilders.put("testUseCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode",
                                  contextBuilderCorrelationIDNamedReplyToSelector);
-            
+
             contextBuilders.put("testUseCorrelationIDMultiNodeDiffComponents", contextBuilderCorrelationIDDiffComp);
             contextBuilders.put("testUseMessageIDAsCorrelationIDMultiNodeDiffComponents", contextBuilderMessageIDDiffComp);
             contextBuilders.put("testUseMessageIDAsCorrelationIDTimeout", contextBuilderMessageID);
@@ -268,19 +268,19 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
             routeBuilders.put("testUseCorrelationID", new SingleNodeRouteBuilder());
             routeBuilders.put("testUseMessageIDAsCorrelationIDMultiNode", new MultiNodeRouteBuilder());
             routeBuilders.put("testUseCorrelationIDMultiNode", new MultiNodeRouteBuilder());
-            
+
             routeBuilders.put("testUseMessageIDAsCorrelationIDPersistReplyToMultiNode", new MultiNodeRouteBuilder());
             routeBuilders.put("testUseCorrelationIDPersistReplyToMultiNode", new MultiNodeRouteBuilder());
-            
+
             routeBuilders.put("testUseMessageIDAsCorrelationIDPersistMultiReplyToMultiNode", new MultiNodeReplyToRouteBuilder());
             routeBuilders.put("testUseCorrelationIDPersistMultiReplyToMultiNode", new MultiNodeReplyToRouteBuilder());
-            
-            routeBuilders.put("testUseMessageIDAsCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode", 
+
+            routeBuilders.put("testUseMessageIDAsCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode",
                                new MultiNodeReplyToRouteBuilder());
-            
-            routeBuilders.put("testUseCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode", 
+
+            routeBuilders.put("testUseCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode",
                                new MultiNodeReplyToRouteBuilder());
-            
+
             routeBuilders.put("testUseCorrelationIDMultiNodeDiffComponents", new MultiNodeDiffCompRouteBuilder());
             routeBuilders.put("testUseMessageIDAsCorrelationIDMultiNodeDiffComponents", new MultiNodeDiffCompRouteBuilder());
             routeBuilders.put("testUseMessageIDAsCorrelationIDTimeout", new SingleNodeDeadEndRouteBuilder());
@@ -328,7 +328,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
     public void testUseMessageIDAsCorrelationIDReplyToTempDestinationPerComponent() throws Exception {
         runRequestReplyThreaded(endpoingUriA);
     }
-    
+
     public void testUseMessageIDAsCorrelationIDReplyToTempDestinationPerProducer() throws Exception {
         runRequestReplyThreaded(endpoingUriA);
     }
@@ -365,11 +365,11 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
         int oldMaxTasks = maxTasks;
         int oldMaxServerTasks = maxServerTasks;
         int oldMaxCalls = maxCalls;
-        
+
         maxTasks = 10;
         maxServerTasks = 1;
         maxCalls = 2;
-        
+
         try {
             runRequestReplyThreaded(endpoingUriA);
         } finally {
@@ -384,7 +384,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
         int oldMaxTasks = maxTasks;
         int oldMaxServerTasks = maxServerTasks;
         int oldMaxCalls = maxCalls;
-        
+
         maxTasks = 10;
         maxServerTasks = 1;
         maxCalls = 2;
@@ -405,7 +405,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
     public void testUseCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode() throws Exception {
         runRequestReplyThreaded(endpoingUriA);
     }
-    
+
     public void testUseCorrelationIDTimeout() throws Exception {
         JmsComponent c = (JmsComponent)context.getComponent(componentName);
         c.getConfiguration().setRequestTimeout(1000);
@@ -413,7 +413,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
 
         Object reply = template.requestBody(endpoingUriA, request);
         assertEquals(reply, request);
-        
+
         JmsEndpoint endpoint = template.getResolvedEndpoint(endpoingUriA, JmsEndpoint.class);
         // Wait 1 extra purge cycle to make sure that TimeoutMap had a chance to cleanup
         Thread.sleep(endpoint.getConfiguration().getRequestMapPurgePollTimeMillis());
@@ -424,10 +424,10 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
         JmsComponent c = (JmsComponent)context.getComponent(componentName);
         c.getConfiguration().setRequestTimeout(1000);
         c.getConfiguration().setRequestMapPurgePollTimeMillis(1000);
-        
+
         Object reply = template.requestBody(endpoingUriA, request);
         assertEquals(reply, request);
-        
+
         JmsEndpoint endpoint = template.getResolvedEndpoint(endpoingUriA, JmsEndpoint.class);
         // Wait 1 extra purge cycle to make sure that TimeoutMap had a chance to cleanup
         Thread.sleep(endpoint.getConfiguration().getRequestMapPurgePollTimeMillis());
@@ -441,7 +441,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
     public void testUseMessageIDAsCorrelationIDMultiNodeDiffComponents() throws Exception {
         runRequestReplyThreaded(endpoingUriA);
     }
-    
+
     protected void runRequestReplyThreaded(String fromUri) throws Exception {
         final AtomicInteger counter = new AtomicInteger(-1);
         Task[] tasks = new Task[maxTasks];

@@ -1084,10 +1084,10 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     public Type setBody(Expression expression) {
         return process(ProcessorBuilder.setBody(expression));
     }
-   
+
     /**
      * Adds a processor which sets the body on the OUT message
-     * 
+     *
      * @deprecated Please use {@link #transform(Expression)} instead
      */
     public Type setOutBody(Expression expression) {
@@ -1102,7 +1102,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     public ExpressionClause<ProcessorType<Type>> setOutBody() {
         return transform();
     }
-    
+
     /**
      * Adds a processor which sets the body on the OUT message
      */
@@ -1121,11 +1121,11 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
         TransformType answer = new TransformType(clause);
         addOutput(answer);
         return clause;
-    }             
-    
+    }
+
     /**
-	 * Adds a processor which sets the body on the FAULT message
-	 */
+     * Adds a processor which sets the body on the FAULT message
+     */
     public Type setFaultBody(Expression expression) {
         return process(ProcessorBuilder.setFaultBody(expression));
     }
