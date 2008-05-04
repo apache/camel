@@ -83,7 +83,6 @@ public final class CxfBinding {
         CxfMessage out = exchange.getOut();
         if (response != null) {
             out.setMessage(response);
-            out.setBody(response.getContent(InputStream.class));
         }
     }
 

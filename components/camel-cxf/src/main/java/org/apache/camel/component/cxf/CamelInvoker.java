@@ -165,6 +165,15 @@ public class CamelInvoker implements Invoker, MessageInvoker {
             }
         } else {
             result = cxfExchange.getOut().getBody();
+            if (result != null) {
+                if (result instanceof MessageContentsList || result instanceof List || result.getClass().isArray()) {
+                    return result;
+                } else {
+                    MessageContentsList resList = new MessageContentsList();
+                    resList.add(result);
+                    return resList;
+                }
+            }
         }
         return result;
     }
