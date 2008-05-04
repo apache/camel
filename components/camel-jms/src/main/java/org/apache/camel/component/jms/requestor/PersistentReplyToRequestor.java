@@ -122,7 +122,7 @@ public class PersistentReplyToRequestor extends Requestor {
 
     @Override
     protected FutureHandler createFutureHandler(String correlationID) {
-        boolean dynamicSelector = (getConfiguration().getReplyToDestinationSelectorName() == null);
+        boolean dynamicSelector = getConfiguration().getReplyToDestinationSelectorName() == null;
         if (dynamicSelector) {
             return new PersistentReplyToFutureHandler(this, correlationID);
         }
@@ -131,7 +131,7 @@ public class PersistentReplyToRequestor extends Requestor {
 
     @Override
     protected FutureHandler createFutureHandler(DeferredMessageSentCallback callback) {
-        boolean dynamicSelector = (getConfiguration().getReplyToDestinationSelectorName() == null);
+        boolean dynamicSelector = getConfiguration().getReplyToDestinationSelectorName() == null;
         if (dynamicSelector) {
             return new PersistentReplyToFutureHandler(this, callback);
         }
@@ -144,8 +144,8 @@ public class PersistentReplyToRequestor extends Requestor {
         String replyToSelectorName = getConfiguration().getReplyToDestinationSelectorName();
 
         AbstractMessageListenerContainer container =
-            config.isUseVersion102() ?
-                    (replyToSelectorName != null) ? new DefaultMessageListenerContainer102()
+            config.isUseVersion102()
+                    ? (replyToSelectorName != null) ? new DefaultMessageListenerContainer102()
                            : new CamelDefaultMessageListenerContainer102()
                     : (replyToSelectorName != null) ? new DefaultMessageListenerContainer()
                            : new CamelDefaultMessageListenerContainer();

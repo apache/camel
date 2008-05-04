@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
-
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
@@ -54,12 +52,14 @@ import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.Assert;
 
+import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+
 
 /**
  * @version $Revision$
  */
 public class JmsConfiguration implements Cloneable {
-    
+
     public static final String QUEUE_PREFIX = "queue:";
     public static final String TOPIC_PREFIX = "topic:";
     public static final String TEMP_QUEUE_PREFIX = "temp:queue:";
@@ -72,7 +72,7 @@ public class JmsConfiguration implements Cloneable {
     protected static final String REPLYTO_TEMP_DEST_AFFINITY_PER_COMPONENT = "component";
     protected static final String REPLYTO_TEMP_DEST_AFFINITY_PER_ENDPOINT = "endpoint";
     protected static final String REPLYTO_TEMP_DEST_AFFINITY_PER_PRODUCER = "producer";
-    
+
     private static final transient Log LOG = LogFactory.getLog(JmsConfiguration.class);
     private JmsOperations jmsOperations;
     private DestinationResolver destinationResolver;
@@ -870,7 +870,7 @@ public class JmsConfiguration implements Cloneable {
         if (endpoint.getSelector() != null && endpoint.getSelector().length() != 0) {
             container.setMessageSelector(endpoint.getSelector());
         }
-        
+
         if (container instanceof DefaultMessageListenerContainer) {
             // this includes DefaultMessageListenerContainer102
             DefaultMessageListenerContainer listenerContainer = (DefaultMessageListenerContainer)container;
@@ -957,7 +957,7 @@ public class JmsConfiguration implements Cloneable {
             template.setDeliveryPersistent(isReplyToDeliveryPersistent());
         }
     }
-    
+
     public AbstractMessageListenerContainer chooseMessageListenerContainerImplementation() {
         // TODO we could allow a spring container to auto-inject these objects?
         switch (consumerType) {
@@ -1091,7 +1091,7 @@ public class JmsConfiguration implements Cloneable {
             throw new IllegalArgumentException("ReplyTo destination value has to be of type queue; "
                                               + "e.g: \"queue:replyQueue\"");
         }
-        this.replyToDestination = 
+        this.replyToDestination =
             removeStartingCharacters(replyToDestination.substring(QUEUE_PREFIX.length()), '/');
     }
 
@@ -1102,7 +1102,7 @@ public class JmsConfiguration implements Cloneable {
     public void setReplyToDestinationSelectorName(String replyToDestinationSelectorName) {
         this.replyToDestinationSelectorName = replyToDestinationSelectorName;
         // in case of consumer -> producer and a named replyTo correlation selector
-        // message passthough is impossible as we need to set the value of selector into 
+        // message passthough is impossible as we need to set the value of selector into
         // outgoing message, which would be read-only if passthough were to remain enabled
         if (replyToDestinationSelectorName != null) {
             setAlwaysCopyMessage(true);

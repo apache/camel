@@ -190,7 +190,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                         if (operationNameSpace == null) {
                             if (endpoint.isWrapped()) {
                                 result = client.invokeWrapped(operationName, parameters.toArray());
-                            }else {
+                            } else {
                                 result = client.invoke(operationName, parameters.toArray());
                             }
                         } else {

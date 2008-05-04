@@ -56,7 +56,7 @@ public class Requestor extends ServiceSupport implements MessageListener {
     private TimeoutMap requestMap;
     private Map<JmsProducer, DeferredRequestReplyMap> producerDeferredRequestReplyMap;
     private TimeoutMap deferredRequestMap;
-    private TimeoutMap deferredReplyMap;    
+    private TimeoutMap deferredReplyMap;
     private Destination replyTo;
     private long maxRequestTimeout = -1;
     private long replyToResolverTimeout = 5000;
@@ -130,7 +130,7 @@ public class Requestor extends ServiceSupport implements MessageListener {
         map.put(callback, future);
         return future;
     }
-    
+
     protected FutureHandler createFutureHandler(String correlationID) {
         return new FutureHandler();
     }
@@ -178,7 +178,7 @@ public class Requestor extends ServiceSupport implements MessageListener {
     }
 
     public Destination getReplyTo() {
-        synchronized(this) {
+        synchronized (this) {
             try {
                 if (replyTo == null) {
                     wait(replyToResolverTimeout);
@@ -214,7 +214,7 @@ public class Requestor extends ServiceSupport implements MessageListener {
     protected Requestor getOutterInstance() {
         return this;
     }
-    
+
     protected AbstractMessageListenerContainer createListenerContainer() {
         SimpleMessageListenerContainer answer = configuration.isUseVersion102()
             ? new SimpleMessageListenerContainer102() : new SimpleMessageListenerContainer();
@@ -229,7 +229,7 @@ public class Requestor extends ServiceSupport implements MessageListener {
                         queue = session.createTemporaryQueue();
                         setReplyTo(queue);
                     } finally {
-                        getOutterInstance().notifyAll();                        
+                        getOutterInstance().notifyAll();
                     }
                 }
                 return queue;
@@ -267,7 +267,7 @@ public class Requestor extends ServiceSupport implements MessageListener {
     protected JmsConfiguration getConfiguration() {
         return configuration;
     }
-    
+
     public void setReplyToSelectorHeader(org.apache.camel.Message in, Message jmsIn) throws JMSException {
         // complete
     }
