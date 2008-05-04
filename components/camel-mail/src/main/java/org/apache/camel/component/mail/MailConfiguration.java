@@ -50,6 +50,7 @@ public class MailConfiguration {
     private boolean ignoreUriScheme;
     private boolean processOnlyUnseenMessages;
     private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
+    private int fetchSize = -1;
 
     public MailConfiguration() {
     }
@@ -273,4 +274,11 @@ public class MailConfiguration {
         return recipients;
     }
 
+    public int getFetchSize() {
+        return fetchSize;
+    }
+
+    public void setFetchSize(int fetchSize) {
+        this.fetchSize = fetchSize;
+    }
 }

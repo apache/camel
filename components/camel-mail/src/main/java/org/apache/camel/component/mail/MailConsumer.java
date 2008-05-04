@@ -77,8 +77,14 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
 
     protected void poll() throws Exception {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Polling mailfolder " + folder.getFullName() + " at host " + endpoint.getConfiguration().getHost());
+            LOG.debug("Polling mailfolder " + folder.getFullName() + " at host " + endpoint.getConfiguration().getHost() + ":" + endpoint.getConfiguration().getPort());
         }
+
+        if (endpoint.getConfiguration().getFetchSize() == 0) {
+            LOG.warn("Fetch size is 0 meaning the configuration is set to poll no new messages at all. Camel will skip this poll.");
+            return;
+        }
+
         // ensure folder is open
         if (!folder.isOpen()) {
             folder.open(Folder.READ_WRITE);
@@ -113,13 +119,21 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
      * Process all the messages
      */
     protected void processMessages(Message[] messages) throws Exception {
-        for (Message message : messages) {
+        int fetchSize = endpoint.getConfiguration().getFetchSize();
+        int count = fetchSize == -1 ? messages.length : Math.min(fetchSize, messages.length);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Fetching " + count + " messages. Total " + messages.length + " messages.");
+        }
+
+        for (int i = 0; i < count; i++) {
+            Message message = messages[i];
             if (!message.getFlags().contains(Flags.Flag.DELETED)) {
                 processMessage(message);
                 flagMessageProcessed(message);
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Skipping message as it was flagged as DELETED: " + MailUtils.dumpMessage(message));
+                    LOG.debug("Skipping message as it was flagged as deleted: " + MailUtils.dumpMessage(message));
                 }
             }
         }

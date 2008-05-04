@@ -71,6 +71,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("password", "secret", config.getPassword());
         assertEquals(true, config.isDeleteProcessedMessages());
         assertEquals(false, config.isIgnoreUriScheme());
+        assertEquals("fetchSize", -1, config.getFetchSize());
     }
 
     public void testDefaultPOP3Configuration() throws Exception {
@@ -87,6 +88,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("password", "secret", config.getPassword());
         assertEquals(true, config.isDeleteProcessedMessages());
         assertEquals(false, config.isIgnoreUriScheme());
+        assertEquals("fetchSize", -1, config.getFetchSize());
     }
 
     public void testDefaultIMAPConfiguration() throws Exception {
@@ -103,6 +105,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("password", "secret", config.getPassword());
         assertEquals(true, config.isDeleteProcessedMessages());
         assertEquals(false, config.isIgnoreUriScheme());
+        assertEquals("fetchSize", -1, config.getFetchSize());
     }
 
     public void testManyConfigurations() throws Exception {
@@ -120,6 +123,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("password", "secret", config.getPassword());
         assertEquals(false, config.isDeleteProcessedMessages());
         assertEquals(false, config.isIgnoreUriScheme());
+        assertEquals("fetchSize", -1, config.getFetchSize());
     }
 
     public void testDestination() {
@@ -136,6 +140,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("password", "secret", config.getPassword());
         assertEquals(true, config.isDeleteProcessedMessages());
         assertEquals(false, config.isIgnoreUriScheme());
+        assertEquals("fetchSize", -1, config.getFetchSize());
     }
 
     public void testNoUserInfoButUsername() {
@@ -152,6 +157,19 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("password", "secret", config.getPassword());
         assertEquals(true, config.isDeleteProcessedMessages());
         assertEquals(false, config.isIgnoreUriScheme());
+        assertEquals("fetchSize", -1, config.getFetchSize());
+    }
+
+    public void testMailEndpointsWithFetchSize() throws Exception {
+        MailEndpoint endpoint = resolveMandatoryEndpoint("pop3://james@myhost?fetchSize=5");
+        MailConfiguration config = endpoint.getConfiguration();
+        assertEquals("getProtocol()", "pop3", config.getProtocol());
+        assertEquals("getHost()", "myhost", config.getHost());
+        assertEquals("getPort()", 110, config.getPort());
+        assertEquals("getUsername()", "james", config.getUsername());
+        assertEquals("getDestination()", "james@myhost", config.getDestination());
+        assertEquals("folder", "INBOX", config.getFolderName());
+        assertEquals("fetchSize", 5, config.getFetchSize());
     }
 
     @Override
