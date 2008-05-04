@@ -76,8 +76,14 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
     }
 
     protected void poll() throws Exception {
+        if (store == null || folder == null) {
+            throw new IllegalStateException("MailConsumer did not start properly. Camel does not have access to the MailStore or MailFolder."
+                + " Check log files for errors reported during starting this component");
+        }
+
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Polling mailfolder " + folder.getFullName() + " at host " + endpoint.getConfiguration().getHost() + ":" + endpoint.getConfiguration().getPort());
+            LOG.debug("Polling mailfolder " + folder.getFullName() + " at host " +
+                endpoint.getConfiguration().getHost() + ":" + endpoint.getConfiguration().getPort());
         }
 
         if (endpoint.getConfiguration().getFetchSize() == 0) {

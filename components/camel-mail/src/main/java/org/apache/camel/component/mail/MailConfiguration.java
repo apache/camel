@@ -35,6 +35,7 @@ public class MailConfiguration {
 
     public static final String DEFAULT_FOLDER_NAME = "INBOX";
     public static final String DEFAULT_FROM = "camel@localhost";
+    public static final long DEFAULT_CONNECTION_TIMEOUT = 30000L;
 
     private Properties javaMailProperties;
     private String protocol;
@@ -52,6 +53,7 @@ public class MailConfiguration {
     private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
     private int fetchSize = -1;
     private boolean debugMode;
+    private long connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
 
     public MailConfiguration() {
     }
@@ -94,14 +96,18 @@ public class MailConfiguration {
         // sets the debug mode of the underlying mail framework
         answer.getSession().setDebug(debugMode);
 
+        if (javaMailProperties != null) {
+            answer.setJavaMailProperties(javaMailProperties);
+        } else {
+            // set default properties if none provided
+            answer.setJavaMailProperties(createJavaMailProperties());
+        }
+
         if (defaultEncoding != null) {
             answer.setDefaultEncoding(defaultEncoding);
         }
         if (host != null) {
             answer.setHost(host);
-        }
-        if (javaMailProperties != null) {
-            answer.setJavaMailProperties(javaMailProperties);
         }
         if (port >= 0) {
             answer.setPort(port);
@@ -119,6 +125,23 @@ public class MailConfiguration {
             answer.setUsername(username);
         }
         return answer;
+    }
+
+    private Properties createJavaMailProperties() {
+        // clone the system properties
+        Properties properties = (Properties)System.getProperties().clone();
+        properties.put("mail." + protocol + ".connectiontimeout", connectionTimeout);
+        properties.put("mail." + protocol + ".timeout", connectionTimeout);
+        properties.put("mail." + protocol + ".host", host);
+        properties.put("mail." + protocol + ".port", "" + port);
+        properties.put("mail." + protocol + ".user", username);
+        properties.put("mail." + protocol + ".rsetbeforequit", "true");
+        properties.put("mail." + protocol + ".auth", "true");
+        properties.put("mail.transport.protocol", protocol);
+        properties.put("mail.store.protocol", protocol);
+        properties.put("mail.host", host);
+        properties.put("mail.user", username);
+        return properties;
     }
 
     // Properties
@@ -293,5 +316,13 @@ public class MailConfiguration {
 
     public void setDebugMode(boolean debugMode) {
         this.debugMode = debugMode;
+    }
+
+    public long getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public void setConnectionTimeout(long connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
     }
 }
