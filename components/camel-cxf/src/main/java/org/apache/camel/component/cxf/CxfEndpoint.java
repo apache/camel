@@ -42,6 +42,7 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     private String serviceName;
     private String dataFormat;
     private String beanId;
+    private boolean isWrapped;
     private boolean isSpringContextEndpoint;
     private boolean inOut = true;
     private ConfigurerImpl configurer;
@@ -141,6 +142,14 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
 
     public void setInOut(boolean inOut) {
         this.inOut = inOut;
+    }
+
+    public boolean isWrapped() {
+        return isWrapped;
+    }
+
+    public void setWrapped(boolean wrapped) {
+        isWrapped = wrapped;
     }
 
 

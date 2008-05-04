@@ -188,10 +188,18 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                     try {
                         Object[] result = null;
                         if (operationNameSpace == null) {
-                            result = client.invoke(operationName, parameters.toArray());
+                            if (endpoint.isWrapped()) {
+                                result = client.invokeWrapped(operationName, parameters.toArray());
+                            }else {
+                                result = client.invoke(operationName, parameters.toArray());
+                            }
                         } else {
                             QName operation = new QName(operationNameSpace, operationName);
-                            result = client.invoke(operation, parameters.toArray());
+                            if (endpoint.isWrapped()) {
+                                result = client.invokeWrapped(operation, parameters.toArray());
+                            } else {
+                                result = client.invoke(operation, parameters.toArray());
+                            }
                         }
                         response.setContent(Object[].class, result);
                         CxfBinding.storeCxfResponse(exchange, response);
