@@ -17,12 +17,12 @@
 package org.apache.camel.component.mail;
 
 import java.net.URI;
-import java.util.Properties;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
-import javax.mail.Session;
 import javax.mail.Message;
+import javax.mail.Session;
 
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
@@ -209,7 +209,7 @@ public class MailConfiguration {
 
     public void setUsername(String username) {
         this.username = username;
-        if (! recipients.containsKey(Message.RecipientType.TO)) {
+        if (!recipients.containsKey(Message.RecipientType.TO)) {
             // set default destination to username@host for backwards compatibility
             // can be overridden by URI parameters
             String address = username + "@" + host;

@@ -77,7 +77,7 @@ public class MailProcessOnlyUnseenMessagesTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:a").to("smtp://claus@localhost");
 
-                from("imap://localhost?username=claus&password=secret&processOnlyUnseenMessages=true").to( "mock:result");
+                from("imap://localhost?username=claus&password=secret&processOnlyUnseenMessages=true").to("mock:result");
             }
         };
     }

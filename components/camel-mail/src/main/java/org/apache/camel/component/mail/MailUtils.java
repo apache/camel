@@ -18,9 +18,10 @@ package org.apache.camel.component.mail;
 
 import java.text.DateFormat;
 import java.util.Date;
+
 import javax.mail.Address;
-import javax.mail.MessagingException;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 
 /**
  * Mail utility class.
