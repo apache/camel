@@ -20,8 +20,10 @@ public interface HelloService {
     String sayHello();
 
     void ping();
-    
+
     int getInvocationCount();
 
     String echo(String text);
+
+    Boolean echoBoolean(Boolean bool);
 }

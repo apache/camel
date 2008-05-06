@@ -38,6 +38,7 @@ public class CxfConsumerTest extends ContextTestSupport {
     private static final String SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
                                                        + "?serviceClass=org.apache.camel.component.cxf.HelloService";
     private static final String ECHO_OPERATION = "echo";
+    private static final String ECHO_BOOLEAN_OPERATION = "echoBoolean";
     private static final String TEST_MESSAGE = "Hello World!";
 
     // START SNIPPET: example
@@ -51,7 +52,13 @@ public class CxfConsumerTest extends ContextTestSupport {
                         List parameter = in.getBody(List.class);
                         // Get the operation name
                         String operation = (String)in.getHeader(CxfConstants.OPERATION_NAME);
-                        String result = operation + " " + (String)parameter.get(0);
+                        Object result = null;
+                        if (operation.equals(ECHO_OPERATION)) {
+                            result = operation + " " + (String)parameter.get(0);
+                        }
+                        if (operation.equals(ECHO_BOOLEAN_OPERATION)) {
+                            result = (Boolean)parameter.get(0);
+                        }
                         // Put the result back
                         exchange.getOut().setBody(result);
                     }
@@ -71,7 +78,11 @@ public class CxfConsumerTest extends ContextTestSupport {
         HelloService client = (HelloService) proxyFactory.create();
 
         String result = client.echo("hello world");
-        assertEquals("we should get the right answer from router", result, "echo hello world");
+        assertEquals("We should get the echo string result from router", result, "echo hello world");
+
+        Boolean bool = client.echoBoolean(Boolean.TRUE);
+        assertNotNull("The result should not be null", bool);
+        assertEquals("We should get the echo boolean result from router ", bool.toString(), "true");
 
     }
 
