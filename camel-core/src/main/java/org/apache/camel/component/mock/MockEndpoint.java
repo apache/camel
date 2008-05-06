@@ -512,7 +512,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     }
 
     /**
-     * Sets the maximum amount of time the {@link #assertIsSatisfied()} will
+     * Sets the maximum amount of time (in millis) the {@link #assertIsSatisfied()} will
      * wait on a latch until it is satisfied
      */
     public void setResultWaitTime(long resultWaitTime) {
