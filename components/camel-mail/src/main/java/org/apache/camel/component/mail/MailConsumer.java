@@ -18,10 +18,10 @@ package org.apache.camel.component.mail;
 
 import javax.mail.Flags;
 import javax.mail.Folder;
+import javax.mail.FolderNotFoundException;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Store;
-import javax.mail.FolderNotFoundException;
 import javax.mail.search.FlagTerm;
 
 import org.apache.camel.Processor;
@@ -82,8 +82,8 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Polling mailfolder " + folder.getFullName() + " at host " +
-                endpoint.getConfiguration().getHost() + ":" + endpoint.getConfiguration().getPort());
+            LOG.debug("Polling mailfolder " + folder.getFullName() + " at host "
+                + endpoint.getConfiguration().getHost() + ":" + endpoint.getConfiguration().getPort());
         }
 
         if (endpoint.getConfiguration().getFetchSize() == 0) {

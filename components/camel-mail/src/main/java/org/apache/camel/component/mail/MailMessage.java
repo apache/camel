@@ -27,9 +27,9 @@ import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.CollectionHelper;
-import org.apache.camel.RuntimeCamelException;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with Mail
@@ -152,7 +152,7 @@ public class MailMessage extends DefaultMessage {
      */
     protected static void extractAttachments(Message message, Map<String, DataHandler> map)
         throws javax.mail.MessagingException, IOException {
-        
+
         Object content = message.getContent();
         if (content instanceof Multipart) {
             // mail with attachment

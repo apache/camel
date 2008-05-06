@@ -17,13 +17,14 @@
 package org.apache.camel.component.mail;
 
 import java.util.Map;
+
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
