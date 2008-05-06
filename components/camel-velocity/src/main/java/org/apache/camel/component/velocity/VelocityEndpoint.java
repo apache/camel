@@ -28,6 +28,7 @@ import org.apache.camel.component.ResourceBasedEndpoint;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.app.Velocity;
 import org.apache.velocity.context.Context;
 
 /**
@@ -36,6 +37,7 @@ import org.apache.velocity.context.Context;
 public class VelocityEndpoint extends ResourceBasedEndpoint {
     private final VelocityComponent component;
     private VelocityEngine velocityEngine;
+    private boolean loaderCache = true;
 
     public VelocityEndpoint(String uri, VelocityComponent component, String resourceUri, Map parameters) {
         super(uri, component, resourceUri, null);
@@ -55,12 +57,28 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         if (velocityEngine == null) {
             velocityEngine = component.getVelocityEngine();
             velocityEngine.init();
+            if (isLoaderCache()) {
+                Velocity.setProperty(Velocity.FILE_RESOURCE_LOADER_CACHE, Boolean.TRUE);
+            }
         }
         return velocityEngine;
     }
 
     public void setVelocityEngine(VelocityEngine velocityEngine) {
         this.velocityEngine = velocityEngine;
+    }
+
+    public boolean isLoaderCache() {
+        return loaderCache;
+    }
+
+    /**
+     * Enables / disables the velocity resource loader cache which is enabled by default
+     *
+     * @param loaderCache a flag to enable/disable the cache
+     */
+    public void setLoaderCache(boolean loaderCache) {
+        this.loaderCache = loaderCache;
     }
 
     @Override
