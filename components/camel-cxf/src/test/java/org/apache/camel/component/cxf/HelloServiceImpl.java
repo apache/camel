@@ -42,6 +42,10 @@ public class HelloServiceImpl implements HelloService {
         return "hello";
     }
 
+    public Boolean echoBoolean(Boolean bool) {
+        return bool;
+    }
+
 
 }
 
