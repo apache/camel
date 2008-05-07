@@ -63,5 +63,11 @@ trait ScalaDsl {
   def otherwise : SChoiceType = 
     throw new Exception("otherwise is only supported in a choice block or after a when statement")
   
+  def multicast = new SMulticastType(target.multicast)
+  
+  def process(function: Exchange => Unit) = {
+    target.process(new ScalaProcessor(function))
+    this
+  }
 
 }

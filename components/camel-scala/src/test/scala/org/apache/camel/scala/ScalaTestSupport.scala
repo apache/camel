@@ -18,11 +18,12 @@ package org.apache.camel.scala;
 
 import org.apache.camel.ContextTestSupport
 import org.apache.camel.component.mock.MockEndpoint
-import builder.RouteBuilderSupport
+import builder.{RouteBuilder,RouteBuilderSupport}
 import org.apache.camel.scala.dsl._
+import _root_.scala.List
 
 abstract class ScalaTestSupport extends ContextTestSupport with RouteBuilderSupport with Preamble {
-
+  
   implicit def stringToUri(uri:String) = new RichTestUri(uri, this)
   implicit def mockWrapper(endpoint: MockEndpoint) = new RichMockEndpoint(endpoint)
 
@@ -37,5 +38,9 @@ abstract class ScalaTestSupport extends ContextTestSupport with RouteBuilderSupp
     println(exchange)
     exchange
   }
+  
+  val builder : RouteBuilder
+  
+  override protected def createRouteBuilder = builder.print
 
 }

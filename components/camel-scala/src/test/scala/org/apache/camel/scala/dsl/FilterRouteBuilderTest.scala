@@ -38,23 +38,22 @@ class FilterRouteBuilderTest extends ScalaTestSupport {
     "mock:e" assert()
   }
 
-  override protected def createRouteBuilder() =
-    new RouteBuilder {
-       //START SNIPPET: simple
-       "direct:a" when(_.in == "<hello/>") to("mock:a")
-       //END SNIPPET: simple
+  val builder = new RouteBuilder {
+     //START SNIPPET: simple
+     "direct:a" when(_.in == "<hello/>") to("mock:a")
+     //END SNIPPET: simple
 
-       //START SNIPPET: alternatives
-       "direct:b" ==> {
-         when(_.in == "<hallo/>") {
-           --> ("mock:b")
-           to ("mock:c")
-         } otherwise {
-           to ("mock:e")
-         }
-         to ("mock:d")
+     //START SNIPPET: alternatives
+     "direct:b" ==> {
+       when(_.in == "<hallo/>") {
+         --> ("mock:b")
+         to ("mock:c")
+       } otherwise {
+         to ("mock:e")
        }
-       //END SNIPPET: alternatives
-    }.print
+       to ("mock:d")
+     }
+     //END SNIPPET: alternatives
+   }
 
 }

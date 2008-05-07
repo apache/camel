@@ -32,7 +32,7 @@ class BasicRouteBuilderTest extends ScalaTestSupport {
     to assert
   }
 
-  override protected def createRouteBuilder() = new MyRouteBuilder
+  val builder = new MyRouteBuilder
   
   //START SNIPPET: basic
   class MyRouteBuilder extends RouteBuilder {

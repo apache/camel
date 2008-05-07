@@ -34,21 +34,20 @@ class ContentBasedRouterTest extends ScalaTestSupport {
     "mock:french" assert()
   }
 
-  override protected def createRouteBuilder() =
-    new RouteBuilder {
-      //START SNIPPET: cbr
-      "direct:a" ==> {
-        to ("mock:polyglot")
-        choice {
-          when (_.in == "<hello/>") to ("mock:english")
-          when (_.in == "<hallo/>") {
-            to ("mock:dutch")
-            to ("mock:german")
-          }
-          otherwise to ("mock:french")
+  val builder = new RouteBuilder {
+     //START SNIPPET: cbr
+     "direct:a" ==> {
+     to ("mock:polyglot")
+     choice {
+        when (_.in == "<hello/>") to ("mock:english")
+        when (_.in == "<hallo/>") {
+          to ("mock:dutch")
+          to ("mock:german")
         }
+        otherwise to ("mock:french")
       }
-      //END SNIPPET: cbr
-    }.print
+    }
+    //END SNIPPET: cbr
+  }
 
 }

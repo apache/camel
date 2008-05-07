@@ -58,5 +58,7 @@ class RouteBuilder extends Preamble {
   def recipients(expression: Exchange => Any) = stack.top.recipients(expression)
   def splitter(expression: Exchange => Any) = stack.top.splitter(expression)
   def otherwise = stack.top.otherwise
+  def multicast = stack.top.multicast
+  def process(function: Exchange => Unit) = stack.top.process(function)
 
 }

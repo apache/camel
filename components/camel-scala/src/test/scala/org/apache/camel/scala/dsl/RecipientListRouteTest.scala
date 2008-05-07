@@ -40,27 +40,25 @@ class RecipientListRouteTest extends ScalaTestSupport {
     "mock:c" assert()    
     "mock:d" assert()
   }
-  
-  override protected def createRouteBuilder() = 
-    new RouteBuilder with languages.JXPath {
-      //START SNIPPET: simple
-      "direct:a" recipients(_.in(classOf[String]).substring(21))
-      //END SNIPPET: simple
+   
+  val builder = new RouteBuilder with languages.JXPath {
+    //START SNIPPET: simple
+    "direct:a" recipients(_.in(classOf[String]).substring(21))
+    //END SNIPPET: simple
       
-      //START SNIPPET: pattern 
-      "direct:b" recipients(_.in match {
-        case Toddler(_) => "mock:playgarden"
-        case _ => "mock:work"
-      })
-      //END SNIPPET: pattern
+    //START SNIPPET: pattern 
+    "direct:b" recipients(_.in match {
+      case Toddler(_) => "mock:playgarden"
+      case _ => "mock:work"
+    })
+    //END SNIPPET: pattern
       
-      //START SNIPPET: block
-      "direct:c" ==> {
-        to("mock:c")
-        recipients(_.jxpath("./in/body/destination"))
-      }
-      //END SNIPPET: block
-  }.print
-  
+    //START SNIPPET: block
+    "direct:c" ==> {
+      to("mock:c")
+      recipients(_.jxpath("./in/body/destination"))
+    }
+    //END SNIPPET: block
+  }
 
 }
