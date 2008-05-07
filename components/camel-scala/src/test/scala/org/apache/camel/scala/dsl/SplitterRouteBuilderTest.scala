@@ -39,7 +39,7 @@ class SplitterRouteBuilderTest extends ScalaTestSupport {
     "mock:c" assert()
   }
 
-  override protected def createRouteBuilder() =
+  val builder =
     //START SNIPPET: xpath
     new RouteBuilder with XPath {
     //END SNIPPET: xpath

@@ -24,6 +24,8 @@ import org.apache.camel.Exchange
 class RichExchange(val exchange : Exchange) {
 
   def in : Any = exchange.getIn().getBody()
+  
+  def in_=(message: Any) = exchange.getIn().setBody(message)
 
   def in(header:String) : Any = exchange.getIn().getHeader(header)
 
