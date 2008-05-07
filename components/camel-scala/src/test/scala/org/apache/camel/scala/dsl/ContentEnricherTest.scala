@@ -30,7 +30,7 @@ class ContentEnricherTest extends ScalaTestSupport {
   
   def testContentEnricherByProcessorDef = {
     "mock:b" expect { _.received ("hello from the UK", 
-                                  "hallo vanuit België",
+                                  "hallo vanuit Belgie",
                                   "bonjour de la douce France")}
     "direct:b" ! ("hello", "hallo", "bonjour")
     "mock:b" assert()
@@ -55,7 +55,7 @@ class ContentEnricherTest extends ScalaTestSupport {
     def myProcessor(exchange: Exchange) = {
       exchange.in match {
         case "hello" => exchange.in = "hello from the UK"
-        case "hallo" => exchange.in = "hallo vanuit België"
+        case "hallo" => exchange.in = "hallo vanuit Belgie"
         case "bonjour" => exchange.in = "bonjour de la douce France"
       }
     }
