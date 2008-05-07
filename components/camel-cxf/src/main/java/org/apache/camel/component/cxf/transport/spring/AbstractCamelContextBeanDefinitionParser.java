@@ -31,7 +31,7 @@ public class AbstractCamelContextBeanDefinitionParser extends AbstractBeanDefini
 
     private String getContextId(String contextId) {
         if (ObjectHelper.isNullOrBlank(contextId)) {
-            //set the contextId default value here
+            //Set the contextId default value here
             return DEFAULT_CAMEL_CONTEXT_NAME;
         } else {
             return contextId;
@@ -43,7 +43,7 @@ public class AbstractCamelContextBeanDefinitionParser extends AbstractBeanDefini
     }
 
     protected void doParse(Element element, ParserContext ctx, BeanDefinitionBuilder bean) {
-        // paser the id attribute
+        // Parser the id attribute
         bean.setAbstract(true);
         NodeList children = element.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
@@ -51,9 +51,9 @@ public class AbstractCamelContextBeanDefinitionParser extends AbstractBeanDefini
             if (n.getNodeType() == Node.ELEMENT_NODE) {
                 String name = n.getLocalName();
                 if ("camelContext".equals(name)) {
-                    // paraser the camel context
+                    // Parser the camel context
                     BeanDefinition bd = ctx.getDelegate().parseCustomElement((Element)n);
-                    // get the inner camel context id
+                    // Get the inner camel context id
                     String contextId = (String)bd.getPropertyValues().getPropertyValue("id").getValue();
                     bean.addPropertyReference("camelContext", getContextId(contextId));
                 } else if ("camelContextRef".equals(name)) {
