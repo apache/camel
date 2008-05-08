@@ -70,7 +70,6 @@ public class DotMojo extends AbstractMavenReport {
      * milliseconds.
      *
      * @parameter expression="2s"
-     * @readonly
      */
     protected String duration;
     /**
@@ -78,7 +77,6 @@ public class DotMojo extends AbstractMavenReport {
      * generate the DOT file
      *
      * @parameter expression="true"
-     * @readonly
      */
     protected boolean runCamel;
     /**
@@ -86,7 +84,6 @@ public class DotMojo extends AbstractMavenReport {
      * generate images
      *
      * @parameter expression="true"
-     * @readonly
      */
     protected boolean useDot;
     /**
@@ -102,14 +99,12 @@ public class DotMojo extends AbstractMavenReport {
      *
      * @parameter expression="${project.build.directory}"
      * @required
-     * @readonly
      */
     private File buildDirectory;
     /**
      * Base output directory for reports.
      *
      * @parameter default-value="${project.build.directory}/site/cameldoc"
-     * @readonly
      * @required
      */
     private File outputDirectory;
@@ -180,6 +175,14 @@ public class DotMojo extends AbstractMavenReport {
 
     public void setAggregate(String aggregate) {
         this.aggregate = aggregate;
+    }
+
+    public boolean isUseDot() {
+        return useDot;
+    }
+
+    public void setUseDot(boolean useDot) {
+        this.useDot = useDot;
     }
 
     /**

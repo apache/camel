@@ -84,6 +84,10 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
+        <configuration>
+          <!-- lets disable the DOT file conversion as a test -->
+          <useDot>false</useDot>
+        </configuration>
       </plugin>
     </plugins>
   </reporting>
