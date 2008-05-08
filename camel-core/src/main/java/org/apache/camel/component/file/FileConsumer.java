@@ -36,6 +36,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private FileEndpoint endpoint;
     private ConcurrentHashMap<File, File> filesBeingProcessed = new ConcurrentHashMap<File, File>();
     private ConcurrentHashMap<File, Long> fileSizes = new ConcurrentHashMap<File, Long>();
+    private ConcurrentHashMap<File, Long> noopMap = new ConcurrentHashMap<File, Long>();
 
     private boolean generateEmptyExchangeWhenIdle;
     private boolean recursive = true;
@@ -44,6 +45,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private long lastPollTime;
     private int unchangedDelay;
     private boolean unchangedSize;
+    
 
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -105,14 +107,22 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         // we only care about file modified times if we are not deleting/moving
         // files
         if (endpoint.isNoop()) {
+            // do nothing now as isValidFile() filters unmodified files
+/*
             long fileModified = file.lastModified();
-            if (fileModified <= lastPollTime) {
+            Long previousModified = noopMap.get(file);
+            noopMap.put(file, fileModified);
+            if (previousModified == null || fileModified > previousModified) {
+                return 1;
+            }
+            else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Ignoring file: " + file + " as modified time: " + fileModified
-                              + " less than last poll time: " + lastPollTime);
+                              + " less than the previous modified time: " + previousModified);
                 }
                 return 0;
             }
+*/
         } else {
             if (filesBeingProcessed.contains(file)) {
                 return 1;
@@ -185,6 +195,13 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                 lastModifiedCheck = modifiedDuration >= getUnchangedDelay();
             }
 
+            long fileModified = file.lastModified();
+            Long previousModified = noopMap.get(file);
+            noopMap.put(file, fileModified);
+            boolean modifiedChanged = previousModified == null || fileModified > previousModified;
+
+
+
             boolean sizeCheck = true;
             long sizeDifference = 0;
             if (isUnchangedSize()) {
@@ -193,7 +210,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                 sizeCheck = sizeDifference == 0;
             }
 
-            boolean answer = lastModifiedCheck && sizeCheck;
+            boolean answer = lastModifiedCheck && sizeCheck && !modifiedChanged;
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("file:" + file + " isUnchanged:" + answer + " " + "sizeCheck:" + sizeCheck + "("
