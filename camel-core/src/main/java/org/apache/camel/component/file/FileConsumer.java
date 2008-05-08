@@ -106,24 +106,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         }
         // we only care about file modified times if we are not deleting/moving
         // files
-        if (endpoint.isNoop()) {
-            // do nothing now as isValidFile() filters unmodified files
-/*
-            long fileModified = file.lastModified();
-            Long previousModified = noopMap.get(file);
-            noopMap.put(file, fileModified);
-            if (previousModified == null || fileModified > previousModified) {
-                return 1;
-            }
-            else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Ignoring file: " + file + " as modified time: " + fileModified
-                              + " less than the previous modified time: " + previousModified);
-                }
-                return 0;
-            }
-*/
-        } else {
+        if (!endpoint.isNoop()) {
             if (filesBeingProcessed.contains(file)) {
                 return 1;
             }
@@ -172,7 +155,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         boolean result = false;
         if (file != null && file.exists()) {
             // TODO: maybe use a configurable strategy instead of the hardcoded one based on last file change
-            if (isMatched(file) && isUnchanged(file)) {
+            if (isMatched(file) && isChanged(file)) {
                 result = true;
             }
         }
@@ -180,7 +163,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     }
 
 
-    protected boolean isUnchanged(File file) {
+    protected boolean isChanged(File file) {
         if (file == null) {
             // Sanity check
             return false;
@@ -188,7 +171,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
             // Allow recursive polling to descend into this directory
             return true;
         } else {
-            boolean lastModifiedCheck = true;
+            boolean lastModifiedCheck = false;
             long modifiedDuration = 0;
             if (getUnchangedDelay() > 0) {
                 modifiedDuration = System.currentTimeMillis() - file.lastModified();
@@ -198,31 +181,35 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
             long fileModified = file.lastModified();
             Long previousModified = noopMap.get(file);
             noopMap.put(file, fileModified);
-            boolean modifiedChanged = previousModified == null || fileModified > previousModified;
-
-
-
-            boolean sizeCheck = true;
-            long sizeDifference = 0;
-            if (isUnchangedSize()) {
-                long prevFileSize = (fileSizes.get(file) == null) ? 0 : fileSizes.get(file).longValue();
-                sizeDifference = file.length() - prevFileSize;
-                sizeCheck = sizeDifference == 0;
+            if (previousModified == null || fileModified > previousModified) {
+                lastModifiedCheck = true;
             }
 
-            boolean answer = lastModifiedCheck && sizeCheck && !modifiedChanged;
+            boolean sizeCheck = false;
+            long sizeDifference = 0;
+            if (isUnchangedSize()) {
+                Long value = fileSizes.get(file);
+                if (value == null) {
+                    sizeCheck = true;
+                }
+                else {
+                    sizeCheck = file.length() != value;
+                }
+            }
+
+            boolean answer = lastModifiedCheck || sizeCheck;
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("file:" + file + " isUnchanged:" + answer + " " + "sizeCheck:" + sizeCheck + "("
+                LOG.debug("file:" + file + " isChanged:" + answer + " " + "sizeCheck:" + sizeCheck + "("
                           + sizeDifference + ") " + "lastModifiedCheck:" + lastModifiedCheck + "("
                           + modifiedDuration + ")");
             }
 
             if (isUnchangedSize()) {
                 if (answer) {
-                    fileSizes.remove(file);
-                } else {
                     fileSizes.put(file, file.length());
+                } else {
+                    fileSizes.remove(file);
                 }
             }
 

@@ -65,6 +65,9 @@ public class MoveFilesToDirectoryTest extends ContextTestSupport {
         assertFileNotExists(file);
         assertFileExists(newFile);
 
+        // now lets wait for multiple polls to check we only process it once
+        Thread.sleep(5000);
+
         assertMockEndpointsSatisifed();
     }
 
