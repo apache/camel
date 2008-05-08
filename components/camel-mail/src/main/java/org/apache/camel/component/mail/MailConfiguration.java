@@ -144,6 +144,18 @@ public class MailConfiguration {
         return properties;
     }
 
+   /**
+     * Is the used protocol to be secure or not
+     */
+    public boolean isSecureProtocol() {
+        return this.protocol.equalsIgnoreCase("smtps") || this.protocol.equalsIgnoreCase("pop3s")
+               || this.protocol.equalsIgnoreCase("imaps");
+    }
+
+    public String getMailStoreLogInformation() {
+        return "MailStore [" + protocol + "//" + host + ":" + port + "] folder=[" + folderName + "]";
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -325,4 +337,5 @@ public class MailConfiguration {
     public void setConnectionTimeout(long connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
+
 }

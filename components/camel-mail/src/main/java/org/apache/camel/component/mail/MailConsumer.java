@@ -52,23 +52,14 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
-        MailConfiguration config = endpoint.getConfiguration();
-        store = sender.getSession().getStore(config.getProtocol());
-        store.connect(config.getHost(), config.getPort(), config.getUsername(), config.getPassword());
-
-        folder = store.getFolder(config.getFolderName());
-        if (folder == null || !folder.exists()) {
-            throw new FolderNotFoundException(folder, "Folder not found or invalid: " + config.getFolderName());
-        }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (folder.isOpen()) {
+        if (folder != null && folder.isOpen()) {
             folder.close(true);
         }
-        if (store.isConnected()) {
+        if (store != null && store.isConnected()) {
             store.close();
         }
 
@@ -76,9 +67,11 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
     }
 
     protected void poll() throws Exception {
+        ensureIsConnected();
+
         if (store == null || folder == null) {
-            throw new IllegalStateException("MailConsumer did not start properly. Camel does not have access to the MailStore or MailFolder."
-                + " Check log files for errors reported during starting this component");
+            throw new IllegalStateException("MailConsumer did not connect properly to the MailStore: " +
+                endpoint.getConfiguration().getMailStoreLogInformation());
         }
 
         if (LOG.isDebugEnabled()) {
@@ -117,6 +110,25 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
             // need to ensure we release resources
             if (folder.isOpen()) {
                 folder.close(true);
+            }
+        }
+    }
+
+    protected void ensureIsConnected() throws MessagingException {
+        MailConfiguration config = endpoint.getConfiguration();
+
+        if (store == null || !store.isConnected()) {
+            store = sender.getSession().getStore(config.getProtocol());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Connecting to MailStore at host " + config.getHost() + " on port " + config.getPort());
+            }
+            store.connect(config.getHost(), config.getPort(), config.getUsername(), config.getPassword());
+        }
+
+        if (folder == null) {
+            folder = store.getFolder(config.getFolderName());
+            if (folder == null || !folder.exists()) {
+                throw new FolderNotFoundException(folder, "Folder not found or invalid: " + config.getFolderName());
             }
         }
     }
