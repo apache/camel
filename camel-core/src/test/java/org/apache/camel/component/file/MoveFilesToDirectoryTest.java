@@ -31,6 +31,7 @@ public class MoveFilesToDirectoryTest extends ContextTestSupport {
     protected String outputDirectory = testDirectory + "/output";
     protected String fileName = "foo.txt";
     protected Object expectedBody = "Hello there!";
+    protected boolean noop = false;
 
     public void testFileRoute() throws Exception {
         template.sendBodyAndHeader("file:" + inputDirectory, expectedBody, FileComponent.HEADER_FILE_NAME, fileName);
@@ -49,7 +50,11 @@ public class MoveFilesToDirectoryTest extends ContextTestSupport {
         Thread.sleep(5000);
 
         File file = new File(inputDirectory + "/" + fileName);
-        File newFile = new File(outputDirectory + "/" + fileName);
+
+        File outDir = new File(outputDirectory);
+        outDir.mkdirs();
+        
+        File newFile = new File(outDir, fileName);
 
         assertFileExists(file);
         assertFileNotExists(newFile);
@@ -81,8 +86,12 @@ public class MoveFilesToDirectoryTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file:" + outputDirectory).to("mock:result");
+                from(getOutputEndpointUri()).to("mock:result");
             }
         };
+    }
+
+    protected String getOutputEndpointUri() {
+        return "file:" + outputDirectory;
     }
 }
