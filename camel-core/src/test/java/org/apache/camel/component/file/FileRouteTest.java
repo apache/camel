@@ -28,13 +28,13 @@ public class FileRouteTest extends ContextTestSupport {
     protected String uri = "file:target/test-default-inbox";
 
     public void testFileRoute() throws Exception {
-        MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived(expectedBody);
         result.setResultWaitTime(5000);
 
         template.sendBodyAndHeader(uri, expectedBody, "cheese", 123);
 
-        result.assertIsSatisfied();
+        assertMockEndpointsSatisifed();
     }
 
     @Override
