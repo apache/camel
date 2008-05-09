@@ -56,7 +56,7 @@ public class MimeMessageConsumeTest extends ContextTestSupport {
 
         MimeMessage message = new MimeMessage(session);
         populateMimeMessageBody(message);
-        message.setRecipients(Message.RecipientType.TO, "james@localhost");
+        message.setRecipients(Message.RecipientType.TO, "james3@localhost");
 
         Transport.send(message);
 
@@ -130,7 +130,7 @@ public class MimeMessageConsumeTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://james@localhost").convertBodyTo(String.class).to("mock:result");
+                from("pop3://james3@localhost?consumer.delay=1000").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

@@ -67,7 +67,12 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
      */
     public Consumer<MailExchange> createConsumer(Processor processor, JavaMailSenderImpl sender) throws Exception {
         MailConsumer answer = new MailConsumer(this, processor, sender);
+
+        // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a mailbox,
+        // so we override with a new default value. End user can override this value by providing a consumer.delay parameter
+        answer.setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
         configureConsumer(answer);
+
         return answer;
     }
 

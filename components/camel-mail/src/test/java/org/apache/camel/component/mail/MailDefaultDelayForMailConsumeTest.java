@@ -17,34 +17,38 @@
 package org.apache.camel.component.mail;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Unit test for Mail subject support.
+ * Unit test for testing mail polling is happening according to the default poll interval.
  */
-public class MailSubjectTest extends ContextTestSupport {
-    private String subject = "Camel rocks";
+public class MailDefaultDelayForMailConsumeTest extends ContextTestSupport {
 
-    public void testMailSubject() throws Exception {
-        String body = "Hello Claus.\nYes it does.\n\nRegards James.";
-        template.sendBody("direct:a", body);
-
+    public void testConsuming() throws Exception {
+        template.sendBody("smtp://bond@localhost", "Hello London");
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived("subject", subject);
-        mock.expectedBodiesReceived(body);
+        mock.expectedBodiesReceived("Hello London");
+        // first poll should happend immediately
+        mock.setResultWaitTime(1000);
         mock.assertIsSatisfied();
+
+        long start = System.currentTimeMillis();
+        mock.reset();
+        template.sendBody("smtp://bond@localhost", "Hello Paris");
+        mock.expectedBodiesReceived("Hello Paris");
+        // poll next mail and that is should be done within the default delay + 2 sec slack
+        mock.setResultWaitTime(MailConsumer.DEFAULT_CONSUMER_DELAY + 2000L);
+        mock.assertIsSatisfied();
+        long delta = System.currentTimeMillis() - start;
+        assertTrue("Camel should not default poll the mailbox to often", delta > MailConsumer.DEFAULT_CONSUMER_DELAY - 1000L);
     }
+
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // START SNIPPET: e1
-                from("direct:a").setHeader("subject", subject).to("smtp://james2@localhost");
-                // END SNIPPET: e1
-
-                from("pop3://localhost?username=james2&password=secret&consumer.delay=1000").to("mock:result");
+                from("pop3://bond@localhost").to("mock:result");
             }
         };
     }

@@ -81,7 +81,7 @@ public class MailAttachmentTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://james@mymailserver.com?password=secret").to("mock:result");
+                from("pop3://james@mymailserver.com?password=secret&consumer.delay=1000").to("mock:result");
             }
         };
     }

@@ -37,7 +37,7 @@ public class MailMessageTest extends ContextTestSupport {
     private String body = "Hello World!";
 
     public void testMailMessageHandlesMultipleHeaders() throws Exception {
-        mimeMessage.setRecipients(Message.RecipientType.TO, new Address[] {new InternetAddress("james@localhost"), new InternetAddress("bar@localhost")});
+        mimeMessage.setRecipients(Message.RecipientType.TO, new Address[] {new InternetAddress("foo@localhost"), new InternetAddress("bar@localhost")});
 
         MailExchange exchange = endpoint.createExchange(mimeMessage);
         MailMessage in = exchange.getIn();
@@ -45,17 +45,17 @@ public class MailMessageTest extends ContextTestSupport {
         assertEquals("mail body", body, in.getBody());
 
         String to = in.getHeader("TO", String.class);
-        assertEquals("should have 2 receivers", "james@localhost, bar@localhost", to);
+        assertEquals("should have 2 receivers", "foo@localhost, bar@localhost", to);
     }
 
     public void testMailMessageHandlesSingleHeader() throws Exception {
-        mimeMessage.setRecipients(Message.RecipientType.TO, new Address[] {new InternetAddress("james@localhost")});
+        mimeMessage.setRecipients(Message.RecipientType.TO, new Address[] {new InternetAddress("frank@localhost")});
 
         MailExchange exchange = endpoint.createExchange(mimeMessage);
         MailMessage in = exchange.getIn();
         Object header = in.getHeader("TO");
         String value = assertIsInstanceOf(String.class, header);
-        assertEquals("value", "james@localhost", value);
+        assertEquals("value", "frank@localhost", value);
 
         assertEquals("body", body, in.getBody());
     }
@@ -64,7 +64,7 @@ public class MailMessageTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
-        endpoint = resolveMandatoryEndpoint("pop3://james@myhost:30/subject");
+        endpoint = resolveMandatoryEndpoint("pop3://someone@myhost:30/subject");
 
         Properties properties = new Properties();
         properties.put("mail.smtp.host", "localhost");

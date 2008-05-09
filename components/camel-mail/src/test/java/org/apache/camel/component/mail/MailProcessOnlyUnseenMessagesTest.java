@@ -59,6 +59,7 @@ public class MailProcessOnlyUnseenMessagesTest extends ContextTestSupport {
         store.connect("localhost", 25, "claus", "secret");
         Folder folder = store.getFolder("INBOX");
         folder.open(Folder.READ_WRITE);
+        folder.expunge();
 
         // inserts two messages with the SEEN flag
         Message[] msg = new Message[2];
@@ -77,7 +78,7 @@ public class MailProcessOnlyUnseenMessagesTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:a").to("smtp://claus@localhost");
 
-                from("imap://localhost?username=claus&password=secret&processOnlyUnseenMessages=true").to("mock:result");
+                from("imap://localhost?username=claus&password=secret&processOnlyUnseenMessages=true&consumer.delay=1000").to("mock:result");
             }
         };
     }

@@ -38,6 +38,8 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  */
 public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
     private static final transient Log LOG = LogFactory.getLog(MailConsumer.class);
+    public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
+
     private final MailEndpoint endpoint;
     private final JavaMailSenderImpl sender;
     private Folder folder;

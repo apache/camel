@@ -73,9 +73,9 @@ public class MailRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://route-test-james@localhost").to("direct:a");
+                from("pop3://route-test-james@localhost?consumer.delay=1000").to("direct:a");
                 from("direct:a").to("smtp://route-test-result@localhost", "smtp://route-test-copy@localhost");
-                from("pop3://route-test-result@localhost").convertBodyTo(String.class).to("mock:result");
+                from("pop3://route-test-result@localhost?consumer.delay=1000").convertBodyTo(String.class).to("mock:result");
             }
         };
     }
