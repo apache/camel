@@ -32,7 +32,7 @@ public class MailRecipientsTest extends ContextTestSupport {
 
         Mailbox inbox = Mailbox.get("camel@riders.org");
         Message msg = inbox.get(0);
-        assertEquals("james@apache.org", msg.getFrom()[0].toString());
+        assertEquals("you@apache.org", msg.getFrom()[0].toString());
         assertEquals("camel@riders.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
         assertEquals("easy@riders.org", msg.getRecipients(Message.RecipientType.TO)[1].toString());
         assertEquals("me@you.org", msg.getRecipients(Message.RecipientType.CC)[0].toString());
@@ -40,7 +40,7 @@ public class MailRecipientsTest extends ContextTestSupport {
 
         inbox = Mailbox.get("easy@riders.org");
         msg = inbox.get(0);
-        assertEquals("james@apache.org", msg.getFrom()[0].toString());
+        assertEquals("you@apache.org", msg.getFrom()[0].toString());
         assertEquals("camel@riders.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
         assertEquals("easy@riders.org", msg.getRecipients(Message.RecipientType.TO)[1].toString());
         assertEquals("me@you.org", msg.getRecipients(Message.RecipientType.CC)[0].toString());
@@ -48,7 +48,7 @@ public class MailRecipientsTest extends ContextTestSupport {
 
         inbox = Mailbox.get("me@you.org");
         msg = inbox.get(0);
-        assertEquals("james@apache.org", msg.getFrom()[0].toString());
+        assertEquals("you@apache.org", msg.getFrom()[0].toString());
         assertEquals("camel@riders.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
         assertEquals("easy@riders.org", msg.getRecipients(Message.RecipientType.TO)[1].toString());
         assertEquals("me@you.org", msg.getRecipients(Message.RecipientType.CC)[0].toString());
@@ -56,7 +56,7 @@ public class MailRecipientsTest extends ContextTestSupport {
 
         inbox = Mailbox.get("someone@somewhere.org");
         msg = inbox.get(0);
-        assertEquals("james@apache.org", msg.getFrom()[0].toString());
+        assertEquals("you@apache.org", msg.getFrom()[0].toString());
         assertEquals("camel@riders.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
         assertEquals("easy@riders.org", msg.getRecipients(Message.RecipientType.TO)[1].toString());
         assertEquals("me@you.org", msg.getRecipients(Message.RecipientType.CC)[0].toString());
@@ -73,7 +73,7 @@ public class MailRecipientsTest extends ContextTestSupport {
                 // BCC: someone@somewhere.org
                 String recipients = "&To=camel@riders.org,easy@riders.org&CC=me@you.org&BCC=someone@somewhere.org";
 
-                from("direct:a").to("smtp://james@mymailserver.com?password=secret&From=james@apache.org" + recipients);
+                from("direct:a").to("smtp://you@mymailserver.com?password=secret&From=you@apache.org" + recipients);
                 // END SNIPPET: e1
             }
         };

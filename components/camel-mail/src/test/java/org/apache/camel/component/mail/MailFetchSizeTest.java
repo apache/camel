@@ -34,7 +34,7 @@ public class MailFetchSizeTest extends ContextTestSupport {
 
     public void testFetchSize() throws Exception {
         prepareMailbox();
-        Mailbox mailbox = Mailbox.get("james@localhost");
+        Mailbox mailbox = Mailbox.get("jones@localhost");
         assertEquals(5, mailbox.size());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -67,9 +67,10 @@ public class MailFetchSizeTest extends ContextTestSupport {
         // connect to mailbox
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         Store store = sender.getSession().getStore("pop3");
-        store.connect("localhost", 25, "james", "secret");
+        store.connect("localhost", 25, "jones", "secret");
         Folder folder = store.getFolder("INBOX");
         folder.open(Folder.READ_WRITE);
+        folder.expunge();
 
         // inserts 5 new messages
         Message[] messages = new Message[5];
@@ -84,7 +85,7 @@ public class MailFetchSizeTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://james@localhost?password=secret&fetchSize=2&consumer.delay=5000").to("mock:result");
+                from("pop3://jones@localhost?password=secret&fetchSize=2&consumer.delay=5000").to("mock:result");
             }
         };
     }
