@@ -868,8 +868,10 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
 
     public Type proceed() {
         ProceedType proceed = null;
-        if (this instanceof InterceptType) {
-            proceed = ((InterceptType) this).getProceed();
+        ProcessorType currentProcessor = this;
+
+        if (currentProcessor instanceof InterceptType) {
+            proceed = ((InterceptType) currentProcessor).getProceed();
         }
         if (proceed == null) {
             for (ProcessorType node = parent; node != null; node = node.getParent()) {
@@ -881,13 +883,12 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
             }
         }
 
-        if (this instanceof InterceptType) {
-            proceed = ((InterceptType)this).getProceed();
+        if (currentProcessor instanceof InterceptType) {
+            proceed = ((InterceptType) currentProcessor).getProceed();
         }
 
         if (proceed == null) {
-            throw new IllegalArgumentException(
-                                               "Cannot use proceed() without being within an intercept() block");
+            throw new IllegalArgumentException("Cannot use proceed() without being within an intercept() block");
         }
 
         addOutput(proceed);
