@@ -24,6 +24,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
+ * Component for JavaMail.
+ *
  * @version $Revision:520964 $
  */
 public class MailComponent extends DefaultComponent<MailExchange> {

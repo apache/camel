@@ -27,6 +27,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
 /**
+ * A Producer to send messages using JavaMail.
+ *  
  * @version $Revision$
  */
 public class MailProducer extends DefaultProducer<MailExchange> {
@@ -45,7 +47,7 @@ public class MailProducer extends DefaultProducer<MailExchange> {
             public void prepare(MimeMessage mimeMessage) throws Exception {
                 endpoint.getBinding().populateMailMessage(endpoint, mimeMessage, exchange);
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Sending MineMessage: " + MailUtils.dumpMessage(mimeMessage));
+                    LOG.debug("Sending MimeMessage: " + MailUtils.dumpMessage(mimeMessage));
                 }
             }
         });
