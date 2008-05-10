@@ -20,10 +20,10 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import javax.mail.Message;
 import javax.mail.Session;
 
+import org.apache.camel.component.mail.security.DummySSLSocketFactory;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
@@ -54,6 +54,7 @@ public class MailConfiguration {
     private int fetchSize = -1;
     private boolean debugMode;
     private long connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
+    private boolean dummyTrustManager;
 
     public MailConfiguration() {
     }
@@ -124,11 +125,12 @@ public class MailConfiguration {
         if (username != null) {
             answer.setUsername(username);
         }
+
         return answer;
     }
 
     private Properties createJavaMailProperties() {
-        // clone the system properties
+        // clone the system properties and set the java mail properties
         Properties properties = (Properties)System.getProperties().clone();
         properties.put("mail." + protocol + ".connectiontimeout", connectionTimeout);
         properties.put("mail." + protocol + ".timeout", connectionTimeout);
@@ -141,6 +143,18 @@ public class MailConfiguration {
         properties.put("mail.store.protocol", protocol);
         properties.put("mail.host", host);
         properties.put("mail.user", username);
+
+        if (debugMode) {
+            properties.put("javax.net.debug", "all");
+        }
+
+        if (dummyTrustManager && isSecureProtocol()) {
+            // set the custom SSL properties
+            properties.put("mail." + protocol + ".socketFactory.class", DummySSLSocketFactory.class.getName());
+            properties.put("mail." + protocol + ".socketFactory.fallback", "false");
+            properties.put("mail." + protocol + ".socketFactory.port", "" + port);
+        }
+
         return properties;
     }
 
@@ -153,7 +167,12 @@ public class MailConfiguration {
     }
 
     public String getMailStoreLogInformation() {
-        return protocol + "//" + host + ":" + port + (isSecureProtocol() ? " (SSL enabled)" : "") + ", folder=" + folderName;
+        String ssl = "";
+        if (isSecureProtocol()) {
+            ssl = "(SSL enabled" + (dummyTrustManager ? " using DummyTrustManager)" : ")");
+        }
+
+        return protocol + "//" + host + ":" + port + ssl + ", folder=" + folderName;
     }
 
     // Properties
@@ -338,4 +357,11 @@ public class MailConfiguration {
         this.connectionTimeout = connectionTimeout;
     }
 
+    public boolean isDummyTrustManager() {
+        return dummyTrustManager;
+    }
+
+    public void setDummyTrustManager(boolean dummyTrustManager) {
+        this.dummyTrustManager = dummyTrustManager;
+    }
 }
