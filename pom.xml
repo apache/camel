@@ -47,7 +47,7 @@
     <openjpa-version>1.0.2</openjpa-version>
     <spring-version>2.5.4</spring-version>
     <spring-osgi-version>1.0.2</spring-osgi-version>
-    <mina-version>1.1.6</mina-version>
+    <mina-version>1.1.7</mina-version>
     <uface-version>1.0-m1</uface-version>
 
     <!-- Repositories -->
