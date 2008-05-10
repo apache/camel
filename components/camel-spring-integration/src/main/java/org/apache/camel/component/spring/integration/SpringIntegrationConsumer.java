@@ -33,6 +33,7 @@ import org.springframework.integration.message.GenericMessage;
  * Please specify the inputChannel in the endpoint url for this consumer.
  * If the message pattern is inOut, the outputChannel property
  * should be set for the outgoing message.
+ *
  * @version $Revision$
  */
 public class SpringIntegrationConsumer  extends ScheduledPollConsumer<SpringIntegrationExchange> {

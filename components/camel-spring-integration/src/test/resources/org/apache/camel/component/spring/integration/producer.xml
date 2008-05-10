@@ -27,10 +27,10 @@
 
 	<message-bus auto-create-channels="true"/>
 
-	<endpoint input-channel="inputChannel"
-	          default-output-channel="outputChannel"
-	          handler-ref="helloService"
-	          handler-method="sayHello"/>
+	<handler-endpoint input-channel="inputChannel"
+	          output-channel="outputChannel"
+	          handler="helloService"
+	          method="sayHello"/>
 
 	<beans:bean id="helloService" class="org.apache.camel.component.spring.integration.HelloWorldService"/>
 

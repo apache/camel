@@ -14,23 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.component.spring.integration.adapter.config;
 
-package org.apache.camel.component.spring.integration;
+import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
- * The bean class which implements the business logical
+ * The name space handler Spring Integration Camel Adapter
+ *
+ * @author Willem Jiang
+ *
+ * @version $Revision$
  */
-public class HelloWorldService {
-
-    private int count;
-
-    public String sayHello(String name) {
-        count++;
-        return "Hello " + name;
+public class NamespaceHandler extends NamespaceHandlerSupport {
+    public void init() {
+        registerBeanDefinitionParser("camelSource", new CamelSourceAdpaterParser());
+        registerBeanDefinitionParser("camelTarget", new CamelTargetAdapterParser());
     }
-
-    public int getCount() {
-        return count;
-    }
-
 }
