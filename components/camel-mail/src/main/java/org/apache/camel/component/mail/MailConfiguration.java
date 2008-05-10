@@ -153,7 +153,7 @@ public class MailConfiguration {
     }
 
     public String getMailStoreLogInformation() {
-        return "MailStore [" + protocol + "//" + host + ":" + port + "] folder=[" + folderName + "]";
+        return protocol + "//" + host + ":" + port + (isSecureProtocol() ? " (SSL enabled)" : "") + ", folder=" + folderName;
     }
 
     // Properties
