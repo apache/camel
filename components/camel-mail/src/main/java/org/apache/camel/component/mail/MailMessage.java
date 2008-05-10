@@ -49,7 +49,7 @@ public class MailMessage extends DefaultMessage {
     @Override
     public String toString() {
         if (mailMessage != null) {
-            return "MailMessage: " + mailMessage;
+            return "MailMessage: " + MailUtils.dumpMessage(mailMessage);
         } else {
             return "MailMessage: " + getBody();
         }

@@ -90,44 +90,49 @@ public final class MailUtils {
      *
      * @param message the Mail message
      * @return a log string with important fields dumped
-     * @throws MessagingException can be thrown by the Mail API
      */
-    public static String dumpMessage(Message message) throws MessagingException {
-        StringBuilder sb = new StringBuilder();
+    public static String dumpMessage(Message message) {
+        try {
+            StringBuilder sb = new StringBuilder();
 
-        int number = message.getMessageNumber();
-        sb.append("messageNumber=[").append(number).append("]");
+            int number = message.getMessageNumber();
+            sb.append("messageNumber=[").append(number).append("]");
 
-        Address[] from = message.getFrom();
-        if (from != null) {
-            for (Address adr : from) {
-                sb.append(", from=[").append(adr).append("]");
+            Address[] from = message.getFrom();
+            if (from != null) {
+                for (Address adr : from) {
+                    sb.append(", from=[").append(adr).append("]");
+                }
             }
-        }
 
-        Address[] to = message.getRecipients(Message.RecipientType.TO);
-        if (to != null) {
-            for (Address adr : to) {
-                sb.append(", to=[").append(adr).append("]");
+            Address[] to = message.getRecipients(Message.RecipientType.TO);
+            if (to != null) {
+                for (Address adr : to) {
+                    sb.append(", to=[").append(adr).append("]");
+                }
             }
+
+            String subject = message.getSubject();
+            if (subject != null) {
+                sb.append(", subject=[").append(subject).append("]");
+            }
+
+            Date sentDate = message.getSentDate();
+            if (sentDate != null) {
+                sb.append(", sentDate=[").append(DateFormat.getDateTimeInstance().format(sentDate)).append("]");
+            }
+
+            Date receivedDate = message.getReceivedDate();
+            if (receivedDate != null) {
+                sb.append(", receivedDate=[").append(DateFormat.getDateTimeInstance().format(receivedDate)).append("]");
+            }
+
+            return sb.toString();
+        } catch (MessagingException e) {
+            // ignore the error and just return tostring 
+            return message.toString();
         }
 
-        String subject = message.getSubject();
-        if (subject != null) {
-            sb.append(", subject=[").append(subject).append("]");
-        }
-
-        Date sentDate = message.getSentDate();
-        if (sentDate != null) {
-            sb.append(", sentDate=[").append(DateFormat.getDateTimeInstance().format(sentDate)).append("]");
-        }
-
-        Date receivedDate = message.getReceivedDate();
-        if (receivedDate != null) {
-            sb.append(", receivedDate=[").append(DateFormat.getDateTimeInstance().format(receivedDate)).append("]");
-        }
-
-        return sb.toString();
     }
 
 }
