@@ -67,6 +67,8 @@ import org.apache.mina.transport.vmpipe.VmPipeConnector;
 public class MinaComponent extends DefaultComponent<MinaExchange> {
     private static final transient Log LOG = LogFactory.getLog(MinaComponent.class);
 
+    private static final long DEFAULT_CONNECT_TIMEOUT = 30000;
+
     // encoder used for datagram
     private CharsetEncoder encoder;
 
@@ -124,7 +126,9 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         if (minaLogger) {
             connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
-        // TODO: CAMEL-396 override connector timeout to either default or timeout provided by end user: connectorConfig.setConnectTimeout();
+        // set connect timeout to mina in seconds
+        long connectTimeout = timeout > 0 ? timeout : DEFAULT_CONNECT_TIMEOUT;
+        connectorConfig.setConnectTimeout((int)(connectTimeout / 1000));
 
         // acceptor connectorConfig
         SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig();
@@ -186,7 +190,9 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         if (minaLogger) {
             connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
-        // TODO: CAMEL-396 override connector timeout to either default or timeout provided by end user: connectorConfig.setConnectTimeout();
+        // set connect timeout to mina in seconds
+        long connectTimeout = timeout > 0 ? timeout : DEFAULT_CONNECT_TIMEOUT;
+        connectorConfig.setConnectTimeout((int)(connectTimeout / 1000));
 
         DatagramAcceptorConfig acceptorConfig = new DatagramAcceptorConfig();
         configureDataGramCodecFactory("MinaConsumer", acceptorConfig, parameters);
