@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.Session;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Authenticator;
 
 import org.apache.camel.component.mail.security.DummySSLSocketFactory;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -121,6 +123,10 @@ public class MailConfiguration {
         }
         if (session != null) {
             answer.setSession(session);
+        } else {
+            // use our authenticator that does no live user interaction but returns the already configured username and password
+            Session session = Session.getDefaultInstance(answer.getJavaMailProperties(), getAuthenticator());
+            answer.setSession(session);
         }
         if (username != null) {
             answer.setUsername(username);
@@ -145,6 +151,7 @@ public class MailConfiguration {
         properties.put("mail.user", username);
 
         if (debugMode) {
+            // add more debug for the SSL communication as well
             properties.put("javax.net.debug", "all");
         }
 
@@ -164,6 +171,17 @@ public class MailConfiguration {
     public boolean isSecureProtocol() {
         return this.protocol.equalsIgnoreCase("smtps") || this.protocol.equalsIgnoreCase("pop3s")
                || this.protocol.equalsIgnoreCase("imaps");
+    }
+
+    /**
+     * Returns an authenticator object for use in sessions
+     */
+    public Authenticator getAuthenticator() {
+        return new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(getUsername(), getPassword());
+            }
+        };
     }
 
     public String getMailStoreLogInformation() {
