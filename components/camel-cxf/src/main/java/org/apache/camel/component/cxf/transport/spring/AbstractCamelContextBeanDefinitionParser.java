@@ -55,10 +55,10 @@ public class AbstractCamelContextBeanDefinitionParser extends AbstractBeanDefini
                     BeanDefinition bd = ctx.getDelegate().parseCustomElement((Element)n);
                     // Get the inner camel context id
                     String contextId = (String)bd.getPropertyValues().getPropertyValue("id").getValue();
-                    bean.addPropertyReference("camelContext", getContextId(contextId));
+                    wireCamelContext(bean, getContextId(contextId));
                 } else if ("camelContextRef".equals(name)) {
                     String contextId = n.getTextContent();
-                    bean.addPropertyReference("camelContext", getContextId(contextId));
+                    wireCamelContext(bean, getContextId(contextId));
                 }
             }
         }

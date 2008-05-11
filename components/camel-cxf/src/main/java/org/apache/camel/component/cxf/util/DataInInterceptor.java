@@ -22,6 +22,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
+import org.w3c.dom.Document;
+
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.interceptor.AbstractInDatabindingInterceptor;
 import org.apache.cxf.interceptor.Fault;
@@ -41,7 +43,8 @@ public class DataInInterceptor extends AbstractInDatabindingInterceptor {
         DepthXMLStreamReader xmlReader = getXMLStreamReader(message);
         try {
             // put the payload source as a document
-            message.setContent(Source.class, new DOMSource(StaxUtils.read(xmlReader)));
+            Document doc = StaxUtils.read(xmlReader);
+            message.setContent(Source.class, new DOMSource(doc));
         } catch (XMLStreamException e) {
             throw new Fault(new org.apache.cxf.common.i18n.Message("XMLSTREAM_EXCEPTION",
                                                                    LOG),
