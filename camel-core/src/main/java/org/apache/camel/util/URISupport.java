@@ -28,6 +28,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
+ * URI utilities.
+ *
  * @version $Revision$
  */
 public class URISupport {
@@ -123,7 +125,7 @@ public class URISupport {
         }
     }
 
-    public static Map parseParamters(URI uri) throws URISyntaxException {
+    public static Map parseParameters(URI uri) throws URISyntaxException {
         String query = uri.getQuery();
         if (query == null) {
             String schemeSpecificPart = uri.getSchemeSpecificPart();

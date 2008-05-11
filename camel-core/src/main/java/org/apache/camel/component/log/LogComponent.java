@@ -30,6 +30,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * The <a href="http://activemq.apache.org/camel/log.html">Log Component</a>
+ * to log message exchanges to the underlying logging mechanism.
+ * 
  * @version $Revision$
  */
 public class LogComponent extends DefaultComponent<Exchange> {
@@ -51,6 +54,7 @@ public class LogComponent extends DefaultComponent<Exchange> {
 
     protected LoggingLevel getLoggingLevel(Map parameters) {
         String levelText = (String) parameters.get("level");
+        parameters.remove("level");
         LoggingLevel level = null;
         if (levelText != null) {
             level = LoggingLevel.valueOf(levelText.toUpperCase());

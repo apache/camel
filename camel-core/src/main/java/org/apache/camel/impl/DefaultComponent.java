@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.CamelContextHelper;
@@ -33,13 +34,17 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
+ * Default component to use for base for components implementations.
+ *
  * @version $Revision$
  */
 public abstract class DefaultComponent<E extends Exchange> extends ServiceSupport implements Component<E> {
+    private static final transient Log LOG = LogFactory.getLog(DefaultComponent.class);
 
     private int defaultThreadPoolSize = 5;
     private CamelContext camelContext;
@@ -54,7 +59,7 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
 
     public Endpoint<E> createEndpoint(String uri) throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
-        //endcode uri string to the unsafe URI characters
+        //encode URI string to the unsafe URI characters
         URI u = new URI(UnsafeUriCharactersEncoder.encode(uri));
         String path = u.getSchemeSpecificPart();
 
@@ -66,19 +71,50 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
         if (idx > 0) {
             path = path.substring(0, idx);
         }
-        Map parameters = URISupport.parseParamters(u);
+        Map parameters = URISupport.parseParameters(u);
 
+        validateURI(uri, path, parameters);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating endpoint uri=[" + uri + "], path=[" + path + "], parameters=[" + parameters + "]");
+        }
         Endpoint<E> endpoint = createEndpoint(uri, path, parameters);
         if (endpoint == null) {
             return null;
         }
+
         if (parameters != null) {
             endpoint.configureProperties(parameters);
             if (useIntrospectionOnEndpoint()) {
                 setProperties(endpoint, parameters);
             }
+
+            // fail if there are parameters that could not be set, then they are probably miss spelt or not supported at all
+            if (parameters.size() > 0) {
+                throw new ResolveEndpointFailedException(uri, "There are " + parameters.size() +
+                    " parameters that couldn't be set on the endpoint." +
+                    " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint." +
+                    " Unknown parameters=[" + parameters + "]");
+            }
         }
+
         return endpoint;
+    }
+
+    /**
+     * Strategy for validation of the uri when creating the endpoint.
+     *
+     * @param uri        the uri - the uri the end user provided untouched
+     * @param path       the path - part after the scheme
+     * @param parameters the parameters, an empty map if no parameters given
+     * @throws ResolveEndpointFailedException should be thrown if the URI validation failed
+     */
+    protected void validateURI(String uri, String path, Map parameters) throws ResolveEndpointFailedException {
+        // check for uri containing & but no ? marker
+        if (uri.contains("&") && !uri.contains("?")) {
+            throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: no ? marker however the uri "
+                + "has & parameter separators. Check the uri if its missing a ? marker.");
+        }
     }
 
     public CamelContext getCamelContext() {
