@@ -29,7 +29,13 @@ public class ResolveEndpointFailedException extends RuntimeCamelException {
         this.uri = uri;
     }
 
+    public ResolveEndpointFailedException(String uri, String message) {
+        super("Failed to resolve endpoint: " + uri + " due to: " + message);
+        this.uri = uri;
+    }
+
     public String getUri() {
         return uri;
     }
+    
 }
