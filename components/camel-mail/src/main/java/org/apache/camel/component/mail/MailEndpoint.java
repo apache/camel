@@ -54,8 +54,8 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
 
     public Consumer<MailExchange> createConsumer(Processor processor) throws Exception {
         if (configuration.getProtocol().startsWith("smtp")) {
-            throw new IllegalArgumentException("Protocol " + configuration.getProtocol() +
-                " can not be used for a MailConsumer. Please use another protocol such as pop3 or imap.");
+            throw new IllegalArgumentException("Protocol " + configuration.getProtocol()
+                + " can not be used for a MailConsumer. Please use another protocol such as pop3 or imap.");
         }
 
         JavaMailSenderImpl sender = configuration.createJavaMailSender();

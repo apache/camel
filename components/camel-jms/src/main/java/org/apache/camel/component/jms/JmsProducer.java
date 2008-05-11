@@ -94,30 +94,31 @@ public class JmsProducer extends DefaultProducer {
     protected void testAndSetRequestor() throws RuntimeCamelException {
         if (!started.get()) {
             synchronized (this) {
-                if (!started.get()) {
-                    try {
-                        JmsConfiguration c = endpoint.getConfiguration();
-                        if (c.getReplyTo() != null) {
-                            requestor = new PersistentReplyToRequestor(endpoint.getConfiguration(),
-                                                                       endpoint.getExecutorService());
-                            requestor.start();
-                        } else {
-                            if (affinity == RequestorAffinity.PER_PRODUCER) {
-                                requestor = new Requestor(endpoint.getConfiguration(),
-                                                          endpoint.getExecutorService());
-                                requestor.start();
-                            } else if (affinity == RequestorAffinity.PER_ENDPOINT) {
-                                requestor = endpoint.getRequestor();
-                            } else if (affinity == RequestorAffinity.PER_COMPONENT) {
-                                requestor = ((JmsComponent)endpoint.getComponent()).getRequestor();
-                            }
-                        }
-                    } catch (Exception e) {
-                        throw new FailedToCreateProducerException(endpoint, e);
-                    }
-                    deferredRequestReplyMap = requestor.getDeferredRequestReplyMap(this);
-                    started.set(true);
+                if (started.get()) {
+                    return;
                 }
+                try {
+                    JmsConfiguration c = endpoint.getConfiguration();
+                    if (c.getReplyTo() != null) {
+                        requestor = new PersistentReplyToRequestor(endpoint.getConfiguration(), endpoint
+                            .getExecutorService());
+                        requestor.start();
+                    } else {
+                        if (affinity == RequestorAffinity.PER_PRODUCER) {
+                            requestor = new Requestor(endpoint.getConfiguration(), endpoint
+                                .getExecutorService());
+                            requestor.start();
+                        } else if (affinity == RequestorAffinity.PER_ENDPOINT) {
+                            requestor = endpoint.getRequestor();
+                        } else if (affinity == RequestorAffinity.PER_COMPONENT) {
+                            requestor = ((JmsComponent)endpoint.getComponent()).getRequestor();
+                        }
+                    }
+                } catch (Exception e) {
+                    throw new FailedToCreateProducerException(endpoint, e);
+                }
+                deferredRequestReplyMap = requestor.getDeferredRequestReplyMap(this);
+                started.set(true);
             }
         }
     }

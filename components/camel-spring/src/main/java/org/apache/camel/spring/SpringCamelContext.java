@@ -76,6 +76,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         answer.afterPropertiesSet();
         return answer;
     }
+        
 
     public static SpringCamelContext springCamelContext(String configLocations) throws Exception {
         return springCamelContext(new ClassPathXmlApplicationContext(configLocations));

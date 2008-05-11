@@ -41,7 +41,7 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
     public DummySSLSocketFactory() {
         try {
             SSLContext sslContext = SSLContext.getInstance("TLS");
-            TrustManager[] trustManagers = new TrustManager[] { new DummyTrustManager()};
+            TrustManager[] trustManagers = new TrustManager[] {new DummyTrustManager()};
             sslContext.init(null, trustManagers, new java.security.SecureRandom());
             factory = sslContext.getSocketFactory();
         } catch (Exception e) {

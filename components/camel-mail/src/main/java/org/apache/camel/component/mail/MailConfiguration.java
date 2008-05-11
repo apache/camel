@@ -20,10 +20,11 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.PasswordAuthentication;
+
 import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
 
 import org.apache.camel.component.mail.security.DummySSLSocketFactory;
 import org.springframework.mail.javamail.JavaMailSenderImpl;

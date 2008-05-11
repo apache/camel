@@ -37,8 +37,8 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  * @version $Revision$
  */
 public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
-    private static final transient Log LOG = LogFactory.getLog(MailConsumer.class);
     public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
+    private static final transient Log LOG = LogFactory.getLog(MailConsumer.class);
 
     private final MailEndpoint endpoint;
     private final JavaMailSenderImpl sender;
@@ -72,8 +72,8 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
         ensureIsConnected();
 
         if (store == null || folder == null) {
-            throw new IllegalStateException("MailConsumer did not connect properly to the MailStore: " +
-                endpoint.getConfiguration().getMailStoreLogInformation());
+            throw new IllegalStateException("MailConsumer did not connect properly to the MailStore: "
+                                            + endpoint.getConfiguration().getMailStoreLogInformation());
         }
 
         if (LOG.isDebugEnabled()) {
