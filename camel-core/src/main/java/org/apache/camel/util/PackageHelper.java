@@ -25,7 +25,8 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public final class PackageHelper {
-    public static final transient Log LOG = LogFactory.getLog(PackageHelper.class);
+    private static final transient Log LOG = LogFactory.getLog(PackageHelper.class);
+
     private PackageHelper() {
         // Utility Class
     }

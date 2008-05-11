@@ -66,8 +66,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private static int nameSuffix;
 
     private String name;
-    private Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
-    private Map<String, Component> components = new HashMap<String, Component>();
+    private final Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
+    private final Map<String, Component> components = new HashMap<String, Component>();
     private List<Route> routes;
     private List<Service> servicesToClose = new ArrayList<Service>();
     private TypeConverter typeConverter;
@@ -546,8 +546,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * some kind of transformation or wrapper
      *
      * @param uri the uri for the endpoint (and name in the registry)
-     * @param bean the bean to be converted to an endpoint, which will be not
-     *                null
+     * @param bean the bean to be converted to an endpoint, which will be not null
      * @return a new endpoint
      */
     protected Endpoint convertBeanToEndpoint(String uri, Object bean) {

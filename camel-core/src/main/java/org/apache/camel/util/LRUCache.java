@@ -42,7 +42,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
      * @param accessOrder      the ordering mode - <tt>true</tt> for
      *                         access-order, <tt>false</tt> for insertion-order.
      * @throws IllegalArgumentException if the initial capacity is negative
-     *                                  or the load factor is nonpositive.
+     *                                  or the load factor is non positive.
      */
     public LRUCache(int initialCapacity, int maximumCacheSize, float loadFactor, boolean accessOrder) {
         super(initialCapacity, loadFactor, accessOrder);
@@ -50,7 +50,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
     }
 
     /**
-     * @return Returns the maxCacheSize.
+     * Returns the maxCacheSize.
      */
     public int getMaxCacheSize() {
         return maxCacheSize;

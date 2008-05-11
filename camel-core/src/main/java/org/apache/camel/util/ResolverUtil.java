@@ -126,7 +126,9 @@ public class ResolverUtil<T> {
     public static class AnnotatedWith implements Test {
         private Class<? extends Annotation> annotation;
 
-        /** Construts an AnnotatedWith test for the specified annotation type. */
+        /**
+         * Constructs an AnnotatedWith test for the specified annotation type.
+         */
         public AnnotatedWith(Class<? extends Annotation> annotation) {
             this.annotation = annotation;
         }
@@ -323,14 +325,15 @@ public class ResolverUtil<T> {
             String name = file.getName();
             if (name != null) {
                 name = name.trim();
-            }
-            builder.append(parent).append("/").append(name);
-            String packageOrClass = parent == null ? name : builder.toString();
 
-            if (file.isDirectory()) {
-                loadImplementationsInDirectory(test, packageOrClass, file);
-            } else if (name.endsWith(".class")) {
-                addIfMatching(test, packageOrClass);
+                builder.append(parent).append("/").append(name);
+                String packageOrClass = parent == null ? name : builder.toString();
+
+                if (file.isDirectory()) {
+                    loadImplementationsInDirectory(test, packageOrClass, file);
+                } else if (name.endsWith(".class")) {
+                    addIfMatching(test, packageOrClass);
+                }
             }
         }
     }
@@ -355,9 +358,9 @@ public class ResolverUtil<T> {
                 String name = entry.getName();
                 if (name != null) {
                     name = name.trim();
-                }
-                if (!entry.isDirectory() && name.startsWith(parent) && name.endsWith(".class")) {
-                    addIfMatching(test, name);
+                    if (!entry.isDirectory() && name.startsWith(parent) && name.endsWith(".class")) {
+                        addIfMatching(test, name);
+                    }
                 }
             }
         } catch (IOException ioe) {

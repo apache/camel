@@ -31,6 +31,7 @@ import java.util.Map;
  * @version $Revision$
  */
 public class URISupport {
+
     public static class CompositeData {
         public String host;
 
@@ -165,12 +166,6 @@ public class URISupport {
         return rc;
     }
 
-    /**
-     * @param uri
-     * @param rc
-     * @param ssp
-     * @throws URISyntaxException
-     */
     private static void parseComposite(URI uri, CompositeData rc, String ssp) throws URISyntaxException {
         String componentString;
         String params;
@@ -216,10 +211,6 @@ public class URISupport {
         }
     }
 
-    /**
-     * @param str
-     * @return
-     */
     private static String[] splitComponents(String str) {
         ArrayList l = new ArrayList();
 
@@ -294,7 +285,7 @@ public class URISupport {
     }
 
     /**
-     * Creates a URI from the original URI and the remaining paramaters
+     * Creates a URI from the original URI and the remaining parameters
      * 
      * @throws URISyntaxException
      */
@@ -332,6 +323,9 @@ public class URISupport {
         return result;
     }
 
+    /**
+     * @deprecated this method will be removed in a future release 
+     */
     public int indexOfParenthesisMatch(String str) {
         int result = -1;
 

@@ -171,8 +171,11 @@ public final class ObjectHelper {
     }
 
     public static String capitalize(String text) {
+        if (text == null) {
+            return null;
+        }
         int length = text.length();
-        if (text == null || length == 0) {
+        if (length == 0) {
             return text;
         }
         String answer = text.substring(0, 1).toUpperCase();
@@ -404,6 +407,7 @@ public final class ObjectHelper {
                 rc = Short.class;
             } else if (type == byte.class) {
                 rc = Byte.class;
+            // TODO: Why is boolean disabled
 /*
             } else if (type == boolean.class) {
                 rc = Boolean.class;
@@ -530,7 +534,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * returns the type of the given object or null if the value is null
+     * Returns the type of the given object or null if the value is null
      */
     public static Object type(Object bean) {
         return bean != null ? bean.getClass() : null;

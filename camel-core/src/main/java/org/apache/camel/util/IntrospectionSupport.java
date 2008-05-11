@@ -32,10 +32,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-
 import org.apache.camel.TypeConverter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public final class IntrospectionSupport {
+
+    private static final Log LOG = LogFactory.getLog(IntrospectionSupport.class);
+
 
     /**
      * Utility classes should not have a public constructor.
@@ -44,7 +48,6 @@ public final class IntrospectionSupport {
     }
 
     public static boolean getProperties(Object target, Map props, String optionPrefix) {
-
         boolean rc = false;
         if (target == null) {
             throw new IllegalArgumentException("target was null.");
@@ -64,9 +67,7 @@ public final class IntrospectionSupport {
             Class type = method.getReturnType();
             Class params[] = method.getParameterTypes();
             if (name.startsWith("get") && params.length == 0 && type != null && isSettableType(type)) {
-
                 try {
-
                     Object value = method.invoke(target, new Object[] {});
                     if (value == null) {
                         continue;
@@ -80,10 +81,9 @@ public final class IntrospectionSupport {
                     name = name.substring(3, 4).toLowerCase() + name.substring(4);
                     props.put(optionPrefix + name, strValue);
                     rc = true;
-
                 } catch (Throwable ignore) {
+                    // ignore
                 }
-
             }
         }
 
@@ -322,7 +322,6 @@ public final class IntrospectionSupport {
     }
 
     private static void addFields(Object target, Class startClass, Class stopClass, LinkedHashMap map) {
-
         if (startClass != stopClass) {
             addFields(target, startClass.getSuperclass(), stopClass, map);
         }
@@ -341,14 +340,14 @@ public final class IntrospectionSupport {
                     try {
                         o = Arrays.asList((Object[])o);
                     } catch (Throwable e) {
+                        // ignore
                     }
                 }
                 map.put(field.getName(), o);
             } catch (Throwable e) {
-                // TODO: LOG or rethrow
-                e.printStackTrace();
+                LOG.debug("Error adding fields", e);
             }
         }
-
     }
+
 }
