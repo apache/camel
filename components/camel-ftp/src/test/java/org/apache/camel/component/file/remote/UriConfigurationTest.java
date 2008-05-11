@@ -96,7 +96,7 @@ public class UriConfigurationTest extends TestSupport {
         assertRemoteFileEndpointFile("ftp://hostname", "");
         assertRemoteFileEndpointFile("ftp://hostname//", "/");
         assertRemoteFileEndpointFile("ftp://hostname//foo/bar", "/foo/bar");
-        assertRemoteFileEndpointFile("sftp://user@hostname:123//foo/bar?password=secret&completegibberish", "/foo/bar");
+        assertRemoteFileEndpointFile("sftp://user@hostname:123//foo/bar?password=secret", "/foo/bar");
     }
     
     private void assertRemoteFileEndpointFile(String endpointUri, String expectedFile) {
