@@ -38,26 +38,31 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Consumer that can read from any stream
  */
-
 public class StreamConsumer extends DefaultConsumer<StreamExchange> {
 
+    private static final transient Log LOG = LogFactory.getLog(StreamConsumer.class);
     private static final String TYPES = "in";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
-    private static final Log LOG = LogFactory.getLog(StreamConsumer.class);
     protected InputStream inputStream = System.in;
-    Endpoint<StreamExchange> endpoint;
-    private Map<String, String> parameters;
+    protected Endpoint<StreamExchange> endpoint;
     private String uri;
-
+    private String file;
+    private String url;
 
     public StreamConsumer(Endpoint<StreamExchange> endpoint, Processor processor, String uri,
                           Map<String, String> parameters) throws Exception {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        this.parameters = parameters;
+        this.uri = uri;
+
+        file = parameters.get("file");
+        url = parameters.get("url");
+        // must remove the options this component supports
+        parameters.remove("file");
+        parameters.remove("url");
+
         validateUri(uri);
-        LOG.debug("Stream consumer created");
     }
 
     @Override
@@ -73,19 +78,26 @@ public class StreamConsumer extends DefaultConsumer<StreamExchange> {
         }
 
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-        String line = null;
+        String line;
         try {
             while ((line = br.readLine()) != null) {
                 consume(line);
             }
-            br.close();
         } catch (IOException e) {
-            e.printStackTrace();
             throw new StreamComponentException(e);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new StreamComponentException(e);
+        } finally {
+            br.close();
         }
+    }
+
+    @Override
+    public void doStop() throws Exception {
+        if (inputStream != null) {
+            inputStream.close();
+        }
+        super.doStop();
     }
 
     public void consume(Object o) throws Exception {
@@ -95,17 +107,18 @@ public class StreamConsumer extends DefaultConsumer<StreamExchange> {
     }
 
     private InputStream resolveStreamFromUrl() throws IOException {
-        String u = parameters.get("url");
+        String u = url;
         URL url = new URL(u);
         URLConnection c = url.openConnection();
         return c.getInputStream();
     }
 
     private InputStream resolveStreamFromFile() throws IOException {
-        String fileName = parameters.get("file");
-        fileName = fileName != null ? fileName.trim() : "_file";
+        String fileName = file != null ? file.trim() : "_file";
         File f = new File(fileName);
-        LOG.debug("About to read from file: " + f);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("About to read from file: " + f);
+        }
         f.createNewFile();
         return new FileInputStream(f);
     }
@@ -113,25 +126,18 @@ public class StreamConsumer extends DefaultConsumer<StreamExchange> {
     private void validateUri(String uri) throws Exception {
         String[] s = uri.split(":");
         if (s.length < 2) {
-            throw new Exception(INVALID_URI);
+            throw new IllegalArgumentException(INVALID_URI);
         }
         String[] t = s[1].split("\\?");
 
         if (t.length < 1) {
-            throw new Exception(INVALID_URI);
+            throw new IllegalArgumentException(INVALID_URI);
         }
 
         this.uri = t[0].trim();
         if (!TYPES_LIST.contains(this.uri)) {
-            throw new Exception(INVALID_URI);
+            throw new IllegalArgumentException(INVALID_URI);
         }
     }
 
-    @Override
-    public void stop() throws Exception {
-        super.stop();
-        if (inputStream != null) {
-            inputStream.close();
-        }
-    }
 }

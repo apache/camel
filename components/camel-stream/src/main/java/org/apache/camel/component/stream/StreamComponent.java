@@ -19,15 +19,11 @@ package org.apache.camel.component.stream;
 import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
+/**
+ * Component providing streams connectivity
+ */
 public class StreamComponent extends DefaultComponent<StreamExchange> {
-
-    /**
-     * Component providing streams connectivity
-     */
-
 
     @Override
     protected Endpoint<StreamExchange> createEndpoint(String uri, String remaining, Map parameters)

@@ -22,11 +22,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class StreamEndpoint extends DefaultEndpoint<StreamExchange> {
-    private static final Log LOG = LogFactory.getLog(StreamConsumer.class);
     Producer<StreamExchange> producer;
     private Map<String, String> parameters;
     private String uri;
@@ -37,13 +34,11 @@ public class StreamEndpoint extends DefaultEndpoint<StreamExchange> {
         super(uri, component);
         this.parameters = parameters;
         this.uri = uri;
-        LOG.debug(uri + " / " + remaining + " / " + parameters);
         this.producer = new StreamProducer(this, uri, parameters);
-
     }
 
-    public Consumer<StreamExchange> createConsumer(Processor p) throws Exception {
-        return new StreamConsumer(this, p, uri, parameters);
+    public Consumer<StreamExchange> createConsumer(Processor processor) throws Exception {
+        return new StreamConsumer(this, processor, uri, parameters);
     }
 
     public Producer<StreamExchange> createProducer() throws Exception {
