@@ -31,7 +31,6 @@ public class ReportingTypeConverterRegistry implements TypeConverterRegistry {
     }
 
     public void addTypeConverter(Class toType, Class fromType, TypeConverter typeConverter) {
-
         if (errors.size() == 0) {
             errors.add("Method should not be invoked.");
         }
