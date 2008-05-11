@@ -31,7 +31,7 @@ public class MoveFilesToDirectoryTest extends ContextTestSupport {
     protected String outputDirectory = testDirectory + "/output";
     protected String fileName = "foo.txt";
     protected Object expectedBody = "Hello there!";
-    protected boolean noop = false;
+    protected boolean noop;
 
     public void testFileRoute() throws Exception {
         template.sendBodyAndHeader("file:" + inputDirectory, expectedBody, FileComponent.HEADER_FILE_NAME, fileName);
@@ -53,7 +53,7 @@ public class MoveFilesToDirectoryTest extends ContextTestSupport {
 
         File outDir = new File(outputDirectory);
         outDir.mkdirs();
-        
+
         File newFile = new File(outDir, fileName);
 
         assertFileExists(file);

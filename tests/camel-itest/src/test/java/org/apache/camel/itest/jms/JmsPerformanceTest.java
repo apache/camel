@@ -36,7 +36,7 @@ public class JmsPerformanceTest extends ContextTestSupport {
     protected MyBean myBean = new MyBean();
     protected int messageCount = 1000;
     protected CountDownLatch receivedCountDown = new CountDownLatch(messageCount);
-    protected long consumerSleep = 0L;
+    protected long consumerSleep;
     protected int expectedMessageCount;
     protected ClassPathXmlApplicationContext applicationContext;
     protected boolean useLocalBroker = true;
@@ -130,8 +130,7 @@ public class JmsPerformanceTest extends ContextTestSupport {
             if (consumerSleep > 0) {
                 try {
                     Thread.sleep(consumerSleep);
-                }
-                catch (InterruptedException e) {
+                } catch (InterruptedException e) {
                     LOG.warn("Caught: " + e, e);
                 }
             }

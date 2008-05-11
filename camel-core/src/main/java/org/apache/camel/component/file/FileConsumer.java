@@ -45,7 +45,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private long lastPollTime;
     private int unchangedDelay;
     private boolean unchangedSize;
-    
+
 
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -191,8 +191,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                 Long value = fileSizes.get(file);
                 if (value == null) {
                     sizeCheck = true;
-                }
-                else {
+                } else {
                     sizeCheck = file.length() != value;
                 }
             }

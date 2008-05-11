@@ -27,8 +27,8 @@ import org.apache.camel.Message;
 import org.apache.camel.component.ResourceBasedEndpoint;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 
 /**

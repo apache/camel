@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.mail.security;
 
-import java.security.cert.X509Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *  DummyTrustManager that accepts any given certificate - <b>NOT SECURE</b>.
@@ -42,7 +43,7 @@ public class DummyTrustManager implements X509TrustManager {
 
     public X509Certificate[] getAcceptedIssuers() {
         // everything is trusted
-        return new X509Certificate[0];  
+        return new X509Certificate[0];
     }
 
     private static void logCertificateChain(String type, X509Certificate[] chain) {
