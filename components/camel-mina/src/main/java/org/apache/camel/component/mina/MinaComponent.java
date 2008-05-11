@@ -139,6 +139,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
             acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
 
+        removeKnownParameters(parameters);
         MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout, transferExchange);
 
         // set sync or async mode after endpoint is created
@@ -174,6 +175,18 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         addCodecFactory(config, codecFactory);
     }
 
+    private void removeKnownParameters(Map parameters) {
+        // remove the known parameters this component supports
+        parameters.remove("lazySessionCreation");
+        parameters.remove("timeout");
+        parameters.remove("transferExchange");
+        parameters.remove("sync");
+        parameters.remove("minaLogger");
+        parameters.remove("codec");
+        parameters.remove("textline");
+        parameters.remove("encoding");
+    }
+
     protected MinaEndpoint createDatagramEndpoint(String uri, URI connectUri, Map parameters) {
         IoAcceptor acceptor = new DatagramAcceptor();
         SocketAddress address = new InetSocketAddress(connectUri.getHost(), connectUri.getPort());
@@ -202,6 +215,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
             acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
 
+        removeKnownParameters(parameters);
         MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout, transferExchange);
 
         // set sync or async mode after endpoint is created
