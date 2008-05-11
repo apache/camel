@@ -44,7 +44,7 @@ public class StickyLoadBalanceStrategy extends LoadBalancerType {
         this.expressionType = expressionType;
     }
 
-    public StickyLoadBalanceStrategy(ExpressionType expressionType, LoadBalancerType loadBalancerTyep) {
+    public StickyLoadBalanceStrategy(ExpressionType expressionType, LoadBalancerType loadBalancerType) {
         this();
         this.expressionType = expressionType;
         this.loadBalancerType = loadBalancerType;
