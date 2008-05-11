@@ -52,7 +52,7 @@ public class MimeMessageConsumeTest extends ContextTestSupport {
 
         Properties properties = new Properties();
         properties.put("mail.smtp.host", "localhost");
-        Session session = Session.getDefaultInstance(properties, null);
+        Session session = Session.getInstance(properties, null);
 
         MimeMessage message = new MimeMessage(session);
         populateMimeMessageBody(message);
