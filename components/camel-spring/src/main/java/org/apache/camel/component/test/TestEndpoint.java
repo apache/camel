@@ -47,7 +47,9 @@ public class TestEndpoint extends MockEndpoint implements Service {
     }
 
     public void start() throws Exception {
-        LOG.debug("Consuming expected messages from: " + expectedMessageEndpoint);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Consuming expected messages from: " + expectedMessageEndpoint);
+        }
         final List expectedBodies = new ArrayList();
         EndpointHelper.pollEndpoint(expectedMessageEndpoint, new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -56,7 +58,9 @@ public class TestEndpoint extends MockEndpoint implements Service {
             }
         }, timeout);
 
-        LOG.debug("Received: " + expectedBodies.size() + " expected message(s) from: " + expectedMessageEndpoint);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Received: " + expectedBodies.size() + " expected message(s) from: " + expectedMessageEndpoint);
+        }
         expectedBodiesReceived(expectedBodies);
     }
 
@@ -64,7 +68,7 @@ public class TestEndpoint extends MockEndpoint implements Service {
     }
 
     /**
-     * This method allows us to convert or cooerce the expected message body into some other type
+     * This method allows us to convert or coerce the expected message body into some other type
      */
     protected Object getInBody(Exchange exchange) {
         return exchange.getIn().getBody();

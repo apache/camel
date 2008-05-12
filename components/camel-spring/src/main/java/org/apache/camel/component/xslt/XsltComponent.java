@@ -52,7 +52,7 @@ public class XsltComponent extends ResourceBasedComponent {
 
         // lets allow the converter to be configured
         XmlConverter converter = null;
-        String converterName = (String) parameters.remove("converter");
+        String converterName = getAndRemoveParameter(parameters, "converter", String.class);
         if (converterName != null) {
             converter = mandatoryLookup(converterName, XmlConverter.class);
         }
