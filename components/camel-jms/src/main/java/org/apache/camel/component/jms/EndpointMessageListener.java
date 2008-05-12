@@ -25,7 +25,6 @@ import javax.jms.Session;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jms.core.JmsOperations;
@@ -77,7 +76,7 @@ public class EndpointMessageListener implements MessageListener {
     }
 
     public JmsExchange createExchange(Message message, Destination replyDestination) {
-        JmsExchange exchange = new JmsExchange(endpoint.getContext(), endpoint.getExchangePattern(), getBinding(), message);
+        JmsExchange exchange = new JmsExchange(endpoint.getCamelContext(), endpoint.getExchangePattern(), getBinding(), message);
         // lets set to an InOut if we have some kind of reply-to destination
         if (replyDestination != null && !disableReplyTo) {
             exchange.setProperty("org.apache.camel.jms.replyDestination", replyDestination);

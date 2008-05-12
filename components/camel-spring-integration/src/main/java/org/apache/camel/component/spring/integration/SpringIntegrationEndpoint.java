@@ -49,6 +49,11 @@ public class SpringIntegrationEndpoint extends DefaultEndpoint<SpringIntegration
         messageChannel = channel;
     }
 
+    public SpringIntegrationEndpoint(String endpointUri, MessageChannel messageChannel) {
+        super(endpointUri);
+        this.messageChannel = messageChannel;
+    }
+
     public Producer<SpringIntegrationExchange> createProducer() throws Exception {
         return new SpringIntegrationProducer(this);
     }
@@ -62,7 +67,7 @@ public class SpringIntegrationEndpoint extends DefaultEndpoint<SpringIntegration
     }
 
     public SpringIntegrationExchange createExchange(ExchangePattern pattern) {
-        return new SpringIntegrationExchange(getContext(), pattern);
+        return new SpringIntegrationExchange(getCamelContext(), pattern);
     }
 
     public void setInputChannel(String input) {

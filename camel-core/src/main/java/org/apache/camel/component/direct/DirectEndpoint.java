@@ -44,6 +44,10 @@ public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
         super(uri, component);
     }
 
+    public DirectEndpoint(String endpointUri) {
+        super(endpointUri);
+    }
+
     public Producer createProducer() throws Exception {
         return new DirectProducer<E>(this);
     }

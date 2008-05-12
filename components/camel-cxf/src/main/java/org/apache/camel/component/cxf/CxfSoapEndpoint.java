@@ -81,8 +81,8 @@ public class CxfSoapEndpoint implements Endpoint {
         return endpoint.createExchange(exchange);
     }
 
-    public CamelContext getContext() {
-        return endpoint.getContext();
+    public CamelContext getCamelContext() {
+        return endpoint.getCamelContext();
     }
 
     public Producer createProducer() throws Exception {
@@ -155,7 +155,7 @@ public class CxfSoapEndpoint implements Endpoint {
         return serviceName;
     }
 
-    public void setContext(CamelContext context) {
-        endpoint.setContext(context);
+    public void setCamelContext(CamelContext context) {
+        endpoint.setCamelContext(context);
     }
 }

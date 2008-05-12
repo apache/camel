@@ -96,7 +96,7 @@ public class CamelNamingStrategy {
 
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName + ":");
-        buffer.append(KEY_CONTEXT + "=" + getContextId(ep.getContext()) + ",");
+        buffer.append(KEY_CONTEXT + "=" + getContextId(ep.getCamelContext()) + ",");
         buffer.append(KEY_GROUP + "=" + GROUP_ENDPOINTS + ",");
         buffer.append(KEY_COMPONENT + "=" + getComponentId(ep) + ",");
         buffer.append(KEY_NAME + "=" + getEndpointId(ep));
@@ -136,7 +136,7 @@ public class CamelNamingStrategy {
         Route<? extends Exchange> route = mbean.getRoute();
         Endpoint<? extends Exchange> ep = route.getEndpoint();
 
-        String ctxid = ep != null ? getContextId(ep.getContext()) : VALUE_UNKNOWN;
+        String ctxid = ep != null ? getContextId(ep.getCamelContext()) : VALUE_UNKNOWN;
         String cid = getComponentId(ep);
         String id = VALUE_UNKNOWN.equals(cid) ? getEndpointId(ep)
             : "[" + cid + "]" + getEndpointId(ep);
@@ -169,7 +169,7 @@ public class CamelNamingStrategy {
 
         RouteType route = routeContext.getRoute();
         Endpoint<? extends Exchange> ep = routeContext.getEndpoint();
-        String ctxid = ep != null ? getContextId(ep.getContext()) : VALUE_UNKNOWN;
+        String ctxid = ep != null ? getContextId(ep.getCamelContext()) : VALUE_UNKNOWN;
         String cid = getComponentId(ep);
         String id = VALUE_UNKNOWN.equals(cid) ? getEndpointId(ep) : "[" + cid + "]" + getEndpointId(ep);
         String group = route.getGroup();

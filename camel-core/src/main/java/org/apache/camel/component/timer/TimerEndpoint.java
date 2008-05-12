@@ -33,8 +33,7 @@ import org.apache.camel.impl.DefaultEndpoint;
  */
 public class TimerEndpoint extends DefaultEndpoint<Exchange> {
 
-    private final TimerComponent component;
-    private final String timerName;
+    private String timerName;
     private Date time;
     private long period = 1000;
     private long delay;
@@ -44,8 +43,17 @@ public class TimerEndpoint extends DefaultEndpoint<Exchange> {
 
     public TimerEndpoint(String fullURI, TimerComponent component, String timerName) {
         super(fullURI, component);
-        this.component = component;
+        this.timer = component.getTimer(this);
         this.timerName = timerName;
+    }
+
+    public TimerEndpoint(String endpointUri, Timer timer) {
+        this(endpointUri);
+        this.timer = timer;
+    }
+
+    public TimerEndpoint(String endpointUri) {
+        super(endpointUri);
     }
 
     public Producer<Exchange> createProducer() throws Exception {
@@ -56,12 +64,15 @@ public class TimerEndpoint extends DefaultEndpoint<Exchange> {
         return new TimerConsumer(this, processor);
     }
 
-    public TimerComponent getComponent() {
-        return component;
+    public String getTimerName() {
+        if (timerName == null) {
+            timerName = getEndpointUri();
+        }
+        return timerName;
     }
 
-    public String getTimerName() {
-        return timerName;
+    public void setTimerName(String timerName) {
+        this.timerName = timerName;
     }
 
     public boolean isDaemon() {
@@ -110,8 +121,12 @@ public class TimerEndpoint extends DefaultEndpoint<Exchange> {
 
     public Timer getTimer() {
         if (timer == null) {
-            timer = component.getTimer(this);
+            timer = new Timer();
         }
         return timer;
+    }
+
+    public void setTimer(Timer timer) {
+        this.timer = timer;
     }
 }

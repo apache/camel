@@ -47,7 +47,7 @@ public class SpringIntegrationProducer extends DefaultProducer<SpringIntegration
     public SpringIntegrationProducer(SpringIntegrationEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        context = (SpringCamelContext) endpoint.getContext();
+        context = (SpringCamelContext) endpoint.getCamelContext();
         if (context != null && endpoint.getMessageChannel() == null) {
             outputChannelName = endpoint.getDefaultChannel();
             channelRegistry = (ChannelRegistry) context.getApplicationContext().getBean(MessageBusParser.MESSAGE_BUS_BEAN_NAME);

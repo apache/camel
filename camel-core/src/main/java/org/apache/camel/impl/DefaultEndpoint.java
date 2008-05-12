@@ -28,6 +28,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -35,9 +36,9 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E> {
+public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>, CamelContextAware {
     private String endpointUri;
-    private CamelContext context;
+    private CamelContext camelContext;
     private Component component;
     private ScheduledExecutorService executorService;
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
@@ -47,9 +48,13 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         this.component = component;
     }
 
-    protected DefaultEndpoint(String endpointUri, CamelContext context) {
+    protected DefaultEndpoint(String endpointUri, CamelContext camelContext) {
+        this(endpointUri);
+        this.camelContext = camelContext;
+    }
+
+    protected DefaultEndpoint(String endpointUri) {
         this.endpointUri = endpointUri;
-        this.context = context;
     }
 
     public int hashCode() {
@@ -74,16 +79,16 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         return endpointUri;
     }
 
-    public CamelContext getContext() {
-        return context;
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 
     public Component getComponent() {
         return component;
     }
 
-    public void setContext(CamelContext context) {
-        this.context = context;
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     /**
@@ -122,7 +127,7 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         if (type.isInstance(exchange)) {
             return type.cast(exchange);
         }
-        return getContext().getExchangeConverter().convertTo(type, exchange);
+        return getCamelContext().getExchangeConverter().convertTo(type, exchange);
     }
 
     public E createExchange(Exchange exchange) {
@@ -160,7 +165,7 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
     }
 
     public E createExchange(ExchangePattern pattern) {
-        return (E) new DefaultExchange(getContext(), pattern);
+        return (E) new DefaultExchange(getCamelContext(), pattern);
     }
 
     public ExchangePattern getExchangePattern() {

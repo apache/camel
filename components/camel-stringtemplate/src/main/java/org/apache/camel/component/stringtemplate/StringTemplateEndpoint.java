@@ -24,6 +24,7 @@ import org.antlr.stringtemplate.StringTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.component.ResourceBasedEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.ExchangeHelper;
@@ -32,11 +33,13 @@ import org.apache.camel.util.ExchangeHelper;
  * @version $Revision$
  */
 public class StringTemplateEndpoint extends ResourceBasedEndpoint {
-    private final StringTemplateComponent component;
 
     public StringTemplateEndpoint(String uri, StringTemplateComponent component, String resourceUri, Map parameters) {
         super(uri, component, resourceUri, null);
-        this.component = component;
+    }
+
+    public StringTemplateEndpoint(String endpointUri, Processor processor, String resourceUri) {
+        super(endpointUri, processor, resourceUri);
     }
 
     public boolean isSingleton() {

@@ -57,6 +57,13 @@ public class JcrEndpoint extends DefaultEndpoint<DefaultExchange> {
         }
     }
 
+    public JcrEndpoint(String endpointUri, String base, Credentials credentials, Repository repository) {
+        super(endpointUri);
+        this.base = base;
+        this.credentials = credentials;
+        this.repository = repository;
+    }
+
     /**
      * Currently unsupported
      * @throws RuntimeCamelException

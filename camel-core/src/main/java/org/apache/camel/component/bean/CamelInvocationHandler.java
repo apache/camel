@@ -41,7 +41,7 @@ public class CamelInvocationHandler implements InvocationHandler {
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         BeanInvocation invocation = new BeanInvocation(method, args);
-        BeanExchange exchange = new BeanExchange(endpoint.getContext(), ExchangePattern.InOut);
+        BeanExchange exchange = new BeanExchange(endpoint.getCamelContext(), ExchangePattern.InOut);
         exchange.setInvocation(invocation);
 
         producer.process(exchange);

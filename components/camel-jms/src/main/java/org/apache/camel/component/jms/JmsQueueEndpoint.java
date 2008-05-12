@@ -51,6 +51,19 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint<J
         }
     }
 
+    public JmsQueueEndpoint(String endpointUri, String destination, QueueBrowseStrategy queueBrowseStrategy) {
+        super(endpointUri, destination, false);
+        this.queueBrowseStrategy = queueBrowseStrategy;
+        if (queueBrowseStrategy == null) {
+            queueBrowseStrategy = createQueueBrowseStrategy();
+        }
+    }
+
+    public JmsQueueEndpoint(String endpointUri, String destination) {
+        super(endpointUri, destination, false);
+        queueBrowseStrategy = createQueueBrowseStrategy();
+    }
+
     public int getMaximumBrowseSize() {
         return maximumBrowseSize;
     }

@@ -30,20 +30,29 @@ public abstract class RemoteFileEndpoint<T extends RemoteFileExchange> extends S
         this.configuration = configuration;
     }
 
+    protected RemoteFileEndpoint(String endpointUri, RemoteFileConfiguration configuration) {
+        super(endpointUri);
+        this.configuration = configuration;
+    }
+
+    protected RemoteFileEndpoint(String endpointUri) {
+        this(endpointUri, new RemoteFileConfiguration());
+    }
+
     protected RemoteFileBinding createRemoteFileBinding() {
         return new RemoteFileBinding();
     }
 
     public T createExchange() {
-        return (T) new RemoteFileExchange(getContext(), getExchangePattern(), getBinding());
+        return (T) new RemoteFileExchange(getCamelContext(), getExchangePattern(), getBinding());
     }
 
     public T createExchange(ExchangePattern pattern) {
-        return (T) new RemoteFileExchange(getContext(), pattern, getBinding());
+        return (T) new RemoteFileExchange(getCamelContext(), pattern, getBinding());
     }
 
     public T createExchange(String fullFileName, ByteArrayOutputStream outputStream) {
-        return (T) new RemoteFileExchange(getContext(), getExchangePattern(), getBinding(), getConfiguration().getHost(), fullFileName, outputStream);
+        return (T) new RemoteFileExchange(getCamelContext(), getExchangePattern(), getBinding(), getConfiguration().getHost(), fullFileName, outputStream);
     }
 
     public RemoteFileBinding getBinding() {
@@ -63,5 +72,9 @@ public abstract class RemoteFileEndpoint<T extends RemoteFileExchange> extends S
 
     public RemoteFileConfiguration getConfiguration() {
         return configuration;
+    }
+
+    public void setConfiguration(RemoteFileConfiguration configuration) {
+        this.configuration = configuration;
     }
 }

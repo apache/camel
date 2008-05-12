@@ -30,6 +30,10 @@ public class FtpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
         super(uri, remoteFileComponent, configuration);
     }
 
+    public FtpEndpoint(String endpointUri) {
+        super(endpointUri);
+    }
+
     public FtpProducer createProducer() throws Exception {
         return new FtpProducer(this, createFtpClient());
     }

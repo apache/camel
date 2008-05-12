@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.spring.integration;
 
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -26,7 +25,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.springframework.integration.channel.ChannelRegistry;
 import org.springframework.integration.channel.MessageChannel;
 import org.springframework.integration.config.MessageBusParser;
-import org.springframework.integration.message.GenericMessage;
 
 /**
  * A consumer of exchanges for the Spring Integration
@@ -47,7 +45,7 @@ public class SpringIntegrationConsumer  extends ScheduledPollConsumer<SpringInte
     public SpringIntegrationConsumer(SpringIntegrationEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        context = (SpringCamelContext) endpoint.getContext();
+        context = (SpringCamelContext) endpoint.getCamelContext();
         if (context != null && endpoint.getMessageChannel() == null) {
             channelRegistry = (ChannelRegistry) context.getApplicationContext().getBean(MessageBusParser.MESSAGE_BUS_BEAN_NAME);
             inputChannelName = endpoint.getDefaultChannel();

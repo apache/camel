@@ -40,6 +40,15 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
         this.configuration = configuration;
     }
 
+    public MailEndpoint(String endpointUri, MailConfiguration configuration) {
+        super(endpointUri);
+        this.configuration = configuration;
+    }
+
+    public MailEndpoint(String endpointUri) {
+        this(endpointUri, new MailConfiguration());
+    }
+
     public Producer<MailExchange> createProducer() throws Exception {
         JavaMailSender sender = configuration.createJavaMailSender();
         return createProducer(sender);
@@ -79,11 +88,11 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
 
     @Override
     public MailExchange createExchange(ExchangePattern pattern) {
-        return new MailExchange(getContext(), pattern, getBinding());
+        return new MailExchange(getCamelContext(), pattern, getBinding());
     }
 
     public MailExchange createExchange(Message message) {
-        return new MailExchange(getContext(), getExchangePattern(), getBinding(), message);
+        return new MailExchange(getCamelContext(), getExchangePattern(), getBinding(), message);
     }
 
     // Properties

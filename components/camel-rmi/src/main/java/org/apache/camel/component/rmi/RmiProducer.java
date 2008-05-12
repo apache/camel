@@ -34,7 +34,7 @@ public class RmiProducer extends DefaultProducer<BeanExchange> {
 
     public RmiProducer(RmiEndpoint endpoint) throws RemoteException, NotBoundException {
         super(endpoint);
-        BeanHolder holder = new RmiRegistryBean(endpoint.getContext(), endpoint.getName(), endpoint.getRegistry());
+        BeanHolder holder = new RmiRegistryBean(endpoint.getCamelContext(), endpoint.getName(), endpoint.getRegistry());
         beanProcessor = new BeanProcessor(holder);
         String method = endpoint.getMethod();
         if (method != null) {

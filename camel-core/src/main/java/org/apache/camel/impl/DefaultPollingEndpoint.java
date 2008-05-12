@@ -38,6 +38,10 @@ public abstract class DefaultPollingEndpoint<E extends Exchange> extends Schedul
         super(endpointUri, context);
     }
 
+    protected DefaultPollingEndpoint(String endpointUri) {
+        super(endpointUri);
+    }
+
     public Consumer<E> createConsumer(Processor processor) throws Exception {
         DefaultScheduledPollConsumer result = new DefaultScheduledPollConsumer(this, processor);
         configureConsumer(result);

@@ -35,7 +35,6 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
  * @version $Revision:520964 $
  */
 public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
-    private final JmsComponent component;
     private final boolean pubSubDomain;
     private JmsBinding binding;
     private String destination;
@@ -46,11 +45,30 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
 
     public JmsEndpoint(String uri, JmsComponent component, String destination, boolean pubSubDomain, JmsConfiguration configuration) {
         super(uri, component);
-        this.component = component;
         this.configuration = configuration;
         this.destination = destination;
         this.pubSubDomain = pubSubDomain;
         this.requestTimeout = configuration.getRequestTimeout();
+    }
+
+    public JmsEndpoint(String endpointUri, JmsBinding binding, JmsConfiguration configuration, String destination, boolean pubSubDomain) {
+        super(endpointUri);
+        this.binding = binding;
+        this.configuration = configuration;
+        this.destination = destination;
+        this.pubSubDomain = pubSubDomain;
+        this.requestTimeout = configuration.getRequestTimeout();
+    }
+
+    public JmsEndpoint(String endpointUri, String destination, boolean pubSubDomain) {
+        this(endpointUri, new JmsBinding(), new JmsConfiguration(), destination, pubSubDomain);
+    }
+
+    /**
+     * Creates a pub-sub endpoint with the given destination
+     */
+    public JmsEndpoint(String endpointUri, String destination) {
+        this(endpointUri, destination, true);
     }
 
     public JmsProducer createProducer() throws Exception {
@@ -98,11 +116,11 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
 
     @Override
     public JmsExchange createExchange(ExchangePattern pattern) {
-        return new JmsExchange(getContext(), pattern, getBinding());
+        return new JmsExchange(getCamelContext(), pattern, getBinding());
     }
 
     public JmsExchange createExchange(Message message) {
-        return new JmsExchange(getContext(), getExchangePattern(), getBinding(), message);
+        return new JmsExchange(getCamelContext(), getExchangePattern(), getBinding(), message);
     }
 
     /**

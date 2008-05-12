@@ -60,7 +60,7 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
             if (beanId.startsWith("//")) {
                 beanId = beanId.substring(2);
             }
-            SpringCamelContext context = (SpringCamelContext) this.getContext();
+            SpringCamelContext context = (SpringCamelContext) this.getCamelContext();
             configurer = new ConfigurerImpl(context.getApplicationContext());
             cxfEndpointBean = (CxfEndpointBean) context.getApplicationContext().getBean(beanId);
             assert cxfEndpointBean != null;
@@ -76,15 +76,15 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     }
 
     public CxfExchange createExchange() {
-        return new CxfExchange(getContext(), getExchangePattern());
+        return new CxfExchange(getCamelContext(), getExchangePattern());
     }
 
     public CxfExchange createExchange(ExchangePattern pattern) {
-        return new CxfExchange(getContext(), pattern);
+        return new CxfExchange(getCamelContext(), pattern);
     }
 
     public CxfExchange createExchange(Message inMessage) {
-        return new CxfExchange(getContext(), getExchangePattern(), inMessage);
+        return new CxfExchange(getCamelContext(), getExchangePattern(), inMessage);
     }
 
     public String getDataFormat() {

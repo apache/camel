@@ -54,6 +54,11 @@ public class ListEndpoint extends DefaultEndpoint<Exchange> implements Browsable
         reset();
     }
 
+    public ListEndpoint(String endpointUri) {
+        super(endpointUri);
+        reset();
+    }
+
     public boolean isSingleton() {
         return true;
     }

@@ -43,6 +43,10 @@ public class ProcessorEndpoint extends DefaultPollingEndpoint<Exchange> {
         this.processor = processor;
     }
 
+    public ProcessorEndpoint(String endpointUri, Processor processor) {
+        super(endpointUri);
+        this.processor = processor;
+    }
 
     public Producer<Exchange> createProducer() throws Exception {
         return new DefaultProducer<Exchange>(this) {

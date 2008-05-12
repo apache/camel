@@ -48,7 +48,7 @@ public class ProducerTest extends TestSupport {
 
 
             public MyExchange createExchange(ExchangePattern pattern) {
-                return new MyExchange(getContext(), pattern);
+                return new MyExchange(getCamelContext(), pattern);
             }
 
             public Producer<MyExchange> createProducer() throws Exception {

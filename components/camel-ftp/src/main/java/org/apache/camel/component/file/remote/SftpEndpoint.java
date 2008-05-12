@@ -29,6 +29,10 @@ public class SftpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
         super(uri, remoteFileComponent, configuration);
     }
 
+    public SftpEndpoint(String endpointUri) {
+        super(endpointUri);
+    }
+
     public SftpProducer createProducer() throws Exception {
         return new SftpProducer(this, createSession());
     }

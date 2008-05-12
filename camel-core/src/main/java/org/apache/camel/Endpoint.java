@@ -69,7 +69,7 @@ public interface Endpoint<E extends Exchange> {
      *
      * @return the context which created the endpoint
      */
-    CamelContext getContext();
+    CamelContext getCamelContext();
 
     /**
      * Creates a new producer which is used send messages into the endpoint
@@ -106,5 +106,5 @@ public interface Endpoint<E extends Exchange> {
 
     void configureProperties(Map options);
 
-    void setContext(CamelContext context);
+    void setCamelContext(CamelContext context);
 }

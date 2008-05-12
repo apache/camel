@@ -48,13 +48,18 @@ public class RmiEndpoint extends DefaultEndpoint<BeanExchange> {
         this.uri = new URI(endpointUri);
     }
 
+    public RmiEndpoint(String endpointUri) throws URISyntaxException {
+        super(endpointUri);
+        this.uri = new URI(endpointUri);
+    }
+
     public boolean isSingleton() {
         return false;
     }
 
     @Override
     public BeanExchange createExchange(ExchangePattern pattern) {
-        return new BeanExchange(getContext(), pattern);
+        return new BeanExchange(getCamelContext(), pattern);
     }
 
     public Consumer<BeanExchange> createConsumer(Processor processor) throws Exception {

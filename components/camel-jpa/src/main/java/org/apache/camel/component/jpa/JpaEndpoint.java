@@ -32,7 +32,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.util.IntrospectionSupport;
-
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.orm.jpa.JpaTemplate;
 
 /**
@@ -55,11 +55,22 @@ public class JpaEndpoint extends ScheduledPollEndpoint<Exchange> {
         entityManagerFactory = component.getEntityManagerFactory();
     }
 
+    public JpaEndpoint(String endpointUri, EntityManagerFactory entityManagerFactory) {
+        super(endpointUri);
+        this.entityManagerFactory = entityManagerFactory;
+    }
+
+    public JpaEndpoint(String endpointUri) {
+        super(endpointUri);
+    }
+
     public Producer<Exchange> createProducer() throws Exception {
+        validate();
         return new JpaProducer(this, getProducerExpression());
     }
 
     public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
+        validate();
         JpaConsumer consumer = new JpaConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
@@ -174,6 +185,10 @@ public class JpaEndpoint extends ScheduledPollEndpoint<Exchange> {
 
     // Implementation methods
     // -------------------------------------------------------------------------
+    protected void validate() {
+        ObjectHelper.notNull(getEntityManagerFactory(), "entityManagerFactory property");
+    }
+
     protected JpaTemplate createTemplate() {
         return new JpaTemplate(getEntityManagerFactory());
     }
