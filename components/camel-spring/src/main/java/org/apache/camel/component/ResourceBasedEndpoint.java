@@ -17,9 +17,7 @@
 package org.apache.camel.component;
 
 import org.apache.camel.Component;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.validator.ValidatorComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,15 +32,16 @@ import org.springframework.core.io.ResourceLoader;
  * @version $Revision$
  */
 public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
-    protected static final transient Log LOG = LogFactory.getLog(ValidatorComponent.class);
-    private ResourceLoader resourceLoader = new DefaultResourceLoader();
+    protected final transient Log LOG = LogFactory.getLog(getClass());
     private final String resourceUri;
+    private ResourceLoader resourceLoader = new DefaultResourceLoader();
     private Resource resource;
 
     public ResourceBasedEndpoint(String endpointUri, Component component, String resourceUri, Processor processor) {
         super(endpointUri, component, processor);
         this.resourceUri = resourceUri;
     }
+
     public Resource getResource() {
         if (resource == null) {
             resource = getResourceLoader().getResource(resourceUri);
