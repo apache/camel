@@ -22,5 +22,5 @@ package org.apache.camel.processor;
  * @version $Revision$
  */
 public enum LoggingLevel {
-    DEBUG, ERROR, FATAL, INFO, TRACE, WARN;
+    DEBUG, ERROR, FATAL, INFO, TRACE, WARN
 }

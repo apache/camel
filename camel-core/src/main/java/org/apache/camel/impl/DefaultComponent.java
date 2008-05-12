@@ -237,7 +237,7 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
      * {@link CamelContext} or throws
      */
     public Object mandatoryLookup(String name) {
-        return  CamelContextHelper.mandatoryLookup(getCamelContext(), name);
+        return CamelContextHelper.mandatoryLookup(getCamelContext(), name);
     }
 
     /**
@@ -245,8 +245,39 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
      * {@link CamelContext}
      */
     public <T> T mandatoryLookup(String name, Class<T> beanType) {
-        return  CamelContextHelper.mandatoryLookup(getCamelContext(), name, beanType);
+        return CamelContextHelper.mandatoryLookup(getCamelContext(), name, beanType);
     }
 
+    /**
+     * Gets the parameter and remove it from the parameter map.
+     * 
+     * @param parameters  the parameters
+     * @param key        the key
+     * @param type       the requested type to convert the value from the parameter
+     * @return  the converted value parameter, <tt>null</tt> if parameter does not exists.
+     */
+    public <T> T getAndRemoveParameter(Map parameters, String key, Class<T> type) {
+        return getAndRemoveParameter(parameters, key, type, null);
+    }
+
+    /**
+     * Gets the parameter and remove it from the parameter map.
+     *
+     * @param parameters     the parameters
+     * @param key           the key
+     * @param type          the requested type to convert the value from the parameter
+     * @param defaultValue  use this default value if the parameter does not contain the key
+     * @return  the converted value parameter
+     */
+    public <T> T getAndRemoveParameter(Map parameters, String key, Class<T> type, T defaultValue) {
+        Object value = parameters.remove(key);
+        if (value == null) {
+            value = defaultValue;
+        }
+        if (value == null) {
+            return null;
+        }
+        return convertTo(type, value);
+    }
 
 }

@@ -26,8 +26,6 @@ import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.LoggingLevel;
 import org.apache.camel.processor.ThroughputLogger;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * The <a href="http://activemq.apache.org/camel/log.html">Log Component</a>
@@ -36,15 +34,14 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class LogComponent extends DefaultComponent<Exchange> {
-    private static final Log LOG = LogFactory.getLog(LogComponent.class);
 
     protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         LoggingLevel level = getLoggingLevel(parameters);
-        Object value = parameters.remove("groupSize");
+        Integer groupSize = getAndRemoveParameter(parameters, "groupSize", Integer.class);
 
         Logger logger;
-        if (value != null) {
-            logger = new ThroughputLogger(remaining, level, ObjectConverter.toInteger(value));
+        if (groupSize != null) {
+            logger = new ThroughputLogger(remaining, level, ObjectConverter.toInteger(groupSize));
         } else {
             logger = new Logger(remaining, level);
         }
@@ -53,18 +50,8 @@ public class LogComponent extends DefaultComponent<Exchange> {
     }
 
     protected LoggingLevel getLoggingLevel(Map parameters) {
-        String levelText = (String) parameters.get("level");
-        parameters.remove("level");
-        LoggingLevel level = null;
-        if (levelText != null) {
-            level = LoggingLevel.valueOf(levelText.toUpperCase());
-            if (level == null) {
-                LOG.warn("Could not convert level text: " + levelText + " to a valid logging level so defaulting to WARN");
-            }
-        }
-        if (level == null) {
-            level = LoggingLevel.INFO;
-        }
-        return level;
+        String levelText = getAndRemoveParameter(parameters, "level", String.class, "INFO");
+        return LoggingLevel.valueOf(levelText.toUpperCase());
     }
+
 }

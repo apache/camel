@@ -22,7 +22,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
@@ -34,14 +33,7 @@ import org.apache.camel.impl.DefaultComponent;
 public class SedaComponent extends DefaultComponent<Exchange> {
 
     public BlockingQueue<Exchange> createQueue(String uri, Map parameters) {
-        int size = 1000;
-        Object value = parameters.remove("size");
-        if (value != null) {
-            Integer i = convertTo(Integer.class, value);
-            if (i != null) {
-                size = i;
-            }
-        }
+        int size = getAndRemoveParameter(parameters, "size", Integer.class, 1000);
         return new LinkedBlockingQueue<Exchange>(size);
     }
 
