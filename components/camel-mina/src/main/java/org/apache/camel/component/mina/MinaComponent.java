@@ -27,7 +27,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -114,15 +113,18 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         SocketAddress address = new InetSocketAddress(connectUri.getHost(), connectUri.getPort());
         IoConnector connector = new SocketConnector();
 
-        boolean lazySessionCreation = ObjectConverter.toBool(parameters.get("lazySessionCreation"));
-        long timeout = getTimeoutParameter(parameters);
-        boolean transferExchange = ObjectConverter.toBool(parameters.get("transferExchange"));
-        boolean sync = ObjectConverter.toBool(parameters.get("sync"));
-        boolean minaLogger = ObjectConverter.toBool(parameters.get("minaLogger"));
+        boolean lazySessionCreation = getAndRemoveParameter(parameters, "lazySessionCreation", Boolean.class, false);
+        long timeout = getAndRemoveParameter(parameters, "timeout", Long.class, 0L);
+        boolean transferExchange = getAndRemoveParameter(parameters, "transferExchange", Boolean.class, false);
+        boolean sync = getAndRemoveParameter(parameters, "sync", Boolean.class, false);
+        boolean minaLogger = getAndRemoveParameter(parameters, "minaLogger", Boolean.class, false);
+        boolean textline = getAndRemoveParameter(parameters, "textline", Boolean.class, false);
+        String encoding = getAndRemoveParameter(parameters, "encoding", String.class);
+        String codec = getAndRemoveParameter(parameters, "codec", String.class);
 
         // connector config
         SocketConnectorConfig connectorConfig = new SocketConnectorConfig();
-        configureSocketCodecFactory("MinaProducer", connectorConfig, parameters);
+        configureSocketCodecFactory("MinaProducer", connectorConfig, textline, encoding, codec);
         if (minaLogger) {
             connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -132,14 +134,13 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
 
         // acceptor connectorConfig
         SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig();
-        configureSocketCodecFactory("MinaConsumer", acceptorConfig, parameters);
+        configureSocketCodecFactory("MinaConsumer", acceptorConfig, textline, encoding, codec);
         acceptorConfig.setReuseAddress(true);
         acceptorConfig.setDisconnectOnUnbind(true);
         if (minaLogger) {
             acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
 
-        removeKnownParameters(parameters);
         MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout, transferExchange);
 
         // set sync or async mode after endpoint is created
@@ -152,14 +153,13 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         return endpoint;
     }
 
-    protected void configureSocketCodecFactory(String type, IoServiceConfig config, Map parameters) {
-        ProtocolCodecFactory codecFactory = getCodecFactory(type, parameters);
+    protected void configureSocketCodecFactory(String type, IoServiceConfig config, boolean textline, String encoding, String codec) {
+        ProtocolCodecFactory codecFactory = getCodecFactory(type, codec);
 
         if (codecFactory == null) {
-            boolean textline = ObjectConverter.toBool(parameters.get("textline"));
             if (textline) {
-                Charset encoding = getEncodingParameter(type, parameters);
-                codecFactory = new TextLineCodecFactory(encoding);
+                Charset charset = getEncodingParameter(type, encoding);
+                codecFactory = new TextLineCodecFactory(charset);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(type + ": Using TextLineCodecFactory: " + codecFactory + " using encoding: "
                               + encoding);
@@ -175,31 +175,21 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         addCodecFactory(config, codecFactory);
     }
 
-    private void removeKnownParameters(Map parameters) {
-        // remove the known parameters this component supports
-        parameters.remove("lazySessionCreation");
-        parameters.remove("timeout");
-        parameters.remove("transferExchange");
-        parameters.remove("sync");
-        parameters.remove("minaLogger");
-        parameters.remove("codec");
-        parameters.remove("textline");
-        parameters.remove("encoding");
-    }
-
     protected MinaEndpoint createDatagramEndpoint(String uri, URI connectUri, Map parameters) {
         IoAcceptor acceptor = new DatagramAcceptor();
         SocketAddress address = new InetSocketAddress(connectUri.getHost(), connectUri.getPort());
         IoConnector connector = new DatagramConnector();
 
-        boolean lazySessionCreation = ObjectConverter.toBool(parameters.get("lazySessionCreation"));
-        long timeout = getTimeoutParameter(parameters);
+        boolean lazySessionCreation = getAndRemoveParameter(parameters, "lazySessionCreation", Boolean.class, false);
+        long timeout = getAndRemoveParameter(parameters, "timeout", Long.class, 0L);
         boolean transferExchange = false; // transfer exchange is not supported for datagram protocol
-        boolean sync = ObjectConverter.toBool(parameters.get("sync"));
-        boolean minaLogger = ObjectConverter.toBool(parameters.get("minaLogger"));
+        boolean sync = getAndRemoveParameter(parameters, "sync", Boolean.class, false);
+        boolean minaLogger = getAndRemoveParameter(parameters, "minaLogger", Boolean.class, false);
+        String encoding = getAndRemoveParameter(parameters, "encoding", String.class);
+        String codec = getAndRemoveParameter(parameters, "codec", String.class);
 
         DatagramConnectorConfig connectorConfig = new DatagramConnectorConfig();
-        configureDataGramCodecFactory("MinaProducer", connectorConfig, parameters);
+        configureDataGramCodecFactory("MinaProducer", connectorConfig, encoding, codec);
         if (minaLogger) {
             connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -208,14 +198,13 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         connectorConfig.setConnectTimeout((int)(connectTimeout / 1000));
 
         DatagramAcceptorConfig acceptorConfig = new DatagramAcceptorConfig();
-        configureDataGramCodecFactory("MinaConsumer", acceptorConfig, parameters);
+        configureDataGramCodecFactory("MinaConsumer", acceptorConfig, encoding, codec);
         acceptorConfig.setDisconnectOnUnbind(true);
         // reuse address is default true for datagram
         if (minaLogger) {
             acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
 
-        removeKnownParameters(parameters);
         MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout, transferExchange);
 
         // set sync or async mode after endpoint is created
@@ -228,8 +217,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         return endpoint;
     }
 
-    private Charset getEncodingParameter(String type, Map parameters) {
-        String encoding = (String) parameters.get("encoding");
+    private Charset getEncodingParameter(String type, String encoding) {
         if (encoding == null) {
             encoding = Charset.defaultCharset().name();
             if (LOG.isDebugEnabled()) {
@@ -243,26 +231,12 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         return Charset.forName(encoding);
     }
 
-    private static long getTimeoutParameter(Map parameters) throws IllegalArgumentException {
-        long timeout = 0;
-        String value = (String) parameters.get("timeout");
-        if (value != null) {
-            try {
-                timeout = ObjectConverter.toLong(value);
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("The timeout parameter is not a number: " + value);
-            }
-        }
-
-        return timeout;
-    }
-
     /**
      * For datagrams the entire message is available as a single ByteBuffer so lets just pass those around by default
      * and try converting whatever they payload is into ByteBuffers unless some custom converter is specified
      */
-    protected void configureDataGramCodecFactory(String type, IoServiceConfig config, Map parameters) {
-        ProtocolCodecFactory codecFactory = getCodecFactory(type, parameters);
+    protected void configureDataGramCodecFactory(String type, IoServiceConfig config, String encoding, String codec) {
+        ProtocolCodecFactory codecFactory = getCodecFactory(type, codec);
         if (codecFactory == null) {
             codecFactory = new ProtocolCodecFactory() {
                 public ProtocolEncoder getEncoder() throws Exception {
@@ -298,8 +272,8 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
             };
 
             // set the encoder used for this datagram codec factory
-            Charset encoding = getEncodingParameter(type, parameters);
-            encoder = encoding.newEncoder();
+            Charset charset = getEncodingParameter(type, encoding);
+            encoder = charset.newEncoder();
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug(type + ": Using CodecFactory: " + codecFactory + " using encoding: " + encoding);
@@ -319,9 +293,8 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         return answer;
     }
 
-    protected ProtocolCodecFactory getCodecFactory(String type, Map parameters) {
+    protected ProtocolCodecFactory getCodecFactory(String type, String codec) {
         ProtocolCodecFactory codecFactory = null;
-        String codec = (String) parameters.get("codec");
         if (codec != null) {
             codecFactory = getCamelContext().getRegistry().lookup(codec, ProtocolCodecFactory.class);
             if (LOG.isDebugEnabled()) {
