@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.Message;
@@ -27,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 public class MultiCastAggregatorTest extends ContextTestSupport {
-    protected Endpoint<Exchange> startEndpoint;
-    protected MockEndpoint result;
 
     public void testMulticastReceivesItsOwnExchangeParallelly() throws Exception {
         sendingAMessageUsingMulticastReceivesItsOwnExchange(true);
@@ -39,7 +36,9 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
     }
 
     private void sendingAMessageUsingMulticastReceivesItsOwnExchange(boolean isParallel) throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("inputx+inputy+inputz");
+
         String url;
         if (isParallel) {
             url = "direct:parallel";
@@ -55,30 +54,18 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
             }
         });
 
-
         assertNotNull("We should get result here", exchange);
         assertEquals("Can't get the right result", "inputx+inputy+inputz", exchange.getOut().getBody(String.class));
 
         assertMockEndpointsSatisifed();
     }
 
+    private class AppendingProcessor implements Processor {
+        private String appendingString;
 
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        result = getMockEndpoint("mock:result");
-
-
-    }
-
-    class AppendingProcessor implements Processor {
-        String appendingString;
-
-        AppendingProcessor(String string) {
+        public AppendingProcessor(String string) {
             appendingString = string;
         }
-
 
         public void process(Exchange exchange) {
             // lets transform the IN message
@@ -86,11 +73,10 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
             String body = in.getBody(String.class);
             in.setBody(body + appendingString);
         }
-
-
     }
 
-    class BodyOutAggregatingStrategy implements AggregationStrategy {
+    private class BodyOutAggregatingStrategy implements AggregationStrategy {
+
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             Message newOut = newExchange.getOut();
             String oldBody = oldExchange.getOut().getBody(String.class);
@@ -98,10 +84,10 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
             newOut.setBody(oldBody + "+" + newBody);
             return newExchange;
         }
+
     }
 
-
-    class BodyInAggregatingStrategy implements AggregationStrategy {
+    private class BodyInAggregatingStrategy implements AggregationStrategy {
 
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             Message newIn = newExchange.getIn();
@@ -117,7 +103,7 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
         }
 
         /**
-         * An expression used to determine if the aggreagation is complete
+         * An expression used to determine if the aggregation is complete
          */
         public boolean isCompleted(@Header(name = "aggregated")
                                    Integer aggregated) {
@@ -134,9 +120,9 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                // The message will be parallely sent to the endpoints
+                // The message will be sent parallelly to the endpoints
                 from("direct:parallel").multicast(new BodyOutAggregatingStrategy(), true).to("direct:x", "direct:y", "direct:z");
-                // Mulitcast the message in a sequential way
+                // Multicast the message in a sequential way
                 from("direct:sequential").multicast(new BodyOutAggregatingStrategy()).to("direct:x", "direct:y", "direct:z");
 
                 from("direct:x").process(new AppendingProcessor("x")).to("direct:aggregater");
@@ -150,6 +136,5 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
         };
 
     }
-
 
 }
