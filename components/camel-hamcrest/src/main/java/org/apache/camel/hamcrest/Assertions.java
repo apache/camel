@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.instanceOf;
 /**
  * A set of useful assertions you can use when testing
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class Assertions {
 
