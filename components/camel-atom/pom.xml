@@ -38,17 +38,6 @@
   </properties>
 
   <dependencies>
-    <!-- TODO these two should be picked up transitively! -->
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-    </dependency>
-
-
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -56,9 +45,8 @@
     <dependency>
       <groupId>org.apache.abdera</groupId>
       <artifactId>abdera-extensions-main</artifactId>
-      <version>0.3.0-incubating</version>
+      <version>0.4.0-incubating</version>
     </dependency>
-
 
     <!-- testing -->
     <dependency>
@@ -85,3 +73,4 @@
   </dependencies>
     
 </project>
+
