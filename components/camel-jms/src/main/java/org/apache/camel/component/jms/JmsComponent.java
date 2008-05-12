@@ -330,9 +330,8 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
                 try {
                     queueBrowseStrategy = tryCreateDefaultQueueBrowseStrategy();
                 } catch (Throwable e) {
-                    LOG.warn(
-                             "Could not instantiate the QueueBrowseStrategy are you using Spring 2.0.x by any chance? Error: "
-                                 + e, e);
+                    LOG.warn("Could not instantiate the QueueBrowseStrategy are you using Spring 2.0.x"
+                        + " by any chance? Error: " + e, e);
                 }
             }
         }
@@ -397,7 +396,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
             }
         }
 
-        String selector = (String)parameters.remove("selector");
+        String selector = getAndRemoveParameter(parameters, "selector", String.class);
         if (selector != null) {
             endpoint.setSelector(selector);
         }
@@ -427,7 +426,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
      * Attempts to instantiate the default {@link QueueBrowseStrategy} which
      * should work fine if Spring 2.5.x or later is on the classpath but this
      * will fail if 2.0.x are on the classpath. We can continue to operate on
-     * this version we just cannot support the browsable queues supported by
+     * this version we just cannot support the browseable queues supported by
      * {@link JmsQueueEndpoint}
      *
      * @return the queue browse strategy or null if it cannot be supported
