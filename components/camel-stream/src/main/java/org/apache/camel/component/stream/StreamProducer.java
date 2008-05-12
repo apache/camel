@@ -26,41 +26,27 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.ObjectConverter;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class StreamProducer extends DefaultProducer<StreamExchange> {
+public class StreamProducer extends DefaultProducer<Exchange> {
 
     private static final transient Log LOG = LogFactory.getLog(StreamProducer.class);
     private static final String TYPES = "in,out,err,file,url,header";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
-    protected OutputStream outputStream = System.out;
+    private OutputStream outputStream = System.out;
+    private StreamEndpoint endpoint;
     private String uri;
-    private Map<String, String> parameters;
-    private String delay;
-    private String url;
-    private String file;
 
-    public StreamProducer(Endpoint<StreamExchange> endpoint, String uri, Map<String, String> parameters)
+    public StreamProducer(StreamEndpoint endpoint, String uri)
         throws Exception {
         super(endpoint);
-        this.parameters = parameters;
-
-        delay = parameters.get("delay");
-        url = parameters.get("url");
-        file = parameters.get("file");
-        // must remove the parameters this component support
-        parameters.remove("delay");
-        parameters.remove("url");
-        parameters.remove("file");
-
+        this.endpoint = endpoint;
         validateUri(uri);
     }
 
@@ -73,10 +59,7 @@ public class StreamProducer extends DefaultProducer<StreamExchange> {
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (delay != null) {
-            long ms = ObjectConverter.toLong(delay);
-            delay(ms);
-        }
+        delay(endpoint.getDelay());
 
         if ("out".equals(uri)) {
             outputStream = System.out;
@@ -85,7 +68,7 @@ public class StreamProducer extends DefaultProducer<StreamExchange> {
         } else if ("file".equals(uri)) {
             outputStream = resolveStreamFromFile();
         } else if ("header".equals(uri)) {
-            outputStream = resolveStreamFromHeader(exchange.getIn().getHeader("stream"));
+            outputStream = resolveStreamFromHeader(exchange.getIn().getHeader("stream"), exchange);
         } else if ("url".equals(uri)) {
             outputStream = resolveStreamFromUrl();
         }
@@ -93,14 +76,14 @@ public class StreamProducer extends DefaultProducer<StreamExchange> {
     }
 
     private OutputStream resolveStreamFromUrl() throws IOException {
-        String u = url;
+        String u = endpoint.getUrl();
         URL url = new URL(u);
         URLConnection c = url.openConnection();
         return c.getOutputStream();
     }
 
     private OutputStream resolveStreamFromFile() throws IOException {
-        String fileName = file != null ? file.trim() : "_file";
+        String fileName = endpoint.getFile() != null ? endpoint.getFile().trim() : "_file";
         File f = new File(fileName);
         if (LOG.isDebugEnabled()) {
             LOG.debug("About to write to file: " + f);
@@ -109,15 +92,18 @@ public class StreamProducer extends DefaultProducer<StreamExchange> {
         return new FileOutputStream(f);
     }
 
-    private OutputStream resolveStreamFromHeader(Object o) throws StreamComponentException {
+    private OutputStream resolveStreamFromHeader(Object o, Exchange exchange) throws CamelExchangeException {
         if (o != null && o instanceof OutputStream) {
             return (OutputStream)o;
         } else {
-            throw new StreamComponentException("Expected OutputStream in header('stream'), found: " + o);
+            throw new CamelExchangeException("Expected OutputStream in header('stream'), found: " + o, exchange);
         }
     }
 
     private void delay(long ms) throws InterruptedException {
+        if (ms == 0) {
+            return;
+        }
         if (LOG.isDebugEnabled()) {
             LOG.debug("Delaying " + ms + " millis");
         }
