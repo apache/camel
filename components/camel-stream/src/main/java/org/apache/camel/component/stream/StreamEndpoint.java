@@ -16,36 +16,60 @@
  */
 package org.apache.camel.component.stream;
 
-import java.util.Map;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Component;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultEndpoint;
 
-public class StreamEndpoint extends DefaultEndpoint<StreamExchange> {
-    Producer<StreamExchange> producer;
-    private Map<String, String> parameters;
+public class StreamEndpoint extends DefaultEndpoint<Exchange> {
     private String uri;
+    private String file;
+    private String url;
+    private long delay;
 
-
-    public StreamEndpoint(StreamComponent component, String uri, String remaining,
-                          Map<String, String> parameters) throws Exception {
-        super(uri, component);
-        this.parameters = parameters;
-        this.uri = uri;
-        this.producer = new StreamProducer(this, uri, parameters);
+    public StreamEndpoint(String endpointUri, Component component) throws Exception {
+        super(endpointUri, component);
+        this.uri = endpointUri;
     }
 
-    public Consumer<StreamExchange> createConsumer(Processor processor) throws Exception {
-        return new StreamConsumer(this, processor, uri, parameters);
+    public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
+        return new StreamConsumer(this, processor, uri);
     }
 
-    public Producer<StreamExchange> createProducer() throws Exception {
-        return producer;
+    public Producer<Exchange> createProducer() throws Exception {
+        return new StreamProducer(this, uri);
     }
 
     public boolean isSingleton() {
         return true;
+    }
+
+    // Properties
+    //-------------------------------------------------------------------------
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public long getDelay() {
+        return delay;
+    }
+
+    public void setDelay(long delay) {
+        this.delay = delay;
     }
 }

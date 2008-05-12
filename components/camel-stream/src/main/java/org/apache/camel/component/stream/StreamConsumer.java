@@ -26,9 +26,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
@@ -38,30 +36,20 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Consumer that can read from any stream
  */
-public class StreamConsumer extends DefaultConsumer<StreamExchange> {
+public class StreamConsumer extends DefaultConsumer<Exchange> {
 
     private static final transient Log LOG = LogFactory.getLog(StreamConsumer.class);
     private static final String TYPES = "in";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
-    protected InputStream inputStream = System.in;
-    protected Endpoint<StreamExchange> endpoint;
+    private InputStream inputStream = System.in;
+    private StreamEndpoint endpoint;
     private String uri;
-    private String file;
-    private String url;
 
-    public StreamConsumer(Endpoint<StreamExchange> endpoint, Processor processor, String uri,
-                          Map<String, String> parameters) throws Exception {
+    public StreamConsumer(StreamEndpoint endpoint, Processor processor, String uri) throws Exception {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.uri = uri;
-
-        file = parameters.get("file");
-        url = parameters.get("url");
-        // must remove the options this component supports
-        parameters.remove("file");
-        parameters.remove("url");
-
         validateUri(uri);
     }
 
@@ -83,10 +71,6 @@ public class StreamConsumer extends DefaultConsumer<StreamExchange> {
             while ((line = br.readLine()) != null) {
                 consume(line);
             }
-        } catch (IOException e) {
-            throw new StreamComponentException(e);
-        } catch (Exception e) {
-            throw new StreamComponentException(e);
         } finally {
             br.close();
         }
@@ -107,14 +91,14 @@ public class StreamConsumer extends DefaultConsumer<StreamExchange> {
     }
 
     private InputStream resolveStreamFromUrl() throws IOException {
-        String u = url;
+        String u = endpoint.getUrl();
         URL url = new URL(u);
         URLConnection c = url.openConnection();
         return c.getInputStream();
     }
 
     private InputStream resolveStreamFromFile() throws IOException {
-        String fileName = file != null ? file.trim() : "_file";
+        String fileName = endpoint.getFile() != null ? endpoint.getFile().trim() : "_file";
         File f = new File(fileName);
         if (LOG.isDebugEnabled()) {
             LOG.debug("About to read from file: " + f);
@@ -123,7 +107,7 @@ public class StreamConsumer extends DefaultConsumer<StreamExchange> {
         return new FileInputStream(f);
     }
 
-    private void validateUri(String uri) throws Exception {
+    private void validateUri(String uri) throws IllegalArgumentException {
         String[] s = uri.split(":");
         if (s.length < 2) {
             throw new IllegalArgumentException(INVALID_URI);

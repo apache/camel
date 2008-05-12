@@ -26,11 +26,6 @@ public class StreamMessage extends DefaultMessage {
     }
 
     @Override
-    public String toString() {
-        return o.toString();
-    }
-
-    @Override
     protected Object createBody() {
         return o;
     }
@@ -38,6 +33,11 @@ public class StreamMessage extends DefaultMessage {
     @Override
     public Object getBody() {
         return o;
+    }
+
+    @Override
+    public String toString() {
+        return o.toString();
     }
 
 }

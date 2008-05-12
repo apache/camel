@@ -18,17 +18,18 @@ package org.apache.camel.component.stream;
 
 import java.util.Map;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
  * Component providing streams connectivity
  */
-public class StreamComponent extends DefaultComponent<StreamExchange> {
+public class StreamComponent extends DefaultComponent<Exchange> {
 
     @Override
-    protected Endpoint<StreamExchange> createEndpoint(String uri, String remaining, Map parameters)
+    protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters)
         throws Exception {
-        return new StreamEndpoint(this, uri, remaining, parameters);
+        return new StreamEndpoint(uri, this);
     }
 
 }
