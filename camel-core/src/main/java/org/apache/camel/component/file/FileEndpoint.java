@@ -57,6 +57,11 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
         this.file = file;
     }
 
+    public FileEndpoint(String endpointUri, File file) {
+        super(endpointUri);
+        this.file = file;
+    }
+
     public Producer<FileExchange> createProducer() throws Exception {
         Producer<FileExchange> result = new FileProducer(this);
         return result;
@@ -75,7 +80,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      * @return the created exchange
      */
     public FileExchange createExchange(File file) {
-        return new FileExchange(getContext(), getExchangePattern(), file);
+        return new FileExchange(getCamelContext(), getExchangePattern(), file);
     }
 
     public FileExchange createExchange() {
@@ -83,7 +88,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     }
 
     public FileExchange createExchange(ExchangePattern pattern) {
-        return new FileExchange(getContext(), pattern, file);
+        return new FileExchange(getCamelContext(), pattern, file);
     }
 
     /**

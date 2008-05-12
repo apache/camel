@@ -56,6 +56,11 @@ public class QuartzEndpoint extends DefaultEndpoint<QuartzExchange> {
         this.scheduler = scheduler;
     }
 
+    public QuartzEndpoint(String endpointUri, Scheduler scheduler) {
+        super(endpointUri);
+        this.scheduler = scheduler;
+    }
+
     public void addTriggers(Map<Trigger, JobDetail> triggerMap) throws SchedulerException {
         if (triggerMap != null) {
             Set<Map.Entry<Trigger, JobDetail>> entries = triggerMap.entrySet();
@@ -119,11 +124,11 @@ public class QuartzEndpoint extends DefaultEndpoint<QuartzExchange> {
 
     @Override
     public QuartzExchange createExchange(ExchangePattern pattern) {
-        return new QuartzExchange(getContext(), pattern, null);
+        return new QuartzExchange(getCamelContext(), pattern, null);
     }
 
     public QuartzExchange createExchange(JobExecutionContext jobExecutionContext) {
-        return new QuartzExchange(getContext(), getExchangePattern(), jobExecutionContext);
+        return new QuartzExchange(getCamelContext(), getExchangePattern(), jobExecutionContext);
     }
 
     public Producer<QuartzExchange> createProducer() throws Exception {

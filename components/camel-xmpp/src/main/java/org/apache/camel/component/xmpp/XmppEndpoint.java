@@ -54,6 +54,10 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
         super(uri, component);
     }
 
+    public XmppEndpoint(String endpointUri) {
+        super(endpointUri);
+    }
+
     public Producer<XmppExchange> createProducer() throws Exception {
         if (room != null) {
             return createGroupChatProducer(room);
@@ -79,11 +83,11 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
 
     @Override
     public XmppExchange createExchange(ExchangePattern pattern) {
-        return new XmppExchange(getContext(), pattern, getBinding());
+        return new XmppExchange(getCamelContext(), pattern, getBinding());
     }
 
     public XmppExchange createExchange(Message message) {
-        return new XmppExchange(getContext(), getExchangePattern(), getBinding(), message);
+        return new XmppExchange(getCamelContext(), getExchangePattern(), getBinding(), message);
     }
 
     // Properties

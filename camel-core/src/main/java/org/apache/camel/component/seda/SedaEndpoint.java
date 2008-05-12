@@ -48,6 +48,11 @@ public class SedaEndpoint extends DefaultEndpoint<Exchange> implements Browsable
         this(uri, component, component.createQueue(uri, parameters));
     }
 
+    public SedaEndpoint(String endpointUri, BlockingQueue<Exchange> queue) {
+        super(endpointUri);
+        this.queue = queue;
+    }
+
     public Producer createProducer() throws Exception {
         return new CollectionProducer(this, getQueue());
     }

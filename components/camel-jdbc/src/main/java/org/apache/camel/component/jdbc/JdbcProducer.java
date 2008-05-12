@@ -44,7 +44,7 @@ public class JdbcProducer extends DefaultProducer<DefaultExchange> {
     public JdbcProducer(JdbcEndpoint endpoint, String remaining, int readSize) throws Exception {
         super(endpoint);
         this.readSize = readSize;
-        source = (DataSource) getEndpoint().getContext().getRegistry().lookup(remaining);
+        source = (DataSource) getEndpoint().getCamelContext().getRegistry().lookup(remaining);
     }
 
     /**

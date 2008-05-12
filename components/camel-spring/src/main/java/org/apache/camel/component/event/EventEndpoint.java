@@ -28,6 +28,8 @@ import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.beans.BeansException;
 
 /**
  * An <a href="http://activemq.apache.org/camel/event.html">Event Endpoint</a>
@@ -35,22 +37,25 @@ import org.springframework.context.ApplicationEvent;
  * 
  * @version $Revision$
  */
-public class EventEndpoint extends DefaultEndpoint<Exchange> {
-    private final EventComponent component;
+public class EventEndpoint extends DefaultEndpoint<Exchange> implements ApplicationContextAware {
     private LoadBalancer loadBalancer;
+    private ApplicationContext applicationContext;
 
     public EventEndpoint(String endpointUri, EventComponent component) {
         super(endpointUri, component);
-        this.component = component;
+        this.applicationContext = component.getApplicationContext();
     }
 
-    @Override
-    public EventComponent getComponent() {
-        return component;
+    public EventEndpoint(String endpointUri) {
+        super(endpointUri);
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 
     public ApplicationContext getApplicationContext() {
-        return getComponent().getApplicationContext();
+        return applicationContext;
     }
 
     public boolean isSingleton() {
@@ -112,4 +117,5 @@ public class EventEndpoint extends DefaultEndpoint<Exchange> {
         }
         return event;
     }
+
 }

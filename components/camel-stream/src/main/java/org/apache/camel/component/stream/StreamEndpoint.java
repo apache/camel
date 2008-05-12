@@ -34,6 +34,11 @@ public class StreamEndpoint extends DefaultEndpoint<Exchange> {
         this.uri = endpointUri;
     }
 
+    public StreamEndpoint(String endpointUri) {
+        super(endpointUri);
+        this.uri = endpointUri;
+    }
+
     public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
         return new StreamConsumer(this, processor, uri);
     }

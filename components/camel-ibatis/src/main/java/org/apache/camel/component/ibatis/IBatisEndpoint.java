@@ -41,6 +41,11 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
         this.entityName = entityName;
     }
 
+    public IBatisEndpoint(String endpointUri, String entityName) {
+        super(endpointUri);
+        this.entityName = entityName;
+    }
+
     @Override
     public IBatisComponent getComponent() {
         return (IBatisComponent) super.getComponent();

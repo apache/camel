@@ -42,6 +42,11 @@ public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
         this.resourceUri = resourceUri;
     }
 
+    protected ResourceBasedEndpoint(String endpointUri, Processor processor, String resourceUri) {
+        super(endpointUri, processor);
+        this.resourceUri = resourceUri;
+    }
+
     public Resource getResource() {
         if (resource == null) {
             resource = getResourceLoader().getResource(resourceUri);

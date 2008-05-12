@@ -41,6 +41,10 @@ public abstract class ScheduledPollEndpoint<E extends Exchange> extends DefaultE
         super(endpointUri, context);
     }
 
+    protected ScheduledPollEndpoint(String endpointUri) {
+        super(endpointUri);
+    }
+
     public Map getConsumerProperties() {
         return consumerProperties;
     }
@@ -52,7 +56,7 @@ public abstract class ScheduledPollEndpoint<E extends Exchange> extends DefaultE
     protected void configureConsumer(Consumer<E> consumer) throws Exception {
         if (consumerProperties != null) {
             // TODO pass in type converter
-            IntrospectionSupport.setProperties(getContext().getTypeConverter(), consumer, consumerProperties);
+            IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), consumer, consumerProperties);
         }
     }
 

@@ -76,11 +76,11 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
 
     @Override
     public MinaExchange createExchange(ExchangePattern pattern) {
-        return new MinaExchange(getContext(), pattern, null);
+        return new MinaExchange(getCamelContext(), pattern, null);
     }
 
     public MinaExchange createExchange(IoSession session, Object payload) {
-        MinaExchange exchange = new MinaExchange(getContext(), getExchangePattern(), session);
+        MinaExchange exchange = new MinaExchange(getCamelContext(), getExchangePattern(), session);
         MinaPayloadHelper.setIn(exchange, payload);
         return exchange;
     }

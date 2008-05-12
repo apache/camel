@@ -42,6 +42,12 @@ public class JdbcEndpoint extends DefaultEndpoint<DefaultExchange> {
         this.remaining = remaining;
     }
 
+    public JdbcEndpoint(String endpointUri, String remaining) throws URISyntaxException {
+        super(endpointUri);
+        this.remaining = remaining;
+        this.uri = new URI(endpointUri);
+    }
+
     public boolean isSingleton() {
         return false;
     }

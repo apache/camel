@@ -52,6 +52,10 @@ public class JMXEndpoint extends DefaultEndpoint<JMXExchange> {
         observedObjectName = endpointUri;
     }
 
+    public JMXEndpoint(String endpointUri) {
+        super(endpointUri);
+    }
+
     /**
      * @return a Producer
      * @throws Exception
@@ -93,15 +97,15 @@ public class JMXEndpoint extends DefaultEndpoint<JMXExchange> {
     }
 
     public JMXExchange createExchange(Notification notification) {
-        return new JMXExchange(getContext(), getExchangePattern(), notification);
+        return new JMXExchange(getCamelContext(), getExchangePattern(), notification);
     }
 
     public JMXExchange createExchange() {
-        return new JMXExchange(getContext(), getExchangePattern(), null);
+        return new JMXExchange(getCamelContext(), getExchangePattern(), null);
     }
 
     public JMXExchange createExchange(ExchangePattern pattern) {
-        return new JMXExchange(getContext(), pattern, null);
+        return new JMXExchange(getCamelContext(), pattern, null);
     }
 
     public String getAttributeName() {

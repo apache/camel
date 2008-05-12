@@ -46,6 +46,11 @@ public class TestEndpoint extends MockEndpoint implements Service {
         this.expectedMessageEndpoint = expectedMessageEndpoint;
     }
 
+    public TestEndpoint(String endpointUri, Endpoint expectedMessageEndpoint) {
+        super(endpointUri);
+        this.expectedMessageEndpoint = expectedMessageEndpoint;
+    }
+
     public void start() throws Exception {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Consuming expected messages from: " + expectedMessageEndpoint);

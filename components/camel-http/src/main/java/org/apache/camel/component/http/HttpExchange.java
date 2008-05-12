@@ -34,7 +34,7 @@ public class HttpExchange extends DefaultExchange {
     private HttpServletResponse response;
 
     public HttpExchange(HttpEndpoint endpoint, ExchangePattern pattern) {
-        super(endpoint.getContext(), pattern);
+        super(endpoint.getCamelContext(), pattern);
         this.endpoint = endpoint;
     }
 

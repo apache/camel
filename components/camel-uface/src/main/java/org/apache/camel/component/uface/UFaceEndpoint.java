@@ -33,6 +33,10 @@ public class UFaceEndpoint extends ListEndpoint {
         super(uri, component);
     }
 
+    public UFaceEndpoint(String endpointUri) {
+        super(endpointUri);
+    }
+
     @Override
     protected List<Exchange> createExchangeList() {
         Realm realm = Realm.getDefault();

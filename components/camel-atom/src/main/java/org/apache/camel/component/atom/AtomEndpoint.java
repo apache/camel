@@ -32,6 +32,7 @@ import org.apache.abdera.parser.Parser;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 
 /**
@@ -49,16 +50,27 @@ public class AtomEndpoint extends DefaultPollingEndpoint {
         this.atomUri = atomUri;
     }
 
+    public AtomEndpoint(String endpointUri, String atomUri) {
+        this(endpointUri);
+        this.atomUri = atomUri;
+    }
+
+    public AtomEndpoint(String endpointUri) {
+        super(endpointUri);
+    }
+
     public boolean isSingleton() {
         return true;
     }
 
     public Producer createProducer() throws Exception {
+        validate();
         return new AtomProducer(this);
     }
 
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
+        validate();
         if (isSplitEntries()) {
             return new AtomEntryPollingConsumer(this);
         } else {
@@ -118,6 +130,14 @@ public class AtomEndpoint extends DefaultPollingEndpoint {
 
     // Implementation methods
     //-------------------------------------------------------------------------
+
+    /**
+     * Validates the endpoint is configured properly
+     */
+    protected void validate() {
+        ObjectHelper.notNull(getAtomUri(), "atomUri property");
+    }
+
     protected Factory createAtomFactory() {
         return Abdera.getNewFactory();
     }

@@ -172,7 +172,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         //We will use the type convert to build the endpoint first
         Endpoint endpoint = getTypeConverter().convertTo(Endpoint.class, bean);
         if (endpoint != null) {
-            endpoint.setContext(this);
+            endpoint.setCamelContext(this);
             return endpoint;
         }
         Processor processor = new BeanProcessor(bean, this);

@@ -76,6 +76,11 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
         init();
     }
 
+    public MockEndpoint(String endpointUri) {
+        super(endpointUri);
+        init();
+    }
+
     public static void assertWait(long timeout, TimeUnit unit, MockEndpoint... endpoints) throws InterruptedException {
         long start = System.currentTimeMillis();
         long left = unit.toMillis(timeout);
