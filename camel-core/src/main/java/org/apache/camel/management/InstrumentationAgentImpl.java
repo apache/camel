@@ -161,6 +161,16 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
     }
 
     protected void doStop() throws Exception {
+        // close JMX Connector 
+        if (cs != null) {
+            try {
+                cs.stop();
+            } catch (IOException e) {
+                // ignore
+            }
+            cs = null;
+        }
+        
         // Using the array to hold the busMBeans to avoid the
         // CurrentModificationException
         Object[] mBeans = mbeans.toArray();
