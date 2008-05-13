@@ -90,7 +90,8 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
     private class BodyInAggregatingStrategy implements AggregationStrategy {
 
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            Message newIn = newExchange.getIn();
+            Exchange copy = newExchange.copy();
+            Message newIn = copy.getIn();
             String oldBody = oldExchange.getIn().getBody(String.class);
             String newBody = newIn.getBody(String.class);
             newIn.setBody(oldBody + "+" + newBody);
@@ -98,21 +99,9 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
             if (old == null) {
                 old = 1;
             }
-            newExchange.setProperty("aggregated", old + 1);
-            return newExchange;
+            copy.setProperty("aggregated", old + 1);
+            return copy;
         }
-
-        /**
-         * An expression used to determine if the aggregation is complete
-         */
-        public boolean isCompleted(@Header(name = "aggregated")
-                                   Integer aggregated) {
-            if (aggregated == null) {
-                return false;
-            }
-            return aggregated == 3;
-        }
-
     }
 
     protected RouteBuilder createRouteBuilder() {
