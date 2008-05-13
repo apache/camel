@@ -28,7 +28,7 @@ import org.apache.camel.Endpoint;
  */
 public class DefaultComponentTest extends ContextTestSupport {
 
-    private class MyComponent extends DefaultComponent<DefaultExchange> {
+    private final class MyComponent extends DefaultComponent<DefaultExchange> {
 
         private MyComponent(CamelContext context) {
             super(context);

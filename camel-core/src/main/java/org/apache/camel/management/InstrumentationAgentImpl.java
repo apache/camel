@@ -54,6 +54,7 @@ import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
 public class InstrumentationAgentImpl extends ServiceSupport implements InstrumentationAgent,
     CamelContextAware {
     public static final String SYSTEM_PROPERTY_JMX = "org.apache.camel.jmx";
+    public static final String SYSTEM_PROPERTY_JMX_USE_PLATFORM_MBS = SYSTEM_PROPERTY_JMX + ".usePlatformMBeanServer";
     public static final String DEFAULT_DOMAIN = "org.apache.camel";
     public static final String DEFAULT_HOST = "localhost";
     public static final int DEFAULT_PORT = 1099;
@@ -93,7 +94,8 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
 
     public MBeanServer getMBeanServer() {
         if (server == null) {
-            server = ManagementFactory.getPlatformMBeanServer();
+            // The MBeanServer was not injected
+            createMBeanServer();
         }
         return server;
     }
@@ -138,8 +140,8 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
         ObjectHelper.notNull(context, "camelContext");
 
         if (getMBeanServer() == null) {
-            // The MBeanServer was not injected
-            createMBeanServer();
+            // No mbean server or jmx not enabled
+            return;
         }
 
         if (jmxDomainName == null) {
@@ -161,7 +163,7 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
     }
 
     protected void doStop() throws Exception {
-        // close JMX Connector 
+        // close JMX Connector
         if (cs != null) {
             try {
                 cs.stop();
@@ -170,7 +172,7 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
             }
             cs = null;
         }
-        
+
         // Using the array to hold the busMBeans to avoid the
         // CurrentModificationException
         Object[] mBeans = mbeans.toArray();
@@ -278,13 +280,17 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
         }
 
         // jmx is enabled but there's no MBeanServer, so create one
-        List servers = MBeanServerFactory.findMBeanServer(jmxDomainName);
-        if (servers.size() == 0) {
-            server = MBeanServerFactory.createMBeanServer(jmxDomainName);
+        if (Boolean.getBoolean(SYSTEM_PROPERTY_JMX_USE_PLATFORM_MBS)) {
+            server = ManagementFactory.getPlatformMBeanServer();
         } else {
-            server = (MBeanServer)servers.get(0);
+            // jmx is enabled but there's no MBeanServer, so create one
+            List servers = MBeanServerFactory.findMBeanServer(jmxDomainName);
+            if (servers.size() == 0) {
+                server = MBeanServerFactory.createMBeanServer(jmxDomainName);
+            } else {
+                server = (MBeanServer)servers.get(0);
+            }
         }
-
         // we need a connector too
         try {
             createJmxConnector(hostName);
