@@ -35,8 +35,8 @@ public class XQueryComponent extends ResourceBasedComponent {
 
     protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         Resource resource = resolveMandatoryResource(remaining);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(this + " using schema resource: " + resource);
+        if (log.isDebugEnabled()) {
+            log.debug(this + " using schema resource: " + resource);
         }
         XQueryBuilder xslt = XQueryBuilder.xquery(resource.getURL());
         configureXslt(xslt, uri, remaining, parameters);

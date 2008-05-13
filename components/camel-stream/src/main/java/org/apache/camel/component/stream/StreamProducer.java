@@ -27,8 +27,8 @@ import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

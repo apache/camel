@@ -36,8 +36,8 @@ public class ValidatorComponent extends ResourceBasedComponent {
         SpringValidator validator = new SpringValidator();
         Resource resource = resolveMandatoryResource(remaining);
         validator.setSchemaResource(resource);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(this + " using schema resource: " + resource);
+        if (log.isDebugEnabled()) {
+            log.debug(this + " using schema resource: " + resource);
         }
         configureValidator(validator, uri, remaining, parameters);
         return new ProcessorEndpoint(uri, this, validator);

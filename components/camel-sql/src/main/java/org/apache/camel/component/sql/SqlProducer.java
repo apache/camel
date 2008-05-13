@@ -34,7 +34,7 @@ public class SqlProducer extends DefaultProducer<DefaultExchange> {
 
     public static final String UPDATE_COUNT = "org.apache.camel.sql.update-count";
 
-	private String query;
+    private String query;
 
     private JdbcTemplate jdbcTemplate;
 
@@ -45,29 +45,30 @@ public class SqlProducer extends DefaultProducer<DefaultExchange> {
     }
 
     public void process(final Exchange exchange) throws Exception {
-        
-        
+
+
         jdbcTemplate.execute(query, new PreparedStatementCallback() {
-		
-			public Object doInPreparedStatement(PreparedStatement ps)
-					throws SQLException, DataAccessException {
-				int argNumber = 1;
-				for (Iterator<?> i = exchange.getIn().getBody(Iterator.class); i.hasNext();) {
-		            ps.setObject(argNumber++, i.next());
-		        }
-				boolean isResultSet = ps.execute();
-				if (isResultSet) {
-					RowMapperResultSetExtractor mapper = new RowMapperResultSetExtractor(new ColumnMapRowMapper());
-					List result = (List) mapper.extractData(ps.getResultSet());
-					exchange.getOut().setBody(result);
-				} else {
-					exchange.getIn().setHeader(UPDATE_COUNT, ps.getUpdateCount());
-				}
-				return null;
-			}
-		
-		});
-        
+
+            public Object doInPreparedStatement(PreparedStatement ps) throws SQLException,
+                DataAccessException {
+                int argNumber = 1;
+                for (Iterator<?> i = exchange.getIn().getBody(Iterator.class); i.hasNext();) {
+                    ps.setObject(argNumber++, i.next());
+                }
+                boolean isResultSet = ps.execute();
+                if (isResultSet) {
+                    RowMapperResultSetExtractor mapper = new RowMapperResultSetExtractor(
+                                                                                         new ColumnMapRowMapper());
+                    List result = (List)mapper.extractData(ps.getResultSet());
+                    exchange.getOut().setBody(result);
+                } else {
+                    exchange.getIn().setHeader(UPDATE_COUNT, ps.getUpdateCount());
+                }
+                return null;
+            }
+
+        });
+
     }
 
 }
