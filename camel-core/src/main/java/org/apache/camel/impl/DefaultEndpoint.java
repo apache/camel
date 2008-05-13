@@ -54,28 +54,38 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
     }
 
     protected DefaultEndpoint(String endpointUri) {
-        this.endpointUri = endpointUri;
+        this.setEndpointUri(endpointUri);
+    }
+
+    protected DefaultEndpoint() {
     }
 
     public int hashCode() {
-        return endpointUri.hashCode() * 37 + 1;
+        return getEndpointUri().hashCode() * 37 + 1;
     }
 
     @Override
     public boolean equals(Object object) {
         if (object instanceof DefaultEndpoint) {
             DefaultEndpoint that = (DefaultEndpoint) object;
-            return ObjectHelper.equal(this.endpointUri, that.endpointUri);
+            return ObjectHelper.equal(this.getEndpointUri(), that.getEndpointUri());
         }
         return false;
     }
 
     @Override
     public String toString() {
-        return "Endpoint[" + endpointUri + "]";
+        return "Endpoint[" + getEndpointUri() + "]";
     }
 
     public String getEndpointUri() {
+        if (endpointUri == null) {
+            endpointUri = createEndpointUri();
+            if (endpointUri == null) {
+                throw new IllegalArgumentException("endpointUri is not specified and " + getClass().getName()
+                        + " does not implement createEndpointUri() to create a default value");
+            }
+        }
         return endpointUri;
     }
 
@@ -182,4 +192,17 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
 
     public void configureProperties(Map options) {
     }
+
+    /**
+     * A factory method to lazily create the endpointUri if none is specified 
+     * @return
+     */
+    protected String createEndpointUri() {
+        return null;
+    }
+
+    protected void setEndpointUri(String endpointUri) {
+        this.endpointUri = endpointUri;
+    }
+
 }
