@@ -16,18 +16,25 @@
  */
 package org.apache.camel.component.sql;
 
-import java.util.ArrayList;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCallback;
+import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 
 public class SqlProducer extends DefaultProducer<DefaultExchange> {
 
-    private String query;
+    public static final String UPDATE_COUNT = "org.apache.camel.sql.update-count";
+
+	private String query;
 
     private JdbcTemplate jdbcTemplate;
 
@@ -37,14 +44,30 @@ public class SqlProducer extends DefaultProducer<DefaultExchange> {
         this.query = query;
     }
 
-    public void process(Exchange exchange) throws Exception {
-        List<Object> arguments = new ArrayList<Object>();
-        for (Iterator<?> i = exchange.getIn().getBody(Iterator.class); i.hasNext();) {
-            arguments.add(i.next());
-        }
-
-        List result = jdbcTemplate.queryForList(query, arguments.toArray());
-        exchange.getOut().setBody(result);
+    public void process(final Exchange exchange) throws Exception {
+        
+        
+        jdbcTemplate.execute(query, new PreparedStatementCallback() {
+		
+			public Object doInPreparedStatement(PreparedStatement ps)
+					throws SQLException, DataAccessException {
+				int argNumber = 1;
+				for (Iterator<?> i = exchange.getIn().getBody(Iterator.class); i.hasNext();) {
+		            ps.setObject(argNumber++, i.next());
+		        }
+				boolean isResultSet = ps.execute();
+				if (isResultSet) {
+					RowMapperResultSetExtractor mapper = new RowMapperResultSetExtractor(new ColumnMapRowMapper());
+					List result = (List) mapper.extractData(ps.getResultSet());
+					exchange.getOut().setBody(result);
+				} else {
+					exchange.getIn().setHeader(UPDATE_COUNT, ps.getUpdateCount());
+				}
+				return null;
+			}
+		
+		});
+        
     }
 
 }

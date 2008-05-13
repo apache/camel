@@ -49,13 +49,7 @@ public class SqlEndpoint extends DefaultEndpoint<DefaultExchange> {
         this.query = query;
     }
 
-    public SqlEndpoint(String endpointUri, JdbcTemplate jdbcTemplate, String query) {
-        super(endpointUri);
-        this.jdbcTemplate = jdbcTemplate;
-        this.query = query;
-    }
-
-    public Consumer<DefaultExchange> createConsumer(Processor arg0) throws Exception {
+    public Consumer<DefaultExchange> createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 

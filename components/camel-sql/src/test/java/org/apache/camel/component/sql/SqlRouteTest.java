@@ -25,6 +25,7 @@ import javax.sql.DataSource;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
@@ -37,6 +38,7 @@ public class SqlRouteTest extends ContextTestSupport {
     protected String user = "sa";
     protected String password = "";
     private DataSource ds;
+	private JdbcTemplate jdbcTemplate;
 
     public void testSimpleBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -98,11 +100,28 @@ public class SqlRouteTest extends ContextTestSupport {
         assertEquals("Camel", row1.get("PROJECT"));
     }
 
+    public void testInsert() throws Exception {
+    	MockEndpoint mock = getMockEndpoint("mock:result");
+    	mock.expectedMessageCount(1);
+    	
+		template.sendBody("direct:insert", new Object[] {10, "test", "test"});
+		mock.assertIsSatisfied();
+		try {
+			String projectName = (String) jdbcTemplate.queryForObject("select project from projects where id = 10", String.class);
+			assertEquals("test", projectName);
+		} catch (EmptyResultDataAccessException e) {
+			fail("no row inserted");
+		}
+		
+		Integer actualUpdateCount = mock.getExchanges().get(0).getIn().getHeader(SqlProducer.UPDATE_COUNT, Integer.class);
+		assertEquals((Integer)1, actualUpdateCount);
+	}
+    
     protected void setUp() throws Exception {
         Class.forName(driverClass);
         super.setUp();
 
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+        jdbcTemplate = new JdbcTemplate(ds);
         jdbcTemplate.execute("create table projects (id integer primary key,"
                              + "project varchar(10), license varchar(5))");
         jdbcTemplate.execute("insert into projects values (1, 'Camel', 'ASF')");
@@ -135,6 +154,9 @@ public class SqlRouteTest extends ContextTestSupport {
                     .to("sql:select * from projects where license = # order by id?template.maxRows=1")
                     .to("mock:result");
 
+                from("direct:insert")
+                	.to("sql:insert into projects values (#, #, #)")
+                	.to("mock:result");
             }
         };
     }
