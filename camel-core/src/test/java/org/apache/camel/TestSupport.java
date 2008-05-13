@@ -342,7 +342,7 @@ public abstract class TestSupport extends TestCase {
      *
      * @param file the directory to be deleted
      */
-    protected static void deleteDirectory(String file) {
+    public static void deleteDirectory(String file) {
         deleteDirectory(new File(file));
     }
 
@@ -351,7 +351,7 @@ public abstract class TestSupport extends TestCase {
      *
      * @param file the directory to be deleted
      */
-    protected static void deleteDirectory(File file) {
+    public static void deleteDirectory(File file) {
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             for (int i = 0; i < files.length; i++) {
