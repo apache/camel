@@ -23,6 +23,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.component.file.strategy.FileProcessStrategyFactory;
 import org.apache.camel.component.file.strategy.FileProcessStrategySupport;
 import org.apache.camel.component.file.strategy.NoOpFileProcessStrategy;
@@ -60,6 +61,13 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     public FileEndpoint(String endpointUri, File file) {
         super(endpointUri);
         this.file = file;
+    }
+
+    public FileEndpoint(File file) {
+        this.file = file;
+    }
+
+    public FileEndpoint() {
     }
 
     public Producer<FileExchange> createProducer() throws Exception {
@@ -105,10 +113,15 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     }
 
     public File getFile() {
+        ObjectHelper.notNull(file, "file");
         if (autoCreate && !file.exists()) {
             file.mkdirs();
         }
         return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 
     public boolean isSingleton() {
@@ -260,4 +273,8 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
         return FileProcessStrategyFactory.createFileProcessStrategy(isNoop(), isDelete(), isLock(), moveNamePrefix, moveNamePostfix);
     }
 
+    @Override
+    protected String createEndpointUri() {
+        return "file://" + getFile().getAbsolutePath();
+    }
 }

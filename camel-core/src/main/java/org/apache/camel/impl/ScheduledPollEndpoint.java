@@ -45,6 +45,9 @@ public abstract class ScheduledPollEndpoint<E extends Exchange> extends DefaultE
         super(endpointUri);
     }
 
+    protected ScheduledPollEndpoint() {
+    }
+
     public Map getConsumerProperties() {
         return consumerProperties;
     }
