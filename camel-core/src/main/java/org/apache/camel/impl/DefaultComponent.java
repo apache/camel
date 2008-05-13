@@ -91,10 +91,10 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
 
             // fail if there are parameters that could not be set, then they are probably miss spelt or not supported at all
             if (parameters.size() > 0) {
-                throw new ResolveEndpointFailedException(uri, "There are " + parameters.size() +
-                    " parameters that couldn't be set on the endpoint." +
-                    " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint." +
-                    " Unknown parameters=[" + parameters + "]");
+                throw new ResolveEndpointFailedException(uri, "There are " + parameters.size()
+                    + " parameters that couldn't be set on the endpoint."
+                    + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
+                    + " Unknown parameters=[" + parameters + "]");
             }
         }
 

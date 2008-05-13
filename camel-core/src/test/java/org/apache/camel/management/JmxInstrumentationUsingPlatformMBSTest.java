@@ -16,42 +16,30 @@
  */
 package org.apache.camel.management;
 
-import javax.management.InstanceNotFoundException;
 import javax.management.ObjectName;
 
-
-public class JmxInstrumentationUsingPropertiesTest extends JmxInstrumentationUsingDefaultsTest {
+/**
+ * @version $Revision$
+ */
+public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUsingPropertiesTest {
 
     @Override
     protected void setUp() throws Exception {
-        domainName = "org.apache.camel-properties";
-        System.setProperty(InstrumentationAgentImpl.SYSTEM_PROPERTY_JMX, "");
-        System.setProperty(InstrumentationAgentImpl.SYSTEM_PROPERTY_JMX + ".domain", domainName);
-        System.setProperty(InstrumentationAgentImpl.SYSTEM_PROPERTY_JMX + ".port", "1099");
+        System.setProperty(InstrumentationAgentImpl.SYSTEM_PROPERTY_JMX_USE_PLATFORM_MBS, "True");
         super.setUp();
     }
 
     @Override
     protected void tearDown() throws Exception {
         // restore environment to original state
-        System.setProperty(InstrumentationAgentImpl.SYSTEM_PROPERTY_JMX, "");
-        System.setProperty(InstrumentationAgentImpl.SYSTEM_PROPERTY_JMX + ".domain", "");
-        System.setProperty(InstrumentationAgentImpl.SYSTEM_PROPERTY_JMX + ".port", "");
+        System.setProperty(InstrumentationAgentImpl.SYSTEM_PROPERTY_JMX_USE_PLATFORM_MBS, "");
         super.tearDown();
     }
 
     @Override
-    protected void enableJmx() {
-        // do not enable here, System properties should do the job
-    }
-    
     public void testMBeanServerType() throws Exception {
-        try {
-            iAgent.getMBeanServer().getMBeanInfo(new ObjectName("java.lang:type=OperatingSystem"));
-            assertTrue(false);  // should not get here
-        } catch (InstanceNotFoundException e) {
-            // expect exception since this is not a platform mbean server
-        }
+        assertNotNull(iAgent.getMBeanServer().getMBeanInfo(
+                new ObjectName("java.lang:type=OperatingSystem")));
     }
 
 }

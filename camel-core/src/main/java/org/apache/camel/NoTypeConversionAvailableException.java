@@ -18,7 +18,7 @@ package org.apache.camel;
 
 /**
  * An exception thrown if a value could not be converted to the required type
- * 
+ *
  * @version $Revision$
  */
 public class NoTypeConversionAvailableException extends RuntimeCamelException {
@@ -26,8 +26,8 @@ public class NoTypeConversionAvailableException extends RuntimeCamelException {
     private final Class type;
 
     public NoTypeConversionAvailableException(Object value, Class type) {
-        super("No type converter available to convert from type: " + (value != null ? value.getClass() : null) +
-            " to the required type " + type.getName() + " with value " + value);
+        super("No type converter available to convert from type: " + (value != null ? value.getClass() : null)
+              + " to the required type " + type.getName() + " with value " + value);
         this.value = value;
         this.type = type;
     }
