@@ -17,6 +17,8 @@
 
 package org.apache.camel.spring.config.scan.route;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.config.scan.component.MyProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +27,13 @@ public class MyRouteBuilder extends RouteBuilder {
 
     MyProcessor component;
 
+    @Autowired
+    @EndpointInject(name = "result")
+    Endpoint resultEndpoint;
+
     @Override
     public void configure() throws Exception {
-        from("direct:start").process(component).to("mock:end");
+        from("direct:start").process(component).to(resultEndpoint);
     }
 
     @Autowired
