@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model.language;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -32,6 +34,7 @@ import org.apache.camel.language.bean.BeanExpression;
  * @version $Revision$
  */
 @XmlRootElement(name = "methodCall")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class MethodCallExpression extends ExpressionType {
     @XmlAttribute(required = false)
     private String bean;
