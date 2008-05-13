@@ -38,7 +38,7 @@ public class SqlRouteTest extends ContextTestSupport {
     protected String user = "sa";
     protected String password = "";
     private DataSource ds;
-	private JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     public void testSimpleBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -62,7 +62,7 @@ public class SqlRouteTest extends ContextTestSupport {
         Map row = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals(1, row.get("ID"));
     }
-    
+
     public void testBadNumberOfParameter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -86,7 +86,7 @@ public class SqlRouteTest extends ContextTestSupport {
         Map row2 = assertIsInstanceOf(Map.class, received.get(1));
         assertEquals("AMQ", row2.get("PROJECT"));
     }
-    
+
     public void testListLimitedResult() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -101,22 +101,24 @@ public class SqlRouteTest extends ContextTestSupport {
     }
 
     public void testInsert() throws Exception {
-    	MockEndpoint mock = getMockEndpoint("mock:result");
-    	mock.expectedMessageCount(1);
-    	
-		template.sendBody("direct:insert", new Object[] {10, "test", "test"});
-		mock.assertIsSatisfied();
-		try {
-			String projectName = (String) jdbcTemplate.queryForObject("select project from projects where id = 10", String.class);
-			assertEquals("test", projectName);
-		} catch (EmptyResultDataAccessException e) {
-			fail("no row inserted");
-		}
-		
-		Integer actualUpdateCount = mock.getExchanges().get(0).getIn().getHeader(SqlProducer.UPDATE_COUNT, Integer.class);
-		assertEquals((Integer)1, actualUpdateCount);
-	}
-    
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBody("direct:insert", new Object[] {10, "test", "test"});
+        mock.assertIsSatisfied();
+        try {
+            String projectName = (String)jdbcTemplate
+                .queryForObject("select project from projects where id = 10", String.class);
+            assertEquals("test", projectName);
+        } catch (EmptyResultDataAccessException e) {
+            fail("no row inserted");
+        }
+
+        Integer actualUpdateCount = mock.getExchanges().get(0).getIn().getHeader(SqlProducer.UPDATE_COUNT,
+                                                                                 Integer.class);
+        assertEquals((Integer)1, actualUpdateCount);
+    }
+
     protected void setUp() throws Exception {
         Class.forName(driverClass);
         super.setUp();
@@ -149,14 +151,12 @@ public class SqlRouteTest extends ContextTestSupport {
                 from("direct:list")
                     .to("sql:select * from projects where license = # and project = # order by id")
                     .to("mock:result");
-                
+
                 from("direct:simpleLimited")
                     .to("sql:select * from projects where license = # order by id?template.maxRows=1")
                     .to("mock:result");
 
-                from("direct:insert")
-                	.to("sql:insert into projects values (#, #, #)")
-                	.to("mock:result");
+                from("direct:insert").to("sql:insert into projects values (#, #, #)").to("mock:result");
             }
         };
     }

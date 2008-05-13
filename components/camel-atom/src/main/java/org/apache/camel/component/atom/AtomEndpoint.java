@@ -32,8 +32,8 @@ import org.apache.abdera.parser.Parser;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * An <a href="http://activemq.apache.org/camel/atom.html">Atom Endpoint</a>.

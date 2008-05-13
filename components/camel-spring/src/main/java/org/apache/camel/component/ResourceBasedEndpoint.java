@@ -32,7 +32,7 @@ import org.springframework.core.io.ResourceLoader;
  * @version $Revision$
  */
 public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
-    protected final transient Log LOG = LogFactory.getLog(getClass());
+    protected final transient Log log = LogFactory.getLog(getClass());
     private final String resourceUri;
     private ResourceLoader resourceLoader = new DefaultResourceLoader();
     private Resource resource;

@@ -29,7 +29,7 @@ import org.springframework.core.io.ResourceLoader;
  * @version $Revision$
  */
 public abstract class ResourceBasedComponent extends DefaultComponent<Exchange> {
-    protected final transient Log LOG = LogFactory.getLog(getClass());
+    protected final transient Log log = LogFactory.getLog(getClass());
     private ResourceLoader resourceLoader = new DefaultResourceLoader();
 
     public ResourceLoader getResourceLoader() {
@@ -48,5 +48,5 @@ public abstract class ResourceBasedComponent extends DefaultComponent<Exchange> 
             return resource;
         }
     }
-    
+
 }
