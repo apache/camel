@@ -22,9 +22,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.Predicate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Expression;
 
 /**
- * Some useful converters for Camel APIs
+ * Some useful converters for Camel APIs such as to convert a {@link Predicate} or {@link Expression}
+ * to a {@link Processor}
  *
  * @version $Revision: 1.1 $
  */
@@ -35,6 +37,19 @@ public class CamelConverter {
         return new Processor() {
             public void process(Exchange exchange) throws Exception {
                 boolean answer = predicate.matches(exchange);
+                Message out = exchange.getOut();
+                out.copyFrom(exchange.getIn());
+                out.setBody(answer);
+            }
+        };
+
+    }
+    
+    @Converter
+    public Processor toProcessor(final Expression<Exchange> expresion) {
+        return new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                Object answer = expresion.evaluate(exchange);
                 Message out = exchange.getOut();
                 out.copyFrom(exchange.getIn());
                 out.setBody(answer);
