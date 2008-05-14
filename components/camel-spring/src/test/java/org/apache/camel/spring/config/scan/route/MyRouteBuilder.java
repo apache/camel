@@ -27,13 +27,15 @@ public class MyRouteBuilder extends RouteBuilder {
 
     MyProcessor component;
 
-    @Autowired
+    @EndpointInject(name = "start")
+    Endpoint startEndpoint;
+
     @EndpointInject(name = "result")
     Endpoint resultEndpoint;
 
     @Override
     public void configure() throws Exception {
-        from("direct:start").process(component).to(resultEndpoint);
+        from(startEndpoint).process(component).to(resultEndpoint);
     }
 
     @Autowired

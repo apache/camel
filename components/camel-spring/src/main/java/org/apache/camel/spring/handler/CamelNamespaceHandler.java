@@ -96,11 +96,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         parserMap.put(elementName, parser);
     }
 
-    protected void createBeanPostProcessor(ParserContext parserContext, String contextId, Element childElement) {
+    protected void createBeanPostProcessor(ParserContext parserContext, String contextId, Element childElement, BeanDefinitionBuilder parentBuilder) {
         String beanPostProcessorId = contextId + ":beanPostProcessor";
         childElement.setAttribute("id", beanPostProcessorId);
         BeanDefinition definition = beanPostProcessorParser.parse(childElement, parserContext);
         definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
+        parentBuilder.addPropertyReference("beanPostProcessor", beanPostProcessorId);
     }
 
     protected void registerScriptParser(String elementName, String engineName) {
@@ -182,7 +183,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                     Element childElement = (Element)child;
                     String localName = child.getLocalName();
                     if (localName.equals("beanPostProcessor")) {
-                        createBeanPostProcessor(parserContext, contextId, childElement);
+                        createBeanPostProcessor(parserContext, contextId, childElement, builder);
                         createdBeanPostProcessor = true;
                     } else if (localName.equals("endpoint")) {
                         BeanDefinition definition = endpointParser.parse(childElement, parserContext);
@@ -210,10 +211,10 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             // lets inject the namespaces into any namespace aware POJOs
             injectNamespaces(element);
             if (!createdBeanPostProcessor) {
-                // no bean processor element so lets add a fake one
+                // no bean processor element so lets create it by ourself
                 Element childElement = element.getOwnerDocument().createElement("beanPostProcessor");
                 element.appendChild(childElement);
-                createBeanPostProcessor(parserContext, contextId, childElement);
+                createBeanPostProcessor(parserContext, contextId, childElement, builder);
             }
         }
     }

@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ResolverUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -38,13 +39,15 @@ public class RouteBuilderFinder {
     private final String[] packages;
     private ApplicationContext applicationContext;
     private ResolverUtil resolver = new ResolverUtil();
+    private BeanPostProcessor beanPostProcessor;
 
-    public RouteBuilderFinder(SpringCamelContext camelContext, String[] packages, ClassLoader classLoader) {
+    public RouteBuilderFinder(SpringCamelContext camelContext, String[] packages, ClassLoader classLoader, BeanPostProcessor postProcessor) {
         this.camelContext = camelContext;
         this.applicationContext = camelContext.getApplicationContext();
         this.packages = packages;
+        this.beanPostProcessor = postProcessor;
 
-        // lets add all the available class loaders just in case of wierdness
+        // lets add all the available class loaders just in case of weirdness
         // we could make this more strict once we've worked out all the gremlins
         // in servicemix-camel
         Set set = resolver.getClassLoaders();
@@ -56,6 +59,7 @@ public class RouteBuilderFinder {
         set.add(getClass().getClassLoader());
 */
     }
+
 
     public String[] getPackages() {
         return packages;
@@ -78,6 +82,10 @@ public class RouteBuilderFinder {
             }
             if (isValidClass(aClass)) {
                 RouteBuilder builder = instantiateBuilder(aClass);
+                if (beanPostProcessor != null) {
+                    // Inject the annotated resource
+                    beanPostProcessor.postProcessBeforeInitialization(builder, builder.toString());
+                }
                 list.add(builder);
             }
         }

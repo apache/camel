@@ -27,6 +27,7 @@
 
   <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
     <package>org.apache.camel.spring.config.scan.route</package>
+    <endpoint id="start" uri="direct:start"/>
     <endpoint id="result" uri="mock:end"/>
   </camelContext>
 
