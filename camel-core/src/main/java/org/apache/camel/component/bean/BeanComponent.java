@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
@@ -70,21 +71,16 @@ public class BeanComponent extends DefaultComponent {
     // Implementation methods
     //-----------------------------------------------------------------------
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        RegistryBean holder = new RegistryBean(getCamelContext(), remaining);
-        BeanProcessor processor;
-        if (ObjectConverter.toBool(parameters.remove("cache"))) {
-            processor = new BeanProcessor(holder.createCacheHolder());
-        } else {
-            processor = new BeanProcessor(holder);
-        }
+        BeanEndpoint endpoint = new BeanEndpoint(uri, this);
+        endpoint.setBeanName(remaining);
+        endpoint.setCache(ObjectConverter.toBool(parameters.remove("cache")));
+        Processor processor = endpoint.getProcessor();
         setProperties(processor, parameters);
-        return createEndpoint(uri, processor);
+        return endpoint;
     }
 
-    protected ProcessorEndpoint createEndpoint(String uri, BeanProcessor processor) {
-        ProcessorEndpoint answer = new ProcessorEndpoint(uri, this, processor);
-        answer.setExchangePattern(ExchangePattern.InOut);
-        return answer;
+    protected BeanEndpoint createEndpoint(String uri, BeanProcessor processor) {
+        return new BeanEndpoint(uri, this, processor);
     }
 
     protected ParameterMappingStrategy createParameterMappingStrategy() {
