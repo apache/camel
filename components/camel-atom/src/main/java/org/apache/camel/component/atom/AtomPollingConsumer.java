@@ -23,9 +23,11 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.PollingConsumerSupport;
 
 /**
+ * Consumer to poll atom feeds and return the full feed.
+ *
  * @version $Revision$
  */
-public class AtomPollingConsumer extends PollingConsumerSupport {
+public class AtomPollingConsumer extends PollingConsumerSupport<Exchange> {
     private final AtomEndpoint endpoint;
 
     public AtomPollingConsumer(AtomEndpoint endpoint) {
@@ -35,10 +37,9 @@ public class AtomPollingConsumer extends PollingConsumerSupport {
 
     public Exchange receiveNoWait() {
         try {
-            Document<Feed> document = endpoint.parseDocument();
-            Exchange exchange = endpoint.createExchange();
-            exchange.getIn().setBody(document);
-            return exchange;
+            Document<Feed> document = AtomUtils.parseDocument(endpoint.getAtomUri());
+            Feed feed = document.getRoot();
+            return endpoint.createExchange(feed);
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
@@ -57,4 +58,5 @@ public class AtomPollingConsumer extends PollingConsumerSupport {
 
     protected void doStop() throws Exception {
     }
+    
 }

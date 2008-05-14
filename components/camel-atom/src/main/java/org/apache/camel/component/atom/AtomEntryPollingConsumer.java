@@ -16,40 +16,56 @@
  */
 package org.apache.camel.component.atom;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Date;
 
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.parser.ParseException;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.PollingConsumerSupport;
 
 /**
+ * Consumer to poll atom feeds and return each entry from the feed step by step.
+ *
  * @version $Revision$
  */
-public class AtomEntryPollingConsumer extends PollingConsumerSupport {
+public class AtomEntryPollingConsumer extends PollingConsumerSupport<Exchange> {
     private final AtomEndpoint endpoint;
     private Document<Feed> document;
     private int entryIndex;
-    private EntryFilter entryFilter = new UpdatedDateFilter();
+    private EntryFilter entryFilter;
     private List<Entry> list;
 
-    public AtomEntryPollingConsumer(AtomEndpoint endpoint) {
+    public AtomEntryPollingConsumer(AtomEndpoint endpoint, boolean filter, Date lastUpdate) {
         super(endpoint);
         this.endpoint = endpoint;
+        if (filter) {
+            entryFilter = new UpdatedDateFilter(lastUpdate);
+        }
     }
 
     public Exchange receiveNoWait() {
         try {
             getDocument();
+            Feed feed = document.getRoot();
 
             while (hasNextEntry()) {
                 Entry entry = list.get(entryIndex--);
-                if (entryFilter.isValidEntry(endpoint, document, entry)) {
-                    return endpoint.createExchange(document, entry);
+
+                boolean valid = true;
+                if (entryFilter != null) {
+                    valid = entryFilter.isValidEntry(endpoint, document, entry);
+                }
+                if (valid) {
+                    return endpoint.createExchange(feed, entry);
                 }
             }
+
+            // reset document to be able to poll again
             document = null;
             return null;
         } catch (Exception e) {
@@ -65,36 +81,23 @@ public class AtomEntryPollingConsumer extends PollingConsumerSupport {
         return receiveNoWait();
     }
 
-    // Properties
-    //-------------------------------------------------------------------------
-
-    public EntryFilter getEntryFilter() {
-        return entryFilter;
-    }
-
-    public void setEntryFilter(EntryFilter entryFilter) {
-        this.entryFilter = entryFilter;
-    }
-
-    // Implementation methods
-    //-------------------------------------------------------------------------
-
     protected void doStart() throws Exception {
     }
 
     protected void doStop() throws Exception {
     }
 
-    public Document<Feed> getDocument() throws Exception {
+    private Document<Feed> getDocument() throws IOException, ParseException {
         if (document == null) {
-            document = endpoint.parseDocument();
+            document = AtomUtils.parseDocument(endpoint.getAtomUri());
             list = document.getRoot().getEntries();
             entryIndex = list.size() - 1;
         }
         return document;
     }
 
-    protected boolean hasNextEntry() {
+    private boolean hasNextEntry() {
         return entryIndex >= 0;
     }
+
 }

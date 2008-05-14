@@ -16,19 +16,10 @@
  */
 package org.apache.camel.component.atom;
 
-import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
+import java.util.Date;
 
-import org.apache.abdera.Abdera;
-import org.apache.abdera.factory.Factory;
-import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
-import org.apache.abdera.parser.Parser;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
@@ -40,19 +31,30 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public class AtomEndpoint extends DefaultPollingEndpoint {
-    private Factory atomFactory;
+public class AtomEndpoint extends DefaultPollingEndpoint<Exchange> {
+
+    /**
+     * Header key for the {@link org.apache.abdera.model.Feed} object is stored on the in message on the exchange.
+     */
+    public static final String HEADER_ATOM_FEED = "org.apache.camel.component.atom.feed";
+
     private String atomUri;
     private boolean splitEntries = true;
+    private Date lastUpdate;
+    private boolean filter = true;
 
     public AtomEndpoint(String endpointUri, AtomComponent component, String atomUri) {
         super(endpointUri, component);
         this.atomUri = atomUri;
+
+        ObjectHelper.notNull(atomUri, "atomUri property");
     }
 
     public AtomEndpoint(String endpointUri, String atomUri) {
         this(endpointUri);
         this.atomUri = atomUri;
+
+        ObjectHelper.notNull(atomUri, "atomUri property");
     }
 
     public AtomEndpoint(String endpointUri) {
@@ -63,50 +65,48 @@ public class AtomEndpoint extends DefaultPollingEndpoint {
         return true;
     }
 
-    public Producer createProducer() throws Exception {
-        validate();
-        return new AtomProducer(this);
+    public Producer<Exchange> createProducer() throws Exception {
+        throw new UnsupportedOperationException("AtomProducer is not implemented");
     }
 
     @Override
-    public PollingConsumer createPollingConsumer() throws Exception {
-        validate();
+    public PollingConsumer<Exchange> createPollingConsumer() throws Exception {
         if (isSplitEntries()) {
-            return new AtomEntryPollingConsumer(this);
+            return new AtomEntryPollingConsumer(this, filter, lastUpdate);
         } else {
             return new AtomPollingConsumer(this);
         }
     }
 
-    public Document<Feed> parseDocument() throws Exception {
-        String uri = getAtomUri();
-        InputStream in = new URL(uri).openStream();
-        return createAtomParser().parse(in, uri);
+    /**
+     * Creates an Exchange with the entries as the in body.
+     *
+     * @param feed   the atom feed
+     * @return the created exchange
+     */
+    public Exchange createExchange(Feed feed) {
+        Exchange exchange = createExchange();
+        exchange.getIn().setBody(feed.getEntries());
+        exchange.getIn().setHeader(HEADER_ATOM_FEED, feed);
+        return exchange;
     }
 
-    public OutputStream createProducerOutputStream() throws FileNotFoundException {
-        return new BufferedOutputStream(new FileOutputStream(getAtomUri()));
-    }
-
-    public Exchange createExchange(Document<Feed> document, Entry entry) {
+    /**
+     * Creates an Exchange with the given entry as the in body.
+     *
+     * @param feed   the atom feed
+     * @param entry  the entry as the in body
+     * @return the created exchange
+     */
+    public Exchange createExchange(Feed feed, Entry entry) {
         Exchange exchange = createExchange();
         exchange.getIn().setBody(entry);
-        exchange.setProperty("CamelAtomFeed", document);
+        exchange.getIn().setHeader(HEADER_ATOM_FEED, feed);
         return exchange;
     }
 
     // Properties
     //-------------------------------------------------------------------------
-    public Factory getAtomFactory() {
-        if (atomFactory == null) {
-            atomFactory = createAtomFactory();
-        }
-        return atomFactory;
-    }
-
-    public void setAtomFactory(Factory atomFactory) {
-        this.atomFactory = atomFactory;
-    }
 
     public String getAtomUri() {
         return atomUri;
@@ -128,21 +128,30 @@ public class AtomEndpoint extends DefaultPollingEndpoint {
         this.splitEntries = splitEntries;
     }
 
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+
+    /**
+     * Sets the timestamp to be used for filtering entries from the atom feeds.
+     * This options is only in conjunction with the splitEntries.
+     */
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
+    public boolean isFilter() {
+        return filter;
+    }
+
+    /**
+     * Sets wether to use filtering or not of the entries.
+     */
+    public void setFilter(boolean filter) {
+        this.filter = filter;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
-    /**
-     * Validates the endpoint is configured properly
-     */
-    protected void validate() {
-        ObjectHelper.notNull(getAtomUri(), "atomUri property");
-    }
-
-    protected Factory createAtomFactory() {
-        return Abdera.getNewFactory();
-    }
-
-    protected Parser createAtomParser() {
-        return Abdera.getNewParser();
-    }
 }

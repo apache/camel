@@ -16,20 +16,14 @@
  */
 package org.apache.camel.component.atom;
 
-import java.io.OutputStream;
-import java.util.Date;
-
-import org.apache.abdera.model.Document;
-import org.apache.abdera.model.Entry;
-import org.apache.abdera.model.Feed;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * AtomProducer is currently not implemented
+ *
  * @version $Revision$
  */
 public class AtomProducer extends DefaultProducer {
@@ -42,40 +36,7 @@ public class AtomProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        Document<Feed> document = getDocument(exchange);
-
-        // now lets write the document...
-        OutputStream out = endpoint.createProducerOutputStream();
-        try {
-            document.writeTo(out);
-        } finally {
-            ObjectHelper.close(out, "Atom document output stream", LOG);
-        }
+        throw new UnsupportedOperationException("AtomProducer is not implemented");
     }
 
-    protected Document<Feed> getDocument(Exchange exchange) throws Exception {
-        Document<Feed> document = endpoint.parseDocument();
-        Feed root = document.getRoot();
-        Entry entry = root.addEntry();
-        entry.setPublished(ExchangeHelper.getExchangeProperty(exchange, "org.apache.camel.atom.published", Date.class, new Date()));
-
-        String id = exchange.getProperty("org.apache.camel.atom.id", String.class);
-        if (id != null) {
-            entry.setId(id);
-        }
-        String content = exchange.getProperty("org.apache.camel.atom.content", String.class);
-        if (content != null) {
-            entry.setContent(content);
-        }
-        String summary = exchange.getProperty("org.apache.camel.atom.summary", String.class);
-        if (summary != null) {
-            entry.setSummary(summary);
-        }
-        String title = exchange.getProperty("org.apache.camel.atom.title", String.class);
-        if (title != null) {
-            entry.setTitle(title);
-        }
-        // TODO categories, authors etc
-        return document;
-    }
 }
