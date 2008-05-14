@@ -43,6 +43,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
@@ -96,6 +97,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private ClassLoader contextClassLoaderOnStart;
     @XmlTransient
     private InstrumentationAgent instrumentationAgent;
+    @XmlTransient
+    private BeanPostProcessor beanPostProcessor;
 
     public CamelContextFactoryBean() {
 
@@ -116,6 +119,16 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     public void afterPropertiesSet() throws Exception {
+        // Set the application context and camelContext for the beanPostProcessor
+        if (beanPostProcessor != null) {
+            if (beanPostProcessor instanceof ApplicationContextAware) {
+                ((ApplicationContextAware)beanPostProcessor).setApplicationContext(applicationContext);
+            }
+            if (beanPostProcessor instanceof CamelBeanPostProcessor) {
+                ((CamelBeanPostProcessor)beanPostProcessor).setCamelContext(getContext());
+            }
+
+        }
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
 
@@ -239,6 +252,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.mbeanServer = mbeanServer;
     }
 
+    public void setBeanPostProcessor(BeanPostProcessor postProcessor) {
+        this.beanPostProcessor = postProcessor;
+    }
+
+    public BeanPostProcessor getBeanPostProcessor() {
+        return beanPostProcessor;
+    }
+
     public boolean isJmxEnabled() {
         return useJmx != null && useJmx.booleanValue();
     }
@@ -313,7 +334,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      */
     protected void findRouteBuiders() throws Exception, InstantiationException {
         if (packages != null && packages.length > 0) {
-            RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), packages, contextClassLoaderOnStart);
+            RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), packages, contextClassLoaderOnStart, getBeanPostProcessor());
             finder.appendBuilders(additionalBuilders);
         }
     }
