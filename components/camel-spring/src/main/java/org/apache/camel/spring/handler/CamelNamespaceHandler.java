@@ -87,7 +87,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         // TODO switch to use the above mechanism?
         registerParser("endpoint", endpointParser);
 
-        registerParser("camelContext", new CamelContextBeanDefinitionParser(CamelContextFactoryBean.class));
+        Class cl = CamelContextFactoryBean.class;
+        try {
+            cl = Class.forName("org.apache.camel.osgi.CamelContextFactoryBean");
+        } catch (Throwable t) {
+        }
+        registerParser("camelContext", new CamelContextBeanDefinitionParser(cl));
     }
 
     private void addBeanDefinitionParser(String elementName, Class<?> type) {
