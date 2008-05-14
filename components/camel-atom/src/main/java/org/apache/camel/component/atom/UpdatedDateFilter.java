@@ -31,38 +31,33 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class UpdatedDateFilter implements EntryFilter {
+
     private static final transient Log LOG = LogFactory.getLog(UpdatedDateFilter.class);
-    private Date lastTime;
+    private Date lastUpdate;
+
+    public UpdatedDateFilter(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
 
     public boolean isValidEntry(AtomEndpoint endpoint, Document<Feed> feed, Entry entry) {
-        Date updated = getUpdated(endpoint, feed, entry);
+        Date updated = entry.getUpdated();
         if (updated == null) {
-            warnNoUpdatedTime(endpoint, feed, entry);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No updated time for entry so assuming its valid: entry=[" + entry + "]");
+            }
             return true;
         }
-        if (lastTime != null) {
-            if (lastTime.after(updated)) {
+        if (lastUpdate != null) {
+            if (lastUpdate.after(updated)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Entry is older than lastupdate=[" + lastUpdate
+                        + "], no valid entry=[" + entry + "]");
+                }
                 return false;
             }
         }
-        lastTime = updated;
+        lastUpdate = updated;
         return true;
     }
 
-    protected Date getUpdated(AtomEndpoint endpoint, Document<Feed> feed, Entry entry) {
-        Date answer = entry.getUpdated();
-        if (answer == null) {
-            answer = entry.getEdited();
-
-            // TODO is this valid?
-            if (answer == null) {
-                answer = entry.getPublished();
-            }
-        }
-        return answer;
-    }
-
-    protected void warnNoUpdatedTime(AtomEndpoint endpoint, Document<Feed> feed, Entry entry) {
-        LOG.warn("No updated time for entry so assuming new: " + entry);
-    }
 }

@@ -27,7 +27,9 @@ import org.apache.camel.impl.DefaultComponent;
  * @version $Revision$
  */
 public class AtomComponent extends DefaultComponent {
+
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         return new AtomEndpoint(uri, this, remaining);
     }
+
 }
