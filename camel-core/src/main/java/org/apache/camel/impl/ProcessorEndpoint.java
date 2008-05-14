@@ -31,7 +31,14 @@ import org.apache.camel.Producer;
  * @version $Revision$
  */
 public class ProcessorEndpoint extends DefaultPollingEndpoint<Exchange> {
-    private final Processor processor;
+    private Processor processor;
+
+    protected ProcessorEndpoint() {
+    }
+
+    protected ProcessorEndpoint(String endpointUri) {
+        super(endpointUri);
+    }
 
     public ProcessorEndpoint(String endpointUri, CamelContext context, Processor processor) {
         super(endpointUri, context);
@@ -48,6 +55,11 @@ public class ProcessorEndpoint extends DefaultPollingEndpoint<Exchange> {
         this.processor = processor;
     }
 
+
+    protected ProcessorEndpoint(String endpointUri, Component component) {
+        super(endpointUri, component);
+    }
+
     public Producer<Exchange> createProducer() throws Exception {
         return new DefaultProducer<Exchange>(this) {
             public void process(Exchange exchange) throws Exception {
@@ -61,19 +73,23 @@ public class ProcessorEndpoint extends DefaultPollingEndpoint<Exchange> {
         return new ProcessorPollingConsumer(this, getProcessor());
     }
 
-    public Processor getProcessor() {
+    public Processor getProcessor() throws Exception {
         if (processor == null) {
-            return new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    onExchange(exchange);
-                }
-            };
+            processor = createProcessor();
         }
         return processor;
     }
 
+    protected Processor createProcessor() throws Exception {
+        return new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                onExchange(exchange);
+            }
+        };
+    }
+
     protected void onExchange(Exchange exchange) throws Exception {
-        processor.process(exchange);
+        getProcessor().process(exchange);
     }
 
     public boolean isSingleton() {

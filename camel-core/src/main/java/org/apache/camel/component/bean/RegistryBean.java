@@ -23,7 +23,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * An implementation of a {@link BeanHolder} which will
+ * An implementation of a {@link BeanHolder} which will look up a bean from the registry and act as a cache of its metadata
  *
  * @version $Revision$
  */

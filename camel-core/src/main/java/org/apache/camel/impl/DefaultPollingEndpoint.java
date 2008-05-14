@@ -30,16 +30,19 @@ import org.apache.camel.Processor;
  */
 public abstract class DefaultPollingEndpoint<E extends Exchange> extends ScheduledPollEndpoint<E>  {
 
+    protected DefaultPollingEndpoint() {
+    }
+
+    protected DefaultPollingEndpoint(String endpointUri) {
+        super(endpointUri);
+    }
+
     protected DefaultPollingEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }
 
     protected DefaultPollingEndpoint(String endpointUri, CamelContext context) {
         super(endpointUri, context);
-    }
-
-    protected DefaultPollingEndpoint(String endpointUri) {
-        super(endpointUri);
     }
 
     public Consumer<E> createConsumer(Processor processor) throws Exception {
