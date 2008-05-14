@@ -34,6 +34,11 @@
   <packaging>bundle</packaging>
 
   <properties>
+  <camel.osgi.import>
+    !javax.xml.bind.annotation.adapters,
+    org.apache.camel.osgi;resolution:=optional,
+    *
+  </camel.osgi.import>
   <camel.osgi.export>
     org.apache.camel.spring.*;${camel.osgi.version},
     org.apache.camel.component;${camel.osgi.split.pkg};${camel.osgi.version},
