@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,8 +22,8 @@ import org.apache.camel.CamelTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.TestSupport;
-import org.apache.camel.hamcrest.Assertions;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.hamcrest.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
@@ -43,7 +42,7 @@ public class SpringFileRouteTest extends AbstractJUnit38SpringContextTests {
     protected MockEndpoint result;
 
     public void testMocksAreValid() throws Exception {
-        // lets check that our injected endpoint is valid 
+        // lets check that our injected endpoint is valid
         FileEndpoint fileEndpoint = Assertions.assertInstanceOf(inputFile, FileEndpoint.class);
         assertEquals("File", new File("target/test-default-inbox"), fileEndpoint.getFile());
 

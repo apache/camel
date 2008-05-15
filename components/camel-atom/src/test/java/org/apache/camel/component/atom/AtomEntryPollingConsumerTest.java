@@ -17,11 +17,11 @@
 package org.apache.camel.component.atom;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for AtomEntryPollingConsumer 
+ * Unit test for AtomEntryPollingConsumer
  */
 public class AtomEntryPollingConsumerTest extends ContextTestSupport {
 
@@ -49,7 +49,7 @@ public class AtomEntryPollingConsumerTest extends ContextTestSupport {
                 from("atom:file:src/test/data/feed.atom?splitEntries=true").to("mock:result1");
 
                 from("atom:file:src/test/data/feed.atom?splitEntries=true&filter=false").to("mock:result2");
-                
+
                 from("atom:file:src/test/data/feed.atom?splitEntries=true&filter=true&lastUpdate=2007-11-13T14:35:00").to("mock:result3");
             }
         };

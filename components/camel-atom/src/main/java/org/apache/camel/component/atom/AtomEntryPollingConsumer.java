@@ -17,8 +17,8 @@
 package org.apache.camel.component.atom;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
