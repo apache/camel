@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
@@ -30,7 +29,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 
-public class SqlProducer extends DefaultProducer<DefaultExchange> {
+public class SqlProducer extends DefaultProducer {
 
     public static final String UPDATE_COUNT = "org.apache.camel.sql.update-count";
 
@@ -59,7 +58,7 @@ public class SqlProducer extends DefaultProducer<DefaultExchange> {
                 if (isResultSet) {
                     RowMapperResultSetExtractor mapper = new RowMapperResultSetExtractor(
                                                                                          new ColumnMapRowMapper());
-                    List result = (List)mapper.extractData(ps.getResultSet());
+                    List<?> result = (List<?>)mapper.extractData(ps.getResultSet());
                     exchange.getOut().setBody(result);
                 } else {
                     exchange.getIn().setHeader(UPDATE_COUNT, ps.getUpdateCount());
