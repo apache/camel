@@ -25,7 +25,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -36,7 +35,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  *
  * @author romkal
  */
-public class SqlEndpoint extends DefaultEndpoint<DefaultExchange> {
+public class SqlEndpoint extends DefaultEndpoint {
 
     private JdbcTemplate jdbcTemplate;
 
@@ -55,11 +54,11 @@ public class SqlEndpoint extends DefaultEndpoint<DefaultExchange> {
         this.query = query;
     }
     
-    public Consumer<DefaultExchange> createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    public Producer<DefaultExchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         return new SqlProducer(this, query, jdbcTemplate);
     }
 
