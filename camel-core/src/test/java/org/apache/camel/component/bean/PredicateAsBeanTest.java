@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.Body;
+import javax.naming.Context;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
@@ -25,8 +26,6 @@ import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.util.jndi.JndiContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.naming.Context;
 
 /**
  * @version $Revision: 1.1 $

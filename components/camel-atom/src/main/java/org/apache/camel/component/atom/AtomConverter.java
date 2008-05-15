@@ -31,6 +31,10 @@ public final class AtomConverter {
 
     public static final String DATE_PATTERN_NO_TIMEZONE = "yyyy-MM-dd'T'HH:mm:ss";
 
+    private AtomConverter() {
+        //Helper class
+    }
+
     @Converter
     public static Date toDate(String text) throws ParseException {
         DateFormat sdf = new SimpleDateFormat(DATE_PATTERN_NO_TIMEZONE);

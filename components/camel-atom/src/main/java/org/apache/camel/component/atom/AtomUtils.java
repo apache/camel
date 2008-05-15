@@ -29,7 +29,11 @@ import org.apache.abdera.parser.Parser;
 /**
  * Atom utilities.
  */
-public class AtomUtils {
+public final class AtomUtils {
+
+    private AtomUtils() {
+        // Helper class
+    }
 
     /**
      * Gets the Atom parser.
@@ -40,7 +44,7 @@ public class AtomUtils {
 
     /**
      * Parses the given uri and returns the response as a atom feed document.
-     *  
+     *
      * @param uri the uri for the atom feed.
      * @return  the document
      * @throws IOException is thrown if error reading from the uri

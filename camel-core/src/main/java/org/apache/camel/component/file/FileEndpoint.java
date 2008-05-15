@@ -23,11 +23,11 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.component.file.strategy.FileProcessStrategyFactory;
 import org.apache.camel.component.file.strategy.FileProcessStrategySupport;
 import org.apache.camel.component.file.strategy.NoOpFileProcessStrategy;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
