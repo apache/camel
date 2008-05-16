@@ -32,16 +32,6 @@ import org.apache.camel.util.jndi.CamelInitialContextFactory;
  */
 public class AtomGoodBlogsTest extends TestSupport {
 
-    protected void setUp() throws Exception {
-        super.setUp();
-        setupCamel();
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        context.stop();
-    }
-
     // START SNIPPET: e1
 
     // This is the CamelContext that is the heart of Camel
@@ -130,5 +120,15 @@ public class AtomGoodBlogsTest extends TestSupport {
     }
 
     // END SNIPPET: e1
+
+    protected void setUp() throws Exception {
+        super.setUp();
+        setupCamel();
+    }
+
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        context.stop();
+    }
 
 }
