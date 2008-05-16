@@ -16,27 +16,27 @@
  */
 package org.apache.camel.component.atom;
 
-import org.apache.abdera.model.Document;
-import org.apache.abdera.model.Feed;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Consumer to poll atom feeds and return the full feed.
- *
- * @version $Revision$
+ * Unit test for fast polling using a low delay
  */
-public class AtomPollingConsumer extends AtomConsumerSupport {
+public class AtomPollingLowDelayTest extends ContextTestSupport {
 
-    public AtomPollingConsumer(AtomEndpoint endpoint, Processor processor) {
-        super(endpoint, processor);
+    public void testLowDelay() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(7);
+        mock.setResultWaitTime(1000L);
+        mock.assertIsSatisfied();
     }
 
-    protected void poll() throws Exception {
-        Document<Feed> document = AtomUtils.parseDocument(endpoint.getAtomUri());
-        Feed feed = document.getRoot();
-        Exchange exchange = endpoint.createExchange(feed);
-        getProcessor().process(exchange);
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                from("atom:file:src/test/data/feed.atom?splitEntries=true&consumer.delay=100&consumer.initialDelay=0").to("mock:result");
+            }
+        };
     }
-
 }

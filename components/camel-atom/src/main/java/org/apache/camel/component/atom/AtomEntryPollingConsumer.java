@@ -25,66 +25,46 @@ import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.parser.ParseException;
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.PollingConsumerSupport;
+import org.apache.camel.Processor;
 
 /**
  * Consumer to poll atom feeds and return each entry from the feed step by step.
  *
  * @version $Revision$
  */
-public class AtomEntryPollingConsumer extends PollingConsumerSupport<Exchange> {
-    private final AtomEndpoint endpoint;
+public class AtomEntryPollingConsumer extends AtomPollingConsumer {
     private Document<Feed> document;
     private int entryIndex;
     private EntryFilter entryFilter;
     private List<Entry> list;
 
-    public AtomEntryPollingConsumer(AtomEndpoint endpoint, boolean filter, Date lastUpdate) {
-        super(endpoint);
-        this.endpoint = endpoint;
+    public AtomEntryPollingConsumer(AtomEndpoint endpoint, Processor processor, boolean filter,
+                                    Date lastUpdate) {
+        super(endpoint, processor);
         if (filter) {
             entryFilter = new UpdatedDateFilter(lastUpdate);
         }
     }
 
-    public Exchange receiveNoWait() {
-        try {
-            getDocument();
-            Feed feed = document.getRoot();
+    public void poll() throws Exception {
+        getDocument();
+        Feed feed = document.getRoot();
 
-            while (hasNextEntry()) {
-                Entry entry = list.get(entryIndex--);
+        while (hasNextEntry()) {
+            Entry entry = list.get(entryIndex--);
 
-                boolean valid = true;
-                if (entryFilter != null) {
-                    valid = entryFilter.isValidEntry(endpoint, document, entry);
-                }
-                if (valid) {
-                    return endpoint.createExchange(feed, entry);
-                }
+            boolean valid = true;
+            if (entryFilter != null) {
+                valid = entryFilter.isValidEntry(endpoint, document, entry);
             }
-
-            // reset document to be able to poll again
-            document = null;
-            return null;
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+            if (valid) {
+                Exchange exchange = endpoint.createExchange(feed, entry);
+                getProcessor().process(exchange);
+            }
         }
-    }
 
-    public Exchange receive() {
-        return receiveNoWait();
-    }
-
-    public Exchange receive(long timeout) {
-        return receiveNoWait();
-    }
-
-    protected void doStart() throws Exception {
-    }
-
-    protected void doStop() throws Exception {
+        // reset document to be able to poll again
+        document = null;
     }
 
     private Document<Feed> getDocument() throws IOException, ParseException {

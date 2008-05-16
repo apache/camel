@@ -23,6 +23,8 @@ import org.apache.camel.impl.DefaultComponent;
 
 /**
  * An <a href="http://activemq.apache.org/camel/atom.html">Atom Component</a>.
+ * <p/>
+ * Camel uses Apache Abdera as the Atom implementation. 
  *
  * @version $Revision$
  */
