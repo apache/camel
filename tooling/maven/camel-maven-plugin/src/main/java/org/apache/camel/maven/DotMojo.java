@@ -152,14 +152,14 @@ public class DotMojo extends AbstractMavenReport {
      * @see org.apache.maven.reporting.MavenReport#getDescription(Locale)
      */
     public String getDescription(final Locale locale) {
-        return getBundle(locale).getString("report.description");
+        return getBundle(locale).getString("report.dot.description");
     }
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getName(Locale)
      */
     public String getName(final Locale locale) {
-        return getBundle(locale).getString("report.name");
+        return getBundle(locale).getString("report.dot.name");
     }
 
     /**

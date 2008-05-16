@@ -376,7 +376,6 @@ public class Main extends ServiceSupport {
         }
 
         if (isAggregateDot()) {
-
             generateDot("aggregate", aggregateSpringCamelContext(applicationContext), 1);
         }
     }

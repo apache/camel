@@ -206,7 +206,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
         return (String[]) args.toArray(new String[0]);
     }
 
-    protected ClassLoader createClassLoader(ClassLoader parent) throws MalformedURLException {
+    public ClassLoader createClassLoader(ClassLoader parent) throws MalformedURLException {
         getLog().debug("Using classpath: " + classpathElements);
 
         int size = classpathElements.size();

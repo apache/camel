@@ -418,21 +418,27 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>maven-camel-converters</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <id>camel-converters</id>
-            <goals>
-              <goal>report</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
+  <reporting>
+    <plugins>
+      <!-- let's generate nice PNG / SVG diagrams from our routes -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <configuration/>
+            <reports>
+              <report>converters-report</report>
+              <report>goal2</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+
   <profiles>
     <profile>
       <id>release</id>
