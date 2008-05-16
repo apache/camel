@@ -20,3 +20,4 @@ CamelProxyFactoryType
 CamelServiceExporterType
 CamelTemplateFactoryBean
 EndpointFactoryBean
+CamelJMXAgentType

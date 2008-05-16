@@ -70,12 +70,13 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private Boolean autowireRouteBuilders = Boolean.TRUE;
     @XmlElement(name = "package", required = false)
     private String[] packages = {};
+    @XmlElement(name = "jmxAgent", type = CamelJMXAgentType.class, required = false)
+    private CamelJMXAgentType camelJMXAgent;
     @XmlElements({
         @XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false),
         @XmlElement(name = "template", type = CamelTemplateFactoryBean.class, required = false),
         @XmlElement(name = "proxy", type = CamelProxyFactoryType.class, required = false),
-        @XmlElement(name = "export", type = CamelServiceExporterType.class, required = false),
-        @XmlElement(name = "jmxAgent", required = false)})
+        @XmlElement(name = "export", type = CamelServiceExporterType.class, required = false)})
     private List beans;
     @XmlElement(name = "routeBuilderRef", required = false)
     private List<RouteBuilderRef> builderRefs = new ArrayList<RouteBuilderRef>();
@@ -99,6 +100,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private InstrumentationAgent instrumentationAgent;
     @XmlTransient
     private BeanPostProcessor beanPostProcessor;
+
 
     public CamelContextFactoryBean() {
 
@@ -131,9 +133,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
-
+        // set the instrumentation agent here
         if (instrumentationAgent == null && isJmxEnabled()) {
             SpringInstrumentationAgent agent = new SpringInstrumentationAgent();
+            if (camelJMXAgent != null) {
+                agent.enableJmx(camelJMXAgent.getJmxDomainName(), camelJMXAgent.getConnectorPort());
+            } else {
+                agent.enableJmx(SpringInstrumentationAgent.DEFAULT_DOMAIN, SpringInstrumentationAgent.DEFAULT_PORT);
+            }
             agent.setCamelContext(getContext());
             String name = getMbeanServer();
             if (name != null) {
@@ -270,6 +277,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     public void setUseJmx(Boolean useJmx) {
         this.useJmx = useJmx;
+    }
+
+    public void setCamelJMXAgent(CamelJMXAgentType agent) {
+        camelJMXAgent = agent;
+    }
+
+    public CamelJMXAgentType getCamelJMXAgent() {
+        return camelJMXAgent;
     }
 
     public List<RouteBuilderRef> getBuilderRefs() {
