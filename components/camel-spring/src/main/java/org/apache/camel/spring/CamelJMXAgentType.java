@@ -28,15 +28,21 @@ import org.apache.camel.model.IdentifiedType;
  * The JAXB type class for the configuration of jmxAgent
  * @author Willem Jiang
  *
- * @version $Revision:$
+ * @version $Revision$
  */
 @XmlRootElement(name = "jmxAgent")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelJMXAgentType extends IdentifiedType {
-    @XmlAttribute
+    @XmlAttribute(required = false)
     private Integer connectorPort;
-    @XmlAttribute
+    @XmlAttribute(required = false)
     private String jmxDomainName;
+    @XmlAttribute(required = false)
+    private String connectorPath;
+    @XmlAttribute(required = false)
+    private Boolean createConnector;
+    @XmlAttribute(required = false)
+    private Boolean usePlatformMBeanServer;
 
     public void setConnectorPort(Integer port) {
         connectorPort = port;
@@ -54,4 +60,27 @@ public class CamelJMXAgentType extends IdentifiedType {
         return jmxDomainName;
     }
 
+    public void setConnectorPath(String path) {
+        connectorPath = path;
+    }
+
+    public String getConnectorPath() {
+        return connectorPath;
+    }
+
+    public void setCreateConnector(Boolean flag) {
+        createConnector = flag;
+    }
+
+    public Boolean isCreateConnector() {
+        return createConnector;
+    }
+
+    public void setUsePlatformMBeanServer(Boolean flag) {
+        usePlatformMBeanServer = flag;
+    }
+
+    public Boolean isUsePlatformMBeanServer() {
+        return usePlatformMBeanServer;
+    }
 }

@@ -58,6 +58,7 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
     public static final String DEFAULT_DOMAIN = "org.apache.camel";
     public static final String DEFAULT_HOST = "localhost";
     public static final int DEFAULT_PORT = 1099;
+    public static final String DEFAULT_CONNECTOR_PATH = "/jmxrmi";
     private static final transient Log LOG = LogFactory.getLog(InstrumentationAgentImpl.class);
 
 
@@ -69,7 +70,10 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
     private boolean jmxEnabled;
     private String jmxDomainName;
     private int jmxConnectorPort;
+    private String jmxConnectorPath;
     private CamelNamingStrategy namingStrategy;
+    private boolean createConnector = true;
+    private boolean usePlatformMBeanServer;
 
     public InstrumentationAgentImpl() {
         assembler = new MetadataMBeanInfoAssembler();
@@ -85,6 +89,14 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
 
     public void setCamelContext(CamelContext camelContext) {
         context = camelContext;
+    }
+
+    public void setCreateConnector(boolean flag) {
+        createConnector = flag;
+    }
+
+    public void setUsePlatformMBeanServer(boolean flag) {
+        usePlatformMBeanServer = flag;
     }
 
     public void setMBeanServer(MBeanServer server) {
@@ -213,10 +225,15 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
         }
     }
 
-    public void enableJmx(String domainName, int port) {
+    public void enableJmx() {
+        enableJmx(DEFAULT_DOMAIN, DEFAULT_CONNECTOR_PATH, DEFAULT_PORT);
+    }
+
+    public void enableJmx(String domainName, String connectorPath,  int port) {
         jmxEnabled = true;
         jmxDomainName = domainName;
         configureDomainName();
+        jmxConnectorPath = connectorPath;
         jmxConnectorPort = port;
     }
 
@@ -280,7 +297,7 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
         }
 
         // jmx is enabled but there's no MBeanServer, so create one
-        if (Boolean.getBoolean(SYSTEM_PROPERTY_JMX_USE_PLATFORM_MBS)) {
+        if (Boolean.getBoolean(SYSTEM_PROPERTY_JMX_USE_PLATFORM_MBS) || usePlatformMBeanServer) {
             server = ManagementFactory.getPlatformMBeanServer();
         } else {
             // jmx is enabled but there's no MBeanServer, so create one
@@ -291,9 +308,12 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
                 server = (MBeanServer)servers.get(0);
             }
         }
-        // we need a connector too
+
         try {
-            createJmxConnector(hostName);
+            // Create the connector if we need
+            if (createConnector) {
+                createJmxConnector(hostName);
+            }
         } catch (IOException ioe) {
             LOG.warn("Could not create and start jmx connector.", ioe);
         }
@@ -304,13 +324,16 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
             try {
                 LocateRegistry.createRegistry(jmxConnectorPort);
             } catch (RemoteException ex) {
-                // the registry may had been created
+                // The registry may had been created
                 LocateRegistry.getRegistry(jmxConnectorPort);
             }
 
+            if (jmxConnectorPath == null) {
+                jmxConnectorPath = DEFAULT_CONNECTOR_PATH;
+            }
             // Create an RMI connector and start it
             JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + host + ":"
-                                                  + jmxConnectorPort + "/jmxrmi");
+                                                  + jmxConnectorPort + jmxConnectorPath);
             cs = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
 
             // Start the connector server asynchronously (in a separate thread).
