@@ -431,7 +431,6 @@
             <configuration/>
             <reports>
               <report>converters-report</report>
-              <report>goal2</report>
             </reports>
           </reportSet>
         </reportSets>
