@@ -34,7 +34,6 @@
   <modules>
     <module>camel-maven-plugin</module>
     <module>maven-html-to-pdf</module>
-    <module>maven-camel-converters</module>
   </modules>
 
   <dependencies>
