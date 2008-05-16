@@ -20,8 +20,9 @@ import java.util.Date;
 
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.PollingConsumer;
+import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.util.ObjectHelper;
@@ -69,13 +70,18 @@ public class AtomEndpoint extends DefaultPollingEndpoint<Exchange> {
         throw new UnsupportedOperationException("AtomProducer is not implemented");
     }
 
-    @Override
-    public PollingConsumer<Exchange> createPollingConsumer() throws Exception {
+    public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
+        AtomConsumerSupport answer;
         if (isSplitEntries()) {
-            return new AtomEntryPollingConsumer(this, filter, lastUpdate);
+            answer = new AtomEntryPollingConsumer(this, processor, filter, lastUpdate);
         } else {
-            return new AtomPollingConsumer(this);
+            answer = new AtomPollingConsumer(this, processor);
         }
+        // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a feed,
+        // so we override with a new default value. End user can override this value by providing a consumer.delay parameter
+        answer.setDelay(AtomConsumerSupport.DEFAULT_CONSUMER_DELAY);
+        configureConsumer(answer);
+        return answer;
     }
 
     /**

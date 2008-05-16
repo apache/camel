@@ -36,10 +36,10 @@ public class UpdatedDateFilterTest extends TestCase {
         Document<Feed> doc = AtomUtils.parseDocument("file:src/test/data/feed.atom");
         assertNotNull(doc);
 
+        // timestamp from the feed to use as base
         // 2007-11-13T13:35:25.014Z
         Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT+1:00"));
         cal.set(2007, Calendar.NOVEMBER, 13, 14, 35, 0);
-        System.out.println(cal.getTime());
         EntryFilter filter = new UpdatedDateFilter(cal.getTime());
 
         List<Entry> entries = doc.getRoot().getEntries();
