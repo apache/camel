@@ -24,13 +24,20 @@ import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
 
 /**
- * A factory of the Cameel InitialContext which allows a Map to be used to create a
+ * A factory of the Camel InitialContext which allows a Map to be used to create a
  * JNDI context.
  *
  * @version $Revision$
  */
 public class CamelInitialContextFactory implements InitialContextFactory {
 
+    /**
+     * Creates a new context with the given environment.
+     *
+     * @param  environment  the environment, must not be <tt>null</tt>
+     * @return the created context.
+     * @throws NamingException is thrown if creation failed.
+     */
     public Context getInitialContext(Hashtable environment) throws NamingException {
         try {
             return new JndiContext(environment);
