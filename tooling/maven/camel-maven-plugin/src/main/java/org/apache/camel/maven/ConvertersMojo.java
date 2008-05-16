@@ -22,10 +22,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -36,8 +33,8 @@ import java.util.TreeSet;
 
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReportingTypeConverterLoader;
-import org.apache.camel.util.ReportingTypeConverterRegistry;
 import org.apache.camel.util.ReportingTypeConverterLoader.TypeMapping;
+import org.apache.camel.util.ReportingTypeConverterRegistry;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -63,48 +60,23 @@ import org.apache.maven.reporting.MavenReportException;
 
 /**
  * Generate report of available type conversions.
- * 
+ *
  * @goal converters-report
  * @requiresDependencyResolution runtime
  * @phase verify
  */
 public class ConvertersMojo extends AbstractMavenReport {
 
-    static private final String WIKI_TYPECONVERER_URL = "http://activemq.apache.org/camel/type-converter.html";
-    static private final String CONVERTER_TYPE_STATIC = "org.apache.camel.impl.converter.StaticMethodTypeConverter";
-    static private final String CONVERTER_TYPE_INSTANCE = "org.apache.camel.impl.converter.InstanceMethodTypeConverter";
-    static private final String REPORT_METHOD_STATIC = "STATIC";
-    static private final String REPORT_METHOD_INSTANCE = "INSTANCE";
-    static private final String REPORT_METHOD_UNKNOWN = "UNKNOWN";
-
-    /**
-     * Base output directory for reports.
-     * 
-     * @parameter default-value="${project.build.directory}/site"
-     * @readonly
-     * @required
-     */
-    private File outputDirectory;
-
-    /**
-     * Reference to Maven 2 Project.
-     * 
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
-     * Doxia SiteRenderer.
-     * 
-     * @component
-     */
-    private Renderer renderer;
+    private static final String WIKI_TYPECONVERER_URL = "http://activemq.apache.org/camel/type-converter.html";
+    private static final String CONVERTER_TYPE_STATIC = "org.apache.camel.impl.converter.StaticMethodTypeConverter";
+    private static final String CONVERTER_TYPE_INSTANCE = "org.apache.camel.impl.converter.InstanceMethodTypeConverter";
+    private static final String REPORT_METHOD_STATIC = "STATIC";
+    private static final String REPORT_METHOD_INSTANCE = "INSTANCE";
+    private static final String REPORT_METHOD_UNKNOWN = "UNKNOWN";
 
     /**
      * Remote repositories which will be searched for source attachments.
-     * 
+     *
      * @parameter expression="${project.remoteArtifactRepositories}"
      * @required
      * @readonly
@@ -113,7 +85,7 @@ public class ConvertersMojo extends AbstractMavenReport {
 
     /**
      * Local maven repository.
-     * 
+     *
      * @parameter expression="${localRepository}"
      * @required
      * @readonly
@@ -122,21 +94,47 @@ public class ConvertersMojo extends AbstractMavenReport {
 
     /**
      * The component that is used to resolve additional artifacts required.
-     * 
+     *
      * @component
      */
     protected ArtifactResolver artifactResolver;
 
     /**
      * The component used for creating artifact instances.
-     * 
+     *
      * @component
      */
     protected ArtifactFactory artifactFactory;
+    /**
+     * Base output directory for reports.
+     *
+     * @parameter default-value="${project.build.directory}/site"
+     * @readonly
+     * @required
+     */
+    private File outputDirectory;
+
+    /**
+     * Reference to Maven 2 Project.
+     *
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
+
+    /**
+     * Doxia SiteRenderer.
+     *
+     * @component
+     */
+    private Renderer renderer;
+
+
 
     /**
      * Gets resource bundle for given locale.
-     * 
+     *
      * @param locale
      *            locale
      * @return resource bundle
