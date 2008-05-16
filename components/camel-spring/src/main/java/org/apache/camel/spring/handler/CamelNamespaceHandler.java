@@ -41,6 +41,7 @@ import org.apache.camel.model.loadbalancer.TopicLoadBalanceStrategy;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelContextFactoryBean;
+import org.apache.camel.spring.CamelJMXAgentType;
 import org.apache.camel.spring.CamelTemplateFactoryBean;
 import org.apache.camel.spring.EndpointFactoryBean;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
@@ -83,6 +84,9 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("random", RandomLoadBalanceStrategy.class);
         addBeanDefinitionParser("sticky", StickyLoadBalanceStrategy.class);
         addBeanDefinitionParser("topic", TopicLoadBalanceStrategy.class);
+
+        // jmx agent
+        addBeanDefinitionParser("jmxAgent", CamelJMXAgentType.class);
 
         // TODO switch to use the above mechanism?
         registerParser("endpoint", endpointParser);
@@ -208,8 +212,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                             String id = childElement.getAttribute("id");
                             if (ObjectHelper.isNotNullAndNonEmpty(id)) {
                                 parserContext.registerComponent(new BeanComponentDefinition(definition, id));
+                                if (localName.equals("jmxAgent")) {
+                                    builder.addPropertyReference("camelJMXAgent", id);
+                                }
                             }
                         }
+
                     }
                 }
             }
