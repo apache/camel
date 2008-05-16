@@ -22,6 +22,6 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
     @Override
     protected void enableJmx() {
         domainName = "org.apache.camel-explicit";
-        iAgent.enableJmx(domainName, 1099);
+        iAgent.enableJmx(domainName, "/jmxtest", 1099);
     }
 }

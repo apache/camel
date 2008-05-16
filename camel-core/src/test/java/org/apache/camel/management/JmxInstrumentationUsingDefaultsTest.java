@@ -99,7 +99,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     }
 
     protected void enableJmx() {
-        iAgent.enableJmx(null, 0);
+        iAgent.enableJmx(null, null, 0);
     }
 
     protected CamelContext createCamelContext() throws Exception {

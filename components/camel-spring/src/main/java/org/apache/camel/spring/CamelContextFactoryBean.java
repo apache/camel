@@ -137,9 +137,15 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (instrumentationAgent == null && isJmxEnabled()) {
             SpringInstrumentationAgent agent = new SpringInstrumentationAgent();
             if (camelJMXAgent != null) {
-                agent.enableJmx(camelJMXAgent.getJmxDomainName(), camelJMXAgent.getConnectorPort());
+                agent.enableJmx(camelJMXAgent.getJmxDomainName(), camelJMXAgent.getConnectorPath(), camelJMXAgent.getConnectorPort());
+                if (camelJMXAgent.isCreateConnector() != null) {
+                    agent.setCreateConnector(camelJMXAgent.isCreateConnector());
+                }
+                if (camelJMXAgent.isUsePlatformMBeanServer() != null) {
+                    agent.setUsePlatformMBeanServer(camelJMXAgent.isUsePlatformMBeanServer());
+                }
             } else {
-                agent.enableJmx(SpringInstrumentationAgent.DEFAULT_DOMAIN, SpringInstrumentationAgent.DEFAULT_PORT);
+                agent.enableJmx();
             }
             agent.setCamelContext(getContext());
             String name = getMbeanServer();
