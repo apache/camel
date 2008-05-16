@@ -58,11 +58,14 @@ public abstract class ScheduledPollConsumer<E extends Exchange> extends DefaultC
      * Invoked whenever we should be polled
      */
     public void run() {
-        LOG.debug("Starting to poll");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Starting to poll: " + this.getEndpoint());
+        }
         try {
             poll();
         } catch (Exception e) {
-            LOG.warn("Caught: " + e, e);
+            // TODO: We should not swallow this but handle it better. See CAMEL-501
+            LOG.warn("An exception occured while polling: " + this.getEndpoint() + ": " + e.getMessage(), e);
         }
     }
 
@@ -106,7 +109,7 @@ public abstract class ScheduledPollConsumer<E extends Exchange> extends DefaultC
     /**
      * The polling method which is invoked periodically to poll this consumer
      * 
-     * @throws Exception
+     * @throws Exception can be thrown if an exception occured during polling
      */
     protected abstract void poll() throws Exception;
 
