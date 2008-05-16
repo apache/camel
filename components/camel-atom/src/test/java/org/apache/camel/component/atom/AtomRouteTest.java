@@ -65,7 +65,7 @@ public class AtomRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("atom:file:src/test/data/feed.atom").to("mock:results");
+                from("atom:file:src/test/data/feed.atom?consumer.delay=500").to("mock:results");
             }
         };
     }

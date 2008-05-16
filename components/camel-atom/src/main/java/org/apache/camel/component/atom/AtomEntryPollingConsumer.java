@@ -60,6 +60,8 @@ public class AtomEntryPollingConsumer extends AtomPollingConsumer {
             if (valid) {
                 Exchange exchange = endpoint.createExchange(feed, entry);
                 getProcessor().process(exchange);
+                // return and wait for the next poll to continue from last time (this consumer is stateful)
+                return;
             }
         }
 
