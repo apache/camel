@@ -21,7 +21,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.Service;
-import org.apache.camel.management.CamelNamingStrategy;
 
 public interface InstrumentationAgent extends Service {
 
@@ -59,5 +58,4 @@ public interface InstrumentationAgent extends Service {
      */
     MBeanServer getMBeanServer();
 
-    CamelNamingStrategy getNamingStrategy();
 }
