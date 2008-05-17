@@ -27,6 +27,13 @@ public class InstrumentationProcessor extends DelegateProcessor {
         this.counter = counter;
     }
 
+    InstrumentationProcessor() {
+    }
+
+    public void setCounter(PerformanceCounter counter) {
+        this.counter = counter;
+    }
+    
     public void process(Exchange exchange) throws Exception {
         long startTime = System.nanoTime();
         super.process(exchange);

@@ -35,6 +35,7 @@ import org.apache.camel.processor.Interceptor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.ProceedProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
+import org.apache.camel.spi.InterceptStrategy;
 
 /**
  * The context used to activate new routing rules
@@ -49,6 +50,7 @@ public class RouteContext {
     private List<Processor> eventDrivenProcessors = new ArrayList<Processor>();
     private Interceptor lastInterceptor;
     private CamelContext camelContext;
+    private InterceptStrategy interceptStrategy;
 
     public RouteContext(RouteType route, FromType from, Collection<Route> routes) {
         this.route = route;
@@ -176,5 +178,23 @@ public class RouteContext {
         } else {
             return new ProceedProcessor(lastInterceptor);
         }
+    }
+
+    /**
+     * This method retrieves the InterceptStrategy on this route context.
+     *
+     * @return InterceptStrategy
+     */
+    public InterceptStrategy getInterceptStrategy() {
+        return interceptStrategy;
+    }
+
+    /**
+     * This method sets the InterceptStrategy on this route context.
+     *
+     * @param strategy
+     */
+    public void setInterceptStrategy(InterceptStrategy strategy) {
+        interceptStrategy = strategy;
     }
 }

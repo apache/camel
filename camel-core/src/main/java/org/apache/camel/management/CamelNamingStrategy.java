@@ -27,25 +27,23 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.impl.RouteContext;
+import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
 
 public class CamelNamingStrategy {
     public static final String VALUE_UNKNOWN = "unknown";
-    public static final String VALUE_ROUTE = "route";
-    public static final String VALUE_STATS = "Stats";
-    public static final String VALUE_DEFAULT_BUILDER = "default";
     public static final String KEY_NAME = "name";
     public static final String KEY_TYPE = "type";
     public static final String KEY_CONTEXT = "context";
     public static final String KEY_GROUP = "group";
     public static final String KEY_COMPONENT = "component";
-    public static final String KEY_BUILDER = "builder";
-    public static final String KEY_ROUTE_TYPE = "routeType";
     public static final String KEY_ROUTE = "route";
-    public static final String GROUP_ENDPOINTS = "endpoints";
-    public static final String GROUP_SERVICES = "services";
-    public static final String GROUP_ROUTES = "routes";
-    public static final String GROUP_ROUTE_TYPE = "routeType";
+    public static final String TYPE_CONTEXT = "context";
+    public static final String TYPE_ENDPOINT = "endpoint";
+    public static final String TYPE_PROCESSOR = "processor";
+    public static final String TYPE_ROUTE = "route";
+    public static final String TYPE_SERVICE = "service";
+
 
     protected String domainName;
     protected String hostName = "locahost";
@@ -68,7 +66,7 @@ public class CamelNamingStrategy {
     /**
      * Implements the naming strategy for a {@link CamelContext}.
      * The convention used for a {@link CamelContext} ObjectName is:
-     * <tt>&lt;domain&gt;:context=&lt;context&gt;,name=camel</tt>
+     * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,type=context,name=&lt;context-name&gt;</tt>
      *
      * @param context the camel context
      * @return generated ObjectName
@@ -78,14 +76,15 @@ public class CamelNamingStrategy {
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName + ":");
         buffer.append(KEY_CONTEXT + "=" + getContextId(context) + ",");
-        buffer.append(KEY_NAME + "=" + "context");
+        buffer.append(KEY_TYPE + "=" + TYPE_CONTEXT + ",");
+        buffer.append(KEY_NAME + "=" + getContextId(context));
         return createObjectName(buffer);
     }
 
     /**
      * Implements the naming strategy for a {@link ManagedEndpoint}.
      * The convention used for a {@link ManagedEndpoint} ObjectName is:
-     * <tt>&lt;domain&gt;:context=&lt;context&gt;,type=Services,endpoint=[urlPrefix]localPart</tt>
+     * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,type=endpoint,component=&lt;component-name&gt;name=&lt;endpoint-name&gt;</tt>
      *
      * @param mbean
      * @return generated ObjectName
@@ -97,7 +96,7 @@ public class CamelNamingStrategy {
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName + ":");
         buffer.append(KEY_CONTEXT + "=" + getContextId(ep.getCamelContext()) + ",");
-        buffer.append(KEY_GROUP + "=" + GROUP_ENDPOINTS + ",");
+        buffer.append(KEY_TYPE + "=" + TYPE_ENDPOINT + ",");
         buffer.append(KEY_COMPONENT + "=" + getComponentId(ep) + ",");
         buffer.append(KEY_NAME + "=" + getEndpointId(ep));
         return createObjectName(buffer);
@@ -106,7 +105,7 @@ public class CamelNamingStrategy {
     /**
      * Implements the naming strategy for a {@link org.apache.camel.impl.ServiceSupport Service}.
      * The convention used for a {@link org.apache.camel.Service Service} ObjectName is
-     * <tt>&lt;domain&gt;:context=&lt;context&gt;,type=Services,endpoint=[urlPrefix]localPart</tt>
+     * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,type=service,name=&lt;service-name&gt;</tt>
      *
      * @param context the camel context
      * @param mbean
@@ -117,7 +116,7 @@ public class CamelNamingStrategy {
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName + ":");
         buffer.append(KEY_CONTEXT + "=" + getContextId(context) + ",");
-        buffer.append(KEY_GROUP + "=" + GROUP_SERVICES + ",");
+        buffer.append(KEY_TYPE + "=" + TYPE_SERVICE + ",");
         buffer.append(KEY_NAME + "=" + Integer.toHexString(mbean.getService().hashCode()));
         return createObjectName(buffer);
     }
@@ -125,10 +124,10 @@ public class CamelNamingStrategy {
 
     /**
      * Implements the naming strategy for a {@link ManagedRoute}.
-     * The convention used for a {@link ManagedEndpoint} ObjectName is:
-     * <tt>&lt;domain&gt;:context=&lt;context&gt;,type=Routes,endpoint=[urlPrefix]localPart</tt>
+     * The convention used for a {@link ManagedRoute} ObjectName is:
+     * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,route=&lt;route-name&gt;,type=route,name=&lt;route-name&gt;</tt>
      *
-     * @param mbean
+     * @param mbean 
      * @return generated ObjectName
      * @throws MalformedObjectNameException
      */
@@ -140,48 +139,40 @@ public class CamelNamingStrategy {
         String cid = getComponentId(ep);
         String id = VALUE_UNKNOWN.equals(cid) ? getEndpointId(ep)
             : "[" + cid + "]" + getEndpointId(ep);
-        String group = (String)route.getProperties().get(Route.GROUP_PROPERTY);
 
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName + ":");
         buffer.append(KEY_CONTEXT + "=" + ctxid + ",");
-        buffer.append(KEY_GROUP + "=" + GROUP_ROUTES + ",");
-        buffer.append(KEY_BUILDER + "=" + (group != null ? group : VALUE_DEFAULT_BUILDER) + ",");
-        buffer.append(KEY_ROUTE_TYPE + "=" + route.getProperties().get(Route.PARENT_PROPERTY) + ",");
         buffer.append(KEY_ROUTE + "=" + id + ",");
-        buffer.append(KEY_TYPE + "=" + VALUE_ROUTE);
+        buffer.append(KEY_TYPE + "=" + TYPE_ROUTE + ",");
+        buffer.append(KEY_NAME + "=" + id);
         return createObjectName(buffer);
     }
 
     /**
-     * Implements the naming strategy for a {@link PerformanceCounter}.
-     * The convention used for a {@link ManagedEndpoint} ObjectName is:
-     * <tt>&lt;domain&gt;:context=&lt;context&gt;,type=Routes,endpoint=[urlPrefix]localPart</tt>
-     *
-     * @param context the camel context
-     * @param mbean
+     * Implements the naming strategy for a {@link ProcessorType}.
+     * The convention used for a {@link ProcessorType} ObjectName is:
+     * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,route=&lt;route-name&gt;,type=processor,name=&lt;processor-name&gt;</tt>
+     * 
      * @param routeContext
-     * @return generated ObjectName
+     * @param processor
+     * @return
      * @throws MalformedObjectNameException
      */
-    public ObjectName getObjectName(CamelContext context, PerformanceCounter mbean, RouteContext routeContext)
-        throws MalformedObjectNameException {
-
+    public ObjectName getObjectName(RouteContext routeContext, 
+            ProcessorType processor) throws MalformedObjectNameException {
         RouteType route = routeContext.getRoute();
         Endpoint<? extends Exchange> ep = routeContext.getEndpoint();
         String ctxid = ep != null ? getContextId(ep.getCamelContext()) : VALUE_UNKNOWN;
         String cid = getComponentId(ep);
         String id = VALUE_UNKNOWN.equals(cid) ? getEndpointId(ep) : "[" + cid + "]" + getEndpointId(ep);
-        String group = route.getGroup();
 
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName + ":");
         buffer.append(KEY_CONTEXT + "=" + ctxid + ",");
-        buffer.append(KEY_GROUP + "=" + GROUP_ROUTES + ",");
-        buffer.append(KEY_BUILDER + "=" + (group != null ? group : VALUE_DEFAULT_BUILDER) + ",");
-        buffer.append(KEY_ROUTE_TYPE + "=" + route.hashCode() + ",");
         buffer.append(KEY_ROUTE + "=" + id + ",");
-        buffer.append(KEY_TYPE + "=" + VALUE_STATS);
+        buffer.append(KEY_TYPE + "=" + TYPE_PROCESSOR + ",");
+        buffer.append(KEY_NAME + "=" + ObjectName.quote(processor.toString()));
         return createObjectName(buffer);
     }
 

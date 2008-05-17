@@ -47,16 +47,13 @@ import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.processor.DelegateProcessor;
-import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MessageIdRepository;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.Registry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -1434,35 +1431,13 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
             throw new RuntimeCamelException("target provided.");
         }
 
-        // Interceptors are optional
-        DelegateProcessor first = null;
-        DelegateProcessor last = null;
-/*
-
-        List<InterceptorType> interceptors = new ArrayList<InterceptorType>(routeContext.getRoute()
-                .getInterceptors());
-        List<InterceptorType> list = getInterceptors();
-        for (InterceptorType interceptorType : list) {
-            if (!interceptors.contains(interceptorType)) {
-                interceptors.add(interceptorType);
-            }
-        }
-        for (InterceptorType interceptorRef : interceptors) {
-            DelegateProcessor p = interceptorRef.createInterceptor(routeContext);
-            if (first == null) {
-                first = p;
-            }
-            if (last != null) {
-                last.setProcessor(p);
-            }
-            last = p;
+        InterceptStrategy strategy = routeContext.getInterceptStrategy();
+        if (strategy != null) {
+            return strategy.wrapProcessorInInterceptors(this, target);
+        } else {
+            return target;
         }
 
-        if (last != null) {
-            last.setProcessor(target);
-        }
-*/
-        return first == null ? target : first;
     }
 
     /**
@@ -1511,6 +1486,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
         List<Processor> list = new ArrayList<Processor>();
         for (ProcessorType output : outputs) {
             Processor processor = output.createProcessor(routeContext);
+            processor = output.wrapProcessorInInterceptors(routeContext, processor);
             list.add(processor);
         }
         Processor processor = null;

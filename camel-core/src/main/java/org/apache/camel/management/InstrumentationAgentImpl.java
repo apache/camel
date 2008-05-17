@@ -71,16 +71,12 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
     private String jmxDomainName;
     private int jmxConnectorPort;
     private String jmxConnectorPath;
-    private CamelNamingStrategy namingStrategy;
     private boolean createConnector = true;
     private boolean usePlatformMBeanServer;
 
     public InstrumentationAgentImpl() {
         assembler = new MetadataMBeanInfoAssembler();
         assembler.setAttributeSource(new AnnotationJmxAttributeSource());
-        // naming = new
-        // CamelNamingStrategy(agent.getMBeanServer().getDefaultDomain());
-        namingStrategy = new CamelNamingStrategy();
     }
 
     public CamelContext getCamelContext() {
@@ -140,14 +136,6 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
         server.unregisterMBean(name);
     }
 
-    public CamelNamingStrategy getNamingStrategy() {
-        return namingStrategy;
-    }
-
-    public void setNamingStrategy(CamelNamingStrategy namingStrategy) {
-        this.namingStrategy = namingStrategy;
-    }
-
     protected void doStart() throws Exception {
         ObjectHelper.notNull(context, "camelContext");
 
@@ -162,13 +150,13 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
                 jmxDomainName = DEFAULT_DOMAIN;
             }
         }
-        configureDomainName();
 
         LOG.debug("Starting JMX agent on server: " + getMBeanServer());
 
         if (context instanceof DefaultCamelContext) {
             DefaultCamelContext dc = (DefaultCamelContext)context;
-            InstrumentationLifecycleStrategy ls = new InstrumentationLifecycleStrategy(this);
+            InstrumentationLifecycleStrategy ls = new InstrumentationLifecycleStrategy(
+                    this, new CamelNamingStrategy(jmxDomainName));
             dc.setLifecycleStrategy(ls);
             ls.onContextCreate(context);
         }
@@ -232,15 +220,8 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
     public void enableJmx(String domainName, String connectorPath,  int port) {
         jmxEnabled = true;
         jmxDomainName = domainName;
-        configureDomainName();
         jmxConnectorPath = connectorPath;
         jmxConnectorPort = port;
-    }
-
-    protected void configureDomainName() {
-        if (jmxDomainName != null) {
-            namingStrategy.setDomainName(jmxDomainName);
-        }
     }
 
     protected void createMBeanServer() {

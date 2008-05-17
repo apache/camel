@@ -41,13 +41,26 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
-        ObjectName name = new ObjectName(domainName + ":group=endpoints,*");
-        Set s = iAgent.getMBeanServer().queryNames(name, null);
-
+        Set s = iAgent.getMBeanServer().queryNames(
+                new ObjectName(domainName + ":type=endpoint,*"), null);
+        assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
+        
+        s = iAgent.getMBeanServer().queryNames(
+                new ObjectName(domainName + ":type=context,*"), null);
+        assertEquals("Could not find 1 context: " + s, 1, s.size());
+        
+        s = iAgent.getMBeanServer().queryNames(
+                new ObjectName(domainName + ":type=processor,*"), null);
+        assertEquals("Could not find 1 processor: " + s, 1, s.size());
+        
+        s = iAgent.getMBeanServer().queryNames(
+                new ObjectName(domainName + ":type=route,*"), null);
+        assertEquals("Could not find 1 route: " + s, 1, s.size());
+        
         if (sleepSoYouCanBrowseInJConsole) {
             Thread.sleep(100000);
         }
-        assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
+       
     }
 
     public void testCounters() throws Exception {
@@ -58,7 +71,12 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         MBeanServer mbs = iAgent.getMBeanServer();
-        ObjectName name = new ObjectName(domainName + ":type=Stats,*");
+        verifyCounter(mbs, new ObjectName(domainName + ":type=route,*"));
+        verifyCounter(mbs, new ObjectName(domainName + ":type=processor,*"));
+
+    }
+
+    private void verifyCounter(MBeanServer mbs, ObjectName name) throws Exception {
         Set s = mbs.queryNames(name, null);
         assertEquals("Found mbeans: " + s, 1, s.size());
 
@@ -96,6 +114,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
                       valueofMeanProcessingTime);
         assertTrue(valueofMeanProcessingTime >= valueofMinProcessingTime
                    && valueofMeanProcessingTime <= valueofMaxProcessingTime);
+        
     }
 
     protected void enableJmx() {
