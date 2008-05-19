@@ -22,6 +22,8 @@ import java.util.List;
 import javax.xml.bind.Marshaller;
 
 import org.apache.camel.model.language.GroovyExpression;
+import org.apache.camel.model.language.ELExpression;
+import org.apache.camel.model.language.XQueryExpression;
 
 /**
  * @version $Revision$
@@ -31,8 +33,9 @@ public class GenerateXmlTest extends XmlTestSupport {
         RoutesType context = new RoutesType();
         RouteType route = context.route();
         route.from("seda:a");
-        route.filter("juel", "in.header.foo == 'bar'").
+        route.filter(new XQueryExpression("in.header.foo == 'bar'")).
                 to("seda:b");
+        route.description("This is a description of the route");
 
         dump(context);
     }
@@ -57,5 +60,6 @@ public class GenerateXmlTest extends XmlTestSupport {
         StringWriter buffer = new StringWriter();
         marshaller.marshal(context, buffer);
         log.info("Created: " + buffer);
+        System.out.println("Created: " + buffer);
     }
 }
