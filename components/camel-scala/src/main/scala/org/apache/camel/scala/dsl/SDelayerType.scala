@@ -14,20 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala;
+package org.apache.camel.scala.dsl;
 
-import org.apache.camel.component.mock.MockEndpoint
+import org.apache.camel.model.DelayerType
+import org.apache.camel.scala.builder.RouteBuilder
 
-class RichMockEndpoint(val endpoint: MockEndpoint) {
+/**
+ * Scala enrichment for Camel's DelayerType
+ */
+class SDelayerType(val target: DelayerType)(implicit val builder: RouteBuilder) extends ScalaDsl with Wrapper[DelayerType] {
+ 
+  val unwrap = target
 
-  def received(messages: AnyRef*) {
-    val list = new java.util.ArrayList[AnyRef](messages.length)
-    messages.foreach(list.add(_))
-    endpoint.expectedBodiesReceived(list)
+  def ms = this
+  def milliseconds = ms
+    
+  def sec = {
+    valueInMs *= 1000
+    this
   }
-
-  def count : Int = endpoint.getExpectedCount
+  def seconds = sec
   
-  def count_=(count: Int) = endpoint.expectedMessageCount(count)
+  def min = {
+    valueInMs *= (60 * 1000)
+    this
+  }
+  def minutes = min
+  
+  def valueInMs : Long = target.getDelay().asInstanceOf[Long]
+  def valueInMs_=(period: Long) = target.setDelay(period)
 }
-

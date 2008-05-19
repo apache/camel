@@ -14,20 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala;
+package org.apache.camel.scala.dsl;
 
-import org.apache.camel.component.mock.MockEndpoint
+import org.apache.camel.model.ThrottlerType
+import org.apache.camel.scala.builder.RouteBuilder
 
-class RichMockEndpoint(val endpoint: MockEndpoint) {
-
-  def received(messages: AnyRef*) {
-    val list = new java.util.ArrayList[AnyRef](messages.length)
-    messages.foreach(list.add(_))
-    endpoint.expectedBodiesReceived(list)
-  }
-
-  def count : Int = endpoint.getExpectedCount
+/**
+ * Scala enrichment for Camel's ThrottlerType
+ */
+class STrottlerType(val target: ThrottlerType)(implicit val builder: RouteBuilder) extends ScalaDsl with Wrapper[ThrottlerType] {
+ 
+  val unwrap = target
   
-  def count_=(count: Int) = endpoint.expectedMessageCount(count)
-}
+  /**
+   * Time period in milliseconds
+   */
+  def per(period: Int) = {
+    target.setTimePeriodMillis(period)
+    this
+  }
+  
+  def ms = this
+  def milliseconds = ms
+    
+  def sec = {
+    valueInMs *= 1000
+    this
+  }
+  def seconds = sec
+  
+  def min = {
+    valueInMs *= (60 * 1000)
+    this
+  }
+  def minutes = min
 
+  def valueInMs = target.getTimePeriodMillis()
+  def valueInMs_=(period: Long) = target.setTimePeriodMillis(period)
+}

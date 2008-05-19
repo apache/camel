@@ -17,42 +17,39 @@
 package org.apache.camel.scala.dsl;
  
 import org.w3c.dom.Document
-import languages.XPath
 import scala.builder.RouteBuilder
 
 /**
- * Test case for Splitter
+ * Test case for message throttler
  */
-class SplitterRouteBuilderTest extends ScalaTestSupport {
+class ThrottlerTest extends ScalaTestSupport {
   
-  def testSimpleSplitter = {
-    "mock:a" expect { _.count = 3}
-    "direct:a" ! <persons><person id="1"/><person id="2"/><person id="3"/></persons>
+  def testSimpleTrottler = {
+    "mock:a" expect { _.count = 3 } 
+    "mock:a" expect { _.setResultWaitTime(1000) }  
+    for (id <- 1 to 6) "seda:a" ! id   
     "mock:a" assert()
   }
   
-  def testBlockSplitter = {
-    "mock:b" expect { _.count = 3}
-    "mock:c" expect { _.count = 3}
-    "direct:b" ! <persons><person id="1"/><person id="2"/><person id="3"/></persons>
+  def testBlockTrottler = {
+    "mock:b" expect { _.count = 6 }
+    "mock:c" expect { _.count = 3 } 
+    "mock:c" expect { _.setResultWaitTime(1000) }  
+    for (id <- 1 to 6) "seda:b" ! id   
     "mock:b" assert()
-    "mock:c" assert()
   }
-
+  
   val builder =
-    //START SNIPPET: xpath
-    new RouteBuilder with XPath {
-    //END SNIPPET: xpath
+    new RouteBuilder {
        //START SNIPPET: simple
-       "direct:a" as(classOf[Document]) splitter(_.xpath("/persons/person")) to "mock:a"
+       "seda:a" throttle 3 per 2 seconds to ("mock:a")
        //END SNIPPET: simple
        
        //START SNIPPET: block
-       "direct:b" ==> {
-         as(classOf[Document])
-         splitter(_.xpath("/persons/person")) {
-           to("mock:b")
-           to("mock:c")
+       "seda:b" ==> {
+         to ("mock:b")
+         throttle(3) per 2 seconds {
+           to ("mock:c")
          }
        }
        //END SNIPPET: block

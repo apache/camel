@@ -14,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala;
+package org.apache.camel.scala.dsl;
 
-import org.apache.camel.component.mock.MockEndpoint
+import org.apache.camel.model.LoadBalanceType
+import org.apache.camel.scala.builder.RouteBuilder
 
-class RichMockEndpoint(val endpoint: MockEndpoint) {
-
-  def received(messages: AnyRef*) {
-    val list = new java.util.ArrayList[AnyRef](messages.length)
-    messages.foreach(list.add(_))
-    endpoint.expectedBodiesReceived(list)
-  }
-
-  def count : Int = endpoint.getExpectedCount
+/**
+ * Scala enrichment for Camel's LoadBalanceType
+ */
+class SLoadBalanceType(val target: LoadBalanceType)(implicit val builder: RouteBuilder) extends ScalaDsl with Wrapper[LoadBalanceType] {
+ 
+  val unwrap = target
   
-  def count_=(count: Int) = endpoint.expectedMessageCount(count)
+  def roundrobin = {
+    target.roundRobin
+    this;
+  }
+  
 }
-

@@ -16,18 +16,17 @@
  */
 package org.apache.camel.scala;
 
-import org.apache.camel.component.mock.MockEndpoint
+/**
+ * Represents a period (expressed in milliseconds) in time
+ */
+class Period(var milliseconds : Long) {
 
-class RichMockEndpoint(val endpoint: MockEndpoint) {
-
-  def received(messages: AnyRef*) {
-    val list = new java.util.ArrayList[AnyRef](messages.length)
-    messages.foreach(list.add(_))
-    endpoint.expectedBodiesReceived(list)
+  /**
+   * Convert the current value from seconds -> milliseconds
+   */
+  def seconds = {
+    milliseconds *= 1000
+    this
   }
-
-  def count : Int = endpoint.getExpectedCount
   
-  def count_=(count: Int) = endpoint.expectedMessageCount(count)
 }
-
