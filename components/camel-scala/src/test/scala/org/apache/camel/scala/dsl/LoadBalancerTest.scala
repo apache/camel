@@ -17,45 +17,34 @@
 package org.apache.camel.scala.dsl;
  
 import org.w3c.dom.Document
-import languages.XPath
 import scala.builder.RouteBuilder
 
 /**
- * Test case for Splitter
+ * Test case for message load balancer
  */
-class SplitterRouteBuilderTest extends ScalaTestSupport {
+class LoadBalancerTest extends ScalaTestSupport {
   
-  def testSimpleSplitter = {
-    "mock:a" expect { _.count = 3}
-    "direct:a" ! <persons><person id="1"/><person id="2"/><person id="3"/></persons>
+  def testSimpleTrottler = {
+    "mock:a" expect { _.received("message 1", "message 4") } 
+    "mock:b" expect { _.received("message 2", "message 5") }
+    "mock:c" expect { _.received("message 3", "message 6") }
+    for (id <- 1 to 6) "direct:a" ! "message " + id   
     "mock:a" assert()
-  }
-  
-  def testBlockSplitter = {
-    "mock:b" expect { _.count = 3}
-    "mock:c" expect { _.count = 3}
-    "direct:b" ! <persons><person id="1"/><person id="2"/><person id="3"/></persons>
     "mock:b" assert()
     "mock:c" assert()
   }
-
+    
   val builder =
-    //START SNIPPET: xpath
-    new RouteBuilder with XPath {
-    //END SNIPPET: xpath
-       //START SNIPPET: simple
-       "direct:a" as(classOf[Document]) splitter(_.xpath("/persons/person")) to "mock:a"
-       //END SNIPPET: simple
-       
-       //START SNIPPET: block
-       "direct:b" ==> {
-         as(classOf[Document])
-         splitter(_.xpath("/persons/person")) {
-           to("mock:b")
-           to("mock:c")
+    new RouteBuilder {
+       //START SNIPPET: loadbalance
+       "direct:a" ==> {
+         loadbalance roundrobin {
+           to ("mock:a")
+           to ("mock:b")
+           to ("mock:c")
          }
        }
-       //END SNIPPET: block
+       //END SNIPPET: loadbalance
     }
 
 }

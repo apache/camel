@@ -17,42 +17,46 @@
 package org.apache.camel.scala.dsl;
  
 import org.w3c.dom.Document
-import languages.XPath
 import scala.builder.RouteBuilder
 
 /**
- * Test case for Splitter
+ * Test case for message delayer
  */
-class SplitterRouteBuilderTest extends ScalaTestSupport {
+class DelayerTest extends ScalaTestSupport {
   
-  def testSimpleSplitter = {
-    "mock:a" expect { _.count = 3}
-    "direct:a" ! <persons><person id="1"/><person id="2"/><person id="3"/></persons>
+  def testSimpleDelayer = {
+    "mock:a" expect { _.count = 0 }      
+    "seda:a" ! "any given message"   
     "mock:a" assert()
+    //messages should only arrive after waiting a while 
+    "mock:a" expect { _.count = 1 }
+    "mock:a" expect { _.setResultWaitTime(1500)}
+    "mock:a" assert();
   }
   
-  def testBlockSplitter = {
-    "mock:b" expect { _.count = 3}
-    "mock:c" expect { _.count = 3}
-    "direct:b" ! <persons><person id="1"/><person id="2"/><person id="3"/></persons>
+  def testBlockDelayer = {
+    "mock:b" expect { _.count = 1 }
+    "mock:c" expect { _.count = 0 }
+    "seda:b" ! "any given message"   
     "mock:b" assert()
     "mock:c" assert()
-  }
-
+    //messages should only arrive after waiting a while 
+    "mock:c" expect { _.count = 1 }
+    "mock:c" expect { _.setResultWaitTime(1500)}
+    "mock:b" assert()
+    "mock:c" assert()
+  }    
   val builder =
-    //START SNIPPET: xpath
-    new RouteBuilder with XPath {
-    //END SNIPPET: xpath
+    new RouteBuilder {
        //START SNIPPET: simple
-       "direct:a" as(classOf[Document]) splitter(_.xpath("/persons/person")) to "mock:a"
+       "seda:a" delay(1 seconds) to ("mock:a")
        //END SNIPPET: simple
        
        //START SNIPPET: block
-       "direct:b" ==> {
-         as(classOf[Document])
-         splitter(_.xpath("/persons/person")) {
-           to("mock:b")
-           to("mock:c")
+       "seda:b" ==> {
+         to ("mock:b")
+         delay(1 seconds) {
+           to ("mock:c")
          }
        }
        //END SNIPPET: block

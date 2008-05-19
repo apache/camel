@@ -22,5 +22,6 @@ package org.apache.camel.scala;
 trait Preamble {
 
   implicit def exchangeWrapper(exchange: Exchange[T] forSome {type T}) = new RichExchange(exchange)
+  implicit def intToPeriod(int: Int) : Period = new Period(int)
 
 }

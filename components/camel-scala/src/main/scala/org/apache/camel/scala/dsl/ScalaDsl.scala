@@ -69,5 +69,11 @@ trait ScalaDsl {
     target.process(new ScalaProcessor(function))
     this
   }
+  
+  def throttle(count: Int) = new STrottlerType(target.throttler(count))
+  
+  def loadbalance = new SLoadBalanceType(target.loadBalance)
+  
+  def delay(period: Period) = new SDelayerType(target.delayer(period.milliseconds))
 
 }

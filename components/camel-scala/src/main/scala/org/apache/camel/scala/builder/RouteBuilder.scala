@@ -60,5 +60,8 @@ class RouteBuilder extends Preamble {
   def otherwise = stack.top.otherwise
   def multicast = stack.top.multicast
   def process(function: Exchange => Unit) = stack.top.process(function)
+  def throttle(count: Int) = stack.top.throttle(count)
+  def loadbalance = stack.top.loadbalance
+  def delay(delay: Period) = stack.top.delay(delay)
 
 }
