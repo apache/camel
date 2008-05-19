@@ -25,6 +25,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
@@ -48,9 +50,11 @@ import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.idempotent.MessageIdRepository;
+import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Policy;
@@ -60,11 +64,11 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @version $Revision$
  */
-public abstract class ProcessorType<Type extends ProcessorType> implements Block {
+@XmlAccessorType(XmlAccessType.PROPERTY)
+public abstract class ProcessorType<Type extends ProcessorType> extends OptionalIdentifiedType<Type> implements Block {
     public static final String DEFAULT_TRACE_CATEGORY = "org.apache.camel.TRACE";
     private ErrorHandlerBuilder errorHandlerBuilder;
-    private Boolean inheritErrorHandlerFlag = Boolean.TRUE; // TODO not sure how
-    private DelegateProcessor lastInterceptor;
+    private Boolean inheritErrorHandlerFlag;
     private NodeFactory nodeFactory;
     private LinkedList<Block> blocks = new LinkedList<Block>();
     private ProcessorType<? extends ProcessorType> parent;
@@ -840,7 +844,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
 
     public Type intercept(DelegateProcessor interceptor) {
         addInterceptor(new InterceptorRef(interceptor));
-        lastInterceptor = interceptor;
+        //lastInterceptor = interceptor;
         return (Type) this;
     }
 
@@ -1374,7 +1378,14 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
 
     @XmlTransient
     public boolean isInheritErrorHandler() {
-        return ObjectConverter.toBoolean(getInheritErrorHandlerFlag());
+        return isInheritErrorHandler(getInheritErrorHandlerFlag());
+    }
+
+    /**
+     * Lets default the inherit value to be true if there is none specified
+     */
+    public static boolean isInheritErrorHandler(Boolean value) {
+        return value == null || value.booleanValue();
     }
 
     @XmlAttribute(name = "inheritErrorHandler", required = false)

@@ -40,10 +40,10 @@ import org.apache.camel.processor.DelegateProcessor;
  */
 @XmlRootElement(name = "routes")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RoutesType implements RouteContainer {
+public class RoutesType extends OptionalIdentifiedType<RoutesType> implements RouteContainer {
     // TODO: not sure how else to use an optional attribute in JAXB2
     @XmlAttribute
-    private Boolean inheritErrorHandlerFlag = Boolean.TRUE;
+    private Boolean inheritErrorHandlerFlag;
     @XmlElementRef
     private List<RouteType> routes = new ArrayList<RouteType>();
     @XmlElementRef
@@ -107,7 +107,7 @@ public class RoutesType implements RouteContainer {
     }
 
     public boolean isInheritErrorHandler() {
-        return inheritErrorHandlerFlag != null && inheritErrorHandlerFlag.booleanValue();
+        return ProcessorType.isInheritErrorHandler(getInheritErrorHandlerFlag());
     }
 
     public Boolean getInheritErrorHandlerFlag() {

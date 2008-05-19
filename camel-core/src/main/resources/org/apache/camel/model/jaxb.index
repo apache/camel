@@ -21,6 +21,7 @@ ChoiceType
 CompletedPredicate
 ConvertBodyType
 DelayerType
+Description
 ExceptionType
 FilterType
 FinallyType
@@ -31,6 +32,7 @@ InterceptorRef
 LoadBalanceType
 MarshalType
 MulticastType
+OptionalIdentifiedType
 OtherwiseType
 PolicyRef
 ProceedType
