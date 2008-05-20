@@ -50,7 +50,7 @@ public class RouteContext {
     private List<Processor> eventDrivenProcessors = new ArrayList<Processor>();
     private Interceptor lastInterceptor;
     private CamelContext camelContext;
-    private InterceptStrategy interceptStrategy;
+    private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
 
     public RouteContext(RouteType route, FromType from, Collection<Route> routes) {
         this.route = route;
@@ -181,20 +181,24 @@ public class RouteContext {
     }
 
     /**
-     * This method retrieves the InterceptStrategy on this route context.
+     * This method retrieves the InterceptStrategy instances this route context.
      *
      * @return InterceptStrategy
      */
-    public InterceptStrategy getInterceptStrategy() {
-        return interceptStrategy;
+    public List<InterceptStrategy> getInterceptStrategies() {
+        return interceptStrategies;
     }
 
     /**
-     * This method sets the InterceptStrategy on this route context.
+     * This method sets the InterceptStrategy instances on this route context.
      *
-     * @param strategy
+     * @param interceptStrategies
      */
-    public void setInterceptStrategy(InterceptStrategy strategy) {
-        interceptStrategy = strategy;
+    public void setInterceptStrategies(List<InterceptStrategy> interceptStrategies) {
+        this.interceptStrategies = interceptStrategies;
+    }
+
+    public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
+        getInterceptStrategies().add(interceptStrategy);
     }
 }

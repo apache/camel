@@ -47,6 +47,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
@@ -79,6 +80,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private Registry registry;
     private LifecycleStrategy lifecycleStrategy = new DefaultLifecycleStrategy();
     private List<RouteType> routeDefinitions = new ArrayList<RouteType>();
+    private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
 
     public DefaultCamelContext() {
         name = NAME_PREFIX + ++nameSuffix;
@@ -416,6 +418,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return routeDefinitions;
     }
 
+    public List<InterceptStrategy> getInterceptStrategies() {
+        return interceptStrategies;
+    }
+
+    public void setInterceptStrategies(List<InterceptStrategy> interceptStrategies) {
+        this.interceptStrategies = interceptStrategies;
+    }
+
+    public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
+        getInterceptStrategies().add(interceptStrategy);
+    }
 
     // Implementation methods
     // -----------------------------------------------------------------------

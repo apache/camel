@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.RouteBuilderRef;
@@ -121,6 +122,26 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     public void afterPropertiesSet() throws Exception {
+        // lets see if we can find a debugger to add
+        // TODO there should be a neater way to do this!
+        Debugger debugger = null;
+        String[] names = getApplicationContext().getBeanNamesForType(Debugger.class, true, true);
+        if (names.length == 1) {
+             debugger = (Debugger) getApplicationContext().getBean(names[0], Debugger.class);
+        }
+        if (debugger == null) {
+            ApplicationContext parentContext = getApplicationContext().getParent();
+            if (parentContext != null) {
+                names = parentContext.getBeanNamesForType(Debugger.class, true, true);
+                if (names.length == 1) {
+                    debugger = (Debugger) parentContext.getBean(names[0], Debugger.class);
+                }
+            }
+        }
+        if (debugger != null) {
+            getContext().addInterceptStrategy(debugger);
+        }
+
         // Set the application context and camelContext for the beanPostProcessor
         if (beanPostProcessor != null) {
             if (beanPostProcessor instanceof ApplicationContextAware) {

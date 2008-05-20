@@ -16,12 +16,15 @@
  */
 package org.apache.camel.model;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -39,6 +42,8 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
     private String id;
     @XmlElement(required = false)
     private Description description;
+    @XmlTransient
+    protected static AtomicInteger nodeCounter = new AtomicInteger(1);
 
     /**
      * Gets the value of the id property.
@@ -87,5 +92,12 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
     public T id(String id) {
         setId(id);
         return (T) this;
+    }
+
+    public String idOrCreate() {
+        if (id == null) {
+            setId("node" + nodeCounter.incrementAndGet());
+        }
+        return getId();
     }
 }

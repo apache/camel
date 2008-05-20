@@ -129,8 +129,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             counterMap.put(processor, pc);
         }
 
-        routeContext.setInterceptStrategy(
-                new InstrumentationInterceptStrategy(counterMap));
+        routeContext.addInterceptStrategy(new InstrumentationInterceptStrategy(counterMap));
 
         // Add an InstrumentationProcessor at the beginning of each route and
         // set up the interceptorMap for onRoutesAdd() method to register the
