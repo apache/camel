@@ -20,6 +20,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import org.apache.cxf.binding.soap.SoapMessage;
+import org.apache.cxf.binding.soap.interceptor.CheckFaultInterceptor;
 import org.apache.cxf.binding.soap.interceptor.SoapActionInInterceptor;
 import org.apache.cxf.common.i18n.BundleUtils;
 import org.apache.cxf.common.logging.LogUtils;
@@ -34,8 +35,8 @@ public class DOMInInterceptor extends AbstractPhaseInterceptor<Message> {
     private final XMLMessageInInterceptor xmlInterceptor = new XMLMessageInInterceptor();
     private final SoapMessageInInterceptor soapInterceptor = new SoapMessageInInterceptor();
     public DOMInInterceptor() {
-        super(Phase.READ);
-        this.addAfter(SoapActionInInterceptor.class.getName());
+        super(Phase.POST_PROTOCOL);
+        this.addAfter(CheckFaultInterceptor.class.getName());
     }
 
     public boolean isRequestor(Message message) {
