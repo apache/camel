@@ -114,6 +114,7 @@
           <excludes>
             <!-- TODO FIXME ASAP -->
             <exclude>**/InterceptorLogTest.*</exclude>
+            <exclude>**/MulticastStreamCachingTest.*</exclude>
           </excludes>
         </configuration>
       </plugin>

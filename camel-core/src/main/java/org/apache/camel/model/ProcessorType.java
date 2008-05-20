@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -42,7 +44,6 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.ProcessorBuilder;
-import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.model.language.ExpressionType;
@@ -72,6 +73,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     private NodeFactory nodeFactory;
     private LinkedList<Block> blocks = new LinkedList<Block>();
     private ProcessorType<? extends ProcessorType> parent;
+    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
 
     // else to use an optional attribute in JAXB2
     public abstract List<ProcessorType<?>> getOutputs();
@@ -835,28 +837,57 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return throwFault(new CamelException(message));
     }
 
+    /**
+     * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
+     */
     public Type interceptor(String ref) {
         InterceptorRef interceptor = new InterceptorRef(ref);
-        addInterceptor(interceptor);
+        intercept(interceptor);
         return (Type) this;
     }
 
-
+    /**
+     * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
+     */
     public Type intercept(DelegateProcessor interceptor) {
-        addInterceptor(new InterceptorRef(interceptor));
+        intercept(new InterceptorRef(interceptor));
         //lastInterceptor = interceptor;
         return (Type) this;
     }
 
+    /**
+     * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
+     */
     public InterceptType intercept() {
         InterceptType answer = new InterceptType();
         addOutput(answer);
         return answer;
     }
 
-    public void addInterceptor(InterceptorType interceptor) {
+    /**
+     * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
+     */
+    public void intercept(InterceptorType interceptor) {
         addOutput(interceptor);
         pushBlock(interceptor);
+    }
+
+    /**
+     * Adds an interceptor around the whole of this nodes processing
+     *
+     * @param interceptor
+     */
+    public void addInterceptor(InterceptorType interceptor) {
+        interceptors.add(interceptor);
+    }
+
+    /**
+     * Adds an interceptor around the whole of this nodes processing
+     *
+     * @param interceptor
+     */
+    public void addInterceptor(DelegateProcessor interceptor) {
+        addInterceptor(new InterceptorRef(interceptor));
     }
 
     protected void pushBlock(Block block) {
@@ -1444,11 +1475,26 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
         InterceptStrategy strategy = routeContext.getInterceptStrategy();
         if (strategy != null) {
-            return strategy.wrapProcessorInInterceptors(this, target);
-        } else {
-            return target;
+            target = strategy.wrapProcessorInInterceptors(this, target);
         }
 
+        List<InterceptorType> list = routeContext.getRoute().getInterceptors();
+        if (interceptors != null) {
+            list.addAll(interceptors);
+        }
+        // lets reverse the list so we apply the inner interceptors first
+        Collections.reverse(list);
+        Set<Processor> interceptors = new HashSet<Processor>();
+        interceptors.add(target);
+        for (InterceptorType interceptorType : list) {
+            DelegateProcessor interceptor = interceptorType.createInterceptor(routeContext);
+            if (!interceptors.contains(interceptor)) {
+                interceptors.add(interceptor);
+                interceptor.setProcessor(target);
+                target = interceptor;
+            }
+        }
+        return target;
     }
 
     /**
