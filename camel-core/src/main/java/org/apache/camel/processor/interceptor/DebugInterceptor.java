@@ -23,6 +23,7 @@ import org.apache.camel.model.ProcessorType;
 import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
+import org.apache.camel.Message;
 
 /**
  * An interceptor for debugging and tracing routes
@@ -89,8 +90,21 @@ public class DebugInterceptor implements Processor {
      */
     protected void addTraceExchange(Exchange exchange) {
         if (shouldTraceExchange(exchange)) {
-            exchanges.add(exchange);
+            exchanges.add(copyExchange(exchange));
         }
+    }
+
+    protected Exchange copyExchange(Exchange previousExchange) {
+        Exchange answer = previousExchange.newInstance();
+        answer.getProperties().putAll(previousExchange.getProperties());
+        answer.getIn().copyFrom(previousExchange.getIn());
+
+        // only copy the out if its defined
+        Message previousOut = previousExchange.getOut(false);
+        if (previousOut != null) {
+            answer.getOut().copyFrom(previousOut);
+        }
+        return answer;
     }
 
     /**
