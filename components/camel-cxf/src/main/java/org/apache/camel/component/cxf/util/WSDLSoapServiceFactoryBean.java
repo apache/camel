@@ -19,10 +19,12 @@ package org.apache.camel.component.cxf.util;
 import javax.xml.namespace.QName;
 
 import org.apache.cxf.binding.AbstractBindingFactory;
+import org.apache.cxf.binding.soap.interceptor.CheckFaultInterceptor;
 import org.apache.cxf.binding.soap.interceptor.MustUnderstandInterceptor;
 import org.apache.cxf.binding.soap.interceptor.ReadHeadersInterceptor;
 import org.apache.cxf.binding.soap.interceptor.SoapActionInInterceptor;
 import org.apache.cxf.binding.soap.interceptor.SoapActionOutInterceptor;
+import org.apache.cxf.binding.soap.interceptor.SoapHeaderInterceptor;
 import org.apache.cxf.binding.soap.interceptor.SoapHeaderOutFilterInterceptor;
 import org.apache.cxf.binding.soap.interceptor.SoapOutInterceptor;
 import org.apache.cxf.binding.soap.interceptor.SoapPreProtocolOutInterceptor;
@@ -30,6 +32,7 @@ import org.apache.cxf.interceptor.AttachmentInInterceptor;
 import org.apache.cxf.interceptor.AttachmentOutInterceptor;
 import org.apache.cxf.interceptor.StaxInInterceptor;
 import org.apache.cxf.interceptor.StaxOutInterceptor;
+import org.apache.cxf.interceptor.URIMappingInterceptor;
 import org.apache.cxf.service.Service;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 import org.apache.cxf.service.model.EndpointInfo;
@@ -77,7 +80,9 @@ public class WSDLSoapServiceFactoryBean extends ReflectionServiceFactoryBean {
         getService().getInInterceptors().add(new ReadHeadersInterceptor(getBus()));
         getService().getInInterceptors().add(new MustUnderstandInterceptor());
         getService().getInInterceptors().add(new AttachmentInInterceptor());
-
+        getService().getInInterceptors().add(new SoapHeaderInterceptor());
+        getService().getInInterceptors().add(new CheckFaultInterceptor());
+        getService().getInInterceptors().add(new URIMappingInterceptor());
 
         getService().getInInterceptors().add(new StaxInInterceptor());
         getService().getInInterceptors().add(new SoapActionInInterceptor());
