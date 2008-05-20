@@ -64,7 +64,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
         while (true) {
             if (nextExchange.isFailed()) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Mesage exchange has failed so breaking out of pipeline: " + nextExchange
+                    LOG.debug("Message exchange has failed so breaking out of pipeline: " + nextExchange
                               + " exception: " + nextExchange.getException() + " fault: "
                               + nextExchange.getFault(false));
                 }
@@ -114,7 +114,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
 
                     if (nextExchange.isFailed()) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Mesage exchange has failed so breaking out of pipeline: " + nextExchange + " exception: " + nextExchange.getException() + " fault: "
+                            LOG.debug("Message exchange has failed so breaking out of pipeline: " + nextExchange + " exception: " + nextExchange.getException() + " fault: "
                                     + nextExchange.getFault(false));
                         }
                         break;

@@ -63,22 +63,25 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         this.endpoint = endpoint;
         dataFormat = CxfEndpointUtils.getDataFormat(endpoint);
         if (dataFormat.equals(DataFormat.POJO)) {
-            client = createClientFormClientFactoryBean(null);
+            client = createClientFromClientFactoryBean(null);
         } else {
-            // Create CxfClient for message
-            client = createClientForStreamMessge();
+            // Create CxfClient for message or payload type
+            client = createClientForStreamMessage();
         }
     }
 
-    private Client createClientForStreamMessge() throws CamelException {
+    private Client createClientForStreamMessage() throws CamelException {
         CxfClientFactoryBean cfb = new CxfClientFactoryBean();
         Class serviceClass = null;
         if (endpoint.isSpringContextEndpoint()) {
             CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
             serviceClass = cxfEndpointBean.getServiceClass();
         } else {
+            if (endpoint.getServiceClass() == null) {
+                throw new CamelException("serviceClass setting missing from CXF endpoint configuration");
+            }
             try {
-                serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
+               serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
             } catch (ClassNotFoundException e) {
                 throw new CamelException(e);
             }
@@ -98,11 +101,11 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         }
         cfb.setFeatures(features);
 
-        return createClientFormClientFactoryBean(cfb);
+        return createClientFromClientFactoryBean(cfb);
     }
 
     // If cfb is null, we will try to find the right cfb to use.
-    private Client createClientFormClientFactoryBean(ClientFactoryBean cfb) throws CamelException {
+    private Client createClientFromClientFactoryBean(ClientFactoryBean cfb) throws CamelException {
         Bus bus = BusFactory.getDefaultBus();
         if (endpoint.isSpringContextEndpoint()) {
             CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
