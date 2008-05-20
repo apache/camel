@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import java.security.spec.ECField;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -299,6 +300,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
 
     /**
      * Send the body to an endpoint returning any result output body
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern
      *
      * @param endpoint
      * @param processor the processor which will populate the exchange before sending
@@ -310,6 +312,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
 
     /**
      * Send the body to an endpoint returning any result output body
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern
      *
      * @param endpoint
      * @param body     = the payload
@@ -321,6 +324,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
 
     /**
      * Send the body to an endpoint returning any result output body
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern
      *
      * @param endpoint
      * @param body        = the payload
@@ -334,6 +338,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
 
     /**
      * Send the body to an endpoint returning any result output body
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern
      *
      * @param endpoint
      * @param processor the processor which will populate the exchange before sending
@@ -345,6 +350,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
 
     /**
      * Send the body to an endpoint returning any result output body
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern
      *
      * @param endpoint
      * @param body     = the payload
@@ -356,6 +362,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
 
     /**
      * Send the body to an endpoint returning any result output body
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern
      *
      * @param endpoint
      * @param body        = the payload
@@ -399,10 +406,21 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
         return send(getMandatoryDefaultEndpoint(), processor);
     }
 
+    /**
+     * Sends an {@link ExchangePattern#InOnly} exchange to the default endpoint using the supplied body, header and header value
+     * @param body the message body
+     * @param header the message header
+     * @param headerValue the message header value
+     */
     public Object sendBodyAndHeader(Object body, String header, Object headerValue) {
         return sendBodyAndHeader(getMandatoryDefaultEndpoint(), body, header, headerValue);
     }
 
+    /**
+     * Sends an {@link ExchangePattern#InOnly} exchange to the default endpoint
+     * @param body the message body
+     * @param headers a map with header values 
+     */
     public Object sendBodyAndHeaders(Object body, Map<String, Object> headers) {
         return sendBodyAndHeaders(getMandatoryDefaultEndpoint(), body, headers);
     }
