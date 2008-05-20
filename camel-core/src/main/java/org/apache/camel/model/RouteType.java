@@ -229,4 +229,17 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
         intercept(new StreamCachingInterceptor());
         return this;
     }
+        
+    /**
+     * Enable stream caching on this route
+     * @param enable <code>true</code> for enabling stream caching
+     */
+    @XmlAttribute(required=false)
+    public void setStreamCaching(Boolean enable) {
+        if (enable) {
+            streamCaching();
+        } else {
+            noStreamCaching();
+        }
+    }
 }
