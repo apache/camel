@@ -38,6 +38,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.DataFormatClause;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
@@ -45,6 +46,7 @@ import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.impl.RouteContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.model.language.LanguageExpression;
@@ -1473,9 +1475,18 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
             throw new RuntimeCamelException("target provided.");
         }
 
-        InterceptStrategy strategy = routeContext.getInterceptStrategy();
-        if (strategy != null) {
-            target = strategy.wrapProcessorInInterceptors(this, target);
+
+        List<InterceptStrategy> strategies = new ArrayList<InterceptStrategy>();
+        CamelContext camelContext = routeContext.getCamelContext();
+        if (camelContext instanceof DefaultCamelContext) {
+            DefaultCamelContext defaultCamelContext = (DefaultCamelContext) camelContext;
+            strategies.addAll(defaultCamelContext.getInterceptStrategies());
+        }
+        strategies.addAll(routeContext.getInterceptStrategies());
+        for (InterceptStrategy strategy : strategies) {
+            if (strategy != null) {
+                target = strategy.wrapProcessorInInterceptors(this, target);
+            }
         }
 
         List<InterceptorType> list = routeContext.getRoute().getInterceptors();

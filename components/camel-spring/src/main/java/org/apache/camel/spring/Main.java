@@ -55,8 +55,11 @@ public class Main extends ServiceSupport {
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private String dotOutputDir;
     private boolean aggregateDot;
+    private boolean debug = false;
     private List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
     private List<SpringCamelContext> camelContexts = new ArrayList<SpringCamelContext>();
+    private AbstractApplicationContext parentApplicationContext;
+    private String parentApplicationContextUri;
 
     public Main() {
         addOption(new Option("h", "help", "Displays the help screen") {
@@ -70,6 +73,11 @@ public class Main extends ServiceSupport {
                 "Sets the classpath based pring ApplicationContext", "applicationContext") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setApplicationContextUri(parameter);
+            }
+        });
+        addOption(new Option("d", "debug", "Enables the debugger") {
+            protected void doProcess(String arg, LinkedList<String> remainingArgs) {
+                setDebug(true);
             }
         });
         addOption(new ParameterOption("o", "outdir",
@@ -188,6 +196,7 @@ public class Main extends ServiceSupport {
         options.add(option);
     }
 
+
     public abstract class Option {
         private String abbreviation;
         private String fullName;
@@ -255,12 +264,34 @@ public class Main extends ServiceSupport {
         this.applicationContext = applicationContext;
     }
 
+
     public String getApplicationContextUri() {
         return applicationContextUri;
     }
 
     public void setApplicationContextUri(String applicationContextUri) {
         this.applicationContextUri = applicationContextUri;
+    }
+    public AbstractApplicationContext getParentApplicationContext() {
+        if (parentApplicationContext == null) {
+            if (parentApplicationContextUri != null) {
+                parentApplicationContext = new ClassPathXmlApplicationContext(parentApplicationContextUri);
+                parentApplicationContext.start();
+            }
+        }
+        return parentApplicationContext;
+    }
+
+    public void setParentApplicationContext(AbstractApplicationContext parentApplicationContext) {
+        this.parentApplicationContext = parentApplicationContext;
+    }
+
+    public String getParentApplicationContextUri() {
+        return parentApplicationContextUri;
+    }
+
+    public void setParentApplicationContextUri(String parentApplicationContextUri) {
+        this.parentApplicationContextUri = parentApplicationContextUri;
     }
 
     public List<SpringCamelContext> getCamelContexts() {
@@ -321,6 +352,17 @@ public class Main extends ServiceSupport {
         return aggregateDot;
     }
 
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+        if (debug) {
+            setParentApplicationContextUri("/META-INF/services/org/apache/camel/spring/debug.xml");
+        }
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
     protected void doStart() throws Exception {
@@ -335,7 +377,13 @@ public class Main extends ServiceSupport {
 
     protected AbstractApplicationContext createDefaultApplicationContext() {
         String[] args = getApplicationContextUri().split(";");
-        return new ClassPathXmlApplicationContext(args);
+        ApplicationContext parentContext = getParentApplicationContext();
+        if (parentContext != null ) {
+            return new ClassPathXmlApplicationContext(args, parentContext);
+        }
+        else {
+            return new ClassPathXmlApplicationContext(args);
+        }
     }
 
     protected void doStop() throws Exception {
