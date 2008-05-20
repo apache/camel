@@ -60,6 +60,6 @@ public class GenerateXmlTest extends XmlTestSupport {
         StringWriter buffer = new StringWriter();
         marshaller.marshal(context, buffer);
         log.info("Created: " + buffer);
-        System.out.println("Created: " + buffer);
+        //System.out.println("Created: " + buffer);
     }
 }
