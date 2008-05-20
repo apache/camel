@@ -76,7 +76,7 @@ public class MulticastStreamCachingTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 //stream caching should fix re-readability issues when multicasting messags
-                from("direct:a").streamCaching().multicast().to("direct:x", "direct:y", "direct:z");
+                from("direct:a").multicast().to("direct:x", "direct:y", "direct:z");
 
                 from("direct:x").process(processor).to("mock:x");
                 from("direct:y").process(processor).to("mock:y");
