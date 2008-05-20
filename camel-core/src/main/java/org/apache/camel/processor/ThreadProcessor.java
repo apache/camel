@@ -16,11 +16,9 @@
  */
 package org.apache.camel.processor;
 
-import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -50,6 +48,7 @@ public class ThreadProcessor implements AsyncProcessor, Service {
     private int maxSize = 1;
     private int coreSize = 1;
     private final AtomicBoolean shutdown = new AtomicBoolean(true);
+    private boolean callerRunsWhenRejected = true;
 
     class ProcessCall implements Runnable {
         private final Exchange exchange;
@@ -63,10 +62,8 @@ public class ThreadProcessor implements AsyncProcessor, Service {
         public void run() {
             if (shutdown.get()) {
                 exchange.setException(new RejectedExecutionException());
-                callback.done(false);
-            } else {
-                callback.done(false);
             }
+            callback.done(false);
         }
     }
 
@@ -79,19 +76,26 @@ public class ThreadProcessor implements AsyncProcessor, Service {
             throw new IllegalStateException("ThreadProcessor is not running.");
         }
         ProcessCall call = new ProcessCall(exchange, callback);
-        executor.execute(call);
-        return false;
+        try {
+            executor.execute(call);
+            return false;
+        } catch ( RejectedExecutionException e ) {
+            if( callerRunsWhenRejected ) {
+                if (shutdown.get()) {
+                    exchange.setException(new RejectedExecutionException());
+                } else {
+                    callback.done(true);
+                }
+            } else {
+                exchange.setException(e);
+            }
+            return true;
+        }
     }
 
     public void start() throws Exception {
         shutdown.set(false);
-        getExecutor().setRejectedExecutionHandler(new RejectedExecutionHandler() {
-            public void rejectedExecution(Runnable runnable, ThreadPoolExecutor executor) {
-                ProcessCall call = (ProcessCall)runnable;
-                call.exchange.setException(new RejectedExecutionException());
-                call.callback.done(false);
-            }
-        });
+        getExecutor();
     }
 
     public void stop() throws Exception {
@@ -196,6 +200,14 @@ public class ThreadProcessor implements AsyncProcessor, Service {
 
     public void setExecutor(ThreadPoolExecutor executor) {
         this.executor = executor;
+    }
+
+    public boolean isCallerRunsWhenRejected() {
+        return callerRunsWhenRejected;
+    }
+
+    public void setCallerRunsWhenRejected(boolean callerRunsWhenRejected) {
+        this.callerRunsWhenRejected = callerRunsWhenRejected;
     }
 
 }
