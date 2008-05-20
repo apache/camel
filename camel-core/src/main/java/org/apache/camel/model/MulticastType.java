@@ -83,6 +83,11 @@ public class MulticastType extends OutputType<ProcessorType> {
 
     public void setThreadPoolExecutor(ThreadPoolExecutor executor) {
         this.threadPoolExecutor = executor;
+    }
 
+    @Override
+    protected Processor wrapProcessorInInterceptors(RouteContext routeContext, Processor target) throws Exception {
+        // No need to wrap me in interceptors as they are all applied directly to my children
+        return target;
     }
 }

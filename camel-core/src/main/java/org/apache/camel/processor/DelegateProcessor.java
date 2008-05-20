@@ -35,6 +35,9 @@ public class DelegateProcessor extends ServiceSupport implements Processor {
     }
 
     public DelegateProcessor(Processor processor) {
+        if (processor == this) {
+            throw new IllegalArgumentException("Recursive DelegateProcessor!");
+        }
         this.processor = processor;
     }
 

@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
-import org.apache.camel.Route;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.processor.DelegateProcessor;
 

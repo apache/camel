@@ -165,7 +165,7 @@ public class RouteContext {
             block.addOutput(processorType);
         }
         route.clearOutput();
-        route.addInterceptor(block);
+        route.intercept(block);
 */
 
         //getRoute().getInterceptors().add(new InterceptorRef(interceptor));

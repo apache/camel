@@ -48,6 +48,11 @@ public class StreamCachingInterceptor extends Interceptor {
         setProcessor(processor);
     }
 
+    @Override
+    public String toString() {
+        return "StreamCachingInterceptor";
+    }
+
     /**
      * Remove the {@link StreamCachingInterceptor} type of interceptor from the given list of interceptors
      *

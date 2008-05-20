@@ -145,13 +145,14 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             ProcessorType<?>[] outputs =
                 routeType.getOutputs().toArray(new ProcessorType<?>[0]);
 
-            routeType.clearOutput();
+            //routeType.clearOutput();
             InstrumentationProcessor processor = new InstrumentationProcessor();
-            routeType.intercept(processor);
-            for (ProcessorType<?> output : outputs) {
+            routeType.addInterceptor(processor);
+
+            /*for (ProcessorType<?> output : outputs) {
                 routeType.addOutput(output);
             }
-
+*/
             interceptorMap.put(endpoint, processor);
         }
     }

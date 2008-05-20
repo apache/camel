@@ -3,6 +3,7 @@ package org.apache.camel.spring.interceptor;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import java.io.StringReader;
+import java.util.List;
 
 import javax.xml.transform.stream.StreamSource;
 
@@ -10,6 +11,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.hamcrest.Assertions;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.StreamCache;
 
@@ -26,6 +28,8 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
         template.sendBody("direct:a", message);
 
         assertMockEndpointsSatisifed();
+        Exchange exchange = a.getExchanges().get(0);
+        StreamCache streamCache = Assertions.assertInstanceOf(exchange.getIn().getBody(), StreamCache.class);
         //assertTrue(a.assertExchangeReceived(0).getIn().getBody() instanceof StreamCache);
     }
 

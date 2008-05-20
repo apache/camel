@@ -35,6 +35,7 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Route;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
+import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,19 +47,15 @@ import org.apache.commons.logging.LogFactory;
  */
 @XmlRootElement(name = "route")
 @XmlType(propOrder = {"inputs", "outputs" })
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class RouteType extends ProcessorType<ProcessorType> implements CamelContextAware {
     private static final transient Log LOG = LogFactory.getLog(RouteType.class);
-    @XmlTransient
     private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
-    @XmlElementRef
     private List<FromType> inputs = new ArrayList<FromType>();
-    @XmlElementRef
     private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
-    @XmlAttribute
     private String group;
-    @XmlTransient
     private CamelContext camelContext;
+    private Boolean streamCaching;
 
     public RouteType() {
     }
@@ -126,6 +123,7 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
         return interceptors;
     }
 
+    @XmlTransient
     public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
     }
@@ -134,6 +132,7 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
         return inputs;
     }
 
+    @XmlElementRef
     public void setInputs(List<FromType> inputs) {
         this.inputs = inputs;
     }
@@ -142,9 +141,11 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
         return outputs;
     }
 
+    @XmlElementRef
     public void setOutputs(List<ProcessorType<?>> outputs) {
         this.outputs = outputs;
 
+        // TODO I don't think this is called when using JAXB!
         if (outputs != null) {
             for (ProcessorType output : outputs) {
                 configureChild(output);
@@ -156,6 +157,7 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
         return camelContext;
     }
 
+    @XmlTransient
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
@@ -170,13 +172,32 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
         return group;
     }
 
+    @XmlAttribute
     public void setGroup(String group) {
         this.group = group;
     }
 
+    public Boolean getStreamCaching() {
+        return streamCaching;
+    }
+
+    /**
+     * Enable stream caching on this route
+     * @param streamCaching <code>true</code> for enabling stream caching
+     */
+    @XmlAttribute(required=false)
+    public void setStreamCaching(Boolean streamCaching) {
+        this.streamCaching = streamCaching;
+        if (streamCaching != null && streamCaching) {
+            streamCaching();
+        } else {
+            noStreamCaching();
+        }
+    }
+
+
     // Implementation methods
     // -------------------------------------------------------------------------
-
     protected void addRoutes(Collection<Route> routes, FromType fromType) throws Exception {
         RouteContext routeContext = new RouteContext(this, fromType, routes);
         routeContext.getEndpoint(); // force endpoint resolution
@@ -226,20 +247,12 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
      * Enable stream caching for this Route.
      */
     public RouteType streamCaching() {
-        intercept(new StreamCachingInterceptor());
+        addInterceptor(new StreamCachingInterceptor());
         return this;
     }
-        
-    /**
-     * Enable stream caching on this route
-     * @param enable <code>true</code> for enabling stream caching
-     */
-    @XmlAttribute(required=false)
-    public void setStreamCaching(Boolean enable) {
-        if (enable) {
-            streamCaching();
-        } else {
-            noStreamCaching();
-        }
+
+    @Override
+    public void addInterceptor(InterceptorType interceptor) {
+        getInterceptors().add(interceptor);
     }
 }
