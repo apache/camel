@@ -82,8 +82,8 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
                 // retrieve the per-route intercept for this route
                 InstrumentationProcessor interceptor = interceptorMap.get(route.getEndpoint());
                 if (interceptor == null) {
-                    LOG.warn("Instrumentation processor not found for route endpoint " +
-                            route.getEndpoint());
+                    LOG.warn("Instrumentation processor not found for route endpoint "
+                             + route.getEndpoint());
                 } else {
                     interceptor.setCounter(mr);
                 }
@@ -109,7 +109,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 
         // Create a map (ProcessorType -> PerformanceCounter)
         // to be passed to InstrumentationInterceptStrategy.
-        Map<ProcessorType, PerformanceCounter> counterMap = 
+        Map<ProcessorType, PerformanceCounter> counterMap =
             new HashMap<ProcessorType, PerformanceCounter>();
 
         // Each processor in a route will have its own performance counter
