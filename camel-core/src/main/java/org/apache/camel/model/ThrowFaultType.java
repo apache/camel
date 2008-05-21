@@ -80,7 +80,4 @@ public class ThrowFaultType extends ProcessorType<ThrowFaultType> {
     public List<ProcessorType<?>> getOutputs() {
         return Collections.EMPTY_LIST;
     }
-
-
-
 }

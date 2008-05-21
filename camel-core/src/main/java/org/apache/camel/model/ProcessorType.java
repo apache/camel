@@ -990,6 +990,15 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return answer;
     }
 
+    /**
+     * Forces handling of faults as exceptions
+     *
+     * @return the current builder with the fault handler configured
+     */
+    public Type handleFault() {
+        intercept(new HandleFaultType());
+        return (Type) this;
+    }
 
     /**
      * Installs the given error handler builder
