@@ -38,6 +38,8 @@ public final class MinaConverter {
     public static byte[] toByteArray(ByteBuffer buffer) {
         byte[] answer = new byte[buffer.remaining()];
         buffer.get(answer);
+        // must acquire the Byte buffer to avoid release if more than twice
+        buffer.acquire();
         return answer;
     }
 
