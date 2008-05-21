@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.stream.StreamSource;
@@ -49,27 +50,27 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 public class XsltBuilder implements Processor {
     private Map<String, Object> parameters = new HashMap<String, Object>();
     private XmlConverter converter = new XmlConverter();
-    private Transformer transformer;
+    private Templates template;
     private ResultHandlerFactory resultHandlerFactory = new StringResultHandlerFactory();
     private boolean failOnNullBody = true;
 
     public XsltBuilder() {
     }
 
-    public XsltBuilder(Transformer transformer) {
-        this.transformer = transformer;
+    public XsltBuilder(Templates templates) {
+        this.template = templates;
     }
 
     @Override
     public String toString() {
-        return "XSLT[" + transformer + "]";
+        return "XSLT[" + template + "]";
     }
 
-    public synchronized void process(Exchange exchange) throws Exception {
-        Transformer transformer = getTransformer();
-        if (transformer == null) {
-            throw new IllegalArgumentException("No transformer configured!");
+    public void process(Exchange exchange) throws Exception {
+        if (getTemplate() == null) {
+            throw new IllegalArgumentException("No template configured!");
         }
+        Transformer transformer = getTemplate().newTransformer();
         configureTransformer(transformer, exchange);
         Source source = getSource(exchange);
         ResultHandler resultHandler = resultHandlerFactory.createResult();
@@ -87,10 +88,10 @@ public class XsltBuilder implements Processor {
     // -------------------------------------------------------------------------
 
     /**
-     * Creates an XSLT processor using the given transformer instance
+     * Creates an XSLT processor using the given templates instance
      */
-    public static XsltBuilder xslt(Transformer transformer) {
-        return new XsltBuilder(transformer);
+    public static XsltBuilder xslt(Templates templates) {
+        return new XsltBuilder(templates);
     }
 
     /**
@@ -167,12 +168,12 @@ public class XsltBuilder implements Processor {
         this.parameters = parameters;
     }
 
-    public Transformer getTransformer() {
-        return transformer;
+    public void setTemplate(Templates template) {
+        this.template = template;
     }
-
-    public void setTransformer(Transformer transformer) {
-        this.transformer = transformer;
+    
+    public Templates getTemplate() {
+        return template;
     }
 
     public boolean isFailOnNullBody() {
@@ -198,14 +199,14 @@ public class XsltBuilder implements Processor {
      * @throws TransformerConfigurationException is thrown if creating a XSLT transformer failed.
      */
     public void setTransformerSource(Source source) throws TransformerConfigurationException {
-        // Check that the call to newTransformer() returns a valid transformer instance.
+        // Check that the call to newTemplates() returns a valid template instance.
         // In case of an xslt parse error, it will return null and we should stop the
         // deployment and raise an exception as the route will not be setup properly.
-        Transformer transformer = converter.getTransformerFactory().newTransformer(source);
-        if (transformer != null) {
-            setTransformer(transformer);
+        Templates templates = converter.getTransformerFactory().newTemplates(source);
+        if (templates != null) {
+            setTemplate(templates);
         } else {
-            throw new TransformerConfigurationException("Error creating XSLT transformer. "
+            throw new TransformerConfigurationException("Error creating XSLT template. "
                     + "This is most likely be caused by an XML parse error. "
                     + "Please verify your XSLT file configured.");
         }
@@ -266,7 +267,7 @@ public class XsltBuilder implements Processor {
     }
 
     /**
-     * Configures the transformerwith exchange specific parameters
+     * Configures the transformer with exchange specific parameters
      */
     protected void configureTransformer(Transformer transformer, Exchange exchange) {
         transformer.clearParameters();
