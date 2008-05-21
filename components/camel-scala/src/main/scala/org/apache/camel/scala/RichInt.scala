@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala;
+package org.apache.camel.scala
 
 /**
- * Trait containing common implicit conversion definitions
+ * Rich wrapper for Int, providing a convenient syntax for specifying Period and Frequency
  */
-trait Preamble {
-
-  implicit def exchangeWrapper(exchange: Exchange[T] forSome {type T}) = new RichExchange(exchange)
-  implicit def enrichInt(int: Int) = new RichInt(int)
+class RichInt(val int: Int) {
+  
+  def seconds = new Period(int).seconds
+  
+  def per(period: Int) = new Frequency(int, new Period(period))
 
 }

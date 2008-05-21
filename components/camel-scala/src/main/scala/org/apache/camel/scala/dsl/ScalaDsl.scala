@@ -70,7 +70,7 @@ trait ScalaDsl {
     this
   }
   
-  def throttle(count: Int) = new STrottlerType(target.throttler(count))
+  def throttle(frequency: Frequency) = new STrottlerType(target.throttler(frequency.count).timePeriodMillis(frequency.period.milliseconds))
   
   def loadbalance = new SLoadBalanceType(target.loadBalance)
   

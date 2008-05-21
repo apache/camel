@@ -42,13 +42,13 @@ class ThrottlerTest extends ScalaTestSupport {
   val builder =
     new RouteBuilder {
        //START SNIPPET: simple
-       "seda:a" throttle 3 per 2 seconds to ("mock:a")
+       "seda:a" throttle (3 per 2 seconds) to ("mock:a")
        //END SNIPPET: simple
        
        //START SNIPPET: block
        "seda:b" ==> {
          to ("mock:b")
-         throttle(3) per 2 seconds {
+         throttle (3 per 2 seconds) {
            to ("mock:c")
          }
        }
