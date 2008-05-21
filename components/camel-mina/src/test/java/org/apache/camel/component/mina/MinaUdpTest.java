@@ -60,11 +60,8 @@ public class MinaUdpTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("mina:udp://127.0.0.1:" + port).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        System.out.println("get a message");
-                    }
-                }).to("mock:result");
+                from("mina:udp://127.0.0.1:" + port).to("mina:udp://127.0.0.1:9000");
+                from("mina:udp://127.0.0.1:9000").to("mock:result");
             }
         };
     }
