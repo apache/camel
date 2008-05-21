@@ -301,8 +301,7 @@ public class ConvertersMojo extends AbstractMavenReport {
         return true;
     }
 
-    private File getSkinArtifactFile(DecorationModel decoration)
-            throws MojoFailureException {
+    private File getSkinArtifactFile(DecorationModel decoration) throws MojoFailureException {
 
         Skin skin = decoration.getSkin();
         if (skin == null) {
@@ -348,7 +347,7 @@ public class ConvertersMojo extends AbstractMavenReport {
     }
 
     private void generateReport(Sink sink, Locale locale, TypeMapping[] mappings)
-            throws MojoExecutionException {
+        throws MojoExecutionException {
         beginReport(sink, locale);
 
         Set<String> classes;

@@ -31,13 +31,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.RouteBuilderRef;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.dataformat.DataFormatType;
+import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.spi.InstrumentationAgent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -127,7 +127,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         Debugger debugger = null;
         String[] names = getApplicationContext().getBeanNamesForType(Debugger.class, true, true);
         if (names.length == 1) {
-             debugger = (Debugger) getApplicationContext().getBean(names[0], Debugger.class);
+            debugger = (Debugger) getApplicationContext().getBean(names[0], Debugger.class);
         }
         if (debugger == null) {
             ApplicationContext parentContext = getApplicationContext().getParent();
