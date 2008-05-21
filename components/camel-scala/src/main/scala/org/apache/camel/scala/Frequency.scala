@@ -14,14 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala;
+package org.apache.camel.scala
 
 /**
- * Trait containing common implicit conversion definitions
+ * Represents a frequency (count per period)
+ * @param count the number of occurrences
+ * @param period the time period for this frequency
  */
-trait Preamble {
-
-  implicit def exchangeWrapper(exchange: Exchange[T] forSome {type T}) = new RichExchange(exchange)
-  implicit def enrichInt(int: Int) = new RichInt(int)
-
+class Frequency(val count: Int, val period: Period) {
+  
+  def seconds = {
+    period.seconds
+    this
+  }
+  
 }
