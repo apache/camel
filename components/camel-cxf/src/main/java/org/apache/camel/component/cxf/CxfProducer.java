@@ -81,7 +81,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                 throw new CamelException("serviceClass setting missing from CXF endpoint configuration");
             }
             try {
-               serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
+                serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
             } catch (ClassNotFoundException e) {
                 throw new CamelException(e);
             }

@@ -55,7 +55,7 @@ public class Main extends ServiceSupport {
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private String dotOutputDir;
     private boolean aggregateDot;
-    private boolean debug = false;
+    private boolean debug;
     private List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
     private List<SpringCamelContext> camelContexts = new ArrayList<SpringCamelContext>();
     private AbstractApplicationContext parentApplicationContext;
@@ -378,10 +378,9 @@ public class Main extends ServiceSupport {
     protected AbstractApplicationContext createDefaultApplicationContext() {
         String[] args = getApplicationContextUri().split(";");
         ApplicationContext parentContext = getParentApplicationContext();
-        if (parentContext != null ) {
+        if (parentContext != null) {
             return new ClassPathXmlApplicationContext(args, parentContext);
-        }
-        else {
+        } else {
             return new ClassPathXmlApplicationContext(args);
         }
     }

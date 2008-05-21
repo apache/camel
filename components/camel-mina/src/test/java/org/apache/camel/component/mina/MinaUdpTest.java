@@ -21,6 +21,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -58,7 +60,11 @@ public class MinaUdpTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("mina:udp://127.0.0.1:" + port).to("mock:result");
+                from("mina:udp://127.0.0.1:" + port).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        System.out.println("get a message");
+                    }
+                }).to("mock:result");
             }
         };
     }
