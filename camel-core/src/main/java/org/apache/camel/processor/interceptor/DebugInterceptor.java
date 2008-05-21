@@ -24,22 +24,22 @@ import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Message;
+import org.apache.camel.processor.DelegateProcessor;
 
 /**
  * An interceptor for debugging and tracing routes
  * 
  * @version $Revision: 1.1 $
  */
-public class DebugInterceptor implements Processor {
+public class DebugInterceptor extends DelegateProcessor {
     private final ProcessorType node;
-    private final Processor target;
     private final List<Exchange> exchanges;
     private Predicate traceFilter;
     private Breakpoint breakpoint = new Breakpoint();
 
     public DebugInterceptor(ProcessorType node, Processor target, List<Exchange> exchanges) {
+        super(target);
         this.node = node;
-        this.target = target;
         this.exchanges = exchanges;
     }
 
@@ -51,15 +51,11 @@ public class DebugInterceptor implements Processor {
     public void process(Exchange exchange) throws Exception {
         checkForBreakpoint(exchange);        
         addTraceExchange(exchange);
-        target.process(exchange);
+        super.proceed(exchange);
     }
 
     public ProcessorType getNode() {
         return node;
-    }
-
-    public Processor getTarget() {
-        return target;
     }
 
     public List<Exchange> getExchanges() {

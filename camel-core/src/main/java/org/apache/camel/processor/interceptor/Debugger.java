@@ -24,6 +24,8 @@ import java.util.ArrayList;
 
 import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.commons.logging.Log;
@@ -39,6 +41,25 @@ public class Debugger implements InterceptStrategy {
 
     private int exchangeBufferSize = -1;
     private Map<String, DebugInterceptor> interceptors = new HashMap<String, DebugInterceptor>();
+
+    /**
+     * A helper method to return the debugger instance for a given {@link CamelContext} if one is enabled
+     *
+     * @param context the camel context the debugger is connected to
+     * @return the debugger or null if none can be found
+     */
+    public static Debugger getDebugger(CamelContext context) {
+        if (context instanceof DefaultCamelContext) {
+            DefaultCamelContext defaultCamelContext = (DefaultCamelContext) context;
+            List<InterceptStrategy> list = defaultCamelContext.getInterceptStrategies();
+            for (InterceptStrategy interceptStrategy : list) {
+               if (interceptStrategy instanceof Debugger) {
+                   return (Debugger) interceptStrategy;
+               }
+            }
+        }
+        return null;
+    }
 
     public DebugInterceptor getInterceptor(String id) {
         return interceptors.get(id);

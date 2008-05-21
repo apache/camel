@@ -28,6 +28,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelTemplate;
+import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -60,6 +62,7 @@ public class Main extends ServiceSupport {
     private List<SpringCamelContext> camelContexts = new ArrayList<SpringCamelContext>();
     private AbstractApplicationContext parentApplicationContext;
     private String parentApplicationContextUri;
+    private CamelTemplate camelTemplate;
 
     public Main() {
         addOption(new Option("h", "help", "Displays the help screen") {
@@ -77,7 +80,7 @@ public class Main extends ServiceSupport {
         });
         addOption(new Option("d", "debug", "Enables the debugger") {
             protected void doProcess(String arg, LinkedList<String> remainingArgs) {
-                setDebug(true);
+                enableDebugging();
             }
         });
         addOption(new ParameterOption("o", "outdir",
@@ -195,7 +198,6 @@ public class Main extends ServiceSupport {
     public void addOption(Option option) {
         options.add(option);
     }
-
 
     public abstract class Option {
         private String abbreviation;
@@ -356,15 +358,53 @@ public class Main extends ServiceSupport {
         return debug;
     }
 
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-        if (debug) {
-            setParentApplicationContextUri("/META-INF/services/org/apache/camel/spring/debug.xml");
+    public void enableDebugging() {
+        this.debug = true;
+        setParentApplicationContextUri("/META-INF/services/org/apache/camel/spring/debug.xml");
+    }
+
+    /**
+     * Returns the currently active debugger if one is enabled
+     *
+     * @return the current debugger or null if none is active
+     * @see #enableDebugging()
+     */
+    public Debugger getDebugger() {
+        for (SpringCamelContext camelContext : camelContexts) {
+            Debugger debugger = Debugger.getDebugger(camelContext);
+            if (debugger != null) {
+                return debugger;
+            }
         }
+        return null;
+    }
+
+    /**
+     * Returns a {@link CamelTemplate} from the Spring {@link ApplicationContext} instances
+     * or lazily creates a new one dynamically
+     *
+     * @return
+     */
+    public CamelTemplate getCamelTemplate() {
+        if (camelTemplate == null) {
+            camelTemplate = findOrCreateCamelTemplate();
+        }
+        return camelTemplate;
     }
 
     // Implementation methods
     // -------------------------------------------------------------------------
+    protected CamelTemplate findOrCreateCamelTemplate() {
+        String[] names = getApplicationContext().getBeanNamesForType(CamelTemplate.class);
+        if (names != null && names.length > 0) {
+            return (CamelTemplate) getApplicationContext().getBean(names[0], CamelTemplate.class);
+        }
+        for (SpringCamelContext camelContext : camelContexts) {
+            return new CamelTemplate(camelContext);
+        }
+        throw new IllegalArgumentException("No CamelContexts are available so cannot create a CamelTemplate!");
+    }
+
     protected void doStart() throws Exception {
         LOG.info("Apache Camel " + getVersion() + " starting");
         if (applicationContext == null) {
