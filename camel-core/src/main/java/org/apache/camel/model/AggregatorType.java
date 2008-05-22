@@ -32,12 +32,12 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.ExpressionClause;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.Aggregator;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * @version $Revision$

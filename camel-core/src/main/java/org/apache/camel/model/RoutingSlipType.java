@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.RoutingSlip;
+import org.apache.camel.spi.RouteContext;
 
 @XmlRootElement(name = "routingSlip")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -26,11 +26,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * @version $Revision$

@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.DataFormatType;
@@ -34,6 +33,7 @@ import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * Unmarshals the binary payload using the given {@link DataFormatType}

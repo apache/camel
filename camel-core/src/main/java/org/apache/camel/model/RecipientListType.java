@@ -22,9 +22,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.RecipientList;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * @version $Revision$

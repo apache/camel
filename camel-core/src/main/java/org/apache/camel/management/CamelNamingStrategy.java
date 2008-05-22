@@ -26,9 +26,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.spi.RouteContext;
 
 public class CamelNamingStrategy {
     public static final String VALUE_UNKNOWN = "unknown";

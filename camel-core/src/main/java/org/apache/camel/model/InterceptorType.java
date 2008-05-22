@@ -18,8 +18,8 @@ package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * @version $Revision$

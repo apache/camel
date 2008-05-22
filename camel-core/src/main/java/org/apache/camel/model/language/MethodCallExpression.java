@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.language.bean.BeanExpression;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * For expresions and predicates using the

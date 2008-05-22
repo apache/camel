@@ -21,9 +21,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Predicate;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * @version $Revision$

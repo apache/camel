@@ -26,10 +26,11 @@ import org.apache.camel.bam.TimeExpression;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.RouteContext;
+import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.OutputType;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.Time;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -92,7 +93,7 @@ public class TemporalRule extends ServiceSupport {
             ArrayList<Route> list = new ArrayList<Route>();
             RouteType route = new RouteType();
             route.setCamelContext(first.getBuilder().getProcessBuilder().getContext());
-            RouteContext routeContext = new RouteContext(route, null, list);
+            RouteContext routeContext = new DefaultRouteContext(route, null, list);
 
             overdueAction = overdueProcessors.createOutputsProcessor(routeContext);
         }

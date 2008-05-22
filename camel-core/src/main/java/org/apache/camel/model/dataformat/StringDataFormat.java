@@ -21,8 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * Represents the String (text based) {@link DataFormat}

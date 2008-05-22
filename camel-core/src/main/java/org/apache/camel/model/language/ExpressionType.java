@@ -33,8 +33,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionClause;
-import org.apache.camel.impl.RouteContext;
+import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -90,7 +91,7 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
 
     public Object evaluate(Exchange exchange) {
         if (expressionValue == null) {
-            RouteContext routeContext = new RouteContext(exchange.getContext());
+            RouteContext routeContext = new DefaultRouteContext(exchange.getContext());
             expressionValue = createExpression(routeContext);
         }
         ObjectHelper.notNull(expressionValue, "expressionValue");
@@ -105,7 +106,7 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
 
     public boolean matches(Exchange exchange) {
         if (predicate == null) {
-            RouteContext routeContext = new RouteContext(exchange.getContext());
+            RouteContext routeContext = new DefaultRouteContext(exchange.getContext());
             predicate = createPredicate(routeContext);
         }
         ObjectHelper.notNull(predicate, "predicate");

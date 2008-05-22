@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.impl.RouteContext;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * For XPath expresions and predicates

@@ -24,10 +24,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.language.ExpressionType;
-import org.apache.camel.processor.Delayer;
 import org.apache.camel.processor.SetHeaderProcessor;
+import org.apache.camel.spi.RouteContext;
 
 @XmlRootElement(name = "setHeader")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -23,7 +23,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
-import org.apache.camel.impl.RouteContext;
 
 public interface LifecycleStrategy {
     /**

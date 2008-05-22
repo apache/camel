@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.RouteContext;
 
 public class DefaultLifecycleStrategy implements LifecycleStrategy {
 

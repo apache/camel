@@ -29,12 +29,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.StreamResequencer;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * @version $Revision$

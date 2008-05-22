@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**

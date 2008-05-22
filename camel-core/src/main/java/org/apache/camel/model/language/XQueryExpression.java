@@ -24,8 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.impl.RouteContext;
-import org.apache.camel.model.OutputType;
+import org.apache.camel.spi.RouteContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
