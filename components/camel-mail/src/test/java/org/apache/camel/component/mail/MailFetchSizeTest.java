@@ -44,6 +44,7 @@ public class MailFetchSizeTest extends ContextTestSupport {
         mock.setResultWaitTime(2000L);
         mock.assertIsSatisfied();
 
+        Thread.sleep(500);
         assertEquals(3, mailbox.size());
 
         // reset mock to assert the next batch of 2 messages polled
@@ -54,6 +55,7 @@ public class MailFetchSizeTest extends ContextTestSupport {
         mock.setResultWaitTime(7000L);
         mock.assertIsSatisfied();
 
+        Thread.sleep(500);
         assertEquals(1, mailbox.size());
 
         // reset mock to assert the last message polled
