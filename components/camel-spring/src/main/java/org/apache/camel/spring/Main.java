@@ -16,22 +16,12 @@
  */
 package org.apache.camel.spring;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelTemplate;
-import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.model.RouteType;
+import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.RouteDotGenerator;
 import org.apache.commons.logging.Log;
@@ -39,6 +29,12 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A command line tool for booting up a CamelContext using an optional Spring
@@ -377,6 +373,14 @@ public class Main extends ServiceSupport {
             }
         }
         return null;
+    }
+
+    public List<RouteType> getRouteDefinitions() {
+        List<RouteType> answer = new ArrayList<RouteType>();
+        for (SpringCamelContext camelContext : camelContexts) {
+            answer.addAll(camelContext.getRouteDefinitions());
+        }
+        return answer;
     }
 
     /**
