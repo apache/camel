@@ -33,6 +33,11 @@ public class SpringJXPathFilterTest extends AbstractJUnit38SpringContextTests {
     @EndpointInject(uri = "mock:results")
     protected MockEndpoint endpoint;
 
+    @Override
+    protected void setUp() throws Exception {
+        endpoint.reset();
+    }
+    
     public void testFilterWithJXPath() throws Exception {
         endpoint.expectedMessageCount(1);
 
