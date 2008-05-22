@@ -16,3 +16,4 @@
 #
 
 class=org.apache.camel.component.file.FileComponent
+strategy.factory.class=org.apache.camel.component.file.strategy.FileProcessStrategyFactory

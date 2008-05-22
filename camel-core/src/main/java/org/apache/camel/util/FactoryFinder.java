@@ -102,7 +102,7 @@ public class FactoryFinder {
 
         Class clazz = (Class)classMap.get(propertyPrefix + key);
         if (clazz == null) {
-            clazz = newInstance(doFindFactoryProperies(key), propertyPrefix);
+            clazz = newInstance(doFindFactoryProperties(key), propertyPrefix);
             classMap.put(propertyPrefix + key, clazz);
         }
         return clazz;
@@ -145,7 +145,7 @@ public class FactoryFinder {
         return clazz;
     }
 
-    private Properties doFindFactoryProperies(String key) throws IOException {
+    private Properties doFindFactoryProperties(String key) throws IOException {
         String uri = path + key;
 
         // lets try the thread context class loader first
