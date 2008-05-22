@@ -25,6 +25,7 @@ import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.spring.Main;
 import org.apache.camel.CamelTemplate;
 import org.apache.camel.Exchange;
+import org.apache.camel.model.RouteType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -55,6 +56,10 @@ public class DebugTest extends TestCase {
         DebugInterceptor f1 = assertHasInterceptor("f1");
         DebugInterceptor o1 = assertHasInterceptor("o1");
         DebugInterceptor o2 = assertHasInterceptor("o2");
+
+        // now lets get the routes
+        List<RouteType> routes = main.getRouteDefinitions();
+        assertEquals("Number of routes", 1, routes.size());
 
         // now lets send a message
         CamelTemplate template = main.getCamelTemplate();
