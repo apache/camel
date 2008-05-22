@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file.strategy;
 
+import java.util.Properties;
+
 import org.apache.camel.component.file.FileProcessStrategy;
 
 /**
@@ -30,12 +32,20 @@ public final class FileProcessStrategyFactory {
     /**
      * A strategy method to lazily create the file strategy to use.
      */
-    public static FileProcessStrategy createFileProcessStrategy(boolean isNoop, boolean isDelete, boolean isLock, String moveNamePrefix, String moveNamePostfix) {
-        if (isNoop) {
+    public static FileProcessStrategy createFileProcessStrategy(Properties params) {
+
+    	// We assume a value is present only if its value not null for String and 'true' for boolean    	
+    	boolean isDelete = params.getProperty("delete") != null;
+    	boolean isLock = params.getProperty("lock") != null;
+    	String moveNamePrefix = params.getProperty("moveNamePrefix");
+    	String moveNamePostfix = params.getProperty("moveNamePostfix");
+    	
+        if (params.getProperty("noop") != null) {
             return new NoOpFileProcessStrategy();
         } else if (moveNamePostfix != null || moveNamePrefix != null) {
             if (isDelete) {
-                throw new IllegalArgumentException("You cannot set the deleteFiles property and a moveFilenamePostfix or moveFilenamePrefix");
+                throw new IllegalArgumentException("You cannot set the deleteFiles property " 
+                    + "and a moveFilenamePostfix or moveFilenamePrefix");
             }
             return new RenameFileProcessStrategy(isLock, moveNamePrefix, moveNamePostfix);
         } else if (isDelete) {
