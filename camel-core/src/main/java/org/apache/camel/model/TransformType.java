@@ -22,8 +22,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.TransformProcessor;
+import org.apache.camel.spi.RouteContext;
 
 @XmlRootElement(name = "transform")
 @XmlAccessorType(XmlAccessType.FIELD)

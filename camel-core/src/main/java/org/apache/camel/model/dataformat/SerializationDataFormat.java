@@ -18,8 +18,8 @@ package org.apache.camel.model.dataformat;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * Represents the Java Serialization {@link DataFormat}

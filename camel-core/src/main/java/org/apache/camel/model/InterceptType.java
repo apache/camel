@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.PredicateBuilder;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.Interceptor;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * @version $Revision$

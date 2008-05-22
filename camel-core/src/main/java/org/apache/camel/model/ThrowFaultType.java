@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.ThrowFaultProcessor;
+import org.apache.camel.spi.RouteContext;
 
 @XmlRootElement(name = "throwFault")
 @XmlAccessorType(XmlAccessType.FIELD)

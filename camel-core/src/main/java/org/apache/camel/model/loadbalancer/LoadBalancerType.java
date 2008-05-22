@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.notNull;

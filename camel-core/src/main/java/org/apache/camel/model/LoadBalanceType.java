@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.loadbalancer.LoadBalancerType;
 import org.apache.camel.model.loadbalancer.RandomLoadBalanceStrategy;
 import org.apache.camel.model.loadbalancer.RoundRobinLoadBalanceStrategy;
@@ -41,6 +40,7 @@ import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 
 @XmlRootElement(name = "loadBalance")

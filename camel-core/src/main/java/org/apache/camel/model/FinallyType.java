@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
-import org.apache.camel.impl.RouteContext;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * @version $Revision$

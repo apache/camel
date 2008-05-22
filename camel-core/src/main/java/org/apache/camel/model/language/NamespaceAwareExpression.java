@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.impl.RouteContext;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * A useful base class for any expression which may be namespace or XML content aware

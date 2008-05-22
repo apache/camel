@@ -35,6 +35,7 @@ import org.apache.camel.processor.Interceptor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.ProceedProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.InterceptStrategy;
 
 /**
@@ -42,7 +43,7 @@ import org.apache.camel.spi.InterceptStrategy;
  *
  * @version $Revision$
  */
-public class RouteContext {
+public class DefaultRouteContext implements RouteContext {
     private RouteType route;
     private FromType from;
     private Collection<Route> routes;
@@ -52,7 +53,7 @@ public class RouteContext {
     private CamelContext camelContext;
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
 
-    public RouteContext(RouteType route, FromType from, Collection<Route> routes) {
+    public DefaultRouteContext(RouteType route, FromType from, Collection<Route> routes) {
         this.route = route;
         this.from = from;
         this.routes = routes;
@@ -61,7 +62,7 @@ public class RouteContext {
     /**
      * Only used for lazy construction from inside ExpressionType
      */
-    public RouteContext(CamelContext camelContext) {
+    public DefaultRouteContext(CamelContext camelContext) {
         this.camelContext = camelContext;
         routes = new ArrayList<Route>();
         route = new RouteType("temporary");
@@ -97,9 +98,6 @@ public class RouteContext {
         return route.resolveEndpoint(uri);
     }
 
-    /**
-     * Resolves an endpoint from either a URI or a named reference
-     */
     public Endpoint<? extends Exchange> resolveEndpoint(String uri, String ref) {
         Endpoint<? extends Exchange> endpoint = null;
         if (uri != null) {
@@ -121,17 +119,10 @@ public class RouteContext {
         }
     }
 
-    /**
-     * lookup an object by name and type
-     */
     public <T> T lookup(String name, Class<T> type) {
         return getCamelContext().getRegistry().lookup(name, type);
     }
 
-    /**
-     * Lets complete the route creation, creating a single event driven route
-     * for the current from endpoint with any processors required
-     */
     public void commit() {
         // now lets turn all of the event driven consumer processors into a
         // single route
