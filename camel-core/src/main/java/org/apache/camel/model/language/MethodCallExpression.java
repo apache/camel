@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * For expresions and predicates using the
- * <a href="http://activemq.apache.org/camel/bean-language.html>bean language</a>
+ * <a href="http://activemq.apache.org/camel/bean-language.html">bean language</a>
  *
  * @version $Revision$
  */

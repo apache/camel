@@ -19,6 +19,10 @@ package org.apache.camel;
 import java.util.Map;
 
 /**
+ * Template (named like Spring's TransactionTemplate & JmsTemplate
+ * et al) for working with Camel and sending {@link Message} instances in an
+ * {@link Exchange} to an {@link Endpoint}.
+ *
  * @version $Revision$
  */
 public interface ProducerTemplate<E extends Exchange> extends Service {
