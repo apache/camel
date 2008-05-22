@@ -37,9 +37,13 @@ public final class MinaConverter {
     @Converter
     public static byte[] toByteArray(ByteBuffer buffer) {
         byte[] answer = new byte[buffer.remaining()];
+        try {
+            // must acquire the Byte buffer to avoid release if more than twice
+            buffer.acquire();
+        } catch (IllegalStateException ex) {
+            // catch the exception if we acquire the buffer which is already released.
+        }
         buffer.get(answer);
-        // must acquire the Byte buffer to avoid release if more than twice
-        buffer.acquire();
         return answer;
     }
 
@@ -61,6 +65,7 @@ public final class MinaConverter {
 
     @Converter
     public static ByteBuffer toByteBuffer(byte[] bytes) {
+        System.out.println("calling to ByteBuffer");
         ByteBuffer buf = ByteBuffer.allocate(bytes.length);
         buf.put(bytes);
         return buf;
