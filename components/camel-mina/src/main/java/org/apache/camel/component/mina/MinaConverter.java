@@ -65,7 +65,6 @@ public final class MinaConverter {
 
     @Converter
     public static ByteBuffer toByteBuffer(byte[] bytes) {
-        System.out.println("calling to ByteBuffer");
         ByteBuffer buf = ByteBuffer.allocate(bytes.length);
         buf.put(bytes);
         return buf;
