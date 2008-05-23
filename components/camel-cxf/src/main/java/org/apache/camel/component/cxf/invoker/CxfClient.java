@@ -108,6 +108,8 @@ public class CxfClient extends ClientImpl {
         }
 
         Message message = prepareMessage(exchange, requestContext, param, invokingContext);
+        // add the invocation context
+        message.put(Message.INVOCATION_CONTEXT, context);
 
         // add the endpoint props to the message
         Endpoint ep = getEndpoint();

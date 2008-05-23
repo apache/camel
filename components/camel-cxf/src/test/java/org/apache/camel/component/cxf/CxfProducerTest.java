@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.ws.Endpoint;
 
@@ -30,20 +31,24 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.bus.CXFBusFactory;
+import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.apache.cxf.helpers.CastUtils;
 import org.apache.hello_world_soap_http.GreeterImpl;
 
 /**
  * @version $Revision$
  */
 public class CxfProducerTest extends TestCase {
+    protected static final String ECHO_OPERATION = "echo";
+    protected static final String GREET_ME_OPERATION = "greetMe";
+    protected static final String TEST_MESSAGE = "Hello World!";
+    protected static final String SIMPLE_SERVER_ADDRESS = "http://localhost:28080/test";
+    protected static final String JAXWS_SERVER_ADDRESS = "http://localhost:28081/test";
+
     private static final transient Log LOG = LogFactory.getLog(CxfProducerTest.class);
-    private static final String SIMPLE_SERVER_ADDRESS = "http://localhost:28080/test";
-    private static final String JAXWS_SERVER_ADDRESS = "http://localhost:28081/test";
-    private static final String ECHO_OPERATION = "echo";
-    private static final String GREET_ME_OPERATION = "greetMe";
-    private static final String TEST_MESSAGE = "Hello World!";
+
     protected CamelContext camelContext = new DefaultCamelContext();
     protected CamelTemplate<CxfExchange> template = new CamelTemplate<CxfExchange>(camelContext);
 
@@ -78,8 +83,43 @@ public class CxfProducerTest extends TestCase {
         }
     }
 
+
     public void testInvokingSimpleServerWithParams() throws Exception {
 
+        CxfExchange exchange = sendSimpleMessage();
+
+        org.apache.camel.Message out = exchange.getOut();
+        Object[] output = (Object[])out.getBody();
+        LOG.info("Received output text: " + output[0]);
+        Map<String, Object> responseContext = CastUtils.cast((Map)out.getHeader(Client.RESPONSE_CONTEXT));
+        assertNotNull(responseContext);
+        assertEquals("We should get the response context here", "UTF-8", responseContext.get(org.apache.cxf.message.Message.ENCODING));
+        assertEquals("reply body on Camel", "echo " + TEST_MESSAGE, output[0]);
+    }
+
+
+    public void testInvokingJaxWsServerWithParams() throws Exception {
+        CxfExchange exchange = sendJaxWsMessage();
+
+        org.apache.camel.Message out = exchange.getOut();
+        Object[] output = (Object[])out.getBody();
+        LOG.info("Received output text: " + output[0]);
+        Map<String, Object> responseContext = CastUtils.cast((Map)out.getHeader(Client.RESPONSE_CONTEXT));
+        assertNotNull(responseContext);
+        assertEquals("Get the wrong wsdl opertion name", "{http://apache.org/hello_world_soap_http}greetMe", responseContext.get("javax.xml.ws.wsdl.operation").toString());
+        assertEquals("reply body on Camel", "Hello " + TEST_MESSAGE, output[0]);
+    }
+
+    protected String getSimpleEndpointUri() {
+        return "cxf://" + SIMPLE_SERVER_ADDRESS
+            + "?serviceClass=org.apache.camel.component.cxf.HelloService";
+    }
+
+    protected String getJaxwsEndpointUri() {
+        return "cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter";
+
+    }
+    protected CxfExchange sendSimpleMessage() {
         CxfExchange exchange = (CxfExchange)template.send(getSimpleEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {
                 final List<String> params = new ArrayList<String>();
@@ -88,15 +128,10 @@ public class CxfProducerTest extends TestCase {
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, ECHO_OPERATION);
             }
         });
+        return exchange;
 
-        org.apache.camel.Message out = exchange.getOut();
-        Object[] output = (Object[])out.getBody();
-        LOG.info("Received output text: " + output[0]);
-        assertEquals("reply body on Camel", "echo " + TEST_MESSAGE, output[0]);
     }
-
-
-    public void testInvokingJawsServerWithParams() throws Exception {
+    protected CxfExchange sendJaxWsMessage() {
         CxfExchange exchange = (CxfExchange)template.send(getJaxwsEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {
                 final List<String> params = new ArrayList<String>();
@@ -105,20 +140,6 @@ public class CxfProducerTest extends TestCase {
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, GREET_ME_OPERATION);
             }
         });
-
-        org.apache.camel.Message out = exchange.getOut();
-        Object[] output = (Object[])out.getBody();
-        LOG.info("Received output text: " + output[0]);
-        assertEquals("reply body on Camel", "Hello " + TEST_MESSAGE, output[0]);
-    }
-
-    private String getSimpleEndpointUri() {
-        return "cxf://" + SIMPLE_SERVER_ADDRESS
-            + "?serviceClass=org.apache.camel.component.cxf.HelloService";
-    }
-
-    private String getJaxwsEndpointUri() {
-        return "cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter";
-
+        return exchange;
     }
 }
