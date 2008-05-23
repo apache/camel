@@ -51,6 +51,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ReflectionInjector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

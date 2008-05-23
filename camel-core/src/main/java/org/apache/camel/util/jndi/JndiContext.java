@@ -37,10 +37,10 @@ import javax.naming.OperationNotSupportedException;
 import javax.naming.Reference;
 import javax.naming.spi.NamingManager;
 
-import org.apache.camel.impl.ReflectionInjector;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ReflectionInjector;
 
 /**
  * A default JNDI context

@@ -18,8 +18,8 @@ package org.apache.camel;
 
 import junit.framework.TestCase;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.ReflectionInjector;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.util.ReflectionInjector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

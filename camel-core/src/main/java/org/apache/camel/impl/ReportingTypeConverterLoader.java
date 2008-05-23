@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.impl;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -25,14 +25,14 @@ import java.util.List;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
 import org.apache.camel.impl.converter.TypeConverterRegistry;
-import static org.apache.camel.util.ObjectHelper.equal;
+import org.apache.camel.util.ObjectHelper;
 
 public class ReportingTypeConverterLoader extends AnnotationTypeConverterLoader {
 
     private static final Comparator<TypeMapping> COMPARE_LAST_LOADED_FIRST = new Comparator<TypeMapping>() {
         public int compare(TypeMapping t1, TypeMapping t2) {
-            if (equal(t1.fromType, t2.fromType)) {
-                return equal(t1.toType, t2.toType) ? t1.index - t2.index : ObjectHelper
+            if (ObjectHelper.equal(t1.fromType, t2.fromType)) {
+                return ObjectHelper.equal(t1.toType, t2.toType) ? t1.index - t2.index : ObjectHelper
                     .compare(getTypeName(t1.toType), getTypeName(t2.toType));
             }
             return ObjectHelper.compare(getTypeName(t1.fromType), getTypeName(t2.fromType));
