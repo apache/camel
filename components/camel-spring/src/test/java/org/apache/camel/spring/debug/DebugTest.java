@@ -19,8 +19,8 @@ package org.apache.camel.spring.debug;
 import java.util.List;
 
 import junit.framework.TestCase;
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.processor.interceptor.DebugInterceptor;
 import org.apache.camel.processor.interceptor.Debugger;

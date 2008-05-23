@@ -18,8 +18,8 @@ package org.apache.camel.component.bean;
 
 import javax.annotation.Resource;
 
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.Endpoint;
+import org.apache.camel.impl.CamelTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;

@@ -16,9 +16,9 @@
  */
 package org.apache.camel.spring.example;
 
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.MessageDriven;
+import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

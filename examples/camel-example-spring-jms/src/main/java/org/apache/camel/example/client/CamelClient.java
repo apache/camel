@@ -16,9 +16,9 @@
  */
 package org.apache.camel.example.client;
 
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.jms.JmsExchange;
+import org.apache.camel.impl.CamelTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

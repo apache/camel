@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spring.config;
 
-import org.apache.camel.CamelTemplate;
+import org.apache.camel.impl.CamelTemplate;
 
 /**
  * @version $Revision$

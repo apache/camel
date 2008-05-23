@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.spring.integration.adapter;
 
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.spring.integration.SpringIntegrationBinding;
 import org.apache.camel.component.spring.integration.SpringIntegrationExchange;
+import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

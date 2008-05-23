@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.Endpoint;
+import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.model.IdentifiedType;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;

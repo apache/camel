@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.spi.Registry;
 
 /**
