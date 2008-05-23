@@ -22,13 +22,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
 import org.apache.camel.model.FromType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.processor.Interceptor;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.InterceptStrategy;
 
 /**
  * The context used to activate new routing rules
@@ -69,7 +66,7 @@ public interface RouteContext {
      * Lets complete the route creation, creating a single event driven route
      * for the current from endpoint with any processors required
      */
-    public void commit();
+    void commit();
 
     void addEventDrivenProcessor(Processor processor);
 
@@ -92,5 +89,5 @@ public interface RouteContext {
     void setInterceptStrategies(List<InterceptStrategy> interceptStrategies);
 
     void addInterceptStrategy(InterceptStrategy interceptStrategy);
-    
+
 }

@@ -34,17 +34,17 @@ public final class FileProcessStrategyFactory {
      */
     public static FileProcessStrategy createFileProcessStrategy(Properties params) {
 
-    	// We assume a value is present only if its value not null for String and 'true' for boolean    	
-    	boolean isDelete = params.getProperty("delete") != null;
-    	boolean isLock = params.getProperty("lock") != null;
-    	String moveNamePrefix = params.getProperty("moveNamePrefix");
-    	String moveNamePostfix = params.getProperty("moveNamePostfix");
-    	
+        // We assume a value is present only if its value not null for String and 'true' for boolean
+        boolean isDelete = params.getProperty("delete") != null;
+        boolean isLock = params.getProperty("lock") != null;
+        String moveNamePrefix = params.getProperty("moveNamePrefix");
+        String moveNamePostfix = params.getProperty("moveNamePostfix");
+
         if (params.getProperty("noop") != null) {
             return new NoOpFileProcessStrategy();
         } else if (moveNamePostfix != null || moveNamePrefix != null) {
             if (isDelete) {
-                throw new IllegalArgumentException("You cannot set the deleteFiles property " 
+                throw new IllegalArgumentException("You cannot set the deleteFiles property "
                     + "and a moveFilenamePostfix or moveFilenamePrefix");
             }
             return new RenameFileProcessStrategy(isLock, moveNamePrefix, moveNamePostfix);

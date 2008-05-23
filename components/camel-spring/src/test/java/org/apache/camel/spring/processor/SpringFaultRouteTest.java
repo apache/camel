@@ -33,12 +33,12 @@ public class SpringFaultRouteTest extends FaultRouteTest {
     @Override
     public void testWithThrowFaultMessageUnhandled() throws Exception {
         // Route cannot be configured due to lack of support for errorHandler
-    	// in the xml dsl (CAMEL-122)
+        // in the xml dsl (CAMEL-122)
     }
 
     @Override
     public void testWithHandleFaultMessage() throws Exception {
         // Route cannot be configured due to lack of support for errorHandler
-    	// in the xml dsl (CAMEL-122)
+        // in the xml dsl (CAMEL-122)
     }
 }

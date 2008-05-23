@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -36,14 +36,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "optionalIdentifiedType")
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
+    @XmlTransient
+    protected static AtomicInteger nodeCounter = new AtomicInteger(1);
     @XmlAttribute(required = false)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     private String id;
     @XmlElement(required = false)
     private Description description;
-    @XmlTransient
-    protected static AtomicInteger nodeCounter = new AtomicInteger(1);
+
 
     /**
      * Gets the value of the id property.

@@ -28,10 +28,10 @@ import org.apache.camel.processor.HandleFaultProcessor;
 @XmlRootElement(name = "handleFault")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HandleFaultType extends InterceptorRef {
-    
+
     public HandleFaultType() {
-    	super(new HandleFaultProcessor());
-    }    
+        super(new HandleFaultProcessor());
+    }
 
     @Override
     public String toString() {

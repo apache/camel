@@ -61,8 +61,8 @@ import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MessageIdRepository;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.Policy;
+import org.apache.camel.spi.RouteContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
