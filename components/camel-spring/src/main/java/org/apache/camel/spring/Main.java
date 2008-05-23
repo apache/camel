@@ -28,8 +28,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.processor.interceptor.Debugger;

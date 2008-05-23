@@ -14,13 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.impl.ProducerCache;
-import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
+import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.util.ObjectHelper;
 
 /**

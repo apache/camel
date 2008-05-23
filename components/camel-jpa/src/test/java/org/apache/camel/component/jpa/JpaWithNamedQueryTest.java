@@ -26,12 +26,12 @@ import javax.persistence.PersistenceException;
 import junit.framework.TestCase;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.examples.MultiSteps;
+import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;

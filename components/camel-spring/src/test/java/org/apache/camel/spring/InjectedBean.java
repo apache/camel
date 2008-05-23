@@ -16,12 +16,12 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.impl.CamelTemplate;
 
 /**
  * @version $Revision$

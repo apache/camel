@@ -18,10 +18,10 @@
 package org.apache.camel.spring.config.scan;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.CamelTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

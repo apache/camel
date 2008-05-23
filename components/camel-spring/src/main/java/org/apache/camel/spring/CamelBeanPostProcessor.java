@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -36,6 +35,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.component.bean.BeanProcessor;
+import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.spring.util.ReflectionUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;

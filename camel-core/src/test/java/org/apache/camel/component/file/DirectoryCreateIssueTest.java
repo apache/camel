@@ -19,12 +19,12 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;

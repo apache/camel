@@ -22,12 +22,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.CxfSoapBinding;
+import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.logging.LogUtils;

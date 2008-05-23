@@ -204,8 +204,8 @@ public final class ObjectHelper {
                     return true;
                 }
             }
-            return false;
         }
+        return false;
     }
 
     /**
