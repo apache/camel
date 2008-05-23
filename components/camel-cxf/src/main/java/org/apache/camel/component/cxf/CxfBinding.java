@@ -17,9 +17,14 @@
 package org.apache.camel.component.cxf;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.helpers.CastUtils;
+import org.apache.cxf.jaxws.support.ContextPropertiesMapping;
 import org.apache.cxf.message.Message;
 
 /**
@@ -86,6 +91,13 @@ public final class CxfBinding {
         }
     }
 
+    public static void storeCXfResponseContext(Message response, Map<String, Object> context) {
+        if (context != null) {
+            ContextPropertiesMapping.mapResponsefromCxf2Jaxws(context);
+            response.put(Client.RESPONSE_CONTEXT, context);
+        }
+    }
+
     public static void storeCxfResponse(CxfExchange exchange, Object response) {
         CxfMessage out = exchange.getOut();
         if (response != null) {
@@ -98,5 +110,26 @@ public final class CxfBinding {
         if (fault != null) {
             fault.setBody(getBody(message));
         }
+    }
+
+
+    public static Map<String, Object> propogateContext(Message message, Map<String, Object> context) {
+        Map<String, Object> requestContext = CastUtils.cast((Map)message.get(Client.REQUEST_CONTEXT));
+        Map<String, Object> responseContext = CastUtils.cast((Map)message.get(Client.RESPONSE_CONTEXT));
+        // TODO map the JAXWS properties to cxf
+        if (requestContext != null) {
+            ContextPropertiesMapping.mapRequestfromJaxws2Cxf(requestContext);
+        }
+
+        if (responseContext == null) {
+            responseContext = new HashMap<String, Object>();
+        } else {
+            // clear the response context
+            responseContext.clear();
+        }
+        context.put(Client.REQUEST_CONTEXT, requestContext);
+        context.put(Client.RESPONSE_CONTEXT, responseContext);
+        return responseContext;
+
     }
 }

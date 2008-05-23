@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -27,8 +28,10 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.bus.CXFBusFactory;
+import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.apache.cxf.helpers.CastUtils;
 
 public class CxfProducerRouterTest extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(CxfProducerRouterTest.class);
@@ -69,6 +72,7 @@ public class CxfProducerRouterTest extends ContextTestSupport {
         };
     }
 
+
     public void testInvokingSimpleServerWithParams() throws Exception {
         Exchange senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
         final List<String> params = new ArrayList<String>();
@@ -81,7 +85,10 @@ public class CxfProducerRouterTest extends ContextTestSupport {
         org.apache.camel.Message out = exchange.getOut();
         Object[] output = (Object[])out.getBody();
         LOG.info("Received output text: " + output[0]);
-        assertEquals("reply body on Camel", "echo " + TEST_MESSAGE, output[0]);
+        Map<String, Object> responseContext = CastUtils.cast((Map)out.getHeader(Client.RESPONSE_CONTEXT));
+        assertNotNull(responseContext);
+        assertEquals("We should get the response context here", "UTF-8", responseContext.get(org.apache.cxf.message.Message.ENCODING));
+        assertEquals("Reply body on Camel is wrong", "echo " + TEST_MESSAGE, output[0]);
     }
 
 

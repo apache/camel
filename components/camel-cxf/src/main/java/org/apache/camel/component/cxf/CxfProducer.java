@@ -185,26 +185,19 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                 }
                 String operationName = (String)inMessage.get(CxfConstants.OPERATION_NAME);
                 String operationNameSpace = (String)inMessage.get(CxfConstants.OPERATION_NAMESPACE);
+                // Get context from message
+                Map<String, Object> context = new HashMap<String, Object>();
+                Map<String, Object> responseContext = CxfBinding.propogateContext(inMessage, context);
                 Message response = new MessageImpl();
                 if (operationName != null) {
                     // we need to check out the operation Namespace
                     try {
                         Object[] result = null;
-                        if (operationNameSpace == null) {
-                            if (endpoint.isWrapped()) {
-                                result = client.invokeWrapped(operationName, parameters.toArray());
-                            } else {
-                                result = client.invoke(operationName, parameters.toArray());
-                            }
-                        } else {
-                            QName operation = new QName(operationNameSpace, operationName);
-                            if (endpoint.isWrapped()) {
-                                result = client.invokeWrapped(operation, parameters.toArray());
-                            } else {
-                                result = client.invoke(operation, parameters.toArray());
-                            }
-                        }
+                        // call for the client with the parameters
+                        result = invokeClient(operationNameSpace, operationName, parameters, context);
                         response.setContent(Object[].class, result);
+                        // copy the response context to the response
+                        CxfBinding.storeCXfResponseContext(response, responseContext);
                         CxfBinding.storeCxfResponse(exchange, response);
                     } catch (Exception ex) {
                         response.setContent(Exception.class, ex);
@@ -230,7 +223,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                     invokingContext = InvokingContextFactory.createContext(dataFormat);
                     ex.put(InvokingContext.class, invokingContext);
                 }
-                Map params = invokingContext.getRequestContent(inMessage);
+                Map<Class, Object> params = invokingContext.getRequestContent(inMessage);
                 // invoke the stream message with the exchange context
                 CxfClient cxfClient = (CxfClient)client;
                 // need to get the binding object to create the message
@@ -247,17 +240,13 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                 response.setExchange(ex);
                 // invoke the message prepare the context
                 Map<String, Object> context = new HashMap<String, Object>();
-                Map<String, Object> requestContext = new HashMap<String, Object>();
-                Map<String, Object> responseContext = new HashMap<String, Object>();
-                // TODO Get the requestContext from the CamelExchange
-                context.put(CxfClient.REQUEST_CONTEXT, requestContext);
-                context.put(CxfClient.RESPONSE_CONTEXT, responseContext);
+                Map<String, Object> responseContext = CxfBinding.propogateContext(inMessage, context);
                 try {
                     Object result = cxfClient.dispatch(params, context, ex);
                     ex.setOutMessage(response);
                     invokingContext.setResponseContent(response, result);
                     // copy the response context to the response
-                    response.putAll(responseContext);
+                    CxfBinding.storeCXfResponseContext(response, responseContext);
                     CxfBinding.storeCxfResponse(exchange, response);
                 } catch (Exception e) {
                     response.setContent(Exception.class, e);
@@ -271,6 +260,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
 
     }
 
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -279,6 +269,28 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+    }
+
+    private Object[] invokeClient(String operationNameSpace, String operationName, List parameters, Map<String, Object> context) throws Exception {
+
+        QName operationQName = null;
+        if (operationNameSpace == null) {
+            operationQName = new QName(client.getEndpoint().getService().getName().getNamespaceURI(), operationName);
+        } else {
+            operationQName = new QName(operationNameSpace, operationName);
+        }
+        BindingOperationInfo op = client.getEndpoint().getEndpointInfo().getBinding().getOperation(operationQName);
+        if (op == null) {
+            throw new RuntimeCamelException("No operation found in the CXF client, the operation is " + operationQName);
+        }
+        if (!endpoint.isWrapped()) {
+            if (op.isUnwrappedCapable()) {
+                op = op.getUnwrappedOperation();
+            }
+        }
+        Object[] result = client.invoke(op, parameters.toArray(), context);
+
+        return result;
     }
 
 }
