@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 /**
+ * @deprecated use {@link InvalidTypeException}
  * @version $Revision$
  */
 public class InvalidHeaderTypeException extends RuntimeCamelException {

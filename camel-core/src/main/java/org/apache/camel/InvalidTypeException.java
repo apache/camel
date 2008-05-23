@@ -17,6 +17,8 @@
 package org.apache.camel;
 
 /**
+ * Is thrown if type conversion failed.
+ *
  * @version $Revision$
  */
 public class InvalidTypeException extends CamelExchangeException {

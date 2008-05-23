@@ -17,8 +17,7 @@
 package org.apache.camel;
 
 /**
- * Base class for all Camel checked exceptions typically thrown by a
- * {@link Processor}
+ * Base class for all Camel checked exceptions typically thrown by a {@link Processor}
  *
  * @version $Revision$
  */

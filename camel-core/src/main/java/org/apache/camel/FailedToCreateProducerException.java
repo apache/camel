@@ -17,6 +17,8 @@
 package org.apache.camel;
 
 /**
+ * Thrown if Camel failed to create a producer for a given endpoint.
+ *
  * @version $Revision$
  */
 public class FailedToCreateProducerException extends RuntimeCamelException {
