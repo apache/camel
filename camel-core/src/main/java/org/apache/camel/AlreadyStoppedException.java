@@ -17,6 +17,8 @@
 package org.apache.camel;
 
 /**
+ * Exception thrown in situations when a {@link Service} has already been stopped.
+ *
  * @version $Revision$
  */
 public class AlreadyStoppedException extends CamelException {

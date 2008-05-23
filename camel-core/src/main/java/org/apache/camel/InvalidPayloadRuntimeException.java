@@ -17,6 +17,8 @@
 package org.apache.camel;
 
 /**
+ * Runtime version of the {@link org.apache.camel.InvalidTypeException}.
+ *
  * @version $Revision$
  */
 public class InvalidPayloadRuntimeException extends RuntimeExchangeException {

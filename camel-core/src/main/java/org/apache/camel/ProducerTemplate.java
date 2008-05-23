@@ -26,6 +26,7 @@ import java.util.Map;
  * @version $Revision$
  */
 public interface ProducerTemplate<E extends Exchange> extends Service {
+
     /**
      * Sends the exchange to the default endpoint
      *
@@ -81,7 +82,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
     E send(String endpointUri, E exchange);
 
     /**
-     * Sends an exchange to an endpoint using a supplied
+     * Sends an exchange to an endpoint using a supplied processor
      *
      * @param endpointUri the endpoint URI to send the exchange to
      * @param processor   the transformer used to populate the new exchange
@@ -90,7 +91,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
     E send(String endpointUri, Processor processor);
 
     /**
-     * Sends an exchange to an endpoint using a supplied
+     * Sends an exchange to an endpoint using a supplied processor
      *
      * @param endpointUri the endpoint URI to send the exchange to
      * @param pattern     the message {@link ExchangePattern} such as
@@ -101,6 +102,16 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
     E send(String endpointUri, ExchangePattern pattern, Processor processor);
 
     /**
+     * Sends an exchange to an endpoint using a supplied processor
+     *
+     * @param endpointUri the endpoint URI to send the exchange to
+     * @param processor   the transformer used to populate the new exchange
+     * {@link Processor} to populate the exchange.
+     * @param callback    the callback will be called when the exchange is completed.
+     */
+    E send(String endpointUri, Processor processor, AsyncCallback callback);
+
+    /**
      * Sends the exchange to the given endpoint
      *
      * @param endpoint the endpoint to send the exchange to
@@ -109,7 +120,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
     E send(Endpoint<E> endpoint, E exchange);
 
     /**
-     * Sends an exchange to an endpoint using a supplied
+     * Sends an exchange to an endpoint using a supplied processor
      *
      * @param endpoint  the endpoint to send the exchange to
      * @param processor the transformer used to populate the new exchange
@@ -118,7 +129,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
     E send(Endpoint<E> endpoint, Processor processor);
 
     /**
-     * Sends an exchange to an endpoint using a supplied
+     * Sends an exchange to an endpoint using a supplied processor
      *
      * @param endpoint  the endpoint to send the exchange to
      * @param pattern   the message {@link ExchangePattern} such as
@@ -129,19 +140,29 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
     E send(Endpoint<E> endpoint, ExchangePattern pattern, Processor processor);
 
     /**
-     * Send the body to an endpoint
+     * Sends an exchange to an endpoint using a supplied processor
      *
-     * @param endpoint
-     * @param body     = the payload
+     * @param endpoint  the endpoint to send the exchange to
+     * @param processor the transformer used to populate the new exchange
+     * {@link Processor} to populate the exchange.
+     * @param callback  the callback will be called when the exchange is completed.
+     */
+    E send(Endpoint<E> endpoint, Processor processor, AsyncCallback callback);
+
+    /**
+     * Send the body to an endpoint returning any result output body
+     *
+     * @param endpoint   the endpoint to send the exchange to
+     * @param body       the payload
      * @return the result
      */
     Object sendBody(Endpoint<E> endpoint, Object body);
 
     /**
-     * Send the body to an endpoint
+     * Send the body to an endpoint returning any result output body
      *
-     * @param endpointUri
-     * @param body        = the payload
+     * @param endpointUri   the endpoint URI to send the exchange to
+     * @param body          the payload
      * @return the result
      */
     Object sendBody(String endpointUri, Object body);
@@ -150,21 +171,21 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * Send the body to an endpoint with the given {@link ExchangePattern}
      * returning any result output body
      *
-     * @param endpoint
-     * @param body = the payload
-     * @param pattern the message {@link ExchangePattern} such as
+     * @param endpoint      the endpoint to send the exchange to
+     * @param body          the payload
+     * @param pattern       the message {@link ExchangePattern} such as
      *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
      * @return the result
      */
     Object sendBody(Endpoint<E> endpoint, ExchangePattern pattern, Object body);
 
     /**
-     * Send the body to an endpoint
+     * Send the body to an endpoint returning any result output body
      *
-     * @param endpointUri
-     * @param pattern the message {@link ExchangePattern} such as
+     * @param endpointUri   the endpoint URI to send the exchange to
+     * @param pattern       the message {@link ExchangePattern} such as
      *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
-     * @param body = the payload
+     * @param body          the payload
      * @return the result
      */
     Object sendBody(String endpointUri, ExchangePattern pattern, Object body);
@@ -246,60 +267,67 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
     // -----------------------------------------------------------------------
 
     /**
-     * Send the body to an endpoint returning any result output body
+     * Send the body to an endpoint returning any result output body.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
      *
-     * @param endpoint
+     * @param endpoint  the Endpoint to send to
      * @param processor the processor which will populate the exchange before sending
      * @return the result
      */
     E request(Endpoint<E> endpoint, Processor processor);
 
     /**
-     * Send the body to an endpoint returning any result output body
+     * Send the body to an endpoint returning any result output body.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
      *
-     * @param endpoint
-     * @param body     = the payload
+     * @param endpoint the Endpoint to send to
+     * @param body     the payload
      * @return the result
      */
     Object requestBody(Endpoint<E> endpoint, Object body);
 
     /**
-     * Send the body to an endpoint returning any result output body
+     * Send the body to an endpoint returning any result output body.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
      *
-     * @param endpoint
-     * @param body     = the payload
-     * @param header
-     * @param headerValue
+     * @param endpoint    the Endpoint to send to
+     * @param body        the payload
+     * @param header      the header name
+     * @param headerValue the header value
      * @return the result
      */
     Object requestBodyAndHeader(Endpoint<E> endpoint, Object body, String header, Object headerValue);
 
     /**
-     * Send the body to an endpoint returning any result output body
+     * Send the body to an endpoint returning any result output body.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
      *
-     * @param endpoint
+     * @param endpointUri the endpoint URI to send to
      * @param processor the processor which will populate the exchange before sending
      * @return the result
      */
-    E request(String endpoint, Processor processor);
+    E request(String endpointUri, Processor processor);
 
     /**
-     * Send the body to an endpoint returning any result output body
+     * Send the body to an endpoint returning any result output body.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
      *
-     * @param endpoint
-     * @param body     = the payload
+     * @param endpointUri the endpoint URI to send to
+     * @param body        the payload
      * @return the result
      */
-    Object requestBody(String endpoint, Object body);
+    Object requestBody(String endpointUri, Object body);
 
     /**
-     * Send the body to an endpoint returning any result output body
+     * Send the body to an endpoint returning any result output body.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
      *
-     * @param endpoint
-     * @param body     = the payload
-     * @param header
-     * @param headerValue
+     * @param endpointUri the endpoint URI to send to
+     * @param body        the payload
+     * @param header      the header name
+     * @param headerValue the header value
      * @return the result
      */
-    Object requestBodyAndHeader(String endpoint, Object body, String header, Object headerValue);
+    Object requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue);
+
 }

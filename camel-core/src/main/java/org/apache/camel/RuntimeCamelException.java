@@ -17,6 +17,8 @@
 package org.apache.camel;
 
 /**
+ * Base class for all Camel unchecked exceptions.
+ *
  * @version $Revision$
  */
 public class RuntimeCamelException extends RuntimeException {
