@@ -35,8 +35,8 @@ import org.apache.camel.processor.Interceptor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.ProceedProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * The context used to activate new routing rules

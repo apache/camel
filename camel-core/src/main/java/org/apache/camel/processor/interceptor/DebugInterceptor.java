@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,16 +18,16 @@ package org.apache.camel.processor.interceptor;
 
 import java.util.List;
 
-import org.apache.camel.model.ProcessorType;
-import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
 import org.apache.camel.Message;
+import org.apache.camel.Predicate;
+import org.apache.camel.Processor;
+import org.apache.camel.model.ProcessorType;
 import org.apache.camel.processor.DelegateProcessor;
 
 /**
  * An interceptor for debugging and tracing routes
- * 
+ *
  * @version $Revision: 1.1 $
  */
 public class DebugInterceptor extends DelegateProcessor {
@@ -49,7 +48,7 @@ public class DebugInterceptor extends DelegateProcessor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        checkForBreakpoint(exchange);        
+        checkForBreakpoint(exchange);
         addTraceExchange(exchange);
         super.proceed(exchange);
     }
@@ -107,6 +106,6 @@ public class DebugInterceptor extends DelegateProcessor {
      * Returns true if the given exchange should be logged in the trace list
      */
     protected boolean shouldTraceExchange(Exchange exchange) {
-        return traceFilter == null || traceFilter.matches(exchange) ;
+        return traceFilter == null || traceFilter.matches(exchange);
     }
 }

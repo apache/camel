@@ -92,10 +92,10 @@ public class FaultRouteTest extends ContextTestSupport {
     }
 
     private void throwFaultTest(String startPoint) throws InterruptedException {
-    	throwFaultTest(startPoint, 0);
+        throwFaultTest(startPoint, 0);
     }
-    
-   private void throwFaultTest(String startPoint, int errors) throws InterruptedException {
+
+    private void throwFaultTest(String startPoint, int errors) throws InterruptedException {
         a.expectedMessageCount(1);
         b.expectedMessageCount(0);
         c.expectedMessageCount(0);
@@ -143,16 +143,16 @@ public class FaultRouteTest extends ContextTestSupport {
                 from("direct:exception").to("mock:a")
                     .throwFault(new IllegalStateException("It makes no sense of business logic"))
                     .to("mock:b");
-                
+
                 from("direct:fault").errorHandler(
                     deadLetterChannel("mock:error")
-                	    .maximumRedeliveries(2)
+                            .maximumRedeliveries(2)
                         .loggingLevel(LoggingLevel.DEBUG))
                     .to("mock:a").throwFault("ExceptionMessage").to("mock:b");
-                
+
                 from("direct:error").errorHandler(
                     deadLetterChannel("mock:error")
-                	    .maximumRedeliveries(2)
+                            .maximumRedeliveries(2)
                         .loggingLevel(LoggingLevel.DEBUG))
                     .to("mock:a").handleFault().throwFault("ExceptionMessage").to("mock:b");
             }

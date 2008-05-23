@@ -33,9 +33,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Route;
-import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
-import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.impl.DefaultRouteContext;
+import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.commons.logging.Log;
@@ -186,7 +185,7 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
      * Enable stream caching on this route
      * @param streamCaching <code>true</code> for enabling stream caching
      */
-    @XmlAttribute(required=false)
+    @XmlAttribute(required = false)
     public void setStreamCaching(Boolean streamCaching) {
         this.streamCaching = streamCaching;
         if (streamCaching != null && streamCaching) {

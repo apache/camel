@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,14 +16,14 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
 
-import org.apache.camel.Processor;
-import org.apache.camel.Exchange;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.spi.InterceptStrategy;
@@ -53,9 +52,9 @@ public class Debugger implements InterceptStrategy {
             DefaultCamelContext defaultCamelContext = (DefaultCamelContext) context;
             List<InterceptStrategy> list = defaultCamelContext.getInterceptStrategies();
             for (InterceptStrategy interceptStrategy : list) {
-               if (interceptStrategy instanceof Debugger) {
-                   return (Debugger) interceptStrategy;
-               }
+                if (interceptStrategy instanceof Debugger) {
+                    return (Debugger)interceptStrategy;
+                }
             }
         }
         return null;
@@ -72,8 +71,7 @@ public class Debugger implements InterceptStrategy {
         DebugInterceptor interceptor = getInterceptor(id);
         if (interceptor == null) {
             return null;
-        }
-        else {
+        } else {
             return interceptor.getExchanges();
         }
     }
@@ -85,8 +83,7 @@ public class Debugger implements InterceptStrategy {
         DebugInterceptor interceptor = getInterceptor(id);
         if (interceptor == null) {
             return null;
-        }
-        else {
+        } else {
             return interceptor.getBreakpoint();
         }
     }
@@ -105,13 +102,11 @@ public class Debugger implements InterceptStrategy {
     protected List<Exchange> createExchangeList() {
         if (exchangeBufferSize == 0) {
             return null;
-        }
-        else if (exchangeBufferSize > 0) {
+        } else if (exchangeBufferSize > 0) {
             // TODO lets create a non blocking fixed size queue
             return new ArrayList<Exchange>();
-        }
-        else {
-             return new ArrayList<Exchange>();
+        } else {
+            return new ArrayList<Exchange>();
         }
     }
 }

@@ -79,8 +79,8 @@ public class ThreadProcessor implements AsyncProcessor, Service {
         try {
             executor.execute(call);
             return false;
-        } catch ( RejectedExecutionException e ) {
-            if( callerRunsWhenRejected ) {
+        } catch (RejectedExecutionException e) {
+            if (callerRunsWhenRejected) {
                 if (shutdown.get()) {
                     exchange.setException(new RejectedExecutionException());
                 } else {

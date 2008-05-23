@@ -273,58 +273,63 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      * A strategy method to lazily create the file strategy
      */
     protected FileProcessStrategy createFileStrategy() {
-    	Class factory = null;
-    	try {
-        	FactoryFinder finder = new FactoryFinder("META-INF/services/org/apache/camel/component/");
-			factory = finder.findClass("file", "strategy.factory.");
-    	} catch (ClassNotFoundException e) {
-    		LOG.debug("'strategy.factory.class' not found", e);
-		} catch (IOException e) {
-    		LOG.debug("No strategy factory defined in 'META-INF/services/org/apache/camel/component/file'", e);
-    	}
-		
-		if (factory == null) {
-			// use default
-			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-			try {
-				factory = cl.loadClass("org.apache.camel.component.file.strategy.FileProcessStrategyFactory");
-			} catch (ClassNotFoundException e) {
-				throw new TypeNotPresentException("FileProcessStrategyFactory class not found", e);
-			}
-		}
-		
-		try {
-			Method factoryMethod = factory.getMethod("createFileProcessStrategy", Properties.class);
-			return (FileProcessStrategy) ObjectHelper.invokeMethod(factoryMethod, null, getParamsAsProperties());
-		} catch (NoSuchMethodException e) {
-			throw new TypeNotPresentException(factory.getSimpleName() 
-                + ".createFileProcessStrategy(Properties params) moethod not found", e);
-		}
+        Class factory = null;
+        try {
+            FactoryFinder finder = new FactoryFinder("META-INF/services/org/apache/camel/component/");
+            factory = finder.findClass("file", "strategy.factory.");
+        } catch (ClassNotFoundException e) {
+            LOG.debug("'strategy.factory.class' not found", e);
+        } catch (IOException e) {
+            LOG
+                .debug("No strategy factory defined in 'META-INF/services/org/apache/camel/component/file'",
+                       e);
+        }
+
+        if (factory == null) {
+            // use default
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            try {
+                factory = cl.loadClass("org.apache.camel.component.file.strategy.FileProcessStrategyFactory");
+            } catch (ClassNotFoundException e) {
+                throw new TypeNotPresentException("FileProcessStrategyFactory class not found", e);
+            }
+        }
+
+        try {
+            Method factoryMethod = factory.getMethod("createFileProcessStrategy", Properties.class);
+            return (FileProcessStrategy)ObjectHelper.invokeMethod(factoryMethod, null,
+                                                                  getParamsAsProperties());
+        } catch (NoSuchMethodException e) {
+            throw new TypeNotPresentException(
+                                              factory.getSimpleName()
+                                                  + ".createFileProcessStrategy(Properties params) moethod not found",
+                                              e);
+        }
     }
 
     protected Properties getParamsAsProperties() {
-		Properties params = new Properties();
-		if (isNoop()) {
-			params.setProperty("noop", Boolean.toString(Boolean.TRUE));
-		}
-		if (isDelete()) {
-			params.setProperty("delete", Boolean.toString(Boolean.TRUE));
-		}
-		if (isAppend()) {
-			params.setProperty("append", Boolean.toString(Boolean.TRUE));
-		}
-		if (isLock()) {
-			params.setProperty("lock", Boolean.toString(Boolean.TRUE));
-		}
-		if (moveNamePrefix != null) {
-			params.setProperty("moveNamePrefix", moveNamePrefix);
-		}
-		if (moveNamePostfix != null) {
-			params.setProperty("moveNamePostfix", moveNamePostfix);
-		}
-		return params;
+        Properties params = new Properties();
+        if (isNoop()) {
+            params.setProperty("noop", Boolean.toString(Boolean.TRUE));
+        }
+        if (isDelete()) {
+            params.setProperty("delete", Boolean.toString(Boolean.TRUE));
+        }
+        if (isAppend()) {
+            params.setProperty("append", Boolean.toString(Boolean.TRUE));
+        }
+        if (isLock()) {
+            params.setProperty("lock", Boolean.toString(Boolean.TRUE));
+        }
+        if (moveNamePrefix != null) {
+            params.setProperty("moveNamePrefix", moveNamePrefix);
+        }
+        if (moveNamePostfix != null) {
+            params.setProperty("moveNamePostfix", moveNamePostfix);
+        }
+        return params;
     }
-    
+
     @Override
     protected String createEndpointUri() {
         return "file://" + getFile().getAbsolutePath();

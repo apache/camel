@@ -22,21 +22,21 @@ import org.apache.camel.Message;
 
 public class HandleFaultProcessor extends DelegateProcessor {
 
-	@Override
-	public void process(Exchange exchange) throws Exception {
-    	super.process(exchange);
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        super.process(exchange);
         final Message faultMessage = exchange.getFault(false);
         if (faultMessage != null) {
             final Object faultBody = faultMessage.getBody();
             if (faultBody != null) {
-            	if (faultBody instanceof Throwable) {
-            		exchange.setException((Throwable)faultBody);
-            	} else {
-            		exchange.setException(new CamelException(
-            		    "Message contains fault of type " + 
-            		    faultBody.getClass().getName() + ":\n" + faultBody));
-            	}
+                if (faultBody instanceof Throwable) {
+                    exchange.setException((Throwable)faultBody);
+                } else {
+                    exchange.setException(new CamelException("Message contains fault of type "
+                                                             + faultBody.getClass().getName() + ":\n"
+                                                             + faultBody));
+                }
             }
         }
-	}
+    }
 }
