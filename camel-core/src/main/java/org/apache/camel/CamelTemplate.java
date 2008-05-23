@@ -19,9 +19,9 @@ package org.apache.camel;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ProducerCache;
 
 /**
  * A client helper object (named like Spring's TransactionTemplate & JmsTemplate

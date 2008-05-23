@@ -30,7 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.ProducerCache;
+import org.apache.camel.impl.ProducerCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

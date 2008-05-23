@@ -19,7 +19,7 @@ package org.apache.camel.scala;
 import junit.framework.TestCase
 import junit.framework.Assert._
 
-import org.apache.camel.impl.ReflectionInjector
+import org.apache.camel.util.ReflectionInjector
 import org.apache.camel.impl.converter.DefaultTypeConverter
 
 import org.w3c.dom.Document

@@ -28,10 +28,10 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.converter.ObjectConverter;
+import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ProducerCache;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**

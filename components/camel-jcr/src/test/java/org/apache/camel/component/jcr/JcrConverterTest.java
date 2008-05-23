@@ -24,8 +24,8 @@ import javax.jcr.Value;
 import junit.framework.TestCase;
 
 import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.ReflectionInjector;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.util.ReflectionInjector;
 import org.apache.jackrabbit.value.BinaryValue;
 import org.apache.jackrabbit.value.BooleanValue;
 import org.apache.jackrabbit.value.DateValue;
