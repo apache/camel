@@ -230,7 +230,8 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
 
     /**
      * If set to true then the default {@link FileProcessStrategy} will be to use the
-     * {@link NoOpFileProcessStrategy} to not move or copy processed files
+     * {@link org.apache.camel.component.file.strategy.NoOpFileProcessStrategy NoOpFileProcessStrategy}
+     * to not move or copy processed files
      */
     public void setNoop(boolean noop) {
         this.noop = noop;

@@ -379,8 +379,8 @@ public class XmlConverter {
     public SAXSource toSAXSourceFromDOM(DOMSource source) throws TransformerException {
         if (DOM_TO_SAX_CLASS != null) {
             try {
-                Constructor cns = DOM_TO_SAX_CLASS.getConstructor(new Class[] {Node.class});
-                XMLReader converter = (XMLReader) cns.newInstance(new Object[] {source.getNode()});
+                Constructor cns = DOM_TO_SAX_CLASS.getConstructor(Node.class);
+                XMLReader converter = (XMLReader) cns.newInstance(source.getNode());
                 return new SAXSource(converter, new InputSource());
             } catch (Exception e) {
                 throw new TransformerException(e);

@@ -17,7 +17,7 @@
 package org.apache.camel.builder;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.List;import java.util.Arrays;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -176,9 +176,7 @@ public abstract class BuilderSupport {
      */
     public List<Endpoint> endpoints(Endpoint... endpoints) {
         List<Endpoint> answer = new ArrayList<Endpoint>();
-        for (Endpoint endpoint : endpoints) {
-            answer.add(endpoint);
-        }
+        answer.addAll(Arrays.asList(endpoints));
         return answer;
     }
 

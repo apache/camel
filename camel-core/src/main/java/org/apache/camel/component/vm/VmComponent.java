@@ -35,7 +35,7 @@ import org.apache.camel.component.seda.SedaEndpoint;
  * @version $Revision$
  */
 public class VmComponent extends SedaComponent {
-    protected static Map<String, BlockingQueue> queues = new HashMap<String, BlockingQueue>();
+    protected static final Map<String, BlockingQueue> queues = new HashMap<String, BlockingQueue>();
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
 
 

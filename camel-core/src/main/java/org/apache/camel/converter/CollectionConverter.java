@@ -73,9 +73,7 @@ public final class CollectionConverter {
     @Converter
     public static Set toSet(Object[] array) {
         Set answer = new HashSet();
-        for (Object element : array) {
-            answer.add(element);
-        }
+        answer.addAll(Arrays.asList(array));
         return answer;
     }
 

@@ -37,6 +37,9 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * JMX agent that registeres Camel lifecycle events in JMX.
+ */
 public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     private static final transient Log LOG = LogFactory.getLog(InstrumentationProcessor.class);
 

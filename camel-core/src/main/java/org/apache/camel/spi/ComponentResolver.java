@@ -34,6 +34,7 @@ public interface ComponentResolver<E extends Exchange> {
      * @param name the component name to resolve
      * @param context the context to load the component if it can be resolved
      * @return the component which is added to the context or null if it can not be resolved
+     * @throws Exception is thrown if the the component could not be loaded
      */
     Component<E> resolveComponent(String name, CamelContext context) throws Exception;
 }

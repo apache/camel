@@ -205,7 +205,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
     protected List<ProcessorExchangePair> createProcessorExchangePairs(
         Exchange exchange) {
         List<ProcessorExchangePair> result = new ArrayList<ProcessorExchangePair>(processors.size());
-        Processor[] processorsArray = processors.toArray(new Processor[0]);
+        Processor[] processorsArray = processors.toArray(new Processor[processors.size()]);
         for (int i = 0; i < processorsArray.length; i++) {
             result.add(new ProcessorExchangePair(processorsArray[i], exchange.copy()));
         }

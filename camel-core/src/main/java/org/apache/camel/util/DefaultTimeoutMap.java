@@ -37,7 +37,7 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
 
     private static final Log LOG = LogFactory.getLog(DefaultTimeoutMap.class);
 
-    private Map map = new HashMap();
+    private final Map map = new HashMap();
     private SortedSet index = new TreeSet();
     private ScheduledExecutorService executor;
     private long purgePollTime;

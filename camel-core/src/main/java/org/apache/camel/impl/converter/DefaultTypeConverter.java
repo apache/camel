@@ -41,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistry {
     private static final transient Log LOG = LogFactory.getLog(DefaultTypeConverter.class);
-    private Map<TypeMapping, TypeConverter> typeMappings = new HashMap<TypeMapping, TypeConverter>();
+    private final Map<TypeMapping, TypeConverter> typeMappings = new HashMap<TypeMapping, TypeConverter>();
     private Injector injector;
     private List<TypeConverterLoader> typeConverterLoaders = new ArrayList<TypeConverterLoader>();
     private List<TypeConverter> fallbackConverters = new ArrayList<TypeConverter>();
