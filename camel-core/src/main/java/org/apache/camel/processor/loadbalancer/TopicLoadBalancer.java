@@ -28,6 +28,7 @@ import org.apache.camel.Processor;
  * @version $Revision$
  */
 public class TopicLoadBalancer extends LoadBalancerSupport {
+
     public void process(Exchange exchange) throws Exception {
         List<Processor> list = getProcessors();
         for (Processor processor : list) {

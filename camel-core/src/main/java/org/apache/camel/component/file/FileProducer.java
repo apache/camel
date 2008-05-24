@@ -18,7 +18,6 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -26,14 +25,14 @@ import java.nio.channels.FileChannel;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A {@link Producer} implementation for File
+ * For producing files.
  *
  * @version $Revision$
  */
@@ -51,7 +50,6 @@ public class FileProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        // TODO is it really worth using a FileExchange as the core type?
         FileExchange fileExchange = endpoint.createExchange(exchange);
         process(fileExchange);
         ExchangeHelper.copyResults(exchange, fileExchange);
@@ -98,20 +96,8 @@ public class FileProducer extends DefaultProducer {
                 }
             }
         } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    LOG.warn("Failed to close input: " + e, e);
-                }
-            }
-            if (fc != null) {
-                try {
-                    fc.close();
-                } catch (IOException e) {
-                    LOG.warn("Failed to close output: " + e, e);
-                }
-            }
+            ObjectHelper.close(in, file.getName(), LOG);
+            ObjectHelper.close(fc, file.getName(), LOG);
         }
     }
 

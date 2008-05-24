@@ -29,6 +29,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * A Consumer for the SEDA component.
+ *
  * @version $Revision$
  */
 public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {

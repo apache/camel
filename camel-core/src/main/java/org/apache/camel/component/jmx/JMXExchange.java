@@ -24,18 +24,12 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * A {@link Exchange} for a jmx notification
+ * A {@link Exchange} for JMX notification
  *
  * @version $Revision$
  */
 public class JMXExchange extends DefaultExchange {
 
-    /**
-     * Constructor
-     *
-     * @param camelContext
-     * @param pattern
-     */
     public JMXExchange(CamelContext camelContext, ExchangePattern pattern, Notification notification) {
         super(camelContext, pattern);
         setIn(new JMXMessage(notification));

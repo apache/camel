@@ -29,6 +29,8 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ServiceHelper;
 
 /**
+ * A default consumer useful for implementation inheritance.
+ *
  * @version $Revision$
  */
 public class DefaultConsumer<E extends Exchange> extends ServiceSupport implements Consumer<E> {

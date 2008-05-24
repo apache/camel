@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.PollingConsumerSupport;
 
 /**
+ * @deprecated not used - to be removed in due course
  * @version $Revision$
  */
 public class ListPollingConsumer extends PollingConsumerSupport {

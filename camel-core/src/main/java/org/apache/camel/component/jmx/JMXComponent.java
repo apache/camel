@@ -26,7 +26,7 @@ import org.apache.camel.impl.DefaultComponent;
 
 /**
  * The <a href="http://activemq.apache.org/camel/jmx.html">JMX Component</a>
- * for monitoring jmx attributes
+ * for monitoring JMX attributes
  *
  * @version $Revision$
  */

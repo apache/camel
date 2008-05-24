@@ -49,6 +49,9 @@ public class LogComponent extends DefaultComponent<Exchange> {
         return new ProcessorEndpoint(uri, this, logger);
     }
 
+    /**
+     * Gets the logging level, will default to use INFO if no level parameter provided.
+     */
     protected LoggingLevel getLoggingLevel(Map parameters) {
         String levelText = getAndRemoveParameter(parameters, "level", String.class, "INFO");
         return LoggingLevel.valueOf(levelText.toUpperCase());
