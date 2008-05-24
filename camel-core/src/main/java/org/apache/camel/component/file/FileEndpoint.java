@@ -299,7 +299,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
             return (FileProcessStrategy) ObjectHelper.invokeMethod(factoryMethod, null, getParamsAsProperties());
         } catch (NoSuchMethodException e) {
             throw new TypeNotPresentException(factory.getSimpleName() 
-                + ".createFileProcessStrategy(Properties params) moethod not found", e);
+                + ".createFileProcessStrategy(Properties params) method not found", e);
         }
     }
 

@@ -28,10 +28,11 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 
 /**
+ * A helper class for working with <a href="http://activemq.apache.org/camel/expression.html">expressions</a>.
+ *
  * @version $Revision$
  */
 public final class ExpressionBuilder {
-
 
     /**
      * Utility classes should not have a public constructor.

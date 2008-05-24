@@ -19,6 +19,8 @@ package org.apache.camel.builder;
 import org.apache.camel.Processor;
 
 /**
+ * A builder wrapping a {@link Processor}.
+ *
  * @version $Revision$
  */
 public class ConstantProcessorBuilder implements ProcessorFactory {

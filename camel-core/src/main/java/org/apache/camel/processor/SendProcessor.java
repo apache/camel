@@ -28,6 +28,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * Processor for forwarding exchanges to an endpoint destination.
+ *
  * @version $Revision$
  */
 public class SendProcessor extends ServiceSupport implements AsyncProcessor, Service {
@@ -73,7 +75,6 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Ser
             return processor.process(exchange, callback);
         }
     }
-
     
     public Endpoint getDestination() {
         return destination;

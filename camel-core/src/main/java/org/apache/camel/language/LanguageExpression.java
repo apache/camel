@@ -22,6 +22,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Base annotation for language expressions.
+ *
  * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)

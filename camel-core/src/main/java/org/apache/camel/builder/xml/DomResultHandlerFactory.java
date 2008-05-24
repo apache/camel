@@ -17,6 +17,8 @@
 package org.apache.camel.builder.xml;
 
 /**
+ * Factory for {@link DomResultHandler}
+ *
  * @version $Revision$
  */
 public class DomResultHandlerFactory implements ResultHandlerFactory {

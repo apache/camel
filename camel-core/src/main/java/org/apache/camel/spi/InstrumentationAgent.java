@@ -22,39 +22,47 @@ import javax.management.ObjectName;
 
 import org.apache.camel.Service;
 
+/**
+ * Camel JMX service agent
+ */
 public interface InstrumentationAgent extends Service {
 
     /**
      * Registers object with management infrastructure with a specific name. Object must be annotated or 
      * implement standard MBean interface.
-     * @param obj
-     * @param name
-     * @throws JMException
+     *
+     * @param obj  the object to register
+     * @param name the name
+     * @throws JMException is thrown if the registration failed
      */
     void register(Object obj, ObjectName name) throws JMException;
     
     /**
      * Registers object with management infrastructure with a specific name. Object must be annotated or 
      * implement standard MBean interface.
-     * @param obj
-     * @param name
-     * @param forceRegistration if set to true, then component will be registered despite existing component.
-     * @throws JMException
+     *
+     * @param obj  the object to register
+     * @param name the name
+     * @param forceRegistration if set to <tt>true</tt>, then object will be registered despite
+     * existing object is already registered with the name.
+     * @throws JMException is thrown if the registration failed
      */
     void register(Object obj, ObjectName name, boolean forceRegistration) throws JMException;
     
     /**
-     * Unregisters component based upon registered name
-     * @param name
-     * @throws JMException
+     * Unregisters object based upon registered name
+     *
+     * @param name the name
+     * @throws JMException is thrown if the unregistration failed
      */
     void unregister(ObjectName name) throws JMException;
 
     /**
-     * Get the MBeanServer which hosts managed components
-     * NOTE: if the configuration is not set the JMXEnabled to be true, this method
-     * will return null
-     * @return the MBeanServer 
+     * Get the MBeanServer which hosts managed objects.
+     * <p/>
+     * NOTE: if the JMXEnabled configuration is not set to true, this method will return null.
+     * 
+     * @return the MBeanServer
      */
     MBeanServer getMBeanServer();
 

@@ -38,9 +38,12 @@ public class DataFormatClause<T extends ProcessorType> {
     private final T processorType;
     private final Operation operation;
 
+    /**
+     * {@link DataFormat} operations.
+     */
     public enum Operation {
         Marshal, Unmarshal
-    };
+    }
 
     public DataFormatClause(T processorType, Operation operation) {
         this.processorType = processorType;
@@ -152,7 +155,7 @@ public class DataFormatClause<T extends ProcessorType> {
         case Marshal:
             return (T)processorType.marshal(dataFormatType);
         default:
-            throw new IllegalArgumentException("Unknown value: " + operation);
+            throw new IllegalArgumentException("Unknown DataFormat operation: " + operation);
         }
     }
 

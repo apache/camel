@@ -17,6 +17,8 @@
 package org.apache.camel.builder.xml;
 
 /**
+ * Factory for {@link org.apache.camel.builder.xml.ResultHandler}
+ *
  * @version $Revision$
  */
 public interface ResultHandlerFactory {

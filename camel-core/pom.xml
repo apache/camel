@@ -169,7 +169,7 @@
               <packages>org.apache.camel.model:org.apache.camel.model.*</packages>
             </group>
             <group>
-              <title>Strategy APIs for implementors extend Camel</title>
+              <title>Strategy APIs for implementors extending Camel</title>
               <packages>org.apache.camel.spi</packages>
             </group>
             <group>
@@ -277,7 +277,7 @@
                   <packages>org.apache.camel.model:org.apache.camel.model.*</packages>
                 </group>
                 <group>
-                  <title>Strategy APIs for implementors extend Camel</title>
+                  <title>Strategy APIs for implementors extending Camel</title>
                   <packages>org.apache.camel.spi</packages>
                 </group>
                 <group>

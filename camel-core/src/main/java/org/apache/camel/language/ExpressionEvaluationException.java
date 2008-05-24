@@ -21,6 +21,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
 
 /**
+ * An exception thrown if evaluation of the expression failed.
+ *
  * @version $Revision$
  */
 public class ExpressionEvaluationException extends RuntimeCamelException {
@@ -36,4 +38,9 @@ public class ExpressionEvaluationException extends RuntimeCamelException {
     public Expression<Exchange> getExpression() {
         return expression;
     }
+
+    public Exchange getExchange() {
+        return exchange;
+    }
+    
 }

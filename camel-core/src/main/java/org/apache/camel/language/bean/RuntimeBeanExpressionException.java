@@ -20,6 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExpressionException;
 
 /**
+ * Exception thrown if invocation of bean failed.
+ *
  * @version $Revision$
  */
 public class RuntimeBeanExpressionException extends RuntimeExpressionException {

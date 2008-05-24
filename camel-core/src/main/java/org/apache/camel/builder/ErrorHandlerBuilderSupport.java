@@ -23,6 +23,8 @@ import org.apache.camel.model.ExceptionType;
 import org.apache.camel.processor.ErrorHandlerSupport;
 
 /**
+ * Base class for builders of error handling.
+ *
  * @version $Revision$
  */
 public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
