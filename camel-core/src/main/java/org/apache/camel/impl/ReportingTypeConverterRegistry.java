@@ -23,6 +23,11 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.TypeConverterRegistry;
 import org.apache.camel.spi.Injector;
 
+/**
+ * Registry for reporting type converters.
+ *
+ * @deprecated not used
+ */
 public class ReportingTypeConverterRegistry implements TypeConverterRegistry {
     private List<String> errors = new ArrayList<String>();
 

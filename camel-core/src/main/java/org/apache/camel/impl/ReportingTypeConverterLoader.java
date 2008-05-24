@@ -27,6 +27,11 @@ import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
 import org.apache.camel.impl.converter.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * Type converter loader that is capable of reporting the loaded type converters.
+ *
+ * @deprecated not used
+ */
 public class ReportingTypeConverterLoader extends AnnotationTypeConverterLoader {
 
     private static final Comparator<TypeMapping> COMPARE_LAST_LOADED_FIRST = new Comparator<TypeMapping>() {
@@ -59,14 +64,16 @@ public class ReportingTypeConverterLoader extends AnnotationTypeConverterLoader 
 
     /**
      * Represents a mapping from one type (which can be null) to another
+     *
+     * @deprecated not used
      */
     public static class TypeMapping {
         private static int counter;
-        Class toType;
-        Class fromType;
-        Class converterType;
-        Method method;
-        int index;
+        private Class toType;
+        private Class fromType;
+        private Class converterType;
+        private Method method;
+        private int index;
 
         public TypeMapping(Class toType, Class fromType, Class converterType, Method method) {
             this.toType = toType;
@@ -119,4 +126,5 @@ public class ReportingTypeConverterLoader extends AnnotationTypeConverterLoader 
             return "[" + fromType.getSimpleName() + "=>" + toType.getSimpleName() + "]";
         }
     }
+
 }

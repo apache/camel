@@ -27,13 +27,14 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * Cache containing created {@link Producer}.
+ *
  * @version $Revision$
  */
 public class ProducerCache<E extends Exchange> extends ServiceSupport {
@@ -162,6 +163,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
 
     protected void doStop() throws Exception {
         ServiceHelper.stopServices(producers.values());
+        producers.clear();
     }
 
     protected void doStart() throws Exception {

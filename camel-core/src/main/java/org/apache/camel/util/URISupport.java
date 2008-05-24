@@ -34,6 +34,9 @@ import java.util.Map;
  */
 public class URISupport {
 
+    /**
+     * Holder to get parts of the URI.
+     */
     public static class CompositeData {
         public String host;
 
@@ -108,14 +111,14 @@ public class URISupport {
             Map rc = new HashMap();
             if (uri != null) {
                 String[] parameters = uri.split("&");
-                for (int i = 0; i < parameters.length; i++) {
-                    int p = parameters[i].indexOf("=");
+                for (String parameter : parameters) {
+                    int p = parameter.indexOf("=");
                     if (p >= 0) {
-                        String name = URLDecoder.decode(parameters[i].substring(0, p), "UTF-8");
-                        String value = URLDecoder.decode(parameters[i].substring(p + 1), "UTF-8");
+                        String name = URLDecoder.decode(parameter.substring(0, p), "UTF-8");
+                        String value = URLDecoder.decode(parameter.substring(p + 1), "UTF-8");
                         rc.put(name, value);
                     } else {
-                        rc.put(parameters[i], null);
+                        rc.put(parameter, null);
                     }
                 }
             }
@@ -288,8 +291,6 @@ public class URISupport {
 
     /**
      * Creates a URI from the original URI and the remaining parameters
-     * 
-     * @throws URISyntaxException
      */
     public static URI createRemainingURI(URI originalURI, Map params) throws URISyntaxException {
         String s = createQueryString(params);

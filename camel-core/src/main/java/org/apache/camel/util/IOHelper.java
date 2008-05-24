@@ -19,9 +19,12 @@ package org.apache.camel.util;
 import java.io.IOException;
 
 /**
+ * IO helper class.
+ *
  * @version $Revision$
  */
 public final class IOHelper {
+
     private IOHelper() {
         //Utility Class
     }
