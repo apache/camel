@@ -36,10 +36,12 @@ import org.apache.camel.TypeConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * Helper for introspections of beans.
+ */
 public final class IntrospectionSupport {
 
     private static final Log LOG = LogFactory.getLog(IntrospectionSupport.class);
-
 
     /**
      * Utility classes should not have a public constructor.
@@ -61,14 +63,13 @@ public final class IntrospectionSupport {
 
         Class clazz = target.getClass();
         Method[] methods = clazz.getMethods();
-        for (int i = 0; i < methods.length; i++) {
-            Method method = methods[i];
+        for (Method method : methods) {
             String name = method.getName();
             Class type = method.getReturnType();
             Class params[] = method.getParameterTypes();
             if (name.startsWith("get") && params.length == 0 && type != null && isSettableType(type)) {
                 try {
-                    Object value = method.invoke(target, new Object[] {});
+                    Object value = method.invoke(target);
                     if (value == null) {
                         continue;
                     }
@@ -101,11 +102,11 @@ public final class IntrospectionSupport {
 
         Class clazz = target.getClass();
         Method method = getPropertyGetter(clazz, prop);
-        return method.invoke(target, new Object[] {});
+        return method.invoke(target);
     }
 
     public static Method getPropertyGetter(Class type, String propertyName) throws NoSuchMethodException {
-        Method method = type.getMethod("get" + ObjectHelper.capitalize(propertyName), new Class[] {});
+        Method method = type.getMethod("get" + ObjectHelper.capitalize(propertyName));
         return method;
     }
 
@@ -188,11 +189,11 @@ public final class IntrospectionSupport {
             // If the type is null or it matches the needed type, just use the
             // value directly
             if (value == null || value.getClass() == setter.getParameterTypes()[0]) {
-                setter.invoke(target, new Object[] {value});
+                setter.invoke(target, value);
             } else {
                 // We need to convert it
                 Object convertedValue = convert(typeConverter, setter.getParameterTypes()[0], value);
-                setter.invoke(target, new Object[] {convertedValue});
+                setter.invoke(target, convertedValue);
             }
             return true;
         } catch (InvocationTargetException e) {
@@ -206,7 +207,6 @@ public final class IntrospectionSupport {
             }
         }
     }
-
 
     public static boolean setProperty(Object target, String name, Object value) throws Exception {
         return setProperty(null, target, name, value);
@@ -238,7 +238,7 @@ public final class IntrospectionSupport {
             return editor.getAsText();
         }
         if (type == URI.class) {
-            return ((URI)value).toString();
+            return value.toString();
         }
         return null;
     }
@@ -248,8 +248,7 @@ public final class IntrospectionSupport {
         name = "set" + ObjectHelper.capitalize(name);
         while (clazz != Object.class) {
             Method[] methods = clazz.getMethods();
-            for (int i = 0; i < methods.length; i++) {
-                Method method = methods[i];
+            for (Method method : methods) {
                 Class params[] = method.getParameterTypes();
                 if (method.getName().equals(name) && params.length == 1) {
                     Class paramType = params[0];
@@ -327,9 +326,9 @@ public final class IntrospectionSupport {
         }
 
         Field[] fields = startClass.getDeclaredFields();
-        for (int i = 0; i < fields.length; i++) {
-            Field field = fields[i];
-            if (Modifier.isStatic(field.getModifiers()) || Modifier.isTransient(field.getModifiers()) || Modifier.isPrivate(field.getModifiers())) {
+        for (Field field : fields) {
+            if (Modifier.isStatic(field.getModifiers()) || Modifier.isTransient(field.getModifiers())
+                || Modifier.isPrivate(field.getModifiers())) {
                 continue;
             }
 
