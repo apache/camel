@@ -20,12 +20,11 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.processor.DelegateProcessor;
 
 /**
- * A simple converter that can convert any Processor to an AsyncProcessor.
+ * A simple converter that can convert any {@link Processor} to an {@link AsyncProcessor}.
  * Processing will still occur synchronously but it will provide the required
  * notifications that the caller expects.
  * 
@@ -33,7 +32,7 @@ import org.apache.camel.processor.DelegateProcessor;
  */
 public class AsyncProcessorTypeConverter implements TypeConverter {
 
-    public static final class ProcessorToAsynProcessorBridge extends DelegateProcessor implements AsyncProcessor {
+    private static final class ProcessorToAsynProcessorBridge extends DelegateProcessor implements AsyncProcessor {
 
         private ProcessorToAsynProcessorBridge(Processor processor) {
             super(processor);

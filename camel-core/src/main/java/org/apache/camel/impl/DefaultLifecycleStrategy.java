@@ -26,6 +26,9 @@ import org.apache.camel.Service;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 
+/**
+ * Default implementation of the lifecycle strategy.
+ */
 public class DefaultLifecycleStrategy implements LifecycleStrategy {
 
     public void onContextCreate(CamelContext context) {

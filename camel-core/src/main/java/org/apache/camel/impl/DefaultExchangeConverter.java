@@ -20,11 +20,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.ExchangeConverter;
 
 /**
+ * Default implementation of {@link org.apache.camel.spi.ExchangeConverter}.
+ *
  * @version $Revision$
  */
 public class DefaultExchangeConverter implements ExchangeConverter {
+
     public <T> T convertTo(Class<T> type, Exchange exchange) {
         // TODO use some kinda introspection to find available exchange conversions
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
+    
 }

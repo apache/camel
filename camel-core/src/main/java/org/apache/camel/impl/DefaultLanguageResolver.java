@@ -24,6 +24,9 @@ import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 
 /**
+ * Default language resolver that looks for language factories in <b>META-INF/services/org/apache/camel/language/</b> and
+ * language resolvers in <b>META-INF/services/org/apache/camel/language/resolver/</b>.
+ *
  * @version $Revision$
  */
 public class DefaultLanguageResolver implements LanguageResolver {

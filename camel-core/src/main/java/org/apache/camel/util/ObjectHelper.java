@@ -18,6 +18,7 @@ package org.apache.camel.util;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -312,6 +313,27 @@ public final class ObjectHelper {
     }
 
     /**
+     * Attempts to load the given resource as a stream using the thread context class
+     * loader or the class loader used to load this class
+     *
+     * @param name the name of the resource to load
+     * @return the stream or null if it could not be loaded
+     */
+    public static InputStream loadResourceAsStream(String name) {
+        InputStream in = null;
+
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        if (contextClassLoader != null) {
+            in = contextClassLoader.getResourceAsStream(name);
+        }
+        if (in != null) {
+            in = ObjectHelper.class.getClassLoader().getResourceAsStream(name);
+        }
+
+        return in;
+    }
+
+    /**
      * A helper method to invoke a method via reflection and wrap any exceptions
      * as {@link RuntimeCamelException} instances
      *
@@ -459,7 +481,9 @@ public final class ObjectHelper {
             try {
                 closeable.close();
             } catch (IOException e) {
-                log.warn("Could not close " + name + ". Reason: " + e, e);
+                if (log != null) {
+                    log.warn("Could not close: " + name + ". Reason: " + e, e);
+                }
             }
         }
     }

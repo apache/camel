@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * Default implementation of the {@link TimeoutMap}.
  *
  * @version $Revision$
  */
@@ -86,9 +87,6 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
         }
     }
 
-    /**
-     * Returns a copy of the keys in the map
-     */
     public Object[] getKeys() {
         Object[] keys = null;
         synchronized (map) {
@@ -113,9 +111,6 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
         schedulePoll();
     }
 
-    /**
-     * Purges any old entries from the map
-     */
     public void purge() {
         long now = currentTime();
         synchronized (map) {
