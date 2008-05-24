@@ -27,6 +27,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.spi.Injector;
 
+/**
+ * Finder to find factories from the resource classpath, usually <b>META-INF/services/org/apache/camel/</b>.
+ */
 public class FactoryFinder {
     private final String path;
     private final ConcurrentHashMap classMap = new ConcurrentHashMap();
@@ -41,9 +44,9 @@ public class FactoryFinder {
 
     /**
      * Creates a new instance of the given key
-     * 
+     *
      * @param key is the key to add to the path to find a text file containing
-     *                the factory name
+     *            the factory name
      * @return a newly created instance
      */
     public Object newInstance(String key) throws IllegalAccessException, InstantiationException, IOException,
@@ -130,35 +133,16 @@ public class FactoryFinder {
         if (className == null) {
             throw new IOException("Expected property is missing: " + propertyPrefix + "class");
         }
-        Class clazz = null;
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        if (loader != null) {
-            try {
-                clazz = loader.loadClass(className);
-            } catch (ClassNotFoundException e) {
-                // ignore
-            }
-        }
-        if (clazz == null) {
-            clazz = FactoryFinder.class.getClassLoader().loadClass(className);
-        }
-        return clazz;
+
+        return ObjectHelper.loadClass(className);
     }
 
     private Properties doFindFactoryProperties(String key) throws IOException {
         String uri = path + key;
 
-        // lets try the thread context class loader first
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if (classLoader == null) {
-            classLoader = getClass().getClassLoader();
-        }
-        InputStream in = classLoader.getResourceAsStream(uri);
+        InputStream in = ObjectHelper.loadResourceAsStream(uri);
         if (in == null) {
-            in = FactoryFinder.class.getClassLoader().getResourceAsStream(uri);
-            if (in == null) {
-                throw new NoFactoryAvailableException(uri);
-            }
+            throw new NoFactoryAvailableException(uri);
         }
 
         // lets load the file
@@ -169,10 +153,9 @@ public class FactoryFinder {
             properties.load(reader);
             return properties;
         } finally {
-            try {
-                reader.close();
-            } catch (Exception ignore) {
-            }
+            ObjectHelper.close(reader, key, null);
+            ObjectHelper.close(in, key, null);
         }
     }
+    
 }

@@ -24,6 +24,7 @@ package org.apache.camel.spi;
  * @version $Revision$
  */
 public interface Injector {
+
     /**
      * Instantiates a new instance of the given type possibly injecting values
      * into the object in the process

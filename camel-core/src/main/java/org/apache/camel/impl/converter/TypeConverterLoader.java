@@ -17,9 +17,12 @@
 package org.apache.camel.impl.converter;
 
 /**
+ * A pluggable strategy to load type converters into a registry from some kind of mechanism
+ *
  * @version $Revision$
  */
 public interface TypeConverterLoader {
+
     /**
      * A pluggable strategy to load type converters into a registry from some kind of mechanism
      *

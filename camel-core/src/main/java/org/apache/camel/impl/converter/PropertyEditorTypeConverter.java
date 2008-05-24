@@ -23,7 +23,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Uses the java.beans.PropertyEditor conversion system to convert Objects to
+ * Uses the {@link java.beans.PropertyEditor} conversion system to convert Objects to
  * and from String values.
  *
  * @version $Revision$
@@ -31,16 +31,13 @@ import org.apache.camel.util.ObjectHelper;
 public class PropertyEditorTypeConverter implements TypeConverter {
 
     public <T> T convertTo(Class<T> toType, Object value) {
-
         // We can't convert null values since we can't figure out a property
         // editor for it.
         if (value == null) {
             return null;
         }
 
-
         if (value.getClass() == String.class) {
-
             // No conversion needed.
             if (toType == String.class) {
                 return ObjectHelper.cast(toType, value);
@@ -51,15 +48,14 @@ public class PropertyEditorTypeConverter implements TypeConverter {
                 editor.setAsText(value.toString());
                 return ObjectHelper.cast(toType, editor.getValue());
             }
-
         } else if (toType == String.class) {
-
             PropertyEditor editor = PropertyEditorManager.findEditor(value.getClass());
             if (editor != null) {
                 editor.setValue(value);
                 return ObjectHelper.cast(toType, editor.getAsText());
             }
         }
+
         return null;
     }
 

@@ -20,9 +20,12 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.Injector;
 
 /**
+ * Registry for type converters.
+ *
  * @version $Revision$
  */
 public interface TypeConverterRegistry {
+
     /**
      * Allows a new type converter to be registered
      *

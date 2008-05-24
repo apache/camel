@@ -34,6 +34,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * Default implementation of a type converter registry used for
+ * <a href="http://activemq.apache.org/camel/type-converter.html">type converters</a> in Camel.
+ *
  * @version $Revision$
  */
 public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistry {
@@ -71,8 +74,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
             }
         }
 
-        // lets avoid NullPointerException when converting to boolean for null
-        // values
+        // lets avoid NullPointerException when converting to boolean for null values
         if (boolean.class.isAssignableFrom(toType)) {
             return (T) Boolean.FALSE;
         }
