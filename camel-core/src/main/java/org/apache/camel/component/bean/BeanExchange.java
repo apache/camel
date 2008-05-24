@@ -22,6 +22,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
+ * Exchange for the bean component.
+ *
  * @version $Revision$
  */
 public class BeanExchange extends DefaultExchange {

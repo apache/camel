@@ -28,6 +28,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
+ * Component for <a href="http://activemq.apache.org/camel/dataset.html">DataSet</a>.
+ *
  * @version $Revision$
  */
 public class DataSetComponent extends DefaultComponent<Exchange> {

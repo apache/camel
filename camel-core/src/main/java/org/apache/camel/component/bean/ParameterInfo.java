@@ -21,6 +21,8 @@ import java.lang.annotation.Annotation;
 import org.apache.camel.Expression;
 
 /**
+ * Parameter information to be used for method invocation.
+ *
  * @version $Revision$
  */
 public class ParameterInfo {

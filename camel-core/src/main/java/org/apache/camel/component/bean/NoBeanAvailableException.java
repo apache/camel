@@ -19,6 +19,8 @@ package org.apache.camel.component.bean;
 import org.apache.camel.CamelException;
 
 /**
+ * Exception thrown if the bean could not be found in the registry.
+ *
  * @version $Revision$
  */
 public class NoBeanAvailableException extends CamelException {

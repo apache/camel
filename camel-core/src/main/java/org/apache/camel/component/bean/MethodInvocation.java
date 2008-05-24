@@ -20,6 +20,8 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 
 /**
+ * Information used by Camel to perform method invocation.
+ *
  * @version $Revision$
  */
 public interface MethodInvocation {

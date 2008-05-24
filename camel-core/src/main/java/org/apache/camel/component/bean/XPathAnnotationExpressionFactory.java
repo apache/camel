@@ -26,6 +26,8 @@ import org.apache.camel.language.NamespacePrefix;
 import org.apache.camel.language.XPath;
 
 /**
+ * Factory for the XPath expression annotations.
+ *
  * @version $Revision$
  */
 public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {

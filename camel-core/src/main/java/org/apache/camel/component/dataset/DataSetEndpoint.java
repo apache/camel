@@ -33,6 +33,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * Endpoint for DataSet.
+ *
  * @version $Revision$
  */
 public class DataSetEndpoint extends MockEndpoint implements Service {

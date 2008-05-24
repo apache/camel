@@ -24,6 +24,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * DataSet consumer.
+ *
  * @version $Revision$
  */
 public class DataSetConsumer extends DefaultConsumer<Exchange> {
