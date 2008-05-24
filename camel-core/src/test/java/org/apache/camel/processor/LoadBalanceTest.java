@@ -43,7 +43,7 @@ public class LoadBalanceTest extends ContextTestSupport {
                 from("direct:start").loadBalance().
                 roundRobin().to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: example
-            };
+            }
         };
     }
 

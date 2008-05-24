@@ -206,11 +206,11 @@ public class DefaultExchange implements Exchange {
         if (exception == null) {
             return;
         }
-        if (exception instanceof Exception) {
-            throw (Exception)exception;
-        }
         if (exception instanceof RuntimeException) {
             throw (RuntimeException)exception;
+        }
+        if (exception instanceof Exception) {
+            throw (Exception)exception;
         }
         throw new RuntimeCamelException(exception);
     }

@@ -32,9 +32,9 @@ import org.apache.camel.processor.DelegateProcessor;
  */
 public class AsyncProcessorTypeConverter implements TypeConverter {
 
-    private static final class ProcessorToAsynProcessorBridge extends DelegateProcessor implements AsyncProcessor {
+    private static final class ProcessorToAsyncProcessorBridge extends DelegateProcessor implements AsyncProcessor {
 
-        private ProcessorToAsynProcessorBridge(Processor processor) {
+        private ProcessorToAsyncProcessorBridge(Processor processor) {
             super(processor);
         }
 
@@ -58,7 +58,7 @@ public class AsyncProcessorTypeConverter implements TypeConverter {
                 } else if (value instanceof Processor) {
                     // Provide an async bridge to the regular processor.
                     final Processor processor = (Processor)value;
-                    return toType.cast(new ProcessorToAsynProcessorBridge(processor));
+                    return toType.cast(new ProcessorToAsyncProcessorBridge(processor));
                 }
             }
         }
@@ -69,6 +69,6 @@ public class AsyncProcessorTypeConverter implements TypeConverter {
         if (value instanceof AsyncProcessor) {
             return (AsyncProcessor)value;
         }
-        return new ProcessorToAsynProcessorBridge(value);
+        return new ProcessorToAsyncProcessorBridge(value);
     }
 }

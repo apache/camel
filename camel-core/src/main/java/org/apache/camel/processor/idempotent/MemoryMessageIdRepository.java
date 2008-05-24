@@ -29,7 +29,7 @@ import org.apache.camel.util.LRUCache;
  * @version $Revision$
  */
 public class MemoryMessageIdRepository implements MessageIdRepository {
-    private Map cache;
+    private final Map cache;
 
     public MemoryMessageIdRepository(Map set) {
         this.cache = set;

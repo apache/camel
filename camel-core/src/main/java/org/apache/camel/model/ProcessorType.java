@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.Set;import java.util.Arrays;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -639,9 +639,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      */
     public ResequencerType resequencer(Expression... expressions) {
         List<Expression> list = new ArrayList<Expression>();
-        for (Expression expression : expressions) {
-            list.add(expression);
-        }
+        list.addAll(Arrays.asList(expressions));
         return resequencer(list);
     }
 

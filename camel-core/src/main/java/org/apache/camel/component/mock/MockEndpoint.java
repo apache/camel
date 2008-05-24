@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Map;import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -130,7 +130,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
 
     public static void expectsMessageCount(int count, MockEndpoint... endpoints) throws InterruptedException {
         for (MockEndpoint endpoint : endpoints) {
-            endpoint.expectsMessageCount(count);
+            MockEndpoint.expectsMessageCount(count);
         }
     }
 
@@ -322,9 +322,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
      */
     public void expectedBodiesReceived(Object... bodies) {
         List bodyList = new ArrayList();
-        for (Object body : bodies) {
-            bodyList.add(body);
-        }
+        bodyList.addAll(Arrays.asList(bodies));
         expectedBodiesReceived(bodyList);
     }
 

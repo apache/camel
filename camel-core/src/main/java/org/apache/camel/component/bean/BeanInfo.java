@@ -60,7 +60,7 @@ public class BeanInfo {
     private Map<String, MethodInfo> operations = new ConcurrentHashMap<String, MethodInfo>();
     private MethodInfo defaultMethod;
     private List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
-    private List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<MethodInfo>();;
+    private List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<MethodInfo>();
 
     public BeanInfo(CamelContext camelContext, Class type) {
         this(camelContext, type, createParameterMappingStrategy(camelContext));

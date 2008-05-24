@@ -138,7 +138,7 @@ public class BuilderWithScopesTest extends TestSupport {
                     .process(toProcessor);
             }
         };
-    };
+    }
 
     public void testRouteWithChoice1() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
@@ -183,7 +183,7 @@ public class BuilderWithScopesTest extends TestSupport {
                     .process(orderProcessor3).end().process(toProcessor);
             }
         };
-    };
+    }
 
     public void testRouteWithChoiceOtherwise1() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
@@ -228,7 +228,7 @@ public class BuilderWithScopesTest extends TestSupport {
                     .handle(ValidationException.class).process(orderProcessor).process(orderProcessor3); // continuation of the handle clause
             }
         };
-    };
+    }
 
     public void testRouteWithTryCatchNoEndNoException() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
@@ -261,7 +261,7 @@ public class BuilderWithScopesTest extends TestSupport {
                     .handle(ValidationException.class).process(orderProcessor).end().process(orderProcessor3);
             }
         };
-    };
+    }
 
     public void testRouteWithTryCatchEndNoException() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
@@ -297,7 +297,7 @@ public class BuilderWithScopesTest extends TestSupport {
                     .process(orderProcessor2).process(orderProcessor3); // continuation of the finallyBlock clause
             }
         };
-    };
+    }
 
     public void testRouteWithTryCatchFinallyNoEndNoException() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();
