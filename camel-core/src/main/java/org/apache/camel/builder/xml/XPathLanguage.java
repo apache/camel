@@ -24,6 +24,8 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
 
 /**
+ * XPath language.
+ *
  * @version $Revision$
  */
 public class XPathLanguage implements Language {

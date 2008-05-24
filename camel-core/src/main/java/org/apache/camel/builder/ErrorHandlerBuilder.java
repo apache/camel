@@ -20,9 +20,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.ExceptionType;
 
 /**
+ * A builder of a <a href="http://activemq.apache.org/camel/error-handler.html">Error Handler</a>
+ *
  * @version $Revision$
  */
 public interface ErrorHandlerBuilder {
+
     /**
      * Creates a copy of this builder
      */
@@ -33,5 +36,10 @@ public interface ErrorHandlerBuilder {
      */
     Processor createErrorHandler(Processor processor) throws Exception;
 
+    /**
+     * Adds error handler for the given exception type
+     * @param exception  the exception to handle
+     */
     void addErrorHandlers(ExceptionType exception);
+
 }

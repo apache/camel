@@ -24,6 +24,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 
+/**
+ * Strategy for notifications
+ */
 public interface LifecycleStrategy {
     /**
      * Notification on adding a {@link CamelContext}.

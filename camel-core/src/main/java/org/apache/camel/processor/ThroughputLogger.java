@@ -23,6 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.commons.logging.Log;
 
 /**
+ * A logger for logging message throughput.
+ *  
  * @version $Revision$
  */
 public class ThroughputLogger extends Logger {

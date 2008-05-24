@@ -17,6 +17,8 @@
 package org.apache.camel.builder.xml;
 
 /**
+ * Factory for {@link StreamResultHandler}
+ *
  * @version $Revision$
  */
 public class StreamResultHandlerFactory implements ResultHandlerFactory {

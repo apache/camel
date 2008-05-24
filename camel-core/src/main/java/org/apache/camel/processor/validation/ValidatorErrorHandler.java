@@ -25,9 +25,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 
 /**
+ * Validator error handler.
+ *
  * @version $Revision$
  */
 public interface ValidatorErrorHandler extends ErrorHandler {
+
     /**
      * Resets any state within this error handler
      */
@@ -36,9 +39,9 @@ public interface ValidatorErrorHandler extends ErrorHandler {
     /**
      * Process any errors which may have occurred during validation
      *
-     * @param exchange
-     * @param schema
-     * @param result
+     * @param exchange the exchange
+     * @param schema   the schema
+     * @param result   the result
      */
     void handleErrors(Exchange exchange, Schema schema, DOMResult result) throws ValidationException;
 }

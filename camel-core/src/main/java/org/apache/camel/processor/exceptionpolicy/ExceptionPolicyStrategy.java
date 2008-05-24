@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.model.ExceptionType;
 
 /**
- * A strategy to determine witch {@link org.apache.camel.model.ExceptionType} should handle the thrown
+ * A strategy to determine which {@link org.apache.camel.model.ExceptionType} should handle the thrown
  * exception.
  *
  * @see org.apache.camel.processor.exceptionpolicy.DefaultExceptionPolicyStrategy DefaultExceptionPolicy

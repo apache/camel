@@ -24,6 +24,8 @@ import java.lang.annotation.Target;
 import org.apache.camel.component.bean.DefaultAnnotationExpressionFactory;
 
 /**
+ * Base annotation for languages.
+ *
  * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
