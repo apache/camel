@@ -19,8 +19,6 @@ package org.apache.camel.processor;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Service;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.util.AsyncProcessorHelper;

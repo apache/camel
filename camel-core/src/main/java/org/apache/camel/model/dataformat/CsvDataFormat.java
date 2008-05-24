@@ -18,10 +18,8 @@ package org.apache.camel.model.dataformat;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.spi.DataFormat;
 
 /**

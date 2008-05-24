@@ -18,12 +18,9 @@ package org.apache.camel.model.loadbalancer;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlValue;
 
-import org.apache.camel.model.dataformat.ArtixDSContentType;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 

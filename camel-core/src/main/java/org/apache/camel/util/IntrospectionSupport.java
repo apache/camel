@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.camel.TypeConverter;
@@ -164,7 +163,7 @@ public final class IntrospectionSupport {
         }
 
         for (Iterator iter = props.entrySet().iterator(); iter.hasNext();) {
-            Entry entry = (Entry)iter.next();
+            Map.Entry entry = (Map.Entry)iter.next();
             if (setProperty(typeConverter, target, (String)entry.getKey(), entry.getValue())) {
                 iter.remove();
                 rc = true;

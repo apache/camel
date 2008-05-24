@@ -21,7 +21,6 @@ import java.io.Serializable;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.equal;
 
 /**

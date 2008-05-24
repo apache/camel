@@ -26,7 +26,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.file.strategy.FileProcessStrategyFactory;
 import org.apache.camel.component.file.strategy.FileProcessStrategySupport;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.util.FactoryFinder;
