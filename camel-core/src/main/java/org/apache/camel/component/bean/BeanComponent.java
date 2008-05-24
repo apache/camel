@@ -19,7 +19,6 @@ package org.apache.camel.component.bean;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultComponent;

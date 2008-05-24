@@ -20,7 +20,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultUnitOfWork;
-import org.apache.camel.spi.UnitOfWork;
 
 /** 
  * Handles calling the UnitOfWork.done() method when processing of an exchange

@@ -18,14 +18,11 @@ package org.apache.camel.builder.xml;
 
 import javax.xml.xpath.XPathFunctionResolver;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
 
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 

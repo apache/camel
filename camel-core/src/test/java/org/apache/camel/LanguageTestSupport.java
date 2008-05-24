@@ -16,8 +16,6 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.impl.DefaultExchange;
-
 /**
  * A useful base class for testing the language plugins in Camel
  * @version $Revision$

@@ -16,16 +16,12 @@
  */
 package org.apache.camel.component.dataset;
 
-import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
  * Component for <a href="http://activemq.apache.org/camel/dataset.html">DataSet</a>.

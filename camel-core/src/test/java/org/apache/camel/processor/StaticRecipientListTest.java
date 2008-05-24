@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 public class StaticRecipientListTest extends RecipientListTest {
 

@@ -16,9 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.concurrent.Future;
-
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;

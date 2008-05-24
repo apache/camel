@@ -19,7 +19,6 @@ package org.apache.camel.component.dataset;
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version $Revision$

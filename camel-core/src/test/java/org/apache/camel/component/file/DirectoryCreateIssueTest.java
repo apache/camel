@@ -26,8 +26,6 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**

@@ -16,15 +16,9 @@
  */
 package org.apache.camel.component.bean;
 
-import java.util.Map;
-
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Headers;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.util.jndi.JndiContext;
