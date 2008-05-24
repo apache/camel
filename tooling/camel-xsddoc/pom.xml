@@ -63,7 +63,7 @@
                         out="${basedir}/target/site/xsddoc"
                         doctitle="Apache Camel XML Schema Reference"
                         header="&lt;a href='http://activemq.apache.org/camel/'&gt;Apache Camel&lt;/a&gt;"
-                        footer="Copyright 2007 (c) the &lt;a href='http://www.apache.org/'&gt;Apache Software Foundation&lt;/a&gt;"
+                        footer="Copyright 2008 (c) the &lt;a href='http://www.apache.org/'&gt;Apache Software Foundation&lt;/a&gt;"
                         verbose="false"/>
                 <!--
                         css="${basedir}/../etc/css/stylesheet.css"
