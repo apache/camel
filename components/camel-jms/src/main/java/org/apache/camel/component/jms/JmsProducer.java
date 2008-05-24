@@ -37,8 +37,8 @@ import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap.Deferred
 import org.apache.camel.component.jms.requestor.PersistentReplyToRequestor;
 import org.apache.camel.component.jms.requestor.Requestor;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.Out;
 import org.apache.camel.util.UuidGenerator;
+import org.apache.camel.util.ValueHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jms.core.JmsOperations;
@@ -165,7 +165,7 @@ public class JmsProducer extends DefaultProducer {
                 in.setHeader("JMSCorrelationID", getUuidGenerator().generateId());
             }
 
-            final Out<FutureTask> futureHolder = new Out<FutureTask>();
+            final ValueHolder<FutureTask> futureHolder = new ValueHolder<FutureTask>();
             final DeferredMessageSentCallback callback = msgIdAsCorrId ? deferredRequestReplyMap.createDeferredMessageSentCallback() : null;
 
             final CamelJmsTemplate template = (CamelJmsTemplate)getInOutTemplate();
