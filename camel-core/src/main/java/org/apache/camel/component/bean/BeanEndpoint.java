@@ -22,6 +22,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.ProcessorEndpoint;
 
 /**
+ * Endpoint for the bean component.
+ *
  * @version $Revision: 1.1 $
  */
 public class BeanEndpoint extends ProcessorEndpoint {

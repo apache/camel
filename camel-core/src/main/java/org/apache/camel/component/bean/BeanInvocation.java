@@ -28,6 +28,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * Invocation of beans that can handle being serialized.
+ */
 public class BeanInvocation implements Externalizable {
     private Object[] args;
     private MethodBean methodBean;

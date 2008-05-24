@@ -28,6 +28,8 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
+ * Information about a method to be used for invocation.
+ *
  * @version $Revision$
  */
 public class MethodInfo {

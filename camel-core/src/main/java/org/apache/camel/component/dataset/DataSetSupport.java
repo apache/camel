@@ -25,6 +25,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
+ * Base class for DataSet
+ *
  * @version $Revision$
  */
 public abstract class DataSetSupport implements DataSet {

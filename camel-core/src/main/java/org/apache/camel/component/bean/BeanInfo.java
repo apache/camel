@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -46,8 +45,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ExchangeHelper.convertToType;
-
-
 
 /**
  * Represents the metadata about a bean type created via a combination of
