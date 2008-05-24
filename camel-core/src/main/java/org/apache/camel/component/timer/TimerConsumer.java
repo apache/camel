@@ -26,6 +26,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * The timer consumer.
+ *
  * @version $Revision$
  */
 public class TimerConsumer extends DefaultConsumer<Exchange> {

@@ -30,7 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Creates a CounterMonitor for jmx attributes
+ * JMXEndpoint for monitoring JMX attributs using {@link CounterMonitor}.
  *
  * @version $Revision$
  */
@@ -56,21 +56,10 @@ public class JMXEndpoint extends DefaultEndpoint<JMXExchange> {
         super(endpointUri);
     }
 
-    /**
-     * @return a Producer
-     * @throws Exception
-     * @see org.apache.camel.Endpoint#createProducer()
-     */
     public Producer<JMXExchange> createProducer() throws Exception {
-        throw new RuntimeException("Not supported");
+        throw new UnsupportedOperationException("Producer not supported");
     }
 
-    /**
-     * @param proc
-     * @return a Consumer
-     * @throws Exception
-     * @see org.apache.camel.Endpoint#createConsumer(org.apache.camel.Processor)
-     */
     public Consumer<JMXExchange> createConsumer(Processor proc) throws Exception {
         ObjectName observedName = new ObjectName(observedObjectName);
         if (name == null) {
@@ -78,6 +67,7 @@ public class JMXEndpoint extends DefaultEndpoint<JMXExchange> {
             type = type != null ? type : "UNKNOWN";
             name = mbeanServer.getDefaultDomain() + ":type=CounterMonitor_" + type;
         }
+
         JMXConsumer result = new JMXConsumer(this, proc);
         ourName = new ObjectName(name);
         counterMonitor.setNotify(true);
@@ -87,7 +77,12 @@ public class JMXEndpoint extends DefaultEndpoint<JMXExchange> {
         counterMonitor.setDifferenceMode(false);
         counterMonitor.setInitThreshold(threshold);
         counterMonitor.setOffset(offset);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Registering and adding notification listener for [" + counterMonitor + "] with name [" + ourName + "]");
+        }
         mbeanServer.registerMBean(counterMonitor, ourName);
+        // TODO: How do we remove the listener?
         mbeanServer.addNotificationListener(ourName, result, null, new Object());
         return result;
     }

@@ -18,11 +18,10 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
- * A {@link Exchange} for File
+ * A {@link org.apache.camel.Message Message} for File
  *
  * @version $Revision$
  */

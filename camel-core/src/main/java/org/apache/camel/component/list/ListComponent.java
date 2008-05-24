@@ -22,9 +22,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
+ * The <a href="http://activemq.apache.org/camel/list.html">List</a> component.
+ *
  * @version $Revision$
  */
 public class ListComponent extends DefaultComponent {
+
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         return new ListEndpoint(uri, this);
     }

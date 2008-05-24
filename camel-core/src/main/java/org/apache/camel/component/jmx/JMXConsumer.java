@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
- * Generate an Exchange after getting a JMX Notification
+ * Creates an JMXExchange after getting a JMX Notification
  * 
  * @version $Revision$
  */

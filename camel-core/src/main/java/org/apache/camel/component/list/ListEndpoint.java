@@ -71,7 +71,6 @@ public class ListEndpoint extends DefaultEndpoint<Exchange> implements Browsable
         return loadBalancer;
     }
 
-
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
