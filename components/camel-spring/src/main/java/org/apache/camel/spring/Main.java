@@ -79,11 +79,7 @@ public class Main extends ServiceSupport {
                 setApplicationContextUri(parameter);
             }
         });
-        addOption(new Option("d", "debug", "Enables the debugger") {
-            protected void doProcess(String arg, LinkedList<String> remainingArgs) {
-                enableDebugging();
-            }
-        });
+
         addOption(new ParameterOption("o", "outdir",
                 "Sets the DOT output directory where the visual representations of the routes are generated",
                 "dot") {
@@ -110,6 +106,12 @@ public class Main extends ServiceSupport {
                     setTimeUnit(TimeUnit.SECONDS);
                 }
                 setDuration(Integer.parseInt(value));
+            }
+        });
+
+        addOption(new Option("x", "debug", "Enables the debugger") {
+            protected void doProcess(String arg, LinkedList<String> remainingArgs) {
+                enableDebugging();
             }
         });
     }
