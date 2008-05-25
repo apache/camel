@@ -29,8 +29,8 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Type converter loader that is capable of reporting the loaded type converters.
- *
- * @deprecated not used
+ * <p/>
+ * Used by the camel-maven-plugin.
  */
 public class ReportingTypeConverterLoader extends AnnotationTypeConverterLoader {
 
