@@ -25,8 +25,8 @@ import org.apache.camel.spi.Injector;
 
 /**
  * Registry for reporting type converters.
- *
- * @deprecated not used
+ * <p/>
+ * Used by the camel-maven-plugin.
  */
 public class ReportingTypeConverterRegistry implements TypeConverterRegistry {
     private List<String> errors = new ArrayList<String>();
