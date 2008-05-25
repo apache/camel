@@ -41,9 +41,9 @@ import org.apache.commons.logging.LogFactory;
  */
 public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     private static final transient Log LOG = LogFactory.getLog(FileEndpoint.class);
-    private static final String DEFAULT_STRATEGYFACTORY_CLASS = 
-    	"org.apache.camel.component.file.strategy.FileProcessStrategyFactory";
-    
+    private static final String DEFAULT_STRATEGYFACTORY_CLASS =
+        "org.apache.camel.component.file.strategy.FileProcessStrategyFactory";
+
     private File file;
     private FileProcessStrategy fileProcessStrategy;
     private boolean autoCreate = true;
@@ -276,15 +276,15 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      * A strategy method to lazily create the file strategy
      */
     protected FileProcessStrategy createFileStrategy() {
-    	Class factory = null;
-    	try {
+        Class factory = null;
+        try {
             FactoryFinder finder = new FactoryFinder("META-INF/services/org/apache/camel/component/");
-     	    factory = finder.findClass("file", "strategy.factory.");
-    	} catch (ClassNotFoundException e) {
+            factory = finder.findClass("file", "strategy.factory.");
+        } catch (ClassNotFoundException e) {
             LOG.debug("'strategy.factory.class' not found", e);
         } catch (IOException e) {
             LOG.debug("No strategy factory defined in 'META-INF/services/org/apache/camel/component/file'", e);
-    	}
+        }
 
         if (factory == null) {
             // use default
@@ -298,7 +298,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
             Method factoryMethod = factory.getMethod("createFileProcessStrategy", Properties.class);
             return (FileProcessStrategy) ObjectHelper.invokeMethod(factoryMethod, null, getParamsAsProperties());
         } catch (NoSuchMethodException e) {
-            throw new TypeNotPresentException(factory.getSimpleName() 
+            throw new TypeNotPresentException(factory.getSimpleName()
                 + ".createFileProcessStrategy(Properties params) method not found", e);
         }
     }
