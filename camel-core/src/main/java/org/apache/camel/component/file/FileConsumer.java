@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -104,8 +105,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         if (!isValidFile(file)) {
             return 0;
         }
-        // we only care about file modified times if we are not deleting/moving
-        // files
+        // we only care about file modified times if we are not deleting/moving files
         if (!endpoint.isNoop()) {
             if (filesBeingProcessed.contains(file)) {
                 return 1;
@@ -127,15 +127,21 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                 // the exchange can happen asynchronously
                 getAsyncProcessor().process(exchange, new AsyncCallback() {
                     public void done(boolean sync) {
-                        if (exchange.getException() == null) {
-                            try {
-                                processStrategy.commit(endpoint, exchange, file);
-                            } catch (Exception e) {
-                                handleException(e);
-                            }
-                        } else {
+                        boolean failed = exchange.isFailed();
+                        boolean handled = DeadLetterChannel.isFailureHandled(exchange);
+
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Done processing file: " + file + ". Status is: " + (failed ? "failed: " + failed + ", handled by failure processor: " + handled : "OK"));
+                        }
+
+                        if (!failed || handled) {
+                            // commit the file strategy if there was no failure or already handled by the DeadLetterChannel
+                            processStrategyCommit(processStrategy, exchange, file, handled);
+                        } else if (failed && !handled) {
+                            // there was an exception but it was not handled by the DeadLetterChannel
                             handleException(exchange.getException());
                         }
+
                         filesBeingProcessed.remove(file);
                     }
                 });
@@ -148,7 +154,31 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         } catch (Throwable e) {
             handleException(e);
         }
+
         return 1;
+    }
+
+    /**
+     * Strategy when the file was processed and a commit should be executed.
+     *
+     * @param processStrategy   the strategy to perform the commit
+     * @param exchange          the exchange
+     * @param file              the file processed
+     * @param failureHandled    is <tt>false</tt> if the exchange was processed succesfully, <tt>true</tt> if
+     * an exception occured during processing but it was handled by the failure processor (usually the
+     * DeadLetterChannel).
+     */
+    protected void processStrategyCommit(FileProcessStrategy processStrategy, FileExchange exchange,
+                                         File file, boolean failureHandled) {
+        try {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Committing file strategy: " + processStrategy + " for file: " + file + (failureHandled ? " that was handled by the failure processor." : ""));
+            }
+            processStrategy.commit(endpoint, exchange, file);
+        } catch (Exception e) {
+            LOG.warn("Error committing file strategy: " + processStrategy, e);
+            handleException(e);
+        }
     }
 
     protected boolean isValidFile(File file) {
@@ -161,7 +191,6 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         }
         return result;
     }
-
 
     protected boolean isChanged(File file) {
         if (file == null) {

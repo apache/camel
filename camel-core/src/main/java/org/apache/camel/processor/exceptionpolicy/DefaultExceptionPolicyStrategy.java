@@ -42,6 +42,10 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
     public ExceptionType getExceptionPolicy(Map<Class, ExceptionType> exceptionPolicices, Exchange exchange,
                                             Throwable exception) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Finding best suited exception policy for thrown exception " + exception.getClass().getName());
+        }
+
         // the goal is to find the exception with the same/closet inheritance level as the target exception being thrown
         int targetLevel = getInheritanceLevel(exception.getClass());
         // candidate is the best candidate found so far to return
@@ -77,10 +81,14 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Using " + candidate + " as the exception policy");
+            if (candidate != null) {
+                LOG.debug("Using " + candidate + " as the exception policy");
+            } else {
+                LOG.debug("No candidate found to be used as exception policy");
+            }
         }
-        return candidate;
 
+        return candidate;
     }
 
     private static int getInheritanceLevel(Class clazz) {
