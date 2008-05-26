@@ -33,6 +33,8 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
+ * Represents the base XML type for DataFormat.
+ *
  * @version $Revision$
  */
 @XmlType(name = "dataFormatType")

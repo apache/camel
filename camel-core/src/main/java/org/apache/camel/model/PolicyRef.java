@@ -27,6 +27,8 @@ import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 
 /**
+ * Represents an XML &lt;policy/&gt; element
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "policy")

@@ -40,6 +40,8 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 
 /**
+ * Represents an XML &lt;aggregator/&gt; element
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "aggregator")

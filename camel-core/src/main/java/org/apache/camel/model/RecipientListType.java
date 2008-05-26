@@ -27,6 +27,8 @@ import org.apache.camel.processor.RecipientList;
 import org.apache.camel.spi.RouteContext;
 
 /**
+ * Represents an XML &lt;recipientList/&gt; element
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "recipientList")

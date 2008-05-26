@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.processor.RedeliveryPolicy;
 
 /**
+ * Represents an XML &lt;redeliveryPolicy/&gt; element
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "redeliveryPolicy")
@@ -34,7 +36,6 @@ public class RedeliveryPolicyType {
     private Boolean useExponentialBackOff;
     private Double collisionAvoidanceFactor;
     private Boolean useCollisionAvoidance;
-
 
     public RedeliveryPolicy createRedeliveryPolicy(RedeliveryPolicy parentPolicy) {
         RedeliveryPolicy answer =  parentPolicy.copy();
@@ -101,9 +102,6 @@ public class RedeliveryPolicyType {
         setUseExponentialBackOff(true);
         return this;
     }
-
-
-
 
     // Properties
     //-------------------------------------------------------------------------

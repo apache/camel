@@ -27,6 +27,8 @@ import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.spi.RouteContext;
 
 /**
+ * Represents an XML &lt;completedPredicate/&gt; element
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "completedPredicate")

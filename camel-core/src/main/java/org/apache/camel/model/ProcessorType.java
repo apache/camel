@@ -68,6 +68,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * Base class for processor types that most XML types extend.
+ *
  * @version $Revision$
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)

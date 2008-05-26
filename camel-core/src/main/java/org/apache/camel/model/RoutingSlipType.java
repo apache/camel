@@ -28,6 +28,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.spi.RouteContext;
 
+/**
+ * Represents an XML &lt;routingSlip/&gt; element
+ */
 @XmlRootElement(name = "routingSlip")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutingSlipType extends ProcessorType<ProcessorType> {

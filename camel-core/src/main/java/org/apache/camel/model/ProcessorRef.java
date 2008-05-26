@@ -26,6 +26,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.RouteContext;
 
 /**
+ * Represents an XML &lt;process/&gt; element
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "process")

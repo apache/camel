@@ -28,6 +28,9 @@ import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.SetHeaderProcessor;
 import org.apache.camel.spi.RouteContext;
 
+/**
+ * Represents an XML &lt;setHeader/&gt; element
+ */
 @XmlRootElement(name = "setHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetHeaderType extends ExpressionNode {

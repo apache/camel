@@ -24,6 +24,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 
+/**
+ * Represents an XML &lt;sticky/&gt; element
+ */
 @XmlRootElement(name = "sticky")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StickyLoadBalanceStrategy extends LoadBalancerType {

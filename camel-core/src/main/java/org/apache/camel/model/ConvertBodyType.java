@@ -30,6 +30,9 @@ import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * Represents an XML &lt;convertBodyTo/&gt; element
+ */
 @XmlRootElement(name = "convertBodyTo")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConvertBodyType extends ProcessorType<ProcessorType> {

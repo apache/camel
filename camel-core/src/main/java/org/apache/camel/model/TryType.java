@@ -30,6 +30,8 @@ import org.apache.camel.processor.TryProcessor;
 import org.apache.camel.spi.RouteContext;
 
 /**
+ * Represents an XML &lt;try/&gt; element
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "try")

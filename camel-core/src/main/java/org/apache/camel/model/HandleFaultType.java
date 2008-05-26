@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.processor.HandleFaultProcessor;
 
 /**
+ * Represents an XML &lt;handleFault/&gt; element
+ *
  * @version $Revision: 36565 $
  */
 @XmlRootElement(name = "handleFault")

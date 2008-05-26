@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model.loadbalancer;
 
-
-
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -34,6 +32,9 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
+/**
+ * Represents an XML &lt;loadBalance/&gt; element
+ */
 @XmlType(name = "loadBalancerType")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadBalancerType extends IdentifiedType implements LoadBalancer {

@@ -28,6 +28,8 @@ import org.apache.camel.processor.Interceptor;
 import org.apache.camel.spi.RouteContext;
 
 /**
+ * Represents an XML &lt;intercept/&gt; element
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "intercept")

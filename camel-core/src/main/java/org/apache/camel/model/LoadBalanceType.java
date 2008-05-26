@@ -43,6 +43,9 @@ import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 
+/**
+ * Represents an XML &lt;loadBalance/&gt; element
+ */
 @XmlRootElement(name = "loadBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadBalanceType extends OutputType<LoadBalanceType> {
@@ -57,10 +60,7 @@ public class LoadBalanceType extends OutputType<LoadBalanceType> {
         )
     private LoadBalancerType loadBalancerType;
 
-
-
     public LoadBalanceType() {
-
     }
 
     public String getRef() {
@@ -81,13 +81,10 @@ public class LoadBalanceType extends OutputType<LoadBalanceType> {
 
     protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorType<?>> outputs)
         throws Exception {
-
         LoadBalancer loadBalancer = LoadBalancerType.getLoadBalancer(routeContext, loadBalancerType, ref);
-
         for (ProcessorType processorType : outputs) {
-            //The outputs should be the SendProcessor
+            // The outputs should be the SendProcessor
             SendProcessor processor = (SendProcessor) processorType.createProcessor(routeContext);
-
             loadBalancer.addProcessor(processor);
         }
         return loadBalancer;
@@ -96,12 +93,10 @@ public class LoadBalanceType extends OutputType<LoadBalanceType> {
     // when this method will be called
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-
         LoadBalancer loadBalancer = LoadBalancerType.getLoadBalancer(routeContext, loadBalancerType, ref);
         for (ProcessorType processorType : getOutputs()) {
-            //The outputs should be the SendProcessor
+            // The outputs should be the SendProcessor
             SendProcessor processor = (SendProcessor) processorType.createProcessor(routeContext);
-
             loadBalancer.addProcessor(processor);
         }
 
@@ -135,7 +130,6 @@ public class LoadBalanceType extends OutputType<LoadBalanceType> {
         return this;
     }
 
-
     @Override
     public String getLabel() {
         CollectionStringBuffer buffer = new CollectionStringBuffer();
@@ -157,10 +151,5 @@ public class LoadBalanceType extends OutputType<LoadBalanceType> {
         result = result + getOutputs() + "]";
         return result;
     }
-
-
-
-
-
 
 }

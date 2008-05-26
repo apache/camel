@@ -25,14 +25,9 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
- * The unique identifier for a bean. The scope of the identifier
- * is the enclosing bean factory.
- * <p/>
- * <p/>
- * <p>Java class for identifiedType complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * The unique identifier for a bean. The scope of the identifier is the enclosing bean factory.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * <pre>
  * &lt;complexType name="identifiedType">
  *   &lt;complexContent>
@@ -55,9 +50,6 @@ public abstract class IdentifiedType {
 
     /**
      * Gets the value of the id property.
-     *
-     * @return possible object is
-     *         {@link String }
      */
     public String getId() {
         return id;
@@ -65,9 +57,6 @@ public abstract class IdentifiedType {
 
     /**
      * Sets the value of the id property.
-     *
-     * @param value allowed object is
-     *              {@link String }
      */
     public void setId(String value) {
         this.id = value;

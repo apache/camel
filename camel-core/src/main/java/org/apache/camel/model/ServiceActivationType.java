@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.model.language.ExpressionType;
 
 /**
+ * Represents an XML &lt;serviceActivation/&gt; element
+ * 
  * @version $Revision$
  */
 @XmlRootElement(name = "serviceActivation")

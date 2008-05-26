@@ -27,6 +27,8 @@ import org.apache.camel.processor.Delayer;
 import org.apache.camel.spi.RouteContext;
 
 /**
+ * Represents an XML &lt;delayer/&gt; element
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "delayer")
