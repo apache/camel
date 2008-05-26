@@ -51,7 +51,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
 import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
 
-public class InstrumentationAgentImpl extends ServiceSupport implements InstrumentationAgent,
+/**
+ * Default implementation of the Camel JMX service agent
+ */
+public class DefaultInstrumentationAgent extends ServiceSupport implements InstrumentationAgent,
     CamelContextAware {
     public static final String SYSTEM_PROPERTY_JMX = "org.apache.camel.jmx";
     public static final String SYSTEM_PROPERTY_JMX_USE_PLATFORM_MBS = SYSTEM_PROPERTY_JMX + ".usePlatformMBeanServer";
@@ -59,7 +62,7 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
     public static final String DEFAULT_HOST = "localhost";
     public static final int DEFAULT_PORT = 1099;
     public static final String DEFAULT_CONNECTOR_PATH = "/jmxrmi";
-    private static final transient Log LOG = LogFactory.getLog(InstrumentationAgentImpl.class);
+    private static final transient Log LOG = LogFactory.getLog(DefaultInstrumentationAgent.class);
 
 
     private MBeanServer server;
@@ -74,7 +77,7 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
     private boolean createConnector = true;
     private boolean usePlatformMBeanServer;
 
-    public InstrumentationAgentImpl() {
+    public DefaultInstrumentationAgent() {
         assembler = new MetadataMBeanInfoAssembler();
         assembler.setAttributeSource(new AnnotationJmxAttributeSource());
     }
@@ -151,7 +154,9 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
             }
         }
 
-        LOG.debug("Starting JMX agent on server: " + getMBeanServer());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Starting JMX agent on server: " + getMBeanServer());
+        }
 
         if (context instanceof DefaultCamelContext) {
             DefaultCamelContext dc = (DefaultCamelContext)context;
@@ -188,8 +193,8 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
         }
         if (caught > 0) {
             LOG.warn("A number of " + caught
-                     + " exceptions caught while unregistering MBeans during stop operation.  "
-                     + "See INFO log for details.");
+                     + " exceptions caught while unregistering MBeans during stop operation."
+                     + " See INFO log for details.");
         }
     }
 
@@ -217,7 +222,7 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
         enableJmx(DEFAULT_DOMAIN, DEFAULT_CONNECTOR_PATH, DEFAULT_PORT);
     }
 
-    public void enableJmx(String domainName, String connectorPath,  int port) {
+    public void enableJmx(String domainName, String connectorPath, int port) {
         jmxEnabled = true;
         jmxDomainName = domainName;
         jmxConnectorPath = connectorPath;
@@ -255,7 +260,7 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
                         jmxConnectorPort = Integer.parseInt(portValue);
                     } catch (NumberFormatException nfe) {
                         LOG.info("Invalid port number specified via System property [" + portKey + "="
-                                 + portValue + "].  Using default: " + DEFAULT_PORT);
+                                 + portValue + "]. Using default: " + DEFAULT_PORT);
                         jmxConnectorPort = DEFAULT_PORT;
                     }
                 }
@@ -264,7 +269,7 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
             try {
                 hostName = InetAddress.getLocalHost().getHostName();
             } catch (UnknownHostException uhe) {
-                LOG.info("Cannot determine host name.  Using default: " + DEFAULT_PORT, uhe);
+                LOG.info("Cannot determine localhost name. Using default: " + DEFAULT_PORT, uhe);
                 hostName = DEFAULT_HOST;
             }
         } else {
@@ -329,7 +334,7 @@ public class InstrumentationAgentImpl extends ServiceSupport implements Instrume
             };
             connectorThread.setName("JMX Connector Thread [" + url + "]");
             connectorThread.start();
-            LOG.info("Jmx connector thread started on " + url);
+            LOG.info("JMX connector thread started on " + url);
         }
     }
 }
