@@ -65,14 +65,11 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ResequencerEngine<E> implements TimeoutHandler {
 
-    private static final Log LOG = LogFactory.getLog(ResequencerEngine.class);
+    private static final transient Log LOG = LogFactory.getLog(ResequencerEngine.class);
     
-    private long timeout;
-    
-    private int capacity;
-    
-    private Queue<E> outQueue;
-    
+    private long timeout;    
+    private int capacity;    
+    private Queue<E> outQueue;    
     private Element<E> lastDelivered;
 
     /**

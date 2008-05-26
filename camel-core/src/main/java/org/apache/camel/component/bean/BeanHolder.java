@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
  * @version $Revision$
  */
 public interface BeanHolder {
+
     Object getBean() throws Exception;
 
     Processor getProcessor();

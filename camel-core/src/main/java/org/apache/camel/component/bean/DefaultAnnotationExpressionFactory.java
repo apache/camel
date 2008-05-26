@@ -31,6 +31,7 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public class DefaultAnnotationExpressionFactory implements AnnotationExpressionFactory {
+
     public Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class expressionReturnType) {
         String languageName = languageAnnotation.language();
         if (languageName == null) {

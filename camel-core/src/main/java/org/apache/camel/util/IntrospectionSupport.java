@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public final class IntrospectionSupport {
 
-    private static final Log LOG = LogFactory.getLog(IntrospectionSupport.class);
+    private static final transient Log LOG = LogFactory.getLog(IntrospectionSupport.class);
 
     /**
      * Utility classes should not have a public constructor.

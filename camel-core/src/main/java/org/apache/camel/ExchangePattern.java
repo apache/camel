@@ -31,8 +31,6 @@ public enum ExchangePattern {
 
     /**
      * Returns the WSDL URI for this message exchange pattern
-     *
-     * @return the WSDL URI for this message exchange pattern
      */
     public String getWsdlUri() {
         switch (this) {

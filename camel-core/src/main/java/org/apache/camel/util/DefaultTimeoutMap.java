@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DefaultTimeoutMap implements TimeoutMap, Runnable {
 
-    private static final Log LOG = LogFactory.getLog(DefaultTimeoutMap.class);
+    private static final transient Log LOG = LogFactory.getLog(DefaultTimeoutMap.class);
 
     private final Map map = new HashMap();
     private SortedSet index = new TreeSet();

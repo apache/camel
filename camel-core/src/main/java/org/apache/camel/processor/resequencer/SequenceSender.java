@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class SequenceSender extends Thread {
 
-    private static final Log LOG = LogFactory.getLog(SequenceSender.class);
+    private static final transient Log LOG = LogFactory.getLog(SequenceSender.class);
     private static final Exchange STOP = createStopSignal();
     
     private BlockingQueue<Exchange> queue;

@@ -37,6 +37,7 @@ import org.apache.camel.Converter;
  */
 @Converter
 public final class CollectionConverter {
+
     /**
      * Utility classes should not have a public constructor.
      */

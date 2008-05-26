@@ -32,6 +32,7 @@ import org.apache.camel.TypeConverter;
  * @version $Revision$
  */
 public class ArrayTypeConverter implements TypeConverter {
+
     public <T> T convertTo(Class<T> type, Object value) {
         if (type.isArray()) {
             if (value instanceof Collection) {

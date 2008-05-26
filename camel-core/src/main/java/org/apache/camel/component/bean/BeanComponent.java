@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class BeanComponent extends DefaultComponent {
-    private static final Log LOG = LogFactory.getLog(BeanComponent.class);
+    private static final transient Log LOG = LogFactory.getLog(BeanComponent.class);
     private ParameterMappingStrategy parameterMappingStrategy;
 
     public BeanComponent() {

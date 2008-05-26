@@ -69,19 +69,16 @@ public class XmlConverter {
     public static String defaultCharset = ObjectHelper.getSystemProperty(DEFAULT_CHARSET_PROPERTY, "UTF-8");
 
     /*
-     * When converting a DOM tree to a SAXSource,
-     * we try to use Xalan internal DOM parser if
-     * available.  Else, transform the DOM tree
-     * to a String and build a SAXSource on top of
-     * it.
+     * When converting a DOM tree to a SAXSource, we try to use Xalan internal DOM parser if
+     * available. Else, transform the DOM tree to a String and build a SAXSource on top of it.
      */
     private static final Class DOM_TO_SAX_CLASS;
 
     private DocumentBuilderFactory documentBuilderFactory;
     private TransformerFactory transformerFactory;
 
-
     static {
+        // TODO: Use ObjectHelper.loadClass instead
         Class cl = null;
         try {
             cl = Class.forName("org.apache.xalan.xsltc.trax.DOM2SAX");
@@ -98,7 +95,6 @@ public class XmlConverter {
     public XmlConverter(DocumentBuilderFactory documentBuilderFactory) {
         this.documentBuilderFactory = documentBuilderFactory;
     }
-
 
     /**
      * Converts the given input Source into the required result

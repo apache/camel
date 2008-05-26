@@ -31,9 +31,11 @@ import org.apache.camel.Converter;
  */
 @Converter
 public final class DomConverter {
+
     private DomConverter() {
         // Utility Class
     }
+
     @Converter
     public static String toString(NodeList nodeList) {
         StringBuffer buffer = new StringBuffer();

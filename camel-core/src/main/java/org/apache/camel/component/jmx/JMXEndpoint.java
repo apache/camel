@@ -35,8 +35,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class JMXEndpoint extends DefaultEndpoint<JMXExchange> {
-
-    private static final Log LOG = LogFactory.getLog(JMXEndpoint.class);
+    private static final transient Log LOG = LogFactory.getLog(JMXEndpoint.class);
     private String name;
     private ObjectName ourName;
     private String observedObjectName;

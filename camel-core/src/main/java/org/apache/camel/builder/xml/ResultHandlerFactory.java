@@ -22,5 +22,6 @@ package org.apache.camel.builder.xml;
  * @version $Revision$
  */
 public interface ResultHandlerFactory {
+
     ResultHandler createResult();
 }

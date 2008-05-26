@@ -31,6 +31,7 @@ import org.apache.camel.language.XPath;
  * @version $Revision$
  */
 public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
+
     @Override
     public Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class expressionReturnType) {
         String xpath = getExpressionFromAnnotation(annotation);
