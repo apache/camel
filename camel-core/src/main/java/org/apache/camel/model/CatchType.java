@@ -32,6 +32,8 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
+ * Represents an XML &lt;catch/&gt; element
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "catch")

@@ -27,6 +27,8 @@ import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.RouteContext;
 
 /**
+ * Base class for interceptor types.
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "interceptor")

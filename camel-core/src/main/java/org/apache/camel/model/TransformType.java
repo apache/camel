@@ -25,6 +25,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.TransformProcessor;
 import org.apache.camel.spi.RouteContext;
 
+/**
+ * Represents an XML &lt;transform/&gt; element
+ */
 @XmlRootElement(name = "transform")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransformType extends ExpressionNode {

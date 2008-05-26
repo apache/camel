@@ -35,6 +35,8 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 
 /**
+ * Represents an XML &lt;splitter/&gt; element
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "splitter")

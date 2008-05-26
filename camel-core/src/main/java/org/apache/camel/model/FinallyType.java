@@ -24,6 +24,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.RouteContext;
 
 /**
+ * Represents an XML &lt;finally/&gt; element
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "finally")

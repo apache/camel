@@ -30,6 +30,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.ThrowFaultProcessor;
 import org.apache.camel.spi.RouteContext;
 
+/**
+ * Represents an XML &lt;throwFault/&gt; element
+ */
 @XmlRootElement(name = "throwFault")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThrowFaultType extends ProcessorType<ThrowFaultType> {
@@ -41,7 +44,6 @@ public class ThrowFaultType extends ProcessorType<ThrowFaultType> {
     private String faultRef;
 
     public ThrowFaultType() {
-
     }
 
     public void setFault(Throwable fault) {

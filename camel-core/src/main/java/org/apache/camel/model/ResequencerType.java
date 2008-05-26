@@ -37,6 +37,8 @@ import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.spi.RouteContext;
 
 /**
+ * Represents an XML &lt;resequencer/&gt; element
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "resequencer")
@@ -110,7 +112,6 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
         return this;
     }
 
-
     @Override
     public String toString() {
         return "Resequencer[ " + getExpressions() + " -> " + getOutputs() + "]";
@@ -145,23 +146,17 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
         return streamConfig;
     }
 
-    //
-    // TODO: find out how to have these two within an <xsd:choice>
-    //
-
     @XmlElement(name = "batch-config", required = false)
     public void setBatchConfig(BatchResequencerConfig batchConfig) {
+        // TODO: find out how to have these two within an <xsd:choice>
         batch(batchConfig);
     }
 
     @XmlElement(name = "stream-config", required = false)
     public void setStreamConfig(StreamResequencerConfig streamConfig) {
+        // TODO: find out how to have these two within an <xsd:choice>
         stream(streamConfig);
     }
-
-    //
-    // END_TODO
-    //
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {

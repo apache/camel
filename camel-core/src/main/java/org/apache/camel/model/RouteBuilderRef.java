@@ -27,6 +27,8 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
+ * Represents an XML &lt;routeBuilderRef/&gt; element
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "routeBuilderRef")

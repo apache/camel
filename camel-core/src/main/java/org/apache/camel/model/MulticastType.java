@@ -33,6 +33,8 @@ import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 import org.apache.camel.spi.RouteContext;
 
 /**
+ * Represents an XML &lt;multicast/&gt; element
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "multicast")

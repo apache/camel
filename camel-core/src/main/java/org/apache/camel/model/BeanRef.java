@@ -30,6 +30,8 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
+ * Represents an XML &lt;bean/&gt; element
+ *
  * @version $Revision$
  */
 @XmlRootElement(name = "bean")

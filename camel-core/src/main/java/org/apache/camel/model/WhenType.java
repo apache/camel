@@ -24,10 +24,13 @@ import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.RouteContext;
 
 /**
+ * Represents an XML &lt;when/&gt; element
+ * 
  * @version $Revision$
  */
 @XmlRootElement(name = "when")
 public class WhenType<Type extends ProcessorType> extends ExpressionNode {
+
     public WhenType() {
     }
 
