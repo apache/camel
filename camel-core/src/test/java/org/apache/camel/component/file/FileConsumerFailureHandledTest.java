@@ -33,6 +33,12 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumerFailureHandledTest extends ContextTestSupport {
 
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        deleteDirectory("target/messages");
+    }
+
     public void testParis() throws Exception {
         deleteDirectory("target/messages");
 
