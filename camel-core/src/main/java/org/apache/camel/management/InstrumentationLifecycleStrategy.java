@@ -31,6 +31,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.spi.InstrumentationAgent;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -83,13 +84,13 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             try {
                 ManagedRoute mr = new ManagedRoute(route);
                 // retrieve the per-route intercept for this route
-                InstrumentationProcessor interceptor = interceptorMap.get(route.getEndpoint());
+                /*InstrumentationProcessor interceptor = interceptorMap.get(route.getEndpoint());
                 if (interceptor == null) {
                     LOG.warn("Instrumentation processor not found for route endpoint "
                              + route.getEndpoint());
                 } else {
                     interceptor.setCounter(mr);
-                }
+                }*/
                 agent.register(mr, getNamingStrategy().getObjectName(mr));
             } catch (JMException e) {
                 LOG.warn("Could not register Route MBean", e);
@@ -134,9 +135,15 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 
         routeContext.addInterceptStrategy(new InstrumentationInterceptStrategy(counterMap));
 
+        // TODO we need to find other way to instrument the route.
+        // below codes adding wrap the processor with all the processors which are already wrapped
+        // by the InstrumentationInterceptStrategy
+
+        /*
         // Add an InstrumentationProcessor at the beginning of each route and
         // set up the interceptorMap for onRoutesAdd() method to register the
         // ManagedRoute MBeans.
+
         RouteType routeType = routeContext.getRoute();
         if (routeType.getInputs() != null && !routeType.getInputs().isEmpty()) {
             if (routeType.getInputs().size() > 1) {
@@ -144,19 +151,13 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             }
 
             Endpoint endpoint  = routeType.getInputs().get(0).getEndpoint();
-            ProcessorType<?>[] outputs =
-                routeType.getOutputs().toArray(new ProcessorType<?>[0]);
 
-            //routeType.clearOutput();
             InstrumentationProcessor processor = new InstrumentationProcessor();
+
             routeType.addInterceptor(processor);
 
-            /*for (ProcessorType<?> output : outputs) {
-                routeType.addOutput(output);
-            }
-*/
             interceptorMap.put(endpoint, processor);
-        }
+        }*/
     }
 
     public CamelNamingStrategy getNamingStrategy() {

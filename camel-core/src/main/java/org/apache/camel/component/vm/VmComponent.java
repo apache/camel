@@ -35,7 +35,7 @@ import org.apache.camel.component.seda.SedaEndpoint;
  * @version $Revision$
  */
 public class VmComponent extends SedaComponent {
-    protected static final Map<String, BlockingQueue> queues = new HashMap<String, BlockingQueue>();
+    protected static final Map<String, BlockingQueue> QUEUES = new HashMap<String, BlockingQueue>();
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
 
 
@@ -46,11 +46,11 @@ public class VmComponent extends SedaComponent {
     }
 
     protected BlockingQueue<Exchange> getBlockingQueue(String uri, Map parameters) {
-        synchronized (queues) {
-            BlockingQueue<Exchange> answer = queues.get(uri);
+        synchronized (QUEUES) {
+            BlockingQueue<Exchange> answer = QUEUES.get(uri);
             if (answer == null) {
                 answer = createQueue(uri, parameters);
-                queues.put(uri, answer);
+                QUEUES.put(uri, answer);
             }
             return answer;
         }
@@ -66,11 +66,11 @@ public class VmComponent extends SedaComponent {
     protected void doStop() throws Exception {
         super.doStop();
         if (START_COUNTER.decrementAndGet() == 0) {
-            synchronized (queues) {
-                for (BlockingQueue q : queues.values()) {
+            synchronized (QUEUES) {
+                for (BlockingQueue q : QUEUES.values()) {
                     q.clear();
                 }
-                queues.clear();
+                QUEUES.clear();
             }
         }
     }

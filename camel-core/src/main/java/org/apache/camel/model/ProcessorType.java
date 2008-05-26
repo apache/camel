@@ -18,12 +18,13 @@ package org.apache.camel.model;
 
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;import java.util.Arrays;
+import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.xml.bind.annotation.XmlAccessType;

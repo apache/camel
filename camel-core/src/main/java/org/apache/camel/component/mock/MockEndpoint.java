@@ -19,10 +19,11 @@ package org.apache.camel.component.mock;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -286,12 +287,12 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
         expects(new Runnable() {
             public void run() {
                 assertTrue("No header with name " + headerName + " found.", actualHeader != null);
-                
+
                 assertEquals("Header of message", headerValue, actualHeader);
             }
         });
-    }   
-    
+    }
+
     /**
      * Adds an expectation that the given body values are received by this
      * endpoint
