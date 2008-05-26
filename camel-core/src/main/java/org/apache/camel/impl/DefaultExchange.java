@@ -58,7 +58,6 @@ public class DefaultExchange implements Exchange {
         this.unitOfWork = parent.getUnitOfWork();
     }
 
-
     @Override
     public String toString() {
         return "Exchange[" + in + "]";
@@ -243,13 +242,6 @@ public class DefaultExchange implements Exchange {
         this.exchangeId = id;
     }
 
-    /**
-     * Returns true if this exchange failed due to either an exception or fault
-     *
-     * @see Exchange#getException()
-     * @see Exchange#getFault()
-     * @return true if this exchange failed due to either an exception or fault
-     */
     public boolean isFailed() {
         Message faultMessage = getFault(false);
         if (faultMessage != null) {

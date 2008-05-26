@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class BeanProcessor extends ServiceSupport implements Processor {
     public static final String METHOD_NAME = "org.apache.camel.MethodName";
-    private static final Log LOG = LogFactory.getLog(BeanProcessor.class);
+    private static final transient Log LOG = LogFactory.getLog(BeanProcessor.class);
 
     private Method methodObject;
     private String method;

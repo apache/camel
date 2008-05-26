@@ -19,15 +19,16 @@ package org.apache.camel.util;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Generator for Globally unique Strings.
  */
-
 public class UuidGenerator {
 
-    private static final Logger LOG = Logger.getLogger(UuidGenerator.class.getName());
+    private static final transient Log LOG = LogFactory.getLog(UuidGenerator.class); 
     private static final String UNIQUE_STUB;
     private static int instanceCount;
     private static String hostName;
@@ -54,7 +55,7 @@ public class UuidGenerator {
                 Thread.sleep(100);
                 ss.close();
             } catch (Exception ioe) {
-                LOG.log(Level.WARNING, "could not generate unique stub", ioe);
+                LOG.warn("Could not generate unique stub", ioe);
             }
         } else {
             hostName = "localhost";
@@ -62,11 +63,6 @@ public class UuidGenerator {
         }
         UNIQUE_STUB = stub;
     }
-
-    /**
-     * Construct an IdGenerator
-     * 
-     */
 
     public UuidGenerator(String prefix) {
         synchronized (UNIQUE_STUB) {
@@ -84,17 +80,13 @@ public class UuidGenerator {
      * 
      * @return the local host name
      */
-
     public static String getHostName() {
         return hostName;
     }
 
     /**
      * Generate a unqiue id
-     * 
-     * @return a unique id
      */
-
     public synchronized String generateId() {
         return this.seed + (this.sequence++);
     }

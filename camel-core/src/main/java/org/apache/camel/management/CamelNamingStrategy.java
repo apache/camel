@@ -44,7 +44,6 @@ public class CamelNamingStrategy {
     public static final String TYPE_ROUTE = "route";
     public static final String TYPE_SERVICE = "service";
 
-
     protected String domainName;
     protected String hostName = "locahost";
 
@@ -106,11 +105,6 @@ public class CamelNamingStrategy {
      * Implements the naming strategy for a {@link org.apache.camel.impl.ServiceSupport Service}.
      * The convention used for a {@link org.apache.camel.Service Service} ObjectName is
      * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,type=service,name=&lt;service-name&gt;</tt>
-     *
-     * @param context the camel context
-     * @param mbean
-     * @return generated ObjectName
-     * @throws MalformedObjectNameException
      */
     public ObjectName getObjectName(CamelContext context, ManagedService mbean) throws MalformedObjectNameException {
         StringBuffer buffer = new StringBuffer();
@@ -126,10 +120,6 @@ public class CamelNamingStrategy {
      * Implements the naming strategy for a {@link ManagedRoute}.
      * The convention used for a {@link ManagedRoute} ObjectName is:
      * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,route=&lt;route-name&gt;,type=route,name=&lt;route-name&gt;</tt>
-     *
-     * @param mbean 
-     * @return generated ObjectName
-     * @throws MalformedObjectNameException
      */
     public ObjectName getObjectName(ManagedRoute mbean) throws MalformedObjectNameException {
         Route<? extends Exchange> route = mbean.getRoute();
@@ -153,11 +143,6 @@ public class CamelNamingStrategy {
      * Implements the naming strategy for a {@link ProcessorType}.
      * The convention used for a {@link ProcessorType} ObjectName is:
      * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,route=&lt;route-name&gt;,type=processor,name=&lt;processor-name&gt;</tt>
-     * 
-     * @param routeContext
-     * @param processor
-     * @return
-     * @throws MalformedObjectNameException
      */
     public ObjectName getObjectName(RouteContext routeContext, 
             ProcessorType processor) throws MalformedObjectNameException {

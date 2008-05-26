@@ -19,15 +19,19 @@ package org.apache.camel.management;
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.DelegateProcessor;
 
+/**
+ * JMX enabled processor that uses the {@link Counter} for instrumenting
+ * processing of exchanges.
+ */
 public class InstrumentationProcessor extends DelegateProcessor {
 
     private PerformanceCounter counter;
 
-    InstrumentationProcessor(PerformanceCounter counter) {
+    public InstrumentationProcessor(PerformanceCounter counter) {
         this.counter = counter;
     }
 
-    InstrumentationProcessor() {
+    public InstrumentationProcessor() {
     }
 
     public void setCounter(PerformanceCounter counter) {
@@ -38,7 +42,7 @@ public class InstrumentationProcessor extends DelegateProcessor {
         long startTime = System.nanoTime();
         super.process(exchange);
         if (counter != null) {
-            if (exchange.getException() == null) {
+            if (!exchange.isFailed()) {
                 counter.completedExchange((System.nanoTime() - startTime) / 1000);
             } else {
                 counter.completedExchange();

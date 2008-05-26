@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
  * @version $Revision$
  */
 public interface DataSet {
+
     String INDEX_HEADER = "camelDataSetIndex";
 
     /**

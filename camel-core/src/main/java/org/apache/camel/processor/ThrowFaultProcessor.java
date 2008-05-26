@@ -31,7 +31,8 @@ public class ThrowFaultProcessor implements Processor {
         this.fault = fault;
     }
 
-    /** Set the fault message in the exchange
+    /**
+     * Set the fault message in the exchange
      * @see org.apache.camel.Processor#process(org.apache.camel.Exchange)
      */
     public void process(Exchange exchange) throws Exception {

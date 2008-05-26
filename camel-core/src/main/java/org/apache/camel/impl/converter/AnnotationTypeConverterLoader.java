@@ -97,11 +97,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                         tokenize(packages, line);
                     }
                 } finally {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        LOG.warn("Caught exception closing stream: " + e, e);
-                    }
+                    ObjectHelper.close(reader, null, LOG);
                 }
             }
         }

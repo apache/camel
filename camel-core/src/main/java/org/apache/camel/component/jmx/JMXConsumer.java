@@ -28,7 +28,7 @@ import org.apache.camel.impl.DefaultConsumer;
  */
 public class JMXConsumer extends DefaultConsumer implements NotificationListener {
 
-    JMXEndpoint jmxEndpoint;
+    private JMXEndpoint jmxEndpoint;
 
     public JMXConsumer(JMXEndpoint endpoint, Processor processor) {
         super(endpoint, processor);

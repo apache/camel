@@ -26,6 +26,7 @@ import org.apache.camel.Message;
  * @version $Revision$
  */
 public interface ResultHandler {
+
     Result getResult();
 
     void setBody(Message in);

@@ -29,7 +29,6 @@ import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ObjectHelper;
 
-
 /**
  * A helper class for working with namespaces or creating namespace based expressions
  *
@@ -44,7 +43,6 @@ public class Namespaces {
     public static final String EXCHANGE_PROPERTY = "http://camel.apache.org/xml/variables/exchange-property";
 
     private Map<String, String> namespaces = new HashMap<String, String>();
-
 
     /**
      * Creates a namespaces object from the given XML element
@@ -69,6 +67,7 @@ public class Namespaces {
     public static boolean isMatchingNamespaceOrEmptyNamespace(String namespaceURI, String expectedNamespace) {
         return ObjectHelper.isNullOrBlank(namespaceURI) || namespaceURI.equals(expectedNamespace);
     }
+
     public Namespaces add(String prefix, String uri) {
         namespaces.put(prefix, uri);
         return this;
@@ -135,7 +134,6 @@ public class Namespaces {
     public Map<String, String> getNamespaces() {
         return namespaces;
     }
-
 
     /**
      * Configures the namespace aware object

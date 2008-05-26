@@ -32,7 +32,6 @@ import javax.xml.transform.stream.StreamSource;
  * @version $Revision$
  */
 public class StringSource extends StreamSource implements Serializable {
-
     private final String text;
     private String encoding = "UTF-8";
 

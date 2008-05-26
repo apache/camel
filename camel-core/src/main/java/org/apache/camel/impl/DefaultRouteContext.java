@@ -171,20 +171,10 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
-    /**
-     * This method retrieves the InterceptStrategy instances this route context.
-     *
-     * @return InterceptStrategy
-     */
     public List<InterceptStrategy> getInterceptStrategies() {
         return interceptStrategies;
     }
 
-    /**
-     * This method sets the InterceptStrategy instances on this route context.
-     *
-     * @param interceptStrategies
-     */
     public void setInterceptStrategies(List<InterceptStrategy> interceptStrategies) {
         this.interceptStrategies = interceptStrategies;
     }

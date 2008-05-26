@@ -35,10 +35,9 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
-    private static final Log LOG = LogFactory.getLog(DirectEndpoint.class);
-    boolean allowMultipleConsumers = true;
+    private static final transient Log LOG = LogFactory.getLog(DirectEndpoint.class);
+    private boolean allowMultipleConsumers = true;
     private final CopyOnWriteArrayList<DefaultConsumer<E>> consumers = new CopyOnWriteArrayList<DefaultConsumer<E>>();
-
 
     public DirectEndpoint(String uri, DirectComponent<E> component) {
         super(uri, component);

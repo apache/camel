@@ -52,7 +52,6 @@ public class DefaultUnitOfWork implements UnitOfWork {
     }
 
     public void reset() {
-
     }
 
     public void done(Exchange exchange) {

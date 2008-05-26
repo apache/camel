@@ -114,9 +114,6 @@ public abstract class MessageSupport implements Message {
         return null;
     }
 
-    /**
-     * @return the messageId
-     */
     public String getMessageId() {
         if (messageId == null) {
             messageId = createMessageId();
@@ -124,9 +121,6 @@ public abstract class MessageSupport implements Message {
         return this.messageId;
     }
 
-    /**
-     * @param messageId the messageId to set
-     */
     public void setMessageId(String messageId) {
         this.messageId = messageId;
     }

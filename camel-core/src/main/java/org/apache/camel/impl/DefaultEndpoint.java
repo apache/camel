@@ -101,9 +101,6 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         this.camelContext = camelContext;
     }
 
-    /**
-     * @return the executor
-     */
     public synchronized ScheduledExecutorService getExecutorService() {
         if (executorService == null) {
             Component c = getComponent();
@@ -118,9 +115,6 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         return executorService;
     }
 
-    /**
-     * @param executorService the executor to set
-     */
     public synchronized void setExecutorService(ScheduledExecutorService executorService) {
         this.executorService = executorService;
     }
@@ -195,7 +189,6 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
 
     /**
      * A factory method to lazily create the endpointUri if none is specified 
-     * @return
      */
     protected String createEndpointUri() {
         return null;

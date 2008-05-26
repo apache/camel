@@ -41,7 +41,6 @@ import static org.apache.camel.builder.xml.Namespaces.SYSTEM_PROPERTIES_NAMESPAC
  * @version $Revision$
  */
 public class MessageVariableResolver implements XPathVariableResolver {
-
     private static final transient Log LOG = LogFactory.getLog(MessageVariableResolver.class);
 
     private Exchange exchange;

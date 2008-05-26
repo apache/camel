@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
  * @version $Revision$
  */
 public interface MethodInvocation {
+
     Method getMethod();
 
     Object[] getArguments();

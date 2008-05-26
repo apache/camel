@@ -38,7 +38,6 @@ public class VmComponent extends SedaComponent {
     protected static final Map<String, BlockingQueue> QUEUES = new HashMap<String, BlockingQueue>();
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
 
-
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         BlockingQueue<Exchange> blockingQueue = getBlockingQueue(uri, parameters);

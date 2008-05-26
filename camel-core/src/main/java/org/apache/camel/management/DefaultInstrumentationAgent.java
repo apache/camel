@@ -64,7 +64,6 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
     public static final String DEFAULT_CONNECTOR_PATH = "/jmxrmi";
     private static final transient Log LOG = LogFactory.getLog(DefaultInstrumentationAgent.class);
 
-
     private MBeanServer server;
     private CamelContext context;
     private Set<ObjectName> mbeans = new HashSet<ObjectName>();

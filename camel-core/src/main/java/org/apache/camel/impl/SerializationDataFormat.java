@@ -33,6 +33,7 @@ import org.apache.camel.spi.DataFormat;
  * @version $Revision$
  */
 public class SerializationDataFormat implements DataFormat {
+
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException {
         ObjectOutput out = IOConverter.toObjectOutput(stream);
         out.writeObject(graph);

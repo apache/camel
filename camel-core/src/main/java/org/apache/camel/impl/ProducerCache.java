@@ -38,7 +38,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class ProducerCache<E extends Exchange> extends ServiceSupport {
-    private static final Log LOG = LogFactory.getLog(ProducerCache.class);
+    private static final transient Log LOG = LogFactory.getLog(ProducerCache.class);
 
     private Map<String, Producer<E>> producers = new HashMap<String, Producer<E>>();
 

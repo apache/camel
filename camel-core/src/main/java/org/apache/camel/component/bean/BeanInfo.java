@@ -176,11 +176,8 @@ public class BeanInfo {
         // now lets add the method to the repository
         String opName = method.getName();
 
-        /*
-         *
-         * TODO allow an annotation to expose the operation name to use
-         *
-         * if (method.getAnnotation(Operation.class) != null) { String name =
+        // TODO allow an annotation to expose the operation name to use
+        /* if (method.getAnnotation(Operation.class) != null) { String name =
          * method.getAnnotation(Operation.class).name(); if (name != null &&
          * name.length() > 0) { opName = name; } }
          */

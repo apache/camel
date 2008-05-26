@@ -26,8 +26,6 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.Converter;
 
-
-
 /**
  * Some core java.lang based <a
  * href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>

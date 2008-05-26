@@ -36,9 +36,7 @@ public class TryProcessor extends ServiceSupport implements Processor {
     private static final transient Log LOG = LogFactory.getLog(TryProcessor.class);
 
     private final Processor tryProcessor;
-
     private final List<CatchProcessor> catchClauses;
-
     private final Processor finallyProcessor;
 
     public TryProcessor(Processor tryProcessor, List<CatchProcessor> catchClauses, Processor finallyProcessor) {
