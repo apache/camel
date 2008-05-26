@@ -16,13 +16,13 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.management.InstrumentationAgentImpl;
+import org.apache.camel.management.DefaultInstrumentationAgent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-public class SpringInstrumentationAgent extends InstrumentationAgentImpl implements InitializingBean,
+public class SpringInstrumentationAgent extends DefaultInstrumentationAgent implements InitializingBean,
     DisposableBean {
     private static final transient Log LOG = LogFactory.getLog(SpringInstrumentationAgent.class);
 
