@@ -26,7 +26,7 @@ import org.apache.camel.component.file.FileProcessStrategy;
 public final class FileProcessStrategyFactory {
 
     private FileProcessStrategyFactory() {
-        // Utility class
+        // Factory class
     }
 
     /**
@@ -41,7 +41,7 @@ public final class FileProcessStrategyFactory {
         String moveNamePostfix = params.getProperty("moveNamePostfix");
 
         if (params.getProperty("noop") != null) {
-            return new NoOpFileProcessStrategy();
+            return new NoOpFileProcessStrategy(isLock);
         } else if (moveNamePostfix != null || moveNamePrefix != null) {
             if (isDelete) {
                 throw new IllegalArgumentException("You cannot set the deleteFiles property "

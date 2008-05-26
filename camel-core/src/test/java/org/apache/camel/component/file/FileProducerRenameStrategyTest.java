@@ -29,6 +29,13 @@ import org.apache.camel.converter.IOConverter;
  */
 public class FileProducerRenameStrategyTest extends ContextTestSupport {
 
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        deleteDirectory("target/done");
+        deleteDirectory("target/reports");
+    }
+
     public void testRenameSuccess() throws Exception {
         deleteDirectory("target/done");
         deleteDirectory("target/reports");
