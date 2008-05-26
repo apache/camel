@@ -43,7 +43,12 @@ public class DeleteFileProcessStrategy extends FileProcessStrategySupport {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Deleting file: " + file);
         }
-        file.delete();
+        boolean deleted = file.delete();
+        if (!deleted) {
+            LOG.warn("Could not delete file: " + file);
+        }
+
+        // must commit to release the lock
         super.commit(endpoint, exchange, file);
     }
 }
