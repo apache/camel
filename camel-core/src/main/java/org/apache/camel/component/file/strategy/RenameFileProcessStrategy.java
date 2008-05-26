@@ -17,7 +17,6 @@
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.FileExchange;
@@ -53,15 +52,24 @@ public class RenameFileProcessStrategy extends FileProcessStrategySupport {
     @Override
     public void commit(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception {
         File newName = renamer.renameFile(file);
-        newName.getParentFile().mkdirs();
-
         if (LOG.isDebugEnabled()) {
             LOG.debug("Renaming file: " + file + " to: " + newName);
         }
+
+        // deleting any existing files before renaming
+        if (newName.exists()) {
+            newName.delete();
+        }
+
+        // make parent folder if missing
+        newName.getParentFile().mkdirs();
+
         boolean renamed = file.renameTo(newName);
         if (!renamed) {
-            throw new IOException("Could not rename file from: " + file + " to " + newName);
+            LOG.warn("Could not rename file from: " + file + " to " + newName);
         }
+
+        // must commit to release the lock
         super.commit(endpoint, exchange, file);
     }
 
