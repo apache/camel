@@ -31,8 +31,8 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
     public static final int DEFAULT_PORT = 1099;
 
-    protected InstrumentationAgentImpl iAgent;
-    protected String domainName = InstrumentationAgentImpl.DEFAULT_DOMAIN;
+    protected DefaultInstrumentationAgent iAgent;
+    protected String domainName = DefaultInstrumentationAgent.DEFAULT_DOMAIN;
     protected boolean sleepSoYouCanBrowseInJConsole;
 
     public void testMBeansRegistered() throws Exception {
@@ -130,7 +130,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     }
 
     protected void createInstrumentationAgent(CamelContext context, int port) throws Exception {
-        iAgent = new InstrumentationAgentImpl();
+        iAgent = new DefaultInstrumentationAgent();
         iAgent.setCamelContext(context);
         enableJmx();
         iAgent.start();
