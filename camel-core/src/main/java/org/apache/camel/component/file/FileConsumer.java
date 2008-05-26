@@ -21,8 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

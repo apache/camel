@@ -47,7 +47,12 @@ public class ChoiceType extends ProcessorType<ChoiceType> {
 
     @Override
     public String toString() {
-        return "Choice[ " + getWhenClauses() + " " + getOtherwise() + "]";
+        if (getOtherwise() != null) {
+            return "Choice[ " + getWhenClauses() + " " + getOtherwise() + "]";
+        } else {
+            return "Choice[ " + getWhenClauses() + "]";
+
+        }
     }
 
     @Override

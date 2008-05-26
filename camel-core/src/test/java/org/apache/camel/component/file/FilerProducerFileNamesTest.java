@@ -19,8 +19,8 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -56,11 +56,11 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:report").to( "file:target/reports/report.txt");
+                from("direct:report").to("file:target/reports/report.txt");
 
-                from("direct:report2").to( "file:target/report2.txt?autoCreate=false");
+                from("direct:report2").to("file:target/report2.txt?autoCreate=false");
 
-                from("direct:report3").setHeader(FileComponent.HEADER_FILE_NAME, "report-super.txt").to( "file:target/");
+                from("direct:report3").setHeader(FileComponent.HEADER_FILE_NAME, "report-super.txt").to("file:target/");
             }
         };
     }

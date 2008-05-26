@@ -109,7 +109,9 @@ public class NodeData {
 
             ChoiceType choice = (ChoiceType)node;
             List<ProcessorType> outputs = new ArrayList<ProcessorType>(choice.getWhenClauses());
-            outputs.add(choice.getOtherwise());
+            if (choice.getOtherwise() != null) {
+                outputs.add(choice.getOtherwise());
+            }
             this.outputs = outputs;
         } else if (node instanceof RecipientListType) {
             this.image = imagePrefix + "RecipientListIcon.png";
@@ -131,7 +133,7 @@ public class NodeData {
         }
 
         // lets auto-default as many values as we can
-        if (isNullOrBlank(this.nodeType)) {
+        if (isNullOrBlank(this.nodeType) && node != null) {
             // TODO we could add this to the model?
             String name = node.getClass().getName();
             int idx = name.lastIndexOf('.');
