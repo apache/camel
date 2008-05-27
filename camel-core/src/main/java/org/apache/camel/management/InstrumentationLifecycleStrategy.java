@@ -136,8 +136,9 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         routeContext.addInterceptStrategy(new InstrumentationInterceptStrategy(counterMap));
 
         // TODO we need to find other way to instrument the route.
-        // below codes adding wrap the processor with all the processors which are already wrapped
-        // by the InstrumentationInterceptStrategy
+        // Below codes will wrap the interceptor (route instrumentation processor) to
+        // the each processors which are already wrapped by the InstrumentationInterceptStrategy,
+        // And the router couter will be increased when the processors process the exchange
 
         /*
         // Add an InstrumentationProcessor at the beginning of each route and

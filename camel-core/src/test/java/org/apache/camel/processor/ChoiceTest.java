@@ -32,6 +32,8 @@ public class ChoiceTest extends ContextTestSupport {
     public void testSendToFirstWhen() throws Exception {
         String body = "<one/>";
         x.expectedBodiesReceived(body);
+        // The SpringChoiceTest.java can't setup the header by Spring configure file
+        // x.expectedHeaderReceived("name", "a");
         expectsMessageCount(0, y, z);
 
         sendMessage("bar", body);
