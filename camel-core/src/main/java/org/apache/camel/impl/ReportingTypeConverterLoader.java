@@ -65,7 +65,7 @@ public class ReportingTypeConverterLoader extends AnnotationTypeConverterLoader 
     /**
      * Represents a mapping from one type (which can be null) to another
      *
-     * @deprecated not used
+     * Used by the camel-maven-plugin.
      */
     public static class TypeMapping {
         private static int counter;
