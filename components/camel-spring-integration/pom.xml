@@ -13,7 +13,7 @@
 
   <properties>
 	<camel.osgi.export.pkg>org.apache.camel.component.spring.integration.*</camel.osgi.export.pkg>
-    <spring-integration-version>1.0.0.CI-137</spring-integration-version>
+    <spring-integration-version>1.0.0.M4</spring-integration-version>
   </properties>
 
   <version>1.4-SNAPSHOT</version>
@@ -22,13 +22,19 @@
     <repository>
       <id>spring.maven.milestone</id>
       <name>Spring Milestone Maven Repo</name>
-      <url>http://s3.amazonaws.com/maven.springframework.org/milestone</url>
+      <url>http://repository.springsource.com/maven/bundles/milestone</url>
     </repository>
 
     <repository>
-      <id>spring.maven.snapshot</id>
-      <name>Spring Snapshot Maven Repo</name>
-      <url>http://s3.amazonaws.com/maven.springframework.org/snapshot</url>
+      <id>spring.maven.realse</id>
+      <name>Spring Release Maven Repo</name>
+      <url>http://repository.springsource.com/maven/bundles/release</url>
+    </repository>
+
+    <repository>
+      <id>com.springsource.repository.bundles.external</id>
+      <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+      <url>http://repository.springsource.com/maven/bundles/external</url>
     </repository>
   </repositories>
 
@@ -76,7 +82,7 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.integration</groupId>
-      <artifactId>spring-integration-core</artifactId>
+      <artifactId>org.springframework.integration</artifactId>
       <version>${spring-integration-version}</version>
       <exclusions>
         <exclusion>
