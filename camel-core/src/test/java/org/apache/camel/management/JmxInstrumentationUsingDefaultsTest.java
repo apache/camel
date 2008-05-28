@@ -71,7 +71,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         MBeanServer mbs = iAgent.getMBeanServer();
-        //verifyCounter(mbs, new ObjectName(domainName + ":type=route,*"));
+        verifyCounter(mbs, new ObjectName(domainName + ":type=route,*"));
         verifyCounter(mbs, new ObjectName(domainName + ":type=processor,*"));
 
     }
