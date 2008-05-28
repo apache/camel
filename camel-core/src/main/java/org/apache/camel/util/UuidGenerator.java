@@ -28,14 +28,30 @@ import org.apache.commons.logging.LogFactory;
  */
 public class UuidGenerator {
 
-    private static final transient Log LOG = LogFactory.getLog(UuidGenerator.class); 
-    private static final String UNIQUE_STUB;
+    private static final transient Log LOG = LogFactory.getLog(UuidGenerator.class);
+    private static String UNIQUE_STUB;
     private static int instanceCount;
     private static String hostName;
     private String seed;
     private long sequence;
 
-    static {
+    public UuidGenerator(String prefix) {
+        synchronized (UNIQUE_STUB) {
+            if (UNIQUE_STUB == null) {
+                init();
+            }
+            this.seed = prefix + UNIQUE_STUB + (instanceCount++) + "-";
+        }
+    }
+
+    public UuidGenerator() {
+        this("ID-" + hostName);
+    }
+
+    /**
+     * Initializes the stub - not static codeblock to let commons-logging work
+     */
+    private void init() {
         String stub = "";
         boolean canAccessSystemProps = true;
         try {
@@ -61,17 +77,12 @@ public class UuidGenerator {
             hostName = "localhost";
             stub = "-1-" + System.currentTimeMillis() + "-";
         }
+
         UNIQUE_STUB = stub;
-    }
 
-    public UuidGenerator(String prefix) {
-        synchronized (UNIQUE_STUB) {
-            this.seed = prefix + UNIQUE_STUB + (instanceCount++) + "-";
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("UuidGenerator initialized with stub genereated: " + UNIQUE_STUB);
         }
-    }
-
-    public UuidGenerator() {
-        this("ID-" + hostName);
     }
 
     /**
