@@ -3,9 +3,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:camel="http://activemq.apache.org/camel/schema/spring"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 		http://activemq.apache.org/camel/schema/spring
-		http://activemq.apache.org/camel/schema/spring/camel-spring-1.3-SNAPSHOT.xsd">
+		http://activemq.apache.org/camel/schema/spring/camel-spring-1.3.0.xsd">
 
 	<camel:camelContext id="camel" />
 	<camel:template id="camelTemplate" />

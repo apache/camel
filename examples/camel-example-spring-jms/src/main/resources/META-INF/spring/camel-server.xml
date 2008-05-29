@@ -4,7 +4,7 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:camel="http://activemq.apache.org/camel/schema/spring"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 		http://www.springframework.org/schema/context
 		http://schemas.leadx.com/spring/spring-context-2.5.xsd
 		http://activemq.apache.org/camel/schema/spring

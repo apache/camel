@@ -19,7 +19,7 @@
   xmlns="http://www.springframework.org/schema/beans"
   xmlns:amq="http://activemq.org/config/1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
   http://activemq.org/config/1.0 http://activemq.apache.org/schema/activemq-core.xsd">
 
   <broker xmlns="http://activemq.org/config/1.0" dataDirectory="target/activemq">

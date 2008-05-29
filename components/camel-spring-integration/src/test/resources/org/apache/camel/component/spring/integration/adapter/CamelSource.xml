@@ -21,7 +21,7 @@
        xmlns:camel-si="http://activemq.apache.org/camel/schema/spring/integration"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://www.springframework.org/schema/integration
 	   http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
        http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd

@@ -20,7 +20,7 @@
        xmlns:camel="http://cxf.apache.org/transports/camel"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd
        http://activemq.apache.org/camel/schema/cxfEndpoint
        http://activemq.apache.org/camel/schema/cxf/cxfEndpoint.xsd
