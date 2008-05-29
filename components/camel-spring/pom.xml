@@ -70,6 +70,11 @@
       <artifactId>spring-tx</artifactId>
 	  <version>${spring-version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+      <version>${spring-version}</version>
+    </dependency>
 
     <!-- for testing -->
     <dependency>
@@ -85,12 +90,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-aop</artifactId>
- 	  <version>${spring-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
