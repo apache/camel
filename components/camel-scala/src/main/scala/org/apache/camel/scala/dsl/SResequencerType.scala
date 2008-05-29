@@ -23,6 +23,6 @@ class SResequencerType(val target: ResequencerType)(implicit val builder: RouteB
   
   val unwrap = target
   
-  def batch = this
+  def batch(count: Int) = this
 
 }
