@@ -20,15 +20,15 @@
 	<!-- ===================================================================== -->
 
 	<!-- LeadX -->
-	<logger name="org.example">
+	<logger name="org.apache.camel.example">
 		<level value="DEBUG"/>
 	</logger>
 
 	<!-- Libraries -->
 	<logger name="org.springframework">
-		<level value="INFO" />
+		<level value="WARN" />
 	</logger>
-	
+
 	<!-- ===================================================================== -->
 	<!--  ROOT				                                  		           -->
 	<!-- ===================================================================== -->

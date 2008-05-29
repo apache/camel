@@ -9,13 +9,13 @@
 
 	<camel:camelContext id="camel" />
 	<camel:template id="camelTemplate" />
-	
+
 	<camel:proxy
 		id="multiplierProxy"
-		serviceInterface="org.example.server.Multiplier"
+		serviceInterface="org.apache.camel.example.server.Multiplier"
 		serviceUrl="jms:queue:numbers"
 	/>
-	
+
 	<bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
 		<property name="connectionFactory">
 			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
