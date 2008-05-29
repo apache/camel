@@ -43,7 +43,7 @@ class ContentBasedRouterTest extends ScalaTestSupport {
         when (_.in == "<hallo/>") {
           to ("mock:dutch")
           to ("mock:german")
-        }
+        } 
         otherwise to ("mock:french")
       }
     }

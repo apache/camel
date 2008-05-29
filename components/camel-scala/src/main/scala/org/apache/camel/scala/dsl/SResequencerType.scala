@@ -16,39 +16,13 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.ThrottlerType
+import org.apache.camel.model.ResequencerType
 import org.apache.camel.scala.builder.RouteBuilder
 
-/**
- * Scala enrichment for Camel's ThrottlerType
- */
-class SThrottlerType(val target: ThrottlerType)(implicit val builder: RouteBuilder) extends ScalaDsl with Wrapper[ThrottlerType] {
- 
+class SResequencerType(val target: ResequencerType)(implicit val builder: RouteBuilder) extends ScalaDsl with Wrapper[ResequencerType] {
+  
   val unwrap = target
   
-  /**
-   * Time period in milliseconds
-   */
-  def per(period: Int) = {
-    target.setTimePeriodMillis(period)
-    this
-  }
-  
-  def ms = this
-  def milliseconds = ms
-    
-  def sec = {
-    valueInMs *= 1000
-    this
-  }
-  def seconds = sec
-  
-  def min = {
-    valueInMs *= (60 * 1000)
-    this
-  }
-  def minutes = min
+  def batch = this
 
-  def valueInMs = target.getTimePeriodMillis()
-  def valueInMs_=(period: Long) = target.setTimePeriodMillis(period)
 }

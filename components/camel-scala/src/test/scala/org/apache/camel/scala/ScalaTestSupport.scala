@@ -20,18 +20,23 @@ import org.apache.camel.ContextTestSupport
 import org.apache.camel.component.mock.MockEndpoint
 import builder.{RouteBuilder,RouteBuilderSupport}
 import org.apache.camel.scala.dsl._
-import _root_.scala.List
+import _root_.scala.collection.mutable.ArrayBuffer
 
 abstract class ScalaTestSupport extends ContextTestSupport with RouteBuilderSupport with Preamble {
   
   implicit def stringToUri(uri:String) = new RichTestUri(uri, this)
   implicit def mockWrapper(endpoint: MockEndpoint) = new RichMockEndpoint(endpoint)
+  val endpoints = new ArrayBuffer[MockEndpoint]()
 
   def assert(uri: String) = getMockEndpoint(uri).assertIsSatisfied
 
   protected[scala] def getTemplate() = template
 
-  protected[scala] def mock(uri: String) = getMockEndpoint(uri)
+  protected[scala] def mock(uri: String) = {
+    val mock = getMockEndpoint(uri)
+    endpoints += mock
+    mock
+  }
 
   def in(message: Any) : Exchange = {
     val exchange = createExchangeWithBody(message)
@@ -42,5 +47,14 @@ abstract class ScalaTestSupport extends ContextTestSupport with RouteBuilderSupp
   val builder : RouteBuilder
   
   override protected def createRouteBuilder = builder.print
-
+  
+  override def setUp = {
+    super.setUp
+    endpoints.foreach(_.reset())
+  }
+  
+  def test(block : => Unit) = {
+    block
+    endpoints.foreach(_.assertIsSatisfied)
+  }
 }
