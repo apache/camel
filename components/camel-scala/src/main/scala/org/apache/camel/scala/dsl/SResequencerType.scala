@@ -17,12 +17,18 @@
 package org.apache.camel.scala.dsl;
 
 import org.apache.camel.model.ResequencerType
+import org.apache.camel.model.config.BatchResequencerConfig
 import org.apache.camel.scala.builder.RouteBuilder
 
 class SResequencerType(val target: ResequencerType)(implicit val builder: RouteBuilder) extends ScalaDsl with Wrapper[ResequencerType] {
   
   val unwrap = target
   
-  def batch(count: Int) = this
+  def batch(count: Int) = {
+    val config = new BatchResequencerConfig()
+    config.setBatchSize(count)
+    target.batch(config)
+    this
+  }
 
 }
