@@ -63,5 +63,6 @@ class RouteBuilder extends Preamble {
   def throttle(frequency: Frequency) = stack.top.throttle(frequency)
   def loadbalance = stack.top.loadbalance
   def delay(delay: Period) = stack.top.delay(delay)
+  def resequence(expression: Exchange => Any) = stack.top.resequence(expression)
 
 }

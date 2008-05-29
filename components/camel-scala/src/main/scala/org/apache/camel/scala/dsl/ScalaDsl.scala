@@ -26,6 +26,7 @@ trait ScalaDsl {
   
   val target : ProcessorType[T] forSome {type T}
   implicit val builder: RouteBuilder
+  implicit def expressionBuilder(expression: Exchange => Any) = new ScalaExpression(expression)
   
   def -->(uris: String*) = to(uris:_*)
   def to(uris: String*) = {
@@ -48,10 +49,10 @@ trait ScalaDsl {
   }
   
   def splitter(expression: Exchange => Any) = 
-    new SSplitterType(target.splitter(new ScalaExpression(expression)))
+    new SSplitterType(target.splitter(expression))
     
   def recipients(expression: Exchange => Any) = 
-    target.recipientList(new ScalaExpression(expression))
+    target.recipientList(expression)
 
   def apply(block: => Unit) = {
     builder.build(this, block)
@@ -70,10 +71,12 @@ trait ScalaDsl {
     this
   }
   
-  def throttle(frequency: Frequency) = new STrottlerType(target.throttler(frequency.count).timePeriodMillis(frequency.period.milliseconds))
+  def throttle(frequency: Frequency) = new SThrottlerType(target.throttler(frequency.count).timePeriodMillis(frequency.period.milliseconds))
   
   def loadbalance = new SLoadBalanceType(target.loadBalance)
   
   def delay(period: Period) = new SDelayerType(target.delayer(period.milliseconds))
+  
+  def resequence(expression: Exchange => Any) = new SResequencerType(target.resequencer(expression))
 
 }
