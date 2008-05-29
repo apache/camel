@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+  <parent>
+    <artifactId>examples</artifactId>
+    <groupId>org.apache.camel</groupId>
+    <version>1.4-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-example-loan-broker</artifactId>
+  <name>Camel :: Example :: Loan-Broker</name>
+  <description>An example that shows the EPI's loan broker demo</description>
+
+  <build>
+    <defaultGoal>install</defaultGoal>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <!-- Allows the example to be run via 'mvn compile exec:java' -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>${target.main.class}</mainClass>
+          <includePluginDependencies>false</includePluginDependencies>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-cxf</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jms</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>apache-activemq</artifactId>
+    </dependency>
+  </dependencies>
+  <profiles>
+    <profile>
+        <id>Queue.LoanBroker</id>
+    	<properties>
+            <target.main.class>org.apache.camel.loanbroker.queue.version.LoanBroker</target.main.class>
+        </properties>
+    </profile>
+    <profile>
+        <id>Queue.Client</id>
+    	<properties>
+            <target.main.class>org.apache.camel.loanbroker.queue.version.Client</target.main.class>
+        </properties>
+    </profile>
+  </profiles>
+</project>
