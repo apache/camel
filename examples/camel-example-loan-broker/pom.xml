@@ -50,8 +50,9 @@
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>apache-activemq</artifactId>
+      <artifactId>activemq-core</artifactId>
     </dependency>
+
   </dependencies>
   <profiles>
     <profile>
