@@ -32,8 +32,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.camel.impl.ReportingTypeConverterLoader;
-import org.apache.camel.impl.ReportingTypeConverterRegistry;
 import org.apache.camel.impl.ReportingTypeConverterLoader.TypeMapping;
+import org.apache.camel.impl.ReportingTypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
