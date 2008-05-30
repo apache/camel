@@ -42,7 +42,7 @@ public class InstanceMethodTypeConverter implements TypeConverter {
         return "InstanceMethodTypeConverter: " + method;
     }
 
-    public synchronized <T> T convertTo(Class<T> type, Object value) {
+    public <T> T convertTo(Class<T> type, Object value) {
         Object instance = injector.newInstance();
         if (instance == null) {
             throw new RuntimeCamelException("Could not instantiate an instance of: " + type.getName());
