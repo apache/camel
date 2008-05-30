@@ -163,10 +163,8 @@ public class OsgiComponentResolver implements ComponentResolver {
         if (bean != null) {
             if (bean instanceof Component) {
                 return (Component)bean;
-            } else {
-                throw new IllegalArgumentException("Bean with name: " + name
-                                                   + " in registry is not a Component: " + bean);
             }
+            // we do not throw the exception here and try to auto create a component
         }
         // Check in OSGi bundles
         init();
