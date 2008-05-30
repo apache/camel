@@ -25,21 +25,21 @@ public class Server {
         System.out.println("Starting Server");
         Object implementor = new GreeterImpl();
         String address = "http://cxf.apache.org/transports/jms";
-        endpoint = Endpoint.publish(address, implementor);        
-        
+        endpoint = Endpoint.publish(address, implementor);
+
     }
-    
+
     public void stop() {
         if (endpoint != null) {
             endpoint.stop();
-        }    
+        }
     }
-    
+
 
     public static void main(String args[]) throws Exception {
         Server server = new Server();
         System.out.println("Server ready...");
-
+        server.start();
         Thread.sleep(5 * 60 * 1000);
         System.out.println("Server exiting");
         server.stop();

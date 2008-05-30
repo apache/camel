@@ -7,9 +7,9 @@
   The ASF licenses this file to You under the Apache License, Version 2.0
   (the "License"); you may not use this file except in compliance with
   the License.  You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,13 +53,13 @@
 
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>      
+      <artifactId>camel-spring</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
-      <type>test-jar</type>      
+      <type>test-jar</type>
       <scope>test</scope>
     </dependency>
 
@@ -73,7 +73,7 @@
       <artifactId>commons-io</artifactId>
       <version>${commons-io-version}</version>
     </dependency>
-    
+
 
     <dependency>
       <groupId>org.apache.cxf</groupId>
@@ -94,7 +94,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http-jetty</artifactId>
-      <version>${cxf-version}</version>      
+      <version>${cxf-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
@@ -138,7 +138,7 @@
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
-      <version>2.0.1</version>
+      <version>${jaxb-version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.xml</groupId>
@@ -157,7 +157,7 @@
     <dependency>
       <groupId>javax.xml</groupId>
       <artifactId>jaxb-api</artifactId>
-      <version>2.0</version>
+      <version>${jaxb-api-version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.xml</groupId>
@@ -172,33 +172,41 @@
 
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jetty</artifactId>      
+      <artifactId>jetty</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!--dependency>
+    	<groupId>org.codehaus.woodstox</groupId>
+    	<artifactId>wstx-asl</artifactId>
+    	<version>3.2.4</version>
+    	<exclusions>
+    		<exclusion>
+    			<groupId>stax</groupId>
+    			<artifactId>stax-api</artifactId>
+    		</exclusion>
+    	</exclusions>
+    </dependency-->
 
     <dependency>
        <groupId>org.springframework</groupId>
        <artifactId>spring-core</artifactId>
-       <version>${spring-version}</version>
     </dependency>
 
     <dependency>
        <groupId>org.springframework</groupId>
        <artifactId>spring-beans</artifactId>
-       <version>${spring-version}</version>       
      </dependency>
-    
+
     <dependency>
        <groupId>org.springframework</groupId>
        <artifactId>spring-context</artifactId>
-       <version>${spring-version}</version>       
      </dependency>
 
 
     <dependency>
        <groupId>org.springframework</groupId>
        <artifactId>spring-web</artifactId>
-       <version>${spring-version}</version>
        <scope>test</scope>
      </dependency>
 
@@ -233,9 +241,9 @@
           <systemProperties>
                <property>
                     <name>java.util.logging.config.file</name>
-                    <value>${basedir}/target/test-classes/logging.properties</value>                         
+                    <value>${basedir}/target/test-classes/logging.properties</value>
                </property>
-          </systemProperties>             
+          </systemProperties>
         </configuration>
       </plugin>
 
@@ -253,14 +261,14 @@
               <artifacts>
                 <artifact>
                   <file>./src/main/resources/schema/cxfEndpoint.xsd</file>
-                  <type>xsd</type>                  
+                  <type>xsd</type>
                 </artifact>
               </artifacts>
             </configuration>
           </execution>
         </executions>
       </plugin>
-    </plugins>  
+    </plugins>
   </build>
 
   <profiles>
