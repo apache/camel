@@ -97,11 +97,20 @@ public class UuidGenerator {
      * @return a unique id
      */
     public String generateSanitizedId() {
-        String result = generateId();
-        result = result.replace(':', '-');
-        result = result.replace('_', '-');
-        result = result.replace('.', '-');
-        return result;
+        return generateSanitizedId(generateId());
+    }
+
+    /**
+     * Ensures that the id is friendly for a URL or file system
+     *
+     * @param id the unique id
+     * @return the id as file friendly id
+     */
+    public static String generateSanitizedId(String id) {
+        id = id.replace(':', '-');
+        id = id.replace('_', '-');
+        id = id.replace('.', '-');
+        return id;
     }
 
 }

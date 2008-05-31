@@ -1,0 +1,70 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.jms;
+
+import java.io.File;
+
+import javax.jms.ConnectionFactory;
+
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.CamelContext;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.converter.IOConverter;
+import org.apache.activemq.ActiveMQConnectionFactory;
+
+/**
+ * Unit test that we can consume JMS message and store it as file (to avoid regression bug)
+ */
+public class JmsRouteToFileTest extends ContextTestSupport {
+
+    protected String componentName = "activemq";
+
+    public void testRouteToFile() throws Exception {
+        deleteDirectory("target/routetofile");
+
+        template.sendBody("activemq:queue:hello", "Hello World");
+
+        // pause to let file producer save the file
+        Thread.sleep(1500);
+
+        // do file assertions
+        File dir = new File("./target/routetofile");
+        assertTrue("Should be directory", dir.isDirectory());
+        File file = dir.listFiles()[0];
+        assertTrue("File should exists", file.exists());
+        String body = IOConverter.toString(file);
+        assertEquals("Hello World", body);
+    }
+
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
+        camelContext.addComponent(componentName, jmsComponentClientAcknowledge(connectionFactory));
+
+        return camelContext;
+    }
+
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                from("activemq:queue:hello").to("file://target/routetofile");
+            }
+        };
+    }
+}
