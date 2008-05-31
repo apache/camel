@@ -1,14 +1,13 @@
 Spring & JMS Example
-==================
+====================
 
-This example shows how to work with play with the Camel-JMS Component.
+This example shows how to work with the Camel-JMS Component.
 It can be run using Maven or Ant.
 
-The example consumes messages from a queue and invoke the bean with
-with the message that get from the queue.
+The example consumes messages from a queue and invoke the bean
+with the received message
 
-For the latest & greatest documentation on how to use this example
-please see
+For the latest & greatest documentation on how to use this example please see:
   http://cwiki.apache.org/CAMEL/tutorial-jmsremoting.html
 
 The example should run if you type
