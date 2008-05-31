@@ -293,7 +293,8 @@
 
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>apache-activemq</artifactId>
+      <artifactId>activemq-core</artifactId>
+      <optional>true</optional>
     </dependency>
 
     <dependency>
