@@ -603,11 +603,6 @@
         <version>${activemq-version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>apache-activemq</artifactId>
-        <version>${activemq-version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-spring</artifactId>
         <version>3.3</version>
