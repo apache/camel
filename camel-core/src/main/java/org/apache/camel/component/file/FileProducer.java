@@ -28,6 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.UuidGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -114,10 +115,10 @@ public class FileProducer extends DefaultProducer {
             if (name != null) {
                 answer = new File(endpointFile, name);
                 if (answer.isDirectory()) {
-                    answer = new File(answer, message.getMessageId());
+                    answer = new File(answer, getFileFriendlyMessageId(message.getMessageId()));
                 }
             } else {
-                answer = new File(endpointFile, message.getMessageId());
+                answer = new File(endpointFile, getFileFriendlyMessageId(message.getMessageId()));
             }
         } else {
             if (name == null) {
@@ -138,6 +139,10 @@ public class FileProducer extends DefaultProducer {
             File dir = new File(dirName);
             dir.mkdirs();
         }
+    }
+
+    private static String getFileFriendlyMessageId(String id) {
+        return UuidGenerator.generateSanitizedId(id);
     }
 
 }
