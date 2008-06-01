@@ -182,12 +182,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
-    </dependency>
-	<!-- TODO: fix this 'dependencies.dependency.version' is missing for org.apache.camel:camel-spring-integration' -->
-    <!--dependency>
+    </dependency>	
+    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-integration</artifactId>
-    </dependency-->
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-sql</artifactId>
@@ -252,12 +251,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-example-etl</artifactId>
-    </dependency>
-	<!-- TODO: fix this 'dependencies.dependency.version' is missing for org.apache.camel:camel-example-loan-broker -->
-	<!--dependency>
+    </dependency>	
+    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-example-loan-broker</artifactId>
-    </dependency-->
+    </dependency>
 	<dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-example-jms-file</artifactId>
