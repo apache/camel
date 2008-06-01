@@ -105,6 +105,7 @@ public class ConvertersMojo extends AbstractMavenReport {
      * @component
      */
     protected ArtifactFactory artifactFactory;
+
     /**
      * Base output directory for reports.
      *
@@ -130,13 +131,10 @@ public class ConvertersMojo extends AbstractMavenReport {
      */
     private Renderer renderer;
 
-
-
     /**
      * Gets resource bundle for given locale.
      *
-     * @param locale
-     *            locale
+     * @param locale    locale
      * @return resource bundle
      */
     protected ResourceBundle getBundle(final Locale locale) {
@@ -161,9 +159,6 @@ public class ConvertersMojo extends AbstractMavenReport {
         return getBundle(locale).getString("report.converters.name");
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getOutputName()
-     */
     public String getOutputName() {
         return "camel-converters";
     }
@@ -183,9 +178,6 @@ public class ConvertersMojo extends AbstractMavenReport {
         return renderer;
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#execute()
-     */
     public void execute() throws MojoExecutionException {
         if (!canGenerateReport()) {
             return;
@@ -227,9 +219,6 @@ public class ConvertersMojo extends AbstractMavenReport {
         }
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#execute()
-     */
     @Override
     protected void executeReport(Locale locale) throws MavenReportException {
 
