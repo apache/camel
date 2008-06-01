@@ -81,7 +81,8 @@ public class RunMojo extends AbstractExecMojo {
 
     /**
      * The duration to run the application for which by default is in
-     * milliseconds. A value <= 0 will
+     * milliseconds. A value <= 0 will run forever.
+     * Adding a s indicates seconds - eg "5s" means 5 seconds.
      *
      * @parameter expression="-1"
      * @readonly

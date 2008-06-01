@@ -40,13 +40,17 @@ import org.codehaus.mojo.exec.AbstractExecMojo;
  * @execute phase="test-compile"
  */
 public class EmbeddedMojo extends AbstractExecMojo {
+
     /**
      * The duration to run the application for which by default is in milliseconds.
+     * A value <= 0 will run forever. 
+     * Adding a s indicates seconds - eg "5s" means 5 seconds.
      *
      * @parameter expression="-1"
      * @readonly
      */
     protected String duration;
+    
     /**
      * The DOT File name used to generate the DOT diagram of the route definitions
      *
@@ -54,6 +58,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
      * @readonly
      */
     protected String outputDirectory;
+    
     /**
      * Allows the DOT file generation to be disabled
      *
@@ -61,6 +66,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
      * @readonly
      */
     protected boolean dotEnabled;
+    
     /**
      * Allows the routes from multiple contexts to be aggregated into one DOT file (in addition to the individual files)
      *
@@ -75,6 +81,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
      * @parameter expression="${camel.applicationContextUri}"
      */
     protected String applicationContextUri;
+    
     /**
      * Project classpath.
      *

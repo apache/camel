@@ -67,11 +67,13 @@ public class DotMojo extends AbstractMavenReport {
     //
     /**
      * The duration to run the application for which by default is in
-     * milliseconds.
+     * milliseconds. A value <= 0 will run forever.
+     * Adding a s indicates seconds - eg "5s" means 5 seconds.
      *
      * @parameter expression="2s"
      */
     protected String duration;
+
     /**
      * Whether we should boot up camel with the META-INF/services/*.xml to
      * generate the DOT file
@@ -79,6 +81,7 @@ public class DotMojo extends AbstractMavenReport {
      * @parameter expression="true"
      */
     protected boolean runCamel;
+
     /**
      * Should we try run the DOT executable on the generated .DOT file to
      * generate images
@@ -86,6 +89,7 @@ public class DotMojo extends AbstractMavenReport {
      * @parameter expression="true"
      */
     protected boolean useDot;
+
     /**
      * Reference to Maven 2 Project.
      *
@@ -94,6 +98,7 @@ public class DotMojo extends AbstractMavenReport {
      * @readonly
      */
     private MavenProject project;
+
     /**
      * Base output directory.
      *
@@ -101,6 +106,7 @@ public class DotMojo extends AbstractMavenReport {
      * @required
      */
     private File buildDirectory;
+
     /**
      * Base output directory for reports.
      *
@@ -108,6 +114,7 @@ public class DotMojo extends AbstractMavenReport {
      * @required
      */
     private File outputDirectory;
+
     /**
      * In the case of multiple camel contexts, setting aggregate == true will
      * aggregate all into a monolithic context, otherwise they will be processed
@@ -116,6 +123,7 @@ public class DotMojo extends AbstractMavenReport {
      * @parameter
      */
     private String aggregate;
+
     /**
      * GraphViz executable location; visualization (images) will be generated
      * only if you install this program and set this property to the executable
@@ -124,6 +132,7 @@ public class DotMojo extends AbstractMavenReport {
      * @parameter expression="dot"
      */
     private String executable;
+
     /**
      * Graphviz output types. Default is png. Possible values: png, jpg, gif,
      * svg.
@@ -131,12 +140,14 @@ public class DotMojo extends AbstractMavenReport {
      * @required
      */
     private String graphvizOutputType;
+
     /**
      * Graphviz output types. Possible values: png, jpg, gif, svg.
      *
      * @parameter
      */
     private String[] graphvizOutputTypes;
+
     /**
      * Doxia SiteRender.
      *
@@ -162,9 +173,6 @@ public class DotMojo extends AbstractMavenReport {
         return getBundle(locale).getString("report.dot.name");
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getOutputName()
-     */
     public String getOutputName() {
         return SUBDIRECTORY + "/index";
     }
@@ -185,9 +193,6 @@ public class DotMojo extends AbstractMavenReport {
         this.useDot = useDot;
     }
 
-    /**
-     * @see org.apache.maven.plugin.Mojo#execute()
-     */
     public void execute() throws MojoExecutionException {
         this.execute(this.buildDirectory, Locale.getDefault());
         try {
@@ -197,9 +202,6 @@ public class DotMojo extends AbstractMavenReport {
         }
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(Locale)
-     */
     protected void executeReport(final Locale locale) throws MavenReportException {
         try {
             this.execute(this.outputDirectory, locale);
@@ -509,9 +511,6 @@ public class DotMojo extends AbstractMavenReport {
         return this.renderer;
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     */
     protected String getOutputDirectory() {
         return this.outputDirectory.getAbsolutePath();
     }
