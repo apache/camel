@@ -322,7 +322,7 @@
               <links>
                 <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
                 <link>http://java.sun.com/j2ee/1.4/docs/api/</link>
-                <link>http://jakarta.apache.org/commons/collections/apidocs-COLLECTIONS_3_0/</link>
+                <link>http://commons.apache.org/collections/api-release/</link>
                 <link>http://jakarta.apache.org/commons/dbcp/apidocs/</link>
                 <link>http://jakarta.apache.org/commons/fileupload/apidocs/</link>
                 <link>http://jakarta.apache.org/commons/httpclient/apidocs/</link>

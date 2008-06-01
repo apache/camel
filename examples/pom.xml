@@ -53,11 +53,11 @@
     <module>camel-example-docs</module>
     <module>camel-example-etl</module>
     <module>camel-example-jms-file</module>
+    <module>camel-example-loan-broker</module>
     <module>camel-example-osgi</module>
     <module>camel-example-spring</module>
     <module>camel-example-spring-jms</module>
     <module>camel-example-spring-xquery</module>
-    <module>camel-example-loan-broker</module>
   </modules>
 
   <profiles>

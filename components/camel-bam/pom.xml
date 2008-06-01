@@ -173,7 +173,8 @@
         </dependency>
         <dependency>
           <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
+          <artifactId>geronimo-jta_1.1_spec</artifactId>
+		  <version>${geronimo-spec-version}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -208,7 +209,8 @@
         </dependency>
         <dependency>
           <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
+          <artifactId>geronimo-jta_1.1_spec</artifactId>
+		  <version>${geronimo-spec-version}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -240,12 +242,13 @@
         <dependency>
           <groupId>mysql</groupId>
           <artifactId>mysql-connector-java</artifactId>
-          <version>5.0.5</version>
+          <version>5.1.6</version>
           <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
+          <artifactId>geronimo-jta_1.1_spec</artifactId>
+		  <version>${geronimo-spec-version}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
