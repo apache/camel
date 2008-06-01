@@ -35,7 +35,7 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.amqp.*</camel.osgi.export.pkg>
-    <qpid-version>1.0-incubator-M1</qpid-version>
+    <qpid-version>1.0-incubating-M2.1</qpid-version>
   </properties>
 
   <dependencies>
