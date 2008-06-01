@@ -26,7 +26,7 @@ public class PersonImpl implements Person {
 
     public void getPerson(Holder<String> personId, Holder<String> ssn,
             Holder<String> name) throws UnknownPersonFault {
-        System.out.println("the server is invoked ");
+        //System.out.println("the server is invoked ");
         if (personId.value == null || personId.value.length() == 0) {
             org.apache.camel.wsdl_first.types.UnknownPersonFault
                 fault = new org.apache.camel.wsdl_first.types.UnknownPersonFault();
