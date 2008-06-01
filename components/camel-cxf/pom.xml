@@ -155,7 +155,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>javax.xml</groupId>
+      <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
       <version>${jaxb-api-version}</version>
       <exclusions>
@@ -267,6 +267,31 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+      	<groupId>org.apache.cxf</groupId>
+      	<artifactId>cxf-codegen-plugin</artifactId>
+      	<version>${cxf-version}</version>
+      	<executions>
+      		<execution>
+      			<id>generate-test-sources</id>
+      			<phase>generate-sources</phase>
+      			<configuration>
+      				<sourceRoot>${basedir}/target/generated</sourceRoot>
+      				<wsdlOptions>
+      					<wsdlOption>
+      						<wsdl>${basedir}/src/test/resources/person.wsdl</wsdl>
+      						<extraargs>
+      							<extraarg>-verbose</extraarg>
+      						</extraargs>
+      					</wsdlOption>
+      				</wsdlOptions>
+      			</configuration>
+      			<goals>
+      				<goal>wsdl2java</goal>
+      			</goals>
+      		</execution>
+      	</executions>
       </plugin>
     </plugins>
   </build>
