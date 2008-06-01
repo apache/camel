@@ -30,7 +30,7 @@ public class MailDefaultDelayForMailConsumeTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello London");
         // first poll should happend immediately
-        mock.setResultWaitTime(1000);
+        mock.setResultWaitTime(2000L);
         mock.assertIsSatisfied();
 
         long start = System.currentTimeMillis();
