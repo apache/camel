@@ -42,13 +42,13 @@
     <dependency>
       <groupId>org.codehaus.mojo</groupId>
       <artifactId>exec-maven-plugin</artifactId>
-      <version>1.1-beta-1</version>
+      <version>1.1</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
-      <version>2.0.4</version>
+      <version>2.0.9</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -63,7 +63,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-46</version>
+      <version>1.0-alpha-47</version>
     </dependency>
 
     <dependency>
@@ -77,7 +77,6 @@
       <version>2.0.4.1</version>
     </dependency>
 
-
     <!-- add some logging to the classpath -->
     <dependency>
       <groupId>log4j</groupId>
@@ -88,11 +87,11 @@
       <artifactId>commons-logging</artifactId>
     </dependency>
 
-    <!-- do we need all these? -->
+    <!-- TODO: do we need all these? -->
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
-      <version>3.1</version>
     </dependency>
+	
   </dependencies>
 </project>
