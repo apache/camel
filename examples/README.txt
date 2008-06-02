@@ -24,6 +24,7 @@ If you hit any problems please let us know on the Camel Forums
 
 Please help us make Apache Camel better - we appreciate any feedback you
 may have.
+
 Enjoy!
 
 ------------------------

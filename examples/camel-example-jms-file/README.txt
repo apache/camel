@@ -28,6 +28,15 @@ To run the example with Ant
   c. To run the example using Ant, type
     ant
 
+To stop the example hit ctrl + c
+
+To use log4j as the logging framework add this to the pom.xml:
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+and log4j.properties is located in src/main/resources 
+
 If you hit an problems please let us know on the Camel Forums
   http://activemq.apache.org/camel/discussion-forums.html
 
