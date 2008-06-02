@@ -175,6 +175,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
 
     public void process(CxfExchange exchange) {
         Message inMessage = CxfBinding.createCxfMessage(exchange);
+        exchange.setProperty(CxfExchange.DATA_FORMAT, dataFormat);
         try {
             if (dataFormat.equals(DataFormat.POJO)) {
                 // InputStream is = m.getContent(InputStream.class);

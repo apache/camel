@@ -88,6 +88,10 @@ public final class CxfBinding {
         CxfMessage out = exchange.getOut();
         if (response != null) {
             out.setMessage(response);
+            DataFormat dataFormat = (DataFormat) exchange.getProperty(CxfExchange.DATA_FORMAT);
+            if (!dataFormat.equals(DataFormat.POJO)) {
+                out.setBody(response);
+            }
         }
     }
 

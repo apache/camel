@@ -32,7 +32,6 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.AbstractFeature;
-import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.frontend.ServerFactoryBean;
 
 /**
