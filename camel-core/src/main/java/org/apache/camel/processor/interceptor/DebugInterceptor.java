@@ -28,7 +28,7 @@ import org.apache.camel.processor.DelegateProcessor;
 /**
  * An interceptor for debugging and tracing routes
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DebugInterceptor extends DelegateProcessor {
     private final ProcessorType node;

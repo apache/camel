@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * An interceptor strategy for debugging and tracing routes
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class Debugger implements InterceptStrategy {
     private static final transient Log LOG = LogFactory.getLog(Debugger.class);

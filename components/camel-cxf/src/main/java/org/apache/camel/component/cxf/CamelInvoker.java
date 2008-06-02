@@ -55,9 +55,9 @@ public class CamelInvoker implements Invoker, MessageInvoker {
         //TODO set the request context here
         CxfEndpoint endpoint = cxfConsumer.getEndpoint();
         CxfExchange cxfExchange = endpoint.createExchange(inMessage);
-        
+
         BindingOperationInfo bop = exchange.get(BindingOperationInfo.class);
-        
+
         if (bop != null && bop.getOperationInfo().isOneWay()) {
             cxfExchange.setPattern(ExchangePattern.InOnly);
         } else {
@@ -155,9 +155,9 @@ public class CamelInvoker implements Invoker, MessageInvoker {
             cxfExchange.setPattern(ExchangePattern.InOut);
         }
         if (bop != null && bop.getName() != null) {
-        	cxfExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, bop.getName().getLocalPart());
+            cxfExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, bop.getName().getLocalPart());
         } else {
-        	cxfExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, m.getName());
+            cxfExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, m.getName());
         }
         cxfExchange.getIn().setBody(params);
         try {

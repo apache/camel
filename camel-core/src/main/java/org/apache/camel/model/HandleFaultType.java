@@ -25,7 +25,7 @@ import org.apache.camel.processor.HandleFaultProcessor;
 /**
  * Represents an XML &lt;handleFault/&gt; element
  *
- * @version $Revision: 36565 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "handleFault")
 @XmlAccessorType(XmlAccessType.FIELD)
