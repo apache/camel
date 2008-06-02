@@ -34,6 +34,15 @@ To run the example with Ant
 You can see the routing rules by looking at the the Spring XML configuration
 at src/main/resources/META-INF/spring
 
+To stop the example hit ctrl + c
+
+To use log4j as the logging framework add this to the pom.xml:
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+and log4j.properties is located in src/main/resources 
+
 For the latest & greatest documentation on how to use this example please see
   http://activemq.apache.org/camel/spring-xquery-example.html
 
