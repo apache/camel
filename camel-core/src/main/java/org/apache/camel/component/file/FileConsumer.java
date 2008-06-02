@@ -119,7 +119,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         endpoint.configureMessage(file, exchange.getIn());
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("About to process file:  " + file + " using exchange: " + exchange);
+                LOG.debug("About to process file: " + file + " using exchange: " + exchange);
             }
             if (processStrategy.begin(endpoint, exchange, file)) {
 
