@@ -40,15 +40,11 @@ public class JdbcRouteTest extends TestCase {
     protected String url = "jdbc:hsqldb:mem:camel_jdbc";
     protected String user = "sa";
     protected String password = "";
-/*
-    protected String driverClass = "org.apache.derby.jdbc.EmbeddedDriver";
-    protected String url = "jdbc:derby:target/testdb;create=true";
-*/
     protected Connection connection;
 
     public void testPojoRoutes() throws Exception {
-        DataSource ds = new TestDataSource(url, user, password);
         // START SNIPPET: register
+        DataSource ds = new TestDataSource(url, user, password);
         JndiContext context = new JndiContext();
         context.bind("testdb", ds);
 
@@ -88,7 +84,6 @@ public class JdbcRouteTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         Class.forName(driverClass);
-        // sysinfo.main(new String[] { "JdbcRouteTest.setUp()" });
         connection = DriverManager.getConnection(url, user, password);
         connection.createStatement().execute("create table customer (id varchar(15), name varchar(10))");
         connection.createStatement().executeUpdate("insert into customer values('cust1','jstrachan')");
@@ -100,6 +95,5 @@ public class JdbcRouteTest extends TestCase {
             connection.createStatement().execute("drop table customer");
             connection.close();
         }
-        // DriverManager.getConnection("jdbc:derby;shutdown=true").close();
     }
 }

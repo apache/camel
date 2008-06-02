@@ -32,12 +32,10 @@ public class NullDestination implements Destination {
     }
 
     public EndpointReferenceType getAddress() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public Conduit getBackChannel(Message inMessage, Message partialResponse, EndpointReferenceType address) throws IOException {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -47,12 +45,10 @@ public class NullDestination implements Destination {
 
     public void shutdown() {
         messageObserver = null;
-
     }
 
     public void setMessageObserver(MessageObserver observer) {
         messageObserver = observer;
-
     }
 
 }
