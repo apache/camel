@@ -29,8 +29,6 @@ import org.apache.cxf.ws.addressing.EndpointReferenceType;
 public class NullConduit implements Conduit {
 
     public void close() {
-        // TODO Auto-generated method stub
-
     }
 
     public void close(Message message) throws IOException {
@@ -41,24 +39,19 @@ public class NullConduit implements Conduit {
     }
 
     public Destination getBackChannel() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public EndpointReferenceType getTarget() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public void prepare(Message message) throws IOException {
         CachedOutputStream outputStream = new CachedOutputStream();
         message.setContent(OutputStream.class, outputStream);
-
     }
 
     public void setMessageObserver(MessageObserver observer) {
-        // TODO Auto-generated method stub
-
     }
 
 }

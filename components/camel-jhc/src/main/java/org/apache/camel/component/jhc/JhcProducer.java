@@ -63,22 +63,13 @@ import org.apache.http.protocol.RequestTargetHost;
 import org.apache.http.protocol.RequestUserAgent;
 import org.apache.http.util.concurrent.ThreadFactory;
 
-/**
- * Created by IntelliJ IDEA.
- * User: gnodet
- * Date: Sep 7, 2007
- * Time: 8:15:14 PM
- * To change this template use File | Settings | File Templates.
- */
 public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncProcessor {
     public static final String HTTP_RESPONSE_CODE = "http.responseCode";
     // This should be a set of lower-case strings
     public static final Set<String> HEADERS_TO_SKIP = new HashSet<String>(Arrays.asList(
             "content-length", "content-type", HTTP_RESPONSE_CODE.toLowerCase()));
 
-    private static final Log LOG = LogFactory.getLog(JhcProducer.class);
-
-
+    private static final transient Log LOG = LogFactory.getLog(JhcProducer.class);
 
     private int nbThreads = 2;
     private ConnectingIOReactor ioReactor;
@@ -279,9 +270,7 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
             callback.done(false);
         }
 
-        public void finalizeContext(HttpContext arg0) {
-            // TODO Auto-generated method stub
-
+        public void finalizeContext(HttpContext httpContext) {
         }
     }
 

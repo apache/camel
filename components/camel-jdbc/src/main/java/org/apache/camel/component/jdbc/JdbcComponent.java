@@ -40,16 +40,4 @@ public class JdbcComponent extends DefaultComponent<DefaultExchange> {
         return new JdbcEndpoint(uri, remaining, this);
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // TODO Auto-generated method stub
-        super.doStart();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // TODO Auto-generated method stub
-        super.doStop();
-    }
-
 }

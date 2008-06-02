@@ -203,7 +203,6 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         }
 
         public void shutdown() {
-            // TODO Auto-generated method stub
         }
 
         public synchronized void setMessageObserver(MessageObserver observer) {
