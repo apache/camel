@@ -55,7 +55,7 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
     }
 
     protected void startService() {
-     	Object implementor = new PersonImpl();
+         Object implementor = new PersonImpl();
         String address = "http://localhost:9000/PersonService/";
         Endpoint.publish(address, implementor);
     }
@@ -77,9 +77,8 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
 
     public void testInvokingServiceFromCXFClient() throws Exception {
 
-    	URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
-        PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/wsdl-first",
-			"PersonService"));
+        URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
+        PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/wsdl-first", "PersonService"));
         Person client = ss.getSoap();
         ClientProxy.getClient(client).getOutInterceptors().add(new LoggingOutInterceptor());
         Holder<String> personId = new Holder<String>();

@@ -32,6 +32,7 @@ import org.apache.cxf.transport.Destination;
  * @version $Revision$
  */
 public class CxfExchange extends DefaultExchange {
+    public static final String DATA_FORMAT = "DATA_FORMAT";
     private Exchange exchange;
 
     public CxfExchange(CamelContext context, Exchange exchange) {

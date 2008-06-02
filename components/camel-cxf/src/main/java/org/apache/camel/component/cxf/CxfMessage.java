@@ -47,6 +47,9 @@ public class CxfMessage extends DefaultMessage {
     public void copyFrom(org.apache.camel.Message that) {
         setMessageId(that.getMessageId());
         setBody(that.getBody());
+        if (that.getBody() instanceof Message) {
+            setMessage((Message)that.getBody());
+        }
         getHeaders().putAll(that.getHeaders());
         if (that instanceof CxfMessage) {
             CxfMessage orig = (CxfMessage) that;
@@ -103,5 +106,13 @@ public class CxfMessage extends DefaultMessage {
     @Override
     protected Object createBody() {
         return CxfBinding.extractBodyFromCxf(getExchange(), cxfMessage);
+    }
+
+    @Override
+    public void setBody(Object body) {
+        super.setBody(body);
+        if (body instanceof Message) {
+            setMessage((Message) body);
+        }
     }
 }
