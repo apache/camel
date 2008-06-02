@@ -19,7 +19,7 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.Exchange;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class Breakpoint {
     public void waitForBreakpoint(Exchange exchange) {

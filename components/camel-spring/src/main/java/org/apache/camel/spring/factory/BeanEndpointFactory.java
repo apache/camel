@@ -20,7 +20,7 @@ import org.apache.camel.component.bean.BeanEndpoint;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class BeanEndpointFactory implements FactoryBean {
     private boolean singleton = true;
