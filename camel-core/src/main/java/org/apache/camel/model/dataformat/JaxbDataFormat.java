@@ -21,8 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the JAXB2 XML {@link DataFormat}
@@ -64,7 +64,8 @@ public class JaxbDataFormat extends DataFormatType {
 
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
-        if (ObjectConverter.toBool(getPrettyPrint())) {
+    	Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
+        if (answer != null && answer.booleanValue()) {
             setProperty(dataFormat, "prettyPrint", Boolean.TRUE);
         }
         setProperty(dataFormat, "contextPath", contextPath);

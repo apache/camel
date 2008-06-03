@@ -21,11 +21,11 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Intercept;
 import org.apache.camel.Processor;
 import org.apache.camel.model.FromType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
-import org.apache.camel.processor.Interceptor;
 
 /**
  * The context used to activate new routing rules
@@ -70,7 +70,7 @@ public interface RouteContext {
 
     void addEventDrivenProcessor(Processor processor);
 
-    void intercept(Interceptor interceptor);
+    void intercept(Intercept interceptor);
 
     Processor createProceedProcessor();
 

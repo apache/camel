@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Intercept;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ServiceHelper;
 
@@ -26,7 +27,7 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version $Revision$
  */
-public class Interceptor extends DelegateProcessor {
+public class Interceptor extends DelegateProcessor implements Intercept {
     private Processor interceptorLogic;
 
     public Interceptor() {
