@@ -380,7 +380,7 @@ public final class ObjectHelper {
         if (contextClassLoader != null) {
             in = contextClassLoader.getResourceAsStream(name);
         }
-        if (in != null) {
+        if (in == null) {
             in = ObjectHelper.class.getClassLoader().getResourceAsStream(name);
         }
 
