@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
 import org.apache.camel.Route;
+import org.apache.camel.Routes;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ChoiceType;
 import org.apache.camel.model.ExceptionType;
@@ -40,7 +41,7 @@ import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
  *
  * @version $Revision$
  */
-public abstract class RouteBuilder extends BuilderSupport {
+public abstract class RouteBuilder extends BuilderSupport implements Routes {
     private AtomicBoolean initialized = new AtomicBoolean(false);
     private RoutesType routeCollection = new RoutesType();
     private List<Route> routes = new ArrayList<Route>();
