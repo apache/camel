@@ -24,14 +24,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.camel.Converter;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.converter.ObjectConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * A number of useful helper methods for working with Objects
@@ -131,6 +135,16 @@ public final class ObjectHelper {
         }
     }
 
+    public static Boolean toBoolean(Object value) {
+        if (value instanceof Boolean) {
+            return (Boolean)value;
+        }
+        if (value instanceof String) {
+            return "true".equalsIgnoreCase(value.toString()) ? Boolean.TRUE : Boolean.FALSE;
+        }
+        return null;
+    }
+    
     public static void notNull(Object value, String name) {
         if (value == null) {
             throw new IllegalArgumentException(name + " must be specified");
@@ -190,7 +204,8 @@ public final class ObjectHelper {
     /**
      * Returns true if the collection contains the specified value
      */
-    public static boolean contains(Object collectionOrArray, Object value) {
+    @SuppressWarnings("unchecked")
+	public static boolean contains(Object collectionOrArray, Object value) {
         if (collectionOrArray instanceof Collection) {
             Collection collection = (Collection)collectionOrArray;
             return collection.contains(value);
@@ -199,7 +214,7 @@ public final class ObjectHelper {
             String subStr = (String) value;
             return str.contains(subStr);
         } else {
-            Iterator iter = ObjectConverter.iterator(collectionOrArray);
+            Iterator iter = createIterator(collectionOrArray);
             while (iter.hasNext()) {
                 if (equal(value, iter.next())) {
                     return true;
@@ -207,6 +222,45 @@ public final class ObjectHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * Creates an iterator over the value if the value is a collection, an
+     * Object[] or a primitive type array; otherwise to simplify the caller's
+     * code, we just create a singleton collection iterator over a single value
+     */
+    @SuppressWarnings("unchecked")
+    public static Iterator createIterator(Object value) {
+        if (value == null) {
+            return Collections.EMPTY_LIST.iterator();
+        } else if (value instanceof Collection) {
+            Collection collection = (Collection)value;
+            return collection.iterator();
+        } else if (value.getClass().isArray()) {
+            // TODO we should handle primitive array types?
+            List<Object> list = Arrays.asList((Object[]) value);
+            return list.iterator();
+        } else if (value instanceof NodeList) {
+            // lets iterate through DOM results after performing XPaths
+            final NodeList nodeList = (NodeList) value;
+            return new Iterator<Node>() {
+                int idx = -1;
+
+                public boolean hasNext() {
+                    return ++idx < nodeList.getLength();
+                }
+
+                public Node next() {
+                    return nodeList.item(idx);
+                }
+
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        } else {
+            return Collections.singletonList(value).iterator();
+        }
     }
 
     /**

@@ -16,15 +16,11 @@
  */
 package org.apache.camel.converter;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import org.apache.camel.Converter;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Some core java.lang based <a
@@ -47,42 +43,12 @@ public final class ObjectConverter {
     }
 
     /**
-     * Creates an iterator over the value if the value is a collection, an
-     * Object[] or a primitive type array; otherwise to simplify the caller's
-     * code, we just create a singleton collection iterator over a single value
+     * Creates an iterator over the value
      */
-    @Converter
+    @SuppressWarnings("unchecked")
+	@Converter
     public static Iterator iterator(Object value) {
-        if (value == null) {
-            return Collections.EMPTY_LIST.iterator();
-        } else if (value instanceof Collection) {
-            Collection collection = (Collection)value;
-            return collection.iterator();
-        } else if (value.getClass().isArray()) {
-            // TODO we should handle primitive array types?
-            List<Object> list = Arrays.asList((Object[]) value);
-            return list.iterator();
-        } else if (value instanceof NodeList) {
-            // lets iterate through DOM results after performing XPaths
-            final NodeList nodeList = (NodeList) value;
-            return new Iterator<Node>() {
-                int idx = -1;
-
-                public boolean hasNext() {
-                    return ++idx < nodeList.getLength();
-                }
-
-                public Node next() {
-                    return nodeList.item(idx);
-                }
-
-                public void remove() {
-                    throw new UnsupportedOperationException();
-                }
-            };
-        } else {
-            return Collections.singletonList(value).iterator();
-        }
+    	return ObjectHelper.createIterator(value);
     }
 
     /**
@@ -106,13 +72,7 @@ public final class ObjectConverter {
      */
     @Converter
     public static Boolean toBoolean(Object value) {
-        if (value instanceof Boolean) {
-            return (Boolean)value;
-        }
-        if (value instanceof String) {
-            return "true".equalsIgnoreCase(value.toString()) ? Boolean.TRUE : Boolean.FALSE;
-        }
-        return null;
+    	return ObjectHelper.toBoolean(value);
     }
 
     /**

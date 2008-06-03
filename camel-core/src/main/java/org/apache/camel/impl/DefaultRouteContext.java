@@ -24,6 +24,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Intercept;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -147,7 +148,7 @@ public class DefaultRouteContext implements RouteContext {
         eventDrivenProcessors.add(processor);
     }
 
-    public void intercept(Interceptor interceptor) {
+    public void intercept(Intercept interceptor) {
 /*
         InterceptorRef block = new InterceptorRef(interceptor);
         RouteType route = getRoute();
@@ -160,7 +161,7 @@ public class DefaultRouteContext implements RouteContext {
 */
 
         //getRoute().getInterceptors().add(new InterceptorRef(interceptor));
-        lastInterceptor = interceptor;
+        lastInterceptor = (Interceptor)interceptor;
     }
 
     public Processor createProceedProcessor() {
