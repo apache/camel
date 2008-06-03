@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
@@ -155,7 +154,7 @@ public interface CamelContext extends Service {
      * @param builder the builder which will create the routes and add them to this context
      * @throws Exception if the routes could not be created for whatever reason
      */
-    void addRoutes(RouteBuilder builder) throws Exception;
+    void addRoutes(Routes builder) throws Exception;
 
     /**
      * Adds a collection of route definitions to the context

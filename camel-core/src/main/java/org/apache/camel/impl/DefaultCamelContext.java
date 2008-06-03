@@ -34,6 +34,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
+import org.apache.camel.Routes;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
@@ -302,7 +303,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
-    public void addRoutes(RouteBuilder builder) throws Exception {
+    public void addRoutes(Routes builder) throws Exception {
         // lets now add the routes from the builder
         builder.setContext(this);
         List<Route> routeList = builder.getRouteList();
