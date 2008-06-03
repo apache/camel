@@ -2,7 +2,7 @@ Spring & JMS Example
 ====================
 
 This example shows how to work with the Camel-JMS Component.
-It can be run using Maven or Ant.
+It can be run using Maven.
 
 The example consumes messages from a queue and invoke the bean
 with the received message
@@ -22,7 +22,7 @@ To use log4j as the logging framework add this to the pom.xml:
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
     </dependency>
-and log4j.properties is located in src/main/resources 
+and log4j.properties is located in src/main/resources
 
 If you hit an problems please let us know on the Camel Forums
   http://activemq.apache.org/camel/discussion-forums.html
