@@ -50,7 +50,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
     static class ProcessorExchangePair {
         private final Processor processor;
         private final Exchange exchange;
-        
+
         public ProcessorExchangePair(Processor processor, Exchange exchange) {
             this.processor = processor;
             this.exchange = exchange;
@@ -63,8 +63,8 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
         public Exchange getExchange() {
             return exchange;
         }
-        
-        
+
+
     }
 
     private Collection<Processor> processors;
@@ -90,7 +90,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
             if (executor != null) {
                 this.executor = executor;
             } else { // setup default Executor
-                this.executor = new ThreadPoolExecutor(1, processors.size(), 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(processors.size()));
+                this.executor = new ThreadPoolExecutor(processors.size(), processors.size(), 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(processors.size()));
             }
 
         }
@@ -144,7 +144,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
         Exchange result = null;
 
         List<ProcessorExchangePair> pairs = createProcessorExchangePairs(exchange);
-        
+
         // Parallel Processing the producer
         if (isParallelProcessing) {
             Exchange[] exchanges = new Exchange[pairs.size()];
@@ -181,7 +181,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
                 Processor producer = pair.getProcessor();
                 Exchange subExchange = pair.getExchange();
                 updateNewExchange(subExchange, i, pairs);
-                
+
                 producer.process(subExchange);
                 if (aggregationStrategy != null) {
                     if (result == null) {
