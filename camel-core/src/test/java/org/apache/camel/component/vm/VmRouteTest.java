@@ -17,10 +17,10 @@
 package org.apache.camel.component.vm;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ServiceHelper;
 
@@ -30,7 +30,7 @@ import org.apache.camel.util.ServiceHelper;
 public class VmRouteTest extends TestSupport {
     private CamelContext context1 = new DefaultCamelContext();
     private CamelContext context2 = new DefaultCamelContext();
-    private CamelTemplate template = new CamelTemplate(context1);
+    private ProducerTemplate template = context1.createProducerTemplate();
     private Object expectedBody = "<hello>world!</hello>";
 
     public void testSedaQueue() throws Exception {

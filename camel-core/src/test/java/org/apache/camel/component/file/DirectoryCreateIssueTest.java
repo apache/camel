@@ -23,8 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.TestSupport;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.log4j.Logger;
 
@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
 public class DirectoryCreateIssueTest extends TestSupport {
     private static final Logger LOG = Logger.getLogger(DirectoryCreateIssueTest.class);
     private CamelContext context;
-    private CamelTemplate template;
+    private ProducerTemplate template;
 
     @Override
     protected void setUp() throws Exception {
@@ -49,7 +49,7 @@ public class DirectoryCreateIssueTest extends TestSupport {
 */
         context = new DefaultCamelContext();
         context.start();
-        template = new CamelTemplate(context);
+        template = context.createProducerTemplate(); 
     }
 
     @Override

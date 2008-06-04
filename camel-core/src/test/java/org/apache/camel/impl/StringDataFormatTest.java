@@ -22,6 +22,7 @@ import java.io.InputStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -32,11 +33,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class StringDataFormatTest extends TestSupport {
 
     private CamelContext context;
-    private CamelTemplate template;
+    private ProducerTemplate template;
 
     protected void setUp() throws Exception {
         context = new DefaultCamelContext();
-        template = new CamelTemplate(context);
+        template = context.createProducerTemplate();
         template.start();
     }
 

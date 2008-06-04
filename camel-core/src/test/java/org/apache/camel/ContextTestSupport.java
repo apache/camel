@@ -22,7 +22,7 @@ import javax.naming.Context;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.CamelTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Language;
@@ -37,7 +37,7 @@ import org.apache.camel.util.jndi.JndiTest;
  */
 public abstract class ContextTestSupport extends TestSupport {
     protected CamelContext context;
-    protected CamelTemplate<Exchange> template;
+    protected ProducerTemplate<Exchange> template;
     private boolean useRouteBuilder = true;
     private Service camelContextService;
 
@@ -67,7 +67,7 @@ public abstract class ContextTestSupport extends TestSupport {
         context = createCamelContext();
         assertValidContext(context);
 
-        template = new CamelTemplate<Exchange>(context);
+        template = context.createProducerTemplate();
 
         if (useRouteBuilder) {
             RouteBuilder[] builders = createRouteBuilders();

@@ -196,4 +196,9 @@ public interface CamelContext extends Service {
      */
     Language resolveLanguage(String language);
 
+    /**
+     * Creates a new ProducerTemplate
+     */
+    <E extends Exchange> ProducerTemplate<E> createProducerTemplate();
+
 }

@@ -33,24 +33,23 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A client helper object (named like Spring's TransactionTemplate & JmsTemplate
- * et al) for working with Camel and sending {@link Message} instances in an
- * {@link Exchange} to an {@link Endpoint}.
+ * et al) for working with Camel and sending {@link org.apache.camel.Message} instances in an
+ * {@link org.apache.camel.Exchange} to an {@link org.apache.camel.Endpoint}.
  *
  * @version $Revision$
- * @deprecated use {@link ProducerTemplate} instead, can be created using {@link org.apache.camel.CamelContext#createProducerTemplate()}.
  */
-public class CamelTemplate<E extends Exchange> extends ServiceSupport implements ProducerTemplate<E> {
+public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport implements ProducerTemplate<E> {
     private CamelContext context;
     private final ProducerCache<E> producerCache = new ProducerCache<E>();
     private boolean useEndpointCache = true;
     private final Map<String, Endpoint<E>> endpointCache = new HashMap<String, Endpoint<E>>();
     private Endpoint<E> defaultEndpoint;
 
-    public CamelTemplate(CamelContext context) {
+    public DefaultProducerTemplate(CamelContext context) {
         this.context = context;
     }
 
-    public CamelTemplate(CamelContext context, Endpoint defaultEndpoint) {
+    public DefaultProducerTemplate(CamelContext context, Endpoint defaultEndpoint) {
         this(context);
         this.defaultEndpoint = defaultEndpoint;
     }
@@ -76,7 +75,6 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
     }
 
     public E send(Endpoint<E> endpoint, E exchange) {
-        //E convertedExchange = endpoint.createExchange(exchange);
         E convertedExchange = exchange;
         producerCache.send(endpoint, convertedExchange);
         return convertedExchange;
@@ -247,7 +245,7 @@ public class CamelTemplate<E extends Exchange> extends ServiceSupport implements
         }
         return null;
     }
-    
+
     // Implementation methods
     // -----------------------------------------------------------------------
 

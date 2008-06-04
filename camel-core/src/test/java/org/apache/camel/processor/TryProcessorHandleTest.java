@@ -60,6 +60,9 @@ public class TryProcessorHandleTest extends ContextTestSupport {
     private class ProcessorHandle implements Processor {
         public void process(Exchange exchange) throws Exception {
             handled = true;
+
+            assertEquals("Should not be marked as failed", false, exchange.isFailed());
+
             Exception e = (Exception)exchange.getIn().getHeader("caught.exception");
             assertNotNull("There should be an exception", e);
             assertTrue(e instanceof IllegalStateException);
