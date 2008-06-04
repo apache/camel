@@ -32,14 +32,13 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.Routes;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.spi.ComponentResolver;
@@ -59,8 +58,6 @@ import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ServiceHelper.startServices;
 import static org.apache.camel.util.ServiceHelper.stopServices;
-
-
 /**
  * Represents the context used to configure routes and the policies to use.
  *

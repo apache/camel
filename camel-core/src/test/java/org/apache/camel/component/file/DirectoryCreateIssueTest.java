@@ -22,8 +22,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.TestSupport;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.log4j.Logger;
@@ -49,7 +49,7 @@ public class DirectoryCreateIssueTest extends TestSupport {
 */
         context = new DefaultCamelContext();
         context.start();
-        template = context.createProducerTemplate(); 
+        template = context.createProducerTemplate();
     }
 
     @Override

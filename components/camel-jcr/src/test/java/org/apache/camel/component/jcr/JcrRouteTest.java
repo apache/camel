@@ -39,7 +39,6 @@ public class JcrRouteTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         clean();
         super.setUp();
-        template.setDefaultEndpointUri("direct:a");
     }
 
     private void clean() throws IOException {
@@ -54,7 +53,7 @@ public class JcrRouteTest extends ContextTestSupport {
 
     public void testJcrRoute() throws Exception {
         Exchange exchange = createExchangeWithBody("<hello>world!</hello>");
-        Exchange out = template.send(exchange);
+        Exchange out = template.send("direct:a", exchange);
         assertNotNull(out);
         String uuid = out.getOut().getBody(String.class);
         Session session = repository.login(new SimpleCredentials("user", "pass".toCharArray()));
