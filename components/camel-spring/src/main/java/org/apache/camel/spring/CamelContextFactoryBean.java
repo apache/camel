@@ -39,6 +39,7 @@ import org.apache.camel.model.RouteType;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.spi.InstrumentationAgent;
+import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -102,7 +103,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     @XmlTransient
     private BeanPostProcessor beanPostProcessor;
 
-
     public CamelContextFactoryBean() {
 
         // Lets keep track of the class loader for when we actually do start things up
@@ -124,24 +124,18 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     public void afterPropertiesSet() throws Exception {
         // lets see if we can find a debugger to add
         // TODO there should be a neater way to do this!
-        Debugger debugger = null;
-        String[] names = getApplicationContext().getBeanNamesForType(Debugger.class, true, true);
-        if (names.length == 1) {
-            debugger = (Debugger) getApplicationContext().getBean(names[0], Debugger.class);
-        }
-        if (debugger == null) {
-            ApplicationContext parentContext = getApplicationContext().getParent();
-            if (parentContext != null) {
-                names = parentContext.getBeanNamesForType(Debugger.class, true, true);
-                if (names.length == 1) {
-                    debugger = (Debugger) parentContext.getBean(names[0], Debugger.class);
-                }
-            }
-        }
+        Debugger debugger = getBeanForType(Debugger.class);
+        
         if (debugger != null) {
             getContext().addInterceptStrategy(debugger);
         }
 
+        LifecycleStrategy lifecycleStrategy = getBeanForType(LifecycleStrategy.class);
+
+        if (lifecycleStrategy != null) {
+            getContext().setLifecycleStrategy(lifecycleStrategy);
+        }
+        
         // Set the application context and camelContext for the beanPostProcessor
         if (beanPostProcessor != null) {
             if (beanPostProcessor instanceof ApplicationContextAware) {
@@ -155,7 +149,13 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
         // set the instrumentation agent here
+        
         if (instrumentationAgent == null && isJmxEnabled()) {
+            
+            if (lifecycleStrategy != null) {
+                LOG.warn("lifecycleStrategy will be overriden by InstrumentationLifecycleStrategy");
+            }
+            
             SpringInstrumentationAgent agent = new SpringInstrumentationAgent();
             if (camelJMXAgent != null) {
                 agent.enableJmx(camelJMXAgent.getJmxDomainName(), camelJMXAgent.getConnectorPath(), camelJMXAgent.getConnectorPort());
@@ -176,12 +176,31 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             }
             instrumentationAgent = agent;
             instrumentationAgent.start();
-        }
-
+        } 
+        
         LOG.debug("Found JAXB created routes: " + getRoutes());
 
         findRouteBuiders();
         installRoutes();
+    }
+
+    private <T> T getBeanForType(Class<T> clazz) {
+        T bean = null;
+        String[] names = getApplicationContext().getBeanNamesForType(clazz, true, true);
+        if (names.length == 1) {
+            bean = (T) getApplicationContext().getBean(names[0], clazz);
+        }
+        if (bean == null) {
+            ApplicationContext parentContext = getApplicationContext().getParent();
+            if (parentContext != null) {
+                names = parentContext.getBeanNamesForType(clazz, true, true);
+                if (names.length == 1) {
+                    bean = (T) parentContext.getBean(names[0], clazz);
+                }
+            }
+        }
+        return bean;
+
     }
 
     public void destroy() throws Exception {
