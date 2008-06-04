@@ -30,12 +30,14 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.camel.Converter;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+
 
 /**
  * A number of useful helper methods for working with Objects
@@ -618,15 +620,15 @@ public final class ObjectHelper {
         return bean != null ? bean.getClass() : null;
     }
 
-	/**
-	 * Evaluate the value as a predicate which attempts to convert the value to
-	 * a boolean otherwise true is returned if the value is not null
-	 */
-	public static boolean evaluateValuePredicate(Object value) {
-	    if (value instanceof Boolean) {
-	        Boolean aBoolean = (Boolean)value;
-	        return aBoolean.booleanValue();
-	    }
-	    return value != null;
-	}
+    /**
+     * Evaluate the value as a predicate which attempts to convert the value to
+     * a boolean otherwise true is returned if the value is not null
+     */
+    public static boolean evaluateValuePredicate(Object value) {
+        if (value instanceof Boolean) {
+            Boolean aBoolean = (Boolean)value;
+            return aBoolean.booleanValue();
+        }
+        return value != null;
+    }
 }

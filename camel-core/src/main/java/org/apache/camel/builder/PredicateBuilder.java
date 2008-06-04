@@ -16,8 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import static org.apache.camel.util.ObjectHelper.compare;
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.util.ObjectHelper;
+
+import static org.apache.camel.util.ObjectHelper.compare;
+import static org.apache.camel.util.ObjectHelper.notNull;
+
 
 /**
  * A helper class for working with predicates

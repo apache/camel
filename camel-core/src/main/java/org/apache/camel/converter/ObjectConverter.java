@@ -48,7 +48,7 @@ public final class ObjectConverter {
     @SuppressWarnings("unchecked")
     @Converter
     public static Iterator iterator(Object value) {
-    	return ObjectHelper.createIterator(value);
+        return ObjectHelper.createIterator(value);
     }
 
     /**
@@ -72,7 +72,7 @@ public final class ObjectConverter {
      */
     @Converter
     public static Boolean toBoolean(Object value) {
-    	return ObjectHelper.toBoolean(value);
+        return ObjectHelper.toBoolean(value);
     }
 
     /**
