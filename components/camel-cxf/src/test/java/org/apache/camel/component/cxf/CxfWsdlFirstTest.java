@@ -55,7 +55,7 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
     }
 
     protected void startService() {
-         Object implementor = new PersonImpl();
+        Object implementor = new PersonImpl();
         String address = "http://localhost:9000/PersonService/";
         Endpoint.publish(address, implementor);
     }
