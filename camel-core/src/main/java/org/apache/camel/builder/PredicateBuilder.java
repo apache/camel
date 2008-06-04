@@ -16,18 +16,16 @@
  */
 package org.apache.camel.builder;
 
+import static org.apache.camel.util.ObjectHelper.compare;
+import static org.apache.camel.util.ObjectHelper.notNull;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.impl.BinaryPredicateSupport;
-import org.apache.camel.impl.PredicateSupport;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.util.ObjectHelper.compare;
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A helper class for working with predicates
@@ -49,7 +47,7 @@ public final class PredicateBuilder {
         return new PredicateSupport<E>() {
             public boolean matches(E exchange) {
                 Object value = expression.evaluate(exchange);
-                return evaluateValuePredicate(value);
+                return ObjectHelper.evaluateValuePredicate(value);
             }
 
             @Override
@@ -57,18 +55,6 @@ public final class PredicateBuilder {
                 return expression.toString();
             }
         };
-    }
-
-    /**
-     * Evaluate the value as a predicate which attempts to convert the value to
-     * a boolean otherwise true is returned if the value is not null
-     */
-    public static boolean evaluateValuePredicate(Object value) {
-        if (value instanceof Boolean) {
-            Boolean aBoolean = (Boolean)value;
-            return aBoolean.booleanValue();
-        }
-        return value != null;
     }
 
     /**

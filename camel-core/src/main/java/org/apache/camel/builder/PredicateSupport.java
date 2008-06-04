@@ -14,30 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.builder;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.util.ObjectHelper;
 
 /**
- * A useful base class for {@link Predicate} and {@link Expression} implementations
+ * A useful base class for {@link Predicate} implementations
  *
  * @version $Revision$
  */
-public abstract class ExpressionSupport<E extends Exchange> implements Expression<E> , Predicate<E> {
-
-    public boolean matches(E exchange) {
-        Object value = evaluate(exchange);
-        return ObjectHelper.evaluateValuePredicate(value);
-    }
+public abstract class PredicateSupport<E extends Exchange> implements Predicate<E> {
 
     public void assertMatches(String text, E exchange) {
         if (!matches(exchange)) {
-            throw new AssertionError(text + " " + assertionFailureMessage(exchange) + " for exchange: " + exchange);
+            throw new AssertionError(assertionFailureMessage(exchange)  + " on " + exchange);
         }
     }
 
-    protected abstract String assertionFailureMessage(E exchange);
+    protected String assertionFailureMessage(E exchange) {
+        return toString();
+    }
 }

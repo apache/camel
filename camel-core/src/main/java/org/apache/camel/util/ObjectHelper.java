@@ -617,4 +617,16 @@ public final class ObjectHelper {
     public static Object type(Object bean) {
         return bean != null ? bean.getClass() : null;
     }
+
+	/**
+	 * Evaluate the value as a predicate which attempts to convert the value to
+	 * a boolean otherwise true is returned if the value is not null
+	 */
+	public static boolean evaluateValuePredicate(Object value) {
+	    if (value instanceof Boolean) {
+	        Boolean aBoolean = (Boolean)value;
+	        return aBoolean.booleanValue();
+	    }
+	    return value != null;
+	}
 }
