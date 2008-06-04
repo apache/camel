@@ -16,6 +16,10 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -107,9 +111,12 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
+                ThreadPoolExecutor tpExecutor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(10));
                 // START SNIPPET: example
                 // The message will be sent parallelly to the endpoints
-                from("direct:parallel").multicast(new BodyOutAggregatingStrategy(), true).to("direct:x", "direct:y", "direct:z");
+                from("direct:parallel")
+                    .multicast(new BodyOutAggregatingStrategy(), true).setThreadPoolExecutor(tpExecutor)
+                        .to("direct:x", "direct:y", "direct:z");
                 // Multicast the message in a sequential way
                 from("direct:sequential").multicast(new BodyOutAggregatingStrategy()).to("direct:x", "direct:y", "direct:z");
 

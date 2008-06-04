@@ -144,7 +144,7 @@ public final class ObjectHelper {
         }
         return null;
     }
-    
+
     public static void notNull(Object value, String name) {
         if (value == null) {
             throw new IllegalArgumentException(name + " must be specified");
@@ -205,7 +205,7 @@ public final class ObjectHelper {
      * Returns true if the collection contains the specified value
      */
     @SuppressWarnings("unchecked")
-	public static boolean contains(Object collectionOrArray, Object value) {
+    public static boolean contains(Object collectionOrArray, Object value) {
         if (collectionOrArray instanceof Collection) {
             Collection collection = (Collection)collectionOrArray;
             return collection.contains(value);

@@ -23,8 +23,8 @@ package org.apache.camel;
  * @version $Revision:  $
  */
 public interface Intercept {
-    
-	Processor getInterceptorLogic();
-    
+
+    Processor getInterceptorLogic();
+
     void setInterceptorLogic(Processor interceptorLogic);
 }
