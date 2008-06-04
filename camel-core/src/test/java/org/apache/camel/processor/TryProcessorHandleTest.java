@@ -27,7 +27,6 @@ import org.apache.camel.Exchange;
  */
 public class TryProcessorHandleTest extends ContextTestSupport {
 
-    private MockEndpoint resultEndpoint;
     private boolean handled;
 
     public void test() throws Exception {
