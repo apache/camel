@@ -64,7 +64,7 @@ public class JaxbDataFormat extends DataFormatType {
 
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
-    	Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
+        Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
         if (answer != null && answer.booleanValue()) {
             setProperty(dataFormat, "prettyPrint", Boolean.TRUE);
         }

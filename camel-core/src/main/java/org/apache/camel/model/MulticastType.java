@@ -68,24 +68,27 @@ public class MulticastType extends OutputType<ProcessorType> {
         return aggregationStrategy;
     }
 
-    public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
+    public MulticastType setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
+        return this;
     }
 
     public boolean isParallelProcessing() {
         return parallelProcessing != null ? parallelProcessing : false;
     }
 
-    public void setParallelProcessing(boolean parallelProcessing) {
+    public MulticastType setParallelProcessing(boolean parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
+        return this;
     }
 
     public ThreadPoolExecutor getThreadPoolExecutor() {
         return threadPoolExecutor;
     }
 
-    public void setThreadPoolExecutor(ThreadPoolExecutor executor) {
+    public MulticastType setThreadPoolExecutor(ThreadPoolExecutor executor) {
         this.threadPoolExecutor = executor;
+        return this;
     }
 
     @Override
