@@ -25,9 +25,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.model.AggregatorType;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.commons.logging.Log;
@@ -65,7 +65,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedBodiesReceived(allBrothers);
 
-        CamelTemplate template = new CamelTemplate(context);
+        ProducerTemplate template = context.createProducerTemplate();
         template.sendBody("direct:start", allNames);
 
         assertMockEndpointsSatisifed();

@@ -415,7 +415,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
         Object reply = template.requestBody(endpoingUriA, request);
         assertEquals(reply, request);
 
-        JmsEndpoint endpoint = template.getResolvedEndpoint(endpoingUriA, JmsEndpoint.class);
+        JmsEndpoint endpoint = context.getEndpoint(endpoingUriA, JmsEndpoint.class);
         // Wait 1 extra purge cycle to make sure that TimeoutMap had a chance to cleanup
         Thread.sleep(endpoint.getConfiguration().getRequestMapPurgePollTimeMillis());
         assertTrue(endpoint.getRequestor().getRequestMap().size() == 0);
@@ -429,7 +429,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
         Object reply = template.requestBody(endpoingUriA, request);
         assertEquals(reply, request);
 
-        JmsEndpoint endpoint = template.getResolvedEndpoint(endpoingUriA, JmsEndpoint.class);
+        JmsEndpoint endpoint = context.getEndpoint(endpoingUriA, JmsEndpoint.class);
         // Wait 1 extra purge cycle to make sure that TimeoutMap had a chance to cleanup
         Thread.sleep(endpoint.getConfiguration().getRequestMapPurgePollTimeMillis());
         assertTrue(endpoint.getRequestor().getDeferredRequestMap().size() == 0);

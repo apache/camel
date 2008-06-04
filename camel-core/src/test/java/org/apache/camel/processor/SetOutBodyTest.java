@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SetOutBodyTest extends TransformProcessorTest {
 
+    @SuppressWarnings("deprecation")
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

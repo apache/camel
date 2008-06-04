@@ -38,6 +38,7 @@ import org.apache.camel.Routes;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.model.RouteType;
@@ -576,6 +577,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      */
     protected boolean shouldStartRoutes() {
         return isStarted() && !isStarting();
+    }
+
+    public <E extends Exchange> ProducerTemplate<E> createProducerTemplate() {
+        return new DefaultProducerTemplate<E>(this);
     }
 
 }
