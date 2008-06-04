@@ -35,7 +35,11 @@ import org.apache.cxf.helpers.CastUtils;
 
 public class CxfProducerRouterTest extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(CxfProducerRouterTest.class);
-    private static final  String SIMPLE_SERVER_ADDRESS = "http://localhost:28080/test";
+    private static final String SIMPLE_SERVER_ADDRESS = "http://localhost:28080/test";
+    private static final String REQUEST_MESSAGE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+            + "<soap:Body><ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
+            + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">Hello World!</arg0>"
+            + "</ns1:echo></soap:Body></soap:Envelope>";
 
     private static final String ECHO_OPERATION = "echo";
     private static final String TEST_MESSAGE = "Hello World!";
@@ -68,6 +72,7 @@ public class CxfProducerRouterTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:EndpointA").to(getSimpleEndpointUri());
+                from("direct:EndpointB").to(getSimpleEndpointUri() + "&dataFormat=MESSAGE");
             }
         };
     }
@@ -91,6 +96,17 @@ public class CxfProducerRouterTest extends ContextTestSupport {
         assertEquals("Reply body on Camel is wrong", "echo " + TEST_MESSAGE, output[0]);
     }
 
+    public void testInvokingSimpleServerWithMessageDataFormat() throws Exception {
+        Exchange senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
+        senderExchange.getIn().setBody(REQUEST_MESSAGE);
+        Exchange exchange = template.send("direct:EndpointB", senderExchange);
+
+        org.apache.camel.Message out = exchange.getOut();
+        String response = out.getBody(String.class);
+        assertTrue("It should has the echo message", response.indexOf("echo " + TEST_MESSAGE) > 0);
+        assertTrue("It should has the echoResponse tag", response.indexOf("echoResponse") > 0);
+
+    }
 
     private String getSimpleEndpointUri() {
         return "cxf://" + SIMPLE_SERVER_ADDRESS
