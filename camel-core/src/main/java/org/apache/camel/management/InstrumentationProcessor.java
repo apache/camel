@@ -43,7 +43,7 @@ public class InstrumentationProcessor extends DelegateProcessor {
         super.process(exchange);
         if (counter != null) {
             if (!exchange.isFailed()) {
-                counter.completedExchange((System.nanoTime() - startTime) / 1000);
+                counter.completedExchange(System.nanoTime() - startTime);
             } else {
                 counter.completedExchange();
             }
