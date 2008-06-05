@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -29,6 +30,8 @@ public class PerformanceCounter extends Counter {
     private long minProcessingTime = -1L;
     private long maxProcessingTime = -1L;
     private double totalProcessingTime;
+    private Date lastExchangeCompletionTime;
+    private Date firstExchangeCompletionTime;
 
     @Override
     @ManagedOperation(description = "Reset counters")
@@ -38,6 +41,9 @@ public class PerformanceCounter extends Counter {
         minProcessingTime = 0L;
         maxProcessingTime = 0L;
         totalProcessingTime = 0;
+        lastExchangeCompletionTime = null;
+        firstExchangeCompletionTime = null;
+
     }
 
     @ManagedAttribute(description = "Number of successful exchanges")
@@ -66,6 +72,16 @@ public class PerformanceCounter extends Counter {
         return maxProcessingTime;
     }
 
+    @ManagedAttribute(description = "Last Exchange Completed Timestamp")
+    public synchronized Date getLastExchangeCompletionTime() {
+        return lastExchangeCompletionTime;
+    }
+
+    @ManagedAttribute(description = "First Exchange Completed Timestamp")
+    public synchronized Date getFirstExchangeCompletionTime() {
+        return firstExchangeCompletionTime;
+    }
+
     public synchronized void completedExchange(long time) {
         increment();
         numCompleted.incrementAndGet();
@@ -76,6 +92,11 @@ public class PerformanceCounter extends Counter {
         if (time > maxProcessingTime) {
             maxProcessingTime = time;
         }
+        Date timestamp = new Date();
+        if (firstExchangeCompletionTime == null) {
+            firstExchangeCompletionTime = timestamp;
+        }
+        lastExchangeCompletionTime = timestamp;
     }
 
     public void completedExchange() {

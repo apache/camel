@@ -115,6 +115,12 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         assertTrue(valueofMeanProcessingTime >= valueofMinProcessingTime
                    && valueofMeanProcessingTime <= valueofMaxProcessingTime);
 
+        assertNotNull("Expected first completion time to be available", 
+                mbs.getAttribute(pcob, "FirstExchangeCompletionTime"));
+        
+        assertNotNull("Expected last completion time to be available", 
+                mbs.getAttribute(pcob, "LastExchangeCompletionTime"));
+
     }
 
     protected void enableJmx() {
