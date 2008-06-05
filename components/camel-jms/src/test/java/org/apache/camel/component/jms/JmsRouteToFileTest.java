@@ -20,12 +20,13 @@ import java.io.File;
 
 import javax.jms.ConnectionFactory;
 
-import org.apache.camel.ContextTestSupport;
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.IOConverter;
-import org.apache.activemq.ActiveMQConnectionFactory;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * Unit test that we can consume JMS message and store it as file (to avoid regression bug)
