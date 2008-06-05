@@ -18,7 +18,7 @@ package org.apache.camel.spring.example;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.NoRouteBuilder;
+import org.apache.camel.builder.NoRouteBuilder;
 import org.apache.camel.processor.XPathFilterTest;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
