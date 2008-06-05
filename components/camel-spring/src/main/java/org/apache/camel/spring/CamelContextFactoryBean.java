@@ -40,6 +40,7 @@ import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.spi.InstrumentationAgent;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.Registry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -104,7 +105,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private BeanPostProcessor beanPostProcessor;
 
     public CamelContextFactoryBean() {
-
         // Lets keep track of the class loader for when we actually do start things up
         contextClassLoaderOnStart = Thread.currentThread().getContextClassLoader();
     }
@@ -124,18 +124,23 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     public void afterPropertiesSet() throws Exception {
         // lets see if we can find a debugger to add
         // TODO there should be a neater way to do this!
-        Debugger debugger = getBeanForType(Debugger.class);
-        
+        Debugger debugger = getBeanForType(Debugger.class);       
         if (debugger != null) {
             getContext().addInterceptStrategy(debugger);
         }
 
+        // set the lifecycle strategy if defined
         LifecycleStrategy lifecycleStrategy = getBeanForType(LifecycleStrategy.class);
-
         if (lifecycleStrategy != null) {
             getContext().setLifecycleStrategy(lifecycleStrategy);
         }
-        
+
+        // set the strategy if defined
+        Registry registry = getBeanForType(Registry.class);
+        if (registry != null) {
+            getContext().setRegistry(registry);
+        }
+
         // Set the application context and camelContext for the beanPostProcessor
         if (beanPostProcessor != null) {
             if (beanPostProcessor instanceof ApplicationContextAware) {
@@ -144,14 +149,13 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             if (beanPostProcessor instanceof CamelBeanPostProcessor) {
                 ((CamelBeanPostProcessor)beanPostProcessor).setCamelContext(getContext());
             }
-
         }
+
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
-        // set the instrumentation agent here
-        
-        if (instrumentationAgent == null && isJmxEnabled()) {
-            
+
+        // set the instrumentation agent here        
+        if (instrumentationAgent == null && isJmxEnabled()) {            
             if (lifecycleStrategy != null) {
                 LOG.warn("lifecycleStrategy will be overriden by InstrumentationLifecycleStrategy");
             }
@@ -178,7 +182,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             instrumentationAgent.start();
         } 
         
-        LOG.debug("Found JAXB created routes: " + getRoutes());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Found JAXB created routes: " + getRoutes());
+        }
 
         findRouteBuiders();
         installRoutes();
