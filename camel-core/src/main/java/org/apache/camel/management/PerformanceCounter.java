@@ -56,18 +56,18 @@ public class PerformanceCounter extends Counter {
         return numExchanges.get() - numCompleted.get();
     }
 
-    @ManagedAttribute(description = "Min Processing Time [usec]")
+    @ManagedAttribute(description = "Min Processing Time [ns]")
     public synchronized long getMinProcessingTime() throws Exception {
         return minProcessingTime;
     }
 
-    @ManagedAttribute(description = "Mean Processing Time [usec]")
+    @ManagedAttribute(description = "Mean Processing Time [ns]")
     public synchronized long getMeanProcessingTime() throws Exception {
         long count = numCompleted.get();
         return count > 0 ? (long)totalProcessingTime / count : 0L;
     }
 
-    @ManagedAttribute(description = "Max Processing Time [usec]")
+    @ManagedAttribute(description = "Max Processing Time [ns]")
     public synchronized long getMaxProcessingTime() throws Exception {
         return maxProcessingTime;
     }
