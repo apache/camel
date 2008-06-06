@@ -19,14 +19,16 @@ package org.apache.camel.loanbroker.queue.version;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
+//START SNIPPET: translator
 public class Translator implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         String bank = (String)exchange.getIn().getHeader(Constants.PROPERTY_BANK);
         Double rate = (Double)exchange.getIn().getHeader(Constants.PROPERTY_RATE);
-        String clientId = (String)exchange.getIn().getHeader(Constants.PROPERTY_CLIENT_ID);
-        exchange.getOut().setBody("Loan quotion for Client " + clientId
+        String ssn = (String)exchange.getIn().getHeader(Constants.PROPERTY_SSN);
+        exchange.getOut().setBody("Loan quotion for Client " + ssn
                                   + "The lowest rate of bank is " + bank + ", the rate is " + rate);
     }
 
 }
+//END SNIPPET: translator

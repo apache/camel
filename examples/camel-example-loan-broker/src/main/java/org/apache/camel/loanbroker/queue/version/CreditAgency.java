@@ -21,17 +21,19 @@ import org.apache.camel.Processor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+//START SNIPPET: creditAgency
 public class CreditAgency implements Processor {
     private static final transient Log LOG = LogFactory.getLog(CreditAgency.class);
 
     public void process(Exchange exchange) throws Exception {
         LOG.info("Receiving credit agency request");
-        String clientId = (String)exchange.getIn().getHeader(Constants.PROPERTY_CLIENT_ID);
+        String ssn = (String)exchange.getIn().getHeader(Constants.PROPERTY_SSN);
         int score = (int) (Math.random() * 600 + 300);
         int hlength = (int) (Math.random() * 19 + 1);
         exchange.getOut().setHeader(Constants.PROPERTY_SCORE, new Integer(score));
         exchange.getOut().setHeader(Constants.PROPERTY_HISTORYLENGTH, new Integer(hlength));
-        exchange.getOut().setHeader(Constants.PROPERTY_CLIENT_ID, clientId);
+        exchange.getOut().setHeader(Constants.PROPERTY_SSN, ssn);
     }
 
 }
+//END SNIPPET: creditAgency
