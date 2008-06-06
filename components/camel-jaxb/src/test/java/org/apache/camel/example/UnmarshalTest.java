@@ -41,11 +41,9 @@ public class UnmarshalTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
-
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-
                 DataFormat jaxb = new JaxbDataFormat("org.apache.camel.example");
 
                 from("direct:start").
