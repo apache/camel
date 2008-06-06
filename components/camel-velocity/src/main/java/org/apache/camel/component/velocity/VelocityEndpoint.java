@@ -30,6 +30,8 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
+import org.apache.velocity.runtime.log.SimpleLog4JLogSystem;
+import org.springframework.core.io.Resource;
 
 /**
  * @version $Revision$
@@ -44,6 +46,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         this.component = component;
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }
@@ -53,13 +56,13 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         return ExchangePattern.InOut;
     }
 
-    public VelocityEngine getVelocityEngine() throws Exception {
+    private VelocityEngine getVelocityEngine() throws Exception {
         if (velocityEngine == null) {
             velocityEngine = component.getVelocityEngine();
+            velocityEngine.setProperty(Velocity.FILE_RESOURCE_LOADER_CACHE, isLoaderCache() ? Boolean.TRUE : Boolean.FALSE);
+            velocityEngine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM_CLASS, SimpleLog4JLogSystem.class.getName());
+            velocityEngine.setProperty("runtime.log.logsystem.log4j.category", VelocityEndpoint.class.getName());
             velocityEngine.init();
-            if (isLoaderCache()) {
-                Velocity.setProperty(Velocity.FILE_RESOURCE_LOADER_CACHE, Boolean.TRUE);
-            }
         }
         return velocityEngine;
     }
@@ -83,18 +86,23 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
 
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
-        // TODO we might wanna add some kinda resource caching of the template
-        Reader reader = new InputStreamReader(getResource().getInputStream());
+        Resource resource = getResource();
+
+        // getResourceAsInputStream also considers the content cache
+        Reader reader = new InputStreamReader(getResourceAsInputStream());
         StringWriter buffer = new StringWriter();
         String logTag = getClass().getName();
         Map variableMap = ExchangeHelper.createVariableMap(exchange);
         Context velocityContext = new VelocityContext(variableMap);
+
+        // let velocity parse and generate the result in buffer
         VelocityEngine engine = getVelocityEngine();
         engine.evaluate(velocityContext, buffer, logTag, reader);
 
         // now lets output the results to the exchange
         Message out = exchange.getOut(true);
         out.setBody(buffer.toString());
-        out.setHeader("org.apache.camel.velocity.resource", getResource());
+        out.setHeader("org.apache.camel.velocity.resource", resource);
     }
+    
 }

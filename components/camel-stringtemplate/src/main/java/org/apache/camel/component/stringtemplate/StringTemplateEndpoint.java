@@ -42,6 +42,7 @@ public class StringTemplateEndpoint extends ResourceBasedEndpoint {
         super(endpointUri, processor, resourceUri);
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }
@@ -56,8 +57,8 @@ public class StringTemplateEndpoint extends ResourceBasedEndpoint {
         StringWriter buffer = new StringWriter();
         Map variableMap = ExchangeHelper.createVariableMap(exchange);
 
-        // TODO we might wanna add some kinda resource caching of the template
-        String text = IOConverter.toString(getResource().getInputStream());
+        // getResourceAsInputStream also considers the content cache
+        String text = IOConverter.toString(getResourceAsInputStream());
         StringTemplate template = new StringTemplate(text);
         template.setAttributes(variableMap);
         template.write(new AutoIndentWriter(buffer));
@@ -67,4 +68,5 @@ public class StringTemplateEndpoint extends ResourceBasedEndpoint {
         out.setBody(buffer.toString());
         out.setHeader("org.apache.camel.stringtemplate.resource", getResource());
     }
+    
 }
