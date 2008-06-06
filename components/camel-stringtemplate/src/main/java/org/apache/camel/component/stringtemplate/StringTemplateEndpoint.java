@@ -61,6 +61,9 @@ public class StringTemplateEndpoint extends ResourceBasedEndpoint {
         String text = IOConverter.toString(getResourceAsInputStream());
         StringTemplate template = new StringTemplate(text);
         template.setAttributes(variableMap);
+        if (log.isDebugEnabled()) {
+            log.debug("StringTemplate is writing using attributes: " + variableMap);
+        }
         template.write(new AutoIndentWriter(buffer));
 
         // now lets output the results to the exchange

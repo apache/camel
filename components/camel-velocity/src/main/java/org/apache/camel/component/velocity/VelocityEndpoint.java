@@ -97,6 +97,9 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
 
         // let velocity parse and generate the result in buffer
         VelocityEngine engine = getVelocityEngine();
+        if (log.isDebugEnabled()) {
+            log.debug("Velocity is evaluating using velocity context: " + variableMap);
+        }
         engine.evaluate(velocityContext, buffer, logTag, reader);
 
         // now lets output the results to the exchange
