@@ -141,7 +141,11 @@
         <include>javax.xml.stream:stax-api</include>
         <include>com.sun.xml.bind:jaxb-impl</include>
         <!--<include>stax:stax-api</include>-->
-        <include>org.springframework:spring</include>
+        <include>org.springframework:spring-beans</include>
+        <include>org.springframework:spring-context</include>
+        <include>org.springframework:spring-core</include>
+        <include>org.springframework:spring-test</include>
+        <include>org.springframework:spring-web</include>
       </includes>
     </dependencySet>
     <dependencySet>
