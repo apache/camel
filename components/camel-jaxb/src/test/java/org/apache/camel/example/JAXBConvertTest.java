@@ -21,24 +21,18 @@ import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
 public class JAXBConvertTest extends TestCase {
-    private static final transient Log LOG = LogFactory.getLog(JAXBConvertTest.class);
-    
     protected CamelContext context = new DefaultCamelContext();
     protected TypeConverter converter = context.getTypeConverter();
 
     public void testConverter() throws Exception {
         PurchaseOrder purchaseOrder = converter.convertTo(PurchaseOrder.class, "<purchaseOrder name='foo' amount='123.45' price='2.22'/>");
 
-        LOG.info("Parsed: " + purchaseOrder);
         assertNotNull("Purchase order should not be null!", purchaseOrder);
-
         assertEquals("name", "foo", purchaseOrder.getName());
         assertEquals("amount", 123.45, purchaseOrder.getAmount());
     }

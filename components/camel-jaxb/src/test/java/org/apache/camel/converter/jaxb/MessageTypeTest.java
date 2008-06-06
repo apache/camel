@@ -34,24 +34,27 @@ public class MessageTypeTest extends ExchangeTestSupport {
 
         assertNotNull("Should have created a valid message Type");
 
-        log.info("headers: " + messageType.getHeaderMap());
-        log.info("body: " + messageType.getBody());
-
-        dump(messageType);
+        assertEquals("abc", messageType.getHeaderMap().get("foo"));
+        assertEquals(123, messageType.getHeaderMap().get("bar"));
+        assertEquals("<hello id='m123'>world!</hello>", messageType.getBody());
+        marshalMessage(messageType);
     }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
         jaxbContext = JAXBContext.newInstance("org.apache.camel.converter.jaxb");
     }
 
-    protected void dump(Object object) throws Exception {
+    protected void marshalMessage(Object object) throws Exception {
         Marshaller marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         StringWriter buffer = new StringWriter();
         marshaller.marshal(object, buffer);
-        log.info("Created: " + buffer);
+        String out = buffer.toString();
+        assertTrue("Should be XML", out.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"));
+        assertTrue("Should containt string header", out.indexOf("<header value=\"abc\" name=\"foo\"/>") > -1);
+        assertTrue("Should containt int header", out.indexOf("<intHeader value=\"123\" name=\"bar\"/>") > -1);
+        assertTrue("Should containt the body", out.indexOf("&lt;hello id='m123'&gt;world!&lt;/hello&gt;") > -1);
     }
 }
