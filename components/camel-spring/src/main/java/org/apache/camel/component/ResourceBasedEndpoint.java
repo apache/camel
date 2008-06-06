@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component;
 
+import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import org.apache.camel.Component;
 import org.apache.camel.Processor;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,6 +41,8 @@ public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
     private final String resourceUri;
     private ResourceLoader resourceLoader = new DefaultResourceLoader();
     private Resource resource;
+    private boolean contentCache = false;
+    private byte[] buffer;
 
     public ResourceBasedEndpoint(String endpointUri, Component component, String resourceUri, Processor processor) {
         super(endpointUri, component, processor);
@@ -49,12 +56,59 @@ public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
 
     public Resource getResource() {
         if (resource == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Loading resource: " + resourceUri + " using: " + getResourceLoader());
+            }
             resource = getResourceLoader().getResource(resourceUri);
             if (resource == null) {
                 throw new IllegalArgumentException("Could not find resource for URI: " + resourceUri + " using: " + getResourceLoader());
             }
         }
         return resource;
+    }
+
+    public boolean isContentCache() {
+        return contentCache;
+    }
+
+    /**
+     * Sets wether to use resource content cache or not - default is <tt>false</tt>.
+     *
+     * @see #getResourceAsInputStream()
+     */
+    public void setContentCache(boolean contentCache) {
+        this.contentCache = contentCache;
+    }
+
+    /**
+     * Gets the resource as an input stream considering the cache flag as well.
+     * <p/>
+     * If cache is enabled then the resource content is cached in an internal buffer and this content is
+     * returned to avoid loading the resource over and over again.
+     * 
+     * @return  the input stream
+     * @throws IOException is thrown if error loading the content of the resource to the local cache buffer
+     */
+    public InputStream getResourceAsInputStream() throws IOException {
+        if (resource == null) {
+            // get the resource if not already done
+            resource = getResource();
+        }
+        if (contentCache) {
+            synchronized (resource) {
+                if (buffer == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Reading resource: " + resourceUri + " into the content cache");
+                    }
+                    buffer = IOConverter.toBytes(resource.getInputStream());
+                }
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("Using resource: " + resourceUri + " from the content cache");
+            }
+            return new ByteArrayInputStream(buffer);
+        }
+        return resource.getInputStream();
     }
 
     public ResourceLoader getResourceLoader() {
@@ -64,4 +118,5 @@ public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
     public void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
+
 }
