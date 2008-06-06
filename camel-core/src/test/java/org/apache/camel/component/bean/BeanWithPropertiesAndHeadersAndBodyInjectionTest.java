@@ -17,7 +17,6 @@
 package org.apache.camel.component.bean;
 
 import java.util.Map;
-
 import javax.naming.Context;
 
 import org.apache.camel.Body;
@@ -28,20 +27,16 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Properties;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.util.jndi.JndiContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
 public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(BeanRouteTest.class);
     protected MyBean myBean = new MyBean();
 
     public void testSendMessage() throws Exception {
-        template.send("direct:in", new Processor() {
+        Exchange out = template.send("direct:in", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.setProperty("p1", "abc");
                 exchange.setProperty("p2", 123);
@@ -52,6 +47,12 @@ public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTes
                 in.setBody("TheBody");
             }
         });
+
+        assertEquals("Should not fail", false, out.isFailed());
+
+        BeanHolder holder = out.getProperty("org.apache.camel.bean.BeanHolder", BeanHolder.class);
+        assertNotNull("BeanHolder is missing", holder);
+        assertEquals(myBean, holder.getBean());
 
         Map foo = myBean.foo;
         Map bar = myBean.bar;
@@ -82,8 +83,8 @@ public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTes
     }
 
     public static class MyBean {
-        public Map foo;
-        public Map bar;
+        private Map foo;
+        private Map bar;
         private String body;
 
         @Override
@@ -95,7 +96,9 @@ public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTes
             this.foo = foo;
             this.bar = bar;
             this.body = body;
-            LOG.info("myMethod() method called on " + this);
+            
+            assertNotNull(toString());
         }
     }
+    
 }
