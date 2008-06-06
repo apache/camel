@@ -48,17 +48,14 @@ public class InjectedBeanTest extends SpringTestSupport {
 
         assertNotNull("No PollingConsumer injected for getFieldInjectedPollingConsumer()", bean.getFieldInjectedPollingConsumer());
         assertNotNull("No PollingConsumer injected for getPropertyInjectedPollingConsumer()", bean.getPropertyInjectedPollingConsumer());
-
     }
 
     public void testSendAndReceive() throws Exception {
-
     }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
         bean = getMandatoryBean(InjectedBean.class, "injectedBean");
     }
 
