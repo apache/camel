@@ -23,9 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.PollingConsumerSupport;
 
 /**
- * @deprecated not used - to be removed in due course
+ * @deprecated not used. Will be removed in Camel 2.0.
  * @version $Revision$
  */
+@Deprecated
 public class ListPollingConsumer extends PollingConsumerSupport {
     private final List<Exchange> exchanges;
 

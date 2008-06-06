@@ -54,10 +54,11 @@ public final class ObjectHelper {
     }
 
     /**
-     * @deprecated use the equal method instead
+     * @deprecated use the equal method instead. Will be removed in Camel 2.0.
      *
      * @see #equal(Object, Object)
      */
+    @Deprecated
     public static boolean equals(Object a, Object b) {
         return equal(a, b);
     }
