@@ -58,7 +58,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
     public static void assertEquals(String description, Object expected, Object actual, Exchange exchange) {
         if (!ObjectHelper.equal(expected, actual)) {
-            throw new AssertionError(description + " does not match. Expected: " + expected + " but was: " + actual + " on  " + exchange + " with headers: " + exchange.getIn().getHeaders());
+            throw new AssertionError(description + " does not match. Expected: " + expected + " but was: " + actual + " on " + exchange + " with headers: " + exchange.getIn().getHeaders());
         }
     }
 

@@ -302,6 +302,7 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
 
     protected void doStop() throws Exception {
         producerCache.stop();
+        endpointCache.clear();
     }
 
     protected Object extractResultBody(E result) {
