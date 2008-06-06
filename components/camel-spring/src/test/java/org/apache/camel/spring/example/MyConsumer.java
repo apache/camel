@@ -18,7 +18,7 @@ package org.apache.camel.spring.example;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.MessageDriven;
-import org.apache.camel.impl.CamelTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 public class MyConsumer {
     private static final Log LOG = LogFactory.getLog(MyConsumer.class);
     @EndpointInject(uri = "mock:result")
-    private CamelTemplate destination;
+    private ProducerTemplate destination;
 
     @MessageDriven(uri = "direct:start")
     public void doSomething(String body) {
@@ -41,11 +41,11 @@ public class MyConsumer {
         destination.sendBody(body);
     }
 
-    public CamelTemplate getDestination() {
+    public ProducerTemplate getDestination() {
         return destination;
     }
 
-    public void setDestination(CamelTemplate destination) {
+    public void setDestination(ProducerTemplate destination) {
         this.destination = destination;
     }
 }

@@ -24,11 +24,12 @@ import java.util.HashMap;
 import javax.sql.DataSource;
 
 import junit.framework.TestCase;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.jndi.JndiContext;
 
@@ -64,7 +65,7 @@ public class JdbcRouteTest extends TestCase {
 
         // START SNIPPET: invoke
         Endpoint<Exchange> endpoint = camelContext.getEndpoint("direct:hello");
-        CamelTemplate<Exchange> template = new CamelTemplate<Exchange>(camelContext);
+        ProducerTemplate<Exchange> template = camelContext.createProducerTemplate();
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("select * from customer");
         Exchange out = template.send(endpoint, exchange);

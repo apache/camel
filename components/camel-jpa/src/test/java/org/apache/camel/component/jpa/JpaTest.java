@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.jpa;
 
+import static org.apache.camel.util.ServiceHelper.startServices;
+import static org.apache.camel.util.ServiceHelper.stopServices;
+
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -30,17 +33,13 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.examples.SendEmail;
-import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.JpaTemplate;
-
-import static org.apache.camel.util.ServiceHelper.startServices;
-import static org.apache.camel.util.ServiceHelper.stopServices;
 
 /**
  * @version $Revision$
@@ -48,7 +47,7 @@ import static org.apache.camel.util.ServiceHelper.stopServices;
 public class JpaTest extends TestCase {
     private static final transient Log LOG = LogFactory.getLog(JpaTest.class);
     protected CamelContext camelContext = new DefaultCamelContext();
-    protected CamelTemplate template = new CamelTemplate(camelContext);
+    protected ProducerTemplate template = camelContext.createProducerTemplate();
     protected JpaEndpoint endpoint;
     protected TransactionStrategy transactionStrategy;
     protected JpaTemplate jpaTemplate;

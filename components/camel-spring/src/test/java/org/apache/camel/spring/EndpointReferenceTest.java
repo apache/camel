@@ -18,11 +18,11 @@ package org.apache.camel.spring;
 
 import java.util.List;
 
+import org.apache.camel.CamelTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.spring.example.DummyBean;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;

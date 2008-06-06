@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.spring.integration.adapter;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.spring.integration.SpringIntegrationBinding;
 import org.apache.camel.component.spring.integration.SpringIntegrationExchange;
-import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,16 +39,16 @@ import org.springframework.integration.message.Message;
 public class CamelTargetAdapter extends AbstractCamelAdapter {
 
     private final Log logger = LogFactory.getLog(this.getClass());
-    private CamelTemplate<Exchange> camelTemplate;
+    private ProducerTemplate<Exchange> camelTemplate;
     private Endpoint camelEndpoint;
 
-    public CamelTemplate<Exchange> getCamelTemplate() {
+    public ProducerTemplate<Exchange> getCamelTemplate() {
         if (camelTemplate == null) {
-            if (getCamelContext() != null) {
-                camelTemplate = new CamelTemplate<Exchange>(getCamelContext());
-            } else {
-                camelTemplate = new CamelTemplate<Exchange>(new DefaultCamelContext());
-            }
+        	CamelContext ctx = getCamelContext();
+        	if (ctx == null) {
+        		ctx = new DefaultCamelContext();
+        	}
+        	camelTemplate = ctx.createProducerTemplate();
         }
         return camelTemplate;
     }

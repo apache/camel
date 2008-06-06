@@ -20,10 +20,10 @@ import java.io.File;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.hamcrest.Assertions;
-import org.apache.camel.impl.CamelTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
@@ -35,7 +35,7 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
 public class SpringFileRouteTest extends AbstractJUnit38SpringContextTests {
     protected String expectedBody = "Hello World!";
     @Autowired
-    protected CamelTemplate template;
+    protected ProducerTemplate template;
     @Autowired
     protected Endpoint inputFile;
     @EndpointInject(uri = "mock:result")

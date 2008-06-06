@@ -25,9 +25,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.CxfSoapBinding;
-import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.logging.LogUtils;
@@ -51,7 +51,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     private CamelContext camelContext;
     private EndpointInfo endpointInfo;
     private String targetCamelEndpointUri;
-    private CamelTemplate<Exchange> camelTemplate;
+    private ProducerTemplate<Exchange> camelTemplate;
     private Bus bus;
 
     public CamelConduit(CamelContext context, Bus b, EndpointInfo endpointInfo) {
@@ -113,20 +113,18 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         }
     }
 
-    public CamelTemplate getCamelTemplate() {
+    public ProducerTemplate<Exchange> getCamelTemplate() {
         if (camelTemplate == null) {
-            if (camelContext != null) {
-                camelTemplate = new CamelTemplate<Exchange>(camelContext);
-            } else {
-                camelTemplate = new CamelTemplate<Exchange>(new DefaultCamelContext());
-            }
+        	CamelContext ctx = camelContext != null ? camelContext : new DefaultCamelContext();
+        	camelTemplate = ctx.createProducerTemplate();
         }
         return camelTemplate;
     }
 
-    public void setCamelTemplate(CamelTemplate<Exchange> template) {
+    public void setCamelTemplate(ProducerTemplate<Exchange> template) {
         camelTemplate = template;
     }
+    
     private class CamelOutputStream extends CachedOutputStream {
         private Message outMessage;
         private boolean isOneWay;

@@ -23,10 +23,11 @@ import java.util.Map;
 import javax.xml.ws.Endpoint;
 
 import junit.framework.TestCase;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.CamelTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,7 +51,7 @@ public class CxfProducerTest extends TestCase {
     private static final transient Log LOG = LogFactory.getLog(CxfProducerTest.class);
 
     protected CamelContext camelContext = new DefaultCamelContext();
-    protected CamelTemplate<CxfExchange> template = new CamelTemplate<CxfExchange>(camelContext);
+    protected ProducerTemplate<CxfExchange> template = camelContext.createProducerTemplate();
 
     private ServerImpl simpleServer;
     private Endpoint jaxwsEndpoint;

@@ -19,8 +19,9 @@ package org.apache.camel.spring.debug;
 import java.util.List;
 
 import junit.framework.TestCase;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.CamelTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.processor.interceptor.DebugInterceptor;
 import org.apache.camel.processor.interceptor.Debugger;
@@ -61,7 +62,7 @@ public class DebugTest extends TestCase {
         assertEquals("Number of routes", 1, routes.size());
 
         // now lets send a message
-        CamelTemplate template = main.getCamelTemplate();
+        ProducerTemplate template = main.getCamelTemplate();
         template.sendBody("direct:a", expectedBody);
 
         List<Exchange> o1Messages = o1.getExchanges();

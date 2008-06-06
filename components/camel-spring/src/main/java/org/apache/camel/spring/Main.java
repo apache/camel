@@ -28,8 +28,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.processor.interceptor.Debugger;
@@ -63,7 +63,7 @@ public class Main extends ServiceSupport {
     private List<SpringCamelContext> camelContexts = new ArrayList<SpringCamelContext>();
     private AbstractApplicationContext parentApplicationContext;
     private String parentApplicationContextUri;
-    private CamelTemplate camelTemplate;
+    private ProducerTemplate camelTemplate;
 
     public Main() {
         addOption(new Option("h", "help", "Displays the help screen") {
@@ -391,12 +391,12 @@ public class Main extends ServiceSupport {
     }
 
     /**
-     * Returns a {@link CamelTemplate} from the Spring {@link ApplicationContext} instances
+     * Returns a {@link ProducerTemplate} from the Spring {@link ApplicationContext} instances
      * or lazily creates a new one dynamically
      *
      * @return
      */
-    public CamelTemplate getCamelTemplate() {
+    public ProducerTemplate getCamelTemplate() {
         if (camelTemplate == null) {
             camelTemplate = findOrCreateCamelTemplate();
         }
@@ -405,15 +405,15 @@ public class Main extends ServiceSupport {
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    protected CamelTemplate findOrCreateCamelTemplate() {
-        String[] names = getApplicationContext().getBeanNamesForType(CamelTemplate.class);
+    protected ProducerTemplate findOrCreateCamelTemplate() {
+        String[] names = getApplicationContext().getBeanNamesForType(ProducerTemplate.class);
         if (names != null && names.length > 0) {
-            return (CamelTemplate) getApplicationContext().getBean(names[0], CamelTemplate.class);
+            return (ProducerTemplate) getApplicationContext().getBean(names[0], ProducerTemplate.class);
         }
         for (SpringCamelContext camelContext : camelContexts) {
-            return new CamelTemplate(camelContext);
+            return camelContext.createProducerTemplate();
         }
-        throw new IllegalArgumentException("No CamelContexts are available so cannot create a CamelTemplate!");
+        throw new IllegalArgumentException("No CamelContexts are available so cannot create a ProducerTemplate!");
     }
 
     protected void doStart() throws Exception {

@@ -22,9 +22,9 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
-import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 
 public class Client extends RouteBuilder {
@@ -38,7 +38,7 @@ public class Client extends RouteBuilder {
 
         context.addRoutes(new Client());
 
-        CamelTemplate template = new CamelTemplate(context);
+        ProducerTemplate template = context.createProducerTemplate();
 
         context.start();
         for (int i = 0; i < 2; i++) {

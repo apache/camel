@@ -17,8 +17,8 @@
 package org.apache.camel.example.client;
 
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.jms.JmsExchange;
-import org.apache.camel.impl.CamelTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -36,7 +36,7 @@ public final class CamelClient {
     public static void main(final String[] args) {
 
         ApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
-        CamelTemplate<JmsExchange> camelTemplate = (CamelTemplate)context.getBean("camelTemplate");
+        ProducerTemplate<JmsExchange> camelTemplate = (ProducerTemplate)context.getBean("camelTemplate");
 
         int response = (Integer)camelTemplate.sendBody("jms:queue:numbers", ExchangePattern.InOut, 22);
         System.out.println("Invoking the multiply with 22, the result is " + response);
