@@ -60,6 +60,6 @@ public class BeanInvocationThrowsExceptionTest extends ContextTestSupport {
             }
         }
     }
-    // START SNIPPET: e1
+    // END SNIPPET: e1
 
 }
