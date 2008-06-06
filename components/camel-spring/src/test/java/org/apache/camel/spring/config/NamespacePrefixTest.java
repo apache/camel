@@ -17,8 +17,8 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.CamelTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
@@ -31,7 +31,7 @@ public class NamespacePrefixTest extends AbstractJUnit38SpringContextTests {
     protected String body = "Hello";
 
     @Autowired
-    private CamelTemplate template;
+    private ProducerTemplate template;
 
     @EndpointInject(uri = "mock:results")
     private MockEndpoint endpoint;

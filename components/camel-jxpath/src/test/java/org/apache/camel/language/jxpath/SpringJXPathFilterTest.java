@@ -17,8 +17,8 @@
 package org.apache.camel.language.jxpath;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.CamelTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
@@ -29,7 +29,7 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
 @ContextConfiguration
 public class SpringJXPathFilterTest extends AbstractJUnit38SpringContextTests {
     @Autowired
-    protected CamelTemplate template;
+    protected ProducerTemplate template;
     @EndpointInject(uri = "mock:results")
     protected MockEndpoint endpoint;
 

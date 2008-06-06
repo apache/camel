@@ -14,21 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.config;
+package org.apache.camel;
 
-import org.apache.camel.ProducerTemplate;
+import org.apache.camel.impl.DefaultProducerTemplate;
 
 /**
+ * A client helper object (named like Spring's TransactionTemplate & JmsTemplate
+ * et al) for working with Camel and sending {@link Message} instances in an
+ * {@link Exchange} to an {@link Endpoint}.
+ *
  * @version $Revision$
+ * @deprecated use {@link ProducerTemplate} instead, can be created using {@link org.apache.camel.CamelContext#createProducerTemplate()}.
  */
-public class TemplateUsingBean {
-    private ProducerTemplate template;
+public class CamelTemplate<E extends Exchange> extends DefaultProducerTemplate<E> {
 
-    public ProducerTemplate getTemplate() {
-        return template;
+    public CamelTemplate(CamelContext context) {
+        super(context);
     }
 
-    public void setTemplate(ProducerTemplate template) {
-        this.template = template;
+    public CamelTemplate(CamelContext context, Endpoint defaultEndpoint) {
+        super(context, defaultEndpoint);
     }
 }

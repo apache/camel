@@ -22,9 +22,9 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
-import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
@@ -67,7 +67,7 @@ public final class CamelJmsToFileExample {
         // END SNIPPET: e3
         // Camel template - a handy class for kicking off exchanges
         // START SNIPPET: e4
-        CamelTemplate template = new CamelTemplate(context);
+        ProducerTemplate template = context.createProducerTemplate();
         // END SNIPPET: e4
         // Now everything is set up - lets start the context
         context.start();

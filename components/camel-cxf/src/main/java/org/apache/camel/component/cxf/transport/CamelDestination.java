@@ -26,9 +26,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.CxfSoapBinding;
-import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.logging.LogUtils;
@@ -56,7 +56,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     CamelContext camelContext;
     Consumer consumer;
     String camelDestinationUri;
-    private CamelTemplate<Exchange> camelTemplate;
+    private ProducerTemplate<Exchange> camelTemplate;
     private Endpoint distinationEndpoint;
 
     public CamelDestination(CamelContext camelContext, Bus bus, ConduitInitiator ci, EndpointInfo info) throws IOException {
@@ -112,18 +112,15 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         this.deactivate();
     }
 
-    public CamelTemplate getCamelTemplate() {
+    public ProducerTemplate<Exchange> getCamelTemplate() {
         if (camelTemplate == null) {
-            if (camelContext != null) {
-                camelTemplate = new CamelTemplate<Exchange>(camelContext);
-            } else {
-                camelTemplate = new CamelTemplate<Exchange>(new DefaultCamelContext());
-            }
+        	CamelContext ctx = camelContext != null ? camelContext : new DefaultCamelContext();
+        	camelTemplate = ctx.createProducerTemplate();
         }
         return camelTemplate;
     }
 
-    public void setCamelTemplate(CamelTemplate<Exchange> template) {
+    public void setCamelTemplate(ProducerTemplate<Exchange> template) {
         camelTemplate = template;
     }
 

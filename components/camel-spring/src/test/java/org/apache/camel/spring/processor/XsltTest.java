@@ -17,8 +17,8 @@
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.CamelTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
@@ -33,7 +33,7 @@ public class XsltTest extends AbstractJUnit38SpringContextTests {
     protected MockEndpoint resultEndpoint;
 
     @Autowired
-    protected CamelTemplate template;
+    protected ProducerTemplate template;
 
 
     public void testXslt() throws Exception {

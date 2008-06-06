@@ -25,13 +25,13 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.CamelTemplate;
+import org.apache.camel.impl.DefaultProducerTemplate;
 import org.apache.camel.model.IdentifiedType;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * A Spring {@link FactoryBean} for creating a new {@link CamelTemplate}
+ * A Spring {@link FactoryBean} for creating a new {@link ProducerTemplate}
  * instance with a minimum of XML
  * 
  * @version $Revision$
@@ -57,14 +57,14 @@ public class CamelTemplateFactoryBean extends IdentifiedType implements FactoryB
             if (endpoint == null) {
                 throw new IllegalArgumentException("No endpoint found for URI: " + defaultEndpoint);
             } else {
-                return new CamelTemplate(context, endpoint);
+                return new DefaultProducerTemplate(context, endpoint);
             }
         }
-        return new CamelTemplate(context);
+        return new DefaultProducerTemplate(context);
     }
 
     public Class getObjectType() {
-        return CamelTemplate.class;
+        return DefaultProducerTemplate.class;
     }
 
     public boolean isSingleton() {

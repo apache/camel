@@ -16,12 +16,12 @@
  */
 package org.apache.camel.spring;
 
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.impl.CamelTemplate;
 
 /**
  * @version $Revision$
@@ -34,8 +34,8 @@ public class InjectedBean {
     private Producer fieldInjectedProducer;
     private Producer propertyInjectedProducer;
     @EndpointInject(uri = "direct:fieldInjectedCamelTemplate")
-    private CamelTemplate fieldInjectedCamelTemplate;
-    private CamelTemplate propertyInjectedCamelTemplate;
+    private ProducerTemplate fieldInjectedCamelTemplate;
+    private ProducerTemplate propertyInjectedCamelTemplate;
     @EndpointInject
     private ProducerTemplate injectByFieldName;
     private ProducerTemplate injectByPropertyName;
@@ -76,16 +76,16 @@ public class InjectedBean {
 
     // CamelTemplate
     //-----------------------------------------------------------------------
-    public CamelTemplate getFieldInjectedCamelTemplate() {
+    public ProducerTemplate getFieldInjectedCamelTemplate() {
         return fieldInjectedCamelTemplate;
     }
 
-    public CamelTemplate getPropertyInjectedCamelTemplate() {
+    public ProducerTemplate getPropertyInjectedCamelTemplate() {
         return propertyInjectedCamelTemplate;
     }
 
     @EndpointInject(uri = "direct:propertyInjectedCamelTemplate")
-    public void setPropertyInjectedCamelTemplate(CamelTemplate propertyInjectedCamelTemplate) {
+    public void setPropertyInjectedCamelTemplate(ProducerTemplate propertyInjectedCamelTemplate) {
         this.propertyInjectedCamelTemplate = propertyInjectedCamelTemplate;
     }
 

@@ -35,7 +35,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.component.bean.BeanProcessor;
-import org.apache.camel.impl.CamelTemplate;
+import org.apache.camel.impl.DefaultProducerTemplate;
 import org.apache.camel.spring.util.ReflectionUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -220,8 +220,8 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
                 return endpoint;
             } else if (type.isAssignableFrom(Producer.class)) {
                 return createInjectionProducer(endpoint);
-            } else if (type.isAssignableFrom(CamelTemplate.class)) {
-                return new CamelTemplate(getCamelContext(), endpoint);
+            } else if (type.isAssignableFrom(DefaultProducerTemplate.class)) {
+                return new DefaultProducerTemplate(getCamelContext(), endpoint);
             } else if (type.isAssignableFrom(PollingConsumer.class)) {
                 return createInjectionPollingConsumer(endpoint);
             } else {
