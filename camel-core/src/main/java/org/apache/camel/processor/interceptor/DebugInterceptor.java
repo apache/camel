@@ -33,13 +33,16 @@ import org.apache.camel.processor.DelegateProcessor;
 public class DebugInterceptor extends DelegateProcessor {
     private final ProcessorType node;
     private final List<Exchange> exchanges;
+    private final List<ExceptionEvent> exceptions;
     private Predicate traceFilter;
     private Breakpoint breakpoint = new Breakpoint();
+    private boolean traceExceptions = true;
 
-    public DebugInterceptor(ProcessorType node, Processor target, List<Exchange> exchanges) {
+    public DebugInterceptor(ProcessorType node, Processor target, List<Exchange> exchanges, List<ExceptionEvent> exceptions) {
         super(target);
         this.node = node;
         this.exchanges = exchanges;
+        this.exceptions = exceptions;
     }
 
     @Override
@@ -50,7 +53,17 @@ public class DebugInterceptor extends DelegateProcessor {
     public void process(Exchange exchange) throws Exception {
         checkForBreakpoint(exchange);
         addTraceExchange(exchange);
-        super.proceed(exchange);
+        try {
+            super.proceed(exchange);
+        }
+        catch (Exception e) {
+            onException(exchange, e);
+            throw e;
+        }
+        catch (Error e) {
+            onException(exchange, e);
+            throw e;
+        }
     }
 
     public ProcessorType getNode() {
@@ -59,6 +72,10 @@ public class DebugInterceptor extends DelegateProcessor {
 
     public List<Exchange> getExchanges() {
         return exchanges;
+    }
+
+    public List<ExceptionEvent> getExceptions() {
+        return exceptions;
     }
 
     public Breakpoint getBreakpoint() {
@@ -73,11 +90,33 @@ public class DebugInterceptor extends DelegateProcessor {
         this.traceFilter = traceFilter;
     }
 
+    public boolean isTraceExceptions() {
+        return traceExceptions;
+    }
+
+    public void setTraceExceptions(boolean traceExceptions) {
+        this.traceExceptions = traceExceptions;
+    }
+
     /**
      * Stategy method to wait for a breakpoint if one is set
      */
     protected void checkForBreakpoint(Exchange exchange) {
         breakpoint.waitForBreakpoint(exchange);
+    }
+
+    /**
+     * Fired when an exception is thrown when processing the underlying processor
+     */
+    protected void onException(Exchange exchange, Throwable e) {
+        if (shouldTraceExceptionEvents(exchange, e))  {
+            exceptions.add(new ExceptionEvent(this, exchange, e));    
+        }
+
+    }
+
+    private boolean shouldTraceExceptionEvents(Exchange exchange, Throwable e) {
+        return isTraceExceptions();
     }
 
     /**

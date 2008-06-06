@@ -91,7 +91,7 @@ public class Debugger implements InterceptStrategy {
 
     public Processor wrapProcessorInInterceptors(ProcessorType processorType, Processor target) throws Exception {
         String id = processorType.idOrCreate();
-        DebugInterceptor interceptor = new DebugInterceptor(processorType, target, createExchangeList());
+        DebugInterceptor interceptor = new DebugInterceptor(processorType, target, createExchangeList(), createExceptionsList());
         interceptors.put(id, interceptor);
         if (LOG.isDebugEnabled()) {
             LOG.debug("adding interceptor: " + interceptor);
@@ -108,5 +108,10 @@ public class Debugger implements InterceptStrategy {
         } else {
             return new ArrayList<Exchange>();
         }
+    }
+
+    protected List<ExceptionEvent> createExceptionsList() {
+        // TODO allow some kinda LRU based fixed size list to be used?
+        return new ArrayList<ExceptionEvent>();
     }
 }
