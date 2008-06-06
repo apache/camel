@@ -30,13 +30,18 @@ public class FileProduceGeneratedFileNameTest extends ContextTestSupport {
 
     public void testGeneratedFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:a");
+        FileEndpoint fileEndpoint = resolveMandatoryEndpoint("file://target", FileEndpoint.class);
+
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World");
-        String id = exchange.getIn().getMessageId();
+
+        String id = fileEndpoint.getGeneratedFileName(exchange.getIn());
         template.send(endpoint, exchange);
 
         File file = new File("target/" + id);
-        assertEquals("The generated file should exists", true, file.exists());
+        file = file.getAbsoluteFile();
+        System.out.println("absolute file: " + file);
+        assertEquals("The generated file should exists: " + file, true, file.exists());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

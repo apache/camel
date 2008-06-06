@@ -115,10 +115,10 @@ public class FileProducer extends DefaultProducer {
             if (name != null) {
                 answer = new File(endpointFile, name);
                 if (answer.isDirectory()) {
-                    answer = new File(answer, getFileFriendlyMessageId(message.getMessageId()));
+                    answer = new File(answer, endpoint.getGeneratedFileName(message));
                 }
             } else {
-                answer = new File(endpointFile, getFileFriendlyMessageId(message.getMessageId()));
+                answer = new File(endpointFile, endpoint.getGeneratedFileName(message));
             }
         } else {
             if (name == null) {
@@ -127,6 +127,9 @@ public class FileProducer extends DefaultProducer {
                 answer = new File(endpointFile, name);
             }
         }
+
+        // TODO lets store the name in the header?
+        //message.setHeader(FileComponent.HEADER_FILE_NAME, answer.toString());
 
         return answer;
     }
@@ -141,8 +144,5 @@ public class FileProducer extends DefaultProducer {
         }
     }
 
-    private static String getFileFriendlyMessageId(String id) {
-        return UuidGenerator.generateSanitizedId(id);
-    }
 
 }

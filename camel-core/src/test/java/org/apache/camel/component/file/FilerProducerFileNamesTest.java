@@ -33,7 +33,9 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
         Endpoint endpoint = context.getEndpoint("direct:report");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("This is a good report");
-        String id = exchange.getIn().getMessageId();
+
+        FileEndpoint fileEndpoint = resolveMandatoryEndpoint("file:target/reports/report.txt", FileEndpoint.class);
+        String id = fileEndpoint.getGeneratedFileName(exchange.getIn());
 
         template.send("direct:report", exchange);
 
