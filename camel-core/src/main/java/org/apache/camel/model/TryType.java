@@ -81,7 +81,7 @@ public class TryType extends OutputType<TryType> {
     /**
      * @deprecated Use {@link #finallyBlock()} instead, as the name
      * is better. Current name sugests that it handles exception,
-     * while it mimics java finally keyword.
+     * while it mimics java finally keyword. Will be removed in Camel 2.0.
      */
     @Deprecated
     public TryType handleAll() {

@@ -17,9 +17,10 @@
 package org.apache.camel;
 
 /**
- * @deprecated use {@link InvalidTypeException}
+ * @deprecated use {@link InvalidTypeException}. Will be removed in Camel 2.0.
  * @version $Revision$
  */
+@Deprecated
 public class InvalidHeaderTypeException extends RuntimeCamelException {
 
     private static final long serialVersionUID = -8417806626073055262L;

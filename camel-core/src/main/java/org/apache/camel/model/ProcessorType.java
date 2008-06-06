@@ -1135,8 +1135,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     /**
      * Adds a processor which sets the body on the OUT message
      *
-     * @deprecated Please use {@link #transform(Expression)} instead
+     * @deprecated Please use {@link #transform(Expression)} instead. Will be removed in Camel 2.0.
      */
+    @Deprecated
     public Type setOutBody(Expression expression) {
         return transform(expression);
     }
@@ -1144,8 +1145,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     /**
      * Adds a processor which sets the body on the OUT message
      *
-     * @deprecated Please use {@link #transform()} instead
+     * @deprecated Please use {@link #transform()} instead. Will be removed in Camel 2.0.
      */
+    @Deprecated
     public ExpressionClause<ProcessorType<Type>> setOutBody() {
         return transform();
     }
@@ -1291,20 +1293,20 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     /**
      * Converts the OUT message body to the specified type
      *
-     * @deprecated Please use {@link #convertBodyTo(Class)} instead
+     * @deprecated Please use {@link #convertBodyTo(Class)} instead. Will be removed in Camel 2.0.
      */
+    @Deprecated
     public Type convertOutBodyTo(Class type) {
-        // TODO deprecate method?
-        //return process(ProcessorBuilder.setOutBody(Builder.outBody().convertTo(type)));
         return process(new ConvertBodyProcessor(type));
     }
 
     /**
      * Converts the FAULT message body to the specified type
+     *
+     * @deprecated Please use {@link #convertBodyTo(Class)} instead. Will be removed in Camel 2.0.
      */
+    @Deprecated
     public Type convertFaultBodyTo(Class type) {
-        // TODO deprecate method?
-        //return process(ProcessorBuilder.setFaultBody(Builder.faultBody().convertTo(type)));
         return process(new ConvertBodyProcessor(type));
     }
 

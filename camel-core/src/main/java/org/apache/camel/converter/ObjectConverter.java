@@ -44,9 +44,12 @@ public final class ObjectConverter {
 
     /**
      * Creates an iterator over the value
+     *
+     * @deprecated use {@link org.apache.camel.util.ObjectHelper#createIterator(Object)}. Will be removed in Camel 2.0.
      */
     @SuppressWarnings("unchecked")
     @Converter
+    @Deprecated
     public static Iterator iterator(Object value) {
         return ObjectHelper.createIterator(value);
     }

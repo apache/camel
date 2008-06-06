@@ -24,8 +24,9 @@ import org.apache.camel.impl.DefaultProducerTemplate;
  * {@link Exchange} to an {@link Endpoint}.
  *
  * @version $Revision$
- * @deprecated use {@link ProducerTemplate} instead, can be created using {@link org.apache.camel.CamelContext#createProducerTemplate()}.
+ * @deprecated use {@link ProducerTemplate} instead, can be created using {@link org.apache.camel.CamelContext#createProducerTemplate()}. Will be removed in Camel 2.0
  */
+@Deprecated
 public class CamelTemplate<E extends Exchange> extends DefaultProducerTemplate<E> {
 
     public CamelTemplate(CamelContext context) {
