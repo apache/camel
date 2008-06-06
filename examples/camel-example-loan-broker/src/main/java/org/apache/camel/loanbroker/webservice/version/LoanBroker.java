@@ -51,17 +51,18 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
  */
 public class LoanBroker extends RouteBuilder {
 
-    /**
-     * A main() so we can easily run these routing rules in our IDE
-     * @throws Exception
-     */
+    //START SNIPPET: server
     public static void main(String... args) throws Exception {
         CamelContext context = new DefaultCamelContext();
         CreditAgencyServer creditAgencyServer = new CreditAgencyServer();
+        // Start the credit server
         creditAgencyServer.start();
+
+        // Start the bank server
         BankServer bankServer = new BankServer();
         bankServer.start();
 
+        // Start the camel context
         context.addRoutes(new LoanBroker());
         context.start();
 
@@ -72,21 +73,33 @@ public class LoanBroker extends RouteBuilder {
         bankServer.stop();
         creditAgencyServer.stop();
     }
-
+    //END SNIPPET: server
     /**
      * Lets configure the Camel routing rules using Java code...
      */
     public void configure() {
-        // Option 1 to call the bank endpoints sequentially
-        from(Constants.LOANBROKER_URI).process(new CreditScoreProcessor(Constants.CREDITAGENCY_ADDRESS))
-            .multicast(new BankResponseAggregationStrategy()).to(Constants.BANK1_URI, Constants.BANK2_URI, Constants.BANK3_URI);
+    // START SNIPPET: dsl
 
-        // Option 2 to call the bank endpoints parallelly
-        from(Constants.PARALLEL_LOANBROKER_URI).process(new CreditScoreProcessor(Constants.CREDITAGENCY_ADDRESS))
-            .multicast(new BankResponseAggregationStrategy(), true).to(Constants.BANK1_URI, Constants.BANK2_URI, Constants.BANK3_URI);
+        // Router 1 to call the bank endpoints sequentially
+        from(Constants.LOANBROKER_URI)
+            // Using the CreditScoreProcessor to call the credit agency service
+            .process(new CreditScoreProcessor(Constants.CREDITAGENCY_ADDRESS))
+                // Set the aggregation strategy on the multicast pattern
+                .multicast(new BankResponseAggregationStrategy())
+                    // Send out the request the below three different banks sequentially
+                    .to(Constants.BANK1_URI, Constants.BANK2_URI, Constants.BANK3_URI);
 
+        // Router 2 to call the bank endpoints parallelly
+        from(Constants.PARALLEL_LOANBROKER_URI)
+            .process(new CreditScoreProcessor(Constants.CREDITAGENCY_ADDRESS))
+                // Using the thread pool to send out message to the below three different banks parallelly
+                .multicast(new BankResponseAggregationStrategy(), true)
+                    .to(Constants.BANK1_URI, Constants.BANK2_URI, Constants.BANK3_URI);
+
+    //END SNIPPET: dsl
     }
 
+    //START SNIPPET: credit
     class CreditScoreProcessor implements Processor {
         private String creditAgencyAddress;
         private CreditAgencyWS proxy;
@@ -97,9 +110,10 @@ public class LoanBroker extends RouteBuilder {
         }
 
         private CreditAgencyWS getProxy() {
+            // Here we use JaxWs front end to create the proxy
             JaxWsProxyFactoryBean proxyFactory = new JaxWsProxyFactoryBean();
             ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
-            clientBean.setAddress(Constants.CREDITAGENCY_ADDRESS);
+            clientBean.setAddress(creditAgencyAddress);
             clientBean.setServiceClass(CreditAgencyWS.class);
             clientBean.setBus(BusFactory.getDefaultBus());
             return (CreditAgencyWS)proxyFactory.create();
@@ -115,7 +129,6 @@ public class LoanBroker extends RouteBuilder {
             Integer loanDuriation = (Integer)request.get(2);
             int historyLength = proxy.getCreditHistoryLength(ssn);
             int score = proxy.getCreditScore(ssn);
-            //exchange.getOut().setBody("The ssn's historyLength is " + historyLength + " score is " + score);
 
             // create the invocation message for Bank client
             List<Object> bankRequest = new ArrayList<Object>();
@@ -129,6 +142,6 @@ public class LoanBroker extends RouteBuilder {
         }
 
     }
-
+    //END SNIPPET: credit
 
 }

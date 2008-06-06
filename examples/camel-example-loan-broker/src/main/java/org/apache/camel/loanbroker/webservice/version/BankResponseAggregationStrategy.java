@@ -19,19 +19,21 @@ package org.apache.camel.loanbroker.webservice.version;
 import org.apache.camel.Exchange;
 import org.apache.camel.loanbroker.webservice.version.bank.BankQuote;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-/**
- *
- */
+
+//START SNIPPET: aggregating
 public class BankResponseAggregationStrategy implements AggregationStrategy {
 
     public static final String BANK_QUOTE = "bank_quote";
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+        // Get the bank quote instance from the exchange
         BankQuote oldQuote = oldExchange.getProperty(BANK_QUOTE, BankQuote.class);
+        // Get the oldQute from out message body if we can't get it from the exchange
         if (oldQuote == null) {
             Object[] oldResult = (Object[])oldExchange.getOut().getBody();
             oldQuote = (BankQuote) oldResult[0];
         }
+        // Get the newQuote
         Object[] newResult = (Object[])newExchange.getOut().getBody();
         BankQuote newQuote = (BankQuote) newResult[0];
         Exchange result = null;
@@ -44,8 +46,9 @@ public class BankResponseAggregationStrategy implements AggregationStrategy {
             result = newExchange;
             bankQuote = newQuote;
         }
-        // Copy the bank response together
+        // Set the lower rate BankQuote instance back to aggregated exchange
         result.setProperty(BANK_QUOTE, bankQuote);
+        // Set the return message for the client
         result.getOut().setBody("The best rate is " + bankQuote.toString());
 
         return result;
@@ -53,3 +56,4 @@ public class BankResponseAggregationStrategy implements AggregationStrategy {
     }
 
 }
+//END SNIPPET: aggregating

@@ -18,6 +18,8 @@ package org.apache.camel.loanbroker.webservice.version.bank;
 
 import javax.jws.WebService;
 
+//START SNIPPET: bank
+// Since we use @WebServices here, please make sure to use JaxWs frontend API create the client and server
 @WebService
 public interface BankWS {
 
@@ -27,3 +29,4 @@ public interface BankWS {
     BankQuote getQuote(String ssn, double loanAmount, int loanDuration, int creditHistory, int creditScore);
 
 }
+//END SNIPPET: bank

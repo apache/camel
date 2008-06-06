@@ -18,6 +18,7 @@ package org.apache.camel.loanbroker.webservice.version.credit;
 
 import javax.jws.WebService;
 
+//START SNIPPET: creditAgency
 @WebService
 public interface CreditAgencyWS {
 
@@ -26,3 +27,4 @@ public interface CreditAgencyWS {
     int getCreditHistoryLength(String ssn);
 
 }
+//END SNIPPET: creditAgency

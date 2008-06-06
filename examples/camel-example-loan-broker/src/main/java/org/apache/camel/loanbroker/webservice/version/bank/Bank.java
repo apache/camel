@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.loanbroker.webservice.version.bank;
-
+//START SNIPPET: bankImpl
 public class Bank implements BankWS {
     private String bankName;
     private double primeRate;
@@ -41,6 +41,5 @@ public class Bank implements BankWS {
         return result;
     }
 
-
-
 }
+//END SNIPPET: bankImpl
