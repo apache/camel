@@ -30,6 +30,7 @@ import org.apache.camel.component.file.strategy.FileProcessStrategySupport;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.UuidGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -102,6 +103,14 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
 
     public FileExchange createExchange(ExchangePattern pattern) {
         return new FileExchange(getCamelContext(), pattern, file);
+    }
+
+
+    /**
+     * Return the file name that will be auto-generated for the given message if none is provided
+     */
+    public String getGeneratedFileName(Message message) {
+        return getFileFriendlyMessageId(message.getMessageId());
     }
 
     /**
@@ -329,5 +338,9 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     @Override
     protected String createEndpointUri() {
         return "file://" + getFile().getAbsolutePath();
+    }
+    
+    protected  String getFileFriendlyMessageId(String id) {
+        return UuidGenerator.generateSanitizedId(id);
     }
 }
