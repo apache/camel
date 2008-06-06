@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.loanbroker.webservice.version.credit;
-
+//START SNIPPET: creditAgencyImpl
 public class CreditAgency implements CreditAgencyWS {
 
     public int getCreditHistoryLength(String ssn) {
