@@ -18,8 +18,6 @@ package org.apache.camel.loanbroker.queue.version;
 
 public interface Constants {
 
-    String LOANBROKER_NS = "http://servicemix.org/demos/loan-broker";
-
     String LOANBROKER_SERVICE = "loan-broker";
     String CREDITAGENCY_SERVICE = "credit-agency";
     String LENDERGATEWAY_SERVICE = "lender-gateway";
@@ -31,7 +29,6 @@ public interface Constants {
     String PROPERTY_SCORE = "score";
     String PROPERTY_HISTORYLENGTH = "hlength";
     String PROPERTY_RECIPIENTS = "recipients";
-    String PROPERTY_CLIENT_ID = "client_Id";
     String PROPERTY_RATE = "rate";
     String PROPERTY_BANK = "bank";
 

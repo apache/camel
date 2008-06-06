@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+//START SNIPPET: bank
 public class Bank implements Processor {
     private static final transient Log LOG = LogFactory.getLog(Bank.class);
     private String bankName;
@@ -32,12 +33,12 @@ public class Bank implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         LOG.info("Receiving bank request");
-        String clientId = (String)exchange.getIn().getHeader(Constants.PROPERTY_CLIENT_ID);
+        String ssn = (String)exchange.getIn().getHeader(Constants.PROPERTY_SSN);
         double rate = Math.random() * 10;
-        LOG.info("The bank: " + bankName + " for client: " + clientId + " 's rate " + rate);
+        LOG.info("The bank: " + bankName + " for client: " + ssn + " 's rate " + rate);
         exchange.getOut().setHeader(Constants.PROPERTY_RATE, new Double(rate));
         exchange.getOut().setHeader(Constants.PROPERTY_BANK, bankName);
-        exchange.getOut().setHeader(Constants.PROPERTY_CLIENT_ID, clientId);
+        exchange.getOut().setHeader(Constants.PROPERTY_SSN, ssn);
         // Sleep some time
         try {
             Thread.sleep((int) (Math.random() * 10) * 100);
@@ -47,3 +48,4 @@ public class Bank implements Processor {
     }
 
 }
+//END SNIPPET: bank

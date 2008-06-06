@@ -26,6 +26,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultProducerTemplate;
 
 public class Client extends RouteBuilder {
 
@@ -41,11 +42,15 @@ public class Client extends RouteBuilder {
         ProducerTemplate template = context.createProducerTemplate();
 
         context.start();
+        // START SNIPPET: sending
+        // send out the request message
         for (int i = 0; i < 2; i++) {
             template.sendBodyAndHeader("test-jms:queue:loanRequestQueue",
                                        "Quote for the lowerst rate of loaning bank",
-                                       Constants.PROPERTY_CLIENT_ID, "Client" + i);
+                                       Constants.PROPERTY_SSN, "Client" + i);
         }
+        // END SNIPPET: sending
+
         // Start the loan broker
         Thread.sleep(1000 * 60);
         context.stop();
@@ -53,18 +58,20 @@ public class Client extends RouteBuilder {
     }
 
     /**
-     * Lets configure the Camel routing rules using Java code...
+     * Lets configure the Camel routing rules using Java code to pull the response message
      */
     public void configure() {
-        from("test-jms:queue:loanReply").process(new Processor() {
+        // START SNIPPET: pulling
+        from("test-jms:queue:loanReplyQueue").process(new Processor() {
 
             public void process(Exchange exchange) throws Exception {
-                // Print out the message
+                // Print out the response message
                 System.out.println(exchange.getIn().getBody());
 
             }
 
         });
+        // END SNIPPET: pulling
     }
 
 }

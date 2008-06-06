@@ -19,8 +19,10 @@ package org.apache.camel.loanbroker.queue.version;
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
+//START SNIPPET: aggregation
 public class BankResponseAggregationStrategy implements AggregationStrategy {
 
+    // Here we put the bank response together
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         Integer old = (Integer) oldExchange.getProperty("aggregated");
         Double oldRate = (Double) oldExchange.getIn().getHeader(Constants.PROPERTY_RATE);
@@ -34,10 +36,11 @@ public class BankResponseAggregationStrategy implements AggregationStrategy {
         } else {
             result = newExchange;
         }
+        // Set the property for the completeness condition
         result.setProperty("aggregated", old + 1);
-        // copy the bank response together
         return result;
 
     }
 
 }
+// END SNIPPET: aggregation
