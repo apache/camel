@@ -25,9 +25,12 @@ import org.apache.cxf.frontend.ClientProxyFactoryBean;
 /**
  * The client that will invoke the loan broker service
  */
+
+//START SNIPPET: client
 public class Client {
 
     public LoanBrokerWS getProxy(String address) {
+        // Now we use the simple front API to create the client proxy
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(address);
@@ -55,3 +58,4 @@ public class Client {
     }
 
 }
+//END SNIPPET: client

@@ -16,8 +16,12 @@
  */
 package org.apache.camel.loanbroker.webservice.version;
 
+//START SNIPPET: loanBroker
+
+// This SEI has no @WebService annotation, we use the simple frontend API to create client and server
 public interface LoanBrokerWS {
 
     String getLoanQuote(String ssn, Double loanAmount, Integer loanDuriation);
 
 }
+//END SNIPPET: loanBroker

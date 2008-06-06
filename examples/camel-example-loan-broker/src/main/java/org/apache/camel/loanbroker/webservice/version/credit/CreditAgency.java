@@ -29,3 +29,4 @@ public class CreditAgency implements CreditAgencyWS {
     }
 
 }
+//END SNIPPET: creditAgencyImpl
