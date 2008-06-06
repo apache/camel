@@ -102,12 +102,12 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         assertNotNull("Expected attribute not found. MBean registerred under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       valueofMinProcessingTime);
-        assertTrue(valueofMinProcessingTime > 0);
+        assertTrue(valueofMinProcessingTime >= 0);
         Long valueofMaxProcessingTime = (Long)mbs.getAttribute(pcob, "MaxProcessingTime");
         assertNotNull("Expected attribute not found. MBean registerred under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       valueofMaxProcessingTime);
-        assertTrue(valueofMaxProcessingTime > 0);
+        assertTrue(valueofMaxProcessingTime >= 0);
         Long valueofMeanProcessingTime = (Long)mbs.getAttribute(pcob, "MeanProcessingTime");
         assertNotNull("Expected attribute not found. MBean registerred under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
