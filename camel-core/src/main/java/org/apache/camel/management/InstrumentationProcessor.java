@@ -39,11 +39,11 @@ public class InstrumentationProcessor extends DelegateProcessor {
     }
     
     public void process(Exchange exchange) throws Exception {
-        long startTime = System.nanoTime();
+        long startTime = System.currentTimeMillis();
         super.process(exchange);
         if (counter != null) {
             if (!exchange.isFailed()) {
-                counter.completedExchange(System.nanoTime() - startTime);
+                counter.completedExchange(System.currentTimeMillis() - startTime);
             } else {
                 counter.completedExchange();
             }
