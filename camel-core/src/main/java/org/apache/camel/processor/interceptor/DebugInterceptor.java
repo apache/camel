@@ -55,12 +55,10 @@ public class DebugInterceptor extends DelegateProcessor {
         addTraceExchange(exchange);
         try {
             super.proceed(exchange);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             onException(exchange, e);
             throw e;
-        }
-        catch (Error e) {
+        } catch (Error e) {
             onException(exchange, e);
             throw e;
         }
@@ -110,7 +108,7 @@ public class DebugInterceptor extends DelegateProcessor {
      */
     protected void onException(Exchange exchange, Throwable e) {
         if (shouldTraceExceptionEvents(exchange, e))  {
-            exceptions.add(new ExceptionEvent(this, exchange, e));    
+            exceptions.add(new ExceptionEvent(this, exchange, e));
         }
 
     }
