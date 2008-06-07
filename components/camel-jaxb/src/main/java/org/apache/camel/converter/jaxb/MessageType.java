@@ -33,14 +33,17 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Message;
 
 /**
- * Represents a JAXB2 representation of a Camel {@link Message}
+ * Represents a JAXB2 representation of a Camel {@link Message} - <b>Important</b>: work in progress!
  *
  * @version $Revision$
  */
 @XmlRootElement(name = "message")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class MessageType {
-    @XmlElementRef(type = HeaderType.class)
+    // TODO: XmlElementRef to the abstrac class HeaderType does not work (CAMEL-583)
+    //@XmlElementRef(type = HeaderType.class)
+    @XmlAnyElement(lax = true)
+    @XmlMixed
     List<HeaderType> headers = new ArrayList<HeaderType>();
     @XmlAnyElement(lax = true)
     @XmlMixed

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.jaxb;
 
+import java.io.File;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxb.MessageType;
@@ -25,8 +27,12 @@ import org.apache.camel.converter.jaxb.MessageType;
  */
 public class DumpToXmlTest extends ContextTestSupport {
     public void testDumplFilesToJaxb() throws Exception {
-        // TODO: Needs assertions, fails see CAMEL-583
-        Thread.sleep(5000);
+        deleteDirectory("target/camel/dump");
+        Thread.sleep(2000);
+
+        File file = new File("target/camel/dump");
+        assertTrue("The dump folder should exists", file.exists());
+        assertEquals("There should be 2 dumped files", 2, file.list().length);
     }
 
     @Override
