@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.velocity;
+package org.apache.camel.component.stringtemplate;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.builder.RouteBuilder;
 
 /**
  * Unit test the cahce when reloading .tm files in the classpath
@@ -48,7 +48,7 @@ public class StringTemplateContentCacheTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:a", "Body", "name", "Paris");
         mock.assertIsSatisfied();
-    } 
+    }
 
     public void testCached() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

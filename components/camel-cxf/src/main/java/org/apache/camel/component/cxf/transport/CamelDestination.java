@@ -114,8 +114,8 @@ public class CamelDestination extends AbstractDestination implements Configurabl
 
     public ProducerTemplate<Exchange> getCamelTemplate() {
         if (camelTemplate == null) {
-        	CamelContext ctx = camelContext != null ? camelContext : new DefaultCamelContext();
-        	camelTemplate = ctx.createProducerTemplate();
+            CamelContext ctx = camelContext != null ? camelContext : new DefaultCamelContext();
+            camelTemplate = ctx.createProducerTemplate();
         }
         return camelTemplate;
     }

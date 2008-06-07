@@ -17,12 +17,12 @@
 package org.apache.camel.component.velocity;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Unit test the cahce when reloading .vm files in the classpath
+ * Unit test the cache when reloading .vm files in the classpath
  */
 public class VelocityContentCacheTest extends ContextTestSupport {
 
@@ -48,7 +48,7 @@ public class VelocityContentCacheTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:a", "Body", "name", "Paris");
         mock.assertIsSatisfied();
-    } 
+    }
 
     public void testCached() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

@@ -115,8 +115,8 @@ public class CamelConduit extends AbstractConduit implements Configurable {
 
     public ProducerTemplate<Exchange> getCamelTemplate() {
         if (camelTemplate == null) {
-        	CamelContext ctx = camelContext != null ? camelContext : new DefaultCamelContext();
-        	camelTemplate = ctx.createProducerTemplate();
+            CamelContext ctx = camelContext != null ? camelContext : new DefaultCamelContext();
+            camelTemplate = ctx.createProducerTemplate();
         }
         return camelTemplate;
     }
@@ -124,7 +124,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     public void setCamelTemplate(ProducerTemplate<Exchange> template) {
         camelTemplate = template;
     }
-    
+
     private class CamelOutputStream extends CachedOutputStream {
         private Message outMessage;
         private boolean isOneWay;

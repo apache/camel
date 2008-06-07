@@ -90,7 +90,7 @@ public class LoanBroker extends RouteBuilder {
             .completedPredicate(header("aggregated").isEqualTo(3))
 
         // Here we do some translation and put the message back to loanReplyQueue
-        .process(new Translator()).to("test-jms:queue:loanReplyQueue");
+            .process(new Translator()).to("test-jms:queue:loanReplyQueue");
 
     // END SNIPPET: dsl
     }

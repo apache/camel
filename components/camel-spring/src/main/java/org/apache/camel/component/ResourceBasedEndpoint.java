@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component;
 
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.Component;
@@ -41,7 +41,7 @@ public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
     private final String resourceUri;
     private ResourceLoader resourceLoader = new DefaultResourceLoader();
     private Resource resource;
-    private boolean contentCache = false;
+    private boolean contentCache;
     private byte[] buffer;
 
     public ResourceBasedEndpoint(String endpointUri, Component component, String resourceUri, Processor processor) {
@@ -85,7 +85,7 @@ public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
      * <p/>
      * If cache is enabled then the resource content is cached in an internal buffer and this content is
      * returned to avoid loading the resource over and over again.
-     * 
+     *
      * @return  the input stream
      * @throws IOException is thrown if error loading the content of the resource to the local cache buffer
      */

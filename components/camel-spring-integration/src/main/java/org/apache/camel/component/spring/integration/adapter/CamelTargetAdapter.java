@@ -44,11 +44,11 @@ public class CamelTargetAdapter extends AbstractCamelAdapter {
 
     public ProducerTemplate<Exchange> getCamelTemplate() {
         if (camelTemplate == null) {
-        	CamelContext ctx = getCamelContext();
-        	if (ctx == null) {
-        		ctx = new DefaultCamelContext();
-        	}
-        	camelTemplate = ctx.createProducerTemplate();
+            CamelContext ctx = getCamelContext();
+            if (ctx == null) {
+                ctx = new DefaultCamelContext();
+            }
+            camelTemplate = ctx.createProducerTemplate();
         }
         return camelTemplate;
     }
