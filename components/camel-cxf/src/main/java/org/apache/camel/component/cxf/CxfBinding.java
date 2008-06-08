@@ -82,7 +82,7 @@ public final class CxfBinding {
         return answer;
     }
 
-
+    // Store
     public static void storeCxfResponse(CxfExchange exchange, Message response) {
         // no need to process headers as we use the CXF message
         CxfMessage out = exchange.getOut();
@@ -94,6 +94,23 @@ public final class CxfBinding {
             }
             if (dataFormat.equals(DataFormat.PAYLOAD)) {
                 out.setBody(response);
+            }
+        }
+    }
+
+    // Copy the Camel message to CXF message
+    public static void copyMessage(org.apache.camel.Message camelMessage, org.apache.cxf.message.Message cxfMessage) {
+        InputStream is = camelMessage.getBody(InputStream.class);
+        if (is != null) {
+            cxfMessage.setContent(InputStream.class, is);
+        } else {
+            Object result = camelMessage.getBody();
+            if (result != null) {
+                if (result instanceof InputStream) {
+                    cxfMessage.setContent(InputStream.class, result);
+                } else {
+                    cxfMessage.setContent(result.getClass(), result);
+                }
             }
         }
     }

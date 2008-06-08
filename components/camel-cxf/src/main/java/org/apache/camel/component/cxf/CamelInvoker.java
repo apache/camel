@@ -102,10 +102,11 @@ public class CamelInvoker implements Invoker, MessageInvoker {
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.finest("Get the response outMessage " + outMessage);
             }
-            if (outMessage == null) {
-                outMessage = endpoint.getBinding().createMessage();
-            }
+            // Copy the outMessage back if we set the out's body
+            org.apache.camel.Message camelMessage = result.getOut();
+            CxfBinding.copyMessage(camelMessage, outMessage);
         }
+        // set the CXF outMessage back to the exchange
         exchange.setOutMessage(outMessage);
     }
 

@@ -33,13 +33,15 @@ import org.apache.cxf.frontend.ClientProxyFactoryBean;
 
 
 public class CxfConsumerTest extends ContextTestSupport {
+    protected static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:28080/test";
+    protected static final String SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
+        + "?serviceClass=org.apache.camel.component.cxf.HelloService";
     private static final transient Log LOG = LogFactory.getLog(CxfProducerRouterTest.class);
-    private static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:28080/test";
-    private static final String SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
-                                                       + "?serviceClass=org.apache.camel.component.cxf.HelloService";
+
     private static final String ECHO_OPERATION = "echo";
     private static final String ECHO_BOOLEAN_OPERATION = "echoBoolean";
     private static final String TEST_MESSAGE = "Hello World!";
+
 
     // START SNIPPET: example
     protected RouteBuilder createRouteBuilder() {
@@ -77,8 +79,8 @@ public class CxfConsumerTest extends ContextTestSupport {
 
         HelloService client = (HelloService) proxyFactory.create();
 
-        String result = client.echo("hello world");
-        assertEquals("We should get the echo string result from router", result, "echo hello world");
+        String result = client.echo(TEST_MESSAGE);
+        assertEquals("We should get the echo string result from router", result, "echo " + TEST_MESSAGE);
 
         Boolean bool = client.echoBoolean(Boolean.TRUE);
         assertNotNull("The result should not be null", bool);
