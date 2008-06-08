@@ -17,28 +17,54 @@
 -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:camel="http://activemq.apache.org/camel/schema/spring"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-		http://www.springframework.org/schema/context
-		http://schemas.leadx.com/spring/spring-context-2.5.xsd
-		http://activemq.apache.org/camel/schema/spring
-		http://activemq.apache.org/camel/schema/spring/camel-spring-1.3.0.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:camel="http://activemq.apache.org/camel/schema/spring"
+       xmlns:broker="http://activemq.apache.org/schema/core"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+		http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring-1.3.0.xsd
+		http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.1.0.xsd">
 
-	<context:component-scan base-package="org.apache.camel.example.server" />
+    <!-- turn on AspejctJ AOP to weave all @Aspects beans declared in this spring xml file -->
+    <aop:aspectj-autoproxy/>
 
-	<camel:camelContext id="camel">
-		<camel:package>org.apache.camel.example.server</camel:package>
-	</camel:camelContext>
+    <!-- let Spring do its IoC stuff in this package -->
+    <context:component-scan base-package="org.apache.camel.example.server"/>
 
-	<bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
-		<property name="connectionFactory">
-			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
-				<property name="brokerURL" value="tcp://localhost:61616" />
-			</bean>
-		</property>
-	</bean>
+    <!-- declare a camel context that scans for classes that is RouteBuilder
+         in the package org.apache.camel.example.server -->
+    <camel:camelContext id="camel">
+        <camel:package>org.apache.camel.example.server</camel:package>
+    </camel:camelContext>
+
+    <!-- lets configure the ActiveMQ JMS broker server to listen on TCP 61616 -->
+    <broker:broker useJmx="false" persistent="false" brokerName="localhost">
+        <broker:transportConnectors>
+            <broker:transportConnector name="tcp" uri="tcp://localhost:61616"/>
+        </broker:transportConnectors>
+    </broker:broker>
+
+    <!-- lets configure the Camel JMS consumer to use the ActiveMQ broker declared above -->
+    <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
+        <property name="connectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <property name="brokerURL"
+                          value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- to show aspect AOP stuff -->
+    <bean id="AuditTracker" class="org.apache.camel.example.server.AuditTracker">
+        <!-- define what store to use for audit backup -->
+        <property name="store" ref="AuditStore"/>
+    </bean>
+
+    <!-- the audit store endpoint is configued as file based -->
+    <camel:endpoint id="AuditStore" uri="file://target/store?append=false"/>
 
 </beans>

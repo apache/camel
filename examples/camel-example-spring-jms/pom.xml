@@ -17,81 +17,114 @@
   limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>examples</artifactId>
-    <version>1.4-SNAPSHOT</version>
-  </parent>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>examples</artifactId>
+        <version>1.4-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>camel-example-spring-jms</artifactId>
-  <name>Camel :: Example :: Spring :: JMS </name>
-  <description>An example using Spring XML to talk to the JMS server</description>
+    <artifactId>camel-example-spring-jms</artifactId>
+    <name>Camel :: Example :: Spring :: JMS</name>
+    <description>An example using Spring XML to talk to the JMS server from two kind of client techniques
+        and having AOP aspect to perform audit trails using Camel for record storage
+    </description>
 
- <dependencies>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.14</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jms</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-    </dependency>
+    <dependencies>
+        <!-- required by both client and server -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jms</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-core</artifactId>
+        </dependency>
 
-    <!-- for testing -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+        <!-- xbean is required for ActiveMQ broker configuration in the spring xml file -->
+        <dependency>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring</artifactId>
+        </dependency>
 
-  <profiles>
-    <profile>
-        <id>CamelServer</id>
-    	<properties>
-            <target.main.class>org.apache.camel.example.server.CamelServer</target.main.class>
-        </properties>
-    </profile>
-    <profile>
-        <id>CamelClient</id>
-    	<properties>
-            <target.main.class>org.apache.camel.example.client.CamelClient</target.main.class>
-        </properties>
-    </profile>
-    <profile>
-        <id>CamelClientRemoting</id>
-    	<properties>
-            <target.main.class>org.apache.camel.example.client.CamelClientRemoting</target.main.class>
-        </properties>
-    </profile>
-  </profiles>
-  <build>
-    <plugins>
-      <!-- Allows the example to be run via 'mvn compile exec:java' -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <configuration>
-          <mainClass>${target.main.class}</mainClass>
-          <includePluginDependencies>false</includePluginDependencies>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+        <!-- required jars for aspectj AOP support -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.5.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.5.4</version>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>2.1_3</version>
+        </dependency>
+
+        <!-- for logging using log4j.properties in src/main/resources -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>CamelServer</id>
+            <properties>
+                <!-- we use Camel spring Main class as the server got all what it needs to start in the camel-server.xml file -->
+                <!-- the argument isn't needed as Camel will default scan in the META-INF/spring folder for all spring XML files -->
+                <target.main.class>org.apache.camel.spring.Main</target.main.class>
+                <target.cmd.args>-a META-INF/spring/camel-server.xml</target.cmd.args>
+            </properties>
+        </profile>
+        <profile>
+            <id>CamelClient</id>
+            <properties>
+                <!-- we start using our own class to control what we do in the main -->
+                <target.main.class>org.apache.camel.example.client.CamelClient</target.main.class>
+            </properties>
+        </profile>
+        <profile>
+            <id>CamelClientRemoting</id>
+            <properties>
+                <!-- we start using our own class to control what we do in the main -->
+                <target.main.class>org.apache.camel.example.client.CamelClientRemoting</target.main.class>
+            </properties>
+        </profile>
+    </profiles>
+    <build>
+        <plugins>
+            <!-- Allows the example to be run via 'mvn compile exec:java' -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>${target.main.class}</mainClass>
+                    <includePluginDependencies>false</includePluginDependencies>
+                    <commandlineArgs>${target.cmd.args}</commandlineArgs>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
 
 </project>

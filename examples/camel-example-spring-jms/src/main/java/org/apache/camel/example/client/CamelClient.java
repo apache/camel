@@ -18,7 +18,7 @@ package org.apache.camel.example.client;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.jms.JmsExchange;
+import org.apache.camel.CamelContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -29,19 +29,18 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public final class CamelClient {
 
-    private CamelClient() {
-        // The main class
-    }
-
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws Exception {
+        System.out.println("Notice this client requires that the CamelServer is already running!");
 
         ApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
-        ProducerTemplate<JmsExchange> camelTemplate = (ProducerTemplate)context.getBean("camelTemplate");
+        ProducerTemplate camelTemplate = (ProducerTemplate) context.getBean("camelTemplate");
 
+        System.out.println("Invoking the multiply with 22");
+        // as opposed to the CamelClientRemoting example we need to define the service URI in this java code 
         int response = (Integer)camelTemplate.sendBody("jms:queue:numbers", ExchangePattern.InOut, 22);
-        System.out.println("Invoking the multiply with 22, the result is " + response);
-        System.exit(0);
+        System.out.println("... the result is: " + response);
 
+        System.exit(0);
     }
 
 }
