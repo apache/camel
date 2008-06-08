@@ -27,18 +27,20 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public final class CamelClientRemoting {
 
-    private CamelClientRemoting() {
-        // the main class
-    }
-
     public static void main(final String[] args) {
+        System.out.println("Notice this client requires that the CamelServer is already running!");
 
         ApplicationContext context = new ClassPathXmlApplicationContext("camel-client-remoting.xml");
+        // just get the proxy to the service and we as the client can use the "proxy" as it was
+        // a local object we are invocing. Camel will under the covers do the remote communication
+        // to the remote ActiveMQ server and fetch the response.
         Multiplier multiplier = (Multiplier)context.getBean("multiplierProxy");
-        int response = multiplier.multiply(22);
-        System.out.println("Invoking the multiply with 22, the result is " + response);
-        System.exit(0);
 
+        System.out.println("Invoking the multiply with 33");
+        int response = multiplier.multiply(33);
+        System.out.println("... the result is: " + response);
+
+        System.exit(0);
     }
 
 }
