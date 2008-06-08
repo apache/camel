@@ -23,13 +23,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.w3c.dom.Element;
 
+import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 
 
 
 public class PayloadInvokingContext extends AbstractInvokingContext {
-    private static final Logger LOG = Logger.getLogger(PayloadInvokingContext.class.getName());
+    private static final Logger LOG = LogUtils.getL7dLogger(PayloadInvokingContext.class);
 
 
     public PayloadInvokingContext() {
@@ -107,6 +108,11 @@ public class PayloadInvokingContext extends AbstractInvokingContext {
         contents.put(PayloadMessage.class, new PayloadMessage(payload, header));
 
         return contents;
+    }
+
+    @Override
+    protected Logger getLogger() {
+        return LOG;
     }
 
 }

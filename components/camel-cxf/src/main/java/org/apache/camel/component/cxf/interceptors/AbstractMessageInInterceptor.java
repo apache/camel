@@ -46,9 +46,8 @@ import org.apache.cxf.staxutils.StaxUtils;
  * infers the BindingOperationInfo and then set the
  *
  */
-public abstract class AbstractMessageInInterceptor<T extends Message> 
+public abstract class AbstractMessageInInterceptor<T extends Message>
        extends AbstractPhaseInterceptor<T> {
-    private static final Logger LOG = LogUtils.getL7dLogger(AbstractMessageInInterceptor.class);
 
     public AbstractMessageInInterceptor(String phase) {
         super(phase);
@@ -59,12 +58,12 @@ public abstract class AbstractMessageInInterceptor<T extends Message>
     }
 
     /**
-     * Infer the OperationInfo from the XML Document and get the list of 
+     * Infer the OperationInfo from the XML Document and get the list of
      * parts as DOM Element
      */
     public void handleMessage(T message) throws Fault {
         Logger logger = getLogger();
-        
+
         if (isFaultMessage(message)) {
             message.getInterceptorChain().abort();
             Endpoint ep = message.getExchange().get(Endpoint.class);
@@ -80,7 +79,7 @@ public abstract class AbstractMessageInInterceptor<T extends Message>
         Document document = createDOMMessage(message);
         //Document document = message.getContent(Document.class);
         Element payloadEl = (Element)document.getChildNodes().item(0);
-        
+
         Exchange ex = message.getExchange();
         BindingOperationInfo boi = ex.get(BindingOperationInfo.class);
         if (boi == null) {
@@ -94,30 +93,30 @@ public abstract class AbstractMessageInInterceptor<T extends Message>
             if (logger.isLoggable(Level.INFO)) {
                 logger.info("AbstractRoutingMessageInInterceptor Infer BindingOperationInfo.");
             }
-            
+
             boi = getBindingOperation(message, document);
 
             if (boi == null) {
                 QName startQName = new QName(payloadEl.getNamespaceURI(), payloadEl.getLocalName());
-                
+
                 throw new Fault(new org.apache.cxf.common.i18n.Message(
-                                "REQ_NOT_UNDERSTOOD", LOG, startQName));
+                                "REQ_NOT_UNDERSTOOD", getLogger(), startQName));
             }
-            
+
             if (boi != null) {
                 ex.put(BindingOperationInfo.class, boi);
                 ex.put(OperationInfo.class, boi.getOperationInfo());
                 ex.setOneWay(boi.getOperationInfo().isOneWay());
                 if (logger.isLoggable(Level.INFO)) {
                     logger.info("DOMInInterceptor- BindingOperation is:" + boi.getName());
-                }                
+                }
             }
         }
 
         BindingMessageInfo bmi = isRequestor(message) ?  boi.getOutput() : boi.getInput();
-        List<Element> partList = getPartList(message, payloadEl, bmi);        
+        List<Element> partList = getPartList(message, payloadEl, bmi);
         message.put(List.class, partList);
-        
+
         Element header = getHeader(message);
         message.put(Element.class, header);
     }
@@ -132,14 +131,14 @@ public abstract class AbstractMessageInInterceptor<T extends Message>
             if (getLogger().isLoggable(Level.INFO)) {
                 getLogger().info("AbstractMessageInInterceptor Converting Stax Stream to DOM");
             }
-            XMLStreamReader xsr = message.getContent(XMLStreamReader.class);            
+            XMLStreamReader xsr = message.getContent(XMLStreamReader.class);
             doc = StaxUtils.read(xsr);
         } catch (XMLStreamException xe) {
-            throw new Fault(new org.apache.cxf.common.i18n.Message("STAX_READ_EXC", LOG), xe);
+            throw new Fault(new org.apache.cxf.common.i18n.Message("STAX_READ_EXC", getLogger()), xe);
         }
         return doc;
     }
-    
+
     protected abstract Logger getLogger();
 
     /**

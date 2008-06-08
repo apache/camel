@@ -37,7 +37,6 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     private final String address;
     private String wsdlURL;
     private String serviceClass;
-    private CxfBinding binding;
     private String portName;
     private String serviceName;
     private String dataFormat;

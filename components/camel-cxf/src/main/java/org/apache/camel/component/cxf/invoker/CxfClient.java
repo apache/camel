@@ -41,7 +41,7 @@ import org.apache.cxf.transport.MessageObserver;
  */
 public class CxfClient extends ClientImpl {
 
-    private static final Logger LOG = Logger.getLogger(CxfClient.class.getName());
+    private static final Logger LOG = LogUtils.getL7dLogger(CxfClient.class);
 
     public CxfClient(Bus b, Endpoint e) {
         super(b, e);

@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.Message;
@@ -32,7 +33,7 @@ import org.apache.cxf.message.Message;
  */
 public abstract class AbstractInvokingContext implements InvokingContext {
 
-    private static final Logger LOG = Logger.getLogger(AbstractInvokingContext.class.getName());
+    protected abstract Logger getLogger();
 
     protected <T> T getResponseObject(Message inMessage, Map<String, Object> responseContext,
             Class <T> clazz) {
@@ -40,7 +41,7 @@ public abstract class AbstractInvokingContext implements InvokingContext {
         if (inMessage != null) {
             if (null != responseContext) {
                 responseContext.putAll(inMessage);
-                LOG.info("set responseContext to be" + responseContext);
+                getLogger().info("set responseContext to be" + responseContext);
             }
             retval = inMessage.getContent(clazz);
         }
@@ -68,7 +69,7 @@ public abstract class AbstractInvokingContext implements InvokingContext {
             }
         }
         buffer.append("\n--------------------------------------");
-        LOG.info(buffer.toString());
+        getLogger().info(buffer.toString());
     }
 
 }
