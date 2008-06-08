@@ -36,7 +36,7 @@ public class MemoryMessageIdRepository implements MessageIdRepository {
     }
 
     /**
-     * Creates a new MemoryMessageIdRepository with a memory based respository.
+     * Creates a new MemoryMessageIdRepository with a memory based repository.
      * <b>Warning</b> this method should only really be used for testing as it
      * will involve keeping all message IDs in RAM.
      */
@@ -45,7 +45,7 @@ public class MemoryMessageIdRepository implements MessageIdRepository {
     }
 
     /**
-     * Creates a new MemoryMessageIdRepository with a memory based respository.
+     * Creates a new MemoryMessageIdRepository with a memory based repository.
      * <b>Warning</b> this method should only really be used for testing as it
      * will involve keeping all message IDs in RAM.
      */
@@ -55,7 +55,7 @@ public class MemoryMessageIdRepository implements MessageIdRepository {
 
     /**
      * Creates a new MemoryMessageIdRepository using the given {@link Map} to
-     * use to store the processed Message ID objects. Warning be cafeful of the
+     * use to store the processed Message ID objects. Warning be careful of the
      * implementation of Map you use as if you are not careful it could be a
      * memory leak.
      */

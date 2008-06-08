@@ -1121,7 +1121,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      */
     public ExpressionClause<ProcessorType<Type>> setBody() {
         ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
-        process(ProcessorBuilder.setBody(clause));
+        SetBodyType answer = new SetBodyType(clause);
+        addOutput(answer);
         return clause;
     }
 
@@ -1129,7 +1130,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Adds a processor which sets the body on the IN message
      */
     public Type setBody(Expression expression) {
-        return process(ProcessorBuilder.setBody(expression));
+        SetBodyType answer = new SetBodyType(expression);
+        addOutput(answer);
+        return (Type) this;
     }
 
     /**
@@ -1165,8 +1168,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Adds a processor which sets the body on the OUT message
      */
     public ExpressionClause<ProcessorType<Type>> transform() {
-        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>(
-                (Type) this);
+        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
         TransformType answer = new TransformType(clause);
         addOutput(answer);
         return clause;

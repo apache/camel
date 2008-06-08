@@ -36,7 +36,7 @@ public class MyAggregationStrategy extends UseLatestAggregationStrategy {
     }
 
     /**
-     * An expression used to determine if the aggreagation is complete
+     * An expression used to determine if the aggregation is complete
      */
     public boolean isCompleted(@Header(name = "aggregated")
                                Integer aggregated) {

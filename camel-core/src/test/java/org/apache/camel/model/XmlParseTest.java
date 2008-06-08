@@ -88,6 +88,14 @@ public class XmlParseTest extends XmlTestSupport {
         assertExpression(node.getExpression(), "simple", "${in.body} extra data!");
         assertChildTo(route, "mock:end", 1);
     }    
+
+    public void testParseSetBodyXml() throws Exception {
+        RouteType route = assertOneRoute("setBody.xml");
+        assertFrom(route, "direct:start");
+        SetBodyType node = assertSetBody(route);
+        assertExpression(node.getExpression(), "simple", "${in.body} extra data!");
+        assertChildTo(route, "mock:end", 1);
+    }        
     
     public void testParseSetHeaderXml() throws Exception {
         RouteType route = assertOneRoute("setHeader.xml");
@@ -292,7 +300,12 @@ public class XmlParseTest extends XmlTestSupport {
     protected TransformType assertTransform(ProcessorType<?> route) {
         ProcessorType<?> processor = route.getOutputs().get(0);
         return assertIsInstanceOf(TransformType.class, processor);
-    }       
+    } 
+    
+    protected SetBodyType assertSetBody(ProcessorType<?> route) {
+        ProcessorType<?> processor = route.getOutputs().get(0);
+        return assertIsInstanceOf(SetBodyType.class, processor);
+    }        
     
     protected ChoiceType assertChoice(ProcessorType<?> route) {
         ProcessorType<?> processor = assertOneElement(route.getOutputs());

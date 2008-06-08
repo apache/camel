@@ -45,6 +45,7 @@ RouteBuilderRef
 RoutesType
 RoutingSlipType
 ServiceActivationType
+SetBodyType
 SetHeaderType
 SplitterType
 ThrottlerType
