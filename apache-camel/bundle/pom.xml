@@ -164,17 +164,20 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-scala</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-script</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
     </dependency>
-    <!-- TODO: fix this 'dependencies.dependency.version' is missing for org.apache.camel:camel-spring-integration -->
-	<!--dependency>
+    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-integration</artifactId>
-    </dependency -->
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-sql</artifactId>
