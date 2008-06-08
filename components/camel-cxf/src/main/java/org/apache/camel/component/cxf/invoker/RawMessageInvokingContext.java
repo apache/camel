@@ -23,11 +23,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 
 public class RawMessageInvokingContext extends AbstractInvokingContext {
-    private static final Logger LOG = Logger.getLogger(RawMessageInvokingContext.class.getName());
+    private static final Logger LOG = LogUtils.getL7dLogger(RawMessageInvokingContext.class);
 
     public RawMessageInvokingContext() {
 
@@ -70,6 +71,11 @@ public class RawMessageInvokingContext extends AbstractInvokingContext {
         }
 
         return contents;
+    }
+
+    @Override
+    protected Logger getLogger() {
+        return LOG;
     }
 
 }

@@ -34,7 +34,7 @@ import org.apache.cxf.phase.Phase;
  * Message in PAYLOAD data format
  */
 public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
-    private static final Logger LOG = LogUtils.getL7dLogger(MessageDataFormatFeature.class);
+    private static final Logger LOG = LogUtils.getL7dLogger(PayLoadDataFormatFeature.class);
     // filter the unused phase
     private static final String[] REMOVING_IN_PHASES = {Phase.UNMARSHAL, Phase.PRE_LOGICAL, Phase.PRE_LOGICAL_ENDING, Phase.POST_LOGICAL, Phase.POST_LOGICAL_ENDING };
 

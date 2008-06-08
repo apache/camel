@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.camel.ExchangePattern;
+import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.MethodDispatcher;
 import org.apache.cxf.helpers.CastUtils;
@@ -37,7 +38,7 @@ import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
 
 public class CamelInvoker implements Invoker, MessageInvoker {
-    private static final Logger LOG = Logger.getLogger(CamelInvoker.class.getName());
+    private static final Logger LOG = LogUtils.getL7dLogger(CamelInvoker.class);
     private CxfConsumer cxfConsumer;
 
     public CamelInvoker(CxfConsumer consumer) {
