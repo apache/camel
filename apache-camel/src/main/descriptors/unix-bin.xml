@@ -124,8 +124,10 @@
         <include>org.apache.camel:camel-quartz</include>
         <include>org.apache.camel:camel-rmi</include>
         <include>org.apache.camel:camel-saxon</include>
+        <include>org.apache.camel:camel-scala</include>
         <include>org.apache.camel:camel-script</include>
         <include>org.apache.camel:camel-spring</include>
+        <include>org.apache.camel:camel-spring-integration</include>
         <include>org.apache.camel:camel-sql</include>
         <include>org.apache.camel:camel-stream</include>
         <include>org.apache.camel:camel-stringtemplate</include>
