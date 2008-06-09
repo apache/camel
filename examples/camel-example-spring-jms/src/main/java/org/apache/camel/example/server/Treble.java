@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 /**
  * @author martin.gilday
  */
+// START SNIPPET: e1
 @Service(value = "multiplier")
 public class Treble implements Multiplier {
 
@@ -29,3 +30,4 @@ public class Treble implements Multiplier {
     }
 
 }
+// END SNIPPET: e1

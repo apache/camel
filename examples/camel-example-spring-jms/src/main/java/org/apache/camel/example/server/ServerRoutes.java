@@ -21,6 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @author martin.gilday
  */
+// START SNIPPET: e1
 public class ServerRoutes extends RouteBuilder {
 
     @Override
@@ -30,3 +31,4 @@ public class ServerRoutes extends RouteBuilder {
     }
 
 }
+// END SNIPPET: e1

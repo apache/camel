@@ -22,6 +22,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Required;
 
+// START SNIPPET: e1
 /**
  * For audit tracking of all incoming invocations of our business (Multiplier)
  */
@@ -48,3 +49,4 @@ public class AuditTracker {
     }
     
 }
+// END SNIPPET: e1
