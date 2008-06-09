@@ -17,6 +17,9 @@ of the business service and uses Camel for mediation of the storage of the audit
 For the latest & greatest documentation on how to use this example please see:
   http://cwiki.apache.org/CAMEL/tutorial-jmsremoting.html
 
+You will need to compile this example first:
+  mvn compile
+
 The example should run if you type
   mvn exec:java -PCamelServer
   mvn exec:java -PCamelServerAOP
@@ -40,5 +43,6 @@ have.  Enjoy!
 
 ------------------------
 The Camel riders!
+
 
 

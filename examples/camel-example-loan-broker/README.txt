@@ -13,6 +13,9 @@ the InOut exchange pattern.
 For the latest & greatest documentation on how to use this example please see:
   http://cwiki.apache.org/CAMEL/example-loan-broker.html
 
+You will need to compile this example first:
+  mvn compile
+
 The example of queue version should run if you type
   mvn exec:java -PQueue.LoanBroker
   mvn exec:java -PQueue.Client
@@ -38,5 +41,6 @@ have.  Enjoy!
 
 ------------------------
 The Camel riders!
+
 
 
