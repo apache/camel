@@ -5,7 +5,7 @@ This example shows how to work with CXF and Camel. It can be run using
 Maven or Ant.
 
 To run the example type
-  mvn exec:java
+  mvn compile exec:java
 
 To run the example with Ant
   a. You need to have Apache ActiveMQ and Apache CXF installed. They can be
@@ -46,5 +46,6 @@ have.  Enjoy!
 
 ------------------------
 The Camel riders!
+
 
 
