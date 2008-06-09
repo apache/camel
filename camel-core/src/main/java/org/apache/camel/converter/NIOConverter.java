@@ -64,7 +64,13 @@ public final class NIOConverter {
     	try {
             byte[] buf = new byte[(int)file.length()];
             in = new BufferedInputStream(new FileInputStream(file));
-            in.read(buf);
+            int sizeLeft = (int)file.length();
+            int offset = 0;
+            while (sizeLeft > 0) {
+            	int readSize = in.read(buf, offset, sizeLeft);
+            	sizeLeft -= readSize;
+            	offset += readSize;
+            }
             return ByteBuffer.wrap(buf);
     	} finally {
             try {
