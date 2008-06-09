@@ -9,7 +9,9 @@ with the received message.
 
 The Server is required to be running when you try the clients.
 
-The Server is also configued with an AOP aspect that does audit trails of the invocation
+The Server comes in two flavors:
+- Normal that acts as a JMS broker
+- As Normal plus an AOP aspect that does audit trails of the invocation
 of the business service and uses Camel for mediation of the storage of the audit message.
 
 For the latest & greatest documentation on how to use this example please see:
@@ -17,6 +19,7 @@ For the latest & greatest documentation on how to use this example please see:
 
 The example should run if you type
   mvn exec:java -PCamelServer
+  mvn exec:java -PCamelServerAOP
   mvn exec:java -PCamelClient
   mvn exec:java -PCamelClientRemoting
 

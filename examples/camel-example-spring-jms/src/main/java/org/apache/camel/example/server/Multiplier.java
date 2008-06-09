@@ -19,6 +19,7 @@ package org.apache.camel.example.server;
 /**
  * @author martin.gilday
  */
+// START SNIPPET: e1
 public interface Multiplier {
 
     /**
@@ -30,3 +31,4 @@ public interface Multiplier {
     int multiply(int originalNumber);
 
 }
+// END SNIPPET: e1

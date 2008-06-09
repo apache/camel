@@ -29,6 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public final class CamelClient {
 
+    // START SNIPPET: e1
     public static void main(final String[] args) throws Exception {
         System.out.println("Notice this client requires that the CamelServer is already running!");
 
@@ -42,5 +43,6 @@ public final class CamelClient {
 
         System.exit(0);
     }
+    // END SNIPPET: e1
 
 }

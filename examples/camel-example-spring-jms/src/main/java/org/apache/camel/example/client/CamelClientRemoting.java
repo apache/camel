@@ -27,6 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public final class CamelClientRemoting {
 
+    // START SNIPPET: e1
     public static void main(final String[] args) {
         System.out.println("Notice this client requires that the CamelServer is already running!");
 
@@ -42,5 +43,6 @@ public final class CamelClientRemoting {
 
         System.exit(0);
     }
+    // END SNIPPET: e1
 
 }
