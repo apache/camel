@@ -74,7 +74,7 @@ public class Main extends ServiceSupport {
         });
 
         addOption(new ParameterOption("a", "applicationContext",
-                "Sets the classpath based pring ApplicationContext", "applicationContext") {
+                "Sets the classpath based spring ApplicationContext", "applicationContext") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setApplicationContextUri(parameter);
             }
@@ -94,9 +94,7 @@ public class Main extends ServiceSupport {
                 setAggregateDot("true".equals(parameter));
             }
         });
-        addOption(new ParameterOption(
-                "d",
-                "duration",
+        addOption(new ParameterOption("d", "duration",
                 "Sets the time duration that the applicaiton will run for, by default in milliseconds. You can use '10s' for 10 seconds etc",
                 "duration") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
