@@ -69,7 +69,6 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     }
 
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-
         injectFields(bean);
         injectMethods(bean);
         if (bean instanceof CamelContextAware) {
