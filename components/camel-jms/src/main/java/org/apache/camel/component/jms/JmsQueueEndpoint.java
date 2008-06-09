@@ -36,7 +36,6 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint<J
     private int maximumBrowseSize = -1;
     private final QueueBrowseStrategy queueBrowseStrategy;
 
-
     public JmsQueueEndpoint(String uri, JmsComponent component, String destination,
             JmsConfiguration configuration) {
         this(uri, component, destination, configuration, null);
@@ -45,17 +44,19 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint<J
     public JmsQueueEndpoint(String uri, JmsComponent component, String destination,
             JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
         super(uri, component, destination, false, configuration);
-        this.queueBrowseStrategy = queueBrowseStrategy;
         if (queueBrowseStrategy == null) {
-            queueBrowseStrategy = createQueueBrowseStrategy();
+            this.queueBrowseStrategy = createQueueBrowseStrategy();
+        } else {
+            this.queueBrowseStrategy = queueBrowseStrategy;
         }
     }
 
     public JmsQueueEndpoint(String endpointUri, String destination, QueueBrowseStrategy queueBrowseStrategy) {
         super(endpointUri, destination, false);
-        this.queueBrowseStrategy = queueBrowseStrategy;
         if (queueBrowseStrategy == null) {
-            queueBrowseStrategy = createQueueBrowseStrategy();
+            this.queueBrowseStrategy = createQueueBrowseStrategy();
+        } else {
+            this.queueBrowseStrategy = queueBrowseStrategy;
         }
     }
 
