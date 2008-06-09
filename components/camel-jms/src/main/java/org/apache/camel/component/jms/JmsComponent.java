@@ -381,7 +381,6 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
         // customize its own version
         JmsConfiguration newConfiguration = getConfiguration().copy();
         JmsEndpoint endpoint;
-        QueueBrowseStrategy strategy = getQueueBrowseStrategy();
         if (pubSubDomain) {
             if (tempDestination) {
                 endpoint = new JmsTemporaryTopicEndpoint(uri, this, subject, newConfiguration);
@@ -389,6 +388,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
                 endpoint = new JmsEndpoint(uri, this, subject, pubSubDomain, newConfiguration);
             }
         } else {
+            QueueBrowseStrategy strategy = getQueueBrowseStrategy();
             if (tempDestination) {
                 endpoint = new JmsTemporaryQueueEndpoint(uri, this, subject, newConfiguration, strategy);
             } else {
