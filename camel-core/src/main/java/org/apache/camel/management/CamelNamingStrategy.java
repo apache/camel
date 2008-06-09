@@ -146,7 +146,6 @@ public class CamelNamingStrategy {
      */
     public ObjectName getObjectName(RouteContext routeContext, 
             ProcessorType processor) throws MalformedObjectNameException {
-        RouteType route = routeContext.getRoute();
         Endpoint<? extends Exchange> ep = routeContext.getEndpoint();
         String ctxid = ep != null ? getContextId(ep.getCamelContext()) : VALUE_UNKNOWN;
         String cid = getComponentId(ep);

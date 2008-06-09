@@ -350,9 +350,10 @@ public class ResolverUtil<T> {
      */
     private void loadImplementationsInJar(Test test, String parent, File jarfile) {
 
+    	JarInputStream jarStream = null;
         try {
             JarEntry entry;
-            JarInputStream jarStream = new JarInputStream(new FileInputStream(jarfile));
+            jarStream = new JarInputStream(new FileInputStream(jarfile));
 
             while ((entry = jarStream.getNextJarEntry()) != null) {
                 String name = entry.getName();
@@ -366,6 +367,14 @@ public class ResolverUtil<T> {
         } catch (IOException ioe) {
             LOG.error("Could not search jar file '" + jarfile + "' for classes matching criteria: " + test
                       + "due to an IOException: " + ioe.getMessage());
+        } finally {
+            try {
+            	if (jarStream != null)
+            		jarStream.close();
+            } catch (IOException e) {
+                LOG.warn("Failed to close jar stream: " + jarfile.getPath(), e);
+            }
+        	
         }
     }
 

@@ -97,10 +97,12 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
         return new FileExchange(getCamelContext(), getExchangePattern(), file);
     }
 
+    @Override
     public FileExchange createExchange() {
         return createExchange(getFile());
     }
 
+    @Override
     public FileExchange createExchange(ExchangePattern pattern) {
         return new FileExchange(getCamelContext(), pattern, file);
     }
@@ -285,7 +287,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      * A strategy method to lazily create the file strategy
      */
     protected FileProcessStrategy createFileStrategy() {
-        Class factory = null;
+        Class<?> factory = null;
         try {
             FactoryFinder finder = new FactoryFinder("META-INF/services/org/apache/camel/component/");
             factory = finder.findClass("file", "strategy.factory.");
@@ -315,16 +317,16 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     protected Properties getParamsAsProperties() {
         Properties params = new Properties();
         if (isNoop()) {
-            params.setProperty("noop", Boolean.toString(Boolean.TRUE));
+            params.setProperty("noop", Boolean.toString(true));
         }
         if (isDelete()) {
-            params.setProperty("delete", Boolean.toString(Boolean.TRUE));
+            params.setProperty("delete", Boolean.toString(true));
         }
         if (isAppend()) {
-            params.setProperty("append", Boolean.toString(Boolean.TRUE));
+            params.setProperty("append", Boolean.toString(true));
         }
         if (isLock()) {
-            params.setProperty("lock", Boolean.toString(Boolean.TRUE));
+            params.setProperty("lock", Boolean.toString(true));
         }
         if (moveNamePrefix != null) {
             params.setProperty("moveNamePrefix", moveNamePrefix);
