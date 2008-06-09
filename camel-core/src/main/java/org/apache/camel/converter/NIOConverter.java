@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import org.apache.camel.Converter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Some core java.nio based
@@ -33,6 +35,7 @@ import org.apache.camel.Converter;
  */
 @Converter
 public final class NIOConverter {
+    private static final transient Log LOG = LogFactory.getLog(NIOConverter.class);
 
     /**
      * Utility classes should not have a public constructor.
@@ -57,10 +60,20 @@ public final class NIOConverter {
 
     @Converter
     public static ByteBuffer toByteBuffer(File file) throws IOException {
-        byte[] buf = new byte[(int)file.length()];
-        InputStream in = new BufferedInputStream(new FileInputStream(file));
-        in.read(buf);
-        return ByteBuffer.wrap(buf);
+    	InputStream in = null;
+    	try {
+            byte[] buf = new byte[(int)file.length()];
+            in = new BufferedInputStream(new FileInputStream(file));
+            in.read(buf);
+            return ByteBuffer.wrap(buf);
+    	} finally {
+            try {
+            	if (in != null)
+            		in.close();
+            } catch (IOException e) {
+                LOG.warn("Failed to close file stream: " + file.getPath(), e);
+            }
+    	}
     }
 
     @Converter

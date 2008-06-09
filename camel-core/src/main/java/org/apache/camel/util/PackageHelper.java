@@ -59,7 +59,7 @@ public final class PackageHelper {
                     }
                     value = buffer.toString();
                 }
-                Double number = Double.parseDouble(value);
+                double number = Double.parseDouble(value);
                 return number >= minimumVersion;
             }
         } catch (Exception e) {

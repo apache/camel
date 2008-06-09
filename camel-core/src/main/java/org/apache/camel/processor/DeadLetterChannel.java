@@ -250,7 +250,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
             next = counter + 1;
         }
         in.setHeader(REDELIVERY_COUNTER, next);
-        in.setHeader(REDELIVERED, true);
+        in.setHeader(REDELIVERED, Boolean.TRUE);
         exchange.setException(e);
         return next;
     }
@@ -270,10 +270,12 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         }
     }
 
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startServices(output, deadLetter);
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopServices(deadLetter, output);
     }

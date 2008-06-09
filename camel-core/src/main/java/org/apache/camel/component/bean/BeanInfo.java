@@ -133,7 +133,6 @@ public class BeanInfo {
     protected MethodInfo introspect(Class clazz, Method method) {
         Class[] parameterTypes = method.getParameterTypes();
         Annotation[][] parametersAnnotations = method.getParameterAnnotations();
-        final Expression[] parameterExpressions = new Expression[parameterTypes.length];
 
         List<ParameterInfo> parameters = new ArrayList<ParameterInfo>();
         List<ParameterInfo> bodyParameters = new ArrayList<ParameterInfo>();

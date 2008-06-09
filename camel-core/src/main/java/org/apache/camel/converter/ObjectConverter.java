@@ -84,9 +84,9 @@ public final class ObjectConverter {
     @Converter
     public static Boolean toBoolean(Boolean value) {
         if (value != null) {
-            return value.booleanValue();
+            return value;
         }
-        return false;
+        return Boolean.FALSE;
     }
 
 
@@ -99,9 +99,9 @@ public final class ObjectConverter {
             return (Byte) value;
         } else if (value instanceof Number) {
             Number number = (Number) value;
-            return number.byteValue();
+            return Byte.valueOf(number.byteValue());
         } else if (value instanceof String) {
-            return Byte.parseByte((String) value);
+            return Byte.valueOf((String) value);
         } else {
             return null;
         }
@@ -131,9 +131,9 @@ public final class ObjectConverter {
             return (Short) value;
         } else if (value instanceof Number) {
             Number number = (Number) value;
-            return number.shortValue();
+            return Short.valueOf(number.shortValue());
         } else if (value instanceof String) {
-            return Short.parseShort((String) value);
+            return Short.valueOf((String) value);
         } else {
             return null;
         }
@@ -148,9 +148,9 @@ public final class ObjectConverter {
             return (Integer) value;
         } else if (value instanceof Number) {
             Number number = (Number) value;
-            return number.intValue();
+            return Integer.valueOf(number.intValue());
         } else if (value instanceof String) {
-            return Integer.parseInt((String) value);
+            return Integer.valueOf((String) value);
         } else {
             return null;
         }
@@ -165,9 +165,9 @@ public final class ObjectConverter {
             return (Long) value;
         } else if (value instanceof Number) {
             Number number = (Number) value;
-            return number.longValue();
+            return Long.valueOf(number.longValue());
         } else if (value instanceof String) {
-            return Long.parseLong((String) value);
+            return Long.valueOf((String) value);
         } else {
             return null;
         }
@@ -182,9 +182,9 @@ public final class ObjectConverter {
             return (Float) value;
         } else if (value instanceof Number) {
             Number number = (Number) value;
-            return number.floatValue();
+            return Float.valueOf(number.floatValue());
         } else if (value instanceof String) {
-            return Float.parseFloat((String) value);
+            return Float.valueOf((String) value);
         } else {
             return null;
         }
@@ -199,9 +199,9 @@ public final class ObjectConverter {
             return (Double) value;
         } else if (value instanceof Number) {
             Number number = (Number) value;
-            return number.doubleValue();
+            return Double.valueOf(number.doubleValue());
         } else if (value instanceof String) {
-            return Double.parseDouble((String) value);
+            return Double.valueOf((String) value);
         } else {
             return null;
         }

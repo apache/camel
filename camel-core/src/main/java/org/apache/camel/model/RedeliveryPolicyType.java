@@ -94,12 +94,12 @@ public class RedeliveryPolicyType {
     }
 
     public RedeliveryPolicyType useCollisionAvoidance() {
-        setUseCollisionAvoidance(true);
+        setUseCollisionAvoidance(Boolean.TRUE);
         return this;
     }
 
     public RedeliveryPolicyType useExponentialBackOff() {
-        setUseExponentialBackOff(true);
+        setUseExponentialBackOff(Boolean.TRUE);
         return this;
     }
 
