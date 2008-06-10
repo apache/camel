@@ -37,6 +37,8 @@
       <directory>../examples</directory>
       <outputDirectory>/examples</outputDirectory>
       <excludes>
+        <!-- lets disable the BAM example until it works! -->
+        <exclude>**/camel-example-bam/**</exclude>
         <!-- disable build, IDEA and Eclipsefiles -->
         <exclude>**/*.i*</exclude>
         <exclude>**/elcipse-classes/**</exclude>
