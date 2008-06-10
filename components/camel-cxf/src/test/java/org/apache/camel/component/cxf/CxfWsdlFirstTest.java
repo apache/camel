@@ -94,7 +94,6 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
             fail("We expect to get the UnknowPersonFault here");
         } catch (UnknownPersonFault fault) {
             // We expect to get fault here
-            fault.printStackTrace();
         }
     }
 
