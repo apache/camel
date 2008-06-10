@@ -48,7 +48,7 @@
     <spring-osgi-version>1.0.2</spring-osgi-version>
     <mina-version>1.1.7</mina-version>
     <uface-version>1.0-m1</uface-version>
-    <jaxb-version>2.1.3</jaxb-version>
+    <jaxb-version>2.1.6</jaxb-version>
     <jaxb-api-version>2.1</jaxb-api-version>
     <stax-api-version>1.0.1</stax-api-version>
     <log4j-version>1.2.14</log4j-version>
@@ -580,9 +580,7 @@
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-xjc</artifactId>
-        <!-- TODO upgrade when a new version available -->
-        <version>2.0.3</version>
-        <!--<version>${jaxb-version}</version>-->
+        <version>${jaxb-version}</version>
       </dependency>
 
       <dependency>
