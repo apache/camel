@@ -27,6 +27,7 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -42,6 +43,8 @@ public abstract class BamProcessorSupport<T> implements Processor {
     private Class<T> entityType;
     private Expression<Exchange> correlationKeyExpression;
     private TransactionTemplate transactionTemplate;
+    private int retryCount = 20;
+    private long retrySleep = 1000L;
 
     protected BamProcessorSupport(TransactionTemplate transactionTemplate,
                                   Expression<Exchange> correlationKeyExpression) {
@@ -72,24 +75,42 @@ public abstract class BamProcessorSupport<T> implements Processor {
     }
 
     public void process(final Exchange exchange) {
-        Object entity = transactionTemplate.execute(new TransactionCallback() {
-            public Object doInTransaction(TransactionStatus status) {
+        for (int i = 1; i <= retryCount; i++) {
+            if (i > 1) {
+                LOG.info("Retrying attempt: " + i);
                 try {
-                    Object key = getCorrelationKey(exchange);
-
-                    T entity = loadEntity(exchange, key);
-
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Correlation key: " + key + " with entity: " + entity);
-                    }
-                    processEntity(exchange, entity);
-
-                    return entity;
-                } catch (Exception e) {
-                    return onError(status, e);
+                    Thread.sleep(retryCount);
+                } catch (InterruptedException e) {
+                    LOG.debug("Caught: " + e, e);
                 }
             }
-        });
+            try {
+                transactionTemplate.execute(new TransactionCallback() {
+                    public Object doInTransaction(TransactionStatus status) {
+                        try {
+                            Object key = getCorrelationKey(exchange);
+
+                            T entity = loadEntity(exchange, key);
+
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Correlation key: " + key + " with entity: " + entity);
+                            }
+                            processEntity(exchange, entity);
+
+                            return entity;
+                        } catch (Exception e) {
+                            return onError(status, e);
+                        }
+                    }
+                });
+                if (i > 1) {
+                    LOG.info("Attempt " + i + " worked!");
+                }
+                return;
+            } catch (Exception e) {
+                LOG.warn("Failed to complete transaction: " + e, e);
+            }
+        }
     }
 
     // Properties
@@ -122,7 +143,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
         return value;
     }
 
-    protected Object onError(TransactionStatus status, Throwable e) {
+    protected Object onError(TransactionStatus status, Exception e) {
         status.setRollbackOnly();
         LOG.error("Caught: " + e, e);
         throw new RuntimeCamelException(e);

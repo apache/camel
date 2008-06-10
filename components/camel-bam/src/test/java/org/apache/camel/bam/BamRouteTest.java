@@ -39,7 +39,7 @@ public class BamRouteTest extends SpringTestSupport {
     public void testBam() throws Exception {
         overdueEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:a", "<hello id='123'>world!</hello>");
+        template.sendBody("seda:a", "<hello id='123'>world!</hello>");
 
         overdueEndpoint.assertIsSatisfied();
 
@@ -71,10 +71,10 @@ public class BamRouteTest extends SpringTestSupport {
             public void configure() throws Exception {
 
                 // lets define some activities, correlating on an XPath on the message bodies
-                ActivityBuilder a = activity("direct:a").name("a")
+                ActivityBuilder a = activity("seda:a").name("a")
                         .correlate(xpath("/hello/@id"));
 
-                ActivityBuilder b = activity("direct:b").name("b")
+                ActivityBuilder b = activity("seda:b").name("b")
                         .correlate(xpath("/hello/@id"));
 
                 // now lets add some rules

@@ -41,9 +41,9 @@ public class MultipleProcessesTest extends BamRouteTest {
         TransactionTemplate transaction = getMandatoryBean(TransactionTemplate.class, "transactionTemplate");
         transaction.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                template.sendBody("direct:a", "<hello id='123'>A</hello>");
-                template.sendBody("direct:a", "<hello id='124'>B</hello>");
-                template.sendBody("direct:a", "<hello id='125'>C</hello>");
+                template.sendBody("seda:a", "<hello id='123'>A</hello>");
+                template.sendBody("seda:a", "<hello id='124'>B</hello>");
+                template.sendBody("seda:a", "<hello id='125'>C</hello>");
             }
         });
     }
@@ -52,8 +52,8 @@ public class MultipleProcessesTest extends BamRouteTest {
         TransactionTemplate transaction = getMandatoryBean(TransactionTemplate.class, "transactionTemplate");
         transaction.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                template.sendBody("direct:b", "<hello id='123'>A</hello>");
-                template.sendBody("direct:b", "<hello id='125'>C</hello>");
+                template.sendBody("seda:b", "<hello id='123'>A</hello>");
+                template.sendBody("seda:b", "<hello id='125'>C</hello>");
             }
         });
     }
