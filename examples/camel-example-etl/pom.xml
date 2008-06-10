@@ -101,6 +101,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
+        <version>${pom.version}</version>
       </plugin>
 
       <!-- Allows the example to be run via 'mvn compile exec:java' -->
@@ -133,6 +134,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
+        <version>${pom.version}</version>
       </plugin>
     </plugins>
   </reporting>
