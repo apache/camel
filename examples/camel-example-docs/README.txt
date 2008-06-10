@@ -9,6 +9,11 @@ This example also acts as an integration test case for the GraphViz
 visualisation feature 
   http://activemq.apache.org/camel/visualisation.html
 
+NOTE before you run this example you MUST install GraphViz so that
+the 'dot' executable is available on your path. 
+See the camel:dot documentation for more information
+  http://activemq.apache.org/camel/camel-dot-maven-goal.html
+
 To run the example using Maven and generate the documentation type
   mvn camel:dot
 
