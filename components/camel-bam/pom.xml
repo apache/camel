@@ -130,7 +130,7 @@
             <!-- TODO no idea yet why this seems to fail in a recursive build -
                  but works in a build of just the camel-bam module -->
 
-            <exclude>**/MultipleActivitiesConcurrentlyTest.*</exclude>
+            <!--<exclude>**/MultipleActivitiesConcurrentlyTest.*</exclude>-->
           </excludes>
         </configuration>
       </plugin>
@@ -141,10 +141,7 @@
   <profiles>
 
     <profile>
-      <id>hibernate</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
+      <id>hibernate-hsqldb</id>
       <build>
         <testResources>
           <testResource>
@@ -174,13 +171,16 @@
         <dependency>
           <groupId>org.apache.geronimo.specs</groupId>
           <artifactId>geronimo-jta_1.1_spec</artifactId>
-		  <version>${geronimo-spec-version}</version>
+          <version>${geronimo-spec-version}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
     </profile>
     <profile>
-      <id>derby</id>
+      <id>hibernate-derby</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <build>
         <testResources>
           <testResource>
@@ -210,7 +210,7 @@
         <dependency>
           <groupId>org.apache.geronimo.specs</groupId>
           <artifactId>geronimo-jta_1.1_spec</artifactId>
-		  <version>${geronimo-spec-version}</version>
+          <version>${geronimo-spec-version}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -248,7 +248,7 @@
         <dependency>
           <groupId>org.apache.geronimo.specs</groupId>
           <artifactId>geronimo-jta_1.1_spec</artifactId>
-		  <version>${geronimo-spec-version}</version>
+          <version>${geronimo-spec-version}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
