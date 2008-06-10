@@ -41,7 +41,7 @@
         <exclude>**/camel-example-bam/**</exclude>
         <!-- disable build, IDEA and Eclipsefiles -->
         <exclude>**/*.i*</exclude>
-        <exclude>**/elcipse-classes/**</exclude>
+        <exclude>**/eclipse-classes/**</exclude>
         <exclude>**/.project</exclude>
         <exclude>**/.classpath</exclude>
         <exclude>**/target/</exclude>
