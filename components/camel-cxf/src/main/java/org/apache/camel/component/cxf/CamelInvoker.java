@@ -182,7 +182,7 @@ public class CamelInvoker implements Invoker, MessageInvoker {
             if (result != null) {
                 if (result instanceof MessageContentsList || result instanceof List || result.getClass().isArray()) {
                     return result;
-                } else {
+                } else { // if the result is the single object
                     MessageContentsList resList = new MessageContentsList();
                     resList.add(result);
                     return resList;

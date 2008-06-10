@@ -28,6 +28,7 @@ import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.camel.wsdl_first.PersonService;
+import org.apache.camel.wsdl_first.UnknownPersonFault;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
@@ -80,13 +81,21 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
         URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
         PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/wsdl-first", "PersonService"));
         Person client = ss.getSoap();
-        ClientProxy.getClient(client).getOutInterceptors().add(new LoggingOutInterceptor());
         Holder<String> personId = new Holder<String>();
-        personId.value = "world";
+        personId.value = "hello";
         Holder<String> ssn = new Holder<String>();
         Holder<String> name = new Holder<String>();
         client.getPerson(personId, ssn, name);
         assertEquals("we should get the right answer from router", "Bonjour", name.value);
+
+        personId.value = "";
+        try {
+            client.getPerson(personId, ssn, name);
+            fail("We expect to get the UnknowPersonFault here");
+        } catch (UnknownPersonFault fault) {
+            // We expect to get fault here
+            fault.printStackTrace();
+        }
     }
 
 
