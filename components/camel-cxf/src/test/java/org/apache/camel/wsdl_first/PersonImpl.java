@@ -26,12 +26,11 @@ public class PersonImpl implements Person {
 
     public void getPerson(Holder<String> personId, Holder<String> ssn,
             Holder<String> name) throws UnknownPersonFault {
-        //System.out.println("the server is invoked ");
         if (personId.value == null || personId.value.length() == 0) {
             org.apache.camel.wsdl_first.types.UnknownPersonFault
                 fault = new org.apache.camel.wsdl_first.types.UnknownPersonFault();
             fault.setPersonId(personId.value);
-            throw new UnknownPersonFault(null, fault);
+            throw new UnknownPersonFault("Get the null value of person name", fault);
         }
         name.value = "Bonjour";
         ssn.value = "000-000-0000";
