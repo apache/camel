@@ -79,8 +79,10 @@ public class CxfProducerRouterTest extends ContextTestSupport {
 
 
     public void testInvokingSimpleServerWithParams() throws Exception {
+     // START SNIPPET: sending
         Exchange senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
         final List<String> params = new ArrayList<String>();
+        // Prepare the request message for the camel-cxf procedure
         params.add(TEST_MESSAGE);
         senderExchange.getIn().setBody(params);
         senderExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, ECHO_OPERATION);
@@ -88,12 +90,15 @@ public class CxfProducerRouterTest extends ContextTestSupport {
         Exchange exchange = template.send("direct:EndpointA", senderExchange);
 
         org.apache.camel.Message out = exchange.getOut();
+        // The response message's body is an object array which first element is the return value of the operation,
+        // If there are some holder parameters, the holder parameter will be filled in the reset of array.
         Object[] output = (Object[])out.getBody();
         LOG.info("Received output text: " + output[0]);
         Map<String, Object> responseContext = CastUtils.cast((Map)out.getHeader(Client.RESPONSE_CONTEXT));
         assertNotNull(responseContext);
         assertEquals("We should get the response context here", "UTF-8", responseContext.get(org.apache.cxf.message.Message.ENCODING));
         assertEquals("Reply body on Camel is wrong", "echo " + TEST_MESSAGE, output[0]);
+     // END SNIPPET: sending
     }
 
     public void testInvokingSimpleServerWithMessageDataFormat() throws Exception {
