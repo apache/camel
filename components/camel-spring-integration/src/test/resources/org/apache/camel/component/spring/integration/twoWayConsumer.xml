@@ -15,6 +15,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+
 <beans:beans xmlns="http://www.springframework.org/schema/integration"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
@@ -24,7 +25,7 @@
 			http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
 			http://activemq.apache.org/camel/schema/spring
 			http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
-
+    <!-- START SNIPPET: example -->
 	<message-bus auto-create-channels="true"/>
 
     <channel id="requestChannel"/>
@@ -39,4 +40,6 @@
         <process ref="myProcessor"/>
       </route>
     </camelContext>
+    <!-- END SNIPPET: example -->
 </beans:beans>
+

@@ -15,6 +15,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+<!-- START SNIPPET: example -->
 <beans:beans xmlns="http://www.springframework.org/schema/integration"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
@@ -33,7 +34,7 @@
 	          method="sayHello"/>
 
 	<beans:bean id="helloService" class="org.apache.camel.component.spring.integration.HelloWorldService"/>
-
+    <!-- START SNIPPET: example -->
     <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
       <route>
         <from uri="direct:start"/>
@@ -41,4 +42,5 @@
         <to uri="spring-integration:inputChannel?inOut=true&amp;inputChannel=outputChannel"/>
       </route>
     </camelContext>
+    <!-- END SNIPPET: example -->
 </beans:beans>
