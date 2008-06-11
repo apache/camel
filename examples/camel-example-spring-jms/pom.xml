@@ -123,6 +123,13 @@
                 <target.main.class>org.apache.camel.example.client.CamelClientRemoting</target.main.class>
             </properties>
         </profile>
+        <profile>
+            <id>CamelClientEndpoint</id>
+            <properties>
+                <!-- we start using our own class to control what we do in the main -->
+                <target.main.class>org.apache.camel.example.client.CamelClientEndpoint</target.main.class>
+            </properties>
+        </profile>
     </profiles>
     <build>
         <plugins>

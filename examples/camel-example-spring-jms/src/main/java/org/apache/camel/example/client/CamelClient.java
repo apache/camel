@@ -34,6 +34,8 @@ public final class CamelClient {
         System.out.println("Notice this client requires that the CamelServer is already running!");
 
         ApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
+
+        // get the camel template for Spring template style sending of messages (= producer)
         ProducerTemplate camelTemplate = (ProducerTemplate) context.getBean("camelTemplate");
 
         System.out.println("Invoking the multiply with 22");

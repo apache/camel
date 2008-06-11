@@ -11,8 +11,13 @@ The Server is required to be running when you try the clients.
 
 The Server comes in two flavors:
 - Normal that acts as a JMS broker
-- As Normal plus an AOP aspect that does audit trails of the invocation
+- As normal plus an AOP aspect that does audit trails of the invocation
 of the business service and uses Camel for mediation of the storage of the audit message.
+
+And for the Client we have a total of three flavors:
+- Normal use the ProducerTemplate ala Spring Template style
+- Using Spring Remoting for powefull "Client doesnt know at all its a remote call"
+- And using the Message Endpoint pattern using the neutral Camel API
 
 For the latest & greatest documentation on how to use this example please see:
   http://cwiki.apache.org/CAMEL/tutorial-jmsremoting.html
@@ -25,6 +30,7 @@ The example should run if you type
   mvn exec:java -PCamelServerAOP
   mvn exec:java -PCamelClient
   mvn exec:java -PCamelClientRemoting
+  mvn exec:java -PCamelClientEndpoint
 
 To stop the example hit ctrl + c
 
