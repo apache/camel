@@ -19,7 +19,7 @@ package org.apache.camel.example.server;
 import org.springframework.stereotype.Service;
 
 /**
- * @author martin.gilday
+ * This is the implementation of the business service.
  */
 // START SNIPPET: e1
 @Service(value = "multiplier")

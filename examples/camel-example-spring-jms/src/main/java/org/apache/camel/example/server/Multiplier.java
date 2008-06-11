@@ -17,7 +17,7 @@
 package org.apache.camel.example.server;
 
 /**
- * @author martin.gilday
+ * Our business service. 
  */
 // START SNIPPET: e1
 public interface Multiplier {

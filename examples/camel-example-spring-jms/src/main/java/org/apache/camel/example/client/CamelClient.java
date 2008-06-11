@@ -23,9 +23,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
+ * Client that uses the {@link ProducerTemplate} to easily exchange messages with the Server.
+ * <p/>
  * Requires that the JMS broker is running, as well as CamelServer
- *
- * @author martin.gilday
  */
 public final class CamelClient {
 
