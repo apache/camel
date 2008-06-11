@@ -15,6 +15,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+<!-- START SNIPPET: header -->
 <beans:beans xmlns="http://www.springframework.org/schema/integration"
        xmlns:beans="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -24,21 +25,19 @@
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://www.springframework.org/schema/integration
 	   http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
-       http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd
        http://activemq.apache.org/camel/schema/spring/integration
        http://activemq.apache.org/camel/schema/spring/integration/camel-spring-integration.xsd
        http://activemq.apache.org/camel/schema/spring
        http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
-
+ <!-- END SNIPPET: header -->
    	<message-bus/>
 
    	<channel id="channelA"/>
    	<channel id="channelB"/>
     <channel id="channelC"/>
-
-
    <!-- START SNIPPET: example -->
+   <!-- Create the camel context here -->
    <camelContext id="camelTargetContext" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
            <from uri="direct:EndpointA" />
@@ -50,6 +49,7 @@
          </route>
    </camelContext>
 
+   <!-- We can bind the camelTarget to the camel context's endpoint by specifying the camelEndpointUri attribute -->
    <camel-si:camelTarget id="camelTargetA" camelEndpointUri="direct:EndpointA" requestChannel="channelA" expectReply="false">
        <camel-si:camelContextRef>camelTargetContext</camel-si:camelContextRef>
    </camel-si:camelTarget>
@@ -60,5 +60,5 @@
 
    <beans:bean id="myProcessor" class="org.apache.camel.component.spring.integration.MyProcessor"/>
    <!-- END SNIPPET: example -->
-
 </beans:beans>
+
