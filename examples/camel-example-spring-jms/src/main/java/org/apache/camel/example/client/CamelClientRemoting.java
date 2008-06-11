@@ -21,9 +21,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
+ * Client that uses Camel Spring Remoting for very easy integration with the server.
+ * <p/>
  * Requires that the JMS broker is running, as well as CamelServer
- *
- * @author martin.gilday
  */
 public final class CamelClientRemoting {
 
