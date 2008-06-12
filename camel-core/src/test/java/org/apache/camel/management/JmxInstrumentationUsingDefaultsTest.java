@@ -84,36 +84,41 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         ObjectName pcob = (ObjectName)iter.next();
 
         Long valueofNumExchanges = (Long)mbs.getAttribute(pcob, "NumExchanges");
-        assertNotNull("Expected attribute not found. MBean registerred under a "
+        assertNotNull("Expected attribute found. MBean registered under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       valueofNumExchanges);
         assertTrue(valueofNumExchanges == 1);
         Long valueofNumCompleted = (Long)mbs.getAttribute(pcob, "NumCompleted");
-        assertNotNull("Expected attribute not found. MBean registerred under a "
+        assertNotNull("Expected attribute found. MBean registered under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       valueofNumCompleted);
         assertTrue(valueofNumCompleted == 1);
         Long valueofNumFailed = (Long)mbs.getAttribute(pcob, "NumFailed");
-        assertNotNull("Expected attribute not found. MBean registerred under a "
+        assertNotNull("Expected attribute found. MBean registered under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       valueofNumFailed);
         assertTrue(valueofNumFailed == 0);
-        Long valueofMinProcessingTime = (Long)mbs.getAttribute(pcob, "MinProcessingTime");
-        assertNotNull("Expected attribute not found. MBean registerred under a "
+        Double valueofMinProcessingTime = (Double)mbs.getAttribute(pcob, "MinProcessingTimeMillis");
+        assertNotNull("Expected attribute found. MBean registered under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       valueofMinProcessingTime);
-        assertTrue(valueofMinProcessingTime >= 0);
-        Long valueofMaxProcessingTime = (Long)mbs.getAttribute(pcob, "MaxProcessingTime");
-        assertNotNull("Expected attribute not found. MBean registerred under a "
+        assertTrue(valueofMinProcessingTime > 0);
+        Double valueofMaxProcessingTime = (Double)mbs.getAttribute(pcob, "MaxProcessingTimeMillis");
+        assertNotNull("Expected attribute found. MBean registered under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       valueofMaxProcessingTime);
-        assertTrue(valueofMaxProcessingTime >= 0);
-        Long valueofMeanProcessingTime = (Long)mbs.getAttribute(pcob, "MeanProcessingTime");
-        assertNotNull("Expected attribute not found. MBean registerred under a "
+        assertTrue(valueofMaxProcessingTime > 0);
+        Double valueofMeanProcessingTime = (Double)mbs.getAttribute(pcob, "MeanProcessingTimeMillis");
+        assertNotNull("Expected attribute found. MBean registered under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       valueofMeanProcessingTime);
         assertTrue(valueofMeanProcessingTime >= valueofMinProcessingTime
                    && valueofMeanProcessingTime <= valueofMaxProcessingTime);
+        Double totalProcessingTime = (Double)mbs.getAttribute(pcob, "TotalProcessingTimeMillis");
+        assertNotNull("Expected attribute found. MBean registered under a "
+                      + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
+                      totalProcessingTime);
+        assertTrue(totalProcessingTime > 0);
 
         assertNotNull("Expected first completion time to be available", 
                 mbs.getAttribute(pcob, "FirstExchangeCompletionTime"));
