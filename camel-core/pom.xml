@@ -84,6 +84,11 @@
       <version>${spring-version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>${felix-osgi-version}</version>
+    </dependency>
   </dependencies>
 
 
