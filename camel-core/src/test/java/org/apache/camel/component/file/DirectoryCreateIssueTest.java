@@ -26,27 +26,18 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.log4j.Logger;
 
 /**
  * @author Albert Moraal
  * @version $Revision$
  */
 public class DirectoryCreateIssueTest extends TestSupport {
-    private static final Logger LOG = Logger.getLogger(DirectoryCreateIssueTest.class);
     private CamelContext context;
     private ProducerTemplate template;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
-        // The following code is removed
-        // if you want to enable debugging, add the src/test/ide-resources directory to your IDE classpath
-/*
-        BasicConfigurator.configure();
-        Logger.getRootLogger().setLevel(Level.DEBUG);
-*/
         context = new DefaultCamelContext();
         context.start();
         template = context.createProducerTemplate();
@@ -64,23 +55,23 @@ public class DirectoryCreateIssueTest extends TestSupport {
         final int numFiles = 10;
 
         context.addRoutes(
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        String[] destinations = new String[numFiles];
-                        for (int i = 0; i < numFiles; i++) {
-                            destinations[i] = "seda:file" + i;
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    String[] destinations = new String[numFiles];
+                    for (int i = 0; i < numFiles; i++) {
+                        destinations[i] = "seda:file" + i;
 
-                            from("seda:file" + i)
-                                    .setHeader(FileComponent.HEADER_FILE_NAME,
-                                            constant("file" + i + ".txt"))
-                                    .to("file://" + path + "/?append=false&noop=true");
-                        }
-
-                        from("seda:testFileCreatedAsDir")
-                                .to(destinations);
+                        from("seda:file" + i)
+                            .setHeader(FileComponent.HEADER_FILE_NAME,
+                                constant("file" + i + ".txt"))
+                            .to("file://" + path + "/?append=false&noop=true");
                     }
+
+                    from("seda:testFileCreatedAsDir")
+                        .to(destinations);
                 }
+            }
         );
 
         deleteDirectory(new File("a"));
@@ -92,11 +83,14 @@ public class DirectoryCreateIssueTest extends TestSupport {
             }
         });
 
+        // must sleep for some time to make sure runs on all platforms
         Thread.sleep(8 * 1000);
+
         for (int i = 0; i < numFiles; i++) {
             assertTrue((new File(path + "/file" + i + ".txt")).isFile());
         }
     }
+
 }
 
 
