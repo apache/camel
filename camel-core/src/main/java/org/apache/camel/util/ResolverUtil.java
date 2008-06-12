@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Arrays;
@@ -31,6 +32,7 @@ import java.util.jar.JarInputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.Bundle;
 
 /**
  * <p>
@@ -40,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
  * specific annotation. However, through the use of the {@link Test} class it is
  * possible to search using arbitrary conditions.
  * </p>
- *
+ * <p/>
  * <p>
  * A ClassLoader is used to locate all locations (directories and jar files) in
  * the class path that contain classes within certain packages, and then to load
@@ -49,7 +51,7 @@ import org.apache.commons.logging.LogFactory;
  * be overridden by calling {@link #setClassLoaders(Set)} prior to
  * invoking any of the {@code find()} methods.
  * </p>
- *
+ * <p/>
  * <p>
  * General searches are initiated by calling the
  * {@link #find(ResolverUtil.Test, String)} ()} method and supplying a package
@@ -59,11 +61,11 @@ import org.apache.commons.logging.LogFactory;
  * for extensions of particular classes, or classes annotated with a specific
  * annotation.
  * </p>
- *
+ * <p/>
  * <p>
  * The standard usage pattern for the ResolverUtil class is as follows:
  * </p>
- *
+ * <p/>
  * <pre>
  * esolverUtil&lt;ActionBean&gt; resolver = new ResolverUtil&lt;ActionBean&gt;();
  * esolver.findImplementation(ActionBean.class, pkg1, pkg2);
@@ -147,7 +149,9 @@ public class ResolverUtil<T> {
         }
     }
 
-    /** The set of matches being accumulated. */
+    /**
+     * The set of matches being accumulated.
+     */
     private Set<Class<? extends T>> matches = new HashSet<Class<? extends T>>();
 
     /**
@@ -171,7 +175,7 @@ public class ResolverUtil<T> {
     /**
      * Returns the classloaders that will be used for scanning for classes. If no
      * explicit ClassLoader has been set by the calling, the context class
-     * loader will be used.
+     * loader will and the one that has loaded this class ResolverUtil be used.
      *
      * @return the ClassLoader instances that will be used to scan for classes
      */
@@ -179,6 +183,7 @@ public class ResolverUtil<T> {
         if (classLoaders == null) {
             classLoaders = new HashSet<ClassLoader>();
             classLoaders.add(Thread.currentThread().getContextClassLoader());
+            classLoaders.add(ResolverUtil.class.getClassLoader());
         }
         return classLoaders;
     }
@@ -200,43 +205,57 @@ public class ResolverUtil<T> {
      * collected. Accumulated classes can be accessed by calling
      * {@link #getClasses()}.
      *
-     * @param parent the class of interface to find subclasses or
-     *                implementations of
+     * @param parent       the class of interface to find subclasses or
+     *                     implementations of
      * @param packageNames one or more package names to scan (including
-     *                subpackages) for classes
+     *                     subpackages) for classes
      */
     public void findImplementations(Class parent, String... packageNames) {
         if (packageNames == null) {
             return;
         }
 
-        LOG.debug("Searching for implementations of " + parent.getName() + " in packages: " + Arrays.asList(packageNames));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Searching for implementations of " + parent.getName() + " in packages: " + Arrays
+                .asList(packageNames));
+        }
 
         Test test = new IsA(parent);
         for (String pkg : packageNames) {
             find(test, pkg);
         }
 
-        LOG.debug("Found: " + getClasses());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Found: " + getClasses());
+        }
     }
 
     /**
      * Attempts to discover classes that are annotated with to the annotation.
      * Accumulated classes can be accessed by calling {@link #getClasses()}.
      *
-     * @param annotation the annotation that should be present on matching
-     *                classes
+     * @param annotation   the annotation that should be present on matching
+     *                     classes
      * @param packageNames one or more package names to scan (including
-     *                subpackages) for classes
+     *                     subpackages) for classes
      */
     public void findAnnotated(Class<? extends Annotation> annotation, String... packageNames) {
         if (packageNames == null) {
             return;
         }
 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Searching for annotations of " + annotation.getName() + " in packages: " + Arrays
+                .asList(packageNames));
+        }
+
         Test test = new AnnotatedWith(annotation);
         for (String pkg : packageNames) {
             find(test, pkg);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Found: " + getClasses());
         }
     }
 
@@ -246,25 +265,41 @@ public class ResolverUtil<T> {
      * and if the Test returns true the class is retained. Accumulated classes
      * can be fetched by calling {@link #getClasses()}.
      *
-     * @param test an instance of {@link Test} that will be used to filter
-     *                classes
+     * @param test        an instance of {@link Test} that will be used to filter
+     *                    classes
      * @param packageName the name of the package from which to start scanning
-     *                for classes, e.g. {@code net.sourceforge.stripes}
+     *                    for classes, e.g. {@code net.sourceforge.stripes}
      */
     public void find(Test test, String packageName) {
         packageName = packageName.replace('.', '/');
 
         Set<ClassLoader> set = getClassLoaders();
         for (ClassLoader classLoader : set) {
-            LOG.trace("Searching: " + classLoader);
-
             find(test, packageName, classLoader);
         }
     }
 
     protected void find(Test test, String packageName, ClassLoader loader) {
-        Enumeration<URL> urls;
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Searching for: " + test + " in package: " + packageName +
+                " using classloader: " + loader);
+        }
 
+        try {
+            Method mth = loader.getClass().getMethod("getBundle", new Class[] {});
+            if (mth != null) {
+                // it's osgi bundle class loader, so we need to load implementation in bundles
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Loading from osgi buindle using classloader: " + loader);
+                }
+                loadImplementationsInBundle(test, packageName, loader, mth);
+                return;
+            }
+        } catch (NoSuchMethodException e) {
+            LOG.trace("It's not an osgi bundle classloader");
+        }
+
+        Enumeration<URL> urls;
         try {
             urls = loader.getResources(packageName);
         } catch (IOException ioe) {
@@ -273,8 +308,9 @@ public class ResolverUtil<T> {
         }
 
         while (urls.hasMoreElements()) {
+            URL url = null;
             try {
-                URL url = urls.nextElement();
+                url = urls.nextElement();
 
                 String urlPath = url.getFile();
                 urlPath = URLDecoder.decode(urlPath, "UTF-8");
@@ -289,18 +325,50 @@ public class ResolverUtil<T> {
                     urlPath = urlPath.substring(0, urlPath.indexOf('!'));
                 }
 
-                LOG.debug("Scanning for classes in [" + urlPath + "] matching criteria: " + test);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Scanning for classes in [" + urlPath + "] matching criteria: " + test);
+                }
+
                 File file = new File(urlPath);
                 if (file.isDirectory()) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Loading from directory: " + file);
+                    }
                     loadImplementationsInDirectory(test, packageName, file);
                 } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Loading from jar: " + file);
+                    }
                     loadImplementationsInJar(test, packageName, file);
                 }
             } catch (IOException ioe) {
-                LOG.warn("could not read entries", ioe);
+                LOG.warn("Could not read entries in url: " + url, ioe);
             }
         }
     }
+
+    private void loadImplementationsInBundle(Test test, String packageName, ClassLoader loader, Method mth) {
+        try {
+            Bundle bundle = (Bundle)mth.invoke(loader);
+            Bundle[] bundles = bundle.getBundleContext().getBundles();
+            for (Bundle bd : bundles) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Searching in bundle:" + bd);
+                }
+
+                Enumeration<URL> paths = (Enumeration<URL>)bd.findEntries("/" + packageName, "*.class", true);
+                while (paths != null && paths.hasMoreElements()) {
+                    URL path = paths.nextElement();
+                    // substring to avoid leading slashes
+                    addIfMatching(test, path.getPath().substring(1));
+                }
+            }
+        } catch (Exception e) {
+            LOG.error("Could not search osgi bundles for classes matching criteria: "
+                + test + "due to an Exception: " + e.getMessage());
+        }
+    }
+
 
     /**
      * Finds matches in a physical directory on a filesystem. Examines all files
@@ -309,11 +377,11 @@ public class ResolverUtil<T> {
      * according to the Test. Operates recursively to find classes within a
      * folder structure matching the package structure.
      *
-     * @param test a Test used to filter the classes that are discovered
-     * @param parent the package name up to this directory in the package
-     *                hierarchy. E.g. if /classes is in the classpath and we
-     *                wish to examine files in /classes/org/apache then the
-     *                values of <i>parent</i> would be <i>org/apache</i>
+     * @param test     a Test used to filter the classes that are discovered
+     * @param parent   the package name up to this directory in the package
+     *                 hierarchy. E.g. if /classes is in the classpath and we wish to
+     *                 examine files in /classes/org/apache then the values of
+     *                 <i>parent</i> would be <i>org/apache</i>
      * @param location a File object representing a directory
      */
     private void loadImplementationsInDirectory(Test test, String parent, File location) {
@@ -325,7 +393,6 @@ public class ResolverUtil<T> {
             String name = file.getName();
             if (name != null) {
                 name = name.trim();
-
                 builder.append(parent).append("/").append(name);
                 String packageOrClass = parent == null ? name : builder.toString();
 
@@ -343,18 +410,17 @@ public class ResolverUtil<T> {
      * structure matching the package structure. If the File is not a JarFile or
      * does not exist a warning will be logged, but no error will be raised.
      *
-     * @param test a Test used to filter the classes that are discovered
-     * @param parent the parent package under which classes must be in order to
+     * @param test    a Test used to filter the classes that are discovered
+     * @param parent  the parent package under which classes must be in order to
      *                be considered
      * @param jarfile the jar file to be examined for classes
      */
     private void loadImplementationsInJar(Test test, String parent, File jarfile) {
-
-    	JarInputStream jarStream = null;
+        JarInputStream jarStream = null;
         try {
-            JarEntry entry;
             jarStream = new JarInputStream(new FileInputStream(jarfile));
 
+            JarEntry entry;
             while ((entry = jarStream.getNextJarEntry()) != null) {
                 String name = entry.getName();
                 if (name != null) {
@@ -366,15 +432,9 @@ public class ResolverUtil<T> {
             }
         } catch (IOException ioe) {
             LOG.error("Could not search jar file '" + jarfile + "' for classes matching criteria: " + test
-                      + "due to an IOException: " + ioe.getMessage());
+                + " due to an IOException: " + ioe.getMessage(), ioe);
         } finally {
-            try {
-            	if (jarStream != null)
-            		jarStream.close();
-            } catch (IOException e) {
-                LOG.warn("Failed to close jar stream: " + jarfile.getPath(), e);
-            }
-        	
+            ObjectHelper.close(jarStream, jarfile.getPath(), LOG);
         }
     }
 
@@ -384,7 +444,7 @@ public class ResolverUtil<T> {
      * supplied.
      *
      * @param test the test used to determine if the class matches
-     * @param fqn the fully qualified name of a class
+     * @param fqn  the fully qualified name of a class
      */
     protected void addIfMatching(Test test, String fqn) {
         try {
@@ -392,26 +452,31 @@ public class ResolverUtil<T> {
             Set<ClassLoader> set = getClassLoaders();
             boolean found = false;
             for (ClassLoader classLoader : set) {
-                LOG.trace("Checking to see if class " + externalName + " matches criteria [" + test + "]");
-
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Testing for class " + externalName + " matches criteria [" + test + "]");
+                }
                 try {
                     Class type = classLoader.loadClass(externalName);
                     if (test.matches(type)) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Found class: " + type + " in classloader: " + classLoader);
+                        }
                         matches.add((Class<T>)type);
                     }
                     found = true;
                     break;
                 } catch (ClassNotFoundException e) {
-                    LOG.debug("Could not find class '" + fqn + "' in class loader: " + classLoader
-                              + ". Reason: " + e, e);
+                    LOG.debug("Could not find class '" + fqn + "' in classloader: " + classLoader
+                        + ". Reason: " + e, e);
                 }
             }
             if (!found) {
-                LOG.warn("Could not find class '" + fqn + "' in any class loaders: " + set);
+                LOG.warn("Could not find class '" + fqn + "' in any classloaders: " + set);
             }
         } catch (Throwable t) {
             LOG.warn("Could not examine class '" + fqn + "' due to a " + t.getClass().getName()
-                     + " with message: " + t.getMessage());
+                + " with message: " + t.getMessage(), t);
         }
     }
+
 }
