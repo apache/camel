@@ -27,8 +27,8 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 public class PerformanceCounter extends Counter {
 
     private AtomicLong numCompleted = new AtomicLong(0L);
-    private long minProcessingTime = -1L;
-    private long maxProcessingTime = -1L;
+    private double minProcessingTime = -1.0;
+    private double maxProcessingTime;
     private double totalProcessingTime;
     private Date lastExchangeCompletionTime;
     private Date firstExchangeCompletionTime;
@@ -38,9 +38,9 @@ public class PerformanceCounter extends Counter {
     public synchronized void reset() {
         super.reset();
         numCompleted.set(0L);
-        minProcessingTime = 0L;
-        maxProcessingTime = 0L;
-        totalProcessingTime = 0;
+        minProcessingTime = -1.0;
+        maxProcessingTime = 0.0;
+        totalProcessingTime = 0.0;
         lastExchangeCompletionTime = null;
         firstExchangeCompletionTime = null;
 
@@ -56,20 +56,25 @@ public class PerformanceCounter extends Counter {
         return numExchanges.get() - numCompleted.get();
     }
 
-    @ManagedAttribute(description = "Min Processing Time [milli-seconds]")
-    public synchronized long getMinProcessingTime() throws Exception {
+    @ManagedAttribute(description = "Min Processing Time [milliseconds]")
+    public synchronized double getMinProcessingTimeMillis() throws Exception {
         return minProcessingTime;
     }
 
-    @ManagedAttribute(description = "Mean Processing Time [milli-seconds]")
-    public synchronized long getMeanProcessingTime() throws Exception {
+    @ManagedAttribute(description = "Mean Processing Time [milliseconds]")
+    public synchronized double getMeanProcessingTimeMillis() throws Exception {
         long count = numCompleted.get();
-        return count > 0 ? (long)totalProcessingTime / count : 0L;
+        return count > 0 ? totalProcessingTime / count : 0.0;
     }
 
-    @ManagedAttribute(description = "Max Processing Time [milli-seconds]")
-    public synchronized long getMaxProcessingTime() throws Exception {
+    @ManagedAttribute(description = "Max Processing Time [milliseconds]")
+    public synchronized double getMaxProcessingTimeMillis() throws Exception {
         return maxProcessingTime;
+    }
+
+    @ManagedAttribute(description = "Total Processing Time [milliseconds]")
+    public synchronized double getTotalProcessingTimeMillis() throws Exception {
+        return totalProcessingTime;
     }
 
     @ManagedAttribute(description = "Last Exchange Completed Timestamp")
@@ -82,7 +87,12 @@ public class PerformanceCounter extends Counter {
         return firstExchangeCompletionTime;
     }
 
-    public synchronized void completedExchange(long time) {
+    /**
+     * This method is called when an exchange has been processed successfully.
+     * 
+     * @param time in milliseconds it spent on processing the exchange
+     */
+    public synchronized void completedExchange(double time) {
         increment();
         numCompleted.incrementAndGet();
         totalProcessingTime += time;

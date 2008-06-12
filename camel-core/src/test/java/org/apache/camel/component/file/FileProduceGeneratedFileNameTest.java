@@ -39,8 +39,8 @@ public class FileProduceGeneratedFileNameTest extends ContextTestSupport {
         template.send(endpoint, exchange);
 
         File file = new File("target/" + id);
+        // use absolute file to let unittest pass on all platforms
         file = file.getAbsoluteFile();
-        System.out.println("absolute file: " + file);
         assertEquals("The generated file should exists: " + file, true, file.exists());
     }
 
