@@ -50,7 +50,6 @@ public class HttpPostWithBodyTest extends ContextTestSupport {
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
 
         String body = in.getBody(String.class);
-        System.out.println(body);
         log.debug("Body: " + body);
         assertNotNull("Should have a body!", body);
         assertTrue("body should contain: " + expectedText, body.contains(expectedText));

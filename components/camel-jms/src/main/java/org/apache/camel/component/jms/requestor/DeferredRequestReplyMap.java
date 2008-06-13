@@ -130,7 +130,6 @@ public class DeferredRequestReplyMap  {
                 }
                 deferredRequestMap.remove(transitionalID);
                 String correlationID = outMessage.getJMSMessageID();
-                // System.out.println("DeferredRequestReplyMap.processDeferredReplies: sent messageID = " + correlationID);
                 Object in = deferredReplyMap.get(correlationID);
 
                 if (in != null && in instanceof Message) {

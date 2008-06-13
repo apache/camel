@@ -71,7 +71,6 @@ public class SpringRunner {
     @BeforeTest
     protected void setUp() {
         oldSystemProperties = new Properties(System.getProperties());
-        System.out.println("Setup!");
     }
 
     @AfterTest
@@ -80,6 +79,6 @@ public class SpringRunner {
             applicationContext.close();
         }
         System.setProperties(oldSystemProperties);
-        System.out.println("Tearning down!");
     }
+
 }
