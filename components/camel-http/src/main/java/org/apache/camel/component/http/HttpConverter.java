@@ -32,6 +32,7 @@ import org.apache.camel.Converter;
  */
 @Converter
 public class HttpConverter {
+
     @Converter
     public HttpServletRequest toServletRequest(HttpMessage message) {
         if (message == null) {
@@ -42,7 +43,6 @@ public class HttpConverter {
 
     @Converter
     public ServletInputStream toServletInputStream(HttpMessage message) throws IOException {
-        System.out.println("Converting to an InputStream using the HttpConverter!");
         HttpServletRequest request = toServletRequest(message);
         if (request != null) {
             return request.getInputStream();
@@ -58,4 +58,5 @@ public class HttpConverter {
         }
         return null;
     }
+
 }
