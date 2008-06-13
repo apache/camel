@@ -38,6 +38,15 @@ public interface Exchange {
     ExchangePattern getPattern();
 
     /**
+     * Allows the {@link ExchangePattern} (MEP) of this exchange to be customized.
+     *
+     * This typically won't be required as an exchange can be created with a specific MEP
+     * by calling {@link Endpoint#createExchange(ExchangePattern)} but it is here just in case
+     * it is needed.
+     */
+    void setPattern(ExchangePattern pattern);
+
+    /**
      * Returns a property associated with this exchange by name
      *
      * @param name the name of the property
@@ -210,4 +219,5 @@ public interface Exchange {
      * @param id
      */
     void setExchangeId(String id);
+
 }
