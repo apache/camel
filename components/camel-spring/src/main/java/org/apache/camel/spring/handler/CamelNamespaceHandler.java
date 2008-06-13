@@ -57,11 +57,9 @@ import org.springframework.beans.factory.xml.ParserContext;
 
 
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
-    public static final String JAXB_PACKAGES = "org.apache.camel.spring:org.apache.camel.model:org.apache.camel.model.config:"
-                                               + "org.apache.camel.model.dataformat:org.apache.camel.model.language:org.apache.camel.model.loadbalancer";
+
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(EndpointFactoryBean.class);
-    protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(
-                                                                                      CamelBeanPostProcessor.class);
+    protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
     protected Set<String> parserElementNames = new HashSet<String>();
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
@@ -149,7 +147,25 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     }
 
     protected JAXBContext createJaxbContext() throws JAXBException {
-        return JAXBContext.newInstance(JAXB_PACKAGES);
+        StringBuilder packages = new StringBuilder();
+        for (Class cl : getJaxbPackages()) {
+            if (packages.length() > 0) {
+                packages.append(":");
+            }
+            packages.append(cl.getName().substring(0, cl.getName().lastIndexOf('.')));
+        }
+        return JAXBContext.newInstance(packages.toString(), getClass().getClassLoader());
+    }
+
+    protected Set<Class> getJaxbPackages() {
+        Set<Class> classes = new HashSet<Class>();
+        classes.add(org.apache.camel.spring.CamelContextFactoryBean.class);
+        classes.add(org.apache.camel.model.RouteType.class);
+        classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);
+        classes.add(org.apache.camel.model.dataformat.DataFormatType.class);
+        classes.add(org.apache.camel.model.language.ExpressionType.class);
+        classes.add(org.apache.camel.model.loadbalancer.LoadBalancerType.class) ;
+        return classes;
     }
 
     protected class CamelContextBeanDefinitionParser extends BeanDefinitionParser {
