@@ -27,7 +27,6 @@ import org.springframework.integration.channel.MessageChannel;
  *
  * @version $Revision$
  */
-
 @Converter
 public final class SpringIntegrationConverter {
 
@@ -46,7 +45,6 @@ public final class SpringIntegrationConverter {
             throw new IllegalArgumentException("The MessageChannel is null");
         }
         Endpoint answer = new SpringIntegrationEndpoint("URL", channel, null);
-        System.out.println("call the toEndpoint method");
         // check the channel
         return answer;
     }

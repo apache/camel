@@ -142,7 +142,9 @@ public class Requestor extends ServiceSupport implements MessageListener {
     public void onMessage(Message message) {
         try {
             String correlationID = message.getJMSCorrelationID();
-            // System.out.println("Requestor.onMessage: correlationID " + correlationID);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Message correlationID: " + correlationID);
+            }
             if (correlationID == null) {
                 LOG.warn("Ignoring message with no correlationID! " + message);
                 return;
