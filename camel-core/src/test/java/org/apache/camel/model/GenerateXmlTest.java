@@ -28,6 +28,7 @@ import org.apache.camel.model.language.XQueryExpression;
  * @version $Revision$
  */
 public class GenerateXmlTest extends XmlTestSupport {
+
     public void testCreateSimpleXml() throws Exception {
         RoutesType context = new RoutesType();
         RouteType route = context.route();
@@ -59,6 +60,9 @@ public class GenerateXmlTest extends XmlTestSupport {
         StringWriter buffer = new StringWriter();
         marshaller.marshal(context, buffer);
         log.info("Created: " + buffer);
-        //System.out.println("Created: " + buffer);
+        assertNotNull(buffer);
+        String out = buffer.toString();
+        assertTrue("Should contain the description", out.indexOf("This is a description of the route") > -1);
     }
+    
 }
