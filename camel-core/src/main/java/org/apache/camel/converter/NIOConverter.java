@@ -60,26 +60,27 @@ public final class NIOConverter {
 
     @Converter
     public static ByteBuffer toByteBuffer(File file) throws IOException {
-    	InputStream in = null;
-    	try {
+        InputStream in = null;
+        try {
             byte[] buf = new byte[(int)file.length()];
             in = new BufferedInputStream(new FileInputStream(file));
             int sizeLeft = (int)file.length();
             int offset = 0;
             while (sizeLeft > 0) {
-            	int readSize = in.read(buf, offset, sizeLeft);
-            	sizeLeft -= readSize;
-            	offset += readSize;
+                int readSize = in.read(buf, offset, sizeLeft);
+                sizeLeft -= readSize;
+                offset += readSize;
             }
             return ByteBuffer.wrap(buf);
-    	} finally {
+        } finally {
             try {
-            	if (in != null)
-            		in.close();
+                if (in != null) {
+                    in.close();
+                }
             } catch (IOException e) {
                 LOG.warn("Failed to close file stream: " + file.getPath(), e);
             }
-    	}
+        }
     }
 
     @Converter
