@@ -113,7 +113,6 @@ public class MinaTcpWithInOutTest extends TestCase {
             public void configure() {
                 from("direct:x").to(uri).process(new Processor() {
                     public void process(Exchange e) {
-                        // System.out.println("Received exchange: " + e.getIn());
                         receivedExchange = e;
                         latch.countDown();
                     }

@@ -47,8 +47,6 @@ public class ReverserServer {
 
         // Bind
         acceptor.bind(new InetSocketAddress(port), new ReverseProtocolHandler(), cfg);
-
-        // System.out.println("Listening on port " + port);
     }
 
     public void stop() throws Exception {

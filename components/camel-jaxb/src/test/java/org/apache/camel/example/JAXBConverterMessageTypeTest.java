@@ -34,7 +34,6 @@ public class JAXBConverterMessageTypeTest extends TestCase {
         // TODO: fails see CAMEL-583
         /*
         MessageType message = converter.convertTo(MessageType.class, "<message><hello>bar</hello></message>");
-        System.out.println(message);
 
         assertNotNull("Message should not be null!", message);
         */

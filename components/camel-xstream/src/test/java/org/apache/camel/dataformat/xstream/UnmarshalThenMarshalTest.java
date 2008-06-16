@@ -47,8 +47,6 @@ public class UnmarshalThenMarshalTest extends ContextTestSupport {
         Object actualBody = exchange.getIn().getBody();
 
         log.debug("Received: " + actualBody);
-
-        System.out.println("Received " + actualBody);
         assertEquals("Received body", expectedBody, actualBody);
     }
 
@@ -59,7 +57,6 @@ public class UnmarshalThenMarshalTest extends ContextTestSupport {
                         marshal().xstream().
                         process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                System.out.println("marshalled: " + exchange.getIn().getBody(String.class));
                                 log.debug("marshalled: " + exchange.getIn().getBody(String.class));
                             }
                         }).

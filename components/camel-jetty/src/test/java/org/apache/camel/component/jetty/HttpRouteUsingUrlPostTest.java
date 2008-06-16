@@ -54,9 +54,6 @@ public class HttpRouteUsingUrlPostTest extends HttpRouteTest {
             log.info("Read: " + line);
         }
         reader.close();
-
-//        InputStream is = url.openConnection().getInputStream();
-//        System.out.println("Content: "+is);
     }
 
 }
