@@ -42,11 +42,21 @@
   </properties>
 
   <dependencies>
+
+      <!-- required dependencies by camel-core -->
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging-api</artifactId>
     </dependency>
 
+    <dependency>
+      <!-- TODO: this is only needed for OSGi environments, can we have it be optional or how? -->
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>${felix-osgi-version}</version>
+    </dependency>
+
+    <!-- TODO: Javax Activation (attachment support) is now also a hard dependency, where do we configure this in pom.xml? -->
 
     <!-- to allow Spring annotations to be used -->
     <dependency>
@@ -83,11 +93,6 @@
       <artifactId>spring-aop</artifactId>
       <version>${spring-version}</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.felix</groupId>
-      <artifactId>org.osgi.core</artifactId>
-      <version>${felix-osgi-version}</version>
     </dependency>
   </dependencies>
 
