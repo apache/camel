@@ -281,8 +281,7 @@ public class ResolverUtil<T> {
 
     protected void find(Test test, String packageName, ClassLoader loader) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Searching for: " + test + " in package: " + packageName +
-                " using classloader: " + loader);
+            LOG.trace("Searching for: " + test + " in package: " + packageName + " using classloader: " + loader);
         }
 
         try {
@@ -364,8 +363,8 @@ public class ResolverUtil<T> {
                 }
             }
         } catch (Exception e) {
-            LOG.error("Could not search osgi bundles for classes matching criteria: "
-                + test + "due to an Exception: " + e.getMessage());
+            LOG.error("Could not search osgi bundles for classes matching criteria: " + test
+                      + "due to an Exception: " + e.getMessage());
         }
     }
 

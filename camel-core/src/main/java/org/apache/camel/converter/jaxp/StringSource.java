@@ -16,8 +16,17 @@
  */
 package org.apache.camel.converter.jaxp;
 
+import java.io.ByteArrayInputStream;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+
 import javax.xml.transform.stream.StreamSource;
-import java.io.*;
 
 /**
  * A helper class which provides a JAXP {@link javax.xml.transform.Source Source} from a String which can
