@@ -32,7 +32,6 @@ import java.util.jar.JarInputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.osgi.framework.Bundle;
 
 /**
  * <p>
@@ -347,25 +346,39 @@ public class ResolverUtil<T> {
     }
 
     private void loadImplementationsInBundle(Test test, String packageName, ClassLoader loader, Method mth) {
-        try {
-            Bundle bundle = (Bundle)mth.invoke(loader);
-            Bundle[] bundles = bundle.getBundleContext().getBundles();
-            for (Bundle bd : bundles) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Searching in bundle:" + bd);
-                }
-
-                Enumeration<URL> paths = (Enumeration<URL>)bd.findEntries("/" + packageName, "*.class", true);
-                while (paths != null && paths.hasMoreElements()) {
-                    URL path = paths.nextElement();
-                    // substring to avoid leading slashes
-                    addIfMatching(test, path.getPath().substring(1));
-                }
+        // Use an inner class to avoid a NoClassDefFoundError when used in a non-osgi env
+        Set<String> urls = OsgiUtil.getImplementationsInBundle(test, packageName, loader, mth);
+        if (urls != null) {
+            for (String url : urls) {
+                // substring to avoid leading slashes
+                addIfMatching(test, url);
             }
-        } catch (Exception e) {
-            LOG.error("Could not search osgi bundles for classes matching criteria: " + test
-                      + "due to an Exception: " + e.getMessage());
         }
+    }
+
+    private static class OsgiUtil {
+	    static Set<String> getImplementationsInBundle(Test test, String packageName, ClassLoader loader, Method mth) {
+	        try {
+	            org.osgi.framework.Bundle bundle = (org.osgi.framework.Bundle) mth.invoke(loader);
+	            org.osgi.framework.Bundle[] bundles = bundle.getBundleContext().getBundles();
+                Set<String> urls = new HashSet<String>();
+	            for (org.osgi.framework.Bundle bd : bundles) {
+	                if (LOG.isTraceEnabled()) {
+	                    LOG.trace("Searching in bundle:" + bd);
+	                }
+                    Enumeration<URL> paths = bd.findEntries("/" + packageName, "*.class", true);
+			        while (paths != null && paths.hasMoreElements()) {
+			            URL path = paths.nextElement();
+                        urls.add(path.getPath().substring(1));
+                    }
+                }
+                return urls;
+	        } catch (Throwable t) {
+	            LOG.error("Could not search osgi bundles for classes matching criteria: " + test
+	                      + "due to an Exception: " + t.getMessage());
+                return null;
+	        }
+	    }
     }
 
 
