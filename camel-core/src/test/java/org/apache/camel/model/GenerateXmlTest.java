@@ -36,7 +36,6 @@ public class GenerateXmlTest extends XmlTestSupport {
         route.filter(new XQueryExpression("in.header.foo == 'bar'")).
                 to("seda:b");
         route.description("This is a description of the route");
-
         dump(context);
     }
 
@@ -47,7 +46,7 @@ public class GenerateXmlTest extends XmlTestSupport {
         route.interceptors("interceptor1", "interceptor2");
         route.filter(new GroovyExpression("in.headers.any { h -> h.startsWith('foo') }")).
                 to("seda:b");
-
+        route.description("This is a description of the route");
         List<ProcessorType<?>> list = route.getOutputs();
         assertEquals("Size of list: " + list, 1, list.size());
 
@@ -62,7 +61,7 @@ public class GenerateXmlTest extends XmlTestSupport {
         log.info("Created: " + buffer);
         assertNotNull(buffer);
         String out = buffer.toString();
-        assertTrue("Should contain the description", out.indexOf("This is a description of the route") > -1);
+        assertTrue("Should contain the description", out.indexOf("This is a description of the route") > 0);
     }
-    
+
 }

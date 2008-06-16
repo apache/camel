@@ -468,6 +468,9 @@ public class ResolverUtil<T> {
                 } catch (ClassNotFoundException e) {
                     LOG.debug("Could not find class '" + fqn + "' in classloader: " + classLoader
                         + ". Reason: " + e, e);
+                } catch (NoClassDefFoundError e) {
+                    LOG.debug("Could not find the class defintion '" + fqn + "' in classloader: " + classLoader
+                              + ". Reason: " + e, e);
                 }
             }
             if (!found) {
