@@ -27,18 +27,19 @@
 
     <route>
       <from uri="dataset:foo"/>
-      <to uri="seda:test.queue"/>
+      <to uri="direct:test.queue"/>
     </route>
 
     <route>
-      <from uri="seda:test.queue"/>
+      <from uri="direct:test.queue"/>
       <to uri="dataset:foo"/>
     </route>
 
   </camelContext>
 
   <bean id="foo" class="org.apache.camel.component.dataset.SimpleDataSet">
-    <property name="size" value="10"/>
+    <property name="size" value="100"/>
   </bean>
+   
 </beans>
 <!-- END SNIPPET: example -->
