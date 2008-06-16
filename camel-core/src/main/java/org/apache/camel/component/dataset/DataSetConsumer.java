@@ -63,13 +63,18 @@ public class DataSetConsumer extends DefaultConsumer<Exchange> {
                 Exchange exchange = endpoint.createExchange(i);
                 getProcessor().process(exchange);
 
-                long delay = endpoint.getProduceDelay();
-                if (delay > 0) {
-                    try {
+                try {
+                    long delay = endpoint.getProduceDelay();
+                    if (delay > 0) {
                         Thread.sleep(delay);
-                    } catch (InterruptedException e) {
-                        LOG.debug(e);
+                    } else {
+                        // if no delay set then we must sleep at lest for 1 nano to avoid concurrency
+                        // issues with extremly high throughtput
+                        Thread.sleep(0, 1);
                     }
+                } catch (InterruptedException e) {
+                    // ignore and just log to debug
+                    LOG.debug(e);
                 }
                 if (reporter != null) {
                     reporter.process(exchange);
