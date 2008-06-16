@@ -35,6 +35,6 @@ public class JuelTest extends TestCase {
         ValueExpression valueExpression = factory.createValueExpression(context, "${123 * 2}", Object.class);
         Object value = valueExpression.getValue(context);
 
-        System.out.println("Found: " + value + " for expression: " + valueExpression);
+        assertEquals("Result is a Long object", 246L, value);
     }
 }

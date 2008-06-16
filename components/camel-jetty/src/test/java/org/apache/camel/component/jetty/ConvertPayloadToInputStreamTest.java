@@ -52,28 +52,14 @@ public class ConvertPayloadToInputStreamTest extends ContextTestSupport {
 
         Object actual = in.getBody();
         InputStream value = assertIsInstanceOf(InputStream.class, actual);
-        System.out.println("Found: " + value);
+        assertNotNull("InputStream", value);
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 from("jetty:http://localhost:8080/test").
-                        process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                Object value = exchange.getIn().getBody();
-                                System.out.println("Body is: " + value);
-
-                                if (value instanceof Reader) {
-                                    System.out.println("Is a Reader!");
-                                }
-                                if (value instanceof InputStream) {
-                                    System.out.println("Is an InputStream!");
-                                }
-                            }
-                        }).
                         convertBodyTo(InputStream.class).
                         to("mock:result");
             }
