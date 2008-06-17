@@ -38,6 +38,7 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
@@ -106,7 +107,14 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
 
     // If cfb is null, we will try to find the right cfb to use.
     private Client createClientFromClientFactoryBean(ClientFactoryBean cfb) throws CamelException {
-        Bus bus = BusFactory.getDefaultBus();
+        Bus bus = null;
+        if (endpoint.getApplicationContext() != null) {
+            SpringBusFactory bf = new SpringBusFactory(endpoint.getApplicationContext());
+            bus = bf.createBus();
+        } else {
+            // now we just use the default bus here
+            bus = BusFactory.getDefaultBus();
+        }
         if (endpoint.isSpringContextEndpoint()) {
             CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
             if (cfb == null) {
@@ -114,12 +122,6 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
             }
             endpoint.configure(cfb);
 
-            if (cxfEndpointBean.getServiceName() != null) {
-                cfb.setServiceName(cxfEndpointBean.getServiceName());
-            }
-            if (cxfEndpointBean.getEndpointName() != null) {
-                cfb.setEndpointName(cxfEndpointBean.getEndpointName());
-            }
         } else { // set up the clientFactoryBean by using URI information
             if (null != endpoint.getServiceClass()) {
                 try {

@@ -25,6 +25,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.cxf.configuration.spring.ConfigurerImpl;
 import org.apache.cxf.message.Message;
+import org.springframework.context.ApplicationContext;
 
 
 /**
@@ -170,6 +171,15 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
 
     public void configure(Object beanInstance) {
         configurer.configureBean(beanId, beanInstance);
+    }
+
+    public ApplicationContext getApplicationContext() {
+        if (getCamelContext() instanceof SpringCamelContext) {
+            SpringCamelContext context = (SpringCamelContext) getCamelContext();
+            return context.getApplicationContext();
+        } else {
+            return null;
+        }
     }
 
 
