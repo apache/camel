@@ -31,13 +31,8 @@ public class Main extends org.apache.camel.spring.Main {
     protected void postProcesCamelContext(CamelContext camelContext) throws Exception {
         super.postProcesCamelContext(camelContext);
 
-        try {
-            SwingBrowser browser = new SwingBrowser((DefaultCamelContext) camelContext);
-            browser.run();
-        } catch (RuntimeException e) {
-            System.out.println("Caught: " + e);
-            e.printStackTrace();
-            throw e;
-        }
+        SwingBrowser browser = new SwingBrowser((DefaultCamelContext) camelContext);
+        browser.run();
     }
+
 }

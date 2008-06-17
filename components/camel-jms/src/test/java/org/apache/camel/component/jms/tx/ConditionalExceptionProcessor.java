@@ -18,7 +18,8 @@ package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Conditionally throws exception causing a rollback
@@ -27,29 +28,22 @@ import org.apache.log4j.Logger;
  */
 public class ConditionalExceptionProcessor implements Processor {
 
-    private Logger log = Logger.getLogger(getClass());
+    private static final transient Log LOG = LogFactory.getLog(ConditionalExceptionProcessor.class);
     private int count;
 
     public ConditionalExceptionProcessor() {
-        
     }
-    
+
     public void process(Exchange exchange) throws Exception {
-
         setCount(getCount() + 1);
-        
-        // System.out.println(this + "; getCount() = " + getCount());
 
-        AbstractTransactionTest
-            .assertTrue(
-                        "Expected only 2 calls to process() but encountered "
-                            + getCount()
-                            + ".  There should be 1 for intentionally triggered rollback, and 1 for the redelivery.",
-                        getCount() <= 2);
+        AbstractTransactionTest.assertTrue("Expected only 2 calls to process() but encountered " +
+            getCount() + ". There should be 1 for intentionally triggered rollback, and 1 for redelivery.",
+            getCount() <= 2);
 
         // should be printed 2 times due to one re-delivery after one failure
-        log.info("Exchange[" + getCount() + "][" + ((getCount() <= 1) ? "Should rollback" : "Should succeed")
-                 + "] = " + exchange);
+        LOG.info("Exchange[" + getCount() + "][" + ((getCount() <= 1) ? "Should rollback" : "Should succeed")
+            + "] = " + exchange);
 
         // force rollback on the second attempt
         if (getCount() <= 1) {
@@ -58,12 +52,10 @@ public class ConditionalExceptionProcessor implements Processor {
     }
 
     private void setCount(int count) {
-
         this.count = count;
     }
 
     public int getCount() {
-
         return count;
     }
 }

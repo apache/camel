@@ -26,6 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version $Revision$
  */
 public class JmsMessageBindTest extends SpringTestSupport {
+    
     public void testSendAMessageToBean() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedBodiesReceived("Completed");
@@ -38,10 +39,9 @@ public class JmsMessageBindTest extends SpringTestSupport {
         // now lets test that the bean is correct
         MyBean bean = getMandatoryBean(MyBean.class, "myBean");
         assertEquals("body", "SomeBody", bean.getBody());
+
         Map headers = bean.getHeaders();
         assertNotNull("No headers!", headers);
-        System.out.println("Headers: " + headers);
-
         assertEquals("foo header", "bar", headers.get("foo"));
     }
 

@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.DelegateProcessor;
@@ -54,7 +55,6 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
     private ClassPathXmlApplicationContext spring;
     private MockEndpoint mockEndpointC;
     private MockEndpoint mockEndpointD;
-
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -192,9 +192,9 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
-        // for (Route route : this.context.getRoutes()) {
-        // System.out.println(route);
-        // }
+        for (Route route : this.context.getRoutes()) {
+            log.debug(route);
+        }
 
         mockEndpointA = getMockEndpoint("mock:a");
         mockEndpointB = getMockEndpoint("mock:b");
@@ -243,10 +243,8 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
     public void xtestSenarioB() throws Exception {
         String expected = getName() + ": " + System.currentTimeMillis();
         mockEndpointA.expectedMessageCount(0);
-        mockEndpointB.expectedMinimumMessageCount(2); // May be more since
-                                                        // spring seems to go
-                                                        // into tight loop
-                                                        // re-delivering.
+        // May be more since spring seems to go into tight loop re-delivering.
+        mockEndpointB.expectedMinimumMessageCount(2);
         sendBody("activemq:queue:b", expected);
         assertIsSatisfied(assertTimeoutSeconds, TimeUnit.SECONDS, mockEndpointA, mockEndpointB);
     }
@@ -254,9 +252,8 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
     public void testSenarioC() throws Exception {
         String expected = getName() + ": " + System.currentTimeMillis();
         mockEndpointA.expectedMessageCount(0);
-        mockEndpointB.expectedMessageCount(1); // Should only get 1 message the
-                                                // incoming transaction does not
-                                                // rollback.
+        // Should only get 1 message the incoming transaction does not rollback.
+        mockEndpointB.expectedMessageCount(1);
         sendBody("activemq:queue:c", expected);
 
         // Wait till the endpoints get their messages.

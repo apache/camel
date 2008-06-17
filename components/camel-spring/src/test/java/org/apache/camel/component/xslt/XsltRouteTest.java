@@ -41,16 +41,18 @@ public class XsltRouteTest extends SpringTestSupport {
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
 
-        log.debug("Found: " + xml);
+        assertNotNull("The transformed XML should not be null", xml);
+        assertTrue(xml.indexOf("transformed") > -1);
+        // the cheese tag is in the transform.xsl
+        assertTrue(xml.indexOf("cheese") > -1);
+        assertTrue(xml.indexOf("<subject>Hey</subject>") > -1);
+        assertTrue(xml.indexOf("<body>Hello world!</body>") > -1);
 
         TestBean bean = getMandatoryBean(TestBean.class, "testBean");
-
         assertEquals("bean.subject", "Hey", bean.getSubject());
-        log.debug("Found bean subject: " + bean.getSubject());
     }
 
     protected int getExpectedRouteCount() {
-        // TODO why zero?
         return 0;
     }
 

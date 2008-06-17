@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
  * http://activemq.apache.org/camel/transactional-client.html and Martin
  * Krasser's sample:
  * http://www.nabble.com/JMS-Transactions---How-To-td15168958s22882.html#a15198803
+ * <p/>
  * NOTE: had to split into separate test classes as I was unable to fully tear
  * down and isolate the test cases, I'm not sure why, but as soon as we know the
  * Transaction classes can be joined into one.
@@ -100,11 +101,9 @@ public class QueueToQueueRequestReplyTransactionTest extends AbstractTransaction
                 from("activemq:queue:foo?replyTo=queue:foo.reply").policy(required).process(new ConditionalExceptionProcessor()).to("activemq-1:queue:bar?replyTo=queue:bar.reply");
                 from("activemq-1:queue:bar").process(new Processor() {
                     public void process(Exchange e) {
-                        System.out.println(e);
                         String request = e.getIn().getBody(String.class);
                         Message out = e.getOut(true);
                         String selectorValue = e.getIn().getHeader("camelProvider", String.class);
-                        System.out.println("selectorValue = " + selectorValue);
                         out.setHeader("camelProvider", selectorValue);
                         out.setBody("Re: " + request);
                     }

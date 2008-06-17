@@ -34,7 +34,6 @@ public class MyBean {
 
     @MessageDriven(uri = "activemq:Test.BindingQueue")
     public void myMethod(@Headers Map headers, String body) {
-        System.out.println("Invoked bean with: " + headers + " and body: " + body);
         this.headers = headers;
         this.body = body;
 
