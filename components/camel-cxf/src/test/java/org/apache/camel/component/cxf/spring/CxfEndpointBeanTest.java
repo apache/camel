@@ -16,21 +16,57 @@
  */
 package org.apache.camel.component.cxf.spring;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import junit.framework.TestCase;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.message.Message;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  *
  */
 public class CxfEndpointBeanTest extends TestCase {
+    private ClassPathXmlApplicationContext ctx;
+    protected void setUp() throws Exception {
+        ctx =  new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouter.xml"});
+    }
+
+    protected void tearDown() throws Exception {
+        ctx.close();
+    }
 
     public void testCxfEndpointBeanDefinitionParser() {
-        ClassPathXmlApplicationContext ctx =
-            new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeans.xml"});
 
         CxfEndpointBean routerEndpoint = (CxfEndpointBean)ctx.getBean("routerEndpoint");
         assertEquals("Got the wrong endpoint address", routerEndpoint.getAddress(), "http://localhost:9000/router");
         assertEquals("Got the wrong endpont service class", routerEndpoint.getServiceClass().getCanonicalName(), "org.apache.camel.component.cxf.HelloService");
+
+    }
+
+    public void testCxfBusConfiguration() throws InterruptedException {
+        // get the camelContext from application context
+        CamelContext camelContext = (CamelContext) ctx.getBean("camel");
+        ProducerTemplate template = camelContext.createProducerTemplate();
+        Exchange exchange = template.send("cxf:bean:routerEndpoint", new Processor() {
+            public void process(final Exchange exchange) {
+                final List<String> params = new ArrayList<String>();
+                params.add("hello");
+                exchange.getIn().setBody(params);
+                exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "echo");
+            }
+        });
+        assertTrue("There should have a timeout exception", exchange.isFailed());
+
     }
 
 }

@@ -29,6 +29,7 @@ import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.AbstractFeature;
@@ -46,11 +47,16 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
     public CxfConsumer(CxfEndpoint endpoint, Processor processor) throws Exception {
 
         super(endpoint, processor);
+        Bus bus = null;
         this.endpoint = endpoint;
         boolean isWebServiceProvider = false;
-
-        // now we just use the default bus here
-        Bus bus = BusFactory.getDefaultBus();
+        if (endpoint.getApplicationContext() != null) {
+            SpringBusFactory bf = new SpringBusFactory(endpoint.getApplicationContext());
+            bus = bf.createBus();
+        } else {
+            // now we just use the default bus here
+            bus = BusFactory.getDefaultBus();
+        }
         ServerFactoryBean svrBean = null;
 
         if (endpoint.isSpringContextEndpoint()) {
@@ -59,13 +65,6 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
             isWebServiceProvider = CxfEndpointUtils.hasAnnotation(endpointBean.getServiceClass(),
                                                                   WebServiceProvider.class);
             endpoint.configure(svrBean);
-            CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
-            if (cxfEndpointBean.getServiceName() != null) {
-                svrBean.setServiceName(cxfEndpointBean.getServiceName());
-            }
-            if (cxfEndpointBean.getEndpointName() != null) {
-                svrBean.setEndpointName(cxfEndpointBean.getEndpointName());
-            }
 
         } else { // setup the serverFactoryBean with the URI parameters
             Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
