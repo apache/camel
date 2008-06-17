@@ -27,29 +27,28 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version $Revision$
  */
 public class XQueryEndpointTest extends SpringTestSupport {
+
     public void testSendMessageAndHaveItTransformed() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedMessageCount(1);
 
         template.sendBody("direct:start",
-                "<mail><subject>Hey</subject><body>Hello world!</body></mail>");
+            "<mail><subject>Hey</subject><body>Hello world!</body></mail>");
 
         assertMockEndpointsSatisifed();
 
         List<Exchange> list = endpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
-        System.out.println("Found: " + xml);
-        log.debug("Found: " + xml);
+        assertNotNull("The transformed XML should not be null", xml);
+        assertEquals("transformed", "<transformed subject=\"Hey\"><mail><subject>Hey</subject>" +
+            "<body>Hello world!</body></mail></transformed>", xml);
 
         TestBean bean = getMandatoryBean(TestBean.class, "testBean");
-
-        // TODO - fixme when we allow XQuery injection to do proper type conversion
-        //assertEquals("bean.subject", "Hey", bean.getSubject());
+        assertEquals("bean.subject", "Hey", bean.getSubject());
     }
 
     protected int getExpectedRouteCount() {
-        // TODO why zero?
         return 0;
     }
 

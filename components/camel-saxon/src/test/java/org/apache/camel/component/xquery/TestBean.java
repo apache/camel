@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.xquery;
 
-
 /**
  * @version $Revision$
  */
@@ -25,7 +24,6 @@ public class TestBean {
 
     public void onMethod(@XQuery("/*/@subject")String subject) {
         this.subject = subject;
-        System.out.println("Invoked with: [" + subject + "]");
     }
 
     public String getSubject() {

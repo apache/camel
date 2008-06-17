@@ -26,7 +26,6 @@ public class TestBean {
 
     public void onMethod(@XPath("/*/@subject")String subject) {
         this.subject = subject;
-        System.out.println("Invoked with: [" + subject + "]");
     }
 
     public String getSubject() {

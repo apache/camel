@@ -33,7 +33,4 @@ public class DummyBean implements InitializingBean {
         this.message = message;
     }
 
-    public void afterPropertiesSet() throws Exception {
-        System.out.println("DummyBean says " + message);
-    }
 }

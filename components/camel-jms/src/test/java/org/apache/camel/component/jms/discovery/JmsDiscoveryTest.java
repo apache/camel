@@ -44,8 +44,6 @@ public class JmsDiscoveryTest extends ContextTestSupport {
         }
 
         Map<String, Map> map = new HashMap<String, Map>(registry.getServices());
-        System.out.println("Received map: " + map);
-
         assertEquals("Size of map: " + map, 3, map.size());
     }
 
