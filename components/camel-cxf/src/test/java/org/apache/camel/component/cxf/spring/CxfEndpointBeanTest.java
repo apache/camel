@@ -32,9 +32,7 @@ import org.apache.cxf.message.Message;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- *
- */
+
 public class CxfEndpointBeanTest extends TestCase {
     private ClassPathXmlApplicationContext ctx;
     protected void setUp() throws Exception {
@@ -65,6 +63,7 @@ public class CxfEndpointBeanTest extends TestCase {
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "echo");
             }
         });
+        
         assertTrue("There should have a timeout exception", exchange.isFailed());
 
     }
