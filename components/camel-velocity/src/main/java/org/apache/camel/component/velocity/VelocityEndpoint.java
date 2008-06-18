@@ -84,6 +84,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         this.loaderCache = loaderCache;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         Resource resource = getResource();
@@ -106,6 +107,10 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         Message out = exchange.getOut(true);
         out.setBody(buffer.toString());
         out.setHeader("org.apache.camel.velocity.resource", resource);
+        Map<String, Object> headers = (Map<String, Object>)velocityContext.get("headers");
+        for (String key : headers.keySet()) {
+            out.setHeader(key, headers.get(key));
+        }
     }
-    
+
 }
