@@ -32,9 +32,9 @@ public class DumpToXmlTest extends ContextTestSupport {
         super.setUp();
     }
 
-    public void testDumplFilesToJaxb() throws Exception {        
-        File file = new File("target/camel/dump");
+    public void testDumplFilesToJaxb() throws Exception {
         Thread.sleep(2000);
+        File file = new File("target/camel/dump");
         assertTrue("The dump folder should exists", file.exists());
         assertEquals("There should be 2 dumped files", 2, file.list().length);
     }
