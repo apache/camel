@@ -19,8 +19,8 @@ package org.apache.camel.component.dataset;
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * Unit test to demonstrate high concurrency with seda. Offspring by CAMEL-605.

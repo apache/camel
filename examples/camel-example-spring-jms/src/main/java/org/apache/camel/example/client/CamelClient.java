@@ -18,7 +18,6 @@ package org.apache.camel.example.client;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.CamelContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -28,6 +27,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * Requires that the JMS broker is running, as well as CamelServer
  */
 public final class CamelClient {
+    private CamelClient() {
+        // Helper class
+    }
 
     // START SNIPPET: e1
     public static void main(final String[] args) throws Exception {
@@ -39,7 +41,7 @@ public final class CamelClient {
         ProducerTemplate camelTemplate = (ProducerTemplate) context.getBean("camelTemplate");
 
         System.out.println("Invoking the multiply with 22");
-        // as opposed to the CamelClientRemoting example we need to define the service URI in this java code 
+        // as opposed to the CamelClientRemoting example we need to define the service URI in this java code
         int response = (Integer)camelTemplate.sendBody("jms:queue:numbers", ExchangePattern.InOut, 22);
         System.out.println("... the result is: " + response);
 
