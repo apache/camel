@@ -40,6 +40,9 @@ public class Debugger implements InterceptStrategy {
 
     private int exchangeBufferSize = -1;
     private Map<String, DebugInterceptor> interceptors = new HashMap<String, DebugInterceptor>();
+    private boolean logExchanges = true;
+    private TraceFormatter formatter = new TraceFormatter();
+
 
     /**
      * A helper method to return the debugger instance for a given {@link CamelContext} if one is enabled
@@ -91,6 +94,9 @@ public class Debugger implements InterceptStrategy {
 
     public Processor wrapProcessorInInterceptors(ProcessorType processorType, Processor target) throws Exception {
         String id = processorType.idOrCreate();
+        if (logExchanges) {
+            target = new TraceInterceptor(processorType, target, formatter);
+        }
         DebugInterceptor interceptor = new DebugInterceptor(processorType, target, createExchangeList(), createExceptionsList());
         interceptors.put(id, interceptor);
         if (LOG.isDebugEnabled()) {

@@ -21,11 +21,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.apache.camel.model.RouteType;
-import org.apache.camel.spi.ExchangeConverter;
-import org.apache.camel.spi.Injector;
-import org.apache.camel.spi.Language;
-import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.*;
 
 /**
  * Interface used to represent the context used to configure routes and the
@@ -201,4 +197,5 @@ public interface CamelContext extends Service {
      */
     <E extends Exchange> ProducerTemplate<E> createProducerTemplate();
 
+    void addInterceptStrategy(InterceptStrategy interceptStrategy);
 }
