@@ -18,6 +18,9 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultExchangeFormatter;
+import org.apache.camel.processor.interceptor.ExchangeFormatter;
+import org.apache.camel.processor.interceptor.TraceInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -30,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 public class Logger implements Processor {
     private Log log;
     private LoggingLevel level;
+    private ExchangeFormatter formatter = DefaultExchangeFormatter.getInstance();
 
     public Logger() {
         this(LogFactory.getLog(Logger.class));
@@ -50,6 +54,11 @@ public class Logger implements Processor {
 
     public Logger(String logName, LoggingLevel level) {
         this(LogFactory.getLog(logName), level);
+    }
+
+    public Logger(Log log,ExchangeFormatter formatter) {
+        this(log);
+        this.formatter = formatter;
     }
 
     @Override
@@ -87,6 +96,43 @@ public class Logger implements Processor {
         case WARN:
             if (log.isWarnEnabled()) {
                 log.warn(logMessage(exchange));
+            }
+            break;
+        default:
+            log.error("Unknown level: " + level + " when trying to log exchange: " + logMessage(exchange));
+        }
+    }
+
+    public void process(Exchange exchange, Throwable exception) {
+        switch (level) {
+        case DEBUG:
+            if (log.isDebugEnabled()) {
+                log.debug(logMessage(exchange), exception);
+            }
+            break;
+        case ERROR:
+            if (log.isErrorEnabled()) {
+                log.error(logMessage(exchange), exception);
+            }
+            break;
+        case FATAL:
+            if (log.isFatalEnabled()) {
+                log.fatal(logMessage(exchange), exception);
+            }
+            break;
+        case INFO:
+            if (log.isInfoEnabled()) {
+                log.info(logMessage(exchange), exception);
+            }
+            break;
+        case TRACE:
+            if (log.isTraceEnabled()) {
+                log.trace(logMessage(exchange), exception);
+            }
+            break;
+        case WARN:
+            if (log.isWarnEnabled()) {
+                log.warn(logMessage(exchange), exception);
             }
             break;
         default:
@@ -169,7 +215,7 @@ public class Logger implements Processor {
     }
 
     protected Object logMessage(Exchange exchange) {
-        return exchange;
+        return formatter.format(exchange);
     }
 
     public Log getLog() {

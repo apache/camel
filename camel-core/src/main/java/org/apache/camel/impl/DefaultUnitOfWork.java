@@ -16,14 +16,15 @@
  */
 package org.apache.camel.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.util.UuidGenerator;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * The default implementation of {@link UnitOfWork}
@@ -31,6 +32,9 @@ import org.apache.camel.spi.UnitOfWork;
  * @version $Revision$
  */
 public class DefaultUnitOfWork implements UnitOfWork {
+    private static final UuidGenerator DEFAULT_ID_GENERATOR = new UuidGenerator();
+
+    private String id;
     private List<Synchronization> synchronizations;
     private List<AsyncCallback> asyncCallbacks;
     private CountDownLatch latch;
@@ -69,6 +73,18 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
     public boolean isSynchronous() {
         return asyncCallbacks == null || asyncCallbacks.isEmpty();
+    }
+
+    /**
+     * Returns the unique ID of this unit of work, lazily creating one if it does not yet have one
+     *
+     * @return
+     */
+    public String getId() {
+        if (id == null) {
+            id = DEFAULT_ID_GENERATOR.generateId();
+        }
+        return id;
     }
 
     /**
