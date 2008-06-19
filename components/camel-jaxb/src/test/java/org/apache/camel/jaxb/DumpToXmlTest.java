@@ -28,13 +28,18 @@ import org.apache.camel.converter.jaxb.MessageType;
 public class DumpToXmlTest extends ContextTestSupport {
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("target/camel/dump");
+        // Delete the dump directory
+        File file = new File("target/camel/dump");
+        if (file.getAbsoluteFile().exists()) {
+            deleteDirectory("target/camel/dump");
+        }
         super.setUp();
     }
 
     public void testDumplFilesToJaxb() throws Exception {
-        Thread.sleep(2000);
+        Thread.sleep(3000);
         File file = new File("target/camel/dump");
+        file = file.getAbsoluteFile();
         assertTrue("The dump folder should exists", file.exists());
         assertEquals("There should be 2 dumped files", 2, file.list().length);
     }
