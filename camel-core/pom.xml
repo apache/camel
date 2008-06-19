@@ -124,7 +124,6 @@
           <excludes>
             <!-- TODO FIXME ASAP -->
             <exclude>**/DataSetSedaTest.*</exclude>
-            <exclude>**/InterceptorLogTest.*</exclude>
           </excludes>
         </configuration>
       </plugin>
