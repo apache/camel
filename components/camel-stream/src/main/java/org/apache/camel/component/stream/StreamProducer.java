@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
 public class StreamProducer extends DefaultProducer<Exchange> {
 
     private static final transient Log LOG = LogFactory.getLog(StreamProducer.class);
-    private static final String TYPES = "in,out,err,file,url,header";
+    private static final String TYPES = "out,err,file,header,url";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
     private OutputStream outputStream = System.out;
@@ -118,10 +118,13 @@ public class StreamProducer extends DefaultProducer<Exchange> {
         if (body instanceof String) {
             LOG.debug("in text buffered mode");
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outputStream));
-            bw.write((String)body);
-            bw.write("\n");
-            bw.flush();
-            bw.close();
+            try {
+                bw.write((String)body);
+                bw.write("\n");
+                bw.flush();
+            } finally {
+                bw.close();
+            }
         } else {
             LOG.debug("in binary stream mode");
             outputStream.write((byte[])body);
