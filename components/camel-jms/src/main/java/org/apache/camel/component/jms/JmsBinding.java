@@ -168,7 +168,7 @@ public class JmsBinding {
             } else if (headerName.equals("JMSCorrelationID")) {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class,
                                                                             headerValue));
-            } else if (headerName.equals("JMSReplyTo")) {
+            } else if (headerName.equals("JMSReplyTo") && headerValue != null) {
                 jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class,
                                                                       headerValue));
             } else if (headerName.equals("JMSType")) {
@@ -278,8 +278,10 @@ public class JmsBinding {
     protected void populateIgnoreJmsHeaders(Set<String> set) {
         // ignore provider specified JMS extension headers
         // see page 39 of JMS 1.1 specification
+        //
+        // added "JMSXRecvTimestamp" as a workaround for an Oracle bug/typo in AqjmsMessage
         String[] ignore = {"JMSXUserID", "JMSXAppID", "JMSXDeliveryCount", "JMSXProducerTXID",
-                           "JMSXConsumerTXID", "JMSXRcvTimestamp", "JMSXState"};
+                           "JMSXConsumerTXID", "JMSXRcvTimestamp", "JMSXRecvTimestamp", "JMSXState"};
         set.addAll(Arrays.asList(ignore));
     }
 }
