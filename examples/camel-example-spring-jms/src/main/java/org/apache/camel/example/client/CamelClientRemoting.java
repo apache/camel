@@ -26,6 +26,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * Requires that the JMS broker is running, as well as CamelServer
  */
 public final class CamelClientRemoting {
+    private CamelClientRemoting() {
+        //Helper class
+    }
 
     // START SNIPPET: e1
     public static void main(final String[] args) {

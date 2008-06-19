@@ -61,7 +61,7 @@ public final class SpringIntegrationConverter {
         if (camelMessage instanceof SpringIntegrationMessage) {
             SpringIntegrationMessage siMessage = (SpringIntegrationMessage)camelMessage;
             org.springframework.integration.message.Message message =  siMessage.getMessage();
-            if( message != null) {
+            if (message != null) {
                 return message;
             }
         }
@@ -69,7 +69,7 @@ public final class SpringIntegrationConverter {
         // Create a new spring message and copy the attributes and body from the camel message
         MessageHeader messageHeader = new MessageHeader();
         Map<String, Object> headers = camelMessage.getHeaders();
-        for(String key : headers.keySet()) {
+        for (String key : headers.keySet()) {
             Object value = headers.get(key);
             messageHeader.setAttribute(key, value);
         }

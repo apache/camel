@@ -72,7 +72,7 @@ public class InterceptType extends OutputType<ProcessorType> {
     public ProceedType getProceed() {
         return proceed;
     }
-    
+
     public InterceptType createProxy() {
         InterceptType answer = new InterceptType();
         answer.getOutputs().addAll(this.getOutputs());
@@ -82,27 +82,27 @@ public class InterceptType extends OutputType<ProcessorType> {
         // in its outputs (if proceed() was called) and/or in the
         // outputs of the otherwise or last when clause for the predicated version.
         proxifyProceed(this.getProceed(), answer.getProceed(), answer);
-        
+
         if (answer.getOutputs().size() > 0) {
             // this is for the predicate version
-            ProcessorType<?> processor = answer; 
+            ProcessorType<?> processor = answer;
             processor = (ProcessorType<?>) answer.getOutputs().get(0);
             if (processor instanceof ChoiceType) {
-        	    ChoiceType choice = (ChoiceType) processor;
-                proxifyProceed(this.getProceed(), answer.getProceed(), 
+                ChoiceType choice = (ChoiceType) processor;
+                proxifyProceed(this.getProceed(), answer.getProceed(),
                         choice.getWhenClauses().get(choice.getWhenClauses().size() - 1));
                 proxifyProceed(this.getProceed(), answer.getProceed(), choice.getOtherwise());
             }
         }
         return answer;
     }
-    
+
     private void proxifyProceed(ProceedType orig, ProceedType proxy, ProcessorType<?> processor) {
-    	int index = processor.getOutputs().indexOf(orig);
+        int index = processor.getOutputs().indexOf(orig);
         if (index >= 0) {
             // replace original proceed with proxy
             processor.addOutput(proxy);
-        
+
             List<ProcessorType<?>> outs = processor.getOutputs();
             outs.remove(proxy);
             outs.set(index, proxy);

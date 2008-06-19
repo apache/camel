@@ -356,29 +356,32 @@ public class ResolverUtil<T> {
         }
     }
 
-    private static class OsgiUtil {
-	    static Set<String> getImplementationsInBundle(Test test, String packageName, ClassLoader loader, Method mth) {
-	        try {
-	            org.osgi.framework.Bundle bundle = (org.osgi.framework.Bundle) mth.invoke(loader);
-	            org.osgi.framework.Bundle[] bundles = bundle.getBundleContext().getBundles();
+    private static final class OsgiUtil {
+        private OsgiUtil() {
+            // Helper class
+        }
+        static Set<String> getImplementationsInBundle(Test test, String packageName, ClassLoader loader, Method mth) {
+            try {
+                org.osgi.framework.Bundle bundle = (org.osgi.framework.Bundle) mth.invoke(loader);
+                org.osgi.framework.Bundle[] bundles = bundle.getBundleContext().getBundles();
                 Set<String> urls = new HashSet<String>();
-	            for (org.osgi.framework.Bundle bd : bundles) {
-	                if (LOG.isTraceEnabled()) {
-	                    LOG.trace("Searching in bundle:" + bd);
-	                }
+                for (org.osgi.framework.Bundle bd : bundles) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Searching in bundle:" + bd);
+                    }
                     Enumeration<URL> paths = bd.findEntries("/" + packageName, "*.class", true);
-			        while (paths != null && paths.hasMoreElements()) {
-			            URL path = paths.nextElement();
+                    while (paths != null && paths.hasMoreElements()) {
+                        URL path = paths.nextElement();
                         urls.add(path.getPath().substring(1));
                     }
                 }
                 return urls;
-	        } catch (Throwable t) {
-	            LOG.error("Could not search osgi bundles for classes matching criteria: " + test
-	                      + "due to an Exception: " + t.getMessage());
+            } catch (Throwable t) {
+                LOG.error("Could not search osgi bundles for classes matching criteria: " + test
+                          + "due to an Exception: " + t.getMessage());
                 return null;
-	        }
-	    }
+            }
+        }
     }
 
 
