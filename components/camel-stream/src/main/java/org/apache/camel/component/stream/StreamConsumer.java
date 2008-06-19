@@ -29,7 +29,9 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.impl.DefaultMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
 public class StreamConsumer extends DefaultConsumer<Exchange> {
 
     private static final transient Log LOG = LogFactory.getLog(StreamConsumer.class);
-    private static final String TYPES = "in";
+    private static final String TYPES = "in,file,url";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
     private InputStream inputStream = System.in;
@@ -65,15 +67,7 @@ public class StreamConsumer extends DefaultConsumer<Exchange> {
             inputStream = resolveStreamFromUrl();
         }
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-        String line;
-        try {
-            while ((line = br.readLine()) != null) {
-                consume(line);
-            }
-        } finally {
-            br.close();
-        }
+        readFromStream();
     }
 
     @Override
@@ -84,9 +78,25 @@ public class StreamConsumer extends DefaultConsumer<Exchange> {
         super.doStop();
     }
 
-    public void consume(Object o) throws Exception {
+    private void readFromStream() throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+        String line;
+        try {
+            while ((line = br.readLine()) != null) {
+                consumeLine(line);
+            }
+        } finally {
+            br.close();
+        }
+    }
+
+    private void consumeLine(Object line) throws Exception {
         Exchange exchange = endpoint.createExchange();
-        exchange.setIn(new StreamMessage(o));
+
+        Message msg = new DefaultMessage();
+        msg.setBody(line);
+        exchange.setIn(msg);
+
         getProcessor().process(exchange);
     }
 

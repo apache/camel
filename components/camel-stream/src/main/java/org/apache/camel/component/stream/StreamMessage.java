@@ -18,6 +18,9 @@ package org.apache.camel.component.stream;
 
 import org.apache.camel.impl.DefaultMessage;
 
+/**
+ * @deprecated Camel Stream uses a DefaultMessage to contain the body. Will be removed in Camel 2.0
+ */
 public class StreamMessage extends DefaultMessage {
     private Object o;
 
