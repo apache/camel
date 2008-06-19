@@ -918,14 +918,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
                     break;
                 }
             }
-        }
 
-        if (currentProcessor instanceof InterceptType) {
-            proceed = ((InterceptType) currentProcessor).getProceed();
-        }
+            if (proceed == null) {
+                throw new IllegalArgumentException("Cannot use proceed() without being within an intercept() block");
+            }
 
-        if (proceed == null) {
-            throw new IllegalArgumentException("Cannot use proceed() without being within an intercept() block");
         }
 
         addOutput(proceed);
@@ -1488,9 +1485,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     protected Processor wrapProcessorInInterceptors(RouteContext routeContext, Processor target) throws Exception {
         // The target is required.
         if (target == null) {
-            throw new RuntimeCamelException("target provided.");
+            throw new RuntimeCamelException("target not provided.");
         }
-
 
         List<InterceptStrategy> strategies = new ArrayList<InterceptStrategy>();
         CamelContext camelContext = routeContext.getCamelContext();
