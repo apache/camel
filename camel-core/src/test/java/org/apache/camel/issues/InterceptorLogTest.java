@@ -26,13 +26,15 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class InterceptorLogTest extends ContextTestSupport {
 
     public void testInterceptor() throws Exception {
+        MockEndpoint intercept = getMockEndpoint("mock:intercept");
+        intercept.expectedMessageCount(2);
         MockEndpoint mock = getMockEndpoint("mock:result");
-        // TODO: we should only expect 1 message, but seda queues can sometimes send multiple
-        mock.expectedMinimumMessageCount(1);
+        mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
         template.sendBody("seda:foo", "Hello World");
 
+        intercept.assertIsSatisfied();
         mock.assertIsSatisfied();
     }
 
@@ -41,10 +43,11 @@ public class InterceptorLogTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // lets log all steps in all routes (must use proceed to let the exchange continue its
                 // normal route path instead of swallowing it here by our intercepter.
-                intercept().to("log:foo").proceed();
+                intercept().to("log:foo").proceed().to("mock:intercept");
+                intercept().to("log:bar").proceed();
 
                 from("seda:foo").to("seda:bar");
-                from("seda:bar").to("mock:result");
+                from("seda:bar").intercept().to("log:cheese").to("mock:result");
             }
         };
     }

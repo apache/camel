@@ -164,8 +164,11 @@ public class RoutesType extends OptionalIdentifiedType<RoutesType> implements Ro
         }
         List<InterceptType> intercepts = getIntercepts();
         for (InterceptType intercept : intercepts) {
-            route.addOutput(intercept);
-            route.pushBlock(intercept.getProceed());
+            // need to create a proxy for this one and use the 
+            // proceed of the proxy which will be local to this route
+            InterceptType proxy = intercept.createProxy();       	
+            route.addOutput(proxy);
+            route.pushBlock(proxy.getProceed());
         }
         route.getOutputs().addAll(getExceptions());
         getRoutes().add(route);
