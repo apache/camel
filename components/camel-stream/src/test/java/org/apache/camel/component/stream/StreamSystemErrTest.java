@@ -19,23 +19,25 @@ package org.apache.camel.component.stream;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
-public class StreamRouteBuilderTest extends ContextTestSupport {
+/**
+ * Unit test for System.err
+ */
+public class StreamSystemErrTest extends ContextTestSupport {
 
-    public void testStringContent() {
-        template.sendBody("direct:start", "this is text\n");
+    public void testStringContent() throws Exception {
+        template.sendBody("direct:in", "Hello Text World\n");
     }
 
     public void testBinaryContent() {
-        template.sendBody("direct:start", "This is bytes\n".getBytes());
+        template.sendBody("direct:in", "Hello Bytes World\n".getBytes());
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setHeader("stream", constant(System.out))
-                    .to("stream:err", "stream:out", "stream:header");
+                from("direct:in").to("stream:err");
             }
         };
     }
-    
+
 }
