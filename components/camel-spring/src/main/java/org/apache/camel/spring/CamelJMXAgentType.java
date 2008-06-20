@@ -33,54 +33,117 @@ import org.apache.camel.model.IdentifiedType;
 @XmlRootElement(name = "jmxAgent")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelJMXAgentType extends IdentifiedType {
+    /**
+     * Disable JMI (default false)
+     */
+    @XmlAttribute(required = false)
+    private Boolean disabled;
+    
+    /**
+     * RMI connector registry port (default 1099)
+     */
+    @XmlAttribute(required = false)
+    private Integer registryPort;
+    
+    /**
+     * RMI connector server port (default -1 not used)
+     */
     @XmlAttribute(required = false)
     private Integer connectorPort;
+    
+    /**
+     * MBean server default domain name (default org.apache.camel)
+     */
     @XmlAttribute(required = false)
-    private String jmxDomainName;
+    private String mbeanServerDefaultDomain;
+    
+    /**
+     * MBean object domain name (default org.apache.camel)
+     */
     @XmlAttribute(required = false)
-    private String connectorPath;
+    private String mbeanObjectDomainName;
+  
+    /**
+     * JMX Service URL path (default /jmxrmi)
+     */
+    @XmlAttribute(required = false)
+    private String serviceUrlPath;
+    
+    /**
+     * A flag that indicates whether the agent should be created
+     */
     @XmlAttribute(required = false)
     private Boolean createConnector;
+    
+    /**
+     * A flag that indicates whether the platform mbean server should be used
+     */
     @XmlAttribute(required = false)
     private Boolean usePlatformMBeanServer;
-
-    public void setConnectorPort(Integer port) {
-        connectorPort = port;
-    }
 
     public Integer getConnectorPort() {
         return connectorPort;
     }
-
-    public void setJmxDomainName(String name) {
-        jmxDomainName = name;
+    
+    public void setConnectorPort(Integer value) {
+        connectorPort = value;
     }
 
-    public String getJmxDomainName() {
-        return jmxDomainName;
+    public Integer getRegistryPort() {
+        return registryPort;
     }
-
-    public void setConnectorPath(String path) {
-        connectorPath = path;
+    
+    public void setRegistryPort(Integer value) {
+        registryPort = value;
     }
-
-    public String getConnectorPath() {
-        return connectorPath;
+    
+    public String getMbeanServerDefaultDomain() {
+        return mbeanServerDefaultDomain;
     }
-
-    public void setCreateConnector(Boolean flag) {
-        createConnector = flag;
+    
+    public void setMbeanServerDefaultDomain(String value) {
+        mbeanServerDefaultDomain = value;
+    }
+    
+    public String getMbeanObjectDomainName() {
+        return mbeanObjectDomainName;
+    }
+    
+    public void getMbeanObjectDomainName(String value) {
+        mbeanObjectDomainName = value;
+    }
+    
+    public String getServiceUrlPath() {
+        return serviceUrlPath;
+    }
+    
+    public void getServiceUrlPath(String value) {
+        serviceUrlPath = value;
     }
 
     public Boolean isCreateConnector() {
         return createConnector;
     }
-
-    public void setUsePlatformMBeanServer(Boolean flag) {
-        usePlatformMBeanServer = flag;
+    
+    public void setCreateConnector(Boolean value) {
+        createConnector = value;
     }
 
     public Boolean isUsePlatformMBeanServer() {
         return usePlatformMBeanServer;
     }
+    
+    public void setUsePlatformMBeanServer(Boolean value) {
+        usePlatformMBeanServer = value;
+    }
+
+    public Boolean isDisabled() {
+        return disabled;
+    }
+    
+    public void setDisabled(Boolean value) {
+        disabled = value;
+    }
+    
+    
 }

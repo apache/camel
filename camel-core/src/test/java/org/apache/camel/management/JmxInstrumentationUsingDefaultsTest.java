@@ -17,134 +17,119 @@
 package org.apache.camel.management;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.management.MBeanServer;
+import javax.management.MBeanServerConnection;
+import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
+/**
+ * This test verifies JMX is enabled by default and it uses local mbean 
+ * server to conduct the test as connector server is not enabled by default.
+ * 
+ * @version $Revision$
+ *
+ */
 public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
-    public static final int DEFAULT_PORT = 1099;
-
-    protected DefaultInstrumentationAgent iAgent;
     protected String domainName = DefaultInstrumentationAgent.DEFAULT_DOMAIN;
-    protected boolean sleepSoYouCanBrowseInJConsole;
+    protected MBeanServerConnection mbsc;
+    protected long sleepForConnection = 0;
 
     public void testMBeansRegistered() throws Exception {
-        assertNotNull(iAgent.getMBeanServer());
-        // assertEquals(domainName, iAgent.getMBeanServer().getDefaultDomain());
+        if (!Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) { 
+            assertEquals(domainName, mbsc.getDefaultDomain());
+        }
 
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
-        Set s = iAgent.getMBeanServer().queryNames(
+        Set s = mbsc.queryNames(
                 new ObjectName(domainName + ":type=endpoint,*"), null);
         assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
 
-        s = iAgent.getMBeanServer().queryNames(
+        s = mbsc.queryNames(
                 new ObjectName(domainName + ":type=context,*"), null);
         assertEquals("Could not find 1 context: " + s, 1, s.size());
 
-        s = iAgent.getMBeanServer().queryNames(
+        s = mbsc.queryNames(
                 new ObjectName(domainName + ":type=processor,*"), null);
         assertEquals("Could not find 1 processor: " + s, 1, s.size());
 
-        s = iAgent.getMBeanServer().queryNames(
+        s = mbsc.queryNames(
                 new ObjectName(domainName + ":type=route,*"), null);
         assertEquals("Could not find 1 route: " + s, 1, s.size());
-
-        if (sleepSoYouCanBrowseInJConsole) {
-            Thread.sleep(100000);
-        }
 
     }
 
     public void testCounters() throws Exception {
+
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived("<hello>world!</hello>");
         sendBody("direct:start", "<hello>world!</hello>");
 
         resultEndpoint.assertIsSatisfied();
 
-        MBeanServer mbs = iAgent.getMBeanServer();
-        verifyCounter(mbs, new ObjectName(domainName + ":type=route,*"));
-        verifyCounter(mbs, new ObjectName(domainName + ":type=processor,*"));
-
+        verifyCounter(mbsc, new ObjectName(domainName + ":type=route,*"));
+        verifyCounter(mbsc, new ObjectName(domainName + ":type=processor,*"));
+        
     }
 
-    private void verifyCounter(MBeanServer mbs, ObjectName name) throws Exception {
-        Set s = mbs.queryNames(name, null);
+    private void verifyCounter(MBeanServerConnection beanServer, ObjectName name) throws Exception {
+        Set s = beanServer.queryNames(name, null);
         assertEquals("Found mbeans: " + s, 1, s.size());
 
         Iterator iter = s.iterator();
         ObjectName pcob = (ObjectName)iter.next();
 
-        Long valueofNumExchanges = (Long)mbs.getAttribute(pcob, "NumExchanges");
+        Long valueofNumExchanges = (Long)beanServer.getAttribute(pcob, "NumExchanges");
         assertNotNull("Expected attribute found. MBean registered under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       valueofNumExchanges);
         assertTrue(valueofNumExchanges == 1);
-        Long valueofNumCompleted = (Long)mbs.getAttribute(pcob, "NumCompleted");
+        Long valueofNumCompleted = (Long)beanServer.getAttribute(pcob, "NumCompleted");
         assertNotNull("Expected attribute found. MBean registered under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       valueofNumCompleted);
         assertTrue(valueofNumCompleted == 1);
-        Long valueofNumFailed = (Long)mbs.getAttribute(pcob, "NumFailed");
+        Long valueofNumFailed = (Long)beanServer.getAttribute(pcob, "NumFailed");
         assertNotNull("Expected attribute found. MBean registered under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       valueofNumFailed);
         assertTrue(valueofNumFailed == 0);
-        Double valueofMinProcessingTime = (Double)mbs.getAttribute(pcob, "MinProcessingTimeMillis");
+        Double valueofMinProcessingTime = (Double)beanServer.getAttribute(pcob, "MinProcessingTimeMillis");
         assertNotNull("Expected attribute found. MBean registered under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       valueofMinProcessingTime);
         assertTrue(valueofMinProcessingTime > 0);
-        Double valueofMaxProcessingTime = (Double)mbs.getAttribute(pcob, "MaxProcessingTimeMillis");
+        Double valueofMaxProcessingTime = (Double)beanServer.getAttribute(pcob, "MaxProcessingTimeMillis");
         assertNotNull("Expected attribute found. MBean registered under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       valueofMaxProcessingTime);
         assertTrue(valueofMaxProcessingTime > 0);
-        Double valueofMeanProcessingTime = (Double)mbs.getAttribute(pcob, "MeanProcessingTimeMillis");
+        Double valueofMeanProcessingTime = (Double)beanServer.getAttribute(pcob, "MeanProcessingTimeMillis");
         assertNotNull("Expected attribute found. MBean registered under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       valueofMeanProcessingTime);
         assertTrue(valueofMeanProcessingTime >= valueofMinProcessingTime
                    && valueofMeanProcessingTime <= valueofMaxProcessingTime);
-        Double totalProcessingTime = (Double)mbs.getAttribute(pcob, "TotalProcessingTimeMillis");
+        Double totalProcessingTime = (Double)beanServer.getAttribute(pcob, "TotalProcessingTimeMillis");
         assertNotNull("Expected attribute found. MBean registered under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       totalProcessingTime);
         assertTrue(totalProcessingTime > 0);
 
         assertNotNull("Expected first completion time to be available", 
-                mbs.getAttribute(pcob, "FirstExchangeCompletionTime"));
+                beanServer.getAttribute(pcob, "FirstExchangeCompletionTime"));
         
         assertNotNull("Expected last completion time to be available", 
-                mbs.getAttribute(pcob, "LastExchangeCompletionTime"));
+                beanServer.getAttribute(pcob, "LastExchangeCompletionTime"));
 
-    }
-
-    protected void enableJmx() {
-        iAgent.enableJmx(null, null, 0);
-    }
-
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-
-        createInstrumentationAgent(context, DEFAULT_PORT);
-
-        return context;
-    }
-
-    protected void createInstrumentationAgent(CamelContext context, int port) throws Exception {
-        iAgent = new DefaultInstrumentationAgent();
-        iAgent.setCamelContext(context);
-        enableJmx();
-        iAgent.start();
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -157,7 +142,43 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
     @Override
     protected void tearDown() throws Exception {
-        iAgent.stop();
+        releaseMBeanServers();
+        mbsc = null;
         super.tearDown();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void releaseMBeanServers() {
+        List<MBeanServer> servers = 
+            (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
+
+        for (MBeanServer server : servers) {
+            MBeanServerFactory.releaseMBeanServer(server); 
+        }
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        releaseMBeanServers();
+        super.setUp();
+        Thread.sleep(sleepForConnection);
+        mbsc = getMBeanConnection();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected MBeanServerConnection getMBeanConnection() throws Exception {
+        if (mbsc == null) {
+            List<MBeanServer> servers = 
+                    (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
+
+            for (MBeanServer server : servers) {
+                if (domainName.equals(server.getDefaultDomain())) {
+
+                    mbsc = server;
+                    break;
+                }
+            }
+        }
+        return mbsc;
     }
 }

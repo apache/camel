@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -53,14 +52,12 @@ import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.processor.DelegateProcessor;
-import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MessageIdRepository;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.ErrorHandlerWrappingStrategy;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
@@ -75,6 +72,7 @@ import org.apache.commons.logging.LogFactory;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public abstract class ProcessorType<Type extends ProcessorType> extends OptionalIdentifiedType<Type> implements Block {
     public static final String DEFAULT_TRACE_CATEGORY = "org.apache.camel.TRACE";
+    private static final transient Log LOG = LogFactory.getLog(ProcessorType.class);
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Boolean inheritErrorHandlerFlag;
     private NodeFactory nodeFactory;
@@ -106,7 +104,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      */
     public Processor wrapProcessor(RouteContext routeContext, Processor processor) throws Exception {
         processor = wrapProcessorInInterceptors(routeContext, processor);
-        return wrapInErrorHandler(processor);
+        return wrapInErrorHandler(routeContext, processor);
     }
 
     // Fluent API
@@ -1513,8 +1511,15 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
             DelegateProcessor interceptor = interceptorType.createInterceptor(routeContext);
             if (!interceptors.contains(interceptor)) {
                 interceptors.add(interceptor);
-                interceptor.setProcessor(target);
-                target = interceptor;
+                if (interceptor.getProcessor() != null) {
+                    LOG.warn("Interceptor " + interceptor + " currently wraps target " 
+                            + interceptor.getProcessor() 
+                            + " is attempting to change target " + target
+                            + " new wrapping has been denied.");
+                } else {
+                    interceptor.setProcessor(target);
+                    target = interceptor;
+                }
             }
         }
         return target;
@@ -1524,8 +1529,19 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * A strategy method to allow newly created processors to be wrapped in an
      * error handler.
      */
-    protected Processor wrapInErrorHandler(Processor processor) throws Exception {
-        return getErrorHandlerBuilder().createErrorHandler(processor);
+    protected Processor wrapInErrorHandler(RouteContext routeContext, Processor target) throws Exception {
+        // The target is required.
+        if (target == null) {
+            throw new RuntimeCamelException("target not provided.");
+        }
+        
+        ErrorHandlerWrappingStrategy strategy = routeContext.getErrorHandlerWrappingStrategy();
+        
+        if (strategy != null) {
+            return strategy.wrapProcessorInErrorHandler(this, target);
+        }
+        
+        return getErrorHandlerBuilder().createErrorHandler(target);
     }
 
     protected ErrorHandlerBuilder createErrorHandlerBuilder() {
@@ -1567,6 +1583,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         for (ProcessorType output : outputs) {
             Processor processor = output.createProcessor(routeContext);
             processor = output.wrapProcessorInInterceptors(routeContext, processor);
+            
+            if (!(this instanceof ExceptionType || this instanceof TryType)) {
+                processor = output.wrapInErrorHandler(routeContext, processor);
+            }
+            
             list.add(processor);
         }
         Processor processor = null;

@@ -36,6 +36,7 @@ import org.apache.camel.processor.Interceptor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.ProceedProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
+import org.apache.camel.spi.ErrorHandlerWrappingStrategy;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
 
@@ -53,6 +54,7 @@ public class DefaultRouteContext implements RouteContext {
     private Interceptor lastInterceptor;
     private CamelContext camelContext;
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
+    private ErrorHandlerWrappingStrategy errorHandlerWrappingStrategy;
 
     public DefaultRouteContext(RouteType route, FromType from, Collection<Route> routes) {
         this.route = route;
@@ -182,5 +184,14 @@ public class DefaultRouteContext implements RouteContext {
 
     public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
         getInterceptStrategies().add(interceptStrategy);
+    }
+
+    public ErrorHandlerWrappingStrategy getErrorHandlerWrappingStrategy() {
+        return errorHandlerWrappingStrategy;
+    }
+
+    public void setErrorHandlerWrappingStrategy(ErrorHandlerWrappingStrategy strategy) {
+        errorHandlerWrappingStrategy = strategy;
+        
     }
 }

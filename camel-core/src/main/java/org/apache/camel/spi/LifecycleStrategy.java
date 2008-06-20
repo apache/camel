@@ -29,9 +29,9 @@ import org.apache.camel.Service;
  */
 public interface LifecycleStrategy {
     /**
-     * Notification on adding a {@link CamelContext}.
+     * Notification on starting a {@link CamelContext}.
      */
-    void onContextCreate(CamelContext context);
+    void onContextStart(CamelContext context);
 
     /**
      * Notification on adding an {@link Endpoint}.

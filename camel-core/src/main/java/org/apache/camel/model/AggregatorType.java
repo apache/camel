@@ -84,12 +84,30 @@ public class AggregatorType extends ExpressionNode {
     @SuppressWarnings("unchecked")
     @Override
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
+        final Aggregator aggregator = createAggregator(routeContext);
+
+        Route route = new Route<Exchange>(aggregator.getEndpoint(), aggregator) {
+            @Override
+            public String toString() {
+                return "AggregatorRoute[" + getEndpoint() + " -> " + aggregator.getProcessor() + "]";
+            }
+        };
+
+        routes.add(route);
+    }
+    
+    @Override
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
+        return createAggregator(routeContext);
+    }
+
+    protected Aggregator createAggregator(RouteContext routeContext) throws Exception {
         Endpoint from = routeContext.getEndpoint();
         final Processor processor = routeContext.createProcessor(this);
 
-        final Aggregator service;
+        final Aggregator aggregator;
         if (aggregationCollection != null) {
-            service = new Aggregator(from, processor, aggregationCollection);
+            aggregator = new Aggregator(from, processor, aggregationCollection);
         } else {
             AggregationStrategy strategy = getAggregationStrategy();
             if (strategy == null && strategyRef != null) {
@@ -105,29 +123,22 @@ public class AggregatorType extends ExpressionNode {
                 predicate = completedPredicate.createPredicate(routeContext);
             }
             if (predicate != null) {
-                service = new Aggregator(from, processor, aggregateExpression, strategy, predicate);
+                aggregator = new Aggregator(from, processor, aggregateExpression, strategy, predicate);
             } else {
-                service = new Aggregator(from, processor, aggregateExpression, strategy);
+                aggregator = new Aggregator(from, processor, aggregateExpression, strategy);
             }
         }
-
+        
         if (batchSize != null) {
-            service.setBatchSize(batchSize);
+            aggregator.setBatchSize(batchSize);
         }
+        
         if (batchTimeout != null) {
-            service.setBatchTimeout(batchTimeout);
+            aggregator.setBatchTimeout(batchTimeout);
         }
-
-        Route route = new Route<Exchange>(from, service) {
-            @Override
-            public String toString() {
-                return "AggregatorRoute[" + getEndpoint() + " -> " + processor + "]";
-            }
-        };
-
-        routes.add(route);
+        
+        return aggregator;
     }
-
     public AggregationCollection getAggregationCollection() {
         return aggregationCollection;
     }

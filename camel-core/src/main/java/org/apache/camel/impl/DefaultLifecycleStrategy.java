@@ -31,7 +31,7 @@ import org.apache.camel.spi.RouteContext;
  */
 public class DefaultLifecycleStrategy implements LifecycleStrategy {
 
-    public void onContextCreate(CamelContext context) {
+    public void onContextStart(CamelContext context) {
         // do nothing
     }
 

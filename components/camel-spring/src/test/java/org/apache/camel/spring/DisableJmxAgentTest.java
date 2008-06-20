@@ -14,28 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.managment;
+package org.apache.camel.spring;
 
-import org.apache.camel.management.DefaultInstrumentationAgent;
-import org.apache.camel.spi.InstrumentationAgent;
-import org.apache.camel.spring.EndpointReferenceTest;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class JmxInstrumentationWithConnectorTest extends EndpointReferenceTest {
-
-    public void testJmxConfiguration() throws Exception {
-        InstrumentationAgent agent = getMandatoryBean(DefaultInstrumentationAgent.class, "agent");
-        assertNotNull("SpringInstrumentationAgent must be configured for JMX support", agent);
-        assertNotNull("MBeanServer must be configured for JMX support", agent.getMBeanServer());
-        assertEquals("org.apache.camel.test", agent.getMBeanServer().getDefaultDomain());
-    }
-
+/**
+ * Test that verifies JMX can be disabled via Spring.
+ * 
+ * @version $Revision$
+ *
+ */
+public class DisableJmxAgentTest extends DefaultJMXAgentTest {
+    
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/jmxInstrumentationWithConnector.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/disableJmxConfig.xml");            
+    }
+    
+    public void testGetJMXConnector() throws Exception {
+        assertNull(mbsc);
     }
 
-    public void testGetContext() {
-        assertNotNull(this.applicationContext.getBean("camel"));
-    }
 }

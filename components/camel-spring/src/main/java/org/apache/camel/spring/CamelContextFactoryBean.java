@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.management.MBeanServer;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -32,13 +31,15 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultLifecycleStrategy;
+import org.apache.camel.management.DefaultInstrumentationAgent;
+import org.apache.camel.management.InstrumentationLifecycleStrategy;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.RouteBuilderRef;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.processor.interceptor.Debugger;
-import org.apache.camel.spi.InstrumentationAgent;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
 import org.apache.commons.logging.Log;
@@ -65,10 +66,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelContextFactoryBean extends IdentifiedType implements RouteContainer, FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
     private static final Log LOG = LogFactory.getLog(CamelContextFactoryBean.class);
-    @XmlAttribute(required = false)
-    private Boolean useJmx;
-    @XmlAttribute(required = false)
-    private String mbeanServer;
+
     @XmlAttribute(required = false)
     private Boolean autowireRouteBuilders = Boolean.TRUE;
     @XmlElement(name = "package", required = false)
@@ -99,8 +97,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private ApplicationContext applicationContext;
     @XmlTransient
     private ClassLoader contextClassLoaderOnStart;
-    @XmlTransient
-    private InstrumentationAgent instrumentationAgent;
     @XmlTransient
     private BeanPostProcessor beanPostProcessor;
 
@@ -154,33 +150,27 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
 
-        // set the instrumentation agent here        
-        if (instrumentationAgent == null && isJmxEnabled()) {            
-            if (lifecycleStrategy != null) {
-                LOG.warn("lifecycleStrategy will be overriden by InstrumentationLifecycleStrategy");
-            }
-            
-            SpringInstrumentationAgent agent = new SpringInstrumentationAgent();
-            if (camelJMXAgent != null) {
-                agent.enableJmx(camelJMXAgent.getJmxDomainName(), camelJMXAgent.getConnectorPath(), camelJMXAgent.getConnectorPort());
-                if (camelJMXAgent.isCreateConnector() != null) {
-                    agent.setCreateConnector(camelJMXAgent.isCreateConnector());
-                }
-                if (camelJMXAgent.isUsePlatformMBeanServer() != null) {
-                    agent.setUsePlatformMBeanServer(camelJMXAgent.isUsePlatformMBeanServer());
-                }
+        if (camelJMXAgent != null) {
+            if (camelJMXAgent.isDisabled() != null && camelJMXAgent.isDisabled()) {
+                getContext().setLifecycleStrategy(new DefaultLifecycleStrategy());
             } else {
-                agent.enableJmx();
+            
+                if (lifecycleStrategy != null) {
+                    LOG.warn("lifecycleStrategy will be overriden by InstrumentationLifecycleStrategy");
+                }
+
+                DefaultInstrumentationAgent agent = new DefaultInstrumentationAgent();
+                agent.setConnectorPort(camelJMXAgent.getConnectorPort());
+                agent.setCreateConnector(camelJMXAgent.isCreateConnector());
+                agent.setMBeanObjectDomainName(camelJMXAgent.getMbeanObjectDomainName());
+                agent.setMBeanServerDefaultDomain(camelJMXAgent.getMbeanServerDefaultDomain());
+                agent.setRegistryPort(camelJMXAgent.getRegistryPort());
+                agent.setServiceUrlPath(camelJMXAgent.getServiceUrlPath());
+                agent.setUsePlatformMBeanServer(camelJMXAgent.isUsePlatformMBeanServer());
+                
+                getContext().setLifecycleStrategy(new InstrumentationLifecycleStrategy(agent));
             }
-            agent.setCamelContext(getContext());
-            String name = getMbeanServer();
-            if (name != null) {
-                MBeanServer mbeanServer = (MBeanServer) getApplicationContext().getBean(name, MBeanServer.class);
-                agent.setMBeanServer(mbeanServer);
-            }
-            instrumentationAgent = agent;
-            instrumentationAgent.start();
-        } 
+        }
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("Found JAXB created routes: " + getRoutes());
@@ -303,32 +293,12 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.packages = packages;
     }
 
-    public String getMbeanServer() {
-        return mbeanServer;
-    }
-
-    public void setMbeanServer(String mbeanServer) {
-        this.mbeanServer = mbeanServer;
-    }
-
     public void setBeanPostProcessor(BeanPostProcessor postProcessor) {
         this.beanPostProcessor = postProcessor;
     }
 
     public BeanPostProcessor getBeanPostProcessor() {
         return beanPostProcessor;
-    }
-
-    public boolean isJmxEnabled() {
-        return useJmx != null && useJmx.booleanValue();
-    }
-
-    public Boolean getUseJmx() {
-        return useJmx;
-    }
-
-    public void setUseJmx(Boolean useJmx) {
-        this.useJmx = useJmx;
     }
 
     public void setCamelJMXAgent(CamelJMXAgentType agent) {

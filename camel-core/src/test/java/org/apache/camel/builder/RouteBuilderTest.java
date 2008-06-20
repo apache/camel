@@ -26,6 +26,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.apache.camel.management.InstrumentationProcessor;
+import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.DelegateProcessor;
@@ -66,8 +68,15 @@ public class RouteBuilderTest extends TestSupport {
             Endpoint<Exchange> key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
-
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, processor);
+            
+            SendProcessor sendProcessor;
+            if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
+                sendProcessor = assertIsInstanceOf(SendProcessor.class, processor);
+            } else {
+                InstrumentationProcessor interceptor =
+                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                sendProcessor = assertIsInstanceOf(SendProcessor.class, interceptor.getProcessor());
+            }
             assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
         }
     }
@@ -93,11 +102,17 @@ public class RouteBuilderTest extends TestSupport {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
-
+            
+            if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
+                InstrumentationProcessor interceptor = 
+                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                processor = interceptor.getProcessor();
+            }
+            
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class,
-                                                             unwrapErrorHandler(filterProcessor
-                                                                 .getProcessor()));
+                    unwrapErrorHandler(filterProcessor
+                            .getProcessor()));
             assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
         }
     }
@@ -124,6 +139,12 @@ public class RouteBuilderTest extends TestSupport {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
+            
+            if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
+                InstrumentationProcessor interceptor = 
+                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                processor = interceptor.getProcessor();
+            }
 
             ChoiceProcessor choiceProcessor = assertIsInstanceOf(ChoiceProcessor.class, processor);
             List<FilterProcessor> filters = choiceProcessor.getFilters();
@@ -164,6 +185,11 @@ public class RouteBuilderTest extends TestSupport {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
+            if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
+                InstrumentationProcessor interceptor = 
+                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                processor = interceptor.getProcessor();
+            }
 
             assertEquals("Should be called with my processor", myProcessor, processor);
         }
@@ -190,7 +216,11 @@ public class RouteBuilderTest extends TestSupport {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
-
+            if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
+                InstrumentationProcessor interceptor = 
+                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                processor = interceptor.getProcessor();
+            }
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
             assertEquals("Should be called with my processor", myProcessor,
                          unwrapErrorHandler(filterProcessor.getProcessor()));
@@ -261,6 +291,12 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
+            if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
+                InstrumentationProcessor interceptor = 
+                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                processor = interceptor.getProcessor();
+            }
+            
             DelegateProcessor p1 = assertIsInstanceOf(DelegateProcessor.class, processor);
             processor = p1.getProcessor();
 
@@ -335,7 +371,11 @@ public class RouteBuilderTest extends TestSupport {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
-
+            if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
+                InstrumentationProcessor interceptor = 
+                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                processor = interceptor.getProcessor();
+            }
             RecipientList p1 = assertIsInstanceOf(RecipientList.class, processor);
         }
     }
@@ -362,7 +402,11 @@ public class RouteBuilderTest extends TestSupport {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
-
+            if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
+                InstrumentationProcessor interceptor = 
+                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                processor = interceptor.getProcessor();
+            }
             Splitter p1 = assertIsInstanceOf(Splitter.class, processor);
         }
     }
@@ -390,7 +434,11 @@ public class RouteBuilderTest extends TestSupport {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
-
+            if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
+                InstrumentationProcessor interceptor = 
+                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                processor = interceptor.getProcessor();
+            }
             IdempotentConsumer idempotentConsumer = assertIsInstanceOf(IdempotentConsumer.class, processor);
 
             assertEquals("messageIdExpression", "header(myMessageId)", idempotentConsumer
@@ -409,7 +457,7 @@ public class RouteBuilderTest extends TestSupport {
         if (!(processor instanceof SendProcessor)) {
             processor = unwrapErrorHandler(processor);
         }
-
+        
         SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, processor);
         assertEquals("Endpoint URI", uri, sendProcessor.getDestination().getEndpointUri());
     }
@@ -418,6 +466,13 @@ public class RouteBuilderTest extends TestSupport {
         if (!(processor instanceof Producer)) {
             processor = unwrapErrorHandler(processor);
         }
+        
+        if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
+            InstrumentationProcessor interceptor = 
+                assertIsInstanceOf(InstrumentationProcessor.class, processor);
+            processor = interceptor.getProcessor();
+        }
+        
         if (processor instanceof SendProcessor) {
             assertSendTo(processor, uri);
         } else {

@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision$
  */
-public class BatchProcessor extends ServiceSupport implements Runnable {
+public class BatchProcessor extends ServiceSupport implements Runnable, Processor {
     public static final long DEFAULT_BATCH_TIMEOUT = 1000L;
     public static final int DEFAULT_BATCH_SIZE = 100;
 
@@ -176,5 +176,9 @@ public class BatchProcessor extends ServiceSupport implements Runnable {
 
     protected Collection<Exchange> getCollection() {
         return collection;
+    }
+
+    public void process(Exchange exchange) throws Exception {
+        // empty since exchanges come from endpoint's polling consumer
     }
 }

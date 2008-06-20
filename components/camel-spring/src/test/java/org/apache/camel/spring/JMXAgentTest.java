@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spring;
 
-import java.net.MalformedURLException;
-
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
@@ -25,13 +23,39 @@ import javax.management.remote.JMXServiceURL;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+/**
+ * Test that verifies JMX properties can be configured via 
+ * Spring.
+ * 
+ * @version $Revision$
+ *
+ */
 public class JMXAgentTest extends DefaultJMXAgentTest {
+    
+    protected static final String JMXSERVICEURL =
+        "service:jmx:rmi:///jndi/rmi://localhost:20008/jmxrmi";
+    protected JMXConnector clientConnector;
 
     @Override
-    protected String getPort() {
-        return "20008";
+    protected void setUp() throws Exception {
+        sleepForConnection = 2000;
+        super.setUp();
     }
-
+    
+    @Override
+    protected void tearDown() throws Exception {
+        
+        if (clientConnector != null) {
+            try {
+                clientConnector.close();
+            } catch (Exception e) {
+                // ignore
+            }
+            clientConnector = null;
+        }
+        super.tearDown();
+    }
+    
     @Override
     protected String getDomainName() {
         return "org.apache.camel.test";
@@ -40,6 +64,18 @@ public class JMXAgentTest extends DefaultJMXAgentTest {
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/jmxConfig.xml");
+    }
+    
+    @Override
+    protected MBeanServerConnection getMBeanConnection() throws Exception {
+        if (mbsc == null) {
+            if (clientConnector == null) {
+                clientConnector = JMXConnectorFactory.connect(
+                        new JMXServiceURL(JMXSERVICEURL), null);
+            }
+            mbsc = clientConnector.getMBeanServerConnection();
+        }
+        return mbsc;   
     }
 
 }

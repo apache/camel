@@ -16,40 +16,38 @@
  */
 package org.apache.camel.management;
 
-import javax.management.InstanceNotFoundException;
-import javax.management.ObjectName;
-
 /**
- * This module contains test cases that verifies jmx system property uses.
+ * A unit test which verifies disabling of JMX instrumentation.
  *
  * @version $Revision$
  */
-public class JmxInstrumentationUsingPropertiesTest extends JmxInstrumentationUsingDefaultsTest {
-
+public class JmxInstrumentationDisableTest extends JmxInstrumentationUsingPropertiesTest {
+    
     @Override
     protected void setUp() throws Exception {
-        domainName = "org.apache.camel-properties";
-        System.setProperty(JmxSystemPropertyKeys.DOMAIN, domainName);
-        System.setProperty(JmxSystemPropertyKeys.MBEAN_DOMAIN, domainName);
-
+        System.setProperty(JmxSystemPropertyKeys.DISABLED, "True");
         super.setUp();
     }
 
     @Override
     protected void tearDown() throws Exception {
-        // restore environment to original state
-        System.clearProperty(JmxSystemPropertyKeys.DOMAIN);
-        System.clearProperty(JmxSystemPropertyKeys.MBEAN_DOMAIN);
+        System.clearProperty(JmxSystemPropertyKeys.DISABLED);
         super.tearDown();
     }
-
-    public void testMBeanServerType() throws Exception {
-        try {
-            mbsc.getMBeanInfo(new ObjectName("java.lang:type=OperatingSystem"));
-            assertTrue(false);  // should not get here
-        } catch (InstanceNotFoundException e) {
-            // expect exception since this is not a platform mbean server
-        }
+    
+    @Override
+    public void testMBeansRegistered() throws Exception {
+        assertNull(mbsc);
     }
+    
+    @Override
+    public void testCounters() throws Exception {
+        assertNull(mbsc);
+    }
+    
+    @Override
+    public void testMBeanServerType() throws Exception {
+        assertNull(mbsc);
 
+    }
 }

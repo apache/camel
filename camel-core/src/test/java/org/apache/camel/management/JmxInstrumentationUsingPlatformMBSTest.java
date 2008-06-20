@@ -16,30 +16,42 @@
  */
 package org.apache.camel.management;
 
+import java.lang.management.ManagementFactory;
+
+import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
 /**
+ * This test verifies the system property to select platform mbean server.
+ * 
  * @version $Revision$
  */
 public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUsingPropertiesTest {
 
     @Override
     protected void setUp() throws Exception {
-        System.setProperty(DefaultInstrumentationAgent.SYSTEM_PROPERTY_JMX_USE_PLATFORM_MBS, "True");
+        System.setProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS, "True");
         super.setUp();
     }
 
     @Override
     protected void tearDown() throws Exception {
-        // restore environment to original state
-        System.setProperty(DefaultInstrumentationAgent.SYSTEM_PROPERTY_JMX_USE_PLATFORM_MBS, "");
+        System.clearProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS);
         super.tearDown();
     }
 
     @Override
     public void testMBeanServerType() throws Exception {
-        assertNotNull(iAgent.getMBeanServer().getMBeanInfo(
+        assertNotNull(mbsc.getMBeanInfo(
                 new ObjectName("java.lang:type=OperatingSystem")));
+    }
+
+    @Override
+    protected MBeanServerConnection getMBeanConnection() throws Exception {
+        if (mbsc == null) {
+            mbsc = ManagementFactory.getPlatformMBeanServer();
+        }
+        return mbsc;
     }
 
 }

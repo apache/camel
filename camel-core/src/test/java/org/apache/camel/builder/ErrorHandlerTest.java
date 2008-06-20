@@ -23,6 +23,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.apache.camel.management.InstrumentationProcessor;
+import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LoggingErrorHandler;
@@ -86,12 +88,24 @@ public class ErrorHandlerTest extends TestSupport {
                 LoggingErrorHandler loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class,
                                                                           processor);
                 Processor outputProcessor = loggingProcessor.getOutput();
-                sendProcessor = assertIsInstanceOf(SendProcessor.class, outputProcessor);
+                if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
+                    sendProcessor = assertIsInstanceOf(SendProcessor.class, outputProcessor);
+                } else {
+                    InstrumentationProcessor interceptor =
+                        assertIsInstanceOf(InstrumentationProcessor.class, outputProcessor);
+                    sendProcessor = assertIsInstanceOf(SendProcessor.class, interceptor.getProcessor());
+                }
             } else {
                 assertEquals("From endpoint", "seda:b", endpointUri);
                 DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, processor);
                 Processor outputProcessor = deadLetterChannel.getOutput();
-                sendProcessor = assertIsInstanceOf(SendProcessor.class, outputProcessor);
+                if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
+                    sendProcessor = assertIsInstanceOf(SendProcessor.class, outputProcessor);
+                } else {
+                    InstrumentationProcessor interceptor =
+                        assertIsInstanceOf(InstrumentationProcessor.class, outputProcessor);
+                    sendProcessor = assertIsInstanceOf(SendProcessor.class, interceptor.getProcessor());
+                }
             }
             log.debug("For " + endpointUri + " using: " + sendProcessor);
         }
@@ -169,8 +183,18 @@ public class ErrorHandlerTest extends TestSupport {
             Processor processor = unwrap(consumerRoute.getProcessor());
 
             LoggingErrorHandler loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class, processor);
-            FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, loggingProcessor.getOutput());
+
+            if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {   
+                processor = loggingProcessor.getOutput();
+            } else {
+                InstrumentationProcessor interceptor =
+                    assertIsInstanceOf(InstrumentationProcessor.class, loggingProcessor.getOutput());
+                processor = interceptor.getProcessor();
+            }
+            
+            FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, filterProcessor.getProcessor());
+
             log.debug("Found sendProcessor: " + sendProcessor);
         }
     }

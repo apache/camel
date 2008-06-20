@@ -90,4 +90,17 @@ public interface RouteContext {
 
     void addInterceptStrategy(InterceptStrategy interceptStrategy);
 
+    /**
+     * This method retrieves the ErrorHandlerWrappingStrategy.
+     *  
+     * @return ErrorHandlerWrappingStrategy
+     */
+    ErrorHandlerWrappingStrategy getErrorHandlerWrappingStrategy();
+    
+    /**
+     * This method sets the ErrorHandlerWrappingStrategy.
+     * 
+     */
+    void setErrorHandlerWrappingStrategy(ErrorHandlerWrappingStrategy strategy);
+
 }
