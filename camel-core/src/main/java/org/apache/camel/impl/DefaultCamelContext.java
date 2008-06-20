@@ -40,6 +40,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.management.InstrumentationLifecycleStrategy;
+import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ExchangeConverter;
@@ -80,12 +82,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private boolean autoCreateComponents = true;
     private LanguageResolver languageResolver = new DefaultLanguageResolver();
     private Registry registry;
-    private LifecycleStrategy lifecycleStrategy = new DefaultLifecycleStrategy();
+    private LifecycleStrategy lifecycleStrategy;
     private List<RouteType> routeDefinitions = new ArrayList<RouteType>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
 
     public DefaultCamelContext() {
         name = NAME_PREFIX + ++nameSuffix;
+        if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
+            lifecycleStrategy = new DefaultLifecycleStrategy();
+        } else {
+            lifecycleStrategy = new InstrumentationLifecycleStrategy();
+        }
     }
 
     /**
@@ -436,6 +443,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     // -----------------------------------------------------------------------
 
     protected void doStart() throws Exception {
+        lifecycleStrategy.onContextStart(this);
+
         forceLazyInitialization();
         if (components != null) {
             for (Component component : components.values()) {

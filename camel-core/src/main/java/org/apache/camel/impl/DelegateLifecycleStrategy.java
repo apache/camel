@@ -38,8 +38,8 @@ public class DelegateLifecycleStrategy implements LifecycleStrategy {
         this.delegate = delegate;
     }
 
-    public void onContextCreate(CamelContext context) {
-        delegate.onContextCreate(context);
+    public void onContextStart(CamelContext context) {
+        delegate.onContextStart(context);
     }
 
     public void onEndpointAdd(Endpoint<? extends Exchange> endpoint) {

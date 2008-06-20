@@ -59,4 +59,9 @@ public class DummyLifecycleStrategy implements LifecycleStrategy {
         
     }
 
+    public void onContextStart(CamelContext arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

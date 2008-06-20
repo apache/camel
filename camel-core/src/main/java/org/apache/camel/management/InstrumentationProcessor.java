@@ -16,14 +16,20 @@
  */
 package org.apache.camel.management;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * JMX enabled processor that uses the {@link Counter} for instrumenting
  * processing of exchanges.
+ *
+ * @version $Revision$
+ *
  */
-public class InstrumentationProcessor extends DelegateProcessor {
+public class InstrumentationProcessor extends DelegateProcessor implements AsyncProcessor {
 
     private PerformanceCounter counter;
 
@@ -39,15 +45,44 @@ public class InstrumentationProcessor extends DelegateProcessor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        long startTime = System.nanoTime();
-        super.process(exchange);
+        AsyncProcessorHelper.process(this, exchange);
+    }
+   
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        final long startTime = System.nanoTime();
+        
+        if (processor instanceof AsyncProcessor) {
+            return ((AsyncProcessor)processor).process(exchange, new AsyncCallback() {
+                public void done(boolean doneSynchronously) {
+                    if (counter != null) {
+                        // convert nanoseconds to milliseconds
+                        recordTime(exchange, (System.nanoTime() - startTime) / 1000000.0);
+                    }
+                    callback.done(doneSynchronously);
+                }
+            });
+        } 
+        
+        try {
+            processor.process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+
         if (counter != null) {
-            if (!exchange.isFailed()) {
-                // convert nanoseconds to milliseconds
-                counter.completedExchange((System.nanoTime() - startTime) / 1000000.0);
-            } else {
-                counter.completedExchange();
-            }
+            // convert nanoseconds to milliseconds
+            recordTime(exchange, (System.nanoTime() - startTime) / 1000000.0);
+        }
+        callback.done(true);
+        return true;
+
+    }
+
+    protected void recordTime(Exchange exchange, double duration) {
+        if (!exchange.isFailed() && exchange.getException() == null) {
+            counter.completedExchange(duration);
+        } else {
+            counter.completedExchange();
         }
     }
 }

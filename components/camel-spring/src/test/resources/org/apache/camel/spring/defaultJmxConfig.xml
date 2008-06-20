@@ -23,7 +23,7 @@
     ">
 
   <!-- START SNIPPET: example -->
-  <camelContext id="camel" useJmx="true" xmlns="http://activemq.apache.org/camel/schema/spring">
+  <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="seda:start"/>
       <to uri="mock:result"/>

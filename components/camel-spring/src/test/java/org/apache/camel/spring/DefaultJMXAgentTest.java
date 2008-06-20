@@ -16,30 +16,56 @@
  */
 package org.apache.camel.spring;
 
-import java.net.MalformedURLException;
+import java.util.List;
 
+import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
-import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
+import javax.management.MBeanServerFactory;
 
+import org.apache.camel.management.DefaultInstrumentationAgent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+/**
+ * Test that verifies JMX is enabled by default.
+ * 
+ * @version $Revision$
+ *
+ */
 public class DefaultJMXAgentTest extends SpringTestSupport {
+    
+    protected MBeanServerConnection mbsc;
+    protected long sleepForConnection = 0;
 
-    protected String getPort() {
-        return "1099";
+    @Override
+    protected void setUp() throws Exception {
+        releaseMBeanServers();
+        super.setUp();
+        Thread.sleep(sleepForConnection);
+        mbsc = getMBeanConnection();
     }
-
+    
+    @Override
+    protected void tearDown() throws Exception {
+        releaseMBeanServers();
+        mbsc = null;
+        super.tearDown();
+    }
+    
     protected String getDomainName() {
-        return "org.apache.camel";
+        return DefaultInstrumentationAgent.DEFAULT_DOMAIN;
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected void releaseMBeanServers() {
+        List<MBeanServer> servers = 
+            (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
+
+        for (MBeanServer server : servers) {
+            MBeanServerFactory.releaseMBeanServer(server); 
+        }
     }
 
     public void testGetJMXConnector() throws Exception {
-        JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:" + getPort() + "/jmxrmi");
-        JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
-        MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
-        assertNotNull(mbsc);
         assertEquals("Get the wrong domain name", mbsc.getDefaultDomain(), getDomainName());
     }
 
@@ -47,5 +73,20 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/defaultJmxConfig.xml");
     }
+    
+    @SuppressWarnings("unchecked")
+    protected MBeanServerConnection getMBeanConnection() throws Exception {
+        if (mbsc == null) {
+            List<MBeanServer> servers = 
+                    (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
 
+            for (MBeanServer server : servers) {
+                if (getDomainName().equals(server.getDefaultDomain())) {
+                    mbsc = server;
+                    break;
+                }
+            }
+        }
+        return mbsc;
+    }
 }

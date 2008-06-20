@@ -40,12 +40,8 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.InstrumentationAgent;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
@@ -54,66 +50,102 @@ import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
 /**
  * Default implementation of the Camel JMX service agent
  */
-public class DefaultInstrumentationAgent extends ServiceSupport implements InstrumentationAgent,
-    CamelContextAware {
-    public static final String SYSTEM_PROPERTY_JMX = "org.apache.camel.jmx";
-    public static final String SYSTEM_PROPERTY_JMX_USE_PLATFORM_MBS = SYSTEM_PROPERTY_JMX + ".usePlatformMBeanServer";
+public class DefaultInstrumentationAgent extends ServiceSupport implements InstrumentationAgent {
+
     public static final String DEFAULT_DOMAIN = "org.apache.camel";
     public static final String DEFAULT_HOST = "localhost";
-    public static final int DEFAULT_PORT = 1099;
-    public static final String DEFAULT_CONNECTOR_PATH = "/jmxrmi";
+    public static final int DEFAULT_REGISTRY_PORT = 1099;
+    public static final int DEFAULT_CONNECTION_PORT = -1;
+    public static final String DEFAULT_SERVICE_URL_PATH = "/jmxrmi";
     private static final transient Log LOG = LogFactory.getLog(DefaultInstrumentationAgent.class);
 
     private MBeanServer server;
-    private CamelContext context;
     private Set<ObjectName> mbeans = new HashSet<ObjectName>();
     private MetadataMBeanInfoAssembler assembler;
     private JMXConnectorServer cs;
-    private boolean jmxEnabled;
-    private String jmxDomainName;
-    private int jmxConnectorPort;
-    private String jmxConnectorPath;
-    private boolean createConnector = true;
-    private boolean usePlatformMBeanServer;
 
-    public DefaultInstrumentationAgent() {
-        assembler = new MetadataMBeanInfoAssembler();
-        assembler.setAttributeSource(new AnnotationJmxAttributeSource());
+    private Integer registryPort;
+    private Integer connectorPort;
+    private String mBeanServerDefaultDomain;
+    private String mBeanObjectDomainName;
+    private String serviceUrlPath;
+    private Boolean usePlatformMBeanServer;
+    private Boolean createConnector;
+
+    protected void finalizeSettings() {
+        if (registryPort == null) {
+            registryPort = Integer.getInteger(JmxSystemPropertyKeys.REGISTRY_PORT, 
+                    DEFAULT_REGISTRY_PORT); 
+        }
+        
+        if (connectorPort == null) {
+            connectorPort = Integer.getInteger(JmxSystemPropertyKeys.CONNECTOR_PORT, 
+                    DEFAULT_CONNECTION_PORT);
+        }
+        
+        if (mBeanServerDefaultDomain == null) {
+            mBeanServerDefaultDomain = 
+                System.getProperty(JmxSystemPropertyKeys.DOMAIN, DEFAULT_DOMAIN);
+        }
+        
+        if (mBeanObjectDomainName == null) {
+            mBeanObjectDomainName = 
+                System.getProperty(JmxSystemPropertyKeys.MBEAN_DOMAIN, DEFAULT_DOMAIN);
+        }
+        
+        if (serviceUrlPath == null) {
+            serviceUrlPath = 
+                System.getProperty(JmxSystemPropertyKeys.SERVICE_URL_PATH, 
+                        DEFAULT_SERVICE_URL_PATH);
+        }
+  
+        if (createConnector == null) {
+            createConnector = Boolean.getBoolean(JmxSystemPropertyKeys.CREATE_CONNECTOR);
+        }
+        
+        if (usePlatformMBeanServer == null) {
+            usePlatformMBeanServer = 
+                Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS);
+        }
     }
 
-    public CamelContext getCamelContext() {
-        return context;
+
+    public void setRegistryPort(Integer value) {
+        registryPort = value;
+    }
+    
+    public void setConnectorPort(Integer value) {
+        connectorPort = value;
+    }
+    
+    public void setMBeanServerDefaultDomain(String value) {
+        mBeanServerDefaultDomain = value;
+    }
+    
+    public void setMBeanObjectDomainName(String value) {
+        mBeanObjectDomainName = value;
+    }
+    
+    public void setServiceUrlPath(String value) {
+        serviceUrlPath = value;
     }
 
-    public void setCamelContext(CamelContext camelContext) {
-        context = camelContext;
-    }
-
-    public void setCreateConnector(boolean flag) {
+    public void setCreateConnector(Boolean flag) {
         createConnector = flag;
     }
 
-    public void setUsePlatformMBeanServer(boolean flag) {
+    public void setUsePlatformMBeanServer(Boolean flag) {
         usePlatformMBeanServer = flag;
     }
 
-    public void setMBeanServer(MBeanServer server) {
-        this.server = server;
-        jmxEnabled = true;
-    }
-
     public MBeanServer getMBeanServer() {
-        if (server == null) {
-            // The MBeanServer was not injected
-            createMBeanServer();
-        }
         return server;
     }
 
     public void register(Object obj, ObjectName name) throws JMException {
         register(obj, name, false);
     }
-
+    
     public void register(Object obj, ObjectName name, boolean forceRegistration) throws JMException {
         try {
             registerMBeanWithServer(obj, name, forceRegistration);
@@ -139,30 +171,17 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
     }
 
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(context, "camelContext");
-
-        if (getMBeanServer() == null) {
-            // No mbean server or jmx not enabled
-            return;
+        assembler = new MetadataMBeanInfoAssembler();
+        assembler.setAttributeSource(new AnnotationJmxAttributeSource());
+        
+        // create mbean server if is has not be injected.
+        if (server == null) {
+            finalizeSettings();
+            createMBeanServer();
         }
-
-        if (jmxDomainName == null) {
-            jmxDomainName = System.getProperty(SYSTEM_PROPERTY_JMX + ".domain");
-            if (jmxDomainName == null || jmxDomainName.length() == 0) {
-                jmxDomainName = DEFAULT_DOMAIN;
-            }
-        }
-
+        
         if (LOG.isDebugEnabled()) {
             LOG.debug("Starting JMX agent on server: " + getMBeanServer());
-        }
-
-        if (context instanceof DefaultCamelContext) {
-            DefaultCamelContext dc = (DefaultCamelContext)context;
-            InstrumentationLifecycleStrategy ls = new InstrumentationLifecycleStrategy(
-                    this, new CamelNamingStrategy(jmxDomainName));
-            dc.setLifecycleStrategy(ls);
-            ls.onContextCreate(context);
         }
     }
 
@@ -217,17 +236,6 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
         }
     }
 
-    public void enableJmx() {
-        enableJmx(DEFAULT_DOMAIN, DEFAULT_CONNECTOR_PATH, DEFAULT_PORT);
-    }
-
-    public void enableJmx(String domainName, String connectorPath, int port) {
-        jmxEnabled = true;
-        jmxDomainName = domainName;
-        jmxConnectorPath = connectorPath;
-        jmxConnectorPort = port;
-    }
-
     protected void createMBeanServer() {
         String hostName = DEFAULT_HOST;
         boolean canAccessSystemProps = true;
@@ -243,56 +251,18 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
         }
 
         if (canAccessSystemProps) {
-            if (!jmxEnabled) {
-                jmxEnabled = null != System.getProperty(SYSTEM_PROPERTY_JMX);
-                if (!jmxEnabled) {
-                    // we're done here
-                    return;
-                }
-            }
-
-            if (jmxConnectorPort <= 0) {
-                String portKey = SYSTEM_PROPERTY_JMX + ".port";
-                String portValue = System.getProperty(portKey);
-                if (portValue != null && portValue.length() > 0) {
-                    try {
-                        jmxConnectorPort = Integer.parseInt(portValue);
-                    } catch (NumberFormatException nfe) {
-                        LOG.info("Invalid port number specified via System property [" + portKey + "="
-                                 + portValue + "]. Using default: " + DEFAULT_PORT);
-                        jmxConnectorPort = DEFAULT_PORT;
-                    }
-                }
-            }
-
             try {
                 hostName = InetAddress.getLocalHost().getHostName();
             } catch (UnknownHostException uhe) {
-                LOG.info("Cannot determine localhost name. Using default: " + DEFAULT_PORT, uhe);
+                LOG.info("Cannot determine localhost name. Using default: " + 
+                        DEFAULT_REGISTRY_PORT, uhe);
                 hostName = DEFAULT_HOST;
             }
         } else {
-            jmxDomainName = jmxDomainName != null ? jmxDomainName : DEFAULT_DOMAIN;
-            jmxConnectorPort = jmxConnectorPort > 0 ? jmxConnectorPort : DEFAULT_PORT;
             hostName = DEFAULT_HOST;
         }
 
-        if (!jmxEnabled) {
-            return;
-        }
-
-        // jmx is enabled but there's no MBeanServer, so create one
-        if (Boolean.getBoolean(SYSTEM_PROPERTY_JMX_USE_PLATFORM_MBS) || usePlatformMBeanServer) {
-            server = ManagementFactory.getPlatformMBeanServer();
-        } else {
-            // jmx is enabled but there's no MBeanServer, so create one
-            List servers = MBeanServerFactory.findMBeanServer(jmxDomainName);
-            if (servers.size() == 0) {
-                server = MBeanServerFactory.createMBeanServer(jmxDomainName);
-            } else {
-                server = (MBeanServer)servers.get(0);
-            }
-        }
+        server = findOrCreateMBeanServer();
 
         try {
             // Create the connector if we need
@@ -304,21 +274,50 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
         }
     }
 
+    @SuppressWarnings("unchecked")
+    protected MBeanServer findOrCreateMBeanServer() {
+
+        // return platform mbean server if the option is specified.
+        if (Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS) || 
+                usePlatformMBeanServer) {
+            return ManagementFactory.getPlatformMBeanServer();
+        }
+
+        // look for the first mbean server that has match default domain name
+        List<MBeanServer> servers = 
+            (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
+
+        for (MBeanServer server : servers) {
+            if (mBeanServerDefaultDomain.equals(server.getDefaultDomain())) {
+                return server;
+            }
+        }
+
+        // create a mbean server with the given default domain name
+        return MBeanServerFactory.createMBeanServer(mBeanServerDefaultDomain);
+    }
+
     protected void createJmxConnector(String host) throws IOException {
-        if (jmxConnectorPort > 0) {
             try {
-                LocateRegistry.createRegistry(jmxConnectorPort);
+                LocateRegistry.createRegistry(registryPort);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("created RMI regisry on port " + registryPort);
+                }
             } catch (RemoteException ex) {
                 // The registry may had been created
-                LocateRegistry.getRegistry(jmxConnectorPort);
             }
 
-            if (jmxConnectorPath == null) {
-                jmxConnectorPath = DEFAULT_CONNECTOR_PATH;
-            }
             // Create an RMI connector and start it
-            JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + host + ":"
-                                                  + jmxConnectorPort + jmxConnectorPath);
+            JMXServiceURL url;
+            
+            if (connectorPort > 0) {
+               url = new JMXServiceURL("service:jmx:rmi://" + host + ":" 
+                        + connectorPort + "/jndi/rmi://" + host + ":"
+                        + registryPort + serviceUrlPath);
+            } else {
+                url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + host + ":"
+                        + registryPort + serviceUrlPath);
+            }
             cs = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
 
             // Start the connector server asynchronously (in a separate thread).
@@ -334,6 +333,14 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
             connectorThread.setName("JMX Connector Thread [" + url + "]");
             connectorThread.start();
             LOG.info("JMX connector thread started on " + url);
-        }
     }
+
+    public String getMBeanObjectDomainName() {
+        return mBeanObjectDomainName;
+    }
+    
+    public void setServer(MBeanServer value) {
+        server = value;
+    }
+
 }

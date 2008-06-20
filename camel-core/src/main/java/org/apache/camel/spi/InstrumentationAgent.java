@@ -66,4 +66,13 @@ public interface InstrumentationAgent extends Service {
      */
     MBeanServer getMBeanServer();
 
+    /**
+     * Get domain name for Camel MBeans.  Notice that this can be different that the 
+     * default domain name of the MBean Server.  
+     * 
+     * @return domain name
+     */
+    String getMBeanObjectDomainName();
+
+
 }

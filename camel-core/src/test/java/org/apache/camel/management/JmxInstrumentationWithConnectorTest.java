@@ -16,12 +16,58 @@
  */
 package org.apache.camel.management;
 
+import javax.management.MBeanServerConnection;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
+
+/**
+ * Test that verifies JMX connector server can be connected by
+ * a client.
+ * 
+ * @version $Revision$
+ *
+ */
 public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsingDefaultsTest {
 
+    protected JMXConnector clientConnector;
+    protected static final String JMXSERVICEURL =
+        "service:jmx:rmi:///jndi/rmi://localhost:2000/jmxrmi";
 
     @Override
-    protected void enableJmx() {
-        domainName = "org.apache.camel-explicit";
-        iAgent.enableJmx(domainName, "/jmxtest", 1099);
+    protected void setUp() throws Exception {
+        sleepForConnection = 2000;
+        System.setProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR, "True");
+        System.setProperty(JmxSystemPropertyKeys.REGISTRY_PORT, "2000");
+        super.setUp();
     }
+
+    @Override
+    protected void tearDown() throws Exception {
+        System.clearProperty(JmxSystemPropertyKeys.REGISTRY_PORT);
+        System.clearProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR);
+        
+        if (clientConnector != null) {
+            try {
+                clientConnector.close();
+            } catch (Exception e) {
+                // ignore
+            }
+            clientConnector = null;
+        }
+        super.tearDown();
+    }
+
+    @Override
+    protected MBeanServerConnection getMBeanConnection() throws Exception {
+        if (mbsc == null) {
+            if (clientConnector == null) {
+                clientConnector = JMXConnectorFactory.connect(
+                        new JMXServiceURL(JMXSERVICEURL), null);
+            }
+            mbsc = clientConnector.getMBeanServerConnection();
+        }
+        return mbsc;
+    }
+
 }

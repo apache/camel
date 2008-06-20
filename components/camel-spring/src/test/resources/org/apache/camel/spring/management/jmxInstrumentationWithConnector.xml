@@ -23,9 +23,23 @@
     ">
 
   <!-- START SNIPPET: example -->
+  <bean id="agent" class="org.apache.camel.management.DefaultInstrumentationAgent">
+    <property name="server" ref="mbeanServer"/>
+  </bean>
+  
+  <bean id="lifeCycleStrategy" class="org.apache.camel.management.InstrumentationLifecycleStrategy">
+  	<constructor-arg>
+  	  <ref bean="agent"/>
+  	</constructor-arg>
+    <constructor-arg>
+  	  <ref bean="camel"/>
+  	</constructor-arg>
+  </bean>
+  
   <bean id="mybean" class="org.apache.camel.spring.example.DummyBean">
     <property name="endpoint" ref="endpoint1"/>
   </bean>
+  
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <beanPostProcessor/>
     <endpoint id="endpoint1" uri="direct:start"/>
@@ -37,10 +51,6 @@
     </route>
   </camelContext>
 
-  <bean id="agent" class="org.apache.camel.spring.SpringInstrumentationAgent">
-    <property name="camelContext" ref="camel"/>
-    <property name="MBeanServer" ref="mbeanServer"/>
-  </bean>
   <!--
     this bean needs to be eagerly pre-instantiated in order for the exporting to occur;
     this means that it must not be marked as lazily initialized
