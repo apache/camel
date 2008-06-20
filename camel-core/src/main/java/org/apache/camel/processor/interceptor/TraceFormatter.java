@@ -25,6 +25,7 @@ import org.apache.camel.spi.UnitOfWork;
  * @version $Revision: 1.1 $
  */
 public class TraceFormatter {
+    private boolean showNode = true;
     private boolean showProperties = true;
     private boolean showHeaders = true;
     private boolean showBody = true;
@@ -36,6 +37,7 @@ public class TraceFormatter {
         Throwable exception = exchange.getException();
         return (showBreadCrumb ? getBreadCrumbID(exchange) + " " : "")
                 + "-> " + getNodeMessage(interceptor) + " "
+                + (showNode ? interceptor.getNode() + " " : "")
                 + exchange.getPattern()
                 + (showExchangeId ? " Id: " + exchange.getExchangeId() : "")
                 + ((showProperties) ? " Properties:" + exchange.getProperties() : "")
@@ -83,6 +85,14 @@ public class TraceFormatter {
 
     public void setShowProperties(boolean showProperties) {
         this.showProperties = showProperties;
+    }
+
+    public boolean isShowNode() {
+        return showNode;
+    }
+
+    public void setShowNode(boolean showNode) {
+        this.showNode = showNode;
     }
 
     // Implementation methods
