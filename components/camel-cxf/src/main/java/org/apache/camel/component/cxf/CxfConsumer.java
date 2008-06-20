@@ -53,6 +53,9 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
         if (endpoint.getApplicationContext() != null) {
             SpringBusFactory bf = new SpringBusFactory(endpoint.getApplicationContext());
             bus = bf.createBus();
+            if (endpoint.isSetDefaultBus()) {
+                BusFactory.setDefaultBus(bus);
+            }
         } else {
             // now we just use the default bus here
             bus = BusFactory.getDefaultBus();
