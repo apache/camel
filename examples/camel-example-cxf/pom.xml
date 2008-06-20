@@ -103,6 +103,12 @@
         <configuration>
           <mainClass>org.apache.camel.example.cxf.CamelCxfExample</mainClass>
           <includePluginDependencies>false</includePluginDependencies>
+           <systemProperties>
+            <property>
+               <key>java.util.logging.config.file</key>
+               <value>logging.properties</value>
+            </property>
+           </systemProperties>
         </configuration>
       </plugin>
     </plugins>
