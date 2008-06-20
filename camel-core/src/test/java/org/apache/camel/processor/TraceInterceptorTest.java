@@ -43,7 +43,11 @@ public class TraceInterceptorTest extends ContextTestSupport {
                         process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // do nothing
+                            }
 
+                            @Override
+                            public String toString() {
+                                return "MyProcessor";
                             }
                         }).
                         to("mock:a").
