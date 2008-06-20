@@ -22,8 +22,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,6 +35,9 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * Producer that can write to streams
+ */
 public class StreamProducer extends DefaultProducer<Exchange> {
 
     private static final transient Log LOG = LogFactory.getLog(StreamProducer.class);
@@ -52,9 +57,7 @@ public class StreamProducer extends DefaultProducer<Exchange> {
 
     @Override
     public void doStop() throws Exception {
-        if (outputStream != null) {
-            outputStream.close();
-        }
+        // important: do not close the stream as it will close the standard system.out etc.
         super.doStop();
     }
 
@@ -96,7 +99,8 @@ public class StreamProducer extends DefaultProducer<Exchange> {
         if (o != null && o instanceof OutputStream) {
             return (OutputStream)o;
         } else {
-            throw new CamelExchangeException("Expected OutputStream in header('stream'), found: " + o, exchange);
+            throw new CamelExchangeException("Expected OutputStream in header('stream'), found: " + o,
+                exchange);
         }
     }
 
@@ -110,24 +114,27 @@ public class StreamProducer extends DefaultProducer<Exchange> {
         Thread.sleep(ms);
     }
 
-    private void writeToStream(Exchange exchange) throws IOException {
+    private void writeToStream(Exchange exchange) throws IOException, CamelExchangeException {
         Object body = exchange.getIn().getBody();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Writing " + body + " to " + outputStream);
-        }
         if (body instanceof String) {
-            LOG.debug("in text buffered mode");
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outputStream));
-            try {
-                bw.write((String)body);
-                bw.write("\n");
-                bw.flush();
-            } finally {
-                bw.close();
+            Charset charset = endpoint.getCharset();
+            Writer writer = new OutputStreamWriter(outputStream, charset);
+            BufferedWriter bw = new BufferedWriter(writer);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Writing as text: " + body + " to " + outputStream + " using encoding:" + charset);
             }
-        } else {
-            LOG.debug("in binary stream mode");
+            bw.write((String)body);
+            bw.write("\n");
+            bw.flush();
+            // important: do not close the writer as it will close the standard system.out etc.
+        } else if (body instanceof byte[]) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Writing as text: " + body + " to " + outputStream);
+            }
             outputStream.write((byte[])body);
+        } else {
+            throw new CamelExchangeException("The body is neither a String or byte array. "
+                + "Can not write body to output stream", exchange);
         }
     }
 

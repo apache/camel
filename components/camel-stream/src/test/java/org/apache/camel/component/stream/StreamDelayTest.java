@@ -19,23 +19,24 @@ package org.apache.camel.component.stream;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
-public class StreamRouteBuilderTest extends ContextTestSupport {
+/**
+ * Unit test for delay option.
+ */
+public class StreamDelayTest extends ContextTestSupport {
 
-    public void testStringContent() {
-        template.sendBody("direct:start", "this is text\n");
-    }
-
-    public void testBinaryContent() {
-        template.sendBody("direct:start", "This is bytes\n".getBytes());
+    public void testStringContent() throws Exception {
+        long start = System.currentTimeMillis();
+        template.sendBody("direct:in", "Hello Text World\n");
+        long delta = System.currentTimeMillis() - start;
+        assertTrue("Delay should be around 2 sec: " + delta, delta > 1900 && delta < 3000);
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setHeader("stream", constant(System.out))
-                    .to("stream:err", "stream:out", "stream:header");
+                from("direct:in").to("stream:out?delay=2000");
             }
         };
     }
-    
+
 }

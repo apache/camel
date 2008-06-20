@@ -16,13 +16,7 @@
  */
 package org.apache.camel.component.stream;
 
-import java.io.OutputStream;
-
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Producer;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -30,22 +24,14 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class StreamSystemOutTest extends ContextTestSupport {
 
+    // START SNIPPET: e1
     public void testStringContent() throws Exception {
-        Endpoint endpoint = context.getEndpoint("direct:in");
-        Exchange exchange = endpoint.createExchange(ExchangePattern.InOnly);
-        exchange.getIn().setBody("Hello World\n");
-        Producer producer = endpoint.createProducer();
-        producer.start();
-        producer.process(exchange);
-        producer.stop();
-
-        //template.sendBody("direct:in", "Hello");
-        System.out.println("End of test");
+        template.sendBody("direct:in", "Hello Text World\n");
     }
 
-/*    public void testBinaryContent() {
-        template.sendBody("direct:in", "World".getBytes());
-    }*/
+    public void testBinaryContent() {
+        template.sendBody("direct:in", "Hello Bytes World\n".getBytes());
+    }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -54,5 +40,6 @@ public class StreamSystemOutTest extends ContextTestSupport {
             }
         };
     }
-    
+    // END SNIPPET: e1
+
 }

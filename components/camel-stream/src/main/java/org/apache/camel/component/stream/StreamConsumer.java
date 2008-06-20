@@ -24,19 +24,20 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Consumer that can read from any stream
+ * Consumer that can read from streams
  */
 public class StreamConsumer extends DefaultConsumer<Exchange> {
 
@@ -72,22 +73,18 @@ public class StreamConsumer extends DefaultConsumer<Exchange> {
 
     @Override
     public void doStop() throws Exception {
-        if (inputStream != null) {
-            inputStream.close();
-        }
+        // important: do not close the stream as it will close the standard system.in etc.
         super.doStop();
     }
 
     private void readFromStream() throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+        Charset charset = endpoint.getCharset();
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charset));
         String line;
-        try {
-            while ((line = br.readLine()) != null) {
-                consumeLine(line);
-            }
-        } finally {
-            br.close();
+        while ((line = br.readLine()) != null) {
+            consumeLine(line);
         }
+        // important: do not close the reader as it will close the standard system.in etc.
     }
 
     private void consumeLine(Object line) throws Exception {
