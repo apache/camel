@@ -24,15 +24,15 @@ import javax.management.remote.JMXServiceURL;
 /**
  * Test that verifies JMX connector server can be connected by
  * a client.
- * 
+ *
  * @version $Revision$
  *
  */
 public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsingDefaultsTest {
 
-    protected JMXConnector clientConnector;
     protected static final String JMXSERVICEURL =
         "service:jmx:rmi:///jndi/rmi://localhost:2000/jmxrmi";
+    protected JMXConnector clientConnector;
 
     @Override
     protected void setUp() throws Exception {
@@ -46,7 +46,7 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
     protected void tearDown() throws Exception {
         System.clearProperty(JmxSystemPropertyKeys.REGISTRY_PORT);
         System.clearProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR);
-        
+
         if (clientConnector != null) {
             try {
                 clientConnector.close();

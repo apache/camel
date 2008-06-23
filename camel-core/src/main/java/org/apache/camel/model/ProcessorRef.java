@@ -16,10 +16,14 @@
  */
 package org.apache.camel.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.camel.Processor;
 import org.apache.camel.spi.RouteContext;
-
-import javax.xml.bind.annotation.*;
 
 /**
  * Represents an XML &lt;process/&gt; element
@@ -43,8 +47,8 @@ public class ProcessorRef extends OutputType<ProcessorType> {
 
     @Override
     public String toString() {
-        return "Processor[" +
-                ((ref != null) ? "ref:  " + ref : processor)
+        return "Processor["
+                + ((ref != null) ? "ref:  " + ref : processor)
                 + "]";
     }
 

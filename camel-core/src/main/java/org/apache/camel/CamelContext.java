@@ -21,7 +21,12 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.apache.camel.model.RouteType;
-import org.apache.camel.spi.*;
+import org.apache.camel.spi.ExchangeConverter;
+import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.Language;
+import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.Registry;
 
 /**
  * Interface used to represent the context used to configure routes and the
