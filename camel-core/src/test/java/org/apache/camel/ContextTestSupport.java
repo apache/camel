@@ -27,6 +27,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.jndi.JndiTest;
+import org.apache.camel.management.JmxSystemPropertyKeys;
 
 /**
  * A useful base class which creates a {@link CamelContext} with some routes
@@ -273,4 +274,19 @@ public abstract class ContextTestSupport extends TestSupport {
         assertNotNull("No endpoint found for uri: " + uri, endpoint);
         return endpoint;
     }
+
+    /**
+     * Disables the JMX agent. Must be called before the {@link #setUp()} method.
+     */
+    protected void disableJMX() {
+        System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
+    }
+
+    /**
+     * Enables the JMX agent. Must be called before the {@link #setUp()} method.
+     */
+    protected void enableJMX() {
+        System.setProperty(JmxSystemPropertyKeys.DISABLED, "false");
+    }
+
 }
