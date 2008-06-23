@@ -197,5 +197,15 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
     protected void setEndpointUri(String endpointUri) {
         this.endpointUri = endpointUri;
     }
+    
+    @Deprecated
+    public CamelContext getContext() {
+        return getCamelContext();
+    }
+    
+    @Deprecated
+    public void setContext(CamelContext context) {
+        setCamelContext(context);
+    }
 
 }
