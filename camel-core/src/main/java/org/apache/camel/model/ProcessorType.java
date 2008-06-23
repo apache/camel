@@ -1583,8 +1583,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         for (ProcessorType output : outputs) {
             Processor processor = output.createProcessor(routeContext);
             processor = output.wrapProcessorInInterceptors(routeContext, processor);
-            
-            if (!(this instanceof ExceptionType || this instanceof TryType)) {
+           
+            ProcessorType currentProcessor = this; 
+            if (!(currentProcessor instanceof ExceptionType || currentProcessor instanceof TryType)) {
                 processor = output.wrapInErrorHandler(routeContext, processor);
             }
             
