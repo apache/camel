@@ -107,4 +107,10 @@ public interface Endpoint<E extends Exchange> {
     void configureProperties(Map options);
 
     void setCamelContext(CamelContext context);
+    
+    @Deprecated
+    CamelContext getContext();
+    
+    @Deprecated
+    void setContext(CamelContext context);
 }
