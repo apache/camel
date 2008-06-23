@@ -29,10 +29,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
+import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents an XML &lt;choice/&gt; element
@@ -42,6 +45,9 @@ import org.apache.camel.util.CollectionStringBuffer;
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceType extends ProcessorType<ChoiceType> {
+    
+    private static final transient Log LOG = LogFactory.getLog(ChoiceType.class);
+    
     @XmlElementRef
     private List<WhenType> whenClauses = new ArrayList<WhenType>();
     @XmlElement(required = false)
@@ -66,6 +72,8 @@ public class ChoiceType extends ProcessorType<ChoiceType> {
         Processor otherwiseProcessor = null;
         if (otherwise != null) {
             otherwiseProcessor = otherwise.createProcessor(routeContext);
+        } else {
+            LOG.warn("No otherwise clause was specified for a choice block -- any unmatched exchanges will be dropped");
         }
         return new ChoiceProcessor(filters, otherwiseProcessor);
     }
