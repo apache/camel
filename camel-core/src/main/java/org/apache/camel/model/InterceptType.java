@@ -85,8 +85,8 @@ public class InterceptType extends OutputType<ProcessorType> {
 
         if (answer.getOutputs().size() > 0) {
             // this is for the predicate version
-            ProcessorType<?> processor = answer;
-            processor = (ProcessorType<?>) answer.getOutputs().get(0);
+            ProcessorType processor = answer;
+            processor = (ProcessorType) answer.getOutputs().get(0);
             if (processor instanceof ChoiceType) {
                 ChoiceType choice = (ChoiceType) processor;
                 proxifyProceed(this.getProceed(), answer.getProceed(),

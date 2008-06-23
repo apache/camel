@@ -199,7 +199,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
 
             // separate out the exception handers in the outputs
-            for (ProcessorType<?> output : routeType.getOutputs()) {
+            for (ProcessorType output : routeType.getOutputs()) {
                 if (output instanceof ExceptionType) {
                     exceptionHandlers.add(output);
                 } else {
