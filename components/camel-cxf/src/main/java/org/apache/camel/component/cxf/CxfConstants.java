@@ -25,6 +25,7 @@ public interface CxfConstants {
     String METHOD = "method";
     String SERVICE_CLASS = "serviceClass";
     String DATA_FORMAT = "dataFormat";
+    String SET_DEFAULT_BUS = "setDefaultBus";
     String WSDL_URL = "wsdlURL";
     String ADDRESS = "address";
     String SERVICE_NAME = "serviceName";
