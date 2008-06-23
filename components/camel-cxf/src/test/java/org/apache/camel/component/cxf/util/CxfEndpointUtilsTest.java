@@ -22,29 +22,46 @@ import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CxfComponent;
 import org.apache.camel.component.cxf.CxfEndpoint;
+import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.impl.DefaultCamelContext;
 
 public class CxfEndpointUtilsTest extends TestCase {
-    static final String CXF_BASE_URI = "cxf://http://www.example.com/testaddress"
-        + "?serviceClass=org.apache.camel.component.cxf.HelloService"
-        + "&portName={http://www.example.com/test}PortName"
-        + "&serviceName={http://www.example.com/test}ServiceName";
-
     // set up the port name and service name
-    private static final QName SERVICE_NAME =
+    protected static final QName SERVICE_NAME =
         new QName("http://www.example.com/test", "ServiceName");
 
-    CxfEndpoint cxfEndpoint;
 
-    protected void createEndpoint(String uri) throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        cxfEndpoint = (CxfEndpoint)new CxfComponent(context).createEndpoint(uri);
+    private static final String CXF_BASE_URI = "cxf://http://www.example.com/testaddress"
+        + "?serviceClass=org.apache.camel.component.cxf.HelloService"
+        + "&portName={http://www.example.com/test}PortName"
+        + "&serviceName={http://www.example.com/test}ServiceName"
+        + "&setDefaultBus=true";
+
+
+
+    protected String getEndpointURI() {
+        return CXF_BASE_URI;
     }
 
-    public void testGetQName() throws Exception {
-        createEndpoint(CXF_BASE_URI);
-        QName service = CxfEndpointUtils.getQName(cxfEndpoint.getServiceName());
+    protected CamelContext getCamelContext() throws Exception {
+        return new DefaultCamelContext();
+    }
+
+    protected CxfEndpoint createEndpoint(String uri) throws Exception {
+        CamelContext context = getCamelContext();
+        return (CxfEndpoint)new CxfComponent(context).createEndpoint(uri);
+    }
+
+    public void testGetProperties() throws Exception {
+        CxfEndpoint endpoint = createEndpoint(getEndpointURI());
+        QName service = CxfEndpointUtils.getQName(endpoint.getServiceName());
         assertEquals("We should get the right service name", service, SERVICE_NAME);
+        assertEquals("We should get the setDefaultBus value", CxfEndpointUtils.getSetDefaultBus(endpoint) , true);
+    }
+
+    public void testGetDataFormat() throws Exception {
+        CxfEndpoint endpoint = createEndpoint(getEndpointURI() + "&dataFormat=MESSAGE");
+        assertEquals("We should get the Message DataFormat", CxfEndpointUtils.getDataFormat(endpoint), DataFormat.MESSAGE);
     }
 
 

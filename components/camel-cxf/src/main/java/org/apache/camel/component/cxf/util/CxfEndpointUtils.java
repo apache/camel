@@ -26,8 +26,10 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceProvider;
 
 import org.apache.camel.CamelException;
+import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
+import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.common.i18n.Message;
@@ -216,8 +218,34 @@ public final class CxfEndpointUtils {
         }
     }
 
+    public static boolean getSetDefaultBus(CxfEndpoint endpoint) {
+        Boolean isSetDefaultBus = null;
+        // check the value of cxfEndpointBean's property
+        CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
+        if (cxfEndpointBean != null && cxfEndpointBean.getProperties() != null) {
+            String value =  (String)cxfEndpointBean.getProperties().get(CxfConstants.SET_DEFAULT_BUS);
+            isSetDefaultBus = Boolean.valueOf(value);
+        }
+        // We will get the value from the cxfEndpontBean's properties
+        if (isSetDefaultBus != null && endpoint.isSetDefaultBus() == null) {
+            return isSetDefaultBus.booleanValue();
+        } else if (endpoint.isSetDefaultBus() != null) {
+            return endpoint.isSetDefaultBus().booleanValue();
+        } else { // return the default value false
+            return false;
+        }
+    }
+
     public static DataFormat getDataFormat(CxfEndpoint endpoint) throws CamelException {
         String dataFormatString = endpoint.getDataFormat();
+        if (dataFormatString == null) {
+            CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
+            if (cxfEndpointBean != null && cxfEndpointBean.getProperties() != null) {
+                dataFormatString = (String) cxfEndpointBean.getProperties().get(CxfConstants.DATA_FORMAT);
+            }
+        }
+
+        // return the default value if nothing is set
         if (dataFormatString == null) {
             return DataFormat.POJO;
         }

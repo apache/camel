@@ -111,7 +111,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         if (endpoint.getApplicationContext() != null) {
             SpringBusFactory bf = new SpringBusFactory(endpoint.getApplicationContext());
             bus = bf.createBus();
-            if (endpoint.isSetDefaultBus()) {
+            if (CxfEndpointUtils.getSetDefaultBus(endpoint)) {
                 BusFactory.setDefaultBus(bus);
             }
         } else {

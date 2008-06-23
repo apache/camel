@@ -45,7 +45,7 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     private boolean isWrapped;
     private boolean isSpringContextEndpoint;
     private boolean inOut = true;
-    private boolean isSetDefaultBus;
+    private Boolean isSetDefaultBus;
     private ConfigurerImpl configurer;
     private CxfEndpointBean cxfEndpointBean;
 
@@ -113,11 +113,11 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
         wsdlURL = url;
     }
 
-    public void setSetDefaultBus(boolean set) {
+    public void setSetDefaultBus(Boolean set) {
         isSetDefaultBus = set;
     }
 
-    public boolean isSetDefaultBus() {
+    public Boolean isSetDefaultBus() {
         return isSetDefaultBus;
     }
 
