@@ -27,14 +27,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Test that verifies JMX is enabled by default.
- * 
+ *
  * @version $Revision$
  *
  */
 public class DefaultJMXAgentTest extends SpringTestSupport {
-    
+
     protected MBeanServerConnection mbsc;
-    protected long sleepForConnection = 0;
+    protected long sleepForConnection;
 
     @Override
     protected void setUp() throws Exception {
@@ -43,25 +43,25 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
         Thread.sleep(sleepForConnection);
         mbsc = getMBeanConnection();
     }
-    
+
     @Override
     protected void tearDown() throws Exception {
         releaseMBeanServers();
         mbsc = null;
         super.tearDown();
     }
-    
+
     protected String getDomainName() {
         return DefaultInstrumentationAgent.DEFAULT_DOMAIN;
     }
-    
+
     @SuppressWarnings("unchecked")
     protected void releaseMBeanServers() {
-        List<MBeanServer> servers = 
+        List<MBeanServer> servers =
             (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
 
         for (MBeanServer server : servers) {
-            MBeanServerFactory.releaseMBeanServer(server); 
+            MBeanServerFactory.releaseMBeanServer(server);
         }
     }
 
@@ -73,11 +73,11 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/defaultJmxConfig.xml");
     }
-    
+
     @SuppressWarnings("unchecked")
     protected MBeanServerConnection getMBeanConnection() throws Exception {
         if (mbsc == null) {
-            List<MBeanServer> servers = 
+            List<MBeanServer> servers =
                     (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
 
             for (MBeanServer server : servers) {

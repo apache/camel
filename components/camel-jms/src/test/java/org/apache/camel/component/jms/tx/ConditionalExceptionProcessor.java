@@ -37,8 +37,8 @@ public class ConditionalExceptionProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         setCount(getCount() + 1);
 
-        AbstractTransactionTest.assertTrue("Expected only 2 calls to process() but encountered " +
-            getCount() + ". There should be 1 for intentionally triggered rollback, and 1 for redelivery.",
+        AbstractTransactionTest.assertTrue("Expected only 2 calls to process() but encountered "
+            + getCount() + ". There should be 1 for intentionally triggered rollback, and 1 for redelivery.",
             getCount() <= 2);
 
         // should be printed 2 times due to one re-delivery after one failure
