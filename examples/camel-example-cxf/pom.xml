@@ -45,6 +45,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jetty</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-soap</artifactId>
       <version>${cxf-version}</version>
@@ -68,6 +73,30 @@
     </dependency>
 
   </dependencies>
+
+  <profiles>
+  	<profile>
+  		<id>HttpToJMS</id>
+  		<properties>
+  			<!-- Starting the camel-cxf example of routing the SOAP over http message to SOAP over JMS Server -->
+  			<target.main.class>org.apache.camel.example.cxf.CamelCxfExample</target.main.class>
+  		</properties>
+  	</profile>
+  	<profile>
+  		<id>CamelTransport</id>
+  		<properties>
+  			<!-- Starting the camel-cxf example of using Camel transport of CXF -->
+  			<target.main.class>org.apache.camel.example.camel.transport.CamelTransportExample</target.main.class>
+  		</properties>
+  	</profile>
+  	<profile>
+  		<id>WebServiceProvider</id>
+  		<properties>
+  			<!-- Starting the camel-cxf example of how to use the JAXWS WebServiceProvider API -->
+  			<target.main.class>org.apache.camel.example.cxf.provider.CamelCxfExample</target.main.class>
+  		</properties>
+  	</profile>
+  </profiles>
 
   <build>
     <plugins>
@@ -101,7 +130,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <configuration>
-          <mainClass>org.apache.camel.example.cxf.CamelCxfExample</mainClass>
+          <mainClass>${target.main.class}</mainClass>
           <includePluginDependencies>false</includePluginDependencies>
            <systemProperties>
             <property>
