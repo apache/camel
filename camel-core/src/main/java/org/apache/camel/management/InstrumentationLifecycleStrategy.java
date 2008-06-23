@@ -42,9 +42,9 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * JMX agent that registeres Camel lifecycle events in JMX.
- * 
+ *
  * @version $Revision$
- * 
+ *
  */
 public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     private static final transient Log LOG = LogFactory.getLog(InstrumentationProcessor.class);
@@ -52,7 +52,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     private InstrumentationAgent agent;
     private CamelNamingStrategy namingStrategy;
     private boolean initialized;
-    
+
     // A map (Endpoint -> InstrumentationProcessor) to facilitate
     // adding per-route interceptor and registering ManagedRoute MBean
     private Map<Endpoint, InstrumentationProcessor> interceptorMap =
@@ -67,7 +67,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     }
     /**
      * Constructor for camel context that has been started.
-     * 
+     *
      * @param agent
      * @param context
      */
@@ -94,27 +94,27 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     }
 
     public void onEndpointAdd(Endpoint<? extends Exchange> endpoint) {
-        
+
         // the agent hasn't been started
         if (!initialized) {
             return;
         }
-        
-         try {
-             ManagedEndpoint me = new ManagedEndpoint(endpoint);
-             agent.register(me, getNamingStrategy().getObjectName(me));
+
+        try {
+            ManagedEndpoint me = new ManagedEndpoint(endpoint);
+            agent.register(me, getNamingStrategy().getObjectName(me));
         } catch (JMException e) {
             LOG.warn("Could not register Endpoint MBean", e);
         }
     }
 
     public void onRoutesAdd(Collection<Route> routes) {
-        
+
         // the agent hasn't been started
         if (!initialized) {
             return;
         }
-        
+
         for (Route route : routes) {
             try {
                 ManagedRoute mr = new ManagedRoute(route);
@@ -150,12 +150,12 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     }
 
     public void onRouteContextCreate(RouteContext routeContext) {
-        
+
         // the agent hasn't been started
         if (!initialized) {
             return;
         }
-        
+
         // Create a map (ProcessorType -> PerformanceCounter)
         // to be passed to InstrumentationInterceptStrategy.
         Map<ProcessorType, PerformanceCounter> counterMap =
@@ -179,10 +179,10 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         }
 
         routeContext.addInterceptStrategy(new InstrumentationInterceptStrategy(counterMap));
-        
+
         routeContext.setErrorHandlerWrappingStrategy(
                 new InstrumentationErrorHandlerWrappingStrategy(counterMap));
-        
+
         // Add an InstrumentationProcessor at the beginning of each route and
         // set up the interceptorMap for onRoutesAdd() method to register the
         // ManagedRoute MBeans.
@@ -194,12 +194,12 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             }
 
             Endpoint endpoint  = routeType.getInputs().get(0).getEndpoint();
-            
+
             List<ProcessorType<?>> exceptionHandlers = new ArrayList<ProcessorType<?>>();
             List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
-            
+
             // separate out the exception handers in the outputs
-            for (ProcessorType<?> output: routeType.getOutputs()) {
+            for (ProcessorType<?> output : routeType.getOutputs()) {
                 if (output instanceof ExceptionType) {
                     exceptionHandlers.add(output);
                 } else {
@@ -207,21 +207,21 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
                 }
             }
 
-            // clearing the outputs  
+            // clearing the outputs
             routeType.clearOutput();
-            
+
             // add exception handlers as top children
             routeType.getOutputs().addAll(exceptionHandlers);
 
             // add an interceptor
             InstrumentationProcessor processor = new InstrumentationProcessor();
-            routeType.intercept(processor);    
-                       
+            routeType.intercept(processor);
+
             // add the output
             for (ProcessorType<?> processorType : outputs) {
                 routeType.addOutput(processorType);
             }
-            
+
             interceptorMap.put(endpoint, processor);
         }
 
@@ -234,7 +234,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     public void setNamingStrategy(CamelNamingStrategy strategy) {
         this.namingStrategy = strategy;
     }
-    
+
     public void setAgent(InstrumentationAgent agent) {
         this.agent = agent;
     }

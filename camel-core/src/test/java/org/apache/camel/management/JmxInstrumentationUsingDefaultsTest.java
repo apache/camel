@@ -30,9 +30,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * This test verifies JMX is enabled by default and it uses local mbean 
+ * This test verifies JMX is enabled by default and it uses local mbean
  * server to conduct the test as connector server is not enabled by default.
- * 
+ *
  * @version $Revision$
  *
  */
@@ -40,10 +40,10 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
     protected String domainName = DefaultInstrumentationAgent.DEFAULT_DOMAIN;
     protected MBeanServerConnection mbsc;
-    protected long sleepForConnection = 0;
+    protected long sleepForConnection;
 
     public void testMBeansRegistered() throws Exception {
-        if (!Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) { 
+        if (!Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
             assertEquals(domainName, mbsc.getDefaultDomain());
         }
 
@@ -77,7 +77,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
         verifyCounter(mbsc, new ObjectName(domainName + ":type=route,*"));
         verifyCounter(mbsc, new ObjectName(domainName + ":type=processor,*"));
-        
+
     }
 
     private void verifyCounter(MBeanServerConnection beanServer, ObjectName name) throws Exception {
@@ -124,10 +124,10 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
                       totalProcessingTime);
         assertTrue(totalProcessingTime > 0);
 
-        assertNotNull("Expected first completion time to be available", 
+        assertNotNull("Expected first completion time to be available",
                 beanServer.getAttribute(pcob, "FirstExchangeCompletionTime"));
-        
-        assertNotNull("Expected last completion time to be available", 
+
+        assertNotNull("Expected last completion time to be available",
                 beanServer.getAttribute(pcob, "LastExchangeCompletionTime"));
 
     }
@@ -149,11 +149,11 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
     protected void releaseMBeanServers() {
-        List<MBeanServer> servers = 
+        List<MBeanServer> servers =
             (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
 
         for (MBeanServer server : servers) {
-            MBeanServerFactory.releaseMBeanServer(server); 
+            MBeanServerFactory.releaseMBeanServer(server);
         }
     }
 
@@ -168,7 +168,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     @SuppressWarnings("unchecked")
     protected MBeanServerConnection getMBeanConnection() throws Exception {
         if (mbsc == null) {
-            List<MBeanServer> servers = 
+            List<MBeanServer> servers =
                     (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
 
             for (MBeanServer server : servers) {

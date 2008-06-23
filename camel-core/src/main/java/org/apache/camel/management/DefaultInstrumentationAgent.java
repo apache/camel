@@ -74,37 +74,37 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
 
     protected void finalizeSettings() {
         if (registryPort == null) {
-            registryPort = Integer.getInteger(JmxSystemPropertyKeys.REGISTRY_PORT, 
-                    DEFAULT_REGISTRY_PORT); 
+            registryPort = Integer.getInteger(JmxSystemPropertyKeys.REGISTRY_PORT,
+                    DEFAULT_REGISTRY_PORT);
         }
-        
+
         if (connectorPort == null) {
-            connectorPort = Integer.getInteger(JmxSystemPropertyKeys.CONNECTOR_PORT, 
+            connectorPort = Integer.getInteger(JmxSystemPropertyKeys.CONNECTOR_PORT,
                     DEFAULT_CONNECTION_PORT);
         }
-        
+
         if (mBeanServerDefaultDomain == null) {
-            mBeanServerDefaultDomain = 
+            mBeanServerDefaultDomain =
                 System.getProperty(JmxSystemPropertyKeys.DOMAIN, DEFAULT_DOMAIN);
         }
-        
+
         if (mBeanObjectDomainName == null) {
-            mBeanObjectDomainName = 
+            mBeanObjectDomainName =
                 System.getProperty(JmxSystemPropertyKeys.MBEAN_DOMAIN, DEFAULT_DOMAIN);
         }
-        
+
         if (serviceUrlPath == null) {
-            serviceUrlPath = 
-                System.getProperty(JmxSystemPropertyKeys.SERVICE_URL_PATH, 
+            serviceUrlPath =
+                System.getProperty(JmxSystemPropertyKeys.SERVICE_URL_PATH,
                         DEFAULT_SERVICE_URL_PATH);
         }
-  
+
         if (createConnector == null) {
             createConnector = Boolean.getBoolean(JmxSystemPropertyKeys.CREATE_CONNECTOR);
         }
-        
+
         if (usePlatformMBeanServer == null) {
-            usePlatformMBeanServer = 
+            usePlatformMBeanServer =
                 Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS);
         }
     }
@@ -113,19 +113,19 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
     public void setRegistryPort(Integer value) {
         registryPort = value;
     }
-    
+
     public void setConnectorPort(Integer value) {
         connectorPort = value;
     }
-    
+
     public void setMBeanServerDefaultDomain(String value) {
         mBeanServerDefaultDomain = value;
     }
-    
+
     public void setMBeanObjectDomainName(String value) {
         mBeanObjectDomainName = value;
     }
-    
+
     public void setServiceUrlPath(String value) {
         serviceUrlPath = value;
     }
@@ -145,7 +145,7 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
     public void register(Object obj, ObjectName name) throws JMException {
         register(obj, name, false);
     }
-    
+
     public void register(Object obj, ObjectName name, boolean forceRegistration) throws JMException {
         try {
             registerMBeanWithServer(obj, name, forceRegistration);
@@ -173,13 +173,13 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
     protected void doStart() throws Exception {
         assembler = new MetadataMBeanInfoAssembler();
         assembler.setAttributeSource(new AnnotationJmxAttributeSource());
-        
+
         // create mbean server if is has not be injected.
         if (server == null) {
             finalizeSettings();
             createMBeanServer();
         }
-        
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Starting JMX agent on server: " + getMBeanServer());
         }
@@ -254,8 +254,8 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
             try {
                 hostName = InetAddress.getLocalHost().getHostName();
             } catch (UnknownHostException uhe) {
-                LOG.info("Cannot determine localhost name. Using default: " + 
-                        DEFAULT_REGISTRY_PORT, uhe);
+                LOG.info("Cannot determine localhost name. Using default: "
+                         + DEFAULT_REGISTRY_PORT, uhe);
                 hostName = DEFAULT_HOST;
             }
         } else {
@@ -278,13 +278,12 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
     protected MBeanServer findOrCreateMBeanServer() {
 
         // return platform mbean server if the option is specified.
-        if (Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS) || 
-                usePlatformMBeanServer) {
+        if (Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS) || usePlatformMBeanServer) {
             return ManagementFactory.getPlatformMBeanServer();
         }
 
         // look for the first mbean server that has match default domain name
-        List<MBeanServer> servers = 
+        List<MBeanServer> servers =
             (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
 
         for (MBeanServer server : servers) {
@@ -298,47 +297,46 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
     }
 
     protected void createJmxConnector(String host) throws IOException {
-            try {
-                LocateRegistry.createRegistry(registryPort);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("created RMI regisry on port " + registryPort);
-                }
-            } catch (RemoteException ex) {
-                // The registry may had been created
+        try {
+            LocateRegistry.createRegistry(registryPort);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("created RMI regisry on port " + registryPort);
             }
+        } catch (RemoteException ex) {
+            // The registry may had been created
+        }
 
-            // Create an RMI connector and start it
-            JMXServiceURL url;
-            
-            if (connectorPort > 0) {
-               url = new JMXServiceURL("service:jmx:rmi://" + host + ":" 
-                        + connectorPort + "/jndi/rmi://" + host + ":"
-                        + registryPort + serviceUrlPath);
-            } else {
-                url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + host + ":"
-                        + registryPort + serviceUrlPath);
-            }
-            cs = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
+        // Create an RMI connector and start it
+        JMXServiceURL url;
 
-            // Start the connector server asynchronously (in a separate thread).
-            Thread connectorThread = new Thread() {
-                public void run() {
-                    try {
-                        cs.start();
-                    } catch (IOException ioe) {
-                        LOG.warn("Could not start jmx connector thread.", ioe);
-                    }
+        if (connectorPort > 0) {
+            url = new JMXServiceURL("service:jmx:rmi://" + host + ":" + connectorPort + "/jndi/rmi://" + host
+                                    + ":" + registryPort + serviceUrlPath);
+        } else {
+            url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + host + ":" + registryPort
+                                    + serviceUrlPath);
+        }
+        cs = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
+
+        // Start the connector server asynchronously (in a separate thread).
+        Thread connectorThread = new Thread() {
+            public void run() {
+                try {
+                    cs.start();
+                } catch (IOException ioe) {
+                    LOG.warn("Could not start jmx connector thread.", ioe);
                 }
-            };
-            connectorThread.setName("JMX Connector Thread [" + url + "]");
-            connectorThread.start();
-            LOG.info("JMX connector thread started on " + url);
+            }
+        };
+        connectorThread.setName("JMX Connector Thread [" + url + "]");
+        connectorThread.start();
+        LOG.info("JMX connector thread started on " + url);
     }
 
     public String getMBeanObjectDomainName() {
         return mBeanObjectDomainName;
     }
-    
+
     public void setServer(MBeanServer value) {
         server = value;
     }

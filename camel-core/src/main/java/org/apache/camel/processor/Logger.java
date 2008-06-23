@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A {@link Processor} which just logs to a {@link Log} object which can be used
  * as an exception handler instead of using a dead letter queue.
- * 
+ *
  * @version $Revision$
  */
 public class Logger implements Processor {
@@ -56,7 +56,7 @@ public class Logger implements Processor {
         this(LogFactory.getLog(logName), level);
     }
 
-    public Logger(Log log,ExchangeFormatter formatter) {
+    public Logger(Log log, ExchangeFormatter formatter) {
         this(log);
         this.formatter = formatter;
     }

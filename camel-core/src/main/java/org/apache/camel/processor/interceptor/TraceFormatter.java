@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,8 +28,8 @@ public class TraceFormatter {
     private boolean showProperties = true;
     private boolean showHeaders = true;
     private boolean showBody = true;
-    private boolean showExchangeId = false;
-    private boolean showBreadCrumb = false;
+    private boolean showExchangeId;
+    private boolean showBreadCrumb;
 
     public Object format(TraceInterceptor interceptor, Exchange exchange) {
         Message in = exchange.getIn();
@@ -40,9 +39,9 @@ public class TraceFormatter {
                 + (showNode ? interceptor.getNode() + " " : "")
                 + exchange.getPattern()
                 + (showExchangeId ? " Id: " + exchange.getExchangeId() : "")
-                + ((showProperties) ? " Properties:" + exchange.getProperties() : "")
-                + ((showHeaders) ? " Headers:" + in.getHeaders() : "")
-                + ((showBody) ? " Body:" + getBodyAsString(in) : "")
+                + (showProperties ? " Properties:" + exchange.getProperties() : "")
+                + (showHeaders ? " Headers:" + in.getHeaders() : "")
+                + (showBody ? " Body:" + getBodyAsString(in) : "")
                 + (exception != null ? " Exception: " + exception : "");
     }
 
