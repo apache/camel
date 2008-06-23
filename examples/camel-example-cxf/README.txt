@@ -25,7 +25,7 @@ To run the example with Ant
     Apache ActiveMQ
     http://activemq.apache.org/
     Apache CXF
-    http://incubator.apache.org/cxf/
+    http://cxf.apache.org/
 
   b. Export / Set home directories for the above as follows
     UNIX
