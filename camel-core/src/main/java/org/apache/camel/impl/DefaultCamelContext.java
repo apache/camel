@@ -17,49 +17,25 @@
 package org.apache.camel.impl;
 
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-
-import javax.naming.Context;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.Route;
-import org.apache.camel.Routes;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Service;
-import org.apache.camel.TypeConverter;
+import org.apache.camel.*;
+import org.apache.camel.processor.interceptor.TraceStrategy;
+import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.RouteType;
-import org.apache.camel.spi.ComponentResolver;
-import org.apache.camel.spi.ExchangeConverter;
-import org.apache.camel.spi.Injector;
-import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.Language;
-import org.apache.camel.spi.LanguageResolver;
-import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.spi.Registry;
-import org.apache.camel.util.FactoryFinder;
-import org.apache.camel.util.NoFactoryAvailableException;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ReflectionInjector;
+import org.apache.camel.spi.*;
+import org.apache.camel.util.*;
+import static org.apache.camel.util.ServiceHelper.startServices;
+import static org.apache.camel.util.ServiceHelper.stopServices;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import static org.apache.camel.util.ServiceHelper.startServices;
-import static org.apache.camel.util.ServiceHelper.stopServices;
+import javax.naming.Context;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.Callable;
+
 /**
  * Represents the context used to configure routes and the policies to use.
  *
@@ -85,6 +61,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private LifecycleStrategy lifecycleStrategy;
     private List<RouteType> routeDefinitions = new ArrayList<RouteType>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
+    private Boolean tracing;
 
     public DefaultCamelContext() {
         name = NAME_PREFIX + ++nameSuffix;
@@ -168,7 +145,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             return componentType.cast(component);
         } else {
             throw new IllegalArgumentException("The component is not of type: " + componentType + " but is: "
-                                               + component);
+                    + component);
         }
     }
 
@@ -186,13 +163,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     component = factory.call();
                     if (component == null) {
                         throw new RuntimeCamelException("Factory failed to create the " + componentName
-                                                        + " component, it returned null.");
+                                + " component, it returned null.");
                     }
                     components.put(componentName, component);
                     component.setCamelContext(this);
                 } catch (Exception e) {
                     throw new RuntimeCamelException("Factory failed to create the " + componentName
-                                                    + " component", e);
+                            + " component", e);
                 }
             }
             return component;
@@ -282,7 +259,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             return endpointType.cast(endpoint);
         } else {
             throw new IllegalArgumentException("The endpoint is not of type: " + endpointType + " but is: "
-                                               + endpoint);
+                    + endpoint);
         }
     }
 
@@ -439,10 +416,44 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         getInterceptStrategies().add(interceptStrategy);
     }
 
+    /**
+     * Returns true if tracing has been enabled or disabled via the {@link #setTracing(Boolean)} method
+     * or it has not been specified then default to the <b>camel.trace</b> system property
+     */
+    public boolean isTracing() {
+        final Boolean value = getTracing();
+        if (value != null) {
+            return value;
+        } else {
+            return SystemHelper.isSystemProperty("canel.trace");
+        }
+    }
+
+    public Boolean getTracing() {
+        return tracing;
+    }
+
+    public void setTracing(Boolean tracing) {
+        this.tracing = tracing;
+    }
+
     // Implementation methods
     // -----------------------------------------------------------------------
 
     protected void doStart() throws Exception {
+        if (isTracing()) {
+            // lets check if we already have already been configured and if not add the default
+            boolean found = false;
+            final List<InterceptStrategy> list = getInterceptStrategies();
+            for (InterceptStrategy strategy : list) {
+                if (strategy instanceof TraceStrategy) {
+                    found = true;    
+                }
+            }
+            if (!found) {
+                addInterceptStrategy(new TraceStrategy());
+            }
+        }
         lifecycleStrategy.onContextStart(this);
 
         forceLazyInitialization();
@@ -516,7 +527,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     protected Injector createInjector() {
         FactoryFinder finder = new FactoryFinder();
         try {
-            return (Injector)finder.newInstance("Injector");
+            return (Injector) finder.newInstance("Injector");
         } catch (NoFactoryAvailableException e) {
             // lets use the default
             return new ReflectionInjector();
@@ -556,9 +567,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     protected Endpoint createEndpoint(String uri) {
         Object value = getRegistry().lookup(uri);
         if (value instanceof Endpoint) {
-            return (Endpoint)value;
+            return (Endpoint) value;
         } else if (value instanceof Processor) {
-            return new ProcessorEndpoint(uri, this, (Processor)value);
+            return new ProcessorEndpoint(uri, this, (Processor) value);
         } else if (value != null) {
             return convertBeanToEndpoint(uri, value);
         }
@@ -569,13 +580,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * Attempt to convert the bean from a {@link Registry} to an endpoint using
      * some kind of transformation or wrapper
      *
-     * @param uri the uri for the endpoint (and name in the registry)
+     * @param uri  the uri for the endpoint (and name in the registry)
      * @param bean the bean to be converted to an endpoint, which will be not null
      * @return a new endpoint
      */
     protected Endpoint convertBeanToEndpoint(String uri, Object bean) {
         throw new IllegalArgumentException("uri: " + uri + " bean: " + bean
-                                           + " could not be converted to an Endpoint");
+                + " could not be converted to an Endpoint");
     }
 
     /**
