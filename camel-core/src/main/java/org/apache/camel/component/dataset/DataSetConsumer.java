@@ -65,10 +65,10 @@ public class DataSetConsumer extends DefaultConsumer<Exchange> {
 
                 try {
                     long delay = endpoint.getProduceDelay();
-                    if (delay < 1) {
-                        // if no delay set then we must sleep at lest for 1 millis to avoid concurrency
-                        // issues with extremly high throughtput
-                        delay = 1;
+                    if (delay < 3) {
+                        // if no delay set then we must sleep at lest for 3 millis to avoid concurrency
+                        // issues with extremely high throughput
+                        delay = 3;
                     }
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {

@@ -123,7 +123,7 @@
           <forkMode>pertest</forkMode>
           <excludes>
             <!-- TODO FIXME ASAP -->
-            <exclude>**/DataSetSedaTest.*</exclude>
+            <exclude>**/XXXTest.*</exclude>
           </excludes>
         </configuration>
       </plugin>
