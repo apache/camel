@@ -48,7 +48,7 @@ public class CamelNamespaceHandler extends org.apache.camel.spring.handler.Camel
         classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);
         classes.add(org.apache.camel.model.dataformat.DataFormatType.class);
         classes.add(org.apache.camel.model.language.ExpressionType.class);
-        classes.add(org.apache.camel.model.loadbalancer.LoadBalancerType.class) ;
+        classes.add(org.apache.camel.model.loadbalancer.LoadBalancerType.class);
         return classes;
     }
 

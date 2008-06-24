@@ -41,8 +41,8 @@ public class XQueryEndpointTest extends SpringTestSupport {
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
         assertNotNull("The transformed XML should not be null", xml);
-        assertEquals("transformed", "<transformed subject=\"Hey\"><mail><subject>Hey</subject>" +
-            "<body>Hello world!</body></mail></transformed>", xml);
+        assertEquals("transformed", "<transformed subject=\"Hey\"><mail><subject>Hey</subject>"
+            + "<body>Hello world!</body></mail></transformed>", xml);
 
         TestBean bean = getMandatoryBean(TestBean.class, "testBean");
         assertEquals("bean.subject", "Hey", bean.getSubject());
