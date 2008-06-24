@@ -68,6 +68,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private static final Log LOG = LogFactory.getLog(CamelContextFactoryBean.class);
 
     @XmlAttribute(required = false)
+    private Boolean useJmx = Boolean.TRUE;
+    @XmlAttribute(required = false)
     private Boolean autowireRouteBuilders = Boolean.TRUE;
     @XmlAttribute(required = false)
     private Boolean tracing;
@@ -152,7 +154,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
 
-        if (camelJMXAgent != null) {
+        if (camelJMXAgent != null && isJmxEnabled()) {
             if (camelJMXAgent.isDisabled() != null && camelJMXAgent.isDisabled()) {
                 getContext().setLifecycleStrategy(new DefaultLifecycleStrategy());
             } else {
@@ -301,6 +303,18 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     public BeanPostProcessor getBeanPostProcessor() {
         return beanPostProcessor;
+    }
+
+    public boolean isJmxEnabled() {
+        return useJmx != null && useJmx.booleanValue();
+    }
+
+    public Boolean getUseJmx() {
+        return useJmx;
+    }
+
+    public void setUseJmx(Boolean useJmx) {
+        this.useJmx = useJmx;
     }
 
     public void setCamelJMXAgent(CamelJMXAgentType agent) {
