@@ -24,16 +24,16 @@ import javax.management.remote.JMXServiceURL;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Test that verifies JMX properties can be configured via 
+ * Test that verifies JMX properties can be configured via
  * Spring.
- * 
+ *
  * @version $Revision$
  *
  */
 public class JMXAgentTest extends DefaultJMXAgentTest {
-    
+
     protected static final String JMXSERVICEURL =
-        "service:jmx:rmi:///jndi/rmi://localhost:20008/jmxrmi";
+        "service:jmx:rmi:///jndi/rmi://localhost:20008/jmxrmi/camel";
     protected JMXConnector clientConnector;
 
     @Override
@@ -41,10 +41,10 @@ public class JMXAgentTest extends DefaultJMXAgentTest {
         sleepForConnection = 2000;
         super.setUp();
     }
-    
+
     @Override
     protected void tearDown() throws Exception {
-        
+
         if (clientConnector != null) {
             try {
                 clientConnector.close();
@@ -55,7 +55,7 @@ public class JMXAgentTest extends DefaultJMXAgentTest {
         }
         super.tearDown();
     }
-    
+
     @Override
     protected String getDomainName() {
         return "org.apache.camel.test";
@@ -65,7 +65,7 @@ public class JMXAgentTest extends DefaultJMXAgentTest {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/jmxConfig.xml");
     }
-    
+
     @Override
     protected MBeanServerConnection getMBeanConnection() throws Exception {
         if (mbsc == null) {
@@ -75,7 +75,7 @@ public class JMXAgentTest extends DefaultJMXAgentTest {
             }
             mbsc = clientConnector.getMBeanServerConnection();
         }
-        return mbsc;   
+        return mbsc;
     }
 
 }
