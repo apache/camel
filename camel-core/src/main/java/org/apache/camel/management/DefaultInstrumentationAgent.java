@@ -56,7 +56,7 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
     public static final String DEFAULT_HOST = "localhost";
     public static final int DEFAULT_REGISTRY_PORT = 1099;
     public static final int DEFAULT_CONNECTION_PORT = -1;
-    public static final String DEFAULT_SERVICE_URL_PATH = "/jmxrmi";
+    public static final String DEFAULT_SERVICE_URL_PATH = "/jmxrmi/camel";
     private static final transient Log LOG = LogFactory.getLog(DefaultInstrumentationAgent.class);
 
     private MBeanServer server;
@@ -303,7 +303,7 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
                 LOG.debug("created RMI regisry on port " + registryPort);
             }
         } catch (RemoteException ex) {
-            // The registry may had been created
+            // The registry may had been created, we could get the registry instead
         }
 
         // Create an RMI connector and start it
