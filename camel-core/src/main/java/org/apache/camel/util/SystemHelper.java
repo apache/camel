@@ -31,8 +31,6 @@ public class SystemHelper {
 
     /**
      * Looks up the given system property name returning null if any exceptions occur
-     * @param name
-     * @return
      */
     public static String getSystemProperty(String name) {
         try {
@@ -44,11 +42,11 @@ public class SystemHelper {
     }
 
     /**
-     * Looks up the given system property value and returns true or false if it is not enabled
+     * Looks up the given system property boolean value. Returns false if the system property doesn't exist.
      */
     public static boolean isSystemProperty(String name) {
         String text = getSystemProperty(name);
         return ObjectConverter.toBool(text);
-
     }
+
 }
