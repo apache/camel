@@ -31,7 +31,9 @@ public class PerformanceCounter extends Counter {
     private double maxProcessingTime;
     private double totalProcessingTime;
     private Date lastExchangeCompletionTime;
+    private Date lastExchangeFailureTime;
     private Date firstExchangeCompletionTime;
+    private Date firstExchangeFailureTime;
 
     @Override
     @ManagedOperation(description = "Reset counters")
@@ -42,8 +44,9 @@ public class PerformanceCounter extends Counter {
         maxProcessingTime = 0.0;
         totalProcessingTime = 0.0;
         lastExchangeCompletionTime = null;
+        lastExchangeFailureTime = null;
         firstExchangeCompletionTime = null;
-
+        firstExchangeFailureTime = null;
     }
 
     @ManagedAttribute(description = "Number of successful exchanges")
@@ -87,6 +90,16 @@ public class PerformanceCounter extends Counter {
         return firstExchangeCompletionTime;
     }
 
+    @ManagedAttribute(description = "Last Exchange Failed Timestamp")
+    public synchronized Date getLastExchangeFailureTime() {
+        return lastExchangeFailureTime;
+    }
+
+    @ManagedAttribute(description = "First Exchange Failed Timestamp")
+    public synchronized Date getFirstExchangeFailureTime() {
+        return firstExchangeFailureTime;
+    }
+
     /**
      * This method is called when an exchange has been processed successfully.
      * 
@@ -95,6 +108,7 @@ public class PerformanceCounter extends Counter {
     public synchronized void completedExchange(double time) {
         increment();
         numCompleted.incrementAndGet();
+
         totalProcessingTime += time;
         if (minProcessingTime < 0 || time < minProcessingTime) {
             minProcessingTime = time;
@@ -102,6 +116,7 @@ public class PerformanceCounter extends Counter {
         if (time > maxProcessingTime) {
             maxProcessingTime = time;
         }
+        
         Date timestamp = new Date();
         if (firstExchangeCompletionTime == null) {
             firstExchangeCompletionTime = timestamp;
@@ -109,7 +124,17 @@ public class PerformanceCounter extends Counter {
         lastExchangeCompletionTime = timestamp;
     }
 
-    public void completedExchange() {
-        numExchanges.incrementAndGet();
+    /**
+     * This method is called when an exchange has been processed and failed.
+     */
+    public synchronized void failedExchange() {
+        increment();
+
+        Date timestamp = new Date();
+        if (firstExchangeFailureTime == null) {
+            firstExchangeFailureTime = timestamp;
+        }
+        lastExchangeFailureTime = timestamp;
     }
+    
 }

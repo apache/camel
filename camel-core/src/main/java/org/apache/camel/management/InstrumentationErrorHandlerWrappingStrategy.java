@@ -41,11 +41,9 @@ public class InstrumentationErrorHandlerWrappingStrategy implements
         // don't wrap our instrumentation interceptors
         if (counterMap.containsKey(processorType)) {
             return processorType.getErrorHandlerBuilder().createErrorHandler(target);
-         
         }
-        
+
         return target;
-        
     }
 
 }

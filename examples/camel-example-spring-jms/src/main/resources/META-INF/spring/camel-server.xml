@@ -23,10 +23,10 @@
        xmlns:camel="http://activemq.apache.org/camel/schema/spring"
        xmlns:broker="http://activemq.apache.org/schema/core"
        xsi:schemaLocation="
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
-		http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring-1.3.0.xsd
-		http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.1.0.xsd">
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
+        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.1.0.xsd">
 <!-- END SNIPPET: e1 -->
 
     <!-- START SNIPPET: e2 -->
@@ -39,6 +39,9 @@
          in the package org.apache.camel.example.server -->
     <camel:camelContext id="camel">
         <camel:package>org.apache.camel.example.server</camel:package>
+        <!-- enable JMX connector so we can connect to the server and browse mbeans -->
+        <!-- Camel will log at INFO level the service URI to use for connecting with jconsole -->
+        <camel:jmxAgent id="agent" createConnector="true"/>
     </camel:camelContext>
     <!-- END SNIPPET: e3 -->
 
