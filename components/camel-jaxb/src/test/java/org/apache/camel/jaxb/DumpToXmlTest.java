@@ -30,14 +30,18 @@ public class DumpToXmlTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         // Delete the dump directory
         File file = new File("target/camel/dump");
-        if (file.getAbsoluteFile().exists()) {
+        file = file.getAbsoluteFile();
+        if (file.exists()) {
             deleteDirectory("target/camel/dump");
         }
         super.setUp();
     }
 
     public void testDumplFilesToJaxb() throws Exception {
-        Thread.sleep(3000);
+        // sleep to let the file and jaxb do its works
+        Thread.sleep(5000);
+
+        // assert dump file exists
         File file = new File("target/camel/dump");
         file = file.getAbsoluteFile();
         assertTrue("The dump folder should exists", file.exists());
