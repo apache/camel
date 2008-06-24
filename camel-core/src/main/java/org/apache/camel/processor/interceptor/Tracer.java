@@ -25,7 +25,7 @@ import org.apache.camel.spi.InterceptStrategy;
  *
  * @version $Revision$
  */
-public class TraceStrategy implements InterceptStrategy {
+public class Tracer implements InterceptStrategy {
 
     private TraceFormatter formatter = new TraceFormatter();
 

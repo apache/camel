@@ -18,8 +18,7 @@ package org.apache.camel.impl;
 
 
 import org.apache.camel.*;
-import org.apache.camel.processor.interceptor.TraceStrategy;
-import org.apache.camel.converter.ObjectConverter;
+import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
@@ -446,12 +445,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             boolean found = false;
             final List<InterceptStrategy> list = getInterceptStrategies();
             for (InterceptStrategy strategy : list) {
-                if (strategy instanceof TraceStrategy) {
+                if (strategy instanceof Tracer) {
                     found = true;    
                 }
             }
             if (!found) {
-                addInterceptStrategy(new TraceStrategy());
+                addInterceptStrategy(new Tracer());
             }
         }
         lifecycleStrategy.onContextStart(this);

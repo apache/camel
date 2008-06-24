@@ -59,6 +59,7 @@ public class Main extends ServiceSupport {
     private String dotOutputDir;
     private boolean aggregateDot;
     private boolean debug;
+    private boolean trace;
     private List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
     private List<SpringCamelContext> camelContexts = new ArrayList<SpringCamelContext>();
     private AbstractApplicationContext parentApplicationContext;
@@ -109,7 +110,12 @@ public class Main extends ServiceSupport {
 
         addOption(new Option("x", "debug", "Enables the debugger") {
             protected void doProcess(String arg, LinkedList<String> remainingArgs) {
-                enableDebugging();
+                enableDebug();
+            }
+        });
+        addOption(new Option("t", "trace", "Enables tracing") {
+            protected void doProcess(String arg, LinkedList<String> remainingArgs) {
+                enableTrace();
             }
         });
     }
@@ -359,16 +365,25 @@ public class Main extends ServiceSupport {
         return debug;
     }
 
-    public void enableDebugging() {
+    public void enableDebug() {
         this.debug = true;
         setParentApplicationContextUri("/META-INF/services/org/apache/camel/spring/debug.xml");
+    }
+
+    public boolean isTrace() {
+        return trace;
+    }
+
+    public void enableTrace() {
+        this.trace = true;
+        setParentApplicationContextUri("/META-INF/services/org/apache/camel/spring/trace.xml");
     }
 
     /**
      * Returns the currently active debugger if one is enabled
      *
      * @return the current debugger or null if none is active
-     * @see #enableDebugging()
+     * @see #enableDebug()
      */
     public Debugger getDebugger() {
         for (SpringCamelContext camelContext : camelContexts) {
