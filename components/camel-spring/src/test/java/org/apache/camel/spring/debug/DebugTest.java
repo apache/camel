@@ -43,7 +43,7 @@ public class DebugTest extends TestCase {
         // START SNIPPET: example
         // lets run the camel route in debug mode
         main = new Main();
-        main.enableDebugging();
+        main.enableDebug();
         main.setApplicationContextUri("org/apache/camel/spring/debug/applicationContext.xml");
         main.start();
 

@@ -40,6 +40,7 @@ import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.processor.interceptor.Debugger;
+import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
 import org.apache.commons.logging.Log;
@@ -127,6 +128,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         Debugger debugger = getBeanForType(Debugger.class);       
         if (debugger != null) {
             getContext().addInterceptStrategy(debugger);
+        }
+        Tracer tracer = getBeanForType(Tracer.class);
+        if (tracer != null) {
+            getContext().addInterceptStrategy(tracer);
         }
 
         // set the lifecycle strategy if defined
