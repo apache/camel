@@ -160,13 +160,10 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        // TODO:
-        // streamConfig is null and is causing NPE downstream
-        // return createStreamResequencer(routeContext, streamConfig);
-        
         if (batchConfig != null) {
             return createBatchResequencer(routeContext, batchConfig);
         } else {
+            // streamConfig should be non-null if batchConfig is null
             return createStreamResequencer(routeContext, streamConfig);
         }
     }
