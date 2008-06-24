@@ -31,7 +31,7 @@ public class MessageProcessed {
     private String messageId;
     private String processorName;
 
-    
+
     @Override
     public String toString() {
         return "MessageProcessed[processorName: " + getProcessorName() + " messageId: " + getMessageId() + "]";

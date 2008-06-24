@@ -27,7 +27,6 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -148,5 +147,5 @@ public abstract class BamProcessorSupport<T> implements Processor {
         LOG.error("Caught: " + e, e);
         throw new RuntimeCamelException(e);
     }
-    
+
 }
