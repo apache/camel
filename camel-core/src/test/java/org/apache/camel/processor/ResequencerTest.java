@@ -21,8 +21,13 @@ import java.util.List;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.apache.camel.management.InstrumentationProcessor;
+import org.apache.camel.management.JmxSystemPropertyKeys;
 
 /**
  * @version $Revision$
@@ -33,23 +38,22 @@ public class ResequencerTest extends ContextTestSupport {
 
     public void testSendMessagesInWrongOrderButReceiveThemInCorrectOrder() throws Exception {
         resultEndpoint.expectedBodiesReceived("Guillaume", "Hiram", "James", "Rob");
-
         sendBodies("direct:start", "Rob", "Hiram", "Guillaume", "James");
-
         resultEndpoint.assertIsSatisfied();
-        List<Exchange> list = resultEndpoint.getReceivedExchanges();
-        for (Exchange exchange : list) {
-            log.debug("Received: " + exchange);
-        }
     }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
+    @Override 
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        System.clearProperty(JmxSystemPropertyKeys.DISABLED);
+    }
+    
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -59,4 +63,37 @@ public class ResequencerTest extends ContextTestSupport {
             }
         };
     }
+
+    public void testBatchResequencerTypeWithJmx() throws Exception {
+        System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
+
+        List<Route> list = getRouteList(createRouteBuilder());
+        assertEquals("Number of routes created: " + list, 1, list.size());
+
+        Route route = list.get(0);
+        assertTrue(route.toString().startsWith("BatchResequencerRoute"));
+    }
+
+    public void testBatchResequencerTypeWithoutJmx() throws Exception {
+        List<Route> list = getRouteList(createRouteBuilder());
+        assertEquals("Number of routes created: " + list, 1, list.size());
+
+        Route route = list.get(0);
+        EventDrivenConsumerRoute consumerRoute =
+            assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+
+        Processor processor = unwrap(consumerRoute.getProcessor());
+
+        DeadLetterChannel deadLetterChannel =
+            assertIsInstanceOf(DeadLetterChannel.class, processor);
+
+        Processor outputProcessor = deadLetterChannel.getOutput();
+        InstrumentationProcessor interceptor =
+                assertIsInstanceOf(InstrumentationProcessor.class, outputProcessor);
+
+        outputProcessor = interceptor.getProcessor();
+
+        assertIsInstanceOf(Resequencer.class, outputProcessor);
+    }
+
 }

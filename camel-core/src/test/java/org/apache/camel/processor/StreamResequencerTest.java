@@ -22,15 +22,19 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.apache.camel.management.InstrumentationProcessor;
+import org.apache.camel.management.JmxSystemPropertyKeys;
 
 public class StreamResequencerTest extends ContextTestSupport {
 
     protected MockEndpoint resultEndpoint;
 
-    public void sendBodyAndHeader(String endpointUri, final Object body, 
-            final String headerName, final Object headerValue) {
+    protected void sendBodyAndHeader(String endpointUri, final Object body,
+                                   final String headerName, final Object headerValue) {
         template.send(endpointUri, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
@@ -38,9 +42,9 @@ public class StreamResequencerTest extends ContextTestSupport {
                 in.setHeader(headerName, headerValue);
                 in.setHeader("testCase", getName());
             }
-        });        
+        });
     }
-    
+
     public void testSendMessagesInWrongOrderButReceiveThemInCorrectOrder() throws Exception {
         resultEndpoint.expectedBodiesReceived("msg1", "msg2", "msg3", "msg4");
         sendBodyAndHeader("direct:start", "msg4", "seqnum", 4L);
@@ -48,16 +52,18 @@ public class StreamResequencerTest extends ContextTestSupport {
         sendBodyAndHeader("direct:start", "msg3", "seqnum", 3L);
         sendBodyAndHeader("direct:start", "msg2", "seqnum", 2L);
         resultEndpoint.assertIsSatisfied();
-        List<Exchange> list = resultEndpoint.getReceivedExchanges();
-        for (Exchange exchange : list) {
-            log.debug("Received: " + exchange);
-        }
     }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         resultEndpoint = getMockEndpoint("mock:result");
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        System.clearProperty(JmxSystemPropertyKeys.DISABLED);
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -69,4 +75,36 @@ public class StreamResequencerTest extends ContextTestSupport {
             }
         };
     }
+
+    public void testStreamResequencerTypeWithJmx() throws Exception {
+        doTestStreamResequencerType();
+    }
+
+    public void testStreamResequencerTypeWithoutJmx() throws Exception {
+        System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
+        doTestStreamResequencerType();
+    }
+
+    protected void doTestStreamResequencerType() throws Exception {
+        List<Route> list = getRouteList(createRouteBuilder());
+        assertEquals("Number of routes created: " + list, 1, list.size());
+
+        Route route = list.get(0);
+        EventDrivenConsumerRoute consumerRoute =
+            assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+
+        Processor processor = unwrap(consumerRoute.getProcessor());
+
+        DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, processor);
+        Processor outputProcessor = deadLetterChannel.getOutput();
+        if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
+            InstrumentationProcessor interceptor =
+                assertIsInstanceOf(InstrumentationProcessor.class, outputProcessor);
+            outputProcessor = interceptor.getProcessor();
+        }
+
+        assertIsInstanceOf(StreamResequencer.class, outputProcessor);
+    }
+
 }
+
