@@ -21,16 +21,18 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * JMX enabled processor that uses the {@link Counter} for instrumenting
  * processing of exchanges.
  *
  * @version $Revision$
- *
  */
 public class InstrumentationProcessor extends DelegateProcessor implements AsyncProcessor {
 
+    private static final transient Log LOG = LogFactory.getLog(InstrumentationProcessor.class);
     private PerformanceCounter counter;
 
     public InstrumentationProcessor(PerformanceCounter counter) {
@@ -47,10 +49,10 @@ public class InstrumentationProcessor extends DelegateProcessor implements Async
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }
-   
+
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         final long startTime = System.nanoTime();
-        
+
         if (processor instanceof AsyncProcessor) {
             return ((AsyncProcessor)processor).process(exchange, new AsyncCallback() {
                 public void done(boolean doneSynchronously) {
@@ -61,8 +63,8 @@ public class InstrumentationProcessor extends DelegateProcessor implements Async
                     callback.done(doneSynchronously);
                 }
             });
-        } 
-        
+        }
+
         try {
             processor.process(exchange);
         } catch (Exception e) {
@@ -75,14 +77,18 @@ public class InstrumentationProcessor extends DelegateProcessor implements Async
         }
         callback.done(true);
         return true;
-
     }
 
     protected void recordTime(Exchange exchange, double duration) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Recording duration: " + duration + " millis for exchange: " + exchange);
+        }
+
         if (!exchange.isFailed() && exchange.getException() == null) {
             counter.completedExchange(duration);
         } else {
-            counter.completedExchange();
+            counter.failedExchange();
         }
     }
+
 }
