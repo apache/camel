@@ -188,7 +188,7 @@ public class CamelNamingStrategy {
         int pos = uri.indexOf(':');
         String id = (pos == -1) ? uri : uri.substring(pos + 1);
         if (!ep.isSingleton()) {
-            id += "." + Integer.toString(ep.hashCode());
+            id += "@" + Integer.toString(ep.hashCode());
         }
         return ObjectNameEncoder.encode(id);
     }
