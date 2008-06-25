@@ -16,24 +16,52 @@
  */
 package org.apache.camel.impl;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
-import org.apache.camel.*;
-import org.apache.camel.processor.interceptor.Tracer;
+import javax.naming.Context;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.Route;
+import org.apache.camel.Routes;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Service;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.RouteType;
-import org.apache.camel.spi.*;
-import org.apache.camel.util.*;
-import static org.apache.camel.util.ServiceHelper.startServices;
-import static org.apache.camel.util.ServiceHelper.stopServices;
+import org.apache.camel.processor.interceptor.Tracer;
+import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.ExchangeConverter;
+import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.Language;
+import org.apache.camel.spi.LanguageResolver;
+import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.util.FactoryFinder;
+import org.apache.camel.util.NoFactoryAvailableException;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ReflectionInjector;
+import org.apache.camel.util.SystemHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.naming.Context;
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.Callable;
+import static org.apache.camel.util.ServiceHelper.startServices;
+import static org.apache.camel.util.ServiceHelper.stopServices;
+
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -446,7 +474,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             final List<InterceptStrategy> list = getInterceptStrategies();
             for (InterceptStrategy strategy : list) {
                 if (strategy instanceof Tracer) {
-                    found = true;    
+                    found = true;
                 }
             }
             if (!found) {
