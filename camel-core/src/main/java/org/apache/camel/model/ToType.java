@@ -63,6 +63,11 @@ public class ToType extends ProcessorType<ProcessorType> {
     }
 
     @Override
+    public String getShortName() {
+        return "to";
+    }
+
+    @Override
     public String getLabel() {
         return FromType.description(getUri(), getRef(), getEndpoint());
     }

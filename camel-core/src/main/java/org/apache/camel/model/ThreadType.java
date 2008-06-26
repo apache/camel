@@ -87,6 +87,11 @@ public class ThreadType extends ProcessorType<ProcessorType> {
     }
 
     @Override
+    public String getShortName() {
+        return "thread";
+    }
+
+    @Override
     public String getLabel() {
         return "coreSize=" + coreSize;
     }

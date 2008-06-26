@@ -46,6 +46,11 @@ public class ThrowFaultType extends ProcessorType<ThrowFaultType> {
     public ThrowFaultType() {
     }
 
+    @Override
+    public String getShortName() {
+        return "throwFault";
+    }
+
     public void setFault(Throwable fault) {
         this.fault = fault;
     }

@@ -63,6 +63,11 @@ public class SetHeaderType extends ExpressionNode {
     }
 
     @Override
+    public String getShortName() {
+        return "setHeader";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Expression expr;
 

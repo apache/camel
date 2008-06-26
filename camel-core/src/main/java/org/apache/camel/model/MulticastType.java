@@ -53,6 +53,11 @@ public class MulticastType extends OutputType<ProcessorType> {
     }
 
     @Override
+    public String getShortName() {
+        return "multicast";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         return createOutputsProcessor(routeContext);
     }

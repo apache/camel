@@ -61,6 +61,11 @@ public class ExpressionNode extends ProcessorType<ProcessorType> {
         }
     }
 
+    @Override
+    public String getShortName() {
+        return "exp";
+    }
+      
     public ExpressionType getExpression() {
         return expression;
     }

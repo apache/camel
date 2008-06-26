@@ -46,6 +46,11 @@ public class ProcessorRef extends OutputType<ProcessorType> {
     }
 
     @Override
+    public String getShortName() {
+        return "processor";
+    }
+
+    @Override
     public String toString() {
         return "Processor["
                 + ((ref != null) ? "ref:  " + ref : processor)

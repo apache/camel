@@ -66,6 +66,11 @@ public class SplitterType extends ExpressionNode {
     }
 
     @Override
+    public String getShortName() {
+        return "splitter";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
         if (aggregationStrategy == null) {

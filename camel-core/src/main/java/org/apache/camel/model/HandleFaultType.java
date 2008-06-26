@@ -36,6 +36,11 @@ public class HandleFaultType extends InterceptorRef {
     }
 
     @Override
+    public String getShortName() {
+        return "handleFault";
+    }
+
+    @Override
     public String toString() {
         return "HandleFault[" + getLabel() + "]";
     }

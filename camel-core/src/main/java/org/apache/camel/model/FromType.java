@@ -58,6 +58,12 @@ public class FromType extends OptionalIdentifiedType<FromType> {
         return "From[" + getLabel() + "]";
     }
 
+    @Override
+    public String getShortName() {
+        return "from";
+    }
+
+
     public String getLabel() {
         return description(getUri(), getRef(), getEndpoint());
     }

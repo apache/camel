@@ -48,6 +48,12 @@ public class FilterType extends ExpressionNode implements Block {
     public String toString() {
         return "Filter[ " + getExpression() + " -> " + getOutputs() + "]";
     }
+    
+    @Override
+    public String getShortName() {
+        return "filter";
+    }
+
 
     @Override
     public FilterProcessor createProcessor(RouteContext routeContext) throws Exception {

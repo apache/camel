@@ -63,6 +63,11 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
         this.batch();
     }
 
+    @Override
+    public String getShortName() {
+        return "resequencer";
+    }
+
     /**
      * Configures the stream-based resequencing algorithm using the default
      * configuration.

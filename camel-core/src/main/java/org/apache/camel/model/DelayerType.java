@@ -57,6 +57,11 @@ public class DelayerType extends ExpressionNode {
         return "Delayer[ " + getExpression() + " -> " + getOutputs() + "]";
     }
 
+    @Override
+    public String getShortName() {
+        return "delayer";
+    }
+
     public Long getDelay() {
         return delay;
     }

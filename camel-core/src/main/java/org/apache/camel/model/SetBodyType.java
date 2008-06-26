@@ -46,6 +46,11 @@ public class SetBodyType extends ExpressionNode {
     }
 
     @Override
+    public String getShortName() {
+        return "setBody";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Expression expr = getExpression().createExpression(routeContext);
         return ProcessorBuilder.setBody(expr);

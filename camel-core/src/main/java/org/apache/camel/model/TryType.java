@@ -52,6 +52,11 @@ public class TryType extends OutputType<TryType> {
     }
 
     @Override
+    public String getShortName() {
+        return "try";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor tryProcessor = createOutputsProcessor(routeContext, getOutputsWithoutCatches());
 

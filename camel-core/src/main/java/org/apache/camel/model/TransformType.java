@@ -45,6 +45,11 @@ public class TransformType extends ExpressionNode {
     }
 
     @Override
+    public String getShortName() {
+        return "transform";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Expression expr = getExpression().createExpression(routeContext);
         Processor childProcessor = routeContext.createProcessor(this);
