@@ -80,8 +80,8 @@ public class InstrumentationProcessor extends DelegateProcessor implements Async
     }
 
     protected void recordTime(Exchange exchange, double duration) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Recording duration: " + duration + " millis for exchange: " + exchange);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Recording duration: " + duration + " millis for exchange: " + exchange);
         }
 
         if (!exchange.isFailed() && exchange.getException() == null) {

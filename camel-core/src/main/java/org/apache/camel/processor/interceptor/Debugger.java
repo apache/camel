@@ -100,7 +100,7 @@ public class Debugger implements InterceptStrategy {
         DebugInterceptor interceptor = new DebugInterceptor(processorType, target, createExchangeList(), createExceptionsList());
         interceptors.put(id, interceptor);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("adding interceptor: " + interceptor);
+            LOG.debug("Adding " + id + " interceptor: " + interceptor);
         }
         return interceptor;
     }

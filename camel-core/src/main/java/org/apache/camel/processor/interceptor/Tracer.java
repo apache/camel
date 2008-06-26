@@ -30,6 +30,10 @@ public class Tracer implements InterceptStrategy {
     private TraceFormatter formatter = new TraceFormatter();
 
     public Processor wrapProcessorInInterceptors(ProcessorType processorType, Processor target) throws Exception {
+        // Force the creation of an id, otherwise the id is not available when the trace formatter is
+        // outputting trace information
+        String id = processorType.idOrCreate();
         return new TraceInterceptor(processorType, target, formatter);
     }
+
 }
