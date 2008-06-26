@@ -18,6 +18,7 @@ package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.spi.UnitOfWork;
 
 /**
@@ -30,6 +31,7 @@ public class TraceFormatter {
     private boolean showProperties = true;
     private boolean showHeaders = true;
     private boolean showBody = true;
+    private boolean showBodyType = true;
 
     public Object format(TraceInterceptor interceptor, Exchange exchange) {
         Message in = exchange.getIn();
@@ -41,6 +43,7 @@ public class TraceFormatter {
                 + (showExchangeId ? " Id: " + exchange.getExchangeId() : "")
                 + (showProperties ? " Properties:" + exchange.getProperties() : "")
                 + (showHeaders ? " Headers:" + in.getHeaders() : "")
+                + (showBodyType ? " BodyType:" + ObjectHelper.className(in.getBody()) : "")
                 + (showBody ? " Body:" + getBodyAsString(in) : "")
                 + (exception != null ? " Exception: " + exception : "");
     }
@@ -51,6 +54,14 @@ public class TraceFormatter {
 
     public void setShowBody(boolean showBody) {
         this.showBody = showBody;
+    }
+
+    public boolean isShowBodyType() {
+        return showBodyType;
+    }
+
+    public void setShowBodyType(boolean showBodyType) {
+        this.showBodyType = showBodyType;
     }
 
     public boolean isShowBreadCrumb() {
@@ -109,7 +120,7 @@ public class TraceFormatter {
     }
 
     protected String getNodeMessage(TraceInterceptor interceptor) {
-        return interceptor.getNode().getId();
+        return interceptor.getNode().idOrCreate();
     }
 
 }
