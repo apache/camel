@@ -19,14 +19,15 @@ package org.apache.camel.processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision$
+ * @version $Revision:  $
  */
-public class InterceptWithoutProceedRouteTest extends InterceptRouteTestSupport {
+public class InterceptWithStopRouteTest extends InterceptRouteTestSupport {
+
 	@Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                intercept().filter(header("foo").isEqualTo("bar")).to("mock:b");
+                intercept().filter(header("foo").isEqualTo("bar")).to("mock:b").stop();
 
                 from("direct:start").to("mock:a");
             }
@@ -35,13 +36,13 @@ public class InterceptWithoutProceedRouteTest extends InterceptRouteTestSupport 
 
 	@Override
 	protected void prepareMatchingTest() {
-        a.expectedMessageCount(1);
+        a.expectedMessageCount(0);
         b.expectedMessageCount(1);
 	}
 
 	@Override
 	protected void prepareNonMatchingTest() {
-        a.expectedMessageCount(1);
+        a.expectedMessageCount(0);
         b.expectedMessageCount(0);
 	}
 }

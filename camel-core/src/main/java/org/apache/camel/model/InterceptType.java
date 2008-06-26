@@ -43,6 +43,10 @@ public class InterceptType extends OutputType<ProcessorType> {
 
     @XmlTransient
     private ProceedType proceed = new ProceedType();
+    @XmlTransient
+    private Boolean stop = Boolean.FALSE;
+    @XmlTransient
+    private Boolean usePredicate = Boolean.FALSE;
 
     @Override
     public String toString() {
@@ -69,6 +73,7 @@ public class InterceptType extends OutputType<ProcessorType> {
      * Applies this interceptor only if the given predicate is true
      */
     public ChoiceType when(Predicate predicate) {
+    	usePredicate = Boolean.TRUE;
         ChoiceType choice = choice().when(PredicateBuilder.not(predicate));
         choice.addOutput(proceed);
         return choice.otherwise();
@@ -76,6 +81,10 @@ public class InterceptType extends OutputType<ProcessorType> {
 
     public ProceedType getProceed() {
         return proceed;
+    }
+
+    public void stopIntercept() {
+    	stop = Boolean.TRUE;
     }
 
     public InterceptType createProxy() {
@@ -86,31 +95,42 @@ public class InterceptType extends OutputType<ProcessorType> {
         // a bit ugly, operating based on the assumption that the proceed is
         // in its outputs (if proceed() was called) and/or in the
         // outputs of the otherwise or last when clause for the predicated version.
-        proxifyProceed(this.getProceed(), answer.getProceed(), answer);
-
         if (answer.getOutputs().size() > 0) {
-            // this is for the predicate version
-            ProcessorType processor = answer;
-            processor = (ProcessorType) answer.getOutputs().get(0);
-            if (processor instanceof ChoiceType) {
-                ChoiceType choice = (ChoiceType) processor;
-                proxifyProceed(this.getProceed(), answer.getProceed(),
-                        choice.getWhenClauses().get(choice.getWhenClauses().size() - 1));
-                proxifyProceed(this.getProceed(), answer.getProceed(), choice.getOtherwise());
+            // this is for the predicate version or if a choice() is present
+        	ChoiceType choice = null;
+            for (ProcessorType processor : answer.getOutputs()) {
+	            if (processor instanceof ChoiceType) {
+                    choice = (ChoiceType) processor;
+                    
+                    // for the predicated version we add the proceed() to otherwise()
+                    // before knowing if stop() will follow, so let's make a small adjustment
+                    if (usePredicate.booleanValue() && stop.booleanValue()) {
+                    	WhenType when = choice.getWhenClauses().get(0);
+                    	when.getOutputs().remove(this.getProceed());
+                    }
+                    addProceedProxy(this.getProceed(), answer.getProceed(),
+                        choice.getWhenClauses().get(choice.getWhenClauses().size() - 1), usePredicate.booleanValue() && !stop.booleanValue());
+                    addProceedProxy(this.getProceed(), answer.getProceed(), choice.getOtherwise(), false);
+                    break;
+                }
             }
-        }
+            if (choice == null) {
+                addProceedProxy(this.getProceed(), answer.getProceed(), answer, !stop.booleanValue());
+            }
+        }        
         return answer;
     }
 
-    private void proxifyProceed(ProceedType orig, ProceedType proxy, ProcessorType<?> processor) {
+    private void addProceedProxy(ProceedType orig, ProceedType proxy, ProcessorType<?> processor, boolean force) {
         int index = processor.getOutputs().indexOf(orig);
         if (index >= 0) {
-            // replace original proceed with proxy
             processor.addOutput(proxy);
-
+            // replace original proceed with proxy
             List<ProcessorType<?>> outs = processor.getOutputs();
             outs.remove(proxy);
             outs.set(index, proxy);
+        } else if (force) {
+            processor.addOutput(proxy);
         }
     }
 }
