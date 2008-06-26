@@ -27,6 +27,7 @@ import org.apache.camel.processor.interceptor.Debugger;
  */
 public class DebugInterceptorTest extends ContextTestSupport {
 
+    // START SNIPPET: e1
     public void testSendingSomeMessages() throws Exception {
         template.sendBodyAndHeader("direct:start", "Hello London", "to", "James");
         template.sendBodyAndHeader("direct:start", "This is Copenhagen calling", "from", "Claus");
@@ -35,6 +36,9 @@ public class DebugInterceptorTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                // add debugger as an interceptor. The debugger is an enhanced tracer that also
+                // logs the exchanges at runtime. It is also a framework where we programatically
+                // can access the internal states of Camel etc.
                 getContext().addInterceptStrategy(new Debugger());
 
                 from("direct:start").
@@ -53,5 +57,6 @@ public class DebugInterceptorTest extends ContextTestSupport {
             }
         };
     }
+    // END SNIPPET: e1
 
 }

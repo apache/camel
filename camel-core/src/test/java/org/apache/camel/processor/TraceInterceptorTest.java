@@ -28,6 +28,7 @@ import org.apache.camel.processor.interceptor.Tracer;
  */
 public class TraceInterceptorTest extends ContextTestSupport {
 
+    // START SNIPPET: e1
     public void testSendingSomeMessages() throws Exception {
         template.sendBodyAndHeader("direct:start", "Hello London", "to", "James");
         template.sendBodyAndHeader("direct:start", "This is Copenhagen calling", "from", "Claus");
@@ -36,6 +37,8 @@ public class TraceInterceptorTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                // add tracer as an interceptor so it will log the exchange executions at runtime
+                // this can aid us to understand/see how the exchanges is routed etc.
                 getContext().addInterceptStrategy(new Tracer());
 
                 from("direct:start").
@@ -54,5 +57,6 @@ public class TraceInterceptorTest extends ContextTestSupport {
             }
         };
     }
-    
+    // END SNIPPET: e1
+
 }
