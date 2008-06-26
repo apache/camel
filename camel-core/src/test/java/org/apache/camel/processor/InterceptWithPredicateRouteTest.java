@@ -16,41 +16,13 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision$
  */
-public class InterceptWithPredicateRouteTest extends ContextTestSupport {
-    private MockEndpoint a;
-    private MockEndpoint b;
-
-    public void testSendMatchingMessage() throws Exception {
-        b.expectedMessageCount(1);
-
-        template.sendBodyAndHeader("direct:start", "<matched/>", "foo", "bar");
-
-        assertMockEndpointsSatisifed();
-    }
-
-    public void testSendNotMatchingMessage() throws Exception {
-        a.expectedMessageCount(1);
-        b.expectedMessageCount(0);
-
-        template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
-
-        assertMockEndpointsSatisifed();
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        a = getMockEndpoint("mock:a");
-        b = getMockEndpoint("mock:b");
-    }
-
+public class InterceptWithPredicateRouteTest extends InterceptRouteTestSupport {
+	@Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -60,4 +32,16 @@ public class InterceptWithPredicateRouteTest extends ContextTestSupport {
             }
         };
     }
+
+	@Override
+	protected void prepareMatchingTest() {
+        a.expectedMessageCount(0);
+        b.expectedMessageCount(1);
+	}
+
+	@Override
+	protected void prepareNonMatchingTest() {
+        a.expectedMessageCount(1);
+        b.expectedMessageCount(0);
+	}
 }
