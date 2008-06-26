@@ -73,7 +73,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     @XmlAttribute(required = false)
     private Boolean autowireRouteBuilders = Boolean.TRUE;
     @XmlAttribute(required = false)
-    private Boolean tracing;
+    private Boolean trace;
     @XmlElement(name = "package", required = false)
     private String[] packages = {};
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentType.class, required = false)
@@ -326,6 +326,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         camelJMXAgent = agent;
     }
 
+    public Boolean getTrace() {
+        return trace;
+    }
+
+    public void setTrace(Boolean trace) {
+        this.trace = trace;
+    }
+
     public CamelJMXAgentType getCamelJMXAgent() {
         return camelJMXAgent;
     }
@@ -355,8 +363,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     protected SpringCamelContext createContext() {
         SpringCamelContext ctx = new SpringCamelContext(getApplicationContext());
         ctx.setName(getId());
-        if (tracing != null) {
-            ctx.setTracing(tracing);
+        if (trace != null) {
+            ctx.setTrace(trace);
         }
         return ctx;
     }

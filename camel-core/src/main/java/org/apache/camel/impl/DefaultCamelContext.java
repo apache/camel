@@ -88,7 +88,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private LifecycleStrategy lifecycleStrategy;
     private List<RouteType> routeDefinitions = new ArrayList<RouteType>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
-    private Boolean tracing;
+    private Boolean trace;
 
     public DefaultCamelContext() {
         name = NAME_PREFIX + ++nameSuffix;
@@ -444,10 +444,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     /**
-     * Returns true if tracing has been enabled or disabled via the {@link #setTracing(Boolean)} method
+     * Returns true if tracing has been enabled or disabled via the {@link #setTrace(Boolean)} method
      * or it has not been specified then default to the <b>camel.trace</b> system property
      */
-    public boolean isTracing() {
+    public boolean getTrace() {
         final Boolean value = getTracing();
         if (value != null) {
             return value;
@@ -457,18 +457,18 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     public Boolean getTracing() {
-        return tracing;
+        return trace;
     }
 
-    public void setTracing(Boolean tracing) {
-        this.tracing = tracing;
+    public void setTrace(Boolean trace) {
+        this.trace = trace;
     }
 
     // Implementation methods
     // -----------------------------------------------------------------------
 
     protected void doStart() throws Exception {
-        if (isTracing()) {
+        if (getTrace()) {
             // lets check if we already have already been configured and if not add the default
             boolean found = false;
             final List<InterceptStrategy> list = getInterceptStrategies();
