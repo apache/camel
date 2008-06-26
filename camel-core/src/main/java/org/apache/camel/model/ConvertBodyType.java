@@ -58,6 +58,11 @@ public class ConvertBodyType extends ProcessorType<ProcessorType> {
     }
 
     @Override
+    public String getShortName() {
+        return "convertBodyTo";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         return new ConvertBodyProcessor(getTypeClass());
     }

@@ -63,6 +63,11 @@ public class LoadBalanceType extends OutputType<LoadBalanceType> {
     public LoadBalanceType() {
     }
 
+    @Override
+    public String getShortName() {
+        return "loadbalance";
+    }
+
     public String getRef() {
         return ref;
     }

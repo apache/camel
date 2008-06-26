@@ -52,6 +52,11 @@ public class PolicyRef extends OutputType<ProcessorType> {
     }
 
     @Override
+    public String getShortName() {
+        return "policy";
+    }
+
+    @Override
     public String getLabel() {
         if (ref != null) {
             return "ref:  " + ref;

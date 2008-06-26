@@ -62,7 +62,11 @@ public class ChoiceType extends ProcessorType<ChoiceType> {
 
         }
     }
-
+    @Override
+    public String getShortName() {
+        return "choice";
+    }
+           
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         List<FilterProcessor> filters = new ArrayList<FilterProcessor>();

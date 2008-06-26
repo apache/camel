@@ -37,6 +37,11 @@ public class FinallyType extends OutputType<ProcessorType> implements Block {
     }
 
     @Override
+    public String getShortName() {
+        return "finally";
+    }
+     
+    @Override
     public String getLabel() {
         return "";
     }

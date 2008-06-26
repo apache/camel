@@ -48,6 +48,11 @@ public class WhenType<Type extends ProcessorType> extends ExpressionNode {
     }
 
     @Override
+    public String getShortName() {
+        return "when";
+    }
+
+    @Override
     public FilterProcessor createProcessor(RouteContext routeContext) throws Exception {
         return createFilterProcessor(routeContext);
     }

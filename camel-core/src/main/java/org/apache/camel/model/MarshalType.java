@@ -77,6 +77,11 @@ public class MarshalType extends OutputType<ProcessorType> {
         }
     }
 
+    @Override
+    public String getShortName() {
+        return "marshal";
+    }
+
     public String getRef() {
         return ref;
     }

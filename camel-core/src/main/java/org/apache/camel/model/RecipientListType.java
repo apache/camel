@@ -51,6 +51,11 @@ public class RecipientListType extends ExpressionNode {
     }
 
     @Override
+    public String getShortName() {
+        return "recipientList";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         return new RecipientList(getExpression().createExpression(routeContext));
     }

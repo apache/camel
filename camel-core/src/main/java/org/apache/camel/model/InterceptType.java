@@ -50,6 +50,11 @@ public class InterceptType extends OutputType<ProcessorType> {
     }
 
     @Override
+    public String getShortName() {
+        return "intercept";
+    }
+    
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Interceptor interceptor = new Interceptor();
         routeContext.intercept(interceptor);

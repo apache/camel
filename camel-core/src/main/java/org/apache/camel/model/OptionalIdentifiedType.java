@@ -17,6 +17,9 @@
 package org.apache.camel.model;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Collections;
+import java.util.Map;
+import java.util.HashMap;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -37,7 +40,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
     @XmlTransient
-    protected static AtomicInteger nodeCounter = new AtomicInteger(1);
+    protected static Map<String,AtomicInteger> nodeCounters = new HashMap<String, AtomicInteger>();
     @XmlAttribute(required = false)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -74,6 +77,15 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
         this.description = description;
     }
 
+    /**
+     * Returns a short name for this node which can be useful for ID generation or referring to related resources like images
+     *
+     * @return defaults to "node" but derived nodes should overload this to provide a unique name
+     */
+    public String getShortName() {
+        return "node";
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
     public T description(String text) {
@@ -97,8 +109,31 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
 
     public String idOrCreate() {
         if (id == null) {
-            setId("node" + nodeCounter.incrementAndGet());
+            setId(createId());
         }
         return getId();
+    }
+
+    // Implementation methods
+    // -------------------------------------------------------------------------
+    
+    /**
+     * A helper method to create a new ID for this node
+     */
+    protected String createId() {
+        String key = getShortName();
+        return key + getNodeCounter(key).incrementAndGet();
+    }
+
+    /**
+     * Returns the counter for the given node key, lazily creating one if necessary
+     */
+    protected static synchronized AtomicInteger getNodeCounter(String key) {
+        AtomicInteger answer = nodeCounters.get(key);
+        if (answer == null) {
+            answer = new AtomicInteger(0);
+            nodeCounters.put(key, answer);
+        }
+        return answer;
     }
 }

@@ -56,6 +56,11 @@ public class InterceptorRef extends InterceptorType {
     }
 
     @Override
+    public String getShortName() {
+        return "interceptor";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         DelegateProcessor processor = createInterceptor(routeContext);
         Processor child = createOutputsProcessor(routeContext);

@@ -43,6 +43,11 @@ public class OtherwiseType extends OutputType<ProcessorType> implements Block {
     }
 
     @Override
+    public String getShortName() {
+        return "otherwise";
+    }
+
+    @Override
     public String getLabel() {
         return "otherwise";
     }

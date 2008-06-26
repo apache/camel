@@ -58,6 +58,11 @@ public class ThrottlerType extends ProcessorType<ProcessorType> {
     }
 
     @Override
+    public String getShortName() {
+        return "throttler";
+    }
+
+    @Override
     public String getLabel() {
         return "" + getMaximumRequestsPerPeriod() + " per " + getTimePeriodMillis() + " (ms)";
     }

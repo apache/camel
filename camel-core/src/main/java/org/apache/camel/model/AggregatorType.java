@@ -81,6 +81,11 @@ public class AggregatorType extends ExpressionNode {
         return "Aggregator[ " + getExpression() + " -> " + getOutputs() + "]";
     }
 
+    @Override
+    public String getShortName() {
+        return "aggregator";
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {

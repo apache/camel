@@ -32,6 +32,11 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProceedType extends OutputType<ProcessorType> {
 
+    @Override
+    public String getShortName() {
+        return "proceed";
+    }
+
     // TODO we should be just returning the outputs!
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         //return routeContext.createProceedProcessor();

@@ -61,6 +61,11 @@ public class RoutingSlipType extends ProcessorType<ProcessorType> {
     }
 
     @Override
+    public String getShortName() {
+        return "routingSlip";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         return new RoutingSlip(getHeaderName(), getUriDelimiter());
     }

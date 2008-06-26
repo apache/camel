@@ -63,6 +63,11 @@ public class BeanRef extends OutputType<ProcessorType> {
         return "Bean[" + getLabel() + "]";
     }
 
+    @Override
+    public String getShortName() {
+        return "bean";
+    }
+
     public String getRef() {
         return ref;
     }

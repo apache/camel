@@ -64,6 +64,11 @@ public class CatchType extends ProcessorType<ProcessorType> {
     }
 
     @Override
+    public String getShortName() {
+        return "catch";
+    }
+
+    @Override
     public String getLabel() {
         return getExceptionClasses().toString();
     }

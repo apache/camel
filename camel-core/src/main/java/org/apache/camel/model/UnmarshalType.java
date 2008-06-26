@@ -77,6 +77,11 @@ public class UnmarshalType extends OutputType<ProcessorType> {
         }
     }
 
+    @Override
+    public String getShortName() {
+        return "unmarshal";
+    }
+
     public String getRef() {
         return ref;
     }
