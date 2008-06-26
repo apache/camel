@@ -309,6 +309,9 @@ public class ResolverUtil<T> {
             URL url = null;
             try {
                 url = urls.nextElement();
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("URL from classloader: " + url);
+                }
 
                 String urlPath = url.getFile();
                 urlPath = URLDecoder.decode(urlPath, "UTF-8");
