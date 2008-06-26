@@ -24,12 +24,12 @@ import org.apache.camel.spi.UnitOfWork;
  * @version $Revision: 1.1 $
  */
 public class TraceFormatter {
+    private boolean showBreadCrumb = true;
     private boolean showNode = true;
+    private boolean showExchangeId;
     private boolean showProperties = true;
     private boolean showHeaders = true;
     private boolean showBody = true;
-    private boolean showExchangeId;
-    private boolean showBreadCrumb;
 
     public Object format(TraceInterceptor interceptor, Exchange exchange) {
         Message in = exchange.getIn();
@@ -44,7 +44,6 @@ public class TraceFormatter {
                 + (showBody ? " Body:" + getBodyAsString(in) : "")
                 + (exception != null ? " Exception: " + exception : "");
     }
-
 
     public boolean isShowBody() {
         return showBody;
@@ -109,8 +108,8 @@ public class TraceFormatter {
         return answer;
     }
 
-
     protected String getNodeMessage(TraceInterceptor interceptor) {
         return interceptor.getNode().getId();
     }
+
 }

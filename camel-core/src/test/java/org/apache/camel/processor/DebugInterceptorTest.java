@@ -21,12 +21,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.interceptor.Debugger;
-import org.apache.camel.processor.interceptor.Tracer;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
-public class TraceInterceptorTest extends ContextTestSupport {
+public class DebugInterceptorTest extends ContextTestSupport {
 
     public void testSendingSomeMessages() throws Exception {
         template.sendBodyAndHeader("direct:start", "Hello London", "to", "James");
@@ -36,7 +35,7 @@ public class TraceInterceptorTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                getContext().addInterceptStrategy(new Tracer());
+                getContext().addInterceptStrategy(new Debugger());
 
                 from("direct:start").
                         process(new Processor() {
@@ -54,5 +53,5 @@ public class TraceInterceptorTest extends ContextTestSupport {
             }
         };
     }
-    
+
 }
