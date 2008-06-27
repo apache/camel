@@ -934,7 +934,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         if (currentProcessor instanceof InterceptType) {
             ((InterceptType) currentProcessor).stopIntercept();
         } else {
-        	ProcessorType node;
+            ProcessorType node;
             for (node = parent; node != null; node = node.getParent()) {
                 if (node instanceof InterceptType) {
                     ((InterceptType) node).stopIntercept();
@@ -948,7 +948,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
         return (Type) this;
     }
-    
+
     public ExceptionType exception(Class exceptionType) {
         ExceptionType answer = new ExceptionType(exceptionType);
         addOutput(answer);
@@ -1534,8 +1534,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
             if (!interceptors.contains(interceptor)) {
                 interceptors.add(interceptor);
                 if (interceptor.getProcessor() != null) {
-                    LOG.warn("Interceptor " + interceptor + " currently wraps target " 
-                            + interceptor.getProcessor() 
+                    LOG.warn("Interceptor " + interceptor + " currently wraps target "
+                            + interceptor.getProcessor()
                             + " is attempting to change target " + target
                             + " new wrapping has been denied.");
                 } else {
@@ -1556,13 +1556,13 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         if (target == null) {
             throw new RuntimeCamelException("target not provided.");
         }
-        
+
         ErrorHandlerWrappingStrategy strategy = routeContext.getErrorHandlerWrappingStrategy();
-        
+
         if (strategy != null) {
             return strategy.wrapProcessorInErrorHandler(this, target);
         }
-        
+
         return getErrorHandlerBuilder().createErrorHandler(target);
     }
 
@@ -1605,12 +1605,12 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         for (ProcessorType output : outputs) {
             Processor processor = output.createProcessor(routeContext);
             processor = output.wrapProcessorInInterceptors(routeContext, processor);
-           
-            ProcessorType currentProcessor = this; 
+
+            ProcessorType currentProcessor = this;
             if (!(currentProcessor instanceof ExceptionType || currentProcessor instanceof TryType)) {
                 processor = output.wrapInErrorHandler(routeContext, processor);
             }
-            
+
             list.add(processor);
         }
         Processor processor = null;

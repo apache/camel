@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class InterceptWithStopRouteTest extends InterceptRouteTestSupport {
 
-	@Override
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -34,15 +34,15 @@ public class InterceptWithStopRouteTest extends InterceptRouteTestSupport {
         };
     }
 
-	@Override
-	protected void prepareMatchingTest() {
+    @Override
+    protected void prepareMatchingTest() {
         a.expectedMessageCount(0);
         b.expectedMessageCount(1);
-	}
+    }
 
-	@Override
-	protected void prepareNonMatchingTest() {
+    @Override
+    protected void prepareNonMatchingTest() {
         a.expectedMessageCount(0);
         b.expectedMessageCount(0);
-	}
+    }
 }

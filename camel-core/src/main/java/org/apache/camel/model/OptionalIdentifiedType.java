@@ -16,10 +16,9 @@
  */
 package org.apache.camel.model;
 
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.Collections;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -40,7 +39,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
     @XmlTransient
-    protected static Map<String,AtomicInteger> nodeCounters = new HashMap<String, AtomicInteger>();
+    protected static Map<String, AtomicInteger> nodeCounters = new HashMap<String, AtomicInteger>();
     @XmlAttribute(required = false)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -116,7 +115,7 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    
+
     /**
      * A helper method to create a new ID for this node
      */

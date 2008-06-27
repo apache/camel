@@ -57,7 +57,7 @@ public class InterceptType extends OutputType<ProcessorType> {
     public String getShortName() {
         return "intercept";
     }
-    
+
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Interceptor interceptor = new Interceptor();
@@ -73,7 +73,7 @@ public class InterceptType extends OutputType<ProcessorType> {
      * Applies this interceptor only if the given predicate is true
      */
     public ChoiceType when(Predicate predicate) {
-    	usePredicate = Boolean.TRUE;
+        usePredicate = Boolean.TRUE;
         ChoiceType choice = choice().when(PredicateBuilder.not(predicate));
         choice.addOutput(proceed);
         return choice.otherwise();
@@ -84,7 +84,7 @@ public class InterceptType extends OutputType<ProcessorType> {
     }
 
     public void stopIntercept() {
-    	stop = Boolean.TRUE;
+        stop = Boolean.TRUE;
     }
 
     public InterceptType createProxy() {
@@ -97,16 +97,16 @@ public class InterceptType extends OutputType<ProcessorType> {
         // outputs of the otherwise or last when clause for the predicated version.
         if (answer.getOutputs().size() > 0) {
             // this is for the predicate version or if a choice() is present
-        	ChoiceType choice = null;
+            ChoiceType choice = null;
             for (ProcessorType processor : answer.getOutputs()) {
-	            if (processor instanceof ChoiceType) {
+                if (processor instanceof ChoiceType) {
                     choice = (ChoiceType) processor;
-                    
+
                     // for the predicated version we add the proceed() to otherwise()
                     // before knowing if stop() will follow, so let's make a small adjustment
                     if (usePredicate.booleanValue() && stop.booleanValue()) {
-                    	WhenType when = choice.getWhenClauses().get(0);
-                    	when.getOutputs().remove(this.getProceed());
+                        WhenType when = choice.getWhenClauses().get(0);
+                        when.getOutputs().remove(this.getProceed());
                     }
                     addProceedProxy(this.getProceed(), answer.getProceed(),
                         choice.getWhenClauses().get(choice.getWhenClauses().size() - 1), usePredicate.booleanValue() && !stop.booleanValue());
@@ -117,7 +117,7 @@ public class InterceptType extends OutputType<ProcessorType> {
             if (choice == null) {
                 addProceedProxy(this.getProceed(), answer.getProceed(), answer, !stop.booleanValue());
             }
-        }        
+        }
         return answer;
     }
 

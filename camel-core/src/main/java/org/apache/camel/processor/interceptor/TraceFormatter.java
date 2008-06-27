@@ -18,8 +18,8 @@ package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version $Revision: 1.1 $
