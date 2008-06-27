@@ -159,26 +159,25 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
 
-        if (camelJMXAgent != null && isJmxEnabled()) {
-            if (camelJMXAgent.isDisabled() != null && camelJMXAgent.isDisabled()) {
-                getContext().setLifecycleStrategy(new DefaultLifecycleStrategy());
-            } else {
+        if (!isJmxEnabled() || 
+                (camelJMXAgent != null && camelJMXAgent.isDisabled() != null && camelJMXAgent.isDisabled())) {
+            getContext().setLifecycleStrategy(new DefaultLifecycleStrategy());
+        } else if (camelJMXAgent != null) {
             
-                if (lifecycleStrategy != null) {
-                    LOG.warn("lifecycleStrategy will be overriden by InstrumentationLifecycleStrategy");
-                }
-
-                DefaultInstrumentationAgent agent = new DefaultInstrumentationAgent();
-                agent.setConnectorPort(camelJMXAgent.getConnectorPort());
-                agent.setCreateConnector(camelJMXAgent.isCreateConnector());
-                agent.setMBeanObjectDomainName(camelJMXAgent.getMbeanObjectDomainName());
-                agent.setMBeanServerDefaultDomain(camelJMXAgent.getMbeanServerDefaultDomain());
-                agent.setRegistryPort(camelJMXAgent.getRegistryPort());
-                agent.setServiceUrlPath(camelJMXAgent.getServiceUrlPath());
-                agent.setUsePlatformMBeanServer(camelJMXAgent.isUsePlatformMBeanServer());
-                
-                getContext().setLifecycleStrategy(new InstrumentationLifecycleStrategy(agent));
+            if (lifecycleStrategy != null) {
+                LOG.warn("lifecycleStrategy will be overriden by InstrumentationLifecycleStrategy");
             }
+
+            DefaultInstrumentationAgent agent = new DefaultInstrumentationAgent();
+            agent.setConnectorPort(camelJMXAgent.getConnectorPort());
+            agent.setCreateConnector(camelJMXAgent.isCreateConnector());
+            agent.setMBeanObjectDomainName(camelJMXAgent.getMbeanObjectDomainName());
+            agent.setMBeanServerDefaultDomain(camelJMXAgent.getMbeanServerDefaultDomain());
+            agent.setRegistryPort(camelJMXAgent.getRegistryPort());
+            agent.setServiceUrlPath(camelJMXAgent.getServiceUrlPath());
+            agent.setUsePlatformMBeanServer(camelJMXAgent.isUsePlatformMBeanServer());
+
+            getContext().setLifecycleStrategy(new InstrumentationLifecycleStrategy(agent));
         }
         
         if (LOG.isDebugEnabled()) {
@@ -310,8 +309,15 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         return beanPostProcessor;
     }
 
+    /**
+     * This method merely retrieves the value of the "useJmx" attribute and does 
+     * not consider the "dusabled" flag in jmxAgent element.  The useJmx 
+     * attribute will be removed in 2.0.  Please the jmxAgent element instead.
+     * 
+     * @deprecated 
+     */
     public boolean isJmxEnabled() {
-        return useJmx != null && useJmx.booleanValue();
+        return useJmx.booleanValue();
     }
 
     public Boolean getUseJmx() {
