@@ -25,9 +25,10 @@ For the latest & greatest documentation on how to use this example please see:
 You will need to compile this example first:
   mvn compile
 
-The example should run if you type
+The example should run if you type:
   mvn exec:java -PCamelServer
   mvn exec:java -PCamelServerAOP
+
   mvn exec:java -PCamelClient
   mvn exec:java -PCamelClientRemoting
   mvn exec:java -PCamelClientEndpoint

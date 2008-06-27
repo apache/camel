@@ -27,8 +27,8 @@
 
     <artifactId>camel-example-spring-jms</artifactId>
     <name>Camel :: Example :: Spring :: JMS</name>
-    <description>An example using Spring XML to talk to the JMS server from two kind of client techniques
-        and having AOP aspect to perform audit trails using Camel for record storage
+    <description>An example using Spring XML to talk to the JMS server from different kind of client techniques
+        and having AOP aspect to perform audit trails in the Camel Server
     </description>
 
     <dependencies>

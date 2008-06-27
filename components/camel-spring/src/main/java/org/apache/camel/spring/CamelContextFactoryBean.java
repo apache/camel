@@ -161,9 +161,11 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
         if (!isJmxEnabled() || 
                 (camelJMXAgent != null && camelJMXAgent.isDisabled() != null && camelJMXAgent.isDisabled())) {
+            LOG.debug("JMXAgent disabled");
             getContext().setLifecycleStrategy(new DefaultLifecycleStrategy());
         } else if (camelJMXAgent != null) {
-            
+            LOG.debug("JMXAgent enabled");
+
             if (lifecycleStrategy != null) {
                 LOG.warn("lifecycleStrategy will be overriden by InstrumentationLifecycleStrategy");
             }
@@ -183,7 +185,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (LOG.isDebugEnabled()) {
             LOG.debug("Found JAXB created routes: " + getRoutes());
         }
-
         findRouteBuiders();
         installRoutes();
     }
@@ -311,10 +312,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     /**
      * This method merely retrieves the value of the "useJmx" attribute and does 
-     * not consider the "dusabled" flag in jmxAgent element.  The useJmx 
+     * not consider the "disabled" flag in jmxAgent element.  The useJmx 
      * attribute will be removed in 2.0.  Please the jmxAgent element instead.
      * 
-     * @deprecated 
+     * @deprecated Please the jmxAgent element instead. Will be removed in Camel 2.0.
      */
     public boolean isJmxEnabled() {
         return useJmx.booleanValue();
@@ -324,6 +325,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         return useJmx;
     }
 
+    /**
+     * @deprecated Please the jmxAgent element instead. Will be removed in Camel 2.0.
+     */
     public void setUseJmx(Boolean useJmx) {
         this.useJmx = useJmx;
     }
