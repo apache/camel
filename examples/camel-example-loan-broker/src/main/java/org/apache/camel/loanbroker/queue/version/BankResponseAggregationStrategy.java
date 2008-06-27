@@ -18,12 +18,15 @@ package org.apache.camel.loanbroker.queue.version;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 //START SNIPPET: aggregation
 public class BankResponseAggregationStrategy implements AggregationStrategy {
-
+    private static final transient Log LOG = LogFactory.getLog(BankResponseAggregationStrategy.class);
     // Here we put the bank response together
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+        LOG.debug("Get the exchange to aggregate, older: " + oldExchange + " newer:" + newExchange);
         Integer old = (Integer) oldExchange.getProperty("aggregated");
         Double oldRate = (Double) oldExchange.getIn().getHeader(Constants.PROPERTY_RATE);
         Double newRate = (Double) newExchange.getIn().getHeader(Constants.PROPERTY_RATE);
@@ -36,6 +39,7 @@ public class BankResponseAggregationStrategy implements AggregationStrategy {
         } else {
             result = newExchange;
         }
+        LOG.debug("Get the lower rate exchange " + result);
         // Set the property for the completeness condition
         result.setProperty("aggregated", old + 1);
         return result;

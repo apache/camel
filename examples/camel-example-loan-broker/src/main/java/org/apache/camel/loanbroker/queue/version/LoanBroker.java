@@ -21,11 +21,16 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spring.Main;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 
@@ -55,6 +60,7 @@ public class LoanBroker extends RouteBuilder {
         context.addRoutes(new LoanBroker());
         // Start the loan broker
         context.start();
+        System.out.println("Server is ready");
 
         Thread.sleep(5 * 60 * 1000);
         context.stop();
@@ -79,13 +85,13 @@ public class LoanBroker extends RouteBuilder {
         from("test-jms:queue:creditResponseQueue").multicast().to("test-jms:queue:bank1", "test-jms:queue:bank2", "test-jms:queue:bank3");
 
         // Each bank processor will process the message and put the response message into the bankReplyQueue
-        from("test-jms:queue:bank1").process(new Bank("bank1")).to("test-jms:queue:bankReplyQueue");
-        from("test-jms:queue:bank2").process(new Bank("bank2")).to("test-jms:queue:bankReplyQueue");
-        from("test-jms:queue:bank3").process(new Bank("bank3")).to("test-jms:queue:bankReplyQueue");
+        from("test-jms:queue:bank1").process(new Bank("bank1")).to("direct:queue:bankReplyQueue");
+        from("test-jms:queue:bank2").process(new Bank("bank2")).to("direct:queue:bankReplyQueue");
+        from("test-jms:queue:bank3").process(new Bank("bank3")).to("direct:queue:bankReplyQueue");
 
         // Now we aggregating the response message by using the Constants.PROPERTY_SSN header
         // The aggregation will completed when all the three bank responses are received
-        from("test-jms:queue:bankReplyQueue")
+        from("direct:queue:bankReplyQueue")
             .aggregator(header(Constants.PROPERTY_SSN), new BankResponseAggregationStrategy())
             .completedPredicate(header("aggregated").isEqualTo(3))
 
