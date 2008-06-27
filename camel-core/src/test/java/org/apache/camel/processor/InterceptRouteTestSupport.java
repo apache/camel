@@ -27,13 +27,13 @@ public abstract class InterceptRouteTestSupport extends ContextTestSupport {
     protected MockEndpoint b;
 
     public void testSendMatchingMessage() throws Exception {
-    	prepareMatchingTest();
+        prepareMatchingTest();
         template.sendBodyAndHeader("direct:start", "<matched/>", "foo", "bar");
         assertMockEndpointsSatisifed();
     }
 
     public void testSendNonMatchingMessage() throws Exception {
-    	prepareNonMatchingTest();
+        prepareNonMatchingTest();
         template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
         assertMockEndpointsSatisifed();
     }
