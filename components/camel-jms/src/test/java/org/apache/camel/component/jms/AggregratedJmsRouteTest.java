@@ -39,7 +39,7 @@ public class AggregratedJmsRouteTest extends ContextTestSupport {
     private String multicastEndpointUri = "jms:queue:mutilcast";
 
     /*
-     * negative recieve wait timeout for jms is blocking so timeout during processing does not hang
+     * negative receive wait timeout for jms is blocking so timeout during processing does not hang
      */
     public void testJmsBatchTimeoutExpiryWithAggregrationDelay() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
@@ -58,9 +58,9 @@ public class AggregratedJmsRouteTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:reply", MockEndpoint.class);
 
         resultEndpoint.expectedMessageCount(2);
-        for (int i = 1; i <= 6; i++) {
+        for (int i = 1; i <= 2; i++) {
             String body = "message:" + i;
-            sendExchange("jms:queue:point1", body);
+            sendExchange(multicastEndpointUri, body);
         }
 
         resultEndpoint.assertIsSatisfied();
