@@ -903,9 +903,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     public Type proceed() {
         ProceedType proceed = null;
+        ProcessorType currentProcessor = this;
 
-        if (this instanceof InterceptType) {
-            proceed = ((InterceptType) this).getProceed();
+        if (currentProcessor instanceof InterceptType) {
+            proceed = ((InterceptType) currentProcessor).getProceed();
             LOG.info("proceed() is the implied and hence not needed for an intercept()");
         }
         if (proceed == null) {
@@ -928,10 +929,12 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     public Type stop() {
-        if (this instanceof InterceptType) {
-            ((InterceptType) this).stopIntercept();
+        ProcessorType currentProcessor = this;
+
+        if (currentProcessor instanceof InterceptType) {
+            ((InterceptType) currentProcessor).stopIntercept();
         } else {
-        	ProcessorType<?> node;
+        	ProcessorType node;
             for (node = parent; node != null; node = node.getParent()) {
                 if (node instanceof InterceptType) {
                     ((InterceptType) node).stopIntercept();
