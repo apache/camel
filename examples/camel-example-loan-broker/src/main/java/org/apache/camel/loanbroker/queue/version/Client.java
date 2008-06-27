@@ -48,11 +48,12 @@ public class Client extends RouteBuilder {
             template.sendBodyAndHeader("test-jms:queue:loanRequestQueue",
                                        "Quote for the lowerst rate of loaning bank",
                                        Constants.PROPERTY_SSN, "Client" + i);
+            Thread.sleep(100);
         }
         // END SNIPPET: sending
 
         // Start the loan broker
-        Thread.sleep(1000 * 60);
+        Thread.sleep(1000 * 5);
         context.stop();
 
     }

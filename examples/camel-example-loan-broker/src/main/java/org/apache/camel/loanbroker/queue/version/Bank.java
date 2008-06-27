@@ -32,7 +32,7 @@ public class Bank implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        LOG.info("Receiving bank request");
+        LOG.debug("Receiving bank request");
         String ssn = (String)exchange.getIn().getHeader(Constants.PROPERTY_SSN);
         double rate = Math.random() * 10;
         LOG.info("The bank: " + bankName + " for client: " + ssn + " 's rate " + rate);
