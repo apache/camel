@@ -232,7 +232,11 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
         }
 
         if (instance != null) {
-            mbeans.add(name);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Registered objectname " + instance.getObjectName());
+            }
+            
+            mbeans.add(instance.getObjectName());
         }
     }
 
@@ -287,6 +291,10 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
             (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
 
         for (MBeanServer server : servers) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Found MBeanServer with default domain " + server.getDefaultDomain());
+            }
+            
             if (mBeanServerDefaultDomain.equals(server.getDefaultDomain())) {
                 return server;
             }
@@ -300,7 +308,7 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
         try {
             LocateRegistry.createRegistry(registryPort);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("created RMI regisry on port " + registryPort);
+                LOG.debug("Created RMI regisry on port " + registryPort);
             }
         } catch (RemoteException ex) {
             // The registry may had been created, we could get the registry instead

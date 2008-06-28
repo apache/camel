@@ -109,7 +109,7 @@ public class CamelJMXAgentType extends IdentifiedType {
         return mbeanObjectDomainName;
     }
     
-    public void getMbeanObjectDomainName(String value) {
+    public void setMbeanObjectDomainName(String value) {
         mbeanObjectDomainName = value;
     }
     
@@ -117,7 +117,7 @@ public class CamelJMXAgentType extends IdentifiedType {
         return serviceUrlPath;
     }
     
-    public void getServiceUrlPath(String value) {
+    public void setServiceUrlPath(String value) {
         serviceUrlPath = value;
     }
 
@@ -144,6 +144,5 @@ public class CamelJMXAgentType extends IdentifiedType {
     public void setDisabled(Boolean value) {
         disabled = value;
     }
-    
     
 }
