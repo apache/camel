@@ -17,7 +17,5 @@
 
 http\://activemq.apache.org/camel/schema/osgi/camel-osgi.xsd=camel-osgi.xsd
 
-http\://activemq.apache.org/camel/schema/osgi/camel-osgi-1.1.xsd=camel-osgi.xsd
-http\://activemq.apache.org/camel/schema/osgi/camel-osgi-1.1-SNAPSHOT.xsd=camel-osgi.xsd
-http\://activemq.apache.org/camel/schema/osgi/camel-osgi-1.2.xsd=camel-osgi.xsd
-http\://activemq.apache.org/camel/schema/osgi/camel-osgi-1.2-SNAPSHOT.xsd=camel-osgi.xsd
+http\://activemq.apache.org/camel/schema/osgi/camel-osgi-1.3.0.xsd=camel-osgi.xsd
+http\://activemq.apache.org/camel/schema/osgi/camel-osgi-${pom.version}.xsd=camel-osgi.xsd

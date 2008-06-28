@@ -19,6 +19,11 @@
 #
 #
 http\://activemq.apache.org/camel/schema/cxfEndpoint/camel-cxf.xsd=schema/cxfEndpoint.xsd
+
 # to support the camel-1.2's configuration
 http\://activemq.apache.org/camel/schema/cxf/cxfEndpoint.xsd=schema/cxfEndpoint.xsd
+# and for the other previous releases
+http\://activemq.apache.org/camel/schema/cxfEndpoint/camel-cxf-1.3.0.xsd=schema/cxfEndpoint.xsd
+http\://activemq.apache.org/camel/schema/cxfEndpoint/camel-cxf-${pom.version}.xsd=schema/cxfEndpoint.xsd
+
 http\://cxf.apache.org/transports/camel.xsd=schema/configuration/camel.xsd

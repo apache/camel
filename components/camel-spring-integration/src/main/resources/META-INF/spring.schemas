@@ -16,3 +16,5 @@
 #
 
 http\://activemq.apache.org/camel/schema/spring/integration/camel-spring-integration.xsd=schema/camel-spring-integration.xsd
+
+http\://activemq.apache.org/camel/schema/spring/integration/camel-spring-integration-${pom.version}.xsd=schema/camel-spring-integration.xsd
