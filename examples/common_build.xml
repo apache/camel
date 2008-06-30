@@ -35,6 +35,8 @@
   <property name="hibernate.core.home" value="${env.HIBERNATE_CORE_HOME}"/>
   <property name="hibernate.entitymanager.home" value="${env.HIBERNATE_EM_HOME}"/>
   <property name="hsqldb.home" value="${env.HSQLDB_HOME}"/>
+  <property name="aspectj.home" value="${env.ASPECTJ_HOME}"/>
+  <property name="spring.home" value="${env.SPRING_HOME}"/>
 
   <condition property="build.src">
     <available file="${build.src.dir}"/>
@@ -57,6 +59,7 @@
       <include name="**/geronimo-jms_*_spec-*.jar"/>
       <include name="**/activemq-core-*.jar"/>
       <include name="**/backport-util-concurrent-*.jar"/>
+      <include name="**/optional/xbean-*.jar"/>
     </fileset>
   </path>
 
@@ -77,6 +80,18 @@
     </fileset>
     <fileset dir="${hsqldb.home}">
       <include name="**/hsqldb.jar"/>
+    </fileset>
+  </path>
+
+  <path id="aspectj.classpath">
+    <fileset dir="${aspectj.home}/lib">
+      <include name="**/aspectj*.jar"/>
+    </fileset>
+  </path>
+
+  <path id="spring.classpath">
+    <fileset dir="${spring.home}/dist">
+      <include name="spring.jar"/>
     </fileset>
   </path>
 

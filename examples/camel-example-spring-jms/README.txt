@@ -33,6 +33,20 @@ The example should run if you type:
   mvn exec:java -PCamelClientRemoting
   mvn exec:java -PCamelClientEndpoint
 
+To run the example with Ant
+  a. You need to have Apache ActiveMQ installed. It can be downloaded from 
+    http://activemq.apache.org/
+
+  b. Export / Set ACTIVEMQ_HOME to the top level Apache ActiveMQ install
+  directory
+    UNIX
+    export ACTIVEMQ_HOME=<path to ActiveMQ install directory>
+    Windows
+    set ACTIVEMQ_HOME=<path to ActiveMQ install directory>
+
+  c. To run the example using Ant, type
+    ant
+
 To stop the example hit ctrl + c
 
 To use log4j as the logging framework add this to the pom.xml:
