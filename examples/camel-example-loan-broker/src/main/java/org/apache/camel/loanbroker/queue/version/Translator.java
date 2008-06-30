@@ -26,8 +26,8 @@ public class Translator implements Processor {
         String bank = (String)exchange.getIn().getHeader(Constants.PROPERTY_BANK);
         Double rate = (Double)exchange.getIn().getHeader(Constants.PROPERTY_RATE);
         String ssn = (String)exchange.getIn().getHeader(Constants.PROPERTY_SSN);
-        exchange.getOut().setBody("Loan quotion for Client " + ssn
-                                  + "The lowest rate of bank is " + bank + ", the rate is " + rate);
+        exchange.getOut().setBody("Loan quotion for Client " + ssn + "."
+                                  + " The lowest rate of bank is " + bank + ", the rate is " + rate);
     }
 
 }
