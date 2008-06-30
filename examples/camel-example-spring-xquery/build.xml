@@ -21,6 +21,7 @@
 
   <import file="../common_build.xml"/>
 
+  <fail unless="env.SPRING_HOME" message="You must download Spring Framework and set your SPRING_HOME to run this demo."/>
   <fail unless="env.ACTIVEMQ_HOME" message="You must download ActiveMQ and set your ACTIVEMQ_HOME to run this demo."/>
   <fail unless="env.SAXON_HOME" message="You must download Saxon and set your SAXON_HOME to run this demo."/>
   
@@ -29,6 +30,7 @@
   <property name="saxon.home" value="${env.SAXON_HOME}"/>
 
   <path id="sample.build.classpath">
+    <pathelement location="src/main/resources"/>
     <fileset dir="${camel.lib}">
       <include name="**/camel-saxon-*.jar"/>
       <include name="**/camel-jms-*.jar"/>
@@ -37,6 +39,7 @@
       <include name="**/saxon*.jar"/>
     </fileset>
     <path refid="camel.spring.classpath"/>
+    <path refid="spring.classpath"/>
     <path refid="activemq.classpath"/>
   </path>
 
