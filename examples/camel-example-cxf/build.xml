@@ -7,9 +7,9 @@
   The ASF licenses this file to You under the Apache License, Version 2.0
   (the "License"); you may not use this file except in compliance with
   the License.  You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,63 +19,88 @@
 
 <project name="camel-example-cxf" default="run" basedir=".">
 
-  <import file="../common_build.xml"/>
+	<import file="../common_build.xml"/>
 
-  <fail unless="env.ACTIVEMQ_HOME" message="You must download ActiveMQ and set your ACTIVEMQ_HOME to run this demo."/>
-  <fail unless="env.CXF_HOME" message="You must download CXF and set your CXF_HOME to run this demo."/>
-  
-  <property name="project.name" value="camel-example-cxf"/>
+	<fail unless="env.ACTIVEMQ_HOME" message="You must download ActiveMQ and set your ACTIVEMQ_HOME to run this demo."/>
+	<fail unless="env.CXF_HOME" message="You must download CXF and set your CXF_HOME to run this demo."/>
+	<fail unless="env.SPRING_HOME" message="You must download Spring2.5 and set your CXF_HOME to run this demo."/>
+	<fail unless="env.JETTY_HOME" message="You must download Jetty6 and set your JETTY_HOME to run this demo."/>
 
-  <path id="sample.build.classpath">
-    <fileset dir="${camel.lib}">
-      <include name="**/camel-cxf-*.jar"/>
-      <exclude name="**/*-tests.jar"/>
-    </fileset>
-    <path refid="camel.core.classpath"/>
-    <path refid="activemq.classpath"/>
-    <path refid="cxf.classpath"/>
-  </path>
-  
-  <property name="cxf.home" value="${env.CXF_HOME}"/>
-  <path id="cxf.classpath">
-    <fileset dir="${cxf.home}">
-      <include name="**/cxf-*.jar"/>
-    </fileset>
-  </path>
+	<property name="project.name" value="camel-example-cxf"/>
 
-  <target name="generate.code">
-    <echo level="info" message="Generating code using wsdl2java..."/>
-    <wsdl2java file="hello_world.wsdl"/>
-  </target>
+	<property name="jetty.home" value="${env.JETTY_HOME}"/>
+	<path id="jetty.classpath">
+	    <fileset dir="${jetty.home}/lib">
+	      <include name="jetty*.jar"/>
+	      <include name="**/jetty-client-*.jar"/>
+	    </fileset>
+	 </path>
 
-  <target name="run" depends="generate.code,build" 
-    description="Compile and run the sample">
-    <camelrun mainClass="org.apache.camel.example.cxf.CamelCxfExample"/>
-  </target>
 
-  <available property="wsdl.dir" value="${build.resources.dir}/wsdl"
-      file="${build.resources.dir}/wsdl"/>
-  <property name="wsdl.dir" location="."/>
+	<path id="sample.build.classpath">
+		<fileset dir="${camel.lib}">
+			<include name="**/camel-cxf-*.jar"/>
+			<include name="**/camel-http-*.jar"/>
+			<include name="**/camel-jetty-*.jar"/>
+			<exclude name="**/*-tests.jar"/>
+		</fileset>
+		<path refid="camel.spring.classpath"/>
+		<path refid="spring.classpath"/>
+		<path refid="jetty.classpath"/>
+		<path refid="camel.core.classpath"/>
+		<path refid="activemq.classpath"/>
+		<path refid="cxf.classpath"/>
+	</path>
 
-  <macrodef name="wsdl2java">
-    <attribute name="srcdestdir" default="${build.dir}/generated/src/main/java"/>
-    <attribute name="destdir" default="${build.classes.dir}"/>
-    <attribute name="file"/>
-    <attribute name="dir" default="${wsdl.dir}"/>
-    <sequential>
-      <mkdir dir="@{destdir}"/>
-      <mkdir dir="@{srcdestdir}"/>
-      <java failonerror="true" classname="org.apache.cxf.tools.wsdlto.WSDLToJava" fork="yes">
-        <classpath>
-          <path refid="cxf.classpath" />
-        </classpath>
-        <sysproperty key="exitOnFinish" value="true"/>
-        <arg value="-verbose"/>
-        <arg value="-d"/>
-        <arg value="@{srcdestdir}"/>
-        <arg value="@{dir}/@{file}"/>
-      </java>
-    </sequential>
-  </macrodef>
+	<property name="cxf.home" value="${env.CXF_HOME}"/>
+	<path id="cxf.classpath">
+		<fileset dir="${cxf.home}">
+			<include name="**/cxf-*.jar"/>
+		</fileset>
+	</path>
+
+	<target name="generate.code">
+		<echo level="info" message="Generating code using wsdl2java..."/>
+		<wsdl2java file="hello_world.wsdl"/>
+	</target>
+
+	<target name="run" depends="generate.code,build"
+		description="Compile and run the sample of camel-cxf component">
+		<camelrun mainClass="org.apache.camel.example.cxf.CamelCxfExample" />
+	</target>
+
+	<target name="runCamelTransport" depends="generate.code,build"
+		description="Compile and run the sample of camel transport">
+		<camelrun mainClass="org.apache.camel.example.camel.transport.CamelTransportExample" />
+	</target>
+
+	<target name="runWebServiceProvider" depends="generate.code,build"
+		description="Compile and run the sample of web sevice provider">
+		<camelrun mainClass="org.apache.camel.example.cxf.provider.CamelCxfExample" />
+	</target>
+
+	<available property="wsdl.dir" value="${build.resources.dir}/wsdl" file="${build.resources.dir}/wsdl" />
+	<property name="wsdl.dir" location="."/>
+
+	<macrodef name="wsdl2java">
+		<attribute name="srcdestdir" default="${build.dir}/generated/src/main/java"/>
+		<attribute name="destdir" default="${build.classes.dir}"/>
+		<attribute name="file"/>
+		<attribute name="dir" default="${wsdl.dir}"/>
+		<sequential>
+			<mkdir dir="@{destdir}"/>
+			<mkdir dir="@{srcdestdir}"/>
+			<java failonerror="true" classname="org.apache.cxf.tools.wsdlto.WSDLToJava" fork="yes">
+				<classpath>
+					<path refid="cxf.classpath" />
+				</classpath>
+				<sysproperty key="exitOnFinish" value="true"/>
+				<arg value="-verbose"/>
+				<arg value="-d"/>
+				<arg value="@{srcdestdir}"/>
+				<arg value="@{dir}/@{file}"/>
+			</java>
+		</sequential>
+	</macrodef>
 
 </project>
