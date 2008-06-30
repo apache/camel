@@ -52,7 +52,8 @@ public final class CamelClientEndpoint {
         // we use the in out pattern for a synchronized exchange where we expect a response
         Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
         // set the input on the in body
-        exchange.getIn().setBody("11");
+        // must you correct type to match the expected type of an Integer object
+        exchange.getIn().setBody(11);
 
         // to send the exchange we need an producer to do it for us
         Producer producer = endpoint.createProducer();

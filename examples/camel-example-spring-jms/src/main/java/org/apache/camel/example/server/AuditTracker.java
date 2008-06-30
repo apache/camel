@@ -37,7 +37,7 @@ public class AuditTracker {
         this.store = store;
     }
 
-    @Before("execution(* org.apache.camel.example.server.Multiplier.*(..)) && args(originalNumber)")
+    @Before("execution(int org.apache.camel.example.server.Multiplier.multiply(int)) && args(originalNumber)")
     public void audit(int originalNumber) throws Exception {
         String msg = "Someone called us with this number " + originalNumber;
         System.out.println(msg);
