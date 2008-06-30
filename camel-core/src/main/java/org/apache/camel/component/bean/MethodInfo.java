@@ -99,7 +99,6 @@ public class MethodInfo {
         return parameterInfo.getType();
     }
 
-
     public boolean bodyParameterMatches(Class bodyType) {
         Class actualType = getBodyParameterType();
         return actualType != null && ObjectHelper.isAssignableFrom(bodyType, actualType);
@@ -115,6 +114,10 @@ public class MethodInfo {
 
     public boolean isHasCustomAnnotation() {
         return hasCustomAnnotation;
+    }
+
+    public boolean isReturnTypeVoid() {
+        return method.getReturnType().getName().equals("void");
     }
 
     protected Object invoke(Method mth, Object pojo, Object[] arguments, Exchange exchange) throws IllegalAccessException, InvocationTargetException {

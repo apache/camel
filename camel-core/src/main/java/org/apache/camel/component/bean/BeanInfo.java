@@ -212,8 +212,7 @@ public class BeanInfo {
     }
 
     protected MethodInfo chooseMethodWithMatchingBody(Exchange exchange, Collection<MethodInfo> operationList) throws AmbiguousMethodCallException {
-        // lets see if we can find a method who's body param type matches
-        // the message body
+        // lets see if we can find a method who's body param type matches the message body
         Message in = exchange.getIn();
         Object body = in.getBody();
         if (body != null) {
@@ -221,6 +220,18 @@ public class BeanInfo {
 
             List<MethodInfo> possibles = new ArrayList<MethodInfo>();
             for (MethodInfo methodInfo : operationList) {
+                // TODO: AOP proxies have additioan methods - consider having a static
+                // method exclude list to skip all known AOP proxy methods
+                // TODO: This class could use some TRACE logging
+
+                // test for MEP pattern matching
+                boolean out = exchange.getPattern().isOutCapable();
+                if (out && methodInfo.isReturnTypeVoid()) {
+                    // skip this method as the MEP is Out so the method must return someting
+                    continue;
+                }
+                
+                // try to match the arguments
                 if (methodInfo.bodyParameterMatches(bodyType)) {
                     possibles.add(methodInfo);
                 }
@@ -255,6 +266,7 @@ public class BeanInfo {
                 return chooseMethodWithCustomAnnotations(exchange, possibles);
             }
         }
+        // no match so return null
         return null;
     }
 
