@@ -1,13 +1,13 @@
 =============================================================================
- Camel Spring Integration
+ Camel Spring Support
 =============================================================================
 
 Overview
 --------------------------------------------------------------------------
  
  This module provides a nice Spring 2.0 xml extension so that you can 
- build Camel routes in spring with a very consice XML format that is very
- similar the to Camel Fluid api.
+ build Camel routes in spring with a very concise XML format that is very
+ similar to the Camel Fluid Java API.
 
  Where in Java you would do a:
 
@@ -20,6 +20,7 @@ Overview
      <to uri="seda:b"/>
    </route>
 
+
 Developers
 --------------------------------------------------------------------------
  
@@ -27,10 +28,11 @@ Developers
  update the XSD that spring uses to validate the XML syntax.  I think the
  easiest way to do that is to generate the XSD from an example XML file.
  
- I've been using trang for that purpose.  Once installed, you can run:
+ I've been using trang for that purpose. Once installed, you can run:
  
-   trang -I xml -O xsd src/test/resources/org/apache/camel/spring/examples.xml src/main/resources/org/apache/camel/spring/generated-camel-spring.xsd
+   trang -I xml -O xsd src/test/resources/org/apache/camel/spring/examples.xml
+         src/main/resources/org/apache/camel/spring/generated-camel-spring.xsd
 
  To generate the XSD, there are some spring specifics mostly in the header
- that trang does not get right, so then what's left is a manual  cut and paste from 
+ that trang does not get right, so then what's left is a manual cut and paste from 
  the generated-camel-spring.xsd to the camel-spring.xsd
