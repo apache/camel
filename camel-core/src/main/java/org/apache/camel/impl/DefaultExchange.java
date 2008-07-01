@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangeProperty;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UnitOfWork;
@@ -33,6 +34,7 @@ import org.apache.camel.util.UuidGenerator;
  * @version $Revision$
  */
 public class DefaultExchange implements Exchange {
+
     private static final UuidGenerator DEFAULT_ID_GENERATOR = new UuidGenerator();
     protected final CamelContext context;
     private Map<String, Object> properties;
@@ -133,11 +135,37 @@ public class DefaultExchange implements Exchange {
 
     public <T> T getProperty(String name, Class<T> type) {
         Object value = getProperty(name);
+
+        // if the property is also a well known property in ExchangeProperty then validate that the
+        // value is of the same type
+        ExchangeProperty<?> property = ExchangeProperty.getByName(name);
+        if (property != null) {
+            validateExchangePropertyIsExpectedType(property, type, value);
+        }
+
         return getContext().getTypeConverter().convertTo(type, value);
     }
 
     public void setProperty(String name, Object value) {
+        ExchangeProperty<?> property = ExchangeProperty.getByName(name);
+
+        // if the property is also a well known property in ExchangeProperty then validate that the
+        // value is of the same type
+        if (property != null) {
+            Class type = value.getClass();
+            validateExchangePropertyIsExpectedType(property, type, value);
+        }
+
         getProperties().put(name, value);
+    }
+
+    private <T> void validateExchangePropertyIsExpectedType(ExchangeProperty<?> property, Class<T> type, Object value) {
+        if (value != null && property != null && !property.type().isAssignableFrom(type)) {
+            throw new RuntimeCamelException("Type cast exception while getting an "
+                    + "Exchange Property value '" + value.toString()
+                    + "' on Exchange " + this
+                    + " for a well known Exchange Property with these traits: " + property);
+        }
     }
 
     public Object removeProperty(String name) {
@@ -251,6 +279,11 @@ public class DefaultExchange implements Exchange {
             }
         }
         return getException() != null;
+    }
+
+    public boolean isTransacted() {
+        ExchangeProperty<?> property = ExchangeProperty.get("transacted");
+        return property != null && property.get(this) == Boolean.TRUE;
     }
 
     public UnitOfWork getUnitOfWork() {

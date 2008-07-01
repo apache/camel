@@ -55,9 +55,10 @@ public class EndpointMessageListener implements MessageListener {
     }
 
     public void onMessage(final Message message) {
+        RuntimeCamelException rce = null;
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug(endpoint + " receiving JMS message: " + message);
+                LOG.debug(endpoint + " consumer receiving JMS message: " + message);
             }
             Destination replyDestination = getReplyToDestination(message);
             final JmsExchange exchange = createExchange(message, replyDestination);
@@ -65,13 +66,20 @@ public class EndpointMessageListener implements MessageListener {
                 exchange.getIn().getHeaders();
             }
             processor.process(exchange);
-
             final JmsMessage out = exchange.getOut(false);
-            if (out != null && !disableReplyTo) {
+            if (exchange.getException() != null) {
+                rce = new RuntimeCamelException(exchange.getException());
+            }
+            if (rce == null && out != null && !disableReplyTo) {
                 sendReply(replyDestination, message, exchange, out);
             }
         } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+            rce = new RuntimeCamelException(e);
+        }
+        if (rce != null) {
+            LOG.warn(endpoint + " consumer caught an exception while processing "
+                     + "JMS message: " + message, rce);
+            throw rce;
         }
     }
 

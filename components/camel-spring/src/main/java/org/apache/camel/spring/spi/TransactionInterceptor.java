@@ -17,46 +17,100 @@
 package org.apache.camel.spring.spi;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeProperty;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
+ * The <a href="http://activemq.apache.org/camel/transactional-client.html">Transactional Client</a>
+ * EIP pattern.
+ *
  * @version $Revision$
  */
 public class TransactionInterceptor extends DelegateProcessor {
     private static final transient Log LOG = LogFactory.getLog(TransactionInterceptor.class);
     private final TransactionTemplate transactionTemplate;
 
+    public static final ExchangeProperty<Boolean> TRANSACTED =
+        new ExchangeProperty<Boolean>("transacted", "org.apache.camel.transacted", Boolean.class);
+
     public TransactionInterceptor(TransactionTemplate transactionTemplate) {
         this.transactionTemplate = transactionTemplate;
     }
 
     public void process(final Exchange exchange) {
-        LOG.info("transaction begin");
+        LOG.debug("Transaction begin");
 
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
+                // wrapper exception to throw if the exchange failed
+                // IMPORTANT: Must be a runtime exception to let Spring regard it as to do "rollback"
+                RuntimeCamelException rce = null;
+
+                boolean activeTx = false;
                 try {
+                    // find out if there is an actual transaction alive, and thus we are in transacted mode
+                    activeTx = TransactionSynchronizationManager.isActualTransactionActive();
+                    if (!activeTx) {
+                        activeTx = status.isNewTransaction() && !status.isCompleted();
+                        if (!activeTx) {
+                            if (DefaultTransactionStatus.class.isAssignableFrom(status.getClass())) {
+                                DefaultTransactionStatus defStatus = DefaultTransactionStatus.class
+                                    .cast(status);
+                                activeTx = defStatus.hasTransaction() && !status.isCompleted();
+                            }
+                        }
+                    }
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Is actual transaction active: " + activeTx);
+                    }
+
+                    // okay mark the exchange as transacted, then the DeadLetterChannel or others know
+                    // its an transacted exchange
+                    if (activeTx) {
+                        TRANSACTED.set(exchange, Boolean.TRUE);
+                    }
+
+
+                    // process the exchange
                     processNext(exchange);
+
+                    // wrap if the exchange failed with an exception
+                    if (exchange.getException() != null) {
+                        rce = new RuntimeCamelException(exchange.getException());
+                    }
                 } catch (Exception e) {
-                    throw new RuntimeCamelException(e);
+                     // wrap if the exchange threw an exception
+                    rce = new RuntimeCamelException(e);
+                }
+                
+                // rehrow exception if the exchange failed
+                if (rce != null) {
+                    if (activeTx) {
+                        status.setRollbackOnly();
+                        LOG.debug("Transaction rollback");
+                    }
+                    throw rce;
                 }
             }
         });
-
-        LOG.info("transaction commit");
+        
+        LOG.debug("Transaction commit");
     }
 
     @Override
     public String toString() {
-        return "TransactionInterceptor:" + propagationBehaviorToString(transactionTemplate.getPropagationBehavior()) + "[" + getProcessor() + "]";
+        return "TransactionInterceptor:"
+            + propagationBehaviorToString(transactionTemplate.getPropagationBehavior())
+            + "[" + getProcessor() + "]";
     }
 
     private String propagationBehaviorToString(int propagationBehavior) {
@@ -84,8 +138,9 @@ public class TransactionInterceptor extends DelegateProcessor {
             rc = "PROPAGATION_SUPPORTS";
             break;
         default:
-            rc = "UNKOWN"; 
+            rc = "UNKOWN";
         }
         return rc;
     }
+
 }

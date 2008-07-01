@@ -21,6 +21,7 @@ import java.util.concurrent.RejectedExecutionException;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeProperty;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
@@ -93,7 +94,6 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     public boolean process(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
 
         while (true) {
-
             // We can't keep retrying if the route is being shutdown.
             if (!isRunAllowed()) {
                 if (exchange.getException() == null) {
@@ -102,6 +102,8 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 callback.done(data.sync);
                 return data.sync;
             }
+
+            resetMaxDeliveryIfTransacted(exchange);
 
             if (exchange.getException() != null) {
                 Throwable e = exchange.getException();
@@ -143,6 +145,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
             exchange.setProperty(EXCEPTION_CAUSE_PROPERTY, exchange.getException());
             exchange.setException(null);
+            
             boolean sync = outputAsync.process(exchange, new AsyncCallback() {
                 public void done(boolean sync) {
                     // Only handle the async case...
@@ -169,6 +172,12 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
             // error occurred so loop back around.....
         }
 
+    }
+
+    public void resetMaxDeliveryIfTransacted(Exchange exchange) {
+        if (exchange.isTransacted()) {
+            redeliveryPolicy.setMaximumRedeliveries(1);
+        }
     }
 
     public static boolean isFailureHandled(Exchange exchange) {

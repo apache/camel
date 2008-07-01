@@ -30,23 +30,31 @@ public class ConditionalExceptionProcessor implements Processor {
 
     private static final transient Log LOG = LogFactory.getLog(ConditionalExceptionProcessor.class);
     private int count;
+    private int maxCalls;
+    private String errorMsg;
 
     public ConditionalExceptionProcessor() {
+        this.maxCalls = 1;
+    }
+
+    public ConditionalExceptionProcessor(int maxCalls) {
+        this.maxCalls = maxCalls;
     }
 
     public void process(Exchange exchange) throws Exception {
         setCount(getCount() + 1);
 
-        AbstractTransactionTest.assertTrue("Expected only 2 calls to process() but encountered "
-            + getCount() + ". There should be 1 for intentionally triggered rollback, and 1 for redelivery.",
-            getCount() <= 2);
-
+        if (getCount() > maxCalls * 2) {
+            errorMsg = "Expected only " + maxCalls * 2 + " calls to process() but encountered "
+            + getCount() + ". There should be 1 for intentionally triggered rollback, and 1 for redelivery for each call.";
+        }
+         
         // should be printed 2 times due to one re-delivery after one failure
-        LOG.info("Exchange[" + getCount() + "][" + ((getCount() <= 1) ? "Should rollback" : "Should succeed")
+        LOG.info("Exchange[" + getCount() + "][" + ((getCount() % 2 != 0) ? "Should rollback" : "Should succeed")
             + "] = " + exchange);
 
-        // force rollback on the second attempt
-        if (getCount() <= 1) {
+        // force rollback on every mod 2 attempt
+        if (getCount() % 2 != 0) {
             throw new Exception("Rollback should be intentionally triggered: count[" + getCount() + "].");
         }
     }
@@ -57,5 +65,9 @@ public class ConditionalExceptionProcessor implements Processor {
 
     public int getCount() {
         return count;
+    }
+    
+    public String getErrorMessage() {
+        return errorMsg;
     }
 }
