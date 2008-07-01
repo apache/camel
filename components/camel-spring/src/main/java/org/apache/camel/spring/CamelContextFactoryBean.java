@@ -125,7 +125,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     public void afterPropertiesSet() throws Exception {
         // lets see if we can find a debugger to add
         // TODO there should be a neater way to do this!
-        Debugger debugger = getBeanForType(Debugger.class);       
+        Debugger debugger = getBeanForType(Debugger.class);
         if (debugger != null) {
             getContext().addInterceptStrategy(debugger);
         }
@@ -159,8 +159,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
 
-        if (!isJmxEnabled() || 
-                (camelJMXAgent != null && camelJMXAgent.isDisabled() != null && camelJMXAgent.isDisabled())) {
+        if (!isJmxEnabled()
+                || (camelJMXAgent != null && camelJMXAgent.isDisabled() != null && camelJMXAgent.isDisabled())) {
             LOG.debug("JMXAgent disabled");
             getContext().setLifecycleStrategy(new DefaultLifecycleStrategy());
         } else if (camelJMXAgent != null) {
@@ -181,7 +181,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
             getContext().setLifecycleStrategy(new InstrumentationLifecycleStrategy(agent));
         }
-        
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Found JAXB created routes: " + getRoutes());
         }
@@ -311,10 +311,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     /**
-     * This method merely retrieves the value of the "useJmx" attribute and does 
-     * not consider the "disabled" flag in jmxAgent element.  The useJmx 
+     * This method merely retrieves the value of the "useJmx" attribute and does
+     * not consider the "disabled" flag in jmxAgent element.  The useJmx
      * attribute will be removed in 2.0.  Please the jmxAgent element instead.
-     * 
+     *
      * @deprecated Please the jmxAgent element instead. Will be removed in Camel 2.0.
      */
     public boolean isJmxEnabled() {
