@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.Context;
 
@@ -190,6 +191,26 @@ public abstract class ContextTestSupport extends TestSupport {
                 Message in = exchange.getIn();
                 in.setBody(body);
                 in.setHeader("testCase", getName());
+            }
+        });
+    }
+
+    /**
+     * Sends a message to the given endpoint URI with the body value and specified headers
+     *
+     * @param endpointUri the URI of the endpoint to send to
+     * @param body        the body for the message
+     * @param headers     any headers to set on the message
+     */
+    protected void sendBody(String endpointUri, final Object body, final Map<String, Object> headers) {
+        template.send(endpointUri, new Processor() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                in.setBody(body);
+                in.setHeader("testCase", getName());
+                for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                    in.setHeader(entry.getKey(), entry.getValue());
+                }
             }
         });
     }
