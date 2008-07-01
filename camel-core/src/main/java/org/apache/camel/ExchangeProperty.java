@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel;
 
 import java.util.ArrayList;
@@ -35,22 +51,23 @@ import java.util.Map;
  *  </pre>
  *
  *  <b>Note:</b> that if ExchangeProperty instance get or set methods are used then type checks
- *  of property's value are performed and a runtime exception can be thrown if type 
+ *  of property's value are performed and a runtime exception can be thrown if type
  *  safety is violated.
  */
 public class ExchangeProperty<T> {
+
+    private static final List<ExchangeProperty<?>> VALUES =
+        new ArrayList<ExchangeProperty<?>>();
+
+    private static final Map<String, ExchangeProperty<?>> LITERAL_MAP =
+        new HashMap<String, ExchangeProperty<?>>();
+
+    private static final Map<String, ExchangeProperty<?>> NAME_MAP =
+        new HashMap<String, ExchangeProperty<?>>();
+
     private final String literal;
     private final String name;
     private final Class<T> type;
-
-    private static final List<ExchangeProperty<?>> values = 
-        new ArrayList<ExchangeProperty<?>>();
-
-    private static final Map<String, ExchangeProperty<?>> literalMap = 
-        new HashMap<String, ExchangeProperty<?>>();
-    
-    private static final Map<String, ExchangeProperty<?>> nameMap = 
-        new HashMap<String, ExchangeProperty<?>>();
 
     public ExchangeProperty(String literal, String name, Class<T> type) {
         this.literal = literal;
@@ -76,11 +93,11 @@ public class ExchangeProperty<T> {
     }
 
     public static ExchangeProperty<?> get(String literal) {
-        return literalMap.get(literal);
+        return LITERAL_MAP.get(literal);
     }
 
     public static ExchangeProperty<?> getByName(String name) {
-        return nameMap.get(name);
+        return NAME_MAP.get(name);
     }
 
     public T set(Exchange exchange, T value) {
@@ -101,35 +118,35 @@ public class ExchangeProperty<T> {
     }
 
     public static synchronized void register(ExchangeProperty<?> property) {
-        ExchangeProperty<?> existingProperty = literalMap.get(property.literal());
+        ExchangeProperty<?> existingProperty = LITERAL_MAP.get(property.literal());
         if (existingProperty != null && existingProperty != property) {
-            throw new RuntimeCamelException("An Exchange Property '" + property.literal() 
+            throw new RuntimeCamelException("An Exchange Property '" + property.literal()
                     + "' has already been registered; its traits are: " + existingProperty.toString());
         }
-        values.add(property);
-        literalMap.put(property.literal(), property);
-        nameMap.put(property.name(), property);
+        VALUES.add(property);
+        LITERAL_MAP.put(property.literal(), property);
+        NAME_MAP.put(property.name(), property);
     }
 
     public static synchronized void deregister(ExchangeProperty<?> property) {
         if (property != null) {
-            values.remove(property);
-            literalMap.remove(property.literal());
-            nameMap.put(property.name(), property);
+            VALUES.remove(property);
+            LITERAL_MAP.remove(property.literal());
+            NAME_MAP.put(property.name(), property);
         }
     }
 
     public static synchronized void deregister(String literal) {
-        ExchangeProperty<?> property = literalMap.get(literal);
+        ExchangeProperty<?> property = LITERAL_MAP.get(literal);
         if (property != null) {
-            values.remove(property);
-            literalMap.remove(property.literal());
-            nameMap.put(property.name(), property);
+            VALUES.remove(property);
+            LITERAL_MAP.remove(property.literal());
+            NAME_MAP.put(property.name(), property);
         }
     }
 
     public static synchronized ExchangeProperty<?>[] values() {
-        return values.toArray(new ExchangeProperty[0]);
+        return VALUES.toArray(new ExchangeProperty[0]);
     }
 
 }

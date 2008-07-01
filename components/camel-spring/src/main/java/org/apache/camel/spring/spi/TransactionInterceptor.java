@@ -36,11 +36,12 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @version $Revision$
  */
 public class TransactionInterceptor extends DelegateProcessor {
+    public static final ExchangeProperty<Boolean> TRANSACTED =
+        new ExchangeProperty<Boolean>("transacted", "org.apache.camel.transacted", Boolean.class);
     private static final transient Log LOG = LogFactory.getLog(TransactionInterceptor.class);
     private final TransactionTemplate transactionTemplate;
 
-    public static final ExchangeProperty<Boolean> TRANSACTED =
-        new ExchangeProperty<Boolean>("transacted", "org.apache.camel.transacted", Boolean.class);
+
 
     public TransactionInterceptor(TransactionTemplate transactionTemplate) {
         this.transactionTemplate = transactionTemplate;
@@ -91,7 +92,7 @@ public class TransactionInterceptor extends DelegateProcessor {
                      // wrap if the exchange threw an exception
                     rce = new RuntimeCamelException(e);
                 }
-                
+
                 // rehrow exception if the exchange failed
                 if (rce != null) {
                     if (activeTx) {
@@ -102,7 +103,7 @@ public class TransactionInterceptor extends DelegateProcessor {
                 }
             }
         });
-        
+
         LOG.debug("Transaction commit");
     }
 
