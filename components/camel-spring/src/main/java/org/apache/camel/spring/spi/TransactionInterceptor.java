@@ -138,7 +138,7 @@ public class TransactionInterceptor extends DelegateProcessor {
             rc = "PROPAGATION_SUPPORTS";
             break;
         default:
-            rc = "UNKOWN";
+            rc = "UNKNOWN";
         }
         return rc;
     }
