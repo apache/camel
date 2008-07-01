@@ -44,14 +44,13 @@ public class QueueToQueueRequestReplyTransactionTest extends AbstractTransaction
     public void testRollbackUsingXmlQueueToQueueRequestReplyUsingDynamicMessageSelector() throws Exception {
 
         JmsComponent c = (JmsComponent)context.getComponent("activemq");
-        // c.getConfiguration().setRequestTimeout(600000);
         JmsComponent c1 = (JmsComponent)context.getComponent("activemq-1");
-        
+        final ConditionalExceptionProcessor cp = new ConditionalExceptionProcessor(10);
         context.addRoutes(new SpringRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 Policy required = bean(SpringTransactionPolicy.class, "PROPAGATION_REQUIRED_POLICY");
-                from("activemq:queue:foo?replyTo=queue:foo.reply").policy(required).process(new ConditionalExceptionProcessor()).to("activemq-1:queue:bar?replyTo=queue:bar.reply");
+                from("activemq:queue:foo?replyTo=queue:foo.reply").policy(required).process(cp).to("activemq-1:queue:bar?replyTo=queue:bar.reply");
                 from("activemq-1:queue:bar").process(new Processor() {
                     public void process(Exchange e) {
                         String request = e.getIn().getBody(String.class);
@@ -66,8 +65,11 @@ public class QueueToQueueRequestReplyTransactionTest extends AbstractTransaction
             }
         });
 
-        Object reply = template.requestBody("activemq:queue:foo", "blah");
-        assertTrue("Received unexpeced reply", reply.equals("Re: blah"));
+        for (int i = 0; i < 10; ++i) {
+            Object reply = template.requestBody("activemq:queue:foo", "blah" + i);
+            assertTrue("Received unexpeced reply", reply.equals("Re: blah" + i));
+            assertTrue(cp.getErrorMessage(), cp.getErrorMessage() == null);
+        }
     }
 /*
  * This is a working test but is commented out because there is bug in that ConditionalExceptionProcessor 

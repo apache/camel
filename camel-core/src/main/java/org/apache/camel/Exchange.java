@@ -170,6 +170,11 @@ public interface Exchange {
     boolean isFailed();
 
     /**
+     * Returns true if this exchange is transacted
+     */
+    boolean isTransacted();
+    
+    /**
      * Returns the container so that a processor can resolve endpoints from URIs
      *
      * @return the container which owns this exchange
