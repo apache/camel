@@ -454,7 +454,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     protected boolean matches(E exchange, Object scriptValue) {
-        return ObjectConverter.toBoolean(scriptValue);
+        return ObjectConverter.toBool(scriptValue);
     }
 
     protected ScriptEngine createScriptEngine() {
