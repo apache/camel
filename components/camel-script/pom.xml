@@ -166,7 +166,11 @@
             <!--<include>**/*Test.*</include>-->
           </includes>
           <excludes>
-            <exclude>**/*Test.*</exclude>
+            <!-- These tests fail/error; I haven't investigated yet.
+                 The PythonExpressionTest also fails but that is demonstrating a problem that should be fixed. -->
+            <exclude>**/PythonLanguageTest.*</exclude>
+            <exclude>**/JavaScriptLanguageTest.*</exclude>
+            <exclude>**/GroovyFilterTest.*</exclude>
           </excludes>
         </configuration>
       </plugin>
