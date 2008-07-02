@@ -38,11 +38,17 @@
   </properties>
 
   <repositories>
+    <!-- SMX Repository is more up to date than LogicBlaze repo -->
     <repository>
-      <id>logicblaze.all</id>
-      <name>LogicBlaze Repository</name>
-      <url>http://repo.logicblaze.com/maven2-all</url>
+      <id>servicemix.apache.svn</id>
+      <name>ServiceMix Repository</name>
+      <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
     </repository>
+    <!--<repository>-->
+      <!--<id>logicblaze.all</id>-->
+      <!--<name>LogicBlaze Repository</name>-->
+      <!--<url>http://repo.logicblaze.com/maven2-all</url>-->
+    <!--</repository>-->
   </repositories>
 
   <dependencies>
@@ -58,20 +64,7 @@
 	  <version>${spring-version}</version>
     </dependency>
 
-    <!-- testing -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-      <type>test-jar</type>
-      <optional>true</optional>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-      <scope>test</scope>
-    </dependency>
-
+    <!-- LogicBlaze Repo Script Engines
     <dependency>
       <groupId>javax.script</groupId>
       <artifactId>groovy-engine</artifactId>
@@ -87,12 +80,6 @@
       <classifier>jdk14</classifier>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>rhino</groupId>
-      <artifactId>js</artifactId>
-      <version>1.6R7</version>
-      <scope>test</scope>
-    </dependency>
 
     <dependency>
       <groupId>javax.script</groupId>
@@ -100,11 +87,6 @@
       <version>1.0</version>
       <classifier>jdk14</classifier>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.python</groupId>
-      <artifactId>jython</artifactId>
-      <version>2.2.1</version>
     </dependency>
 
     <dependency>
@@ -114,10 +96,76 @@
       <classifier>jdk14</classifier>
       <scope>test</scope>
     </dependency>
+    -->
+
+    <!-- ServiceMix Repo Script Engines -->
+    <dependency>
+      <groupId>com.sun.script</groupId>
+      <artifactId>groovy-engine</artifactId>
+      <version>20080611</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.script</groupId>
+      <artifactId>js-engine</artifactId>
+      <version>20080611</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.script</groupId>
+      <artifactId>jython-engine</artifactId>
+      <version>20080611</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.script</groupId>
+      <artifactId>jruby-engine</artifactId>
+      <version>20080611</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <type>test-jar</type>
+      <optional>true</optional>
+      <scope>test</scope>
+    </dependency>
+      
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>rhino</groupId>
+      <artifactId>js</artifactId>
+      <version>1.6R7</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.python</groupId>
+      <artifactId>jython</artifactId>
+      <version>2.2.1</version>
+    </dependency>
+
 
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby</artifactId>
+      <version>1.1.2</version>
       <scope>test</scope>
     </dependency>
 
@@ -167,8 +215,9 @@
           </includes>
           <excludes>
             <!-- These tests fail/error; I haven't investigated yet.
-                 The PythonExpressionTest also fails but that is demonstrating a problem that should be fixed. -->
-            <exclude>**/PythonExpressionTest.*</exclude>
+                 The PythonExpressionTest also fails but that is demonstrating a problem that should be fixed.
+                 Same with JavaScriptExpressionTest.
+                 Same with RubyExpressionTest -->
             <exclude>**/PythonLanguageTest.*</exclude>
             <exclude>**/JavaScriptLanguageTest.*</exclude>
             <exclude>**/GroovyFilterTest.*</exclude>
