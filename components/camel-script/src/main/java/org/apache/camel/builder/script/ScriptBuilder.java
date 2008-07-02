@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.script.Compilable;
 import javax.script.CompiledScript;
@@ -526,6 +527,12 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     protected ScriptEvaluationException createScriptEvaluationException(Throwable e) {
+        if(e.getClass().getName().equals("org.jruby.exceptions.RaiseException")) { // Only the nested exception has the specific problem
+            try {
+                Object ex = e.getClass().getMethod("getException").invoke(e);
+                return new ScriptEvaluationException("Failed to evaluate: " + getScriptDescription() + ".  Error: "+ex+". Cause: "+e, e);
+            } catch (Exception e1) {}
+        }
         return new ScriptEvaluationException("Failed to evaluate: " + getScriptDescription() + ". Cause: " + e, e);
     }
 
