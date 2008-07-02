@@ -85,13 +85,13 @@ public class LoanBroker extends RouteBuilder {
         from("test-jms:queue:creditResponseQueue").multicast().to("test-jms:queue:bank1", "test-jms:queue:bank2", "test-jms:queue:bank3");
 
         // Each bank processor will process the message and put the response message into the bankReplyQueue
-        from("test-jms:queue:bank1").process(new Bank("bank1")).to("direct:queue:bankReplyQueue");
-        from("test-jms:queue:bank2").process(new Bank("bank2")).to("direct:queue:bankReplyQueue");
-        from("test-jms:queue:bank3").process(new Bank("bank3")).to("direct:queue:bankReplyQueue");
+        from("test-jms:queue:bank1").process(new Bank("bank1")).to("test-jms:queue:bankReplyQueue");
+        from("test-jms:queue:bank2").process(new Bank("bank2")).to("test-jms:queue:bankReplyQueue");
+        from("test-jms:queue:bank3").process(new Bank("bank3")).to("test-jms:queue:bankReplyQueue");
 
         // Now we aggregating the response message by using the Constants.PROPERTY_SSN header
         // The aggregation will completed when all the three bank responses are received
-        from("direct:queue:bankReplyQueue")
+        from("test-jms:queue:bankReplyQueue")
             .aggregator(header(Constants.PROPERTY_SSN), new BankResponseAggregationStrategy())
             .completedPredicate(header("aggregated").isEqualTo(3))
 

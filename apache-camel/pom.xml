@@ -279,15 +279,7 @@
           <artifactId>camel-manual</artifactId>
         </dependency>
     -->
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-      <type>test-jar</type>
-      <version>${project.version}</version>
-      <optional>true</optional>
-    </dependency>
-
+    
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging-api</artifactId>
@@ -297,6 +289,12 @@
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jms_1.1_spec</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <optional>true</optional>      
     </dependency>
 
     <dependency>
