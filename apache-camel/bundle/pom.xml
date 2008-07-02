@@ -232,21 +232,7 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-xstream</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-      <type>test-jar</type>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-      <type>test-jar</type>
-      <version>${project.version}</version>
-    </dependency>
-
+        
   </dependencies>
 
   <build>
@@ -285,31 +271,17 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <artifactSet>
+                <excludes>
+                  <exclude>org.apache.camel:camel-bundle</exclude>
+                  <exclude>org.apache.camel:camel-core:test-jar:tests</exclude>                  
+                </excludes>
+              </artifactSet> 
               <shadedGroupFilter>org.apache.camel</shadedGroupFilter>
               <shadedArtifactAttached>false</shadedArtifactAttached>
               <createSourcesJar>${createSourcesJar}</createSourcesJar>
               <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
               <createDependencyReducedPom>true</createDependencyReducedPom>
-              <filters>
-                <filter>
-                  <artifact>org.apache.camel:camel-bundle</artifact>
-                  <excludes>
-                    <exclude>org/apache/camel/**</exclude>
-                  </excludes>
-                </filter>
-                <filter>
-                  <artifact>org.apache.camel:camel-core:test</artifact>
-                  <excludes>
-                    <exclude>org/apache/camel/**</exclude>
-                  </excludes>
-                </filter>
-                <filter>
-                  <artifact>org.apache.camel:camel-spring:test</artifact>
-                  <excludes>
-                    <exclude>org/apache/camel/spring/**</exclude>
-                  </excludes>
-                </filter>
-              </filters>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                   <resource>META-INF/spring.handlers</resource>
