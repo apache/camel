@@ -90,7 +90,11 @@ public class AggregatorType extends ExpressionNode {
     @Override
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         final Aggregator aggregator = createAggregator(routeContext);
-
+        doAddRoute(routeContext, routes, aggregator);
+    }
+    
+    private void doAddRoute(RouteContext routeContext, Collection<Route> routes, final Aggregator aggregator)
+        throws Exception {
         Route route = new Route<Exchange>(aggregator.getEndpoint(), aggregator) {
             @Override
             public String toString() {
@@ -100,10 +104,14 @@ public class AggregatorType extends ExpressionNode {
 
         routes.add(route);
     }
-    
+ 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return createAggregator(routeContext);
+        final Aggregator aggregator = createAggregator(routeContext);
+        
+        doAddRoute(routeContext, routeContext.getCamelContext().getRoutes(), aggregator);
+        routeContext.setIsRouteAdded(true);
+        return aggregator;
     }
 
     protected Aggregator createAggregator(RouteContext routeContext) throws Exception {

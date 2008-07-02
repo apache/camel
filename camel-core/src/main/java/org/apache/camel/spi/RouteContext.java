@@ -103,4 +103,20 @@ public interface RouteContext {
      */
     void setErrorHandlerWrappingStrategy(ErrorHandlerWrappingStrategy strategy);
 
+    /**
+     * If this flag is true, {@link ProcessorType#addRoutes(RouteContext, java.util.Collection)
+     * will not add processor to addEventDrivenProcessor to the RouteContext and it
+     * will prevent from adding an EventDrivenRoute.
+     * 
+     */
+    void setIsRouteAdded(boolean value);
+    
+    /**
+     * @see {@link #setIsRouteAdded(boolean)}
+     * 
+     */
+    boolean isRouteAdded();
+    
+    
+
 }

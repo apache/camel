@@ -293,6 +293,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     // Route Management Methods
     // -----------------------------------------------------------------------
     public List<Route> getRoutes() {
+        if (routes == null) {
+            routes = new ArrayList<Route>();
+        }
         return routes;
     }
 

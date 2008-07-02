@@ -55,6 +55,7 @@ public class DefaultRouteContext implements RouteContext {
     private CamelContext camelContext;
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private ErrorHandlerWrappingStrategy errorHandlerWrappingStrategy;
+    private boolean routeAdded;
 
     public DefaultRouteContext(RouteType route, FromType from, Collection<Route> routes) {
         this.route = route;
@@ -192,6 +193,15 @@ public class DefaultRouteContext implements RouteContext {
 
     public void setErrorHandlerWrappingStrategy(ErrorHandlerWrappingStrategy strategy) {
         errorHandlerWrappingStrategy = strategy;
+        
+    }
+
+    public boolean isRouteAdded() {
+        return routeAdded;
+    }
+
+    public void setIsRouteAdded(boolean b) {
+        routeAdded = b;
         
     }
 }
