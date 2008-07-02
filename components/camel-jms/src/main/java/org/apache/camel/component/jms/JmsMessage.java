@@ -185,7 +185,11 @@ public class JmsMessage extends DefaultMessage {
                 String name = names.nextElement().toString();
                 try {
                     Object value = jmsMessage.getObjectProperty(name);
-                    map.put(name, value);
+
+                    // must decode back from safe JMS header name to original header name
+                    // when storing on this Camel JmsMessage object.
+                    String key = JmsBinding.decodeFromSafeJmsHeaderName(name);
+                    map.put(key, value);
                 } catch (JMSException e) {
                     throw new MessagePropertyAccessException(name, e);
                 }
@@ -219,4 +223,5 @@ public class JmsMessage extends DefaultMessage {
     private String getSanitizedString(Object value) {
         return value != null ? value.toString().replaceAll("[^a-zA-Z0-9\\.\\_\\-]", "_") : "";
     }
+
 }
