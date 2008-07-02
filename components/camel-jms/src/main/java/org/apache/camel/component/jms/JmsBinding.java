@@ -46,8 +46,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
-
 /**
  * A Strategy used to convert between a Camel {@link JmsExchange} and {@link JmsMessage}
  * to and from a JMS {@link Message}
@@ -182,7 +180,9 @@ public class JmsBinding {
                 LOG.debug("Ignoring JMS header: " + headerName + " with value: " + headerValue);
             }
         } else if (shouldOutputHeader(in, headerName, headerValue)) {
-            jmsMessage.setObjectProperty(headerName, headerValue);
+            // must encode to safe JMS header name before setting property on jmsMessage
+            String key = encodeToSafeJmsHeaderName(headerName);
+            jmsMessage.setObjectProperty(key, headerValue);
         }
     }
 
@@ -264,11 +264,39 @@ public class JmsBinding {
 
     /**
      * Strategy to allow filtering of headers which are put on the JMS message
+     * <p/>
+     * <b>Note</b>: Currently only supports sending java identifiers as keys
      */
     protected boolean shouldOutputHeader(org.apache.camel.Message camelMessage, String headerName,
                                          Object headerValue) {
+        String key = encodeToSafeJmsHeaderName(headerName);
         return headerValue != null && !getIgnoreJmsHeaders().contains(headerName)
-               && ObjectHelper.isJavaIdentifier(headerName);
+               && ObjectHelper.isJavaIdentifier(key);
+    }
+
+    /**
+     * Encoder to encode JMS header keys that is that can be sent over the JMS transport.
+     * <p/>
+     * For example: Sending dots is the key is not allowed. Especially the Bean component has
+     * this problem if you want to provide the method name to invoke on the bean.
+     * <p/>
+     * <b>Note</b>: Currently this encoder is simple as it only supports encoding dots to underscores.
+     *
+     * @param headerName  the header name
+     * @return  the key to use instead for storing properties and to be for lookup of the same property
+     */
+    public static String encodeToSafeJmsHeaderName(String headerName) {
+        return headerName.replace(".", "_");
+    }
+
+    /**
+     * Decode operation for the {@link #encodeToSafeJmsHeaderName(String)}.
+     *
+     * @param headerName  the header name
+     * @return  the original key
+     */
+    public static String decodeFromSafeJmsHeaderName(String headerName) {
+        return headerName.replace("_", ".");
     }
 
     /**
@@ -276,12 +304,12 @@ public class JmsBinding {
      * an input message onto an outgoing message
      */
     protected void populateIgnoreJmsHeaders(Set<String> set) {
-        // ignore provider specified JMS extension headers
-        // see page 39 of JMS 1.1 specification
-        //
+        // ignore provider specified JMS extension headers see page 39 of JMS 1.1 specification
+
         // added "JMSXRecvTimestamp" as a workaround for an Oracle bug/typo in AqjmsMessage
         String[] ignore = {"JMSXUserID", "JMSXAppID", "JMSXDeliveryCount", "JMSXProducerTXID",
                            "JMSXConsumerTXID", "JMSXRcvTimestamp", "JMSXRecvTimestamp", "JMSXState"};
         set.addAll(Arrays.asList(ignore));
     }
+
 }
