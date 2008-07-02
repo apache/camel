@@ -46,7 +46,7 @@ public class CsvDataFormat implements DataFormat {
         Map map = ExchangeHelper.convertToMandatoryType(exchange, Map.class, object);
         OutputStreamWriter out = new OutputStreamWriter(outputStream);
         try {
-            CSVConfig conf = createConfig();
+            CSVConfig conf = getConfig();
             // lets add fields
             Set set = map.keySet();
             for (Object value : set) {
