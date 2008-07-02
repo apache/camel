@@ -26,6 +26,8 @@ import org.apache.camel.processor.validation.ValidatingProcessor;
 import org.springframework.core.io.Resource;
 
 /**
+ * Validator that uses Spring for reading the scheme resource.
+ *
  * @version $Revision$
  */
 public class SpringValidator extends ValidatingProcessor {

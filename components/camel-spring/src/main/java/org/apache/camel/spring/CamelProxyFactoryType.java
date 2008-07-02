@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.model.IdentifiedType;
 
 /**
+ * The &lt;proxy&gt; tag element.
+ *
  * @version $Revision$
 */ // to fudge the XSD generation
 @XmlRootElement(name = "proxy")

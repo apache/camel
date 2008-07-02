@@ -14,5 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/**
+ * The classes for working with Camel and Spring along with the primary factory beans.
+ */
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://activemq.apache.org/camel/schema/spring", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel.spring;

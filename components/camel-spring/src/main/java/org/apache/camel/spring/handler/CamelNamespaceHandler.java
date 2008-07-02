@@ -56,6 +56,9 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.beans.factory.xml.ParserContext;
 
 
+/**
+ * Camel namespace for the spring XML configuration file.
+ */
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(EndpointFactoryBean.class);

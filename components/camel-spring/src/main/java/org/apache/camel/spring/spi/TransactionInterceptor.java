@@ -41,8 +41,6 @@ public class TransactionInterceptor extends DelegateProcessor {
     private static final transient Log LOG = LogFactory.getLog(TransactionInterceptor.class);
     private final TransactionTemplate transactionTemplate;
 
-
-
     public TransactionInterceptor(TransactionTemplate transactionTemplate) {
         this.transactionTemplate = transactionTemplate;
     }
@@ -79,7 +77,6 @@ public class TransactionInterceptor extends DelegateProcessor {
                     if (activeTx) {
                         TRANSACTED.set(exchange, Boolean.TRUE);
                     }
-
 
                     // process the exchange
                     processNext(exchange);

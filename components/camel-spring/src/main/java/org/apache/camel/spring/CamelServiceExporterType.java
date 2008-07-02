@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.model.IdentifiedType;
 
 /**
+ * The &lt;export&gt; tag element.
+ *
  * @version $Revision$
 */
 @XmlRootElement(name = "export")
