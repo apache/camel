@@ -20,6 +20,9 @@ import org.apache.camel.component.bean.BeanEndpoint;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
+ * Spring {@link org.springframework.beans.factory.FactoryBean} for creating
+ * Camel {@link BeanEndpoint} objects.
+ *
  * @version $Revision$
  */
 public class BeanEndpointFactory implements FactoryBean {

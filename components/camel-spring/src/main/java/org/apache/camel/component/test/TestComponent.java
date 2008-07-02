@@ -28,6 +28,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
+ * Test Component.
+ *
+ * @see org.apache.camel.component.test.TestEndpoint
+ *
  * @version $Revision$
  */
 public class TestComponent extends DefaultComponent<Exchange> {

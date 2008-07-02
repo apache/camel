@@ -26,6 +26,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 /**
+ * A useful base class for components which depend on a resource
+ * such as things like Velocity or XQuery based components.
+ *
  * @version $Revision$
  */
 public abstract class ResourceBasedComponent extends DefaultComponent<Exchange> {

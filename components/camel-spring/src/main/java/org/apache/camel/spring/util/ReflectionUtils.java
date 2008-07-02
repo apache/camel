@@ -22,7 +22,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+/**
+ * Reflection utilities, extending Spring ReflectionUtils.
+ */
 public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
+
     public static <T extends Annotation> void callLifecycleMethod(final Object bean, final Class<T> annotation) {
         ReflectionUtils.doWithMethods(bean.getClass(), new ReflectionUtils.MethodCallback() {
             public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
@@ -58,4 +62,5 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
             ReflectionUtils.handleReflectionException(ex);
         }
     }
+    
 }
