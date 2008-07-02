@@ -95,7 +95,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         Processor processor = makeProcessor(routeContext);
-        routeContext.addEventDrivenProcessor(processor);
+        if (!routeContext.isRouteAdded()) {
+            routeContext.addEventDrivenProcessor(processor);
+        }
     }
 
     /**

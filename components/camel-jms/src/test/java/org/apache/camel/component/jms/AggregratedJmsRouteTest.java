@@ -36,7 +36,7 @@ public class AggregratedJmsRouteTest extends ContextTestSupport {
 
     private static final transient Log LOG = LogFactory.getLog(AggregratedJmsRouteTest.class);
     private String timeOutEndpointUri = "jms:queue:test.a";
-    private String multicastEndpointUri = "jms:queue:mutilcast";
+    private String multicastEndpointUri = "jms:queue:multicast";
 
     /*
      * negative receive wait timeout for jms is blocking so timeout during processing does not hang
@@ -54,7 +54,7 @@ public class AggregratedJmsRouteTest extends ContextTestSupport {
     }
 
 
-    public void xtestJmsMulticastAndAggregration() throws Exception {
+    public void testJmsMulticastAndAggregration() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:reply", MockEndpoint.class);
 
         resultEndpoint.expectedMessageCount(2);
@@ -104,12 +104,13 @@ public class AggregratedJmsRouteTest extends ContextTestSupport {
                 from("jms:queue:point3").process(new MyProcessor()).to("jms:queue:reply");
                 from("jms:queue:reply").aggregator(header("cheese"), new AggregationStrategy() {
                     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                        Exchange copy = newExchange.copy();
                         LOG.info("try to aggregating the message ");
                         Integer old = (Integer) oldExchange.getProperty("aggregated");
                         if (old == null) {
                             old = 1;
                         }
-                        Exchange result = newExchange;
+                        Exchange result = copy;
                         result.setProperty("aggregated", old + 1);
                         return result;
                     }
