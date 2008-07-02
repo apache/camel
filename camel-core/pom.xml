@@ -50,10 +50,10 @@
     </dependency>
 
     <dependency>
-       <!-- TODO: this is only needed for OSGi environments, we can have it optional or provided -->
+       <!-- this is only needed for OSGi environments -->
       <groupId>org.apache.felix</groupId>
       <artifactId>org.osgi.core</artifactId>
-      <version>${felix-osgi-version}</version>
+      <scope>provided</scope>
       <optional>true</optional>
     </dependency>
 

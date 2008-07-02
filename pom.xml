@@ -626,6 +626,13 @@
         <version>${log4j-version}</version>
       </dependency>
 
+      <!-- optional dependencies for felix -->
+      <dependency>       
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.osgi.core</artifactId>
+        <version>${felix-osgi-version}</version>     
+      </dependency>
+
       <!-- optional dependencies for JMS -->
       <dependency>
         <groupId>org.apache.activemq</groupId>
