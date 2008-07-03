@@ -34,6 +34,7 @@ MarshalType
 MulticastType
 OptionalIdentifiedType
 OtherwiseType
+PipelineType
 PolicyRef
 ProceedType
 ProcessorRef
