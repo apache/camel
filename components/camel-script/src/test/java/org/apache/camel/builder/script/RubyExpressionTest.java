@@ -16,8 +16,9 @@
  */
 package org.apache.camel.builder.script;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
