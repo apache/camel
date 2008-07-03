@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.Logger;
@@ -61,7 +62,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         return answer;
     }
 
-    public Processor createErrorHandler(Processor processor) throws Exception {
+    public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         Processor deadLetter = getDeadLetterFactory().createProcessor();
         DeadLetterChannel answer = new DeadLetterChannel(processor, deadLetter, getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy());
         configure(answer);

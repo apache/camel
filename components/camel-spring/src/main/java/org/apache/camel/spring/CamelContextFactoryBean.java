@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.DefaultLifecycleStrategy;
 import org.apache.camel.management.DefaultInstrumentationAgent;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;
@@ -74,6 +75,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private Boolean autowireRouteBuilders = Boolean.TRUE;
     @XmlAttribute(required = false)
     private Boolean trace;
+    @XmlAttribute(required = false)
+    private String errorHandlerRef;
     @XmlElement(name = "package", required = false)
     private String[] packages = {};
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentType.class, required = false)
@@ -364,6 +367,20 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.autowireRouteBuilders = autowireRouteBuilders;
     }
 
+    public String getErrorHandlerRef() {
+        return errorHandlerRef;
+    }
+
+    /**
+     * Sets the name of the error handler object used to default the error handling strategy
+     *
+     * @param errorHandlerRef the Spring bean ref of the error handler
+     */
+    public void setErrorHandlerRef(String errorHandlerRef) {
+        this.errorHandlerRef = errorHandlerRef;
+    }
+
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -375,6 +392,13 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         ctx.setName(getId());
         if (trace != null) {
             ctx.setTrace(trace);
+        }
+        if (errorHandlerRef != null) {
+            ErrorHandlerBuilder errorHandlerBuilder = (ErrorHandlerBuilder) getApplicationContext().getBean(errorHandlerRef, ErrorHandlerBuilder.class);
+            if (errorHandlerBuilder == null) {
+                throw new IllegalArgumentException("Could not find bean: " + errorHandlerRef);
+            }
+            ctx.setErrorHandlerBuilder(errorHandlerBuilder);
         }
         return ctx;
     }

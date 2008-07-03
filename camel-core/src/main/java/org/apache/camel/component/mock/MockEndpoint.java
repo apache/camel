@@ -42,6 +42,7 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.util.ExpressionComparator;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -80,6 +81,18 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     public MockEndpoint(String endpointUri) {
         super(endpointUri);
         init();
+    }
+
+
+    /**
+     * A helper method to resolve the mock endpoint of the given URI on the given context
+     *
+     * @param context the camel context to try resolve the mock endpoint from
+     * @param uri the uri of the endpoint to resolve
+     * @return the endpoint
+     */
+    public static MockEndpoint resolve(CamelContext context, String uri) {
+        return CamelContextHelper.getMandatoryEndpoint(context, uri, MockEndpoint.class);
     }
 
     public static void assertWait(long timeout, TimeUnit unit, MockEndpoint... endpoints) throws InterruptedException {

@@ -202,8 +202,9 @@ public class RoutesType extends OptionalIdentifiedType<RoutesType> implements Ro
     //-------------------------------------------------------------------------
     protected RouteType createRoute() {
         RouteType route = new RouteType();
-        if (isInheritErrorHandler()) {
-            route.setErrorHandlerBuilder(getErrorHandlerBuilder());
+        ErrorHandlerBuilder handler = getErrorHandlerBuilder();
+        if (isInheritErrorHandler() && handler != null) {
+            route.setErrorHandlerBuilderIfNull(handler);
         }
         return route;
     }

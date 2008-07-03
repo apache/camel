@@ -17,6 +17,7 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Processor;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.model.ExceptionType;
 
 /**
@@ -34,7 +35,7 @@ public interface ErrorHandlerBuilder {
     /**
      * Creates the error handler interceptor
      */
-    Processor createErrorHandler(Processor processor) throws Exception;
+    Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception;
 
     /**
      * Adds error handler for the given exception type

@@ -37,7 +37,7 @@ public interface ErrorHandlerWrappingStrategy {
      * @return processor wrapped with an interceptor or not wrapped
      * @throws Exception
      */
-    Processor wrapProcessorInErrorHandler(ProcessorType processorType,
-            Processor target) throws Exception;
+    Processor wrapProcessorInErrorHandler(RouteContext routeContext, ProcessorType processorType,
+                                          Processor target) throws Exception;
 
 }
