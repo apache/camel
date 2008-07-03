@@ -58,6 +58,15 @@ public final class CamelContextHelper {
     }
 
     /**
+     * Returns the mandatory endpoint for the given URI and type or the
+     * {@link org.apache.camel.NoSuchEndpointException} is thrown
+     */
+    public static <T extends Endpoint> T getMandatoryEndpoint(CamelContext camelContext, String uri, Class<T> type) {
+        Endpoint endpoint = getMandatoryEndpoint(camelContext, uri);
+        return ObjectHelper.cast(type, endpoint);
+    }
+
+    /**
      * Returns a list of all endpoints of the given type
      *
      * @param camelContext

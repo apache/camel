@@ -43,6 +43,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.DataFormatClause;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.ProcessorBuilder;
@@ -79,6 +80,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     private LinkedList<Block> blocks = new LinkedList<Block>();
     private ProcessorType<? extends ProcessorType> parent;
     private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
+    private String errorHandlerRef;
 
     // else to use an optional attribute in JAXB2
     public abstract List<ProcessorType<?>> getOutputs();
@@ -1444,6 +1446,28 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
+    /**
+     * Sets the error handler if one is not already set
+     */
+    protected void setErrorHandlerBuilderIfNull(ErrorHandlerBuilder errorHandlerBuilder) {
+        if (this.errorHandlerBuilder == null) {
+            setErrorHandlerBuilder(errorHandlerBuilder);
+        }
+    }
+
+    public String getErrorHandlerRef() {
+        return errorHandlerRef;
+    }
+
+    /**
+     * Sets the bean ref name of the error handler builder to use on this route
+     */
+    @XmlAttribute(required = false)
+    public void setErrorHandlerRef(String errorHandlerRef) {
+        this.errorHandlerRef = errorHandlerRef;
+        setErrorHandlerBuilder(new ErrorHandlerBuilderRef(errorHandlerRef));
+    }
+
     @XmlTransient
     public boolean isInheritErrorHandler() {
         return isInheritErrorHandler(getInheritErrorHandlerFlag());
@@ -1562,13 +1586,16 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         ErrorHandlerWrappingStrategy strategy = routeContext.getErrorHandlerWrappingStrategy();
 
         if (strategy != null) {
-            return strategy.wrapProcessorInErrorHandler(this, target);
+            return strategy.wrapProcessorInErrorHandler(routeContext, this, target);
         }
 
-        return getErrorHandlerBuilder().createErrorHandler(target);
+        return getErrorHandlerBuilder().createErrorHandler(routeContext, target);
     }
 
     protected ErrorHandlerBuilder createErrorHandlerBuilder() {
+        if (errorHandlerRef != null) {
+            return new ErrorHandlerBuilderRef(errorHandlerRef);
+        }
         if (isInheritErrorHandler()) {
             return new DeadLetterChannelBuilder();
         } else {

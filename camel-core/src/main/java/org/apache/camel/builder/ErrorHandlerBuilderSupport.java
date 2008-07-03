@@ -39,4 +39,8 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
             handler.addExceptionPolicy(exception);
         }
     }
+
+    public List<ExceptionType> getExceptions() {
+        return exceptions;
+    }
 }

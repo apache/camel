@@ -33,7 +33,9 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Route;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.DefaultRouteContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
@@ -76,10 +78,19 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
     public void addRoutes(CamelContext context, Collection<Route> routes) throws Exception {
         setCamelContext(context);
 
+        if (context instanceof DefaultCamelContext) {
+            DefaultCamelContext defaultCamelContext = (DefaultCamelContext) context;
+            ErrorHandlerBuilder handler = defaultCamelContext.getErrorHandlerBuilder();
+            if (handler != null) {
+                setErrorHandlerBuilderIfNull(handler);
+            }
+        }
+
         for (FromType fromType : inputs) {
             addRoutes(routes, fromType);
         }
     }
+
 
     public Endpoint resolveEndpoint(String uri) throws NoSuchEndpointException {
         CamelContext context = getCamelContext();

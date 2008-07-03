@@ -17,6 +17,7 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Processor;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * A builder to disable the use of an error handler so that any exceptions are thrown.
@@ -32,7 +33,7 @@ public class NoErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
-    public Processor createErrorHandler(Processor processor) {
+    public Processor createErrorHandler(RouteContext routeContext, Processor processor) {
         return processor;
     }
 }

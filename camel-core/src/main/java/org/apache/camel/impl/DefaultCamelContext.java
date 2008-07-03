@@ -38,6 +38,7 @@ import org.apache.camel.Routes;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
@@ -89,6 +90,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private List<RouteType> routeDefinitions = new ArrayList<RouteType>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private Boolean trace;
+    private ErrorHandlerBuilder errorHandlerBuilder;
 
     public DefaultCamelContext() {
         name = NAME_PREFIX + ++nameSuffix;
@@ -467,6 +469,21 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.trace = trace;
     }
 
+    public <E extends Exchange> ProducerTemplate<E> createProducerTemplate() {
+        return new DefaultProducerTemplate<E>(this);
+    }
+
+    public ErrorHandlerBuilder getErrorHandlerBuilder() {
+        return errorHandlerBuilder;
+    }
+
+    /**
+     * Sets the default error handler builder which is inherited by the routes
+     */
+    public void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder) {
+        this.errorHandlerBuilder = errorHandlerBuilder;
+    }
+
     // Implementation methods
     // -----------------------------------------------------------------------
 
@@ -626,8 +643,5 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return isStarted() && !isStarting();
     }
 
-    public <E extends Exchange> ProducerTemplate<E> createProducerTemplate() {
-        return new DefaultProducerTemplate<E>(this);
-    }
 
 }
