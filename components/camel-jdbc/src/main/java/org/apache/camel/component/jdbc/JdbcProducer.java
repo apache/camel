@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -30,12 +31,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
 public class JdbcProducer extends DefaultProducer<DefaultExchange> {
 
+    private static final transient Log LOG = LogFactory.getLog(JdbcProducer.class);
     private DataSource source;
 
     /** The maximum size for reading a result set <code>readSize</code> */
@@ -56,23 +62,30 @@ public class JdbcProducer extends DefaultProducer<DefaultExchange> {
         String sql = exchange.getIn().getBody(String.class);
         Connection conn = null;
         Statement stmt = null;
+        ResultSet rs = null;
         try {
             conn = source.getConnection();
             stmt = conn.createStatement();
             if (stmt.execute(sql)) {
-                ResultSet rs = stmt.getResultSet();
+                rs = stmt.getResultSet();
                 setResultSet(exchange, rs);
-                rs.close();
             } else {
                 int updateCount = stmt.getUpdateCount();
                 exchange.getOut().setHeader("jdbc.updateCount", updateCount);
             }
         } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                LOG.warn("Error closing JDBC resource: " + e, e);
             }
         }
     }
@@ -87,12 +100,13 @@ public class JdbcProducer extends DefaultProducer<DefaultExchange> {
 
     public void setResultSet(Exchange exchange, ResultSet rs) throws SQLException {
         ResultSetMetaData meta = rs.getMetaData();
+
         HashMap<String, Object> props = new HashMap<String, Object>();
         IntrospectionSupport.getProperties(meta, props, "jdbc.");
         exchange.getOut().setHeaders(props);
-        //
+
         int count = meta.getColumnCount();
-        ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
+        List<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
         int rowNumber = 0;
         while (rs.next() && rowNumber < readSize) {
             HashMap<String, Object> row = new HashMap<String, Object>();
