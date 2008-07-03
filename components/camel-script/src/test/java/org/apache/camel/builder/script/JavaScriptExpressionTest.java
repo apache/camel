@@ -57,7 +57,7 @@ public class JavaScriptExpressionTest extends ContextTestSupport {
                 from("direct:start").choice().
                         // The following java script expression should return a boolean
                         // but it seems to always return false -- what's up with that?
-                        when().javaScript("request.headers['foo'] == 'bar'").to("mock:result")
+                        when().javaScript("request.headers.get('foo') == 'bar'").to("mock:result")
                         .otherwise().to("mock:unmatched");
             }
         };

@@ -135,11 +135,12 @@
       <optional>true</optional>
       <scope>test</scope>
     </dependency>
-      
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
       <scope>test</scope>
+      <optional>true</optional>
     </dependency>
 
     <dependency>
@@ -208,20 +209,12 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <forkMode>pertest</forkMode>
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
           <includes>
-            <!--<include>**/*Test.*</include>-->
+            <include>**/*Test.*</include>
           </includes>
-          <excludes>
-            <!-- These tests fail/error; I haven't investigated yet.
-                 The PythonExpressionTest also fails but that is demonstrating a problem that should be fixed.
-                 Same with JavaScriptExpressionTest.
-                 Same with RubyExpressionTest -->
-            <exclude>**/PythonLanguageTest.*</exclude>
-            <exclude>**/JavaScriptLanguageTest.*</exclude>
-            <exclude>**/GroovyFilterTest.*</exclude>
-          </excludes>
         </configuration>
       </plugin>
     </plugins>
