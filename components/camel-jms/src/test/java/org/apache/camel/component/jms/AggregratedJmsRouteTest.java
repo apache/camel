@@ -63,7 +63,7 @@ public class AggregratedJmsRouteTest extends ContextTestSupport {
             sendExchange(multicastEndpointUri, body);
         }
 
-        resultEndpoint.assertIsSatisfied();
+        resultEndpoint.assertIsSatisfied(8000);
     }
 
 
