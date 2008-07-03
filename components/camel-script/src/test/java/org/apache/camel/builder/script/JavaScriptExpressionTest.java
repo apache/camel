@@ -16,8 +16,9 @@
  */
 package org.apache.camel.builder.script;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -54,7 +55,7 @@ public class JavaScriptExpressionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start").choice().
-                        // The following python expression should return a boolean
+                        // The following java script expression should return a boolean
                         // but it seems to always return false -- what's up with that?
                         when().javaScript("request.headers['foo'] == 'bar'").to("mock:result")
                         .otherwise().to("mock:unmatched");
