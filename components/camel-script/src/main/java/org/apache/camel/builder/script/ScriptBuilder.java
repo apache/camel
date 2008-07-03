@@ -482,7 +482,11 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
         try {
             getScriptContext();
             populateBindings(getEngine(), exchange);
-            return runScript();
+            Object result = runScript();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("the script result is " + result);
+            }
+            return result;
         } catch (ScriptException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Script evaluation failed: " + e, e);
@@ -495,15 +499,23 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
 
     protected Object runScript() throws ScriptException, IOException {
         checkInitialised();
+        Object result = null;
         if (compiledScript != null) {
-            return compiledScript.eval();
+            result = compiledScript.eval();
+            if (scriptEngineName.equals("python") || scriptEngineName.equals("jython")) {
+                result = compiledScript.getEngine().get("result");
+            }
         } else {
             if (scriptText != null) {
-                return getEngine().eval(scriptText);
+                result = getEngine().eval(scriptText);
             } else {
-                return getEngine().eval(createScriptReader());
+                result = getEngine().eval(createScriptReader());
+            }
+            if (scriptEngineName.equals("python") || scriptEngineName.equals("jython")) {
+                result = getEngine().get("result");
             }
         }
+        return result;
     }
 
     protected void populateBindings(ScriptEngine engine, Exchange exchange) {

@@ -23,9 +23,10 @@ import org.apache.camel.LanguageTestSupport;
  */
 public class JavaScriptLanguageTest extends LanguageTestSupport {
     public void testLanguageExpressions() throws Exception {
-        assertExpression("exchange.in.headers.foo", "abc");
-        assertExpression("request.headers.foo", "abc");
-        //assertExpression("headers.foo", "abc");
+        assertExpression("exchange.getIn()", "Message: <hello id='m123'>world!</hello>");
+        assertExpression("exchange.getIn().body", "<hello id='m123'>world!</hello>");
+        assertExpression("request.headers.get('foo')", "abc");
+
     }
 
     protected String getLanguageName() {

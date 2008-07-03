@@ -58,7 +58,7 @@ public class PythonExpressionTest extends ContextTestSupport {
                 from("direct:start").choice().
                         // The following python expression should return a boolean
                         // but it seems to return null instead -- what's up with that?
-                        when().python("request.headers['foo'] == 'bar'").to("mock:result")
+                        when().python("result = request.headers['foo']=='bar'").to("mock:result")
                         .otherwise().to("mock:unmatched");
             }
         };
