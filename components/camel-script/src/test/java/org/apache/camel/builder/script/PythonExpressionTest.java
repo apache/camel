@@ -56,8 +56,7 @@ public class PythonExpressionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start").choice().
-                        // The following python expression should return a boolean
-                        // but it seems to return null instead -- what's up with that?
+                        // The result variable is used to retrieve the python script evaluation result
                         when().python("result = request.headers['foo']=='bar'").to("mock:result")
                         .otherwise().to("mock:unmatched");
             }

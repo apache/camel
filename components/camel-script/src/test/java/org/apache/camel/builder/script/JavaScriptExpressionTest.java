@@ -55,8 +55,6 @@ public class JavaScriptExpressionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start").choice().
-                        // The following java script expression should return a boolean
-                        // but it seems to always return false -- what's up with that?
                         when().javaScript("request.headers.get('foo') == 'bar'").to("mock:result")
                         .otherwise().to("mock:unmatched");
             }

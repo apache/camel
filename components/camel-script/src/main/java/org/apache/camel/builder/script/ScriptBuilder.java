@@ -484,7 +484,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
             populateBindings(getEngine(), exchange);
             Object result = runScript();
             if (LOG.isDebugEnabled()) {
-                LOG.debug("the script result is " + result);
+                LOG.debug("The script evaluation result is: " + result);
             }
             return result;
         } catch (ScriptException e) {
@@ -503,6 +503,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
         if (compiledScript != null) {
             result = compiledScript.eval();
             if (scriptEngineName.equals("python") || scriptEngineName.equals("jython")) {
+                // Retrieve the evaluation result for Python script
+                // Python script should store the evaluation result into result variable
                 result = compiledScript.getEngine().get("result");
             }
         } else {
@@ -512,6 +514,8 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
                 result = getEngine().eval(createScriptReader());
             }
             if (scriptEngineName.equals("python") || scriptEngineName.equals("jython")) {
+                // Retrieve the evaluation result for python script
+                // Python script should store the evaluation result into result variable
                 result = getEngine().get("result");
             }
         }
