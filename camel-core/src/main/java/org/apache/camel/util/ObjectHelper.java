@@ -145,6 +145,9 @@ public final class ObjectHelper {
         if (value instanceof String) {
             return "true".equalsIgnoreCase(value.toString()) ? Boolean.TRUE : Boolean.FALSE;
         }
+        if (value instanceof Integer) {
+            return (Integer)value > 0 ? Boolean.TRUE : Boolean.FALSE;
+        }
         return null;
     }
 
