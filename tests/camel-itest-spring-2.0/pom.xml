@@ -74,19 +74,23 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+                        <scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core</artifactId>
 			<type>test-jar</type>
+                        <scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
+                        <scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
+                        <scope>test</scope>
 		</dependency>
 
 		<!-- specific Spring version to test -->
@@ -94,11 +98,13 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring</artifactId>
 			<version>2.0.8</version>
+                        <scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-core</artifactId>
+                        <scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

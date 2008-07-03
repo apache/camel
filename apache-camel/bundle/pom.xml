@@ -274,7 +274,6 @@
               <artifactSet>
                 <excludes>
                   <exclude>org.apache.camel:camel-bundle</exclude>
-                  <exclude>org.apache.camel:camel-core:test-jar:tests</exclude>                  
                 </excludes>
               </artifactSet> 
               <shadedGroupFilter>org.apache.camel</shadedGroupFilter>
