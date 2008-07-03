@@ -47,24 +47,28 @@ public class CxfConsumerTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(SIMPLE_ENDPOINT_URI).process(new Processor() {
+                from(SIMPLE_ENDPOINT_URI).choice().when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_OPERATION)).process(new Processor() {
                     public void process(final Exchange exchange) {
                         Message in = exchange.getIn();
                         // Get the parameter list
                         List parameter = in.getBody(List.class);
                         // Get the operation name
                         String operation = (String)in.getHeader(CxfConstants.OPERATION_NAME);
-                        Object result = null;
-                        if (operation.equals(ECHO_OPERATION)) {
-                            result = operation + " " + (String)parameter.get(0);
-                        }
-                        if (operation.equals(ECHO_BOOLEAN_OPERATION)) {
-                            result = (Boolean)parameter.get(0);
-                        }
+                        Object result = operation + " " + (String)parameter.get(0);
                         // Put the result back
                         exchange.getOut().setBody(result);
                     }
+                })
+                .when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_BOOLEAN_OPERATION)).process(new Processor() {
+                    public void process(final Exchange exchange) {
+                        Message in = exchange.getIn();
+                        // Get the parameter list
+                        List parameter = in.getBody(List.class);
+                        // Put the result back
+                        exchange.getOut().setBody((Boolean)parameter.get(0));
+                    }
                 });
+
             }
         };
     }
