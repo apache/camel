@@ -24,7 +24,7 @@ import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.processor.interceptor.Tracer;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class TraceInterceptorTest extends ContextTestSupport {
 

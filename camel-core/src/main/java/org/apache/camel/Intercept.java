@@ -20,7 +20,7 @@ package org.apache.camel;
 /**
  * An interface which provides the processing logic as a pluggable processor
  *
- * @version $Revision:  $
+ * @version $Revision$
  */
 public interface Intercept {
 

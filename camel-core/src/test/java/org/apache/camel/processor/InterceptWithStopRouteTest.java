@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision:  $
+ * @version $Revision$
  */
 public class InterceptWithStopRouteTest extends InterceptRouteTestSupport {
 

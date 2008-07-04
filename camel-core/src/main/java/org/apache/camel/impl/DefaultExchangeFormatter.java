@@ -22,7 +22,7 @@ import org.apache.camel.processor.interceptor.ExchangeFormatter;
 /**
  * A default {@link ExchangeFormatter} which just uses the {@link org.apache.camel.Exchange#toString()} method
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DefaultExchangeFormatter implements ExchangeFormatter {
     protected static final DefaultExchangeFormatter INSTANCE = new DefaultExchangeFormatter();

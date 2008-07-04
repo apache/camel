@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 /**
  * Represents an exception that occurred when processing an exchange
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ExceptionEvent {
     private final DebugInterceptor interceptor;
