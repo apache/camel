@@ -21,6 +21,7 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
          http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
 
+    <!-- START SNIPPET: e1 -->
     <!-- datasource to the database -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
@@ -43,5 +44,6 @@
     <bean id="bookService" class="org.apache.camel.spring.interceptor.BookService">
         <property name="dataSource" ref="dataSource"/>
     </bean>
+    <!-- END SNIPPET: e1 -->
 
 </beans>
