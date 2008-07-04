@@ -103,7 +103,14 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 return data.sync;
             }
 
-            resetMaxDeliveryIfTransacted(exchange);
+            // if the exchange is transacted then let the underlysing system handle the redelivery etc.
+            // this DeadLetterChannel is only for non transacted exchanges
+            if (exchange.isTransacted() && exchange.getException() != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Transacted Exchange, this DeadLetterChannel is bypassed: " + exchange);
+                }
+                return data.sync;
+            }
 
             if (exchange.getException() != null) {
                 Throwable e = exchange.getException();
@@ -172,12 +179,6 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
             // error occurred so loop back around.....
         }
 
-    }
-
-    public void resetMaxDeliveryIfTransacted(Exchange exchange) {
-        if (exchange.isTransacted()) {
-            redeliveryPolicy.setMaximumRedeliveries(1);
-        }
     }
 
     public static boolean isFailureHandled(Exchange exchange) {
