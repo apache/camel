@@ -21,6 +21,7 @@ import javax.sql.DataSource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
+import org.apache.camel.spi.Policy;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -87,15 +88,15 @@ public class TransactionalClientDataSourceTest extends SpringTestSupport {
                 // setup the transaction policy
                 TransactionTemplate tt = context.getRegistry()
                     .lookup("PROPAGATION_REQUIRED", TransactionTemplate.class);
-                SpringTransactionPolicy required = new SpringTransactionPolicy(tt);
+                Policy required = new SpringTransactionPolicy(tt);
+                // END SNIPPET: e1
 
+                // START SNIPPET: e2
                 // set the required policy for this route
                 from("direct:okay").policy(required).
                     setBody(constant("Tiger in Action")).beanRef("bookService").
                     setBody(constant("Elephant in Action")).beanRef("bookService");
-                // END SNIPPET: e1
 
-                // START SNIPPET: e2
                 // set the required policy for this route
                 from("direct:fail").policy(required).
                     setBody(constant("Tiger in Action")).beanRef("bookService").
