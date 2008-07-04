@@ -91,6 +91,11 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
+    public DeadLetterChannelBuilder maximumRedeliveryDelay(long maximumRedeliveryDelay) {
+        getRedeliveryPolicy().maximumRedeliveryDelay(maximumRedeliveryDelay);
+        return this;
+    }
+
     public DeadLetterChannelBuilder useCollisionAvoidance() {
         getRedeliveryPolicy().useCollisionAvoidance();
         return this;

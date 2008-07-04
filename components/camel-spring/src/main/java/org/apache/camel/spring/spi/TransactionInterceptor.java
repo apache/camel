@@ -78,6 +78,7 @@ public class TransactionInterceptor extends DelegateProcessor {
 
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
+                // TODO: The delay is in some cases never triggered - see CAMEL-663
                 if (redeliveryPolicy != null && redeliveryData.previousRollback) {
                     // lets delay
                     redeliveryData.redeliveryDelay = redeliveryPolicy.sleep(redeliveryData.redeliveryDelay);

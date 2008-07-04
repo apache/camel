@@ -73,4 +73,42 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
     public void afterPropertiesSet() throws Exception {
         ObjectHelper.notNull(transactionTemplate, "transactionTemplate");
     }
+
+    // Builder methods
+    // -------------------------------------------------------------------------
+    public TransactionErrorHandlerBuilder backOffMultiplier(double backOffMultiplier) {
+        getRedeliveryPolicy().backOffMultiplier(backOffMultiplier);
+        return this;
+    }
+
+    public TransactionErrorHandlerBuilder collisionAvoidancePercent(short collisionAvoidancePercent) {
+        getRedeliveryPolicy().collisionAvoidancePercent(collisionAvoidancePercent);
+        return this;
+    }
+
+    public TransactionErrorHandlerBuilder initialRedeliveryDelay(long initialRedeliveryDelay) {
+        getRedeliveryPolicy().initialRedeliveryDelay(initialRedeliveryDelay);
+        return this;
+    }
+
+    public TransactionErrorHandlerBuilder maximumRedeliveries(int maximumRedeliveries) {
+        getRedeliveryPolicy().maximumRedeliveries(maximumRedeliveries);
+        return this;
+    }
+
+    public TransactionErrorHandlerBuilder maximumRedeliveryDelay(long maximumRedeliveryDelay) {
+        getRedeliveryPolicy().maximumRedeliveryDelay(maximumRedeliveryDelay);
+        return this;
+    }
+
+    public TransactionErrorHandlerBuilder useCollisionAvoidance() {
+        getRedeliveryPolicy().useCollisionAvoidance();
+        return this;
+    }
+
+    public TransactionErrorHandlerBuilder useExponentialBackOff() {
+        getRedeliveryPolicy().useExponentialBackOff();
+        return this;
+    }
+
 }

@@ -17,8 +17,13 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.spi.Policy;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.spring.spi.TransactionInterceptor;
+import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
+import org.apache.camel.spring.spi.SpringTransactionPolicy;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -97,4 +102,17 @@ public abstract class SpringRouteBuilder extends RouteBuilder {
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
+
+    /**
+     * Creates a transaction error handler.
+     *
+     * @param policy   using this transaction policy (eg: required, supports, ...)
+     * @return the created error handler
+     */
+    public TransactionErrorHandlerBuilder transactionErrorHandler(SpringTransactionPolicy policy) {
+        TransactionErrorHandlerBuilder answer = new TransactionErrorHandlerBuilder();
+        answer.setTransactionTemplate(policy.getTemplate());
+        return answer;
+    }
+
 }
