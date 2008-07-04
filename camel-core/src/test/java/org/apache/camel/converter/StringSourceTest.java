@@ -28,7 +28,7 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.util.ReflectionInjector;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class StringSourceTest extends TestCase {
     protected TypeConverter converter = new DefaultTypeConverter(new ReflectionInjector());

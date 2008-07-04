@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 647400 $
+ * @version $Revision$
  */
 public abstract class InterceptRouteTestSupport extends ContextTestSupport {
     protected MockEndpoint a;

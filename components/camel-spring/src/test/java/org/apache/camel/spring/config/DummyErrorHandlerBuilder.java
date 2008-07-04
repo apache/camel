@@ -26,7 +26,7 @@ import org.apache.camel.spi.RouteContext;
 import org.springframework.beans.factory.BeanNameAware;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DummyErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements BeanNameAware {
     public static final String PROPERTY_NAME = "DummyErrorHandler";

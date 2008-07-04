@@ -22,7 +22,7 @@ import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class TraceFormatter {
     private boolean showBreadCrumb = true;

@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A helper class for various {@link System} related methods
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public final class SystemHelper {
     private static final transient Log LOG = LogFactory.getLog(SystemHelper.class);
