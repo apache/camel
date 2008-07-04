@@ -146,8 +146,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
             if (data.redeliveryCounter > 0) {
                 // Figure out how long we should wait to resend this message.
-                data.redeliveryDelay = data.currentRedeliveryPolicy.getRedeliveryDelay(data.redeliveryDelay);
-                sleep(data.redeliveryDelay);
+                data.redeliveryDelay = data.currentRedeliveryPolicy.sleep(data.redeliveryDelay);
             }
 
             exchange.setProperty(EXCEPTION_CAUSE_PROPERTY, exchange.getException());
@@ -263,21 +262,6 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         in.setHeader(REDELIVERED, Boolean.TRUE);
         exchange.setException(e);
         return next;
-    }
-
-    protected void sleep(long redeliveryDelay) {
-        if (redeliveryDelay > 0) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sleeping for: " + redeliveryDelay + " millis until attempting redelivery");
-            }
-            try {
-                Thread.sleep(redeliveryDelay);
-            } catch (InterruptedException e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Thread interrupted: " + e, e);
-                }
-            }
-        }
     }
 
     @Override

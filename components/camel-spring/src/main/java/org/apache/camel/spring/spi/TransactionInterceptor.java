@@ -19,7 +19,9 @@ package org.apache.camel.spring.spi;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeProperty;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Processor;
 import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.TransactionDefinition;
@@ -40,16 +42,47 @@ public class TransactionInterceptor extends DelegateProcessor {
         new ExchangeProperty<Boolean>("transacted", "org.apache.camel.transacted", Boolean.class);
     private static final transient Log LOG = LogFactory.getLog(TransactionInterceptor.class);
     private final TransactionTemplate transactionTemplate;
+    private ThreadLocal<RedeliveryData> previousRollback = new ThreadLocal<RedeliveryData>() {
+        @Override
+        protected RedeliveryData initialValue() {
+            return new RedeliveryData();
+        }
+    };
+    private RedeliveryPolicy redeliveryPolicy;
 
     public TransactionInterceptor(TransactionTemplate transactionTemplate) {
         this.transactionTemplate = transactionTemplate;
     }
 
+    public TransactionInterceptor(Processor processor, TransactionTemplate transactionTemplate) {
+        super(processor);
+        this.transactionTemplate = transactionTemplate;
+    }
+
+    public TransactionInterceptor(Processor processor, TransactionTemplate transactionTemplate, RedeliveryPolicy redeliveryPolicy) {
+        this(processor, transactionTemplate);
+        this.redeliveryPolicy = redeliveryPolicy;
+    }
+
+    @Override
+    public String toString() {
+        return "TransactionInterceptor:"
+            + propagationBehaviorToString(transactionTemplate.getPropagationBehavior())
+            + "[" + getProcessor() + "]";
+    }
+
     public void process(final Exchange exchange) {
         LOG.debug("Transaction begin");
 
+        final RedeliveryData redeliveryData = previousRollback.get();
+
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
+                if (redeliveryPolicy != null && redeliveryData.previousRollback) {
+                    // lets delay
+                    redeliveryData.redeliveryDelay = redeliveryPolicy.sleep(redeliveryData.redeliveryDelay);
+                }
+
                 // wrapper exception to throw if the exchange failed
                 // IMPORTANT: Must be a runtime exception to let Spring regard it as to do "rollback"
                 RuntimeCamelException rce = null;
@@ -92,6 +125,7 @@ public class TransactionInterceptor extends DelegateProcessor {
 
                 // rehrow exception if the exchange failed
                 if (rce != null) {
+                    redeliveryData.previousRollback = true;
                     if (activeTx) {
                         status.setRollbackOnly();
                         LOG.debug("Transaction rollback");
@@ -101,17 +135,27 @@ public class TransactionInterceptor extends DelegateProcessor {
             }
         });
 
+        redeliveryData.previousRollback = false;
+        redeliveryData.redeliveryDelay = 0L;
+        
         LOG.debug("Transaction commit");
     }
 
-    @Override
-    public String toString() {
-        return "TransactionInterceptor:"
-            + propagationBehaviorToString(transactionTemplate.getPropagationBehavior())
-            + "[" + getProcessor() + "]";
+
+    public RedeliveryPolicy getRedeliveryPolicy() {
+        return redeliveryPolicy;
     }
 
-    private String propagationBehaviorToString(int propagationBehavior) {
+    public void setRedeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
+        this.redeliveryPolicy = redeliveryPolicy;
+    }
+
+    protected static class RedeliveryData {
+        boolean previousRollback;
+        long redeliveryDelay;
+    }
+
+    protected String propagationBehaviorToString(int propagationBehavior) {
         String rc;
         switch (propagationBehavior) {
         case TransactionDefinition.PROPAGATION_MANDATORY:
