@@ -16,6 +16,9 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.Serializable;
 import java.util.Random;
 
@@ -31,6 +34,7 @@ import java.util.Random;
  * <ul>
  *   <li>maximumRedeliveries = 6</li>
  *   <li>initialRedeliveryDelay = 1000L</li>
+ *   <li>maximumRedeliveryDelay = 60 * 1000L</li>
  *   <li>backOffMultiplier = 2</li>
  *   <li>useExponentialBackOff = false</li>
  *   <li>collisionAvoidanceFactor = 0.15d</li>
@@ -40,9 +44,12 @@ import java.util.Random;
  * @version $Revision$
  */
 public class RedeliveryPolicy implements Cloneable, Serializable {
+    private static final transient Log LOG = LogFactory.getLog(RedeliveryPolicy.class);
+
     protected static transient Random randomNumberGenerator;
     protected int maximumRedeliveries = 6;
     protected long initialRedeliveryDelay = 1000L;
+    protected long maximumRedeliveryDelay = 60 * 1000L;
     protected double backOffMultiplier = 2;
     protected boolean useExponentialBackOff;
     // +/-15% for a 30% spread -cgs
@@ -75,6 +82,60 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         }
         return redeliveryCounter < getMaximumRedeliveries();
     }
+
+
+    /**
+     * Calculates the new redelivery delay based on the last one then sleeps for the necessary amount of time
+     */
+    public long sleep(long redeliveryDelay) {
+        redeliveryDelay = getRedeliveryDelay(redeliveryDelay);
+
+        if (redeliveryDelay > 0) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sleeping for: " + redeliveryDelay + " millis until attempting redelivery");
+            }
+            try {
+                Thread.sleep(redeliveryDelay);
+            } catch (InterruptedException e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Thread interrupted: " + e, e);
+                }
+            }
+        }
+        return redeliveryDelay;
+    }
+
+
+    public long getRedeliveryDelay(long previousDelay) {
+        long redeliveryDelay;
+
+        if (previousDelay == 0) {
+            redeliveryDelay = initialRedeliveryDelay;
+        } else if (useExponentialBackOff && backOffMultiplier > 1) {
+            redeliveryDelay = Math.round(backOffMultiplier * previousDelay);
+        } else {
+            redeliveryDelay = previousDelay;
+        }
+
+        if (useCollisionAvoidance) {
+
+            /*
+             * First random determines +/-, second random determines how far to
+             * go in that direction. -cgs
+             */
+            Random random = getRandomNumberGenerator();
+            double variance = (random.nextBoolean() ? collisionAvoidanceFactor : -collisionAvoidanceFactor)
+                              * random.nextDouble();
+            redeliveryDelay += redeliveryDelay * variance;
+        }
+
+        if (maximumRedeliveryDelay > 0 && redeliveryDelay > maximumRedeliveryDelay) {
+            redeliveryDelay = maximumRedeliveryDelay;
+        }
+
+        return redeliveryDelay;
+    }
+
 
     // Builder methods
     // -------------------------------------------------------------------------
@@ -129,6 +190,24 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     public RedeliveryPolicy collisionAvoidancePercent(double collisionAvoidancePercent) {
         useCollisionAvoidance();
         setCollisionAvoidancePercent(collisionAvoidancePercent);
+        return this;
+    }
+
+    /**
+     * Enables collision avoidence and sets the percentage used
+     */
+    public RedeliveryPolicy collisionAvoidancePercent(double collisionAvoidancePercent) {
+        useCollisionAvoidance();
+        setCollisionAvoidancePercent(collisionAvoidancePercent);
+        return this;
+    }
+
+    /**
+     * Sets the maximum redelivery delay if using exponential back off.
+     * Use -1 if you wish to have no maximum
+     */
+    public RedeliveryPolicy maximumRedeliveryDelay(long maximumRedeliveryDelay) {
+        setMaximumRedeliveryDelay(maximumRedeliveryDelay);
         return this;
     }
 
@@ -193,30 +272,16 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         this.maximumRedeliveries = maximumRedeliveries;
     }
 
-    public long getRedeliveryDelay(long previousDelay) {
-        long redeliveryDelay;
+    public long getMaximumRedeliveryDelay() {
+        return maximumRedeliveryDelay;
+    }
 
-        if (previousDelay == 0) {
-            redeliveryDelay = initialRedeliveryDelay;
-        } else if (useExponentialBackOff && backOffMultiplier > 1) {
-            redeliveryDelay = Math.round(backOffMultiplier * previousDelay);
-        } else {
-            redeliveryDelay = previousDelay;
-        }
-
-        if (useCollisionAvoidance) {
-
-            /*
-             * First random determines +/-, second random determines how far to
-             * go in that direction. -cgs
-             */
-            Random random = getRandomNumberGenerator();
-            double variance = (random.nextBoolean() ? collisionAvoidanceFactor : -collisionAvoidanceFactor)
-                              * random.nextDouble();
-            redeliveryDelay += redeliveryDelay * variance;
-        }
-
-        return redeliveryDelay;
+    /**
+     * Sets the maximum redelivery delay if using exponential back off.
+     * Use -1 if you wish to have no maximum
+     */
+    public void setMaximumRedeliveryDelay(long maximumRedeliveryDelay) {
+        this.maximumRedeliveryDelay = maximumRedeliveryDelay;
     }
 
     public boolean isUseCollisionAvoidance() {
