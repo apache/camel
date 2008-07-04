@@ -50,6 +50,7 @@ public class JMSTransactionalClientTest extends SpringTestSupport {
         // END SNIPPET: e1
     }
 
+    // START SNIPPET: e2
     public static class MyProcessor implements Processor {
         private int count;
 
@@ -61,5 +62,6 @@ public class JMSTransactionalClientTest extends SpringTestSupport {
             exchange.getIn().setHeader("count", count);
         }
     }
-    
+    // END SNIPPET: e2
+
 }
