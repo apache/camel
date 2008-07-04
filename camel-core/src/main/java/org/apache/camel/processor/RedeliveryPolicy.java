@@ -194,15 +194,6 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Enables collision avoidence and sets the percentage used
-     */
-    public RedeliveryPolicy collisionAvoidancePercent(double collisionAvoidancePercent) {
-        useCollisionAvoidance();
-        setCollisionAvoidancePercent(collisionAvoidancePercent);
-        return this;
-    }
-
-    /**
      * Sets the maximum redelivery delay if using exponential back off.
      * Use -1 if you wish to have no maximum
      */
