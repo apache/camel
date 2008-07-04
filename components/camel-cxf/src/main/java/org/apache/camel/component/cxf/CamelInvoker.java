@@ -157,6 +157,7 @@ public class CamelInvoker implements Invoker, MessageInvoker {
             cxfExchange.setPattern(ExchangePattern.InOut);
         }
         if (bop != null && bop.getName() != null) {
+            cxfExchange.getIn().setHeader(CxfConstants.OPERATION_NAMESPACE, bop.getName().getNamespaceURI());
             cxfExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, bop.getName().getLocalPart());
         } else {
             cxfExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, m.getName());
