@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,8 +42,13 @@ public class ConvertBodyProcessor implements Processor {
         if (value == null) {
             LOG.warn("Could not convert body of IN message: " + in + " to type: " + type.getName());
         }
-        Message out = exchange.getOut();
-        out.copyFrom(in);
-        out.setBody(value);
+        if (exchange.getPattern().isOutCapable()) {
+            Message out = exchange.getOut();
+            out.copyFrom(in);
+            out.setBody(value);
+        }
+        else {
+            in.setBody(value);
+        }
     }
 }
