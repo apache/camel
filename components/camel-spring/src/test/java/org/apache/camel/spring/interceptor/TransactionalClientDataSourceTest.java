@@ -19,9 +19,9 @@ package org.apache.camel.spring.interceptor;
 import javax.sql.DataSource;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.apache.camel.spi.Policy;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -31,7 +31,8 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class TransactionalClientDataSourceTest extends SpringTestSupport {
 
-    private JdbcTemplate jdbc;
+    protected JdbcTemplate jdbc;
+    protected boolean useTransactionErrorHandler = true;
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
@@ -73,6 +74,7 @@ public class TransactionalClientDataSourceTest extends SpringTestSupport {
     // END SNIPPET: e3
 
     // START SNIPPET: e4
+
     public void testTransactionRollback() throws Exception {
         template.sendBody("direct:fail", "Hello World");
 
@@ -82,13 +84,29 @@ public class TransactionalClientDataSourceTest extends SpringTestSupport {
     // END SNIPPET: e4
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
+        // START SNIPPET: e1
+        // Notice that we use the SpringRouteBuilder that has a few more features than
+        // the standard RouteBuilder
+        return new SpringRouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 // setup the transaction policy
                 TransactionTemplate tt = context.getRegistry()
                     .lookup("PROPAGATION_REQUIRED", TransactionTemplate.class);
-                Policy required = new SpringTransactionPolicy(tt);
+                SpringTransactionPolicy required = new SpringTransactionPolicy(tt);
+
+                // use this error handler instead of DeadLetterChannel that is the default
+                // Notice: transactionErrorHandler is in SpringRouteBuilder
+                if (useTransactionErrorHandler) {
+                    // useTransactionErrorHandler is only used for unit testing to reuse code
+                    // for doing a 2nd test without this transaction error handler, so ignore
+                    // this. For spring based transaction, end users is encured to use the
+                    // transaction error handler instead of the default DeadLetterChannel.
+                    errorHandler(transactionErrorHandler(required).
+                        // notice that the builder has builder methods for chained configuration
+                        maximumRedeliveries(3).
+                        initialRedeliveryDelay(5 * 1000L));
+                }
                 // END SNIPPET: e1
 
                 // START SNIPPET: e2
