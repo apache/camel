@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,7 +26,7 @@ import java.util.List;
 /**
  * Represents a proxy to an error handler builder which is resolved by named reference
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
     private final String ref;
@@ -51,7 +50,6 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         if (handler == null) {
-            System.out.println("Looking up error handler: " + ref);
             handler = routeContext.lookup(ref, ErrorHandlerBuilder.class);
             ObjectHelper.notNull(handler, "error handler '" + ref + "'");
             List<ExceptionType> list = getExceptions();
