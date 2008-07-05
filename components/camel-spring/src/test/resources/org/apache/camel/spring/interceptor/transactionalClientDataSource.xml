@@ -36,7 +36,7 @@
     </bean>
 
     <!-- policy for required transaction used in our Camel routes -->
-    <bean id="PROPAGATION_REQUIRED" class="org.springframework.transaction.support.TransactionTemplate">
+    <bean id="PROPAGATION_REQUIRED" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
         <property name="transactionManager" ref="txManager"/>
     </bean>
 

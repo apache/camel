@@ -21,6 +21,7 @@ import org.apache.camel.spi.Policy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * Wraps the processor in a Spring transaction
@@ -30,6 +31,12 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class SpringTransactionPolicy<E> implements Policy<E> {
     private static final transient Log LOG = LogFactory.getLog(SpringTransactionPolicy.class);
     private TransactionTemplate template;
+
+    /**
+     * Default constructor for easy spring configuration.
+     */
+    public SpringTransactionPolicy() {
+    }
 
     public SpringTransactionPolicy(TransactionTemplate template) {
         this.template = template;
@@ -54,4 +61,14 @@ public class SpringTransactionPolicy<E> implements Policy<E> {
     public void setTemplate(TransactionTemplate template) {
         this.template = template;
     }
+
+    /**
+     * Sets the transaction manager to use creating and also setting indirectly
+     * the transaction template.
+     */
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        TransactionTemplate template = new TransactionTemplate(transactionManager);
+        setTemplate(template);
+    }
+
 }

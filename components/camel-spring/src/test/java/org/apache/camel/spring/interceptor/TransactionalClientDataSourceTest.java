@@ -24,7 +24,6 @@ import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
@@ -91,9 +90,8 @@ public class TransactionalClientDataSourceTest extends SpringTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 // setup the transaction policy
-                TransactionTemplate tt = context.getRegistry()
-                    .lookup("PROPAGATION_REQUIRED", TransactionTemplate.class);
-                SpringTransactionPolicy required = new SpringTransactionPolicy(tt);
+                SpringTransactionPolicy required = context.getRegistry()
+                    .lookup("PROPAGATION_REQUIRED", SpringTransactionPolicy.class);
 
                 // use this error handler instead of DeadLetterChannel that is the default
                 // Notice: transactionErrorHandler is in SpringRouteBuilder
