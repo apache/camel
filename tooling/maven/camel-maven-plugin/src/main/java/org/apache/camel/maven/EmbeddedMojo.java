@@ -76,12 +76,19 @@ public class EmbeddedMojo extends AbstractExecMojo {
     protected boolean dotAggregationEnabled;
 
     /**
-     * The application context uri that spring wants to get.
+     * The classpath based application context uri that spring wants to get.
      *
      * @parameter expression="${camel.applicationContextUri}"
      */
     protected String applicationContextUri;
     
+    /**
+     * The filesystem based application context uri that spring wants to get.
+     *
+     * @parameter expression="${camel.fileApplicationContextUri}"
+     */
+    protected String fileApplicationContextUri;
+
     /**
      * Project classpath.
      *
@@ -191,13 +198,11 @@ public class EmbeddedMojo extends AbstractExecMojo {
 
         ArrayList<String> args = new ArrayList<String>(5);
         if (isDotEnabled()) {
-
             args.add("-outdir");
             args.add(getOutputDirectory());
         }
 
         if (isDotAggregationEnabled()) {
-
             args.add("-aggregate-dot");
             args.add("true");
         }
@@ -205,6 +210,9 @@ public class EmbeddedMojo extends AbstractExecMojo {
         if (applicationContextUri != null) {
             args.add("-applicationContext");
             args.add(applicationContextUri);
+        } else if (fileApplicationContextUri != null) {
+            args.add("-fileApplicationContext");
+            args.add(fileApplicationContextUri);
         }
 
         args.add("-duration");
