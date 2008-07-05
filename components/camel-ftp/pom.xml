@@ -80,6 +80,14 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- ftpserver using mina 1.0.2 -->
+    <dependency>
+      <groupId>org.apache.mina</groupId>
+      <artifactId>mina-core</artifactId>
+      <version>1.0.2</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>backport-util-concurrent</groupId>
       <artifactId>backport-util-concurrent</artifactId>
