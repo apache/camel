@@ -25,8 +25,8 @@
     <!-- START SNIPPET: e1 -->
     <!-- here we define our camel context -->
     <camel:camelContext id="myroutes">
-        <!-- and now our route using the XML syntax -->
 
+        <!-- first route with transaction error handler -->
         <!-- here we refer to our transaction error handler we define in this Spring XML file -->
         <!-- in this route the transactionErrorHandler is used -->
         <camel:route errorHandlerRef="transactionErrorHandler">
@@ -40,7 +40,8 @@
             <camel:to uri="mock:result"/>
         </camel:route>
 
-        <!-- this route doens't use error handler, in fact the spring bean  noErrorHandler -->
+        <!-- 2nd route with no error handling -->
+        <!-- this route doens't use error handler, in fact the spring bean with id noErrorHandler -->
         <camel:route errorHandlerRef="noErrorHandler">
             <camel:from uri="activemq:queue:bad"/>
             <camel:to uri="log:bad"/>
