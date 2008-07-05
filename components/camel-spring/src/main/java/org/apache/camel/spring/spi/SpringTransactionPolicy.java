@@ -31,6 +31,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class SpringTransactionPolicy<E> implements Policy<E> {
     private static final transient Log LOG = LogFactory.getLog(SpringTransactionPolicy.class);
     private TransactionTemplate template;
+    private String propagationBehaviorName;
+    private PlatformTransactionManager transactionManager;
 
     /**
      * Default constructor for easy spring configuration.
@@ -55,6 +57,12 @@ public class SpringTransactionPolicy<E> implements Policy<E> {
     }
 
     public TransactionTemplate getTemplate() {
+        if (template == null) {
+            template = new TransactionTemplate(transactionManager);
+            if (propagationBehaviorName != null) {
+                template.setPropagationBehaviorName(propagationBehaviorName);
+            }
+        }
         return template;
     }
 
@@ -62,13 +70,20 @@ public class SpringTransactionPolicy<E> implements Policy<E> {
         this.template = template;
     }
 
-    /**
-     * Sets the transaction manager to use creating and also setting indirectly
-     * the transaction template.
-     */
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
-        TransactionTemplate template = new TransactionTemplate(transactionManager);
-        setTemplate(template);
+        this.transactionManager = transactionManager;
     }
 
+    public PlatformTransactionManager getTransactionManager() {
+        return transactionManager;
+    }
+
+    public void setPropagationBehaviorName(String propagationBehaviorName) {
+        this.propagationBehaviorName = propagationBehaviorName;
+    }
+
+    public String getPropagationBehaviorName() {
+        return propagationBehaviorName;
+    }
+    
 }
