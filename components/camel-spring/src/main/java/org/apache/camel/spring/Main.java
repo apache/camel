@@ -40,6 +40,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
  * A command line tool for booting up a CamelContext using an optional Spring
@@ -50,6 +51,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class Main extends ServiceSupport {
     private static final Log LOG = LogFactory.getLog(Main.class);
     private String applicationContextUri = "META-INF/spring/*.xml";
+    private String fileApplicationContextUri;
     private AbstractApplicationContext applicationContext;
     private List<Option> options = new ArrayList<Option>();
     private CountDownLatch latch = new CountDownLatch(1);
@@ -78,6 +80,13 @@ public class Main extends ServiceSupport {
                 "Sets the classpath based spring ApplicationContext", "applicationContext") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setApplicationContextUri(parameter);
+            }
+        });
+
+        addOption(new ParameterOption("fa", "fileApplicationContext",
+                "Sets the filesystem based spring ApplicationContext", "fileApplicationContext") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                setFileApplicationContextUri(parameter);
             }
         });
 
@@ -273,7 +282,6 @@ public class Main extends ServiceSupport {
         this.applicationContext = applicationContext;
     }
 
-
     public String getApplicationContextUri() {
         return applicationContextUri;
     }
@@ -281,6 +289,15 @@ public class Main extends ServiceSupport {
     public void setApplicationContextUri(String applicationContextUri) {
         this.applicationContextUri = applicationContextUri;
     }
+
+    public String getFileApplicationContextUri() {
+        return fileApplicationContextUri;
+    }
+
+    public void setFileApplicationContextUri(String fileApplicationContextUri) {
+        this.fileApplicationContextUri = fileApplicationContextUri;
+    }
+
     public AbstractApplicationContext getParentApplicationContext() {
         if (parentApplicationContext == null) {
             if (parentApplicationContextUri != null) {
@@ -440,6 +457,19 @@ public class Main extends ServiceSupport {
     }
 
     protected AbstractApplicationContext createDefaultApplicationContext() {
+        // file based
+        if (getFileApplicationContextUri() != null) {
+            String[] args = getFileApplicationContextUri().split(";");
+
+            ApplicationContext parentContext = getParentApplicationContext();
+            if (parentContext != null) {
+                return new FileSystemXmlApplicationContext(args, parentContext);
+            } else {
+                return new FileSystemXmlApplicationContext(args);
+            }
+        }
+        
+        // default to classpath based
         String[] args = getApplicationContextUri().split(";");
         ApplicationContext parentContext = getParentApplicationContext();
         if (parentContext != null) {
