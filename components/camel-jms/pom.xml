@@ -50,17 +50,14 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jms</artifactId>
-	  <version>${spring-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jms_1.1_spec</artifactId>
-	  <version>${geronimo-spec-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jta_1.1_spec</artifactId>
-	  <version>${geronimo-spec-version}</version>
     </dependency>
 
     <!-- testing -->
@@ -79,7 +76,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
-	  <version>${spring-version}</version>
 	  <scope>test</scope>
     </dependency>
     <dependency>

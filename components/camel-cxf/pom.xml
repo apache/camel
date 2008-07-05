@@ -71,7 +71,6 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>${commons-io-version}</version>
     </dependency>
 
     <dependency>
@@ -224,7 +223,7 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
-    
+
     <resources>
       <resource>
         <directory>src/main/resources</directory>

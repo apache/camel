@@ -621,6 +621,11 @@
         <version>${commons-dbcp-version}</version>
       </dependency>
       <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io-version}</version>
+      </dependency>
+      <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
         <version>${log4j-version}</version>
@@ -718,6 +723,42 @@
         <artifactId>spring-web</artifactId>
         <version>${spring-version}</version>       
       </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aop</artifactId>
+        <version>${spring-version}</version>      
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jdbc</artifactId>
+        <version>${spring-version}</version>         
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-orm</artifactId>
+	<version>${spring-version}</version>
+      </dependency>
+      <dependency>
+      	<groupId>org.springframework</groupId>
+      	<artifactId>spring-jms</artifactId>
+        <version>${spring-version}</version>	  
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context-support</artifactId>
+        <version>${spring-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-tx</artifactId>
+        <version>${spring-version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.osgi</groupId>
+        <artifactId>spring-osgi-core</artifactId>
+	<version>${spring-osgi-version}</version>
+      </dependency>
 
       <dependency>
         <groupId>javax.annotation</groupId>
@@ -726,6 +767,11 @@
       </dependency>
 
       <!-- optional mina dependencies -->
+      <dependency>
+        <groupId>org.apache.mina</groupId>
+        <artifactId>mina-core</artifactId>
+        <version>${mina-version}</version>
+      </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
