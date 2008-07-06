@@ -45,7 +45,9 @@ public class ChoiceProcessor extends ServiceSupport implements Processor {
         for (FilterProcessor filterProcessor : filters) {
             Predicate<Exchange> predicate = filterProcessor.getPredicate();
             if (predicate != null && predicate.matches(exchange)) {
-                filterProcessor.getProcessor().process(exchange);
+                // process next will also take care (has not null test) if next was a stop()
+                // and this not a processor if so there is no processer to execute
+                filterProcessor.processNext(exchange);
                 return;
             }
         }
