@@ -26,6 +26,7 @@ public class InterceptWithPredicateRouteTest extends InterceptRouteTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                // no stop so the message will proceed in its normal route also
                 intercept(header("foo").isEqualTo("bar")).to("mock:b");
 
                 from("direct:start").to("mock:a");
@@ -35,7 +36,7 @@ public class InterceptWithPredicateRouteTest extends InterceptRouteTestSupport {
 
     @Override
     protected void prepareMatchingTest() {
-        a.expectedMessageCount(0);
+        a.expectedMessageCount(1);
         b.expectedMessageCount(1);
     }
 
