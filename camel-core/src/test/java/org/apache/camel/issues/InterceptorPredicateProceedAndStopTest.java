@@ -102,8 +102,7 @@ public class InterceptorPredicateProceedAndStopTest extends ContextTestSupport {
         template.sendBodyAndHeader("seda:order", "Camel in Action", "user", "test");
 
         mockTest.assertIsSatisfied();
-        // TODO: Fix me in CAMEL-676 and the mockOk assertion should pass
-        //mockOk.assertIsSatisfied();
+        mockOk.assertIsSatisfied();
     }
 
     public void testInterceptorWithPredicateAndProceed() throws Exception {

@@ -43,7 +43,7 @@ public class InterceptWithPredicateAndStopRouteTest extends
 
     @Override
     protected void prepareNonMatchingTest() {
-        a.expectedMessageCount(0);
+        a.expectedMessageCount(1);
         b.expectedMessageCount(0);
     }
 }

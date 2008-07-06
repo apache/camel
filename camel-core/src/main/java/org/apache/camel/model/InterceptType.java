@@ -100,6 +100,7 @@ public class InterceptType extends OutputType<ProcessorType> {
             ChoiceType choice = null;
             for (ProcessorType processor : answer.getOutputs()) {
                 if (processor instanceof ChoiceType) {
+                    // special cases for predicates (choices)
                     choice = (ChoiceType) processor;
 
                     // for the predicated version we add the proceed() to otherwise()
@@ -108,16 +109,31 @@ public class InterceptType extends OutputType<ProcessorType> {
                         WhenType when = choice.getWhenClauses().get(0);
                         when.getOutputs().remove(this.getProceed());
                     }
+
+                    // add proceed to the when clause
                     addProceedProxy(this.getProceed(), answer.getProceed(),
                         choice.getWhenClauses().get(choice.getWhenClauses().size() - 1), usePredicate.booleanValue() && !stop.booleanValue());
-                    addProceedProxy(this.getProceed(), answer.getProceed(), choice.getOtherwise(), false);
+
+                    // force adding a proceed at the end (otherwise) if its not a stop type
+                    addProceedProxy(this.getProceed(), answer.getProceed(), choice.getOtherwise(), !stop.booleanValue());
+
+                    if (stop.booleanValue()) {
+                        // must add proceed to when clause if stop is explictiy declared, otherwise when the
+                        // predicate test fails then there is no proceed
+                        // See example: InterceptorSimpleRouteTest (City Paris is never proceeded)  
+                        addProceedProxy(this.getProceed(), answer.getProceed(),
+                            choice.getWhenClauses().get(choice.getWhenClauses().size() - 1), usePredicate.booleanValue());
+                    }
+
                     break;
                 }
             }
             if (choice == null) {
+                // force adding a proceed at the end if its not a stop type
                 addProceedProxy(this.getProceed(), answer.getProceed(), answer, !stop.booleanValue());
             }
         }
+
         return answer;
     }
 
@@ -133,4 +149,5 @@ public class InterceptType extends OutputType<ProcessorType> {
             processor.addOutput(proxy);
         }
     }
+
 }
