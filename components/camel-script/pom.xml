@@ -44,11 +44,11 @@
       <name>ServiceMix Repository</name>
       <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
     </repository>
-    <!--<repository>-->
-      <!--<id>logicblaze.all</id>-->
-      <!--<name>LogicBlaze Repository</name>-->
-      <!--<url>http://repo.logicblaze.com/maven2-all</url>-->
-    <!--</repository>-->
+    <repository>
+      <id>codehause.mule-deps</id>
+      <name>Codehause Mule Dependencies Repository</name>
+      <url>http://dist.codehaus.org/mule/dependencies/maven2</url>
+    </repository>
   </repositories>
 
   <dependencies>
