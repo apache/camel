@@ -47,11 +47,11 @@
    <!-- START SNIPPET: example -->
    <camelContext id="camelSourceContext" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
-           <from uri="direct:EndpointA"/>
+           <from uri="direct:OneWay"/>
            <to uri="direct:EndpointB" />
        </route>
        <route>
-       	   <from uri="direct:EndpointA"/>
+       	   <from uri="direct:TwoWay"/>
            <to uri="direct:EndpointC" />
        </route>
    </camelContext>
