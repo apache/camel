@@ -97,9 +97,6 @@ public class JmsPerformanceTest extends ContextTestSupport {
     protected void tearDown() throws Exception {
         super.tearDown();
         if (applicationContext != null) {
-            Object broker = applicationContext.getBean("broker");
-            System.out.println("broker is " + broker.getClass());
-
             applicationContext.stop();
         }
     }
