@@ -17,8 +17,8 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Processor;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.model.ExceptionType;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * A builder of a <a href="http://activemq.apache.org/camel/error-handler.html">Error Handler</a>

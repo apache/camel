@@ -18,8 +18,8 @@ package org.apache.camel.spring.spi;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeProperty;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.commons.logging.Log;
@@ -138,7 +138,7 @@ public class TransactionInterceptor extends DelegateProcessor {
 
         redeliveryData.previousRollback = false;
         redeliveryData.redeliveryDelay = 0L;
-        
+
         LOG.debug("Transaction commit");
     }
 

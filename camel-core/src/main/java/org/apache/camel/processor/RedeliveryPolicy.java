@@ -16,11 +16,11 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.Serializable;
 import java.util.Random;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 // Code taken from the ActiveMQ codebase
 
@@ -44,9 +44,9 @@ import java.util.Random;
  * @version $Revision$
  */
 public class RedeliveryPolicy implements Cloneable, Serializable {
+    protected static transient Random randomNumberGenerator;
     private static final transient Log LOG = LogFactory.getLog(RedeliveryPolicy.class);
 
-    protected static transient Random randomNumberGenerator;
     protected int maximumRedeliveries = 6;
     protected long initialRedeliveryDelay = 1000L;
     protected long maximumRedeliveryDelay = 60 * 1000L;
