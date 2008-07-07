@@ -34,6 +34,7 @@ import org.apache.commons.httpclient.HttpConnectionManager;
  */
 public class JettyHttpEndpoint extends HttpEndpoint {
     private JettyHttpComponent component;
+    private boolean sessionSupport;
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL, HttpConnectionManager httpConnectionManager) throws URISyntaxException {
         super(uri, component, httpURL, httpConnectionManager);
@@ -59,5 +60,13 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     @Override
     public JettyHttpComponent getComponent() {
         return component;
+    }
+
+    public void setSessionSupport(boolean support) {
+        sessionSupport = support;
+    }
+
+    public boolean isSessionSupport() {
+        return sessionSupport;
     }
 }

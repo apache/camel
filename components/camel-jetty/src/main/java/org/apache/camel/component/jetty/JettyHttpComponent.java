@@ -33,12 +33,15 @@ import org.mortbay.jetty.client.HttpClient;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.security.SslSocketConnector;
 import org.mortbay.jetty.servlet.Context;
+import org.mortbay.jetty.servlet.HashSessionIdManager;
+import org.mortbay.jetty.servlet.HashSessionManager;
 import org.mortbay.jetty.servlet.ServletHolder;
+import org.mortbay.jetty.servlet.SessionHandler;
 
 /**
  * An HttpComponent which starts an embedded Jetty for to handle consuming from
  * the http endpoints.
- * 
+ *
  * @version $Revision$
  */
 public class JettyHttpComponent extends HttpComponent {
@@ -73,19 +76,22 @@ public class JettyHttpComponent extends HttpComponent {
     @Override
     protected Endpoint<HttpExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         URI httpURL = uri.startsWith("jetty:") ? new URI(remaining) : new URI(uri);
-        return new JettyHttpEndpoint(this, uri, httpURL, getHttpConnectionManager());
+        JettyHttpEndpoint result =
+            new JettyHttpEndpoint(this, uri, httpURL, getHttpConnectionManager());
+        setProperties(result, parameters);
+        return result;
     }
 
     /**
      * Connects the URL specified on the endpoint to the specified processor.
-     * 
+     *
      * @throws Exception
      */
     @Override
     public void connect(HttpConsumer consumer) throws Exception {
 
         // Make sure that there is a connector for the requested endpoint.
-        HttpEndpoint endpoint = (HttpEndpoint)consumer.getEndpoint();
+        JettyHttpEndpoint endpoint = (JettyHttpEndpoint)consumer.getEndpoint();
         String connectorKey = endpoint.getProtocol() + ":" + endpoint.getPort();
 
         synchronized (connectors) {
@@ -99,22 +105,45 @@ public class JettyHttpComponent extends HttpComponent {
                 }
                 connector.setPort(endpoint.getPort());
                 getServer().addConnector(connector);
+                // check the session support
+                if (endpoint.isSessionSupport()) {
+                    enableSessionSupport();
+                }
                 connector.start();
                 connectorRef = new ConnectorRef(connector);
                 connectors.put(connectorKey, connectorRef);
             } else {
                 // ref track the connector
                 connectorRef.increment();
+                // check the session support
+                if (endpoint.isSessionSupport()) {
+                    enableSessionSupport();
+                }
             }
+
         }
 
         camelServlet.connect(consumer);
     }
 
+    private void enableSessionSupport() throws Exception {
+        Context context = (Context)getServer().getChildHandlerByClass(Context.class);
+        if (context.getSessionHandler() == null) {
+            SessionHandler sessionHandler = new SessionHandler();
+            context.setSessionHandler(sessionHandler);
+            if (context.isStarted()) {
+                // restart the context
+                context.stop();
+                context.start();
+            }
+        }
+
+    }
+
     /**
      * Disconnects the URL specified on the endpoint from the specified
      * processor.
-     * 
+     *
      * @throws Exception
      */
     @Override
@@ -166,13 +195,13 @@ public class JettyHttpComponent extends HttpComponent {
     public void setSslPassword(String sslPassword) {
         this.sslPassword = sslPassword;
     }
-    
+
     public void setKeystore(String sslKeystore) {
-        this.sslKeystore = sslKeystore;  
+        this.sslKeystore = sslKeystore;
     }
-    
+
     public String getKeystore() {
-        return sslKeystore;  
+        return sslKeystore;
     }
 
     public synchronized SslSocketConnector getSslSocketConnector() {
@@ -188,11 +217,11 @@ public class JettyHttpComponent extends HttpComponent {
         }
         return sslSocketConnector;
     }
-    
+
     public void setSslSocketConnector(SslSocketConnector connector) {
         sslSocketConnector = connector;
     }
-    
+
     // Implementation methods
     // -------------------------------------------------------------------------
 

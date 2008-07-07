@@ -23,11 +23,14 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.http.HttpExchange;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -68,9 +71,9 @@ public class HttpRouteTest extends ContextTestSupport {
 
         String data = new String(os.toByteArray());
         assertEquals("<b>Hello World</b>", data);
-        
+
     }
-    
+
     protected void invokeHttpEndpoint() throws IOException {
         template.sendBodyAndHeader("http://localhost:8080/test", expectedBody, "Content-Type", "application/xml");
     }
@@ -83,10 +86,17 @@ public class HttpRouteTest extends ContextTestSupport {
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
+                        try {
+                            HttpSession session =
+                                ((HttpExchange)exchange).getRequest().getSession();
+                            assertNotNull("we should get session here", session);
+                        } catch (Exception e) {
+                            exchange.getFault().setBody(e);
+                        }
                         exchange.getOut(true).setBody("<b>Hello World</b>");
                     }
                 };
-                from("jetty:http://localhost:8080/hello").process(proc);
+                from("jetty:http://localhost:8080/hello?sessionSupport=true").process(proc);
             }
         };
     }
