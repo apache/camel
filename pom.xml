@@ -40,7 +40,6 @@
     <cxf-version>2.1.1</cxf-version>
     <felix-version>1.4.1</felix-version>
     <felix-osgi-version>1.0.1</felix-osgi-version>
-    <geronimo-spec-version>1.1</geronimo-spec-version>
     <httpcore-version>4.0-alpha6</httpcore-version>
     <jetty-version>6.1.11</jetty-version>
     <slf4j-version>1.3.0</slf4j-version>
@@ -653,43 +652,43 @@
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jms_1.1_spec</artifactId>
-        <version>${geronimo-spec-version}</version>
+        <version>1.1.1</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jta_1.1_spec</artifactId>
-        <version>${geronimo-spec-version}</version>
+        <version>1.1.1</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-j2ee-management_1.0_spec</artifactId>
-        <version>${geronimo-spec-version}</version>
+        <version>1.1</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-j2ee-jacc_1.0_spec</artifactId>
-        <version>${geronimo-spec-version}</version>
+        <version>1.1</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-        <version>${geronimo-spec-version}</version>
+        <version>2.0.0</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jsp_2.0_spec</artifactId>
-        <version>${geronimo-spec-version}</version>
+        <version>1.1</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-servlet_2.4_spec</artifactId>
-        <version>${geronimo-spec-version}</version>
+        <version>1.1.1</version>
       </dependency>
 
       <!-- Optional Spring Support -->
