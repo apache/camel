@@ -46,8 +46,7 @@ public class ConvertBodyProcessor implements Processor {
             Message out = exchange.getOut();
             out.copyFrom(in);
             out.setBody(value);
-        }
-        else {
+        } else {
             in.setBody(value);
         }
     }

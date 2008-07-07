@@ -30,8 +30,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultLifecycleStrategy;
 import org.apache.camel.management.DefaultInstrumentationAgent;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;

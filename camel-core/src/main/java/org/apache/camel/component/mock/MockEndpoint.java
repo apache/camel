@@ -40,9 +40,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExpressionComparator;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

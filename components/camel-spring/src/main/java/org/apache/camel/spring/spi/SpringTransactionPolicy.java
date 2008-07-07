@@ -20,8 +20,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.Policy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Wraps the processor in a Spring transaction
@@ -85,5 +85,5 @@ public class SpringTransactionPolicy<E> implements Policy<E> {
     public String getPropagationBehaviorName() {
         return propagationBehaviorName;
     }
-    
+
 }
