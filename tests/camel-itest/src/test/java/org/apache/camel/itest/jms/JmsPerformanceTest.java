@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.naming.Context;
 
+import org.apache.activemq.broker.Broker;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jndi.JndiContext;
@@ -96,6 +97,9 @@ public class JmsPerformanceTest extends ContextTestSupport {
     protected void tearDown() throws Exception {
         super.tearDown();
         if (applicationContext != null) {
+            Object broker = applicationContext.getBean("broker");
+            System.out.println("broker is " + broker.getClass());
+
             applicationContext.stop();
         }
     }

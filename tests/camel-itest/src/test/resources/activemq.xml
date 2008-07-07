@@ -17,18 +17,16 @@
 <!-- START SNIPPET: example -->
 <beans
   xmlns="http://www.springframework.org/schema/beans"
-  xmlns:amq="http://activemq.org/config/1.0"
+  xmlns:broker="http://activemq.apache.org/schema/core"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-  http://activemq.org/config/1.0 http://activemq.apache.org/schema/activemq-core.xsd">
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.1.0.xsd">
 
-  <broker xmlns="http://activemq.org/config/1.0" dataDirectory="target/activemq">
-
-    <transportConnectors>
-       <transportConnector name="openwire" uri="tcp://localhost:61616"/>
-    </transportConnectors>
-
-  </broker>
+   <broker:broker id="broker" useJmx="false" persistent="false" dataDirectory="target/activemq">
+    <broker:transportConnectors>
+       <broker:transportConnector name="openwire" uri="tcp://localhost:61616"/>
+    </broker:transportConnectors>
+  </broker:broker>
 
 
 </beans>
