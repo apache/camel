@@ -19,17 +19,20 @@ package org.apache.camel.component.spring.integration.adapter;
 import org.apache.camel.component.spring.integration.HelloWorldService;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.integration.channel.MessageChannel;
+import org.springframework.integration.message.Message;
 
 public class CamelSourceAdapterTest extends SpringTestSupport {
     public void testSendingOneWayMessage() throws Exception {
-        HelloWorldService service = (HelloWorldService) applicationContext.getBean("helloService");
-        template.sendBody("direct:EndpointA", "Willem");
-        assertEquals("The service should be called ", service.getCount(), 1);
+        MessageChannel channelA = (MessageChannel) applicationContext.getBean("channelA");
+        template.sendBody("direct:OneWay", "Willem");
+        Message message = channelA.receive();
+        assertEquals("We should get the message from channelA", message.getPayload(), "Willem");
 
     }
 
     public void testSendingTwoWayMessage() throws Exception {
-        String result = (String) template.sendBody("direct:EndpointA", "Willem");
+        String result = (String) template.sendBody("direct:TwoWay", "Willem");
         assertEquals("Can't get the right response", result, "Hello Willem");
     }
 
