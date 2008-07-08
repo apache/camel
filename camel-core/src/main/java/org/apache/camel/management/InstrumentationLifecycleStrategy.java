@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.management.JMException;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -167,15 +169,45 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         // to InstrumentationProcessor and wrap the appropriate processor
         // by InstrumentationInterceptStrategy.
         RouteType route = routeContext.getRoute();
+        
+        // build a local map for handlng multiple instances of a processor
+        Map<ObjectName, Integer> existingNames = new HashMap<ObjectName, Integer>();
+        Map<ProcessorType, ObjectName> nameMap = new HashMap<ProcessorType, ObjectName>();
+        
         for (ProcessorType processor : route.getOutputs()) {
+            ObjectName name = null;
+            try {
+                name = getNamingStrategy().getObjectName(routeContext, processor, null);
+            } catch (MalformedObjectNameException e) {
+                LOG.warn("Could not register MBean: " + name, e);
+            }
+            
+            if (name != null) {
+                Integer instanceCount = existingNames.get(name);
+                if (instanceCount != null) {
+                    instanceCount++;
+                } else {
+                    instanceCount = new Integer(0);
+                    existingNames.put(name, instanceCount);
+                }
+                
+                try {
+                    name = getNamingStrategy().getObjectName(routeContext, processor, instanceCount);
+                    nameMap.put(processor, name);
+                } catch (MalformedObjectNameException e) {
+                    LOG.warn("Could not register MBean: " + name, e);
+                }
+            }
+        }
+        
+        for (Map.Entry<ProcessorType, ObjectName> entry : nameMap.entrySet()) {
             PerformanceCounter pc = new PerformanceCounter();
             try {
-                agent.register(pc, getNamingStrategy().getObjectName(
-                        routeContext, processor));
+                agent.register(pc, entry.getValue());
             } catch (JMException e) {
-                LOG.warn("Could not register Counter MBean", e);
+                LOG.warn("Could not register PerformanceCounter MBean", e);
             }
-            counterMap.put(processor, pc);
+            counterMap.put(entry.getKey(), pc);
         }
 
         routeContext.addInterceptStrategy(new InstrumentationInterceptStrategy(counterMap));

@@ -27,7 +27,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorType;
-import org.apache.camel.model.RouteType;
 import org.apache.camel.spi.RouteContext;
 
 public class CamelNamingStrategy {
@@ -43,6 +42,8 @@ public class CamelNamingStrategy {
     public static final String TYPE_PROCESSOR = "processor";
     public static final String TYPE_ROUTE = "route";
     public static final String TYPE_SERVICE = "service";
+    public static final String KEY_NODE_ID = "nodeid";
+    public static final String KEY_INSTANCE = "instance";
 
     protected String domainName;
     protected String hostName = "locahost";
@@ -138,10 +139,10 @@ public class CamelNamingStrategy {
     /**
      * Implements the naming strategy for a {@link ProcessorType}.
      * The convention used for a {@link ProcessorType} ObjectName is:
-     * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,route=&lt;route-name&gt;,type=processor,name=&lt;processor-name&gt;</tt>
+     * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,route=&lt;route-name&gt;,type=processor,name=&lt;processor-name&gt;,nodeid=&lt;node-id&gt;,instance=&lt;instance-id&gt;</tt>
      */
     public ObjectName getObjectName(RouteContext routeContext, 
-            ProcessorType processor) throws MalformedObjectNameException {
+            ProcessorType processor, Integer instanceCount) throws MalformedObjectNameException {
         Endpoint<? extends Exchange> ep = routeContext.getEndpoint();
         String ctxid = ep != null ? getContextId(ep.getCamelContext()) : VALUE_UNKNOWN;
         String cid = getComponentId(ep);
@@ -152,6 +153,10 @@ public class CamelNamingStrategy {
         buffer.append(KEY_CONTEXT + "=").append(ctxid).append(",");
         buffer.append(KEY_ROUTE + "=").append(id).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_PROCESSOR + ",");
+        buffer.append(KEY_NODE_ID + "=" + processor.getId() + ",");
+        if (instanceCount != null) {
+            buffer.append(KEY_INSTANCE + "=" + instanceCount + ",");
+        }
         buffer.append(KEY_NAME + "=").append(ObjectName.quote(processor.toString()));
         return createObjectName(buffer);
     }
