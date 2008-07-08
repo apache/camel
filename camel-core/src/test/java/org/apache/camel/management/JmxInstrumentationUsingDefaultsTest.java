@@ -80,7 +80,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
     }
 
-    private void verifyCounter(MBeanServerConnection beanServer, ObjectName name) throws Exception {
+    protected void verifyCounter(MBeanServerConnection beanServer, ObjectName name) throws Exception {
         Set s = beanServer.queryNames(name, null);
         assertEquals("Found mbeans: " + s, 1, s.size());
 
