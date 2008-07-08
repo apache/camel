@@ -23,7 +23,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.Date;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import javax.jms.BytesMessage;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -64,6 +66,7 @@ public class JmsBinding {
     public JmsBinding(JmsEndpoint endpoint) {
         this.endpoint = endpoint;
     }
+
     /**
      * Extracts the body from the JMS message
      *
@@ -158,17 +161,18 @@ public class JmsBinding {
         }
     }
 
-    public void appendJmsProperty(Message jmsMessage, Exchange exchange, org.apache.camel.Message in, String headerName, Object headerValue) throws JMSException {
+    public void appendJmsProperty(Message jmsMessage, Exchange exchange, org.apache.camel.Message in,
+                                  String headerName, Object headerValue) throws JMSException {
         if (headerName.startsWith("JMS") && !headerName.startsWith("JMSX")) {
             if (headerName.equals("JMSCorrelationID")) {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class,
-                                                                            headerValue));
+                    headerValue));
             } else if (headerName.equals("JMSCorrelationID")) {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class,
-                                                                            headerValue));
+                    headerValue));
             } else if (headerName.equals("JMSReplyTo") && headerValue != null) {
                 jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class,
-                                                                      headerValue));
+                    headerValue));
             } else if (headerName.equals("JMSType")) {
                 jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
             } else if (LOG.isDebugEnabled()) {
@@ -182,8 +186,54 @@ public class JmsBinding {
         } else if (shouldOutputHeader(in, headerName, headerValue)) {
             // must encode to safe JMS header name before setting property on jmsMessage
             String key = encodeToSafeJmsHeaderName(headerName);
-            jmsMessage.setObjectProperty(key, headerValue);
+
+            // only primitive headers and strings is allowed as properties
+            // see message properties: http://java.sun.com/j2ee/1.4/docs/api/javax/jms/Message.html
+            Object value = getValidJMSHeaderValue(headerName, headerValue);
+            if (value != null) {
+                jmsMessage.setObjectProperty(key, headerValue);
+            } else if (LOG.isDebugEnabled()) {
+                // okay the value is not a primitive or string so we can not sent it over the wire
+                LOG.debug("Ignoring non primitive header: " + headerName + " of class: "
+                    + headerValue.getClass().getName() + " with value: " + headerValue);
+            }
         }
+    }
+
+    /**
+     * Strategy to test if the given header is valid according to the JMS spec to be set as a property
+     * on the JMS message.
+     * <p/>
+     * This default implementation will allow:
+     * <ul>
+     *   <li>any primitives and their counter Objects (Integer, Double etc.)</li>
+     *   <li>String and any other litterals, Character, CharSequence</li>
+     *   <li>BigDecimal and BigInteger</li>
+     *   <li>java.util.Date</li>
+     * </ul>
+     *
+     * @param headerName   the header name
+     * @param headerValue  the header value
+     * @return  the value to use, <tt>null</tt> to ignore this header
+     */
+    protected Object getValidJMSHeaderValue(String headerName, Object headerValue) {
+        if (headerValue.getClass().isPrimitive()) {
+            return headerValue;
+        } else if (headerValue instanceof String) {
+            return headerValue;
+        } else if (headerValue instanceof Number) {
+            return headerValue;
+        } else if (headerValue instanceof Character) {
+            return headerValue.toString();
+        } else if (headerValue instanceof BigDecimal || headerValue instanceof BigInteger) {
+            return headerValue.toString();
+        } else if (headerValue instanceof CharSequence) {
+            return headerValue.toString();
+        } else if (headerValue instanceof Date) {
+            return headerValue.toString();
+        }
+
+        return null;
     }
 
     protected Message createJmsMessage(Object body, Session session, CamelContext context)
@@ -271,7 +321,7 @@ public class JmsBinding {
                                          Object headerValue) {
         String key = encodeToSafeJmsHeaderName(headerName);
         return headerValue != null && !getIgnoreJmsHeaders().contains(headerName)
-               && ObjectHelper.isJavaIdentifier(key);
+            && ObjectHelper.isJavaIdentifier(key);
     }
 
     /**
@@ -282,8 +332,8 @@ public class JmsBinding {
      * <p/>
      * <b>Note</b>: Currently this encoder is simple as it only supports encoding dots to underscores.
      *
-     * @param headerName  the header name
-     * @return  the key to use instead for storing properties and to be for lookup of the same property
+     * @param headerName the header name
+     * @return the key to use instead for storing properties and to be for lookup of the same property
      */
     public static String encodeToSafeJmsHeaderName(String headerName) {
         return headerName.replace(".", "_");
@@ -292,8 +342,8 @@ public class JmsBinding {
     /**
      * Decode operation for the {@link #encodeToSafeJmsHeaderName(String)}.
      *
-     * @param headerName  the header name
-     * @return  the original key
+     * @param headerName the header name
+     * @return the original key
      */
     public static String decodeFromSafeJmsHeaderName(String headerName) {
         return headerName.replace("_", ".");
@@ -308,7 +358,7 @@ public class JmsBinding {
 
         // added "JMSXRecvTimestamp" as a workaround for an Oracle bug/typo in AqjmsMessage
         String[] ignore = {"JMSXUserID", "JMSXAppID", "JMSXDeliveryCount", "JMSXProducerTXID",
-                           "JMSXConsumerTXID", "JMSXRcvTimestamp", "JMSXRecvTimestamp", "JMSXState"};
+            "JMSXConsumerTXID", "JMSXRcvTimestamp", "JMSXRecvTimestamp", "JMSXState"};
         set.addAll(Arrays.asList(ignore));
     }
 
