@@ -18,6 +18,8 @@ package org.apache.camel.component.cxf.transport;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +36,7 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.configuration.Configurable;
 import org.apache.cxf.configuration.Configurer;
+import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
@@ -240,12 +243,13 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             outMessage = m;
         }
 
-        // prepair the message and get the send out message
+        // Prepare the message and get the send out message
         private void commitOutputMessage() throws IOException {
             Exchange camelExchange = (Exchange)outMessage.get(CxfConstants.CAMEL_EXCHANGE);
-            camelExchange.getOut().setHeaders(outMessage);
+            Map<String, List<String>> protocolHeader = CastUtils.cast((Map<?, ?>)outMessage.get(Message.PROTOCOL_HEADERS));
+            CxfSoapBinding.setProtocolHeader(camelExchange.getOut().getHeaders(), protocolHeader);
             CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
-            camelExchange.getOut().setBody(outputStream.getInputStream());
+            camelExchange.getOut().setBody(outputStream.getBytes());
             getLogger().log(Level.FINE, "send the response message: " + outputStream);
 
         }
