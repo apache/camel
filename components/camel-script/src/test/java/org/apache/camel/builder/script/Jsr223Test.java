@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.script;
 
+import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 
@@ -25,10 +26,12 @@ import junit.framework.TestCase;
  * @version $Revision$
  */
 public class Jsr223Test extends TestCase {
+    private static String [] scriptNames = {"groovy", "js", "python", "ruby", "javascript"};
     public void testLanguageNames() throws Exception {
         ScriptEngineManager manager = new ScriptEngineManager();
-        for (ScriptEngineFactory factory : manager.getEngineFactories()) {
-            System.out.println("Factory: " + factory.getNames() + " " + factory.getEngineName());
+        for (String scriptName : scriptNames) {
+            ScriptEngine engine = manager.getEngineByName(scriptName);
+            assertNotNull("We should get the scrpte engine for " + scriptName , engine);
         }
     }
 }

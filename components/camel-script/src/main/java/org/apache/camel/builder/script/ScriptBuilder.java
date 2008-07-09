@@ -458,7 +458,12 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
 
     protected ScriptEngine createScriptEngine() {
         ScriptEngineManager manager = new ScriptEngineManager();
-        return manager.getEngineByName(scriptEngineName);
+        ScriptEngine engine = manager.getEngineByName(scriptEngineName);
+        if (isPython()) {
+            ScriptContext context = engine.getContext();
+            context.setAttribute("com.sun.script.jython.comp.mode", "eval", ScriptContext.ENGINE_SCOPE);
+        }
+        return engine;
     }
 
     protected void compileScript(Compilable compilable) {
@@ -502,21 +507,11 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
         Object result = null;
         if (compiledScript != null) {
             result = compiledScript.eval();
-            if (scriptEngineName.equals("python") || scriptEngineName.equals("jython")) {
-                // Retrieve the evaluation result for Python script
-                // Python script should store the evaluation result into result variable
-                result = compiledScript.getEngine().get("result");
-            }
         } else {
             if (scriptText != null) {
                 result = getEngine().eval(scriptText);
             } else {
                 result = getEngine().eval(createScriptReader());
-            }
-            if (scriptEngineName.equals("python") || scriptEngineName.equals("jython")) {
-                // Retrieve the evaluation result for python script
-                // Python script should store the evaluation result into result variable
-                result = getEngine().get("result");
             }
         }
         return result;
@@ -551,6 +546,10 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
             }
         }
         return new ScriptEvaluationException("Failed to evaluate: " + getScriptDescription() + ". Cause: " + e, e);
+    }
+
+    protected boolean isPython() {
+        return "python".equals(scriptEngineName) || "jython".equals(scriptEngineName);
     }
 
 }
