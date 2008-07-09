@@ -32,10 +32,6 @@
   <name>Camel :: Example :: Spring :: XQuery</name>
   <description>An example using Spring XML to transform a message using XQuery</description>
 
-  <properties>
-    <saxon-version>8.7</saxon-version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
