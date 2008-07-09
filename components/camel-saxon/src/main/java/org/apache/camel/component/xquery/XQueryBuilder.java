@@ -306,14 +306,14 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
         this.configuration = configuration;
     }
 
-    public StaticQueryContext getStaticQueryContext() throws StaticError {
+    public StaticQueryContext getStaticQueryContext() {
         if (staticQueryContext == null) {
             staticQueryContext = new StaticQueryContext(getConfiguration());
             Set<Map.Entry<String, String>> entries = namespacePrefixes.entrySet();
             for (Map.Entry<String, String> entry : entries) {
                 String prefix = entry.getKey();
                 String uri = entry.getValue();
-                staticQueryContext.declarePassiveNamespace(prefix, uri, false);
+                staticQueryContext.declareNamespace(prefix, uri);
                 staticQueryContext.setInheritNamespaces(true);
             }
         }
@@ -417,7 +417,7 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
     }
 
     /**
-     * To avoid keeping around any unnecessary objects after the expresion has
+     * To avoid keeping around any unnecessary objects after the expression has
      * been created lets nullify references here
      */
     protected void clearBuilderReferences() {
