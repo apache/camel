@@ -27,10 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class PythonExpressionTest extends ContextTestSupport {
     public void testSendMatchingMessage() throws Exception {
-        // Currently, this test fails because the Python expression in createRouteBuilder
-        // below returns null and that is treated as 'false', therefore it's as if the
-        // message didn't match the expression
-        // To fix that, we need to figure out how to get the expression to return a boolean
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:unmatched").expectedMessageCount(0);
 
@@ -56,8 +52,7 @@ public class PythonExpressionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start").choice().
-                        // The result variable is used to retrieve the python script evaluation result
-                        when().python("result = request.headers['foo']=='bar'").to("mock:result")
+                        when().python("request.headers['foo']=='bar'").to("mock:result")
                         .otherwise().to("mock:unmatched");
             }
         };

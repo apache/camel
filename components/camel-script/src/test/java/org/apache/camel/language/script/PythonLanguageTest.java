@@ -23,10 +23,10 @@ import org.apache.camel.LanguageTestSupport;
  */
 public class PythonLanguageTest extends LanguageTestSupport {
     public void testLanguageExpressions() throws Exception {
-        assertExpression("result=exchange.in.headers", "{foo=abc, bar=123}");
-        assertExpression("result=exchange.in", "Message: <hello id='m123'>world!</hello>");
-        assertExpression("result=exchange.in.headers.get('foo')", "abc");
-        assertExpression("result=request.headers.get('foo')", "abc");
+        assertExpression("exchange.in.headers", "{foo=abc, bar=123}");
+        assertExpression("exchange.in", "Message: <hello id='m123'>world!</hello>");
+        assertExpression("exchange.in.headers.get('foo')", "abc");
+        assertExpression("request.headers['foo']", "abc");
     }
 
     protected String getLanguageName() {
