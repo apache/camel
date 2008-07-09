@@ -76,7 +76,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Tim Fennell
  */
 public class ResolverUtil<T> {
-    private static final transient Log LOG = LogFactory.getLog(ResolverUtil.class);
+    protected static final transient Log LOG = LogFactory.getLog(ResolverUtil.class);
 
     /**
      * A simple interface that specifies how to test classes to determine if
@@ -299,7 +299,10 @@ public class ResolverUtil<T> {
 
         Enumeration<URL> urls;
         try {
-            urls = loader.getResources(packageName);
+            urls = getResources(loader, packageName);
+            if (!urls.hasMoreElements()) {
+                LOG.trace("No URLs returned by classloader");
+            }
         } catch (IOException ioe) {
             LOG.warn("Could not read package: " + packageName, ioe);
             return;
@@ -346,6 +349,24 @@ public class ResolverUtil<T> {
                 LOG.warn("Could not read entries in url: " + url, ioe);
             }
         }
+    }
+
+    /**
+     * Strategy to get the resources by the given classloader.
+     * <p/>
+     * Notice that in WebSphere platforms there is a {@link org.apache.camel.util.WebSphereResolverUtil}
+     * to take care of WebSphere's odditiy of resource loading.
+     *
+     * @param loader  the classloader
+     * @param packageName   the packagename for the package to load
+     * @return  URL's for the given package
+     * @throws IOException is thrown by the classloader
+     */
+    protected Enumeration<URL> getResources(ClassLoader loader, String packageName) throws IOException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Getting resource URL for package: " + packageName + " with classloader: " + loader);
+        }
+        return loader.getResources(packageName);
     }
 
     private void loadImplementationsInBundle(Test test, String packageName, ClassLoader loader, Method mth) {

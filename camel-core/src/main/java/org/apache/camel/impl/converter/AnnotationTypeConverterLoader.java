@@ -36,6 +36,7 @@ import org.apache.camel.Converter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResolverUtil;
+import org.apache.camel.util.WebSphereResolverUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -51,6 +52,14 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     private static final transient Log LOG = LogFactory.getLog(AnnotationTypeConverterLoader.class);
     private ResolverUtil resolver = new ResolverUtil();
     private Set<Class> visitedClasses = new HashSet<Class>();
+
+    public AnnotationTypeConverterLoader() {
+        // use WebSphere specific resolver if running on WebSphere
+        if (WebSphereResolverUtil.isWebSphereClassLoader(this.getClass().getClassLoader())) {
+            LOG.info("Using WebSphere specific ResolverUtil");
+            resolver = new WebSphereResolverUtil();
+        }
+    }
 
     public void load(TypeConverterRegistry registry) throws Exception {
         String[] packageNames = findPackageNames();
