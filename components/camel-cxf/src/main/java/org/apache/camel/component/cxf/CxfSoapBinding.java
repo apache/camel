@@ -17,10 +17,17 @@
 package org.apache.camel.component.cxf;
 
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.transform.Source;
 
+import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.ExchangeImpl;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 
 public final class CxfSoapBinding {
@@ -43,8 +50,17 @@ public final class CxfSoapBinding {
             cxfExchange = new ExchangeImpl();
             exchange.setProperty(CxfConstants.CXF_EXCHANGE, cxfExchange);
         }
-        Object body = message.getBody(InputStream.class);
 
+        Map<String, Object> headers = null;
+        if (isClient) {
+            headers = exchange.getOut().getHeaders();
+        } else {
+            headers = exchange.getIn().getHeaders();
+        }
+
+        answer.put(Message.PROTOCOL_HEADERS, getProtocolHeader(headers));
+
+        Object body = message.getBody(InputStream.class);
         if (body == null) {
             body = message.getBody();
         }
@@ -74,6 +90,14 @@ public final class CxfSoapBinding {
         } else {
             message = exchange.getOut();
         }
+        Map<String, Object> headers = null;
+        if (isClient) {
+            headers = exchange.getIn().getHeaders();
+        } else {
+            headers = exchange.getOut().getHeaders();
+        }
+
+        outMessage.put(Message.PROTOCOL_HEADERS, getProtocolHeader(headers));
         // send the body back
         Object body = message.getBody(Source.class);
         if (body == null) {
@@ -84,6 +108,40 @@ public final class CxfSoapBinding {
         }
         outMessage.putAll(message.getHeaders());
         return outMessage;
+    }
+
+    private static Map<String, List<String>> getProtocolHeader(Map<String, Object> headers) {
+        Map<String, List<String>> protocolHeader = new HashMap<String, List<String>>();
+        Iterator headersKeySetIterator = headers.keySet().iterator();
+        while (headersKeySetIterator.hasNext()) {
+            String key = (String)headersKeySetIterator.next();
+            Object value = headers.get(key);
+            if (value != null) {
+                protocolHeader.put(key, Collections.singletonList(value.toString()));
+            } else {
+                protocolHeader.put(key, null);
+            }
+        }
+        return protocolHeader;
+    }
+
+    public static void setProtocolHeader(Map<String, Object> headers, Map<String, List<String>> protocolHeader) {
+        if (protocolHeader != null) {
+            StringBuilder value = new StringBuilder(256);
+            for (Map.Entry<String, List<String>> entry : protocolHeader.entrySet()) {
+                value.setLength(0);
+                boolean first = true;
+                for (String s : entry.getValue()) {
+                    if (!first) {
+                        value.append("; ");
+                    }
+                    value.append(s);
+                    first = false;
+                }
+                headers.put(entry.getKey(), value.toString());
+            }
+        }
+
     }
 
 
