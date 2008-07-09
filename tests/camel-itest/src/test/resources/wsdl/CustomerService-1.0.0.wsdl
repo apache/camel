@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<wsdl:definitions name="CustomerServiceV1"
+	targetNamespace="http://camel.apache.org/itest/customerrelations"
+	xmlns:customer="http://camel.apache.org/itest/customerrelations"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+	<wsdl:types>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			targetNamespace="http://camel.apache.org/itest/customerrelations"
+			xmlns="http://camel.apache.org/itest/customerrelations">
+			<xsd:include schemaLocation="../xsd/Customer.xsd" />
+			<xs:element name="getCustomerResponse"
+				type="getCustomerResponse" />
+			<xs:complexType name="getCustomerResponse">
+				<xs:sequence>
+					<xs:element name="customers" type="Customer"
+						minOccurs="1" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="getCustomer" type="getCustomerRequest" />
+			<xs:complexType name="getCustomerRequest">
+				<xs:sequence>
+					<xs:element name="customerNummber" type="xs:token"
+						minOccurs="1" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="BusinessLogicException"
+				type="BusinessLogicException" />
+			<xs:complexType name="BusinessLogicException">
+				<xs:sequence>
+					<xs:element name="message" nillable="true"
+						type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="getCustomerResponse">
+		<wsdl:part name="parameters"
+			element="customer:getCustomerResponse">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getCustomer">
+		<wsdl:part name="parameters" element="customer:getCustomer">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="BusinessLogicException">
+		<wsdl:part name="fault" element="customer:BusinessLogicException">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="CustomerServiceV1">
+		<wsdl:operation name="getCustomer">
+			<wsdl:input name="getCustomer" message="customer:getCustomer">
+			</wsdl:input>
+			<wsdl:output name="getCustomerResponse"
+				message="customer:getCustomerResponse">
+			</wsdl:output>
+			<wsdl:fault name="BusinessLogicException"
+				message="customer:BusinessLogicException">
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="CustomerServiceV1SoapBinding"
+		type="customer:CustomerServiceV1">
+		<soap:binding style="document"
+			transport="http://cxf.apache.org/transports/camel" />
+		<wsdl:operation name="getCustomer">
+			<soap:operation soapAction="getCustomer" style="document" />
+			<wsdl:input name="getCustomer">
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output name="getCustomerResponse">
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="BusinessLogicException">
+				<soap:fault name="BusinessLogicException" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="CustomerServiceV1">
+		<wsdl:port name="CustomerServiceV1CamelPort"
+			binding="customer:CustomerServiceV1SoapBinding">
+			<soap:address
+				location="camel://direct:org.apache.camel.itest.customerrelations.CustomerServiceV1" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>
