@@ -37,6 +37,14 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
     </dependency>
+    <dependency>
+    	<groupId>org.apache.camel</groupId>
+    	<artifactId>camel-spring</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.camel</groupId>
+    	<artifactId>camel-cxf</artifactId>
+    </dependency>
 
     <!-- testing -->
     <dependency>
@@ -86,6 +94,7 @@
 
 
   <build>
+
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -93,7 +102,28 @@
           <forkMode>pertest</forkMode>
         </configuration>
       </plugin>
-
+      <plugin>
+      	<groupId>org.apache.cxf</groupId>
+      	<artifactId>cxf-codegen-plugin</artifactId>
+      	<version>2.1.1</version>
+      	<executions>
+      		<execution>
+      			<id>generate-sources</id>
+      			<phase>generate-sources</phase>
+      			<configuration>
+      				<wsdlOptions>
+      					<wsdlOption>
+      					    <outputDir>target/generated/src/main/java</outputDir>
+      						<wsdl>src/test/resources/wsdl/CustomerService-1.0.0.wsdl</wsdl>
+      					</wsdlOption>
+      				</wsdlOptions>
+      			</configuration>
+      			<goals>
+      				<goal>wsdl2java</goal>
+      			</goals>
+      		</execution>
+      	</executions>
+      </plugin>
     </plugins>
   </build>
 
