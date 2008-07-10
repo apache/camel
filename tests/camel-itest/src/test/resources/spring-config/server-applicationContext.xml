@@ -22,7 +22,7 @@
 		http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
 		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
 		http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.1.0.xsd
-		http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring-1.3.0.xsd
+		http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
 		http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd">
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />

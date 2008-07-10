@@ -135,8 +135,8 @@ public class JmsPerformanceTest extends ContextTestSupport {
                     LOG.warn("Caught: " + e, e);
                 }
             }
-            receivedCountDown.countDown();
             consumedMessageCount++;
+            receivedCountDown.countDown();            
         }
     }
 }
