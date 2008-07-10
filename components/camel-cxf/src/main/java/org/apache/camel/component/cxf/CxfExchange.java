@@ -35,8 +35,8 @@ public class CxfExchange extends DefaultExchange {
     public static final String DATA_FORMAT = "DATA_FORMAT";
     private Exchange exchange;
 
-    public CxfExchange(CamelContext context, Exchange exchange) {
-        super(context);
+    public CxfExchange(CamelContext context, ExchangePattern pattern, Exchange exchange) {
+        super(context, pattern);
         this.exchange = exchange;
         // TO avoid the NPE here
         if (exchange != null) {
@@ -73,7 +73,7 @@ public class CxfExchange extends DefaultExchange {
 
     @Override
     public org.apache.camel.Exchange newInstance() {
-        return new CxfExchange(this.getContext(), this.getExchange());
+        return new CxfExchange(this.getContext(), this.getPattern(), this.getExchange());
     }
 
     @Override
