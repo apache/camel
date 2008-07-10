@@ -105,16 +105,16 @@
       <plugin>
       	<groupId>org.apache.cxf</groupId>
       	<artifactId>cxf-codegen-plugin</artifactId>
-      	<version>2.1.1</version>
+      	<version>${cxf-version}</version>
       	<executions>
       		<execution>
       			<id>generate-sources</id>
       			<phase>generate-sources</phase>
       			<configuration>
+      			    <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
       				<wsdlOptions>
       					<wsdlOption>
-      					    <outputDir>target/generated/src/main/java</outputDir>
-      						<wsdl>src/test/resources/wsdl/CustomerService-1.0.0.wsdl</wsdl>
+      						<wsdl>${basedir}/src/main/resources/wsdl/CustomerService-1.0.0.wsdl</wsdl>
       					</wsdlOption>
       				</wsdlOptions>
       			</configuration>
