@@ -20,12 +20,21 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
-import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
-
 /**
  * WebSphere specific resolver util to handle loading annotated resources in JAR files.
  */
 public class WebSphereResolverUtil extends ResolverUtil {
+
+    private String resourcePath;
+
+    /**
+     * Constructor.
+     *
+     * @param resourcePath  the fixed resource path to use for fetching camel jars in WebSphere.
+     */
+    public WebSphereResolverUtil(String resourcePath) {
+        this.resourcePath = resourcePath;
+    }
 
     /**
      * Is the classloader from IBM and thus the WebSphere platform?
@@ -59,7 +68,7 @@ public class WebSphereResolverUtil extends ResolverUtil {
             // converters that is annotated. So by searching for this resource WebSphere is able to find
             // it and return the URL to the .jar file with the resource. Then the default ResolverUtil
             // can take it from there and find the classes that are annotated.
-            enumeration = loader.getResources(AnnotationTypeConverterLoader.META_INF_SERVICES);
+            enumeration = loader.getResources(resourcePath);
         }
 
         return enumeration;

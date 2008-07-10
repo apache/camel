@@ -57,7 +57,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         // use WebSphere specific resolver if running on WebSphere
         if (WebSphereResolverUtil.isWebSphereClassLoader(this.getClass().getClassLoader())) {
             LOG.info("Using WebSphere specific ResolverUtil");
-            resolver = new WebSphereResolverUtil();
+            resolver = new WebSphereResolverUtil(META_INF_SERVICES);
         }
     }
 
