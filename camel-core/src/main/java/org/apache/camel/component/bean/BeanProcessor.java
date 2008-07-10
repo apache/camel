@@ -108,7 +108,7 @@ public class BeanProcessor extends ServiceSupport implements Processor {
         }
         try {
             Object value = invocation.proceed();
-            if (value != null) {
+            if (value != null && exchange.getPattern().isOutCapable()) {
                 exchange.getOut().setBody(value);
             }
         } catch (InvocationTargetException e) {

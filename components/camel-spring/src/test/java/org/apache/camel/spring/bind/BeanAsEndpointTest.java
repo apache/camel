@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring.bind;
 
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -30,7 +31,7 @@ public class BeanAsEndpointTest extends SpringTestSupport {
         MockEndpoint mock = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mock.expectedBodiesReceived("Hello James!");
 
-        template.sendBody("direct:start", body);
+        template.sendBody("direct:start", ExchangePattern.InOut, body);
 
         mock.assertIsSatisfied();
     }

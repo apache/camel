@@ -17,6 +17,7 @@
 package org.apache.camel.language.bean;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.impl.ExpressionSupport;
@@ -51,6 +52,10 @@ public class BeanExpression<E extends Exchange> extends ExpressionSupport<E> {
         }
         try {
             Exchange newExchange = exchange.copy();
+            // check the exchange pattern
+            if (!newExchange.getPattern().isOutCapable()) {
+                newExchange.setPattern(ExchangePattern.InOut);
+            }
             processor.process(newExchange);
             return newExchange.getOut(true).getBody();
         } catch (Exception e) {

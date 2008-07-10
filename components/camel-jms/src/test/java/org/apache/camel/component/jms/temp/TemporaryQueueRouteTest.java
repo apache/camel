@@ -26,6 +26,7 @@ import org.apache.activemq.command.ActiveMQTempQueue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.BrowsableQueueTest;
@@ -51,7 +52,7 @@ public class TemporaryQueueRouteTest extends ContextTestSupport {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedBodiesReceived("Result");
 
-        template.sendBody(endpointUri, expectedBody);
+        template.sendBody(endpointUri, ExchangePattern.InOut, expectedBody);
 
         endpoint.assertIsSatisfied();
 
