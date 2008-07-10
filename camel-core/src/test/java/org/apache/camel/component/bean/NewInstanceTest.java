@@ -20,6 +20,7 @@ import javax.naming.Context;
 
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BeanRouteTest;
@@ -38,13 +39,13 @@ public class NewInstanceTest extends ContextTestSupport {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedBodiesReceived(1, 2);
 
-        template.sendBody("direct:start", "first");
+        template.sendBody("direct:start", ExchangePattern.InOut, "first");
 
         // lets simulate spring's factory bean stuff
         jndiContext.unbind("myBean");
         jndiContext.bind("myBean", new MyBean());
 
-        template.sendBody("direct:start", "second");
+        template.sendBody("direct:start", ExchangePattern.InOut, "second");
 
         assertMockEndpointsSatisifed();
     }

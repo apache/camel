@@ -16,8 +16,8 @@
  */
 package org.apache.camel.spring.config;
 
-import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 
 /**
  * For unit test.
@@ -27,5 +27,5 @@ public class MyFailureProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         throw new IllegalArgumentException("Unit test - this is thrown by intention");
     }
-    
+
 }

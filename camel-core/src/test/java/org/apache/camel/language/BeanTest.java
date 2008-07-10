@@ -19,14 +19,17 @@ package org.apache.camel.language;
 import javax.naming.Context;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Header;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
  * @version $Revision$
  */
 public class BeanTest extends LanguageTestSupport {
+
     public void testSimpleExpressions() throws Exception {
         assertExpression("foo.cheese", "abc");
     }

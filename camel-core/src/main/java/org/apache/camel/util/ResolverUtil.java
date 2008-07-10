@@ -280,9 +280,15 @@ public class ResolverUtil<T> {
 
     protected void find(Test test, String packageName, ClassLoader loader) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Searching for: " + test + " in package: " + packageName + " using classloader: " + loader);
+            LOG.trace("Searching for: " + test + " in package: " + packageName + " using classloader: " 
+                    + loader.getClass().getName());
         }
-
+        if (loader.getClass().getName().endsWith(
+                "org.apache.felix.framework.searchpolicy.ContentClassLoader")) {
+            //this classloader is in OSGI env which is not URLClassloader, we should resort to the
+            //BundleDelegatingClassLoader in OSGI, so just return
+            return;
+        }
         try {
             Method mth = loader.getClass().getMethod("getBundle", new Class[] {});
             if (mth != null) {

@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -30,7 +31,7 @@ public class MethodFilterTest extends ContextTestSupport {
         String body = "<person name='James' city='London'/>";
         getMockEndpoint("mock:result").expectedBodiesReceived(body);
 
-        template.sendBodyAndHeader("direct:start", body, "foo", "London");
+        template.sendBodyAndHeader("direct:start", ExchangePattern.InOut, body, "foo", "London");
 
         assertMockEndpointsSatisifed();
     }
@@ -39,7 +40,7 @@ public class MethodFilterTest extends ContextTestSupport {
         String body = "<person name='Hiram' city='Tampa'/>";
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        template.sendBodyAndHeader("direct:start", body, "foo", "Tampa");
+        template.sendBodyAndHeader("direct:start", ExchangePattern.InOut, body, "foo", "Tampa");
 
         assertMockEndpointsSatisifed();
     }
