@@ -34,7 +34,8 @@
   <description>Camel JPA support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.component.jpa.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.component.jpa.*,
+      org.apache.camel.processor.idempotent.jpa.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
@@ -141,14 +142,14 @@
                   <fileset dir="${basedir}/target/classes">
                     <include name="org/apache/camel/processor/**/M*.class"/>
                   </fileset>
-				  <config propertiesFile="${basedir}/src/main/resources/META-INF/persistence.xml"/>
+                  <config propertiesFile="${basedir}/src/main/resources/META-INF/persistence.xml"/>
                 </openjpac>
                 <openjpac directory="${basedir}/target/jpa-test-classes">
                   <classpath refid="cp"/>
                   <fileset dir="${basedir}/target/test-classes">
                     <include name="org/apache/camel/examples/*.class"/>
                   </fileset>
-				  <config propertiesFile="${basedir}/src/main/resources/META-INF/persistence.xml"/>
+                  <config propertiesFile="${basedir}/src/main/resources/META-INF/persistence.xml"/>
                 </openjpac>
 
                 <copy overwrite="true" todir="${basedir}/target/classes">
@@ -167,4 +168,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>
