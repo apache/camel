@@ -108,8 +108,20 @@ public class BeanProcessor extends ServiceSupport implements Processor {
         }
         try {
             Object value = invocation.proceed();
-            if (value != null && exchange.getPattern().isOutCapable()) {
-                exchange.getOut().setBody(value);
+            if (value != null) {
+                if (exchange.getPattern().isOutCapable()) {
+                    // force out creating if not already created (as its lazy)
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Setting bean invocation value on OUT message: " + value);
+                    }
+                    exchange.getOut(true).setBody(value);
+                } else {
+                    // if not out then set it on the in
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Setting bean invocation value on IN message: " + value);
+                    }
+                    exchange.getIn().setBody(value);
+                }
             }
         } catch (InvocationTargetException e) {
             // lets unwrap the exception
