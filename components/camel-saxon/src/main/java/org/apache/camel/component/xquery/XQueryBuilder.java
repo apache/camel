@@ -88,6 +88,9 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
     public void process(Exchange exchange) throws Exception {
         Object body = evaluate(exchange);
         exchange.getOut(true).setBody(body);
+
+        // propogate headers
+        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
     }
 
     public Object evaluate(Exchange exchange) {
@@ -405,8 +408,9 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
         addParameters(dynamicQueryContext, getParameters());
 
         dynamicQueryContext.setParameter("exchange", exchange);
-        dynamicQueryContext.setParameter("in", exchange.getIn());
-        dynamicQueryContext.setParameter("out", exchange.getOut());
+        if (exchange.getPattern().isOutCapable()) {
+            dynamicQueryContext.setParameter("out", exchange.getOut());
+        }
     }
 
     protected void addParameters(DynamicQueryContext dynamicQueryContext, Map<String, Object> map) {
