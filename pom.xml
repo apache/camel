@@ -68,6 +68,7 @@
     <junit-version>3.8.2</junit-version>
     <testng-version>5.7</testng-version>
     <hamcrest-version>1.1</hamcrest-version>
+    <saxon-version>9.0</saxon-version>
 
     <!-- Repositories -->
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
@@ -831,6 +832,23 @@
         <groupId>com.sun.script</groupId>
         <artifactId>groovy-engine</artifactId>
         <version>20070112</version>
+      </dependency>
+
+      <!-- optional Saxon support-->
+      <dependency>
+        <groupId>net.sf.saxon</groupId>
+        <artifactId>saxon</artifactId>
+        <version>${saxon-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.saxon</groupId>
+        <artifactId>saxon-dom</artifactId>
+        <version>${saxon-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.saxon</groupId>
+        <artifactId>saxon-sql</artifactId>
+        <version>${saxon-version}</version>
       </dependency>
 
       <!-- optional CXF support -->
