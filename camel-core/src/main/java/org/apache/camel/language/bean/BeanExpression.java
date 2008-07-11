@@ -53,7 +53,7 @@ public class BeanExpression<E extends Exchange> extends ExpressionSupport<E> {
         try {
             Exchange newExchange = exchange.copy();
             // The BeanExperession always has a result regardless of the ExchangePattern,
-            // so I add a checker here to make sure we can get the result .
+            // so I add a checker here to make sure we can get the result.
             if (!newExchange.getPattern().isOutCapable()) {
                 newExchange.setPattern(ExchangePattern.InOut);
             }
