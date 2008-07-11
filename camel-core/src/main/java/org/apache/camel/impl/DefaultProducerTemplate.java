@@ -94,7 +94,7 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
 
     public Object sendBody(Endpoint<E> endpoint, ExchangePattern pattern, Object body) {
         E result = send(endpoint, pattern, createSetBodyProcessor(body));
-        return extractResultBody(result);
+        return extractResultBody(result, pattern);
     }
 
     public Object sendBody(Endpoint<E> endpoint, Object body) {
@@ -126,13 +126,13 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
     public Object sendBodyAndHeader(Endpoint endpoint, ExchangePattern pattern, final Object body, final String header,
             final Object headerValue) {
         E result = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
-        return extractResultBody(result);
+        return extractResultBody(result, pattern);
     }
 
     public Object sendBodyAndHeader(String endpoint, ExchangePattern pattern, final Object body, final String header,
             final Object headerValue) {
         E result = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
-        return extractResultBody(result);
+        return extractResultBody(result, pattern);
     }
 
     public Object sendBodyAndHeaders(String endpointUri, final Object body, final Map<String, Object> headers) {
@@ -305,12 +305,34 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
         endpointCache.clear();
     }
 
+    /**
+     * Extracts the body from the given result.
+     *
+     * @param result   the result
+     * @return  the result, can be <tt>null</tt>.
+     */
     protected Object extractResultBody(E result) {
+        return extractResultBody(result, null);
+    }
+
+    /**
+     * Extracts the body from the given result.
+     * <p/>
+     * If the exchange pattern is provided it will try to honor it and retrive the body
+     * from either IN or OUT according to the pattern.
+     *
+     * @param result   the result
+     * @param pattern  exchange pattern if given, can be <tt>null</tt>
+     * @return  the result, can be <tt>null</tt>.
+     */
+    protected Object extractResultBody(E result, ExchangePattern pattern) {
         Object answer = null;
         if (result != null) {
-            Message out = result.getOut(false);
-            if (out != null) {
-                answer = out.getBody();
+            // try to honor pattern if provided
+            boolean notOut = pattern != null && !pattern.isOutCapable();
+            boolean hasOut = result.getOut(false) != null;
+            if (hasOut && !notOut) {
+                answer = result.getOut().getBody();
             } else {
                 answer = result.getIn().getBody();
             }
