@@ -363,7 +363,17 @@ public class BeanInfo {
     }
 
     protected boolean isValidMethod(Class clazz, Method method) {
-        return Modifier.isPublic(method.getModifiers());
+        // must be a public method
+        if (!Modifier.isPublic(method.getModifiers())) {
+            return false;
+        }
+
+        // return type must not be an Exchange
+        if (method.getReturnType() != null && Exchange.class.isAssignableFrom(method.getReturnType())) {
+            return false;
+        }
+
+        return true;
     }
 
     public static ParameterMappingStrategy createParameterMappingStrategy(CamelContext camelContext) {
