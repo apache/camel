@@ -36,4 +36,11 @@ public class Tracer implements InterceptStrategy {
         return new TraceInterceptor(processorType, target, formatter);
     }
 
+    public TraceFormatter getFormatter() {
+        return formatter;
+    }
+
+    public void setFormatter(TraceFormatter formatter) {
+        this.formatter = formatter;
+    }
 }
