@@ -31,6 +31,8 @@ import javax.persistence.Transient;
 import org.apache.camel.bam.processor.ProcessContext;
 import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The default state for a specific activity within a process
@@ -39,6 +41,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @Entity
 public class ActivityState extends TemporalEntity {
+    private static final transient Log LOG = LogFactory.getLog(ActivityState.class);
     private ProcessInstance processInstance;
     private Integer receivedMessageCount = 0;
     private ActivityDefinition activityDefinition;
@@ -167,6 +170,9 @@ public class ActivityState extends TemporalEntity {
         if (!isStarted()) {
             setTimeStarted(currentTime());
             context.onStarted(this);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Activity first message: " + this);
+            }
         }
     }
 
@@ -176,7 +182,12 @@ public class ActivityState extends TemporalEntity {
     protected void onExpectedMessage(ProcessContext context) {
         if (!isCompleted()) {
             setTimeCompleted(currentTime());
+            // must also clear overdue otherwise we will get failures
+            setTimeOverdue(null);
             context.onCompleted(this);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Activity complete: " + this);
+            }
         }
     }
 

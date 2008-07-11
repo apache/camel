@@ -42,13 +42,13 @@ public class MyActivities extends ProcessBuilder {
         ActivityBuilder purchaseOrder = activity("file:src/data/purchaseOrders?noop=true")
                 .correlate(xpath("/purchaseOrder/@id").stringResult());
 
-        ActivityBuilder invoice = activity("file:src/data/invoices?noop=true")
+        ActivityBuilder invoice = activity("file:src/data/invoices?noop=true&consumer.initialDelay=5000")
                 .correlate(xpath("/invoice/@purchaseOrderId").stringResult());
 
         // now let's add some BAM rules
         invoice.starts().after(purchaseOrder.completes())
-                .expectWithin(seconds(1))
-                .errorIfOver(seconds(2)).to("log:org.apache.camel.example.bam.BamFailures?level=error");
+                .expectWithin(seconds(10))
+                .errorIfOver(seconds(20)).to("log:org.apache.camel.example.bam.BamFailures?level=error");
     }
 }
 // END SNIPPET: demo
