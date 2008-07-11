@@ -280,11 +280,12 @@ public class ResolverUtil<T> {
 
     protected void find(Test test, String packageName, ClassLoader loader) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Searching for: " + test + " in package: " + packageName + " using classloader: " 
+            LOG.trace("Searching for: " + test + " in package: " + packageName + " using classloader: "
                     + loader.getClass().getName());
         }
         if (loader.getClass().getName().endsWith(
                 "org.apache.felix.framework.searchpolicy.ContentClassLoader")) {
+            LOG.trace("This is not an URL classloader, skipping");
             //this classloader is in OSGI env which is not URLClassloader, we should resort to the
             //BundleDelegatingClassLoader in OSGI, so just return
             return;
@@ -324,10 +325,19 @@ public class ResolverUtil<T> {
 
                 String urlPath = url.getFile();
                 urlPath = URLDecoder.decode(urlPath, "UTF-8");
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Decoded urlPath: " + urlPath);
+                }
 
                 // If it's a file in a directory, trim the stupid file: spec
                 if (urlPath.startsWith("file:")) {
                     urlPath = urlPath.substring(5);
+                }
+
+                // osgi bundles should be skipped
+                if (urlPath.startsWith("bundle:")) {
+                    LOG.trace("It's a virtual osgi bundle, skipping");
+                    continue;
                 }
 
                 // Else it's in a JAR, grab the path to the jar
