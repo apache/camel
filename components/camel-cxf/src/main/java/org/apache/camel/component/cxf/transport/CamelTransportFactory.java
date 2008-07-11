@@ -26,7 +26,6 @@ import javax.annotation.Resource;
 
 import org.apache.camel.CamelContext;
 import org.apache.cxf.Bus;
-import org.apache.cxf.configuration.Configurer;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.AbstractTransportFactory;
 import org.apache.cxf.transport.Conduit;
@@ -68,7 +67,7 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
     public void setActivationNamespaces(Collection<String> ans) {
         activationNamespaces = ans;
     }
-    
+
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -87,18 +86,13 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
     }
 
     public Destination getDestination(EndpointInfo endpointInfo) throws IOException {
-        CamelDestination destination = new CamelDestination(camelContext, bus, this, endpointInfo);
-        Configurer configurer = bus.getExtension(Configurer.class);
-        if (null != configurer) {
-            configurer.configureBean(destination);
-        }
-        return destination;
+        return new CamelDestination(camelContext, bus, this, endpointInfo);
     }
 
     public Set<String> getUriPrefixes() {
         return URI_PREFIXES;
     }
-    
+
     @PostConstruct
     void registerWithBindingManager() {
         if (null == bus) {
