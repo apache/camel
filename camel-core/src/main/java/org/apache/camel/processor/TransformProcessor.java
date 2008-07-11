@@ -42,6 +42,9 @@ public class TransformProcessor extends DelegateProcessor implements Processor {
         Object newBody = expression.evaluate(exchange);
         exchange.getOut().setBody(newBody);
 
+        // propogate headers
+        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+        
         super.process(exchange);
     }
 
