@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jivesoftware.smack.GroupChat;
+import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 
@@ -31,7 +31,7 @@ public class XmppGroupChatProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(XmppGroupChatProducer.class);
     private final XmppEndpoint endpoint;
     private final String room;
-    private GroupChat chat;
+    private MultiUserChat chat;
 
     public XmppGroupChatProducer(XmppEndpoint endpoint, String room) {
         super(endpoint);
@@ -63,7 +63,8 @@ public class XmppGroupChatProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
         if (chat == null) {
-            chat = endpoint.getConnection().createGroupChat(room);
+        	chat = new MultiUserChat(endpoint.getConnection(), room);
+        	chat.join(this.endpoint.getResource());
         }
     }
 
@@ -78,11 +79,11 @@ public class XmppGroupChatProducer extends DefaultProducer {
 
     // Properties
     // -------------------------------------------------------------------------
-    public GroupChat getChat() {
+    public MultiUserChat getChat() {
         return chat;
     }
 
-    public void setChat(GroupChat chat) {
+    public void setChat(MultiUserChat chat) {
         this.chat = chat;
     }
 
