@@ -31,7 +31,7 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 
 /**
- * An XMPP Endpoint
+ * A XMPP Endpoint
  *
  * @version $Revision:520964 $
  */
@@ -103,8 +103,6 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     /**
      * Sets the binding used to convert from a Camel message to and from an XMPP
      * message
-     *
-     * @param binding the binding to use
      */
     public void setBinding(XmppBinding binding) {
         this.binding = binding;
@@ -191,11 +189,11 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     }
     
     public String getNickname() {
-    	return nickname;
+        return nickname;
     }
     
     public void setNickname(String nickname) {
-    	this.nickname = nickname;
+        this.nickname = nickname;
     }
 
     public XMPPConnection getConnection() throws XMPPException {
@@ -239,8 +237,7 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
                 connection.loginAnonymously();
             }
 
-            // now lets send a presence
-            connection.sendPacket(new Presence(Presence.Type.AVAILABLE));
+            // presence is not needed to be sent after login
         }
         return connection;
     }
