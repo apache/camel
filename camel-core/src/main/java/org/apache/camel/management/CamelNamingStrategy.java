@@ -157,7 +157,7 @@ public class CamelNamingStrategy {
         buffer.append(KEY_CONTEXT + "=").append(ctxid).append(",");
         buffer.append(KEY_ROUTE + "=").append(id).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_PROCESSOR + ",");
-        buffer.append(KEY_NODE_ID + "=").append(id).append(",");
+        buffer.append(KEY_NODE_ID + "=").append(nodeId).append(",");
         buffer.append(KEY_NAME + "=").append(ObjectName.quote(processor.toString()));
         return createObjectName(buffer);
     }
