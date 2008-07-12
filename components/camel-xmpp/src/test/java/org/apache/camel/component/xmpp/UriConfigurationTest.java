@@ -29,7 +29,7 @@ public class UriConfigurationTest extends TestCase {
     protected CamelContext context = new DefaultCamelContext();
 
     public void testPrivateChatConfiguration() throws Exception {
-        Endpoint endpoint = context.getEndpoint("xmpp://camel-user@localhost:123/test-user@localhost");
+        Endpoint endpoint = context.getEndpoint("xmpp://camel-user@localhost:123/test-user@localhost?password=secret");
         assertTrue("Endpoint not an XmppEndpoint: " + endpoint, endpoint instanceof XmppEndpoint);
         XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
 
@@ -38,10 +38,11 @@ public class UriConfigurationTest extends TestCase {
         assertEquals(123, xmppEndpoint.getPort());
         assertEquals("camel-user", xmppEndpoint.getUser());
         assertEquals("test-user@localhost", xmppEndpoint.getParticipant());
+        assertEquals("secret", xmppEndpoint.getPassword());
     }
 
     public void testGroupChatConfiguration() throws Exception {
-        Endpoint endpoint = context.getEndpoint("xmpp://camel-user@im.google.com:123?room=cheese");
+        Endpoint endpoint = context.getEndpoint("xmpp://camel-user@im.google.com:123?room=cheese&password=secret");
         assertTrue("Endpoint not an XmppEndpoint: " + endpoint, endpoint instanceof XmppEndpoint);
         XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
 
@@ -50,5 +51,6 @@ public class UriConfigurationTest extends TestCase {
         assertEquals(123, xmppEndpoint.getPort());
         assertEquals("camel-user", xmppEndpoint.getUser());
         assertEquals("cheese", xmppEndpoint.getRoom());
+        assertEquals("secret", xmppEndpoint.getPassword());
     }
 }
