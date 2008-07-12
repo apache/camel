@@ -49,6 +49,7 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     private boolean createAccount;
     private String room;
     private String participant;
+    private String nickname;
 
     public XmppEndpoint(String uri, XmppComponent component) {
         super(uri, component);
@@ -187,6 +188,14 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
 
     public void setParticipant(String participant) {
         this.participant = participant;
+    }
+    
+    public String getNickname() {
+    	return nickname;
+    }
+    
+    public void setNickname(String nickname) {
+    	this.nickname = nickname;
     }
 
     public XMPPConnection getConnection() throws XMPPException {

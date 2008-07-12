@@ -42,7 +42,7 @@ public class UriConfigurationTest extends TestCase {
     }
 
     public void testGroupChatConfiguration() throws Exception {
-        Endpoint endpoint = context.getEndpoint("xmpp://camel-user@im.google.com:123?room=cheese&password=secret");
+        Endpoint endpoint = context.getEndpoint("xmpp://camel-user@im.google.com:123?room=cheese&password=secret&nickname=incognito");
         assertTrue("Endpoint not an XmppEndpoint: " + endpoint, endpoint instanceof XmppEndpoint);
         XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
 
@@ -52,5 +52,18 @@ public class UriConfigurationTest extends TestCase {
         assertEquals("camel-user", xmppEndpoint.getUser());
         assertEquals("cheese", xmppEndpoint.getRoom());
         assertEquals("secret", xmppEndpoint.getPassword());
+        assertEquals("incognito", xmppEndpoint.getNickname());
+    }
+    
+    // Changes in default resource name may break
+    // clients program assuming the default "Camel" resource name
+    // so it is better to avoid changing it.
+    public void testDefaultResource() throws Exception {
+        Endpoint endpoint = context.getEndpoint("xmpp://camel-user@im.google.com?password=secret");
+        assertTrue("Endpoint not an XmppEndpoint: " + endpoint, endpoint instanceof XmppEndpoint);
+        XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
+
+        assertEquals("Camel", xmppEndpoint.getResource());
+    	
     }
 }
