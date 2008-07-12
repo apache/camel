@@ -46,9 +46,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         // TODO it would be nice if we could reuse the message from the exchange
         Message message = chat.createMessage();
         message.setTo(participant);
-        message.setFrom(endpoint.getUser());
         message.setThread(exchange.getExchangeId());
-        message.setType(Message.Type.NORMAL);
 
         endpoint.getBinding().populateXmppMessage(message, exchange);
         if (LOG.isDebugEnabled()) {
