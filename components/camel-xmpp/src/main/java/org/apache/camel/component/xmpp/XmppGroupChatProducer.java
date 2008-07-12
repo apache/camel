@@ -65,9 +65,7 @@ public class XmppGroupChatProducer extends DefaultProducer {
         if (chat == null) {
         	chat = new MultiUserChat(endpoint.getConnection(), room);
         	String nickname = this.endpoint.getNickname();
-        	if(nickname == null)
-        		nickname = this.endpoint.getUser();
-        	chat.join(nickname);
+        	chat.join(nickname != null ? nickname : this.endpoint.getUser());
         }
     }
 
