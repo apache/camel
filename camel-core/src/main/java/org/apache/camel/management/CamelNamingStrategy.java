@@ -29,6 +29,9 @@ import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.spi.RouteContext;
 
+/**
+ * Naming strategy used when registering MBeans.
+ */
 public class CamelNamingStrategy {
     public static final String VALUE_UNKNOWN = "unknown";
     public static final String KEY_NAME = "name";
@@ -139,24 +142,22 @@ public class CamelNamingStrategy {
     /**
      * Implements the naming strategy for a {@link ProcessorType}.
      * The convention used for a {@link ProcessorType} ObjectName is:
-     * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,route=&lt;route-name&gt;,type=processor,name=&lt;processor-name&gt;,nodeid=&lt;node-id&gt;,instance=&lt;instance-id&gt;</tt>
+     * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,route=&lt;route-name&gt;,type=processor,name=&lt;processor-name&gt;,nodeid=&lt;node-id&gt;</tt>
      */
-    public ObjectName getObjectName(RouteContext routeContext, 
-            ProcessorType processor, Integer instanceCount) throws MalformedObjectNameException {
+    public ObjectName getObjectName(RouteContext routeContext, ProcessorType processor)
+        throws MalformedObjectNameException {
         Endpoint<? extends Exchange> ep = routeContext.getEndpoint();
         String ctxid = ep != null ? getContextId(ep.getCamelContext()) : VALUE_UNKNOWN;
         String cid = getComponentId(ep);
         String id = VALUE_UNKNOWN.equals(cid) ? getEndpointId(ep) : "[" + cid + "]" + getEndpointId(ep);
+        String nodeId = processor.idOrCreate();
 
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(ctxid).append(",");
         buffer.append(KEY_ROUTE + "=").append(id).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_PROCESSOR + ",");
-        buffer.append(KEY_NODE_ID + "=" + processor.getId() + ",");
-        if (instanceCount != null) {
-            buffer.append(KEY_INSTANCE + "=" + instanceCount + ",");
-        }
+        buffer.append(KEY_NODE_ID + "=").append(id).append(",");
         buffer.append(KEY_NAME + "=").append(ObjectName.quote(processor.toString()));
         return createObjectName(buffer);
     }

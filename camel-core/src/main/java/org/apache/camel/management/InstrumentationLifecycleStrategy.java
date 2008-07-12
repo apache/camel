@@ -170,46 +170,25 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         // by InstrumentationInterceptStrategy.
         RouteType route = routeContext.getRoute();
         
-        // build a local map for handlng multiple instances of a processor
-        Map<ObjectName, Integer> existingNames = new HashMap<ObjectName, Integer>();
-        Map<ProcessorType, ObjectName> nameMap = new HashMap<ProcessorType, ObjectName>();
-        
         for (ProcessorType processor : route.getOutputs()) {
             ObjectName name = null;
             try {
-                name = getNamingStrategy().getObjectName(routeContext, processor, null);
+                // get the mbean name
+                name = getNamingStrategy().getObjectName(routeContext, processor);
+
+                // register mbean wrapped in the performance counter mbean
+                PerformanceCounter pc = new PerformanceCounter();
+                agent.register(pc, name);
+
+                // add to map now that it has ben registered
+                counterMap.put(processor, pc);
             } catch (MalformedObjectNameException e) {
-                LOG.warn("Could not register MBean: " + name, e);
-            }
-            
-            if (name != null) {
-                Integer instanceCount = existingNames.get(name);
-                if (instanceCount != null) {
-                    instanceCount++;
-                } else {
-                    instanceCount = new Integer(0);
-                    existingNames.put(name, instanceCount);
-                }
-                
-                try {
-                    name = getNamingStrategy().getObjectName(routeContext, processor, instanceCount);
-                    nameMap.put(processor, name);
-                } catch (MalformedObjectNameException e) {
-                    LOG.warn("Could not register MBean: " + name, e);
-                }
+                LOG.warn("Could not create MBean name: " + name, e);
+            } catch (JMException e) {
+                LOG.warn("Could not register PerformanceCounter MBean: " + name, e);
             }
         }
         
-        for (Map.Entry<ProcessorType, ObjectName> entry : nameMap.entrySet()) {
-            PerformanceCounter pc = new PerformanceCounter();
-            try {
-                agent.register(pc, entry.getValue());
-            } catch (JMException e) {
-                LOG.warn("Could not register PerformanceCounter MBean", e);
-            }
-            counterMap.put(entry.getKey(), pc);
-        }
-
         routeContext.addInterceptStrategy(new InstrumentationInterceptStrategy(counterMap));
 
         routeContext.setErrorHandlerWrappingStrategy(
