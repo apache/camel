@@ -35,6 +35,12 @@ To run the example with Ant
    
 You can see the BAM activies defined in
   src/main/java/org/apache/camel/example/bam/MyActivites.java
+  
+In the HSQL Database Explorer type
+  select * from activitystate
+to see the states of the activities. Notice that one activity never receives
+its expected message and when it's overdue Camel reports this as an error.
+
 
 To stop the example hit ctrl + c
 

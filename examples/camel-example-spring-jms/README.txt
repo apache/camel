@@ -20,7 +20,7 @@ And for the Client we have a total of three flavors:
 - And using the Message Endpoint pattern using the neutral Camel API
 
 For the latest & greatest documentation on how to use this example please see:
-  http://cwiki.apache.org/CAMEL/tutorial-jmsremoting.html
+  http://activemq.apache.org/camel/tutorial-jmsremoting.html
 
 You will need to compile this example first:
   mvn compile
@@ -32,6 +32,9 @@ The example should run if you type:
   mvn exec:java -PCamelClient
   mvn exec:java -PCamelClientRemoting
   mvn exec:java -PCamelClientEndpoint
+  
+You can stack the maven goals so you can compile and execute it in one command:
+  mvn compile exec:java -PCamelServer
 
 To run the example with Ant
   a. You need to have Apache ActiveMQ installed. It can be downloaded from 
