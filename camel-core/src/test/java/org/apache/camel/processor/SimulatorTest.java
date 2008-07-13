@@ -17,29 +17,40 @@
 package org.apache.camel.processor;
 
 
+import javax.naming.Context;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.ExchangeHelper;
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
+import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.jndi.JndiContext;
 
 /**
  * @version $Revision$
  */
 public class SimulatorTest extends ContextTestSupport {
 
+    protected Context createJndiContext() throws Exception {
+        JndiContext answer = new JndiContext();
+        answer.bind("foo", new MyBean("foo"));
+        answer.bind("bar", new MyBean("bar"));
+        return answer;
+    }
+
     public void testReceivesFooResponse() throws Exception {
-        assertRespondsWith("foo", "<hello>foo</hello>");
+        assertRespondsWith("foo", "Bye said foo");
     }
 
     public void testReceivesBarResponse() throws Exception {
-        assertRespondsWith("bar", "<hello>bar</hello>");
+        assertRespondsWith("bar", "Bye said bar");
     }
 
-    protected void assertRespondsWith(final String value, String containedText) throws InvalidPayloadException {
+    protected void assertRespondsWith(final String value, String containedText)
+        throws InvalidPayloadException {
         Exchange response = template.request("direct:a", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Message in = exchange.getIn();
@@ -60,9 +71,21 @@ public class SimulatorTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 from("direct:a").
-                    recipientList(simple("file:src/main/data/${in.headers.cheese}.xml"));
+                    recipientList(simple("bean:${in.header.cheese}"));
                 // END SNIPPET: example
             }
         };
+    }
+
+    public static class MyBean {
+        private String value;
+
+        public MyBean(String value) {
+            this.value = value;
+        }
+
+        public String doSomething(String in) {
+            return "Bye said " + value;
+        }
     }
 }
