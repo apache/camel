@@ -57,13 +57,6 @@ public class FileProducer extends DefaultProducer {
     }
 
     public void process(FileExchange exchange) throws Exception {
-        if (ExchangeHelper.isOutCapable(exchange)) {
-            // lets poll the file
-            Message out = exchange.getOut(true);
-            endpoint.configureMessage(endpoint.getFile(), out);
-            return;
-        }
-
         InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
         File file = createFileName(exchange.getIn());
         buildDirectory(file);
@@ -128,8 +121,8 @@ public class FileProducer extends DefaultProducer {
             }
         }
 
-        // TODO lets store the name in the header?
-        //message.setHeader(FileComponent.HEADER_FILE_NAME, answer.toString());
+        // lets store the name we really used in the header, so end-users can retrieve it
+        message.setHeader(FileComponent.HEADER_FILE_NAME_PRODUCED, answer.getAbsolutePath());
 
         return answer;
     }
@@ -143,6 +136,5 @@ public class FileProducer extends DefaultProducer {
             dir.mkdirs();
         }
     }
-
 
 }

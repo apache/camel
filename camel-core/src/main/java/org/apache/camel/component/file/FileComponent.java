@@ -30,7 +30,17 @@ import org.apache.camel.impl.DefaultComponent;
  * @version $Revision$
  */
 public class FileComponent extends DefaultComponent<FileExchange> {
+
+    /**
+     * Header key hold the value: the fixed filename to use for prodcuing files.
+     */
     public static final String HEADER_FILE_NAME = "org.apache.camel.file.name";
+
+
+    /**
+     * Header key holding the value: absolute filepath for the file produced.
+     */
+    public static final String HEADER_FILE_NAME_PRODUCED = "org.apache.camel.file.name.produced";
 
     public FileComponent() {
     }
