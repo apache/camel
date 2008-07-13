@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -62,7 +61,6 @@ public class SimulatorTest extends ContextTestSupport {
         assertNotNull("Should receive a response!", response);
 
         String text = ExchangeHelper.getMandatoryOutBody(response, String.class);
-        log.info("Received: " + text);
         assertStringContains(text, containedText);
     }
 
@@ -88,4 +86,5 @@ public class SimulatorTest extends ContextTestSupport {
             return "Bye said " + value;
         }
     }
+    
 }
