@@ -32,13 +32,14 @@ import org.apache.camel.impl.DefaultComponent;
 public class FileComponent extends DefaultComponent<FileExchange> {
 
     /**
-     * Header key hold the value: the fixed filename to use for prodcuing files.
+     * Header key holding the value: the fixed filename to use for producing files.
      */
     public static final String HEADER_FILE_NAME = "org.apache.camel.file.name";
 
 
     /**
-     * Header key holding the value: absolute filepath for the file produced.
+     * Header key holding the value: absolute filepath for the actual file produced.
+     * Value is set automatically by Camel
      */
     public static final String HEADER_FILE_NAME_PRODUCED = "org.apache.camel.file.name.produced";
 
