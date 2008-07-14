@@ -91,6 +91,9 @@ public abstract class DelayProcessorSupport extends DelegateProcessor {
     }
 
     protected void sleep(long delay) throws InterruptedException {
+        if (delay <= 0) {
+            return;
+        }
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sleeping for: " + delay + " millis");
         }
