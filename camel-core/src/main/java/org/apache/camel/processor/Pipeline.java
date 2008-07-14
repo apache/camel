@@ -134,7 +134,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
     }
 
     /**
-     * Strategy method to create the next exchange from the
+     * Strategy method to create the next exchange from the previous exchange.
      *
      * @param producer         the producer used to send to the endpoint
      * @param previousExchange the previous exchange
