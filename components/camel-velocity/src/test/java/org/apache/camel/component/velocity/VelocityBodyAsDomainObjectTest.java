@@ -30,8 +30,7 @@ public class VelocityBodyAsDomainObjectTest extends ContextTestSupport {
     public void testWithObject() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hi Claus how are you? Its a nice day.\n"
-            + "Give my regards to the family Ibsen.");
+        mock.expectedBodiesReceived("Hi Claus how are you? Its a nice day.\nGive my regards to the family Ibsen.");
 
         MyPerson person = new MyPerson();
         person.setFamilyName("Ibsen");
@@ -73,10 +72,12 @@ public class VelocityBodyAsDomainObjectTest extends ContextTestSupport {
         }
 
         public String toString() {
-            return "MyPerson{" +
-                "givenName='" + givenName + '\'' +
-                ", familyName='" + familyName + '\'' +
-                '}';
+            return "MyPerson{"
+                + "givenName='"
+                + givenName + '\''
+                + ", familyName='"
+                + familyName + '\''
+                + '}';
         }
     }
 
