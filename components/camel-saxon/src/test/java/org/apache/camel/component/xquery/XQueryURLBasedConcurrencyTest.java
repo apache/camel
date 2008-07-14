@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xquery;
 
+import java.util.Random;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,10 +29,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  */
 public class XQueryURLBasedConcurrencyTest extends ContextTestSupport {
 
-    // TODO: Work in progress
-
     public void testConcurrency() throws Exception {
-        int total = 1;
+        int total = 100;
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(total);
@@ -39,32 +39,40 @@ public class XQueryURLBasedConcurrencyTest extends ContextTestSupport {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(5);
         executor.afterPropertiesSet();
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 5; i++) {
             final int threadCount = i;
             executor.execute(new Runnable() {
                 public void run() {
                     int start = threadCount * 20;
-                    for (int i = 0; i < 1; i++) {
-                        template.sendBody("seda:in",
-                            "<mail><subject>" + (start + i) + "</subject><body>Hello world!</body></mail>");
+                    for (int i = 0; i < 20; i++) {
+                        try {
+                            // do some random sleep to simulate spread in user activity
+                            Thread.sleep(new Random().nextInt(10));
+                        } catch (InterruptedException e) {
+                            // ignore
+                        }
+                        template.sendBody("direct:start",
+                            "<mail><subject>Hey</subject><body>Hello world!</body></mail>");
                     }
                 }
             });
         }
 
-        mock.assertIsSatisfied();
         mock.assertNoDuplicates(body());
+        mock.assertIsSatisfied();
+
+        System.out.println("The End");
+        System.out.println(mock.getExchanges().get(0).getIn().getBody());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // only retry at max 2 times to cather
-                // if set to 0 we can get interal Saxon errors - SENR0001
-                errorHandler(new DeadLetterChannelBuilder().maximumRedeliveries(2));
+                // no retry as we want every failure to submerge
+                errorHandler(noErrorHandler());
 
-                from("seda:in")
-                    .thread(10)
+                from("direct:start")
+                    .thread(5)
                     .to("xquery:org/apache/camel/component/xquery/transform.xquery")
                     .to("mock:result");
             }
