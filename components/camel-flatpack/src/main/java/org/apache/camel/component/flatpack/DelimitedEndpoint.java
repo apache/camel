@@ -33,7 +33,7 @@ import java.io.Reader;
 public class DelimitedEndpoint extends FixedLengthEndpoint {
     private char delimiter = ',';
     private char textQualifier = '"';
-    private boolean ignoreFirstRecord = false;
+    private boolean ignoreFirstRecord = true;
 
     public DelimitedEndpoint(String uri, Resource resource) {
         super(uri, resource);
