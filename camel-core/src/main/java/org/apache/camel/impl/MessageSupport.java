@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.CamelContext;
 import org.apache.camel.util.UuidGenerator;
 
 /**
@@ -52,16 +53,19 @@ public abstract class MessageSupport implements Message {
     protected <T> T getBody(Class<T> type, Object body) {
         Exchange e = getExchange();
         if (e != null) {
-            TypeConverter converter = e.getContext().getTypeConverter();
-            T answer = converter.convertTo(type, body);
-            if (answer == null) {
-                // lets first try converting the message itself first
-                // as for some types like InputStream v Reader its more efficient to do the transformation
-                // from the Message itself as its got efficient implementations of them, before trying the
-                // payload
-                answer = converter.convertTo(type, this);
+            CamelContext camelContext = e.getContext();
+            if (camelContext != null) {
+                TypeConverter converter = camelContext.getTypeConverter();
+                T answer = converter.convertTo(type, body);
+                if (answer == null) {
+                    // lets first try converting the message itself first
+                    // as for some types like InputStream v Reader its more efficient to do the transformation
+                    // from the Message itself as its got efficient implementations of them, before trying the
+                    // payload
+                    answer = converter.convertTo(type, this);
+                }
+                return answer;
             }
-            return answer;
         }
         return (T)getBody();
     }
