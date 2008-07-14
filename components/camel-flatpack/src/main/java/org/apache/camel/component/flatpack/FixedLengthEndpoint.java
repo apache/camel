@@ -55,7 +55,7 @@ public class FixedLengthEndpoint extends DefaultPollingEndpoint<Exchange> {
     }
 
     public Producer<Exchange> createProducer() throws Exception {
-        return new FlatpackProcessor(this);
+        return new FlatpackProducer(this);
     }
 
     public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
