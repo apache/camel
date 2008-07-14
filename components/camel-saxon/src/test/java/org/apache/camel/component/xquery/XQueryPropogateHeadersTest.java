@@ -17,8 +17,6 @@
 package org.apache.camel.component.xquery;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.model.ProcessorType;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -58,7 +56,7 @@ public class XQueryPropogateHeadersTest extends ContextTestSupport {
         mock.expectedBodiesReceived("London");
         mock.expectedHeaderReceived("foo", "bar");
 
-        template.sendBodyAndHeader("direct:three", 
+        template.sendBodyAndHeader("direct:three",
             "<person name='James' city='London'/>", "foo", "bar");
 
         assertMockEndpointsSatisifed();
