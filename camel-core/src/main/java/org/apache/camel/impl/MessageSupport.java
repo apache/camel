@@ -46,10 +46,14 @@ public abstract class MessageSupport implements Message {
 
     @SuppressWarnings({"unchecked" })
     public <T> T getBody(Class<T> type) {
+        return getBody(type, getBody());
+    }
+
+    protected <T> T getBody(Class<T> type, Object body) {
         Exchange e = getExchange();
         if (e != null) {
             TypeConverter converter = e.getContext().getTypeConverter();
-            T answer = converter.convertTo(type, getBody());
+            T answer = converter.convertTo(type, body);
             if (answer == null) {
                 // lets first try converting the message itself first
                 // as for some types like InputStream v Reader its more efficient to do the transformation
