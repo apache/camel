@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.xquery;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -37,7 +34,6 @@ public class XQueryConcurrencyTest extends ContextTestSupport {
         mock.expectedMessageCount(total);
 
         // setup a task executor to be able send the messages in parallel
-        final CountDownLatch latch = new CountDownLatch(5);
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(5);
         executor.afterPropertiesSet();
@@ -45,19 +41,14 @@ public class XQueryConcurrencyTest extends ContextTestSupport {
             final int threadCount = i;
             executor.execute(new Runnable() {
                 public void run() {
-                    // requestbody is InOut pattern and thus we expect a reply (JMSReply)
                     int start = threadCount * 20;
                     for (int i = 0; i < 20; i++) {
                         Object response = template.sendBody("seda:in",
                             "<person id='" + (start + i) + "'>James</person>");
                     }
-                    latch.countDown();
                 }
             });
         }
-        // wait for test completion, timeout after 10 sec to let other unit test run to not wait forever
-        latch.await(10000L, TimeUnit.MILLISECONDS);
-        assertEquals("Latch should be zero", 0, latch.getCount());
 
         mock.assertIsSatisfied();
         mock.assertNoDuplicates(body());
