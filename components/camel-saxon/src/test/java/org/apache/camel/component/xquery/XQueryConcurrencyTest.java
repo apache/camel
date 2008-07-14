@@ -30,7 +30,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class XQueryConcurrencyTest extends ContextTestSupport {
 
     public void testConcurrency() throws Exception {
-        int total = 100;
+        int total = 1000;
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(total);
@@ -43,11 +43,11 @@ public class XQueryConcurrencyTest extends ContextTestSupport {
             final int threadCount = i;
             executor.execute(new Runnable() {
                 public void run() {
-                    int start = threadCount * 20;
-                    for (int i = 0; i < 20; i++) {
+                    int start = threadCount * 200;
+                    for (int i = 0; i < 200; i++) {
                         try {
                             // do some random sleep to simulate spread in user activity
-                            Thread.sleep(new Random().nextInt(100));
+                            Thread.sleep(new Random().nextInt(10));
                         } catch (InterruptedException e) {
                             // ignore
                         }
@@ -57,19 +57,18 @@ public class XQueryConcurrencyTest extends ContextTestSupport {
             });
         }
 
-        mock.assertIsSatisfied();
         mock.assertNoDuplicates(body());
+        mock.assertIsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // only retry at max 2 times to cather
-                // if set to 0 we can get interal Saxon errors - SENR0001
-                errorHandler(new DeadLetterChannelBuilder().maximumRedeliveries(1));
+                // no retry as we want every failure to submerge
+                errorHandler(noErrorHandler());
 
                 from("seda:in")
-                    .thread(10)
+                    .thread(5)
                     .transform().xquery("/person/id", String.class)
                     .to("mock:result");
             }
