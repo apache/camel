@@ -19,18 +19,19 @@ package org.apache.camel.component.xquery;
 import java.util.Random;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
- * Concurrency test of XQuery.
+ * Concurrency test of XQuery using classpath resources (to).
  */
 public class XQueryURLBasedConcurrencyTest extends ContextTestSupport {
 
     public void testConcurrency() throws Exception {
-        int total = 100;
+        int total = 1000;
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(total);
@@ -43,8 +44,8 @@ public class XQueryURLBasedConcurrencyTest extends ContextTestSupport {
             final int threadCount = i;
             executor.execute(new Runnable() {
                 public void run() {
-                    int start = threadCount * 20;
-                    for (int i = 0; i < 20; i++) {
+                    int start = threadCount * 200;
+                    for (int i = 0; i < 200; i++) {
                         try {
                             // do some random sleep to simulate spread in user activity
                             Thread.sleep(new Random().nextInt(10));
@@ -52,17 +53,16 @@ public class XQueryURLBasedConcurrencyTest extends ContextTestSupport {
                             // ignore
                         }
                         template.sendBody("direct:start",
-                            "<mail><subject>Hey</subject><body>Hello world!</body></mail>");
+                            "<mail><subject>" + (start + i) + "</subject><body>Hello world!</body></mail>");
                     }
                 }
             });
         }
 
-        mock.assertNoDuplicates(body());
         mock.assertIsSatisfied();
-
-        System.out.println("The End");
-        System.out.println(mock.getExchanges().get(0).getIn().getBody());
+        // must use bodyAs(String.class) to force DOM to be converted to String XML
+        // for duplication detection
+        mock.assertNoDuplicates(bodyAs(String.class));
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
