@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.xquery;
 
-import java.util.Random;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,10 +25,12 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 /**
  * Concurrency test of XQuery.
  */
-public class XQueryConcurrencyTest extends ContextTestSupport {
+public class XQueryURLBasedConcurrencyTest extends ContextTestSupport {
+
+    // TODO: Work in progress
 
     public void testConcurrency() throws Exception {
-        int total = 100;
+        int total = 1;
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(total);
@@ -39,19 +39,14 @@ public class XQueryConcurrencyTest extends ContextTestSupport {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(5);
         executor.afterPropertiesSet();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 1; i++) {
             final int threadCount = i;
             executor.execute(new Runnable() {
                 public void run() {
                     int start = threadCount * 20;
-                    for (int i = 0; i < 20; i++) {
-                        try {
-                            // do some random sleep to simulate spread in user activity
-                            Thread.sleep(new Random().nextInt(100));
-                        } catch (InterruptedException e) {
-                            // ignore
-                        }
-                        template.sendBody("seda:in", "<person><id>" + (start + i) + "</id><name>James</name></person>");
+                    for (int i = 0; i < 1; i++) {
+                        template.sendBody("seda:in",
+                            "<mail><subject>" + (start + i) + "</subject><body>Hello world!</body></mail>");
                     }
                 }
             });
@@ -66,11 +61,11 @@ public class XQueryConcurrencyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // only retry at max 2 times to cather
                 // if set to 0 we can get interal Saxon errors - SENR0001
-                errorHandler(new DeadLetterChannelBuilder().maximumRedeliveries(1));
+                errorHandler(new DeadLetterChannelBuilder().maximumRedeliveries(2));
 
                 from("seda:in")
                     .thread(10)
-                    .transform().xquery("/person/id", String.class)
+                    .to("xquery:org/apache/camel/component/xquery/transform.xquery")
                     .to("mock:result");
             }
         };
