@@ -25,10 +25,10 @@ import org.apache.camel.impl.DefaultProducer;
 /**
  * @version $Revision: 1.1 $
  */
-class FlatpackProcessor extends DefaultProducer<Exchange> {
+class FlatpackProducer extends DefaultProducer<Exchange> {
     private FixedLengthEndpoint endpoint;
 
-    public FlatpackProcessor(FixedLengthEndpoint endpoint) {
+    public FlatpackProducer(FixedLengthEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
     }

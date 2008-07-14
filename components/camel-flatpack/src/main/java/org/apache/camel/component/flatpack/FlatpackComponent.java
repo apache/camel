@@ -39,6 +39,10 @@ public class FlatpackComponent extends ResourceBasedComponent {
             remaining = remaining.substring("fixed:".length());
         } else if (remaining.startsWith("delim:")) {
             remaining = remaining.substring("delim:".length());
+        } else {
+            // lets assume the rest of the string is just a name
+            // to differentiate different named delimited endpoints
+            remaining = "";
         }
         Resource resource = null;
         if (fixed) {

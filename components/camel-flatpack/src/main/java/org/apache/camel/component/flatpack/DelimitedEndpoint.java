@@ -43,9 +43,11 @@ public class DelimitedEndpoint extends FixedLengthEndpoint {
         Reader bodyReader = ExchangeHelper.getMandatoryInBody(exchange, Reader.class);
         Resource resource = getResource();
         if (resource == null) {
-            return getParserFactory().newDelimitedParser(new InputStreamReader(resource.getInputStream()), delimiter, textQualifier);
+            return getParserFactory().newDelimitedParser(bodyReader, delimiter, textQualifier);
         }
-        return createParser(resource, bodyReader);
+        else {
+            return getParserFactory().newDelimitedParser(new InputStreamReader(resource.getInputStream()), bodyReader, delimiter, textQualifier, ignoreFirstRecord);
+        }
     }
 
 
@@ -76,11 +78,4 @@ public class DelimitedEndpoint extends FixedLengthEndpoint {
         this.textQualifier = textQualifier;
     }
 
-    // Implementation methods
-    //-------------------------------------------------------------------------
-
-    @Override
-    protected Parser createParser(Resource resource, Reader bodyReader) throws IOException {
-        return getParserFactory().newDelimitedParser(new InputStreamReader(resource.getInputStream()), bodyReader, delimiter, textQualifier, ignoreFirstRecord);
-    }
 }
