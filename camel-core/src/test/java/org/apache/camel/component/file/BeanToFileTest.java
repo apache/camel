@@ -17,11 +17,12 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
