@@ -39,6 +39,7 @@
     <module>camel-bam</module>
     <module>camel-csv</module>
     <module>camel-cxf</module>
+    <module>camel-flatpack</module>
     <module>camel-ftp</module>
     <module>camel-groovy</module>
     <module>camel-hamcrest</module>
