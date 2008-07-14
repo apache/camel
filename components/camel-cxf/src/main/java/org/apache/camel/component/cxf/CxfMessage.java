@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
+import org.apache.cxf.message.MessageContentsList;
 
 /**
  * An Apache CXF {@link Message} which provides access to the underlying CXF
@@ -115,4 +116,23 @@ public class CxfMessage extends DefaultMessage {
             setMessage((Message) body);
         }
     }
+
+    public <T> T getBody(Class<T> type) {
+        if (!(MessageContentsList.class.isAssignableFrom(type)) && getBody() instanceof MessageContentsList) {
+            // if the body is the MessageContentsList then try to convert its payload
+            // to make it easier for end-users to use camel-cxf
+            MessageContentsList list = (MessageContentsList)getBody();
+            for (int i = 0; i < list.size(); i++) {
+                Object value = list.get(i);
+                T answer = getBody(type, value);
+                if (answer != null) {
+                    return answer;
+                }
+            }
+        }
+
+        // default to super
+        return super.getBody(type);
+    }
+
 }
