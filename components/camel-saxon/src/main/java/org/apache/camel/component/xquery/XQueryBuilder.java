@@ -30,8 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicBoolean;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
@@ -80,8 +78,6 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
     private ResultFormat resultsFormat = ResultFormat.DOM;
     private Properties properties = new Properties();
     private Class resultType;
-    private final Semaphore lock = new Semaphore(1);
-    private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     @Override
     public String toString() {
@@ -97,20 +93,10 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
     }
 
     public Object evaluate(Exchange exchange) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Evaluation " + expression + " for exchange: " + exchange);
+        }
         try {
-            // handle concurrency issue when initializing, allow only one to initialize
-            if (!initialized.get()) {
-                try {
-                    lock.acquire();
-                    if (!initialized.get()) {
-                        initialize();
-                        initialized.set(true);
-                    }
-                } finally {
-                    lock.release();
-                }
-            }
-
             if (resultType != null) {
                 if (resultType.equals(String.class)) {
                     return evaluateAsString(exchange);
@@ -305,7 +291,7 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
     // Properties
     // -------------------------------------------------------------------------
 
-    public XQueryExpression getExpression() throws IOException, XPathException {
+    public synchronized XQueryExpression getExpression() throws IOException, XPathException {
         if (expression == null) {
             expression = createQueryExpression(getStaticQueryContext());
             clearBuilderReferences();
@@ -313,7 +299,7 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
         return expression;
     }
 
-    public Configuration getConfiguration() {
+    public synchronized Configuration getConfiguration() {
         if (configuration == null) {
             configuration = new Configuration();
             configuration.setHostLanguage(Configuration.XQUERY);
@@ -325,7 +311,7 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
         this.configuration = configuration;
     }
 
-    public StaticQueryContext getStaticQueryContext() {
+    public synchronized StaticQueryContext getStaticQueryContext() {
         if (staticQueryContext == null) {
             staticQueryContext = new StaticQueryContext(getConfiguration());
             Set<Map.Entry<String, String>> entries = namespacePrefixes.entrySet();
@@ -441,17 +427,12 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
      * been created lets nullify references here
      */
     protected void clearBuilderReferences() {
-        // TODO: These causes problems if we null them in concurrency environments
-        //staticQueryContext = null;
-        //configuration = null;
+        staticQueryContext = null;
+        configuration = null;
     }
 
     protected boolean matches(Exchange exchange, List results) {
         return ObjectHelper.matches(results);
-    }
-
-    protected void initialize() throws XPathException, IOException {
-        getExpression();
     }
 
 }
