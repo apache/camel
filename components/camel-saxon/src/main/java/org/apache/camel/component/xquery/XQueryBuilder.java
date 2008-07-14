@@ -30,7 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
@@ -38,15 +39,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Node;
 
-import net.sf.saxon.Configuration;
-import net.sf.saxon.om.DocumentInfo;
-import net.sf.saxon.om.Item;
-import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.query.DynamicQueryContext;
-import net.sf.saxon.query.StaticQueryContext;
-import net.sf.saxon.query.XQueryExpression;
-import net.sf.saxon.trans.StaticError;
-import net.sf.saxon.trans.XPathException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
@@ -61,6 +53,15 @@ import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import net.sf.saxon.Configuration;
+import net.sf.saxon.om.DocumentInfo;
+import net.sf.saxon.om.Item;
+import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.query.DynamicQueryContext;
+import net.sf.saxon.query.StaticQueryContext;
+import net.sf.saxon.query.XQueryExpression;
+import net.sf.saxon.trans.XPathException;
 
 
 /**
@@ -79,6 +80,8 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
     private ResultFormat resultsFormat = ResultFormat.DOM;
     private Properties properties = new Properties();
     private Class resultType;
+    private final Semaphore lock = new Semaphore(1);
+    private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     @Override
     public String toString() {
@@ -95,6 +98,19 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
 
     public Object evaluate(Exchange exchange) {
         try {
+            // handle concurrency issue when initializing, allow only one to initialize
+            if (!initialized.get()) {
+                try {
+                    lock.acquire();
+                    if (!initialized.get()) {
+                        initialize();
+                        initialized.set(true);
+                    }
+                } finally {
+                    lock.release();
+                }
+            }
+
             if (resultType != null) {
                 if (resultType.equals(String.class)) {
                     return evaluateAsString(exchange);
@@ -425,11 +441,17 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
      * been created lets nullify references here
      */
     protected void clearBuilderReferences() {
-        staticQueryContext = null;
-        configuration = null;
+        // TODO: These causes problems if we null them in concurrency environments
+        //staticQueryContext = null;
+        //configuration = null;
     }
 
     protected boolean matches(Exchange exchange, List results) {
         return ObjectHelper.matches(results);
     }
+
+    protected void initialize() throws XPathException, IOException {
+        getExpression();
+    }
+
 }
