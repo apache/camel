@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
- * Concurrency test of XQuery.
+ * Concurrency test of XQuery using transform.xquery DSL.
  */
 public class XQueryConcurrencyTest extends ContextTestSupport {
 
@@ -57,8 +57,8 @@ public class XQueryConcurrencyTest extends ContextTestSupport {
             });
         }
 
-        mock.assertNoDuplicates(body());
         mock.assertIsSatisfied();
+        mock.assertNoDuplicates(body());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
