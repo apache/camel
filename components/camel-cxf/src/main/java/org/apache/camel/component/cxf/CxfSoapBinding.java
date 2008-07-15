@@ -25,16 +25,20 @@ import java.util.Map;
 
 import javax.xml.transform.Source;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 
 public final class CxfSoapBinding {
+    private static final Log LOG = LogFactory.getLog(CxfSoapBinding.class);
+
     private CxfSoapBinding() {
 
     }
-    //TODO use the type converter to do this kind of thing
+
     public static org.apache.cxf.message.Message getCxfInMessage(org.apache.camel.Exchange exchange, boolean isClient) {
         MessageImpl answer = new MessageImpl();
         org.apache.cxf.message.Exchange cxfExchange = exchange.getProperty(CxfConstants.CXF_EXCHANGE,
@@ -61,14 +65,10 @@ public final class CxfSoapBinding {
         answer.put(Message.PROTOCOL_HEADERS, getProtocolHeader(headers));
 
         Object body = message.getBody(InputStream.class);
-        if (body == null) {
-            body = message.getBody();
-        }
-        // we could do some message transform here
         if (body instanceof InputStream) {
             answer.setContent(InputStream.class, body);
         } else {
-            // the answer body is null
+            LOG.warn("Can't get right InputStream object here, the message body is " + message.getBody());
         }
 
         answer.putAll(message.getHeaders());
@@ -100,11 +100,10 @@ public final class CxfSoapBinding {
         outMessage.put(Message.PROTOCOL_HEADERS, getProtocolHeader(headers));
         // send the body back
         Object body = message.getBody(Source.class);
-        if (body == null) {
-            body = message.getBody();
-        }
         if (body instanceof Source) {
             outMessage.setContent(Source.class, body);
+        } else {
+            LOG.warn("Can't get right Source object here, the message body is " + message.getBody());
         }
         outMessage.putAll(message.getHeaders());
         return outMessage;

@@ -20,8 +20,8 @@ import java.util.Map;
 
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.cxf.message.Message;
-import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.message.MessageContentsList;
+import org.apache.cxf.message.MessageImpl;
 
 /**
  * An Apache CXF {@link Message} which provides access to the underlying CXF
