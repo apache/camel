@@ -18,6 +18,7 @@ package org.apache.camel.converter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -32,14 +33,9 @@ public class IOConverterTest extends TestCase {
     private static final byte[] TESTDATA = "My test data".getBytes();
 
     public void testToBytes() throws FileNotFoundException, IOException {
-        int fileSize = 962;
-        byte[] data = IOConverter.toBytes(new FileInputStream("src/test/resources/org/apache/camel/converter/dummy.txt"));
-        // since we set the dummy.txt svn property svn:eol-style to be native,
-        // the file size could be different when you run the test in Windows box
-        if (System.getProperty("os.name").startsWith("Windows")) {
-            fileSize = 979;
-        }
-        assertEquals("get the wrong byte size", fileSize, data.length);
+        File file = new File("src/test/resources/org/apache/camel/converter/dummy.txt");
+        byte[] data = IOConverter.toBytes(new FileInputStream(file));
+        assertEquals("get the wrong byte size", file.length(), data.length);
         assertEquals('#', (char) data[0]);
         assertEquals('!', (char) data[data.length - 1]);
     }
