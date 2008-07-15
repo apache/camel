@@ -38,6 +38,7 @@ public class ToFileRouteTest extends ContextTestSupport {
 
         // assert the file exists
         File file = new File("target/test-reports/report.txt");
+        file = file.getAbsoluteFile();
         assertTrue("The file should have been written", file.exists());
     }
 
