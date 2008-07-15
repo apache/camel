@@ -24,9 +24,10 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.language.juel.JuelExpression.el;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.jndi.JndiContext;
+
+import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
  * @version $Revision$

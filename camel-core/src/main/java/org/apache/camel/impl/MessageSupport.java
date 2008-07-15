@@ -16,10 +16,10 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.CamelContext;
 import org.apache.camel.util.UuidGenerator;
 
 /**

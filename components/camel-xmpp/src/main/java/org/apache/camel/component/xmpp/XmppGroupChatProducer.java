@@ -20,9 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smackx.muc.MultiUserChat;
 
 /**
  * @version $Revision$
@@ -63,9 +63,9 @@ public class XmppGroupChatProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
         if (chat == null) {
-        	chat = new MultiUserChat(endpoint.getConnection(), room);
-        	String nickname = this.endpoint.getNickname();
-        	chat.join(nickname != null ? nickname : this.endpoint.getUser());
+            chat = new MultiUserChat(endpoint.getConnection(), room);
+            String nickname = this.endpoint.getNickname();
+            chat.join(nickname != null ? nickname : this.endpoint.getUser());
         }
     }
 
