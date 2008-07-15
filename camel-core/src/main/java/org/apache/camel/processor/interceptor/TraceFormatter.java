@@ -43,7 +43,7 @@ public class TraceFormatter {
                 + (showExchangeId ? " Id: " + exchange.getExchangeId() : "")
                 + (showProperties ? " Properties:" + exchange.getProperties() : "")
                 + (showHeaders ? " Headers:" + in.getHeaders() : "")
-                + (showBodyType ? " BodyType:" + ObjectHelper.className(in.getBody()) : "")
+                + (showBodyType ? " BodyType:" + getBodyTypeAsString(in) : "")
                 + (showBody ? " Body:" + getBodyAsString(in) : "")
                 + (exception != null ? " Exception: " + exception : "");
     }
@@ -115,6 +115,14 @@ public class TraceFormatter {
         Object answer = in.getBody(String.class);
         if (answer == null) {
             answer = in.getBody();
+        }
+        return answer;
+    }
+
+    protected Object getBodyTypeAsString(Message message) {
+        String answer = ObjectHelper.className(message.getBody());
+        if (answer.startsWith("java.lang.")) {
+            return answer.substring(10);
         }
         return answer;
     }
