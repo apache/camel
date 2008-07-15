@@ -31,12 +31,22 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Node;
+
+import net.sf.saxon.Configuration;
+import net.sf.saxon.om.DocumentInfo;
+import net.sf.saxon.om.Item;
+import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.query.DynamicQueryContext;
+import net.sf.saxon.query.StaticQueryContext;
+import net.sf.saxon.query.XQueryExpression;
+import net.sf.saxon.trans.XPathException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -53,14 +63,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import net.sf.saxon.Configuration;
-import net.sf.saxon.om.DocumentInfo;
-import net.sf.saxon.om.Item;
-import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.query.DynamicQueryContext;
-import net.sf.saxon.query.StaticQueryContext;
-import net.sf.saxon.query.XQueryExpression;
-import net.sf.saxon.trans.XPathException;
+
 
 
 /**
@@ -175,7 +178,7 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
 
     public String evaluateAsString(Exchange exchange) throws Exception {
         initialize();
-        
+
         StringWriter buffer = new StringWriter();
         SequenceIterator iter = getExpression().iterator(createDynamicContext(exchange));
         for (Item item = iter.next(); item != null; item = iter.next()) {
@@ -442,7 +445,7 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
      * Initializes this builder - <b>Must be invoked before evaluation</b>.
      */
     protected synchronized void initialize() throws XPathException, IOException {
-        // must use synchronized for concurrency issues and only let it intialize once
+        // must use synchronized for concurrency issues and only let it initialize once
         if (!initialized.get()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Initializing XQueryBuilder " + this);

@@ -17,8 +17,8 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * Unit test that tests that the header contains the absolute path to the filename it used.

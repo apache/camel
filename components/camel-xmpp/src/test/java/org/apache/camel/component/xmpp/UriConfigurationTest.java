@@ -54,7 +54,7 @@ public class UriConfigurationTest extends TestCase {
         assertEquals("secret", xmppEndpoint.getPassword());
         assertEquals("incognito", xmppEndpoint.getNickname());
     }
-    
+
     // Changes in default resource name may break
     // clients program assuming the default "Camel" resource name
     // so it is better to avoid changing it.
@@ -64,6 +64,5 @@ public class UriConfigurationTest extends TestCase {
         XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
 
         assertEquals("Camel", xmppEndpoint.getResource());
-    	
     }
 }
