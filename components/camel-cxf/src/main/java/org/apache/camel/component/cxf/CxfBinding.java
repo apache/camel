@@ -56,29 +56,25 @@ public final class CxfBinding {
 
     public static Message createCxfMessage(CxfExchange exchange) {
         Message answer = exchange.getInMessage();
-
-        // CXF uses StAX which is based on the stream API to parse the XML,
-        // so the CXF transport is also based on the stream API.
-        // And the interceptors are also based on the stream API,
-        // so let's use an InputStream to host the CXF on wire message.
-
         CxfMessage in = exchange.getIn();
-        Object body = in.getBody(InputStream.class);
-        if (body == null) {
-            body = in.getBody();
-        }
-        if (body instanceof InputStream) {
-            answer.setContent(InputStream.class, body);
-            // we need copy context
-        } else if (body instanceof List) {
+        // Check the body if the POJO parameter list first
+        Object body = in.getBody(List.class);
+        if (body instanceof List) {
             // just set the operation's parameter
             answer.setContent(List.class, body);
             // just set the method name
             answer.put(CxfConstants.OPERATION_NAME, (String)in.getHeader(CxfConstants.OPERATION_NAME));
-            answer.put(CxfConstants.OPERATION_NAMESPACE, (String)in
-                .getHeader(CxfConstants.OPERATION_NAMESPACE));
+            answer.put(CxfConstants.OPERATION_NAMESPACE, (String)in.getHeader(CxfConstants.OPERATION_NAMESPACE));
+        } else {
+            // CXF uses StAX which is based on the stream API to parse the XML,
+            // so the CXF transport is also based on the stream API.
+            // And the interceptors are also based on the stream API,
+            // so let's use an InputStream to host the CXF on wire message.
+            body = in.getBody(InputStream.class);
+            if (body instanceof InputStream) {
+                answer.setContent(InputStream.class, body);
+            }
         }
-
         return answer;
     }
 
