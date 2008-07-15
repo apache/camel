@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,15 +16,15 @@
  */
 package org.apache.camel.component.flatpack;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+
 import net.sf.flatpack.Parser;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.util.ExchangeHelper;
 import org.springframework.core.io.Resource;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 
 /**
  * @version $Revision: 1.1 $
@@ -44,8 +43,7 @@ public class DelimitedEndpoint extends FixedLengthEndpoint {
         Resource resource = getResource();
         if (resource == null) {
             return getParserFactory().newDelimitedParser(bodyReader, delimiter, textQualifier);
-        }
-        else {
+        } else {
             return getParserFactory().newDelimitedParser(new InputStreamReader(resource.getInputStream()), bodyReader, delimiter, textQualifier, ignoreFirstRecord);
         }
     }

@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.flatpack;
 
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.component.ResourceBasedComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.core.io.Resource;
-
-import java.util.Map;
 
 /**
  * A <a href="http://flatpack.sourceforge.net/">Flatpack Component</a>
