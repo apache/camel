@@ -115,6 +115,12 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
             throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: no ? marker however the uri "
                 + "has & parameter separators. Check the uri if its missing a ? marker.");
         }
+
+        // check for uri containing double && markers
+        if (uri.contains("&&")) {
+            throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: Double && marker found. "
+                + "Check the uri and remove the duplicate & marker.");
+        }
     }
 
     public CamelContext getCamelContext() {

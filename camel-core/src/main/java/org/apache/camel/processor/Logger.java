@@ -233,4 +233,8 @@ public class Logger implements Processor {
     public void setLevel(LoggingLevel level) {
         this.level = level;
     }
+
+    public void setFormatter(ExchangeFormatter formatter) {
+        this.formatter = formatter;
+    }
 }

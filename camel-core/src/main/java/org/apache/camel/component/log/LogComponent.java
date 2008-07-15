@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
@@ -43,7 +44,12 @@ public class LogComponent extends DefaultComponent<Exchange> {
         if (groupSize != null) {
             logger = new ThroughputLogger(remaining, level, ObjectConverter.toInteger(groupSize));
         } else {
-            logger = new Logger(remaining, level);
+            LogFormatter formatter = new LogFormatter();
+            IntrospectionSupport.setProperties(formatter, parameters);
+
+            logger = new Logger(remaining);
+            logger.setLevel(level);
+            logger.setFormatter(formatter);
         }
 
         return new ProcessorEndpoint(uri, this, logger);
