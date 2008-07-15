@@ -68,7 +68,7 @@
     <junit-version>3.8.2</junit-version>
     <testng-version>5.7</testng-version>
     <hamcrest-version>1.1</hamcrest-version>
-    <saxon-version>9.0</saxon-version>
+    <saxon-version>9.1.0.1</saxon-version>
 
     <!-- Repositories -->
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
