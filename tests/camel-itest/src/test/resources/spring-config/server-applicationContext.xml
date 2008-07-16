@@ -29,8 +29,7 @@
 	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-extension-camel.xml" />
 
-	<import
-		resource="classpath:spring-config/jms-applicationContext.xml" />
+	<import	resource="classpath:spring-config/jms-applicationContext.xml" />
 
     <broker:broker useJmx="false" persistent="false" brokerName="localhost">
         <broker:transportConnectors>
@@ -38,22 +37,12 @@
         </broker:transportConnectors>
     </broker:broker>
 
-	<bean class="org.apache.camel.component.cxf.transport.CamelTransportFactory" lazy-init="true">
-        <property name="bus" ref="cxf"/>
-		<property name="camelContext" ref="camelContext"/>
-        <property name="transportIds">
-            <list>
-              <value>http://cxf.apache.org/transports/camel</value>
-            </list>
-        </property>
-    </bean>
-
 	<endpoint xmlns="http://cxf.apache.org/jaxws"
 		id="org.apache.camel.itest.customerrelations.CustomerServiceV1"
 		xmlns:customer="http://camel.apache.org/itest/customerrelations"
 		serviceName="customer:CustomerServiceV1"
 		endpointName="customer:CustomerServiceV1CamelPort"
-		address="camel://direct:org.apache.camel.itest.customerrelations.CustomerServiceV1"
+		address="camel://direct:serverInbound"
 		implementor="org.apache.camel.itest.customerrelations.CustomerServiceV1Impl">
 		<features>
 			<!-- Enables logging of SOAP messages. -->
@@ -73,7 +62,7 @@
 			<from
 				uri="jms://org.apache.camel.itest.customerrelations.CustomerServiceV1" />
 			<to
-				uri="direct:org.apache.camel.itest.customerrelations.CustomerServiceV1" />
+				uri="direct:serverInbound" />
 		</route>
 	</camelContext>
 </beans>
