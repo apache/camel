@@ -17,7 +17,6 @@
 package org.apache.camel.component.spring.integration.adapter;
 
 import junit.framework.TestCase;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.endpoint.HandlerEndpoint;
@@ -46,10 +45,10 @@ public class ConfigurationTest extends TestCase {
             new ClassPathXmlApplicationContext(new String[] {"/org/apache/camel/component/spring/integration/adapter/CamelTarget.xml"});
         HandlerEndpoint handlerEndpointA = (HandlerEndpoint)context.getBean("camelTargetA");
         assertNotNull(handlerEndpointA);
-        assertEquals("Subscript the wrong channel name", handlerEndpointA.getSubscription().getChannelName(), "channelA");
+        assertEquals("Subscript the wrong channel name", handlerEndpointA.getInputChannelName(), "channelA");
         HandlerEndpoint handlerEndpointB = (HandlerEndpoint)context.getBean("camelTargetA");
         assertNotNull(handlerEndpointB);
-        assertEquals("Subscript the wrong channel name", handlerEndpointB.getSubscription().getChannelName(), "channelA");
+        assertEquals("Subscript the wrong channel name", handlerEndpointB.getInputChannelName(), "channelA");
         context.destroy();
     }
 }

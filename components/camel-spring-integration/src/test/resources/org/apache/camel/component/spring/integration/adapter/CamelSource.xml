@@ -39,7 +39,7 @@
 
 	<handler-endpoint input-channel="channelB"
 	          output-channel="channelC"
-	          handler="helloService"
+	          ref="helloService"
 	          method="sayHello"/>
 
    <beans:bean id="helloService" class="org.apache.camel.component.spring.integration.HelloWorldService"/>
