@@ -37,7 +37,7 @@ public class FromFtpToBinarySampleTest extends ContextTestSupport {
 
                 // from the given FTP server we poll (= download) all the files
                 // from the public/reports folder as BINARY types and store this as files
-                // in a local directory. Camle will use the filenames from the FTPServer
+                // in a local directory. Camel will use the filenames from the FTPServer
 
                 // notice that the FTPConsumer properties must be prefixed with "consumer." in the URL
                 // the delay parameter is from the FileConsumer component so we should use consumer.delay as
