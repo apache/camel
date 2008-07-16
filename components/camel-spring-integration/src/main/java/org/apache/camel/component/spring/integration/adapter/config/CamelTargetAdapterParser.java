@@ -28,7 +28,6 @@ import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.integration.ConfigurationException;
 import org.springframework.integration.endpoint.HandlerEndpoint;
-import org.springframework.integration.scheduling.Subscription;
 import org.springframework.util.StringUtils;
 
 /**
@@ -78,8 +77,7 @@ public class CamelTargetAdapterParser extends AbstractCamelContextBeanDefinition
         String adapterBeanName = parserContext.getReaderContext().generateBeanName(adapterDefBuilder.getBeanDefinition());
         parserContext.registerBeanComponent(new BeanComponentDefinition(adapterDefBuilder.getBeanDefinition(), adapterBeanName));
         builder.addConstructorArgReference(adapterBeanName);
-        Subscription subscription = new Subscription(requestChannel);
-        builder.addPropertyValue("subscription", subscription);
+        builder.addPropertyValue("inputChannelName", requestChannel);
         if (StringUtils.hasText(replyChannel)) {
             builder.addPropertyValue("outputChannelName", replyChannel);
         }

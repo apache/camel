@@ -13,7 +13,7 @@
 
   <properties>
 	<camel.osgi.export.pkg>org.apache.camel.component.spring.integration.*</camel.osgi.export.pkg>
-    <spring-integration-version>1.0.0.M4</spring-integration-version>
+    <spring-integration-version>1.0.0.M5</spring-integration-version>
   </properties>
 
   <version>1.4-SNAPSHOT</version>
@@ -96,11 +96,23 @@
       <exclusions>
         <exclusion>
           <groupId>org.springframework</groupId>
-          <artifactId>spring-context</artifactId>
+          <artifactId>org.springframework.aop</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.springframework</groupId>
-          <artifactId>spring-aop</artifactId>
+          <artifactId>org.springframework.beans</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>org.springframework.core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>org.springframework.context</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>org.springframework.transaction</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
