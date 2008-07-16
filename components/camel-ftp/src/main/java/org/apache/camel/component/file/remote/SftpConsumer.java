@@ -126,7 +126,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         }
     }
 
-    protected String getFullFileName(ChannelSftp.LsEntry sftpFile) throws IOException {
+    protected String getFullFileName(ChannelSftp.LsEntry sftpFile) throws IOException, SftpException {
         return channel.pwd() + "/" + sftpFile.getFilename();
     }
 
