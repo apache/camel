@@ -22,22 +22,11 @@
 		http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
 		http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd">
 
-		<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-extension-camel.xml" />
-
-	<import
-		resource="classpath:spring-config/jms-applicationContext.xml" />
-
-	<bean class="org.apache.camel.component.cxf.transport.CamelTransportFactory" lazy-init="true">
-        <property name="bus" ref="cxf"/>
-		<property name="camelContext" ref="camelContext"/>
-        <property name="transportIds">
-            <list>
-              <value>http://cxf.apache.org/transports/camel</value>
-            </list>
-        </property>
-    </bean>
+	
+	<import resource="classpath:spring-config/jms-applicationContext.xml" />
 
 	<client id="org.apache.camel.itest.customerrelations.CustomerServiceV1"
 		xmlns="http://cxf.apache.org/jaxws"
@@ -45,7 +34,8 @@
 		serviceName="customer:CustomerServiceV1"
 		endpointName="customer:CustomerServiceV1CamelPort"
 		serviceClass="org.apache.camel.itest.customerrelations.CustomerServiceV1"
-		wsdlLocation="./src/main/resources/wsdl/CustomerService-1.0.0.wsdl">
+		address="camel://direct:clientOutbound">
+
 		<features>
 			<!-- Enables logging of SOAP messages. -->
 			<logging xmlns="http://cxf.apache.org/core" />
@@ -61,7 +51,7 @@
 		xmlns="http://activemq.apache.org/camel/schema/spring">
 		<jmxAgent id="agent" disabled="true"/>
 		<route>
-			<from uri="direct:org.apache.camel.itest.customerrelations.CustomerServiceV1" />
+			<from uri="direct:clientOutbound" />
 			<to
 				uri="jms://org.apache.camel.itest.customerrelations.CustomerServiceV1" />
 		</route>

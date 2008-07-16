@@ -16,7 +16,19 @@
  */
 package org.apache.camel.itest.customerrelations;
 
+import java.lang.reflect.Proxy;
+import java.util.List;
+import java.util.Map;
+
 import junit.framework.TestCase;
+
+import org.apache.cxf.helpers.CastUtils;
+import org.apache.cxf.interceptor.Fault;
+import org.apache.cxf.jaxws.EndpointImpl;
+import org.apache.cxf.jaxws.JaxWsClientProxy;
+import org.apache.cxf.message.Message;
+import org.apache.cxf.phase.AbstractPhaseInterceptor;
+import org.apache.cxf.phase.Phase;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CustomerServicesTest extends TestCase {
@@ -29,10 +41,19 @@ public class CustomerServicesTest extends TestCase {
                 new String[] {"spring-config/server-applicationContext.xml"});
             Object server = serverContext.getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1");
             assertNotNull("We should get server here", server);
-
+            
+            // add an interceptor to verify headers
+            EndpointImpl.class.cast(server).getServer().getEndpoint().getInInterceptors()
+                .add(new HeaderChecker(Phase.PRE_STREAM));
+            
             clientContext =  new ClassPathXmlApplicationContext(
                 new String[] {"spring-config/client-applicationContext.xml"});
             CustomerServiceV1 customerService = (CustomerServiceV1) clientContext.getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1");
+            
+            // add an interceptor to verify headers
+            JaxWsClientProxy.class.cast(Proxy.getInvocationHandler(customerService))
+                .getClient().getInInterceptors().add(new HeaderChecker(Phase.PRE_STREAM));
+            
             Customer customer = customerService.getCustomer("12345");
             assertNotNull("We should get Customer here", customer);
         } finally {
@@ -44,5 +65,17 @@ public class CustomerServicesTest extends TestCase {
             }
         }
     }
-
+    
+    class HeaderChecker extends AbstractPhaseInterceptor<Message> {
+        public HeaderChecker(String phase) {
+            super(phase);
+        }
+        
+        public void handleMessage(Message message) throws Fault {
+            Map<String, List<String>> headers 
+                = CastUtils.cast((Map<?, ?>)message.get(Message.PROTOCOL_HEADERS));
+            assertNotNull(headers);
+            assertEquals("\"getCustomer\"", headers.get("SOAPAction").get(0));
+        }   
+    }
 }
