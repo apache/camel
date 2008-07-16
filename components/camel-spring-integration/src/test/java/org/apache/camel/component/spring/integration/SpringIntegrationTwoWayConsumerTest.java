@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.spring.integration;
 
+import java.util.Map;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -27,6 +29,12 @@ import org.springframework.integration.message.StringMessage;
 
 public class SpringIntegrationTwoWayConsumerTest extends SpringTestSupport {
     private static final String MESSAGE_BODY = "Request message";
+    public void testDelyConfiguration() throws Exception {
+        SpringIntegrationEndpoint endpoint = (SpringIntegrationEndpoint)resolveMandatoryEndpoint("spring-integration://requestChannel?outputChannel=responseChannel&inOut=true&consumer.delay=5000");
+        Map map = endpoint.getConsumerProperties();
+        assertEquals("There should have a delay property ", map.size(), 1);
+        assertEquals("The delay value is not right", map.get("delay"), "5000");
+    }
 
     public void testSendingTwoWayMessage() throws Exception {
 
