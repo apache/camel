@@ -75,8 +75,11 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             if (endpoint.getConfiguration().isDirectory()) {
                 pollDirectory(fileName);
             } else {
-                client.changeWorkingDirectory(fileName.substring(0, fileName.lastIndexOf('/')));
-                final FTPFile[] files = client.listFiles(fileName.substring(fileName.lastIndexOf('/') + 1));
+                int index = fileName.lastIndexOf('/');
+                if (index > -1) {
+                    client.changeWorkingDirectory(fileName.substring(0, index));
+                }
+                final FTPFile[] files = client.listFiles(fileName.substring(index + 1));
                 pollFile(files[0]);
             }
             lastPollTime = System.currentTimeMillis();
