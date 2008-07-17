@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @author Martin Krasser
  * 
- * @version $Revision
+ * @version $Revision$
  */
 public class SequenceSender extends Thread {
 
@@ -45,8 +45,7 @@ public class SequenceSender extends Thread {
     /**
      * Creates a new {@link SequenceSender} thread.
      * 
-     * @param processor
-     *            the processor to send re-ordered {@link Exchange}s.
+     * @param processor the processor to send re-ordered {@link Exchange}s.
      */
     public SequenceSender(Processor processor) {
         this.processor = processor;
@@ -55,8 +54,7 @@ public class SequenceSender extends Thread {
     /**
      * Sets the {@link BlockingQueue} to take messages from.
      * 
-     * @param queue
-     *            the {@link BlockingQueue} to take messages from.
+     * @param queue the {@link BlockingQueue} to take messages from.
      */
     public void setQueue(BlockingQueue<Exchange> queue) {
         this.queue = queue;
@@ -67,15 +65,15 @@ public class SequenceSender extends Thread {
             try {
                 Exchange exchange = queue.take();
                 if (exchange == STOP) {
-                    LOG.info("exit processing loop after cancellation");
+                    LOG.info("Exit processing loop after cancellation");
                     return;
                 }
                 processor.process(exchange);
             } catch (InterruptedException e) {
-                LOG.info("exit processing loop after interrupt");
+                LOG.info("Exit processing loop after interrupt");
                 return;
             } catch (Exception e) {
-                LOG.warn("exception during exchange processing");
+                LOG.warn("Exception during exchange processing: " + e.getMessage());
             }
         }
     }
@@ -95,7 +93,7 @@ public class SequenceSender extends Thread {
     private static InvocationHandler createStopHandler() {
         return new InvocationHandler() {
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                throw new RuntimeException("illegal method invocation on stop signal");
+                throw new RuntimeException("Illegal method invocation on stop signal");
             }
         };
     }

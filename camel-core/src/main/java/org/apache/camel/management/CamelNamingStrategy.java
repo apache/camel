@@ -46,7 +46,6 @@ public class CamelNamingStrategy {
     public static final String TYPE_ROUTE = "route";
     public static final String TYPE_SERVICE = "service";
     public static final String KEY_NODE_ID = "nodeid";
-    public static final String KEY_INSTANCE = "instance";
 
     protected String domainName;
     protected String hostName = "locahost";
