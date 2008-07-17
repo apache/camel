@@ -94,10 +94,27 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public DefaultCamelContext() {
         name = NAME_PREFIX + ++nameSuffix;
+
         if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
+            LOG.info("JMX is disabled. Using DefaultLifecycleStrategy.");
             lifecycleStrategy = new DefaultLifecycleStrategy();
         } else {
-            lifecycleStrategy = new InstrumentationLifecycleStrategy();
+            try {
+                LOG.info("JMX enabled. Using InstrumentationLifecycleStrategy.");
+                lifecycleStrategy = new InstrumentationLifecycleStrategy();
+            } catch (NoClassDefFoundError e) {
+                // if we can't instantiate the JMX enabled strategy then fallback to default
+                // could be because of missing .jars on the classpath
+                LOG.warn("Could not find needed classes for JMX lifecycle strategy."
+                    + " Are you missing spring-context.jar by any chance? NoClassDefFoundError: " + e.getMessage());
+            } catch (Exception e) {
+                LOG.warn("Could not create JMX lifecycle strategy, caused by: " + e.getMessage());
+            }
+            // if not created then fallback to default
+            if (lifecycleStrategy == null) {
+                LOG.warn("Not possible to use JMX lifecycle strategy. Using DefaultLifecycleStrategy instead.");
+                lifecycleStrategy = new DefaultLifecycleStrategy();
+            }
         }
     }
 
