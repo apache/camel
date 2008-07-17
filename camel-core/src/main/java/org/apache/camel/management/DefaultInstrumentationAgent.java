@@ -219,24 +219,36 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
     private void registerMBeanWithServer(Object obj, ObjectName name, boolean forceRegistration)
         throws JMException {
 
-        ObjectInstance instance = null;
-        try {
-            instance = server.registerMBean(obj, name);
-        } catch (InstanceAlreadyExistsException e) {
+        // have we already registered the bean, there can be shared instances in the camel routes
+        boolean exists = server.isRegistered(name);
+        if (exists) {
             if (forceRegistration) {
+                LOG.info("ForceRegistration enabled, unregistering existing MBean");
                 server.unregisterMBean(name);
-                instance = server.registerMBean(obj, name);
             } else {
-                throw e;
+                // okay ignore we do not want to force it and it could be a shared instance
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("MBean already registered with objectname: " + name);
+                }
             }
         }
 
+        // register bean if by force or not exsists
+        ObjectInstance instance = null;
+        if (forceRegistration || !exists) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Registering MBean with objectname: " + name);
+            }
+            instance = server.registerMBean(obj, name);
+        }
+
         if (instance != null) {
+            ObjectName registeredName = instance.getObjectName();
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Registered objectname " + instance.getObjectName());
+                LOG.debug("Registered MBean with objectname: " + registeredName);
             }
             
-            mbeans.add(instance.getObjectName());
+            mbeans.add(registeredName);
         }
     }
 
@@ -274,7 +286,7 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
                 createJmxConnector(hostName);
             }
         } catch (IOException ioe) {
-            LOG.warn("Could not create and start jmx connector.", ioe);
+            LOG.warn("Could not create and start JMX connector.", ioe);
         }
     }
 
@@ -308,7 +320,7 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
         try {
             LocateRegistry.createRegistry(registryPort);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Created RMI regisry on port " + registryPort);
+                LOG.debug("Created JMXConnector RMI regisry on port " + registryPort);
             }
         } catch (RemoteException ex) {
             // The registry may had been created, we could get the registry instead
@@ -332,13 +344,13 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
                 try {
                     cs.start();
                 } catch (IOException ioe) {
-                    LOG.warn("Could not start jmx connector thread.", ioe);
+                    LOG.warn("Could not start JMXConnector thread.", ioe);
                 }
             }
         };
-        connectorThread.setName("JMX Connector Thread [" + url + "]");
+        connectorThread.setName("Camel JMX Connector Thread [" + url + "]");
         connectorThread.start();
-        LOG.info("JMX connector thread started on " + url);
+        LOG.info("JMX Connector thread started and listening at: " + url);
     }
 
     public String getMBeanObjectDomainName() {
