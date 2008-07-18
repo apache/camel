@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.httpclient.HttpConnectionManager;
@@ -40,8 +41,6 @@ public class HttpComponent extends DefaultComponent<HttpExchange> {
 
     /**
      * Connects the URL specified on the endpoint to the specified processor.
-     *
-     * @throws Exception
      */
     public void connect(HttpConsumer consumer) throws Exception {
     }
@@ -49,8 +48,6 @@ public class HttpComponent extends DefaultComponent<HttpExchange> {
     /**
      * Disconnects the URL specified on the endpoint from the specified
      * processor.
-     *
-     * @throws Exception
      */
     public void disconnect(HttpConsumer consumer) throws Exception {
     }
@@ -76,7 +73,19 @@ public class HttpComponent extends DefaultComponent<HttpExchange> {
         throws Exception {
         HttpClientParams params = new HttpClientParams();
         IntrospectionSupport.setProperties(params, parameters, "httpClient.");
-        return new HttpEndpoint(uri, this, new URI(uri), params, httpConnectionManager, httpClientConfigurer);
+
+        // validate http uri that end-user did not duplicate the http part that can be a common error
+        URI httpUri = new URI(uri);
+        String part = httpUri.getSchemeSpecificPart();
+        if (part != null) {
+            part = part.toLowerCase();
+            if (part.startsWith("//http://") || part.startsWith("//https://")) {
+                throw new ResolveEndpointFailedException(uri,
+                    "The uri part is not configured correctly. You have duplicated the http(s) protocol.");
+            }
+        }
+
+        return new HttpEndpoint(uri, this, httpUri, params, httpConnectionManager, httpClientConfigurer);
     }
 
     @Override

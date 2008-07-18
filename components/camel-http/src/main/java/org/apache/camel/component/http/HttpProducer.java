@@ -17,8 +17,6 @@
 package org.apache.camel.component.http;
 
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -28,6 +26,7 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
+import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
 import org.apache.camel.component.http.helper.LoadingByteArrayOutputStream;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.httpclient.Header;
@@ -37,9 +36,6 @@ import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.io.IOUtils;
-
-
-import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
 
 /**
  * @version $Revision$
@@ -111,6 +107,7 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
 
         RequestEntity requestEntity = createRequestEntity(exchange);
         Object m = exchange.getIn().getHeader(HTTP_METHOD);
+        // TODO: Damm this is not readable code (nested ? - please dont)
         HttpMethods ms = m instanceof HttpMethods
             ? (HttpMethods)m : HttpMethods.valueOf(m == null
                                                        ? requestEntity == null
