@@ -18,7 +18,7 @@ package org.apache.camel.scala.dsl;
  
 import org.w3c.dom.Document
 import languages.XPath
-import scala.builder.RouteBuilder
+import scala.dsl.builder.RouteBuilder
 
 /**
  * Test case for Splitter

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.scala.dsl;
  
-import scala.builder.RouteBuilder
+import scala.dsl.builder.RouteBuilder
 
 class PipelineAndMulticastTest extends ScalaTestSupport {
 

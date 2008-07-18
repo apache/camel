@@ -17,9 +17,9 @@
 package org.apache.camel.scala.dsl;
 
 import org.apache.camel.model.ChoiceType
-import org.apache.camel.scala.builder.RouteBuilder
+import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-class SChoiceType(val target: ChoiceType)(implicit val builder: RouteBuilder) extends ScalaDsl with Wrapper[ChoiceType] {
+class SChoiceType(val target: ChoiceType)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[ChoiceType] {
   
   val unwrap = target
   
@@ -29,7 +29,7 @@ class SChoiceType(val target: ChoiceType)(implicit val builder: RouteBuilder) ex
   }
   
   override def when(filter: Exchange => Boolean) = {
-    target.when(new WhenPredicate(filter))
+    target.when(new ScalaPredicate(filter))
     this
   }
 

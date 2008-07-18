@@ -17,12 +17,12 @@
 package org.apache.camel.scala.dsl;
 
 import org.apache.camel.model.ThrottlerType
-import org.apache.camel.scala.builder.RouteBuilder
+import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
  * Scala enrichment for Camel's ThrottlerType
  */
-class SThrottlerType(val target: ThrottlerType)(implicit val builder: RouteBuilder) extends ScalaDsl with Wrapper[ThrottlerType] {
+class SThrottlerType(val target: ThrottlerType)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[ThrottlerType] {
  
   val unwrap = target
   

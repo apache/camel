@@ -17,12 +17,12 @@
 package org.apache.camel.scala.dsl;
 
 import org.apache.camel.model.DelayerType
-import org.apache.camel.scala.builder.RouteBuilder
+import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
  * Scala enrichment for Camel's DelayerType
  */
-class SDelayerType(val target: DelayerType)(implicit val builder: RouteBuilder) extends ScalaDsl with Wrapper[DelayerType] {
+class SDelayerType(val target: DelayerType)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[DelayerType] {
  
   val unwrap = target
 
