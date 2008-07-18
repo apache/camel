@@ -16,7 +16,7 @@
  */
 package org.apache.camel.scala.dsl;
 
-import scala.builder.RouteBuilder
+import scala.dsl.builder.RouteBuilder
 import scala.test.{Adult, Toddler, Envelope}
  
 class RecipientListRouteTest extends ScalaTestSupport {

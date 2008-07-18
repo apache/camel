@@ -14,18 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
-import org.apache.camel.Predicate
-
-class WhenPredicate(function: Exchange => Boolean) extends Predicate[Exchange]{
-
-  override def matches(exchange: Exchange) = {
-    function(exchange)
-  }
-
-  override def assertMatches(text: String, exchange: Exchange) = {
-    if (!matches(exchange)) throw new AssertionError(text + " : " + exchange + " doesn't match Scala function")
-  }
+/**
+ * Defines the 'keywords' in our Scala DSL
+ */
+trait DSL {
+  
+  def choice : SChoiceType
+  def -->(uris: String*) : DSL
+  def to(uris: String*) : DSL
+  def when(filter: Exchange => Boolean) : SChoiceType
+  def as[Target](toType: Class[Target]) : DSL
+  def recipients(expression: Exchange => Any) : DSL
+  def splitter(expression: Exchange => Any) : SSplitterType
+  def otherwise : DSL
+  def multicast : SMulticastType
+  def process(function: Exchange => Unit) : DSL
+  def throttle(frequency: Frequency) : SThrottlerType
+  def loadbalance : SLoadBalanceType
+  def delay(delay: Period) : SDelayerType
+  def resequence(expression: Exchange => Any) : SResequencerType
 
 }

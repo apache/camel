@@ -20,9 +20,9 @@ import org.apache.camel.model.ProcessorType
 import org.apache.camel.model.FilterType
 import org.apache.camel.model.ChoiceType
 
-import org.apache.camel.scala.builder.RouteBuilder
+import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-trait ScalaDsl {
+abstract class SAbstractType extends DSL {
   
   val target : ProcessorType[T] forSome {type T}
   implicit val builder: RouteBuilder
@@ -52,7 +52,7 @@ trait ScalaDsl {
     new SSplitterType(target.splitter(expression))
     
   def recipients(expression: Exchange => Any) = 
-    target.recipientList(expression)
+    new SProcessorType(target.recipientList(expression).asInstanceOf[ProcessorType[P] forSome {type P}])
 
   def apply(block: => Unit) = {
     builder.build(this, block)

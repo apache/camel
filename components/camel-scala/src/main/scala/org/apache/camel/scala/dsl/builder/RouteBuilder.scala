@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.builder;
+package org.apache.camel.scala.dsl.builder;
 
 import org.apache.camel.model.ProcessorType
 import org.apache.camel.model.ChoiceType
@@ -24,15 +24,15 @@ import collection.mutable.Stack
 import org.apache.camel.scala.dsl._
 
 /**
-  Scala RouteBuilder implementation
-  */
-class RouteBuilder extends Preamble {
+ * Scala RouteBuilder implementation
+ */
+class RouteBuilder extends Preamble with DSL {
 
   val builder = new org.apache.camel.builder.RouteBuilder {
     override def configure() =  {}
   }
 
-  val stack = new Stack[ScalaDsl];
+  val stack = new Stack[DSL];
 
   implicit def stringToRoute(target: String) : SRouteType = new SRouteType(builder.from(target), this)  
   implicit def unwrap[W](wrapper: Wrapper[W]) = wrapper.unwrap
@@ -42,7 +42,7 @@ class RouteBuilder extends Preamble {
     this
   }
 
-  def build(context: ScalaDsl, block: => Unit) {
+  def build(context: DSL, block: => Unit) {
     stack.push(context)
     block
     stack.pop()

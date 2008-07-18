@@ -14,21 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala;
+package org.apache.camel.scala.dsl.builder;
+ 
+import org.apache.camel.scala.dsl.Wrapper
+import org.apache.camel.scala.test.{Person,Adult}
+import junit.framework.TestCase
+import junit.framework.Assert._
 
-import org.apache.camel.component.mock.MockEndpoint
+class RouteBuilderUnwrapTest extends TestCase {
 
-class RichTestUri(uri: String, support: ScalaTestSupport) {
-
-  def !(messages: Any*) = {
-    messages.foreach(support.getTemplate().sendBody(uri, _))
+  def builder = new RouteBuilder {
+    
+    val person = new PersonWrapper
+    
+    def testUnwrap = {
+      //access the wrapper
+      assertEquals("Apache Camel", person.vote)
+      
+      //unwrap when necessary
+      assertTrue(person.canVote)
+    }
+    
   }
 
-  def expect(block: MockEndpoint => Unit) = {
-    val mock = support.mock(uri)
-    block(mock)
+  
+  def testUnwrapWhenNecessary() = builder.testUnwrap
+  
+  class PersonWrapper extends Wrapper[Person] {
+    
+    val person = new Adult("Gert")
+    val unwrap = person
+    
+    def vote = "Apache Camel"
+    
   }
-
-  def assert() = support.mock(uri).assertIsSatisfied()
-
+  
 }

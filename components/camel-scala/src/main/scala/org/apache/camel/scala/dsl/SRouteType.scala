@@ -17,9 +17,9 @@
 package org.apache.camel.scala.dsl;
 
 import org.apache.camel.model.RouteType
-import org.apache.camel.scala.builder.RouteBuilder
+import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-class SRouteType(val target: RouteType, val builder: RouteBuilder) extends ScalaDsl with Wrapper[RouteType] {
+class SRouteType(val target: RouteType, val builder: RouteBuilder) extends SAbstractType with Wrapper[RouteType] {
  
   val unwrap = target
   

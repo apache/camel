@@ -14,32 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
- 
-import scala.dsl.builder.RouteBuilder
+package org.apache.camel.scala.dsl.builder;
 
-class ExplicitMulticastTest extends ScalaTestSupport {
+trait RouteBuilderSupport {
 
-  def testExplicitMulticast = {
-    "mock:a" expect { _.count = 3 }
-    "mock:b" expect { _.count = 3 }
-    "mock:c" expect { _.count = 3 }
-    "direct:a" ! ("<hello/>", "<hallo/>", "<bonjour/>")
-    "mock:a" assert()
-    "mock:b" assert()
-    "mock:c" assert()
-  }
-
-  val builder = new RouteBuilder {
-    // START SNIPPET: multicast
-    "direct:a" ==> {
-      multicast {
-        to ("mock:a")
-        to ("mock:b")
-        to ("mock:c")
-      }
-    }
-    // END SNIPPET: multicast
-  }
+  implicit def scalaToJavaBuilder(scalaBuilder: RouteBuilder) = scalaBuilder.builder
 
 }

@@ -14,10 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.builder;
+package org.apache.camel.scala.dsl;
 
-trait RouteBuilderSupport {
+import org.apache.camel.Predicate
 
-  implicit def scalaToJavaBuilder(scalaBuilder: org.apache.camel.scala.builder.RouteBuilder) = scalaBuilder.builder
+class ScalaPredicate(function: Exchange => Boolean) extends Predicate[Exchange]{
+
+  override def matches(exchange: Exchange) = {
+    function(exchange)
+  }
+
+  override def assertMatches(text: String, exchange: Exchange) = {
+    if (!matches(exchange)) throw new AssertionError(text + " : " + exchange + " doesn't match Scala function")
+  }
 
 }
