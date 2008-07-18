@@ -121,7 +121,7 @@ public class TraceFormatter {
 
     protected Object getBodyTypeAsString(Message message) {
         String answer = ObjectHelper.className(message.getBody());
-        if (answer.startsWith("java.lang.")) {
+        if (answer != null && answer.startsWith("java.lang.")) {
             return answer.substring(10);
         }
         return answer;
