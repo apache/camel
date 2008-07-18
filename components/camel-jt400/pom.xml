@@ -27,7 +27,7 @@
   </parent>
   <artifactId>camel-jt400</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: Java Toolbox for AS/400 (jt400)</name>
+  <name>Camel :: Java Toolbox for AS/400</name>
   <description>Camel AS/400 support</description>
 
   <properties>
