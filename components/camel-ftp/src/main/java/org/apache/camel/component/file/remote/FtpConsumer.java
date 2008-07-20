@@ -113,6 +113,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 LOG.warn("Unsupported type of FTPFile: " + ftpFile + " not a file or directory");
             }
         }
+        client.changeToParentDirectory();
     }
 
     protected String getFullFileName(FTPFile ftpFile) throws IOException {
