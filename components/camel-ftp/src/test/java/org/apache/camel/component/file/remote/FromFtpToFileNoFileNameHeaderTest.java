@@ -31,7 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFtpToFileNoFileNameHeaderTest extends FtpServerTestSupport {
 
-    private String port = "20015";
+    private String port = "20017";
     private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp3/camel?password=admin&binary=false";
 
     public void testCorrectFilename() throws Exception {
