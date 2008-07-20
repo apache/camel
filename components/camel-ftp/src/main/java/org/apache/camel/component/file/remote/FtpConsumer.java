@@ -100,6 +100,8 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     }
 
     protected void pollDirectory(String dir) throws Exception {
+        String currentDir = client.printWorkingDirectory();
+
         client.changeWorkingDirectory(dir);
         for (FTPFile ftpFile : client.listFiles()) {
             if (ftpFile.isFile()) {
@@ -113,7 +115,9 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 LOG.warn("Unsupported type of FTPFile: " + ftpFile + " not a file or directory");
             }
         }
-        client.changeToParentDirectory();
+
+        // change back to original current dir
+        client.changeWorkingDirectory(currentDir);
     }
 
     protected String getFullFileName(FTPFile ftpFile) throws IOException {

@@ -112,6 +112,8 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     }
 
     protected void pollDirectory(String dir) throws Exception {
+        String currentDir = channel.pwd();
+
         channel.cd(dir);
         for (ChannelSftp.LsEntry sftpFile : (ChannelSftp.LsEntry[])channel.ls(".").toArray(new ChannelSftp.LsEntry[] {})) {
             if (sftpFile.getFilename().startsWith(".")) {
@@ -124,6 +126,9 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 pollFile(sftpFile);
             }
         }
+
+        // change back to original current dir
+        channel.cd(currentDir);
     }
 
     protected String getFullFileName(ChannelSftp.LsEntry sftpFile) throws IOException, SftpException {
