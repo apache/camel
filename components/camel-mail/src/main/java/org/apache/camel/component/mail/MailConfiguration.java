@@ -143,13 +143,15 @@ public class MailConfiguration {
         properties.put("mail." + protocol + ".timeout", connectionTimeout);
         properties.put("mail." + protocol + ".host", host);
         properties.put("mail." + protocol + ".port", "" + port);
-        properties.put("mail." + protocol + ".user", username);
+        if (username != null) {
+            properties.put("mail." + protocol + ".user", username);
+            properties.put("mail.user", username);
+        }
         properties.put("mail." + protocol + ".rsetbeforequit", "true");
         properties.put("mail." + protocol + ".auth", "true");
         properties.put("mail.transport.protocol", protocol);
         properties.put("mail.store.protocol", protocol);
         properties.put("mail.host", host);
-        properties.put("mail.user", username);
 
         if (debugMode) {
             // add more debug for the SSL communication as well
