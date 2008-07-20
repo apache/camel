@@ -31,7 +31,7 @@ import org.apache.camel.converter.IOConverter;
  */
 public class FromFtpToBinaryFilesTest extends FtpServerTestSupport {
 
-    private String port = "20014";
+    private String port = "20015";
     // must user "consumer." prefix on the parameters to the file component
     private String ftpUrl = "ftp://admin@localhost:" + port + "/incoming?password=admin&binary=true"
         + "&consumer.delay=2000&consumer.recursive=true&consumer.append=false";
@@ -95,6 +95,7 @@ public class FromFtpToBinaryFilesTest extends FtpServerTestSupport {
         producer.process(exchange);
         producer.stop();
     }
+    
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

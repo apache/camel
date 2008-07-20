@@ -45,17 +45,20 @@ public class FtpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
     }
 
     protected FTPClient createFtpClient() {
-        final FTPClient client = new FTPClient();
-        return client;
+        return new FTPClient();
     }
 
     public void connect(FTPClient client) throws IOException {
+        // TODO: connect and disconnect. createFtpClient should be moved to another class they don't
+        // belong on this endpoint class that is only for Camel related stuff 
         RemoteFileConfiguration config = getConfiguration();
         String host = config.getHost();
         int port = config.getPort();
+        String username = config.getUsername();
+
         client.connect(host, port);
-        if (null != config.getUsername()) {
-            client.login(config.getUsername(), config.getPassword());
+        if (username != null) {
+            client.login(username, config.getPassword());
         } else {
             client.login("anonymous", null);
         }
