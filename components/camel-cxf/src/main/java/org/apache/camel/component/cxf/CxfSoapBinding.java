@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.xml.transform.Source;
 
+import org.apache.camel.component.cxf.transport.CamelTransportConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.helpers.CastUtils;
@@ -63,6 +64,7 @@ public final class CxfSoapBinding {
         }
 
         answer.put(Message.PROTOCOL_HEADERS, getProtocolHeader(headers));
+        answer.put(Message.CONTENT_TYPE, headers.get(CamelTransportConstants.CONTENT_TYPE));
 
         Object body = message.getBody(InputStream.class);
         if (body instanceof InputStream) {

@@ -44,6 +44,9 @@
 		endpointName="customer:CustomerServiceV1CamelPort"
 		address="camel://direct:serverInbound"
 		implementor="org.apache.camel.itest.customerrelations.CustomerServiceV1Impl">
+		<properties>
+  			<entry xmlns="http://www.springframework.org/schema/beans" key="mtom-enabled" value="true" />
+  		</properties>
 		<features>
 			<!-- Enables logging of SOAP messages. -->
 			<logging xmlns="http://cxf.apache.org/core" />
