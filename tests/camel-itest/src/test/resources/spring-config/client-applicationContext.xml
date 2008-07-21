@@ -25,7 +25,7 @@
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-extension-camel.xml" />
-	
+
 	<import resource="classpath:spring-config/jms-applicationContext.xml" />
 
 	<client id="org.apache.camel.itest.customerrelations.CustomerServiceV1"
@@ -35,7 +35,9 @@
 		endpointName="customer:CustomerServiceV1CamelPort"
 		serviceClass="org.apache.camel.itest.customerrelations.CustomerServiceV1"
 		address="camel://direct:clientOutbound">
-
+        <properties>
+             <entry xmlns="http://www.springframework.org/schema/beans" key="mtom-enabled" value="true" />
+        </properties>
 		<features>
 			<!-- Enables logging of SOAP messages. -->
 			<logging xmlns="http://cxf.apache.org/core" />

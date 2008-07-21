@@ -165,7 +165,9 @@ public class CamelConduit extends AbstractConduit implements Configurable {
                     CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
                     // Send out the request message here, copy the protocolHeader back
                     Map<String, List<String>> protocolHeader = CastUtils.cast((Map<?, ?>)outMessage.get(Message.PROTOCOL_HEADERS));
+                    String contentType = (String) outMessage.get(Message.CONTENT_TYPE);
                     CxfSoapBinding.setProtocolHeader(ex.getIn().getHeaders(), protocolHeader);
+                    ex.getIn().setHeader(CamelTransportConstants.CONTENT_TYPE, contentType);
                     ex.getIn().setBody(outputStream.getBytes());
                     getLogger().log(Level.FINE, "template sending request: ", ex.getIn());
                 }
