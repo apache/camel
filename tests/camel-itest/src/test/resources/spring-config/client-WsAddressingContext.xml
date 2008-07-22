@@ -1,0 +1,54 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+		http://cxf.apache.org/policy http://cxf.apache.org/schemas/policy.xsd
+		http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring-1.3.0.xsd
+		http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd">
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-extension-camel.xml" />
+
+	<import resource="classpath:spring-config/jms-applicationContext.xml" />
+
+
+	<client
+		id="org.apache.camel.itest.customerrelations.CustomerServiceV1"
+		xmlns="http://cxf.apache.org/jaxws"
+		xmlns:customer="http://camel.apache.org/itest/customerrelations"
+		serviceName="customer:CustomerServiceV1"
+		endpointName="customer:CustomerServiceV1CamelPort"
+		serviceClass="org.apache.camel.itest.customerrelations.CustomerServiceV1"
+		wsdlLocation="./src/main/resources/wsdl/CustomerService_noSoapAction.wsdl">
+		<!-- properties>
+			<entry xmlns="http://www.springframework.org/schema/beans"
+				key="mtom-enabled" value="true" />
+		</properties-->
+		<features>
+			<!-- Enable logging of SOAP messages. -->
+			<logging xmlns="http://cxf.apache.org/core" />
+			<!-- Enable WS-Addressing -->
+			<addressing xmlns="http://cxf.apache.org/ws/addressing" />
+		</features>
+
+	</client>
+
+	<conduit xmlns="http://cxf.apache.org/transports/camel"
+		name="{http://www.mycompany.com/examples/customerrelations}CustomerServiceV1CamelPort.camel-conduit">
+		<camelContextRef>camelContext</camelContextRef>
+	</conduit>
+
+	<camelContext id="camelContext"
+		xmlns="http://activemq.apache.org/camel/schema/spring">
+		<route>
+			<from
+				uri="direct:clientOutbound" />
+			<to
+				uri="jms://org.apache.camel.itest.customerrelations.Addressing" />
+		</route>
+	</camelContext>
+
+
+</beans>
