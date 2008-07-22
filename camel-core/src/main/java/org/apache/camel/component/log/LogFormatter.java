@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.log;
 
-import org.apache.camel.processor.interceptor.ExchangeFormatter;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.processor.interceptor.ExchangeFormatter;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -40,23 +40,33 @@ public class LogFormatter implements ExchangeFormatter {
 
         StringBuilder sb = new StringBuilder("");
         if (showAll || showExchangeId) {
-            if (multiline) sb.append('\n');
+            if (multiline) {
+                sb.append('\n');
+            }
             sb.append(", Id:").append(exchange.getExchangeId());
         }
         if (showAll || showProperties) {
-            if (multiline) sb.append('\n');
+            if (multiline) {
+                sb.append('\n');
+            }
             sb.append(", Properties:").append(exchange.getProperties());
         }
         if (showAll || showHeaders) {
-            if (multiline) sb.append('\n');
+            if (multiline) {
+                sb.append('\n');
+            }
             sb.append(", Headers:").append(in.getHeaders());
         }
         if (showAll || showBodyType) {
-            if (multiline) sb.append('\n');
+            if (multiline) {
+                sb.append('\n');
+            }
             sb.append(", BodyType:").append(getBodyTypeAsString(in));
         }
         if (showAll || showBody) {
-            if (multiline) sb.append('\n');
+            if (multiline) {
+                sb.append('\n');
+            }
             sb.append(", Body:").append(getBodyAsString(in));
         }
 
@@ -64,19 +74,27 @@ public class LogFormatter implements ExchangeFormatter {
         if (showAll || showOut) {
             if (out != null) {
                 if (showAll || showHeaders) {
-                    if (multiline) sb.append('\n');
+                    if (multiline) {
+                        sb.append('\n');
+                    }
                     sb.append(", OutHeaders:").append(out.getHeaders());
                 }
                 if (showAll || showBodyType) {
-                    if (multiline) sb.append('\n');
+                    if (multiline) {
+                        sb.append('\n');
+                    }
                     sb.append(", OutBodyType:").append(getBodyTypeAsString(out));
                 }
                 if (showAll || showBody) {
-                    if (multiline) sb.append('\n');
+                    if (multiline) {
+                        sb.append('\n');
+                    }
                     sb.append(", OutBody:").append(getBodyAsString(out));
                 }
             } else {
-                if (multiline) sb.append('\n');
+                if (multiline) {
+                    sb.append('\n');
+                }
                 sb.append(", Out: null");
             }
         }

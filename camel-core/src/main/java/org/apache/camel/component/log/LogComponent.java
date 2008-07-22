@@ -20,18 +20,18 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.LoggingLevel;
 import org.apache.camel.processor.ThroughputLogger;
+import org.apache.camel.util.IntrospectionSupport;
 
 /**
  * The <a href="http://activemq.apache.org/camel/log.html">Log Component</a>
  * to log message exchanges to the underlying logging mechanism.
- * 
+ *
  * @version $Revision$
  */
 public class LogComponent extends DefaultComponent<Exchange> {

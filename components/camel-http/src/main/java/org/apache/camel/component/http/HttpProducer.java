@@ -26,7 +26,6 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
-import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
 import org.apache.camel.component.http.helper.LoadingByteArrayOutputStream;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.httpclient.Header;
@@ -36,6 +35,9 @@ import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.io.IOUtils;
+
+import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
+
 
 /**
  * @version $Revision$
