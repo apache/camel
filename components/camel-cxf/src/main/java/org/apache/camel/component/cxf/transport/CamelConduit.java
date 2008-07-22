@@ -63,7 +63,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     }
 
     public CamelConduit(CamelContext context, Bus b, EndpointInfo epInfo, EndpointReferenceType targetReference) {
-        super(targetReference);
+        super(getTargetReference(epInfo, targetReference, b));
         String address = epInfo.getAddress();
         if (address != null) {
             targetCamelEndpointUri = address.substring(CxfConstants.CAMEL_TRANSPORT_PREFIX.length());
@@ -165,9 +165,10 @@ public class CamelConduit extends AbstractConduit implements Configurable {
                     CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
                     // Send out the request message here, copy the protocolHeader back
                     Map<String, List<String>> protocolHeader = CastUtils.cast((Map<?, ?>)outMessage.get(Message.PROTOCOL_HEADERS));
-                    String contentType = (String) outMessage.get(Message.CONTENT_TYPE);
+                    String contentType = (String)outMessage.get(Message.CONTENT_TYPE);
                     CxfSoapBinding.setProtocolHeader(ex.getIn().getHeaders(), protocolHeader);
                     ex.getIn().setHeader(CamelTransportConstants.CONTENT_TYPE, contentType);
+                    // TODO support different encoding
                     ex.getIn().setBody(outputStream.getBytes());
                     getLogger().log(Level.FINE, "template sending request: ", ex.getIn());
                 }
