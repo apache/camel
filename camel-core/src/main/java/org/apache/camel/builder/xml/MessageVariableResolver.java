@@ -75,9 +75,8 @@ public class MessageVariableResolver implements XPathVariableResolver {
             try {
                 answer = System.getProperty(localPart);
             } catch (Exception e) {
-                LOG
-                    .debug("Security exception evaluating system property: " + localPart + ". Reason: " + e,
-                           e);
+                LOG.debug("Security exception evaluating system property: " + localPart +
+                    ". Reason: " + e, e);
             }
         } else if (uri.equals(ENVIRONMENT_VARIABLES)) {
             answer = System.getenv().get(localPart);
@@ -99,7 +98,14 @@ public class MessageVariableResolver implements XPathVariableResolver {
         }
 
         // TODO support exposing CamelContext properties/resources via XPath?
-        return answer;
+
+        // If we can't find an answer we must return void.
+        // We can't return null then the xpath engine will throw a NullPointerException
+        if (answer == null) {
+            return Void.class;
+        } else {
+            return answer;
+        }
     }
 
     public void addVariable(String localPart, Object value) {
