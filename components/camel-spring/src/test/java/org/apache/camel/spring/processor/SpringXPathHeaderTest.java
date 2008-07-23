@@ -24,10 +24,7 @@ public class SpringXPathHeaderTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:donkey");
         mock.expectedBodiesReceived("<name>Kong</name>");
 
-        // TODO: must send header type so $type evaluates
-        // however maybe we should support missing headers is evaluated to false
-        // if so the we should test by sending no headers
-        template.sendBodyAndHeader("direct:in", "<name>Kong</name>", "type", "Donkey");
+        template.sendBody("direct:in", "<name>Kong</name>");
 
         mock.assertIsSatisfied();
     }
@@ -36,10 +33,7 @@ public class SpringXPathHeaderTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:other");
         mock.expectedBodiesReceived("<name>Other</name>");
 
-        // TODO: must send header type so $type evaluates
-        // however maybe we should support missing headers is evaluated to false
-        // if so the we should test by sending no headers
-        template.sendBodyAndHeader("direct:in", "<name>Other</name>", "type", "Foo");
+        template.sendBody("direct:in", "<name>Other</name>");
 
         mock.assertIsSatisfied();
     }
