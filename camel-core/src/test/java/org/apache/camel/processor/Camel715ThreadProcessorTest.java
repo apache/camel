@@ -71,7 +71,6 @@ public class Camel715ThreadProcessorTest extends TestCase {
 
             final Endpoint e = context.getEndpoint("direct:a");
             context.start();
-            Long startTime = System.nanoTime();
 
             for (int i = 0; i < ITERS; i++) {
                 template.send(e, new SendingProcessor(i), new AsyncCallback() {
@@ -86,6 +85,7 @@ public class Camel715ThreadProcessorTest extends TestCase {
             context.stop();
         } catch (Exception ex) {
             fail("Get the exception " + ex + "here");
+            // Make sure we the threads will exit, or the test will hung
             System.exit(-1);
         }
     }
