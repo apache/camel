@@ -64,5 +64,6 @@ class RouteBuilder extends Preamble with DSL {
   def loadbalance = stack.top.loadbalance
   def delay(delay: Period) = stack.top.delay(delay)
   def resequence(expression: Exchange => Any) = stack.top.resequence(expression)
+  def aggregate(expression: Exchange => Any) = stack.top.aggregate(expression)
 
 }
