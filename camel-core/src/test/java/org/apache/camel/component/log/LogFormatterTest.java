@@ -53,6 +53,10 @@ public class LogFormatterTest extends ContextTestSupport {
         template.sendBody("log:org.apache.camel.TEST?multiline=true", "Hello World");
     }
 
+    public void testSendByteArrayMessageToLogDefault() throws Exception {
+        template.sendBody("log:org.apache.camel.TEST", "Hello World".getBytes());
+    }
+
     public void testSendExchangeWithOut() throws Exception {
         Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showAll=true&multiline=true");
         Exchange exchange = endpoint.createExchange();
