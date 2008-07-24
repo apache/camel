@@ -106,25 +106,33 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo(route, "mock:b", 1);
     }   
 
-    public void testParseSetHeaderWithChildProcessorXml() throws Exception {
-        RouteType route = assertOneRoute("setHeaderWithChildProcessor.xml");
-        assertFrom(route, "seda:a");
-        SetHeaderType node = assertSetHeader(route);
-        assertEquals("oldBodyValue", node.getHeaderName());
-        assertExpression(node.getExpression(), "simple", "body");
-        assertChildTo(node, "mock:b");
-    }
-
     public void testParseSetHeaderToConstantXml() throws Exception {
         RouteType route = assertOneRoute("setHeaderToConstant.xml");
         assertFrom(route, "seda:a");
         SetHeaderType node = assertSetHeader(route);
         assertEquals("theHeader", node.getHeaderName());
-        assertEquals("a value", node.getValue());
-        assertEquals("", node.getExpression().getExpression());
+        assertExpression(node.getExpression(), "constant", "a value");
         assertChildTo(route, "mock:b", 1);
     }       
 
+    public void testParseSetOutHeaderXml() throws Exception {
+        RouteType route = assertOneRoute("setOutHeader.xml");
+        assertFrom(route, "seda:a");
+        SetOutHeaderType node = assertSetOutHeader(route);
+        assertEquals("oldBodyValue", node.getHeaderName());
+        assertExpression(node.getExpression(), "simple", "body");
+        assertChildTo(route, "mock:b", 1);
+    }   
+
+    public void testParseSetOutHeaderToConstantXml() throws Exception {
+        RouteType route = assertOneRoute("setOutHeaderToConstant.xml");
+        assertFrom(route, "seda:a");
+        SetOutHeaderType node = assertSetOutHeader(route);
+        assertEquals("theHeader", node.getHeaderName());
+        assertExpression(node.getExpression(), "constant", "a value");
+        assertChildTo(route, "mock:b", 1);
+    }        
+    
     public void testParseConvertBodyXml() throws Exception {
         RouteType route = assertOneRoute("convertBody.xml");
         assertFrom(route, "seda:a");
@@ -297,6 +305,11 @@ public class XmlParseTest extends XmlTestSupport {
         return assertIsInstanceOf(SetHeaderType.class, processor);
     }    
 
+    protected SetOutHeaderType assertSetOutHeader(ProcessorType<?> route) {
+        ProcessorType<?> processor = route.getOutputs().get(0);
+        return assertIsInstanceOf(SetOutHeaderType.class, processor);
+    }  
+    
     protected TransformType assertTransform(ProcessorType<?> route) {
         ProcessorType<?> processor = route.getOutputs().get(0);
         return assertIsInstanceOf(TransformType.class, processor);

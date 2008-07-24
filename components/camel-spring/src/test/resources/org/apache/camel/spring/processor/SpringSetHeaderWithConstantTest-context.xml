@@ -26,8 +26,8 @@
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="seda:a"/>
-      <setHeader headerName="theHeader" value="the value">
-        <expression/>        
+      <setHeader headerName="theHeader">
+        <constant>the value</constant>        
       </setHeader>
       <to uri="mock:b"/>     
     </route>

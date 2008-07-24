@@ -29,7 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * For XQuery expresions and predicates
+ * For XQuery expressions and predicates
  *
  * @version $Revision$
  */

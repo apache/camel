@@ -48,6 +48,7 @@ RoutingSlipType
 ServiceActivationType
 SetBodyType
 SetHeaderType
+SetOutHeaderType
 SplitterType
 ThrottlerType
 ThreadType

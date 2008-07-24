@@ -19,20 +19,19 @@ package org.apache.camel.model.language;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * For <a href="http://commons.apache.org/jxpath/">JXPath</a> expressions and predicates
+ * For expressions and predicates using a constant
  *
- * @version $Revision$
  */
-@XmlRootElement(name = "jxpath")
-public class JXPathExpression extends ExpressionType {
-    public JXPathExpression() {
+@XmlRootElement(name = "constant")
+public class ConstantExpression extends ExpressionType {
+    public ConstantExpression() {
     }
 
-    public JXPathExpression(String expression) {
+    public ConstantExpression(String expression) {
         super(expression);
     }
 
     public String getLanguage() {
-        return "jxpath";
+        return "constant";
     }
 }

@@ -19,7 +19,7 @@ package org.apache.camel.model.language;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * For OGNL expresions and predicates
+ * For OGNL expressions and predicates
  *
  * @version $Revision$
  */
