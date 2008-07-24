@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -103,7 +104,7 @@ public class DefaultExchange implements Exchange {
         if (properties == null) {
             return null;
         }
-        return new HashMap<String, Object>(properties);
+        return new ConcurrentHashMap<String, Object>(properties);
     }
 
     private static Message safeCopy(Exchange exchange, Message message) {
@@ -155,8 +156,14 @@ public class DefaultExchange implements Exchange {
             Class type = value.getClass();
             validateExchangePropertyIsExpectedType(property, type, value);
         }
-
-        getProperties().put(name, value);
+        if (value != null) {
+            // avoid the NULLPointException
+            getProperties().put(name, value);
+        } else { // if the value is null , we just remove the key from the map
+            if (name !=  null) {
+                getProperties().remove(name);
+            }
+        }
     }
 
     private <T> void validateExchangePropertyIsExpectedType(ExchangeProperty<?> property, Class<T> type, Object value) {
@@ -174,7 +181,7 @@ public class DefaultExchange implements Exchange {
 
     public Map<String, Object> getProperties() {
         if (properties == null) {
-            properties = new HashMap<String, Object>();
+            properties = new ConcurrentHashMap<String, Object>();
         }
         return properties;
     }
