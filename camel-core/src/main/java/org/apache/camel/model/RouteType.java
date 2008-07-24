@@ -78,9 +78,8 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
     public void addRoutes(CamelContext context, Collection<Route> routes) throws Exception {
         setCamelContext(context);
 
-        if (context instanceof DefaultCamelContext) {
-            DefaultCamelContext defaultCamelContext = (DefaultCamelContext) context;
-            ErrorHandlerBuilder handler = defaultCamelContext.getErrorHandlerBuilder();
+        if (context instanceof CamelContext) {
+            ErrorHandlerBuilder handler = context.getErrorHandlerBuilder();
             if (handler != null) {
                 setErrorHandlerBuilderIfNull(handler);
             }
