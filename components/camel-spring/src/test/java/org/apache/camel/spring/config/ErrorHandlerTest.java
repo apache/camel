@@ -30,7 +30,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ErrorHandlerTest extends SpringTestSupport {
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/errorHandler.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/errorHandler.xml");
     }
 
     public void testEndpointConfiguration() throws Exception {
