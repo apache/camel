@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
@@ -203,4 +204,14 @@ public interface CamelContext extends Service {
     <E extends Exchange> ProducerTemplate<E> createProducerTemplate();
 
     void addInterceptStrategy(InterceptStrategy interceptStrategy);
+
+    /**
+     * Gets the default error handler builder which is inherited by the routes
+     */
+    public ErrorHandlerBuilder getErrorHandlerBuilder();
+
+    /**
+     * Sets the default error handler builder which is inherited by the routes
+     */
+    public void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder);
 }

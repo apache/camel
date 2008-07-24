@@ -26,6 +26,7 @@ import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.processor.DeadLetterChannel;
+import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
@@ -36,8 +37,8 @@ import org.apache.camel.processor.SendProcessor;
  */
 public class ErrorHandlerTest extends TestSupport {
 
-    // TODO get the test fixed
-    public void xtestOverloadingTheDefaultErrorHandler() throws Exception {
+
+    public void testOverloadingTheDefaultErrorHandler() throws Exception {
         // START SNIPPET: e1
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
@@ -55,9 +56,10 @@ public class ErrorHandlerTest extends TestSupport {
 
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Processor processor = consumerRoute.getProcessor();
-
+            processor = unwrap(processor);
             LoggingErrorHandler loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class, processor);
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, loggingProcessor.getOutput());
+            processor = unwrap(loggingProcessor.getOutput());
+            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, processor);
             log.debug("Found sendProcessor: " + sendProcessor);
         }
     }
@@ -134,8 +136,8 @@ public class ErrorHandlerTest extends TestSupport {
         }
     }
 
-    // TODO Fix the test
-    public void xtestConfigureDeadLetterChannelWithCustomRedeliveryPolicy() throws Exception {
+
+    public void testConfigureDeadLetterChannelWithCustomRedeliveryPolicy() throws Exception {
         // START SNIPPET: e4
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
@@ -153,6 +155,7 @@ public class ErrorHandlerTest extends TestSupport {
 
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Processor processor = consumerRoute.getProcessor();
+            processor = unwrap(processor);
 
             DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, processor);
 
@@ -184,14 +187,14 @@ public class ErrorHandlerTest extends TestSupport {
 
             LoggingErrorHandler loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class, processor);
 
-            if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {   
+            if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
                 processor = loggingProcessor.getOutput();
             } else {
                 InstrumentationProcessor interceptor =
                     assertIsInstanceOf(InstrumentationProcessor.class, loggingProcessor.getOutput());
                 processor = interceptor.getProcessor();
             }
-            
+
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, filterProcessor.getProcessor());
 
