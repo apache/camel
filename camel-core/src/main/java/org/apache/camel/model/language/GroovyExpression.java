@@ -19,7 +19,7 @@ package org.apache.camel.model.language;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * For Groovy expresions and predicates
+ * For Groovy expressions and predicates
  *
  * @version $Revision$
  */

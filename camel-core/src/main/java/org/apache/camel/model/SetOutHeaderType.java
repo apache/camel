@@ -29,46 +29,46 @@ import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;setHeader/&gt; element
+ * Represents an XML &lt;setOutHeader/&gt; element
  */
-@XmlRootElement(name = "setHeader")
+@XmlRootElement(name = "setOutHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SetHeaderType extends ExpressionNode {
+public class SetOutHeaderType extends ExpressionNode {
     @XmlAttribute
     private String headerName;
     
-    public SetHeaderType() {
+    public SetOutHeaderType() {
     }
 
-    public SetHeaderType(String headerName, ExpressionType expression) {
+    public SetOutHeaderType(String headerName, ExpressionType expression) {
         super(expression);
         setHeaderName(headerName);
     }
 
-    public SetHeaderType(String headerName, Expression expression) {
+    public SetOutHeaderType(String headerName, Expression expression) {
         super(expression);
         setHeaderName(headerName);        
     }
 
-    public SetHeaderType(String headerName, String value) {
+    public SetOutHeaderType(String headerName, String value) {
         super(ExpressionBuilder.constantExpression(value));
         setHeaderName(headerName);        
     }   
     
     @Override
     public String toString() {
-        return "SetHeader[ " + getHeaderName() + ", " + getExpression() + "]";
+        return "SetOutHeader[ " + getHeaderName() + ", " + getExpression() + "]";
     }
 
     @Override
     public String getShortName() {
-        return "setHeader";
+        return "setOutHeader";
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Expression expr = getExpression().createExpression(routeContext);
-        return ProcessorBuilder.setHeader(getHeaderName(), expr);
+        return ProcessorBuilder.setOutHeader(getHeaderName(), expr);
     }
 
     public void setHeaderName(String headerName) {

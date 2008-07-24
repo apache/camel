@@ -19,7 +19,7 @@ package org.apache.camel.model.language;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * For Ruby expresions and predicates
+ * For Ruby expressions and predicates
  *
  * @version $Revision$
  */

@@ -28,7 +28,7 @@ import org.apache.camel.language.bean.BeanExpression;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * For expresions and predicates using the
+ * For expressions and predicates using the
  * <a href="http://activemq.apache.org/camel/bean-language.html">bean language</a>
  *
  * @version $Revision$

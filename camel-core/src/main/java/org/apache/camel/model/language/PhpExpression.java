@@ -19,7 +19,7 @@ package org.apache.camel.model.language;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * For PHP expresions and predicates
+ * For PHP expressions and predicates
  *
  * @version $Revision$
  */

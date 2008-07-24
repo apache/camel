@@ -19,7 +19,7 @@ package org.apache.camel.model.language;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * For SQL expresions and predicates
+ * For SQL expressions and predicates
  *
  * @version $Revision$
  */

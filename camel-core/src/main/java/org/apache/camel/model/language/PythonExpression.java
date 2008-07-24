@@ -19,7 +19,7 @@ package org.apache.camel.model.language;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * For Python expresions and predicates
+ * For Python expressions and predicates
  *
  * @version $Revision$
  */

@@ -26,7 +26,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * For XPath expresions and predicates
+ * For XPath expressions and predicates
  *
  * @version $Revision$
  */

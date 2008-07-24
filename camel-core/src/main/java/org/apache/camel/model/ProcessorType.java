@@ -1235,7 +1235,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      */
     public ExpressionClause<ProcessorType<Type>> setOutHeader(String name) {
         ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
-        process(ProcessorBuilder.setOutHeader(name, clause));
+        SetOutHeaderType answer = new SetOutHeaderType(name, clause);
+        addOutput(answer);
         return clause;
     }
 
@@ -1243,14 +1244,18 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Adds a processor which sets the header on the OUT message
      */
     public Type setOutHeader(String name, Expression expression) {
-        return process(ProcessorBuilder.setOutHeader(name, expression));
+        SetOutHeaderType answer = new SetOutHeaderType(name, expression);
+        addOutput(answer);
+        return (Type) this;
     }
 
     /**
-     * Adds a processor which sets the header on the OUT message
+     * Adds a processor which sets the header on the OUT message to the given value
      */
     public Type setOutHeader(String name, String value) {
-        return (Type) setOutHeader(name).constant(value);
+        SetOutHeaderType answer = new SetOutHeaderType(name, value);
+        addOutput(answer);
+        return (Type) this;
     }
 
     /**

@@ -14,25 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.language;
+package org.apache.camel.language;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import org.apache.camel.LanguageTestSupport;
 
-/**
- * For <a href="http://commons.apache.org/jxpath/">JXPath</a> expressions and predicates
- *
- * @version $Revision$
- */
-@XmlRootElement(name = "jxpath")
-public class JXPathExpression extends ExpressionType {
-    public JXPathExpression() {
+public class ConstantTest extends LanguageTestSupport {
+
+    public void testSimpleExpressions() throws Exception {
+        // We can put anything in here, the expression will 
+        // always evaluate to itself
+        assertExpression("a value", "a value");
+    }
+ 
+    public void testPredicates() throws Exception {
+        assertPredicate("another value");
     }
 
-    public JXPathExpression(String expression) {
-        super(expression);
-    }
-
-    public String getLanguage() {
-        return "jxpath";
+    protected String getLanguageName() {
+        return "constant";
     }
 }

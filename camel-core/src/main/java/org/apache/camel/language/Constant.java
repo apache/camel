@@ -14,25 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.language;
+package org.apache.camel.language;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * For <a href="http://commons.apache.org/jxpath/">JXPath</a> expressions and predicates
+ * Used to inject a constant expression into a field, property, method or parameter when using
+ * <a href="http://activemq.apache.org/camel/bean-integration.html">Bean Integration</a>.
  *
- * @version $Revision$
  */
-@XmlRootElement(name = "jxpath")
-public class JXPathExpression extends ExpressionType {
-    public JXPathExpression() {
-    }
-
-    public JXPathExpression(String expression) {
-        super(expression);
-    }
-
-    public String getLanguage() {
-        return "jxpath";
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
+@LanguageAnnotation(language = "constant")
+public @interface Constant {
+    String value();
 }
