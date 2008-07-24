@@ -337,6 +337,17 @@ public final class ObjectHelper {
     }
 
     /**
+     * Returns the canoical type name of the given value
+     */
+    public static String classCanoicalName(Object value) {
+        if (value != null) {
+            return value.getClass().getCanonicalName();
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Attempts to load the given class name using the thread context class
      * loader or the class loader used to load this class
      *

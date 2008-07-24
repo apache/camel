@@ -120,7 +120,7 @@ public class TraceFormatter {
     }
 
     protected Object getBodyTypeAsString(Message message) {
-        String answer = ObjectHelper.className(message.getBody());
+        String answer = ObjectHelper.classCanoicalName(message.getBody());
         if (answer != null && answer.startsWith("java.lang.")) {
             return answer.substring(10);
         }
