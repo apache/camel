@@ -247,11 +247,7 @@ public abstract class BuilderSupport {
 
     protected ErrorHandlerBuilder createErrorHandlerBuilder() {
         if (isInheritErrorHandler()) {
-            ErrorHandlerBuilder errorHandler= context.getErrorHandlerBuilder();
-            if (errorHandler == null) {
-                errorHandler = new DeadLetterChannelBuilder();
-            }
-            return errorHandler;
+            return new DeadLetterChannelBuilder();
         } else {
             return new NoErrorHandlerBuilder();
         }

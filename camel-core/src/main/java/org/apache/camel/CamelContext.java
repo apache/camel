@@ -208,10 +208,10 @@ public interface CamelContext extends Service {
     /**
      * Gets the default error handler builder which is inherited by the routes
      */
-    public ErrorHandlerBuilder getErrorHandlerBuilder();
+    ErrorHandlerBuilder getErrorHandlerBuilder();
 
     /**
      * Sets the default error handler builder which is inherited by the routes
      */
-    public void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder);
+    void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder);
 }

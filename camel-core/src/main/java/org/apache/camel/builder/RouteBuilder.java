@@ -173,6 +173,11 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     // -----------------------------------------------------------------------
     protected void checkInitialized() throws Exception {
         if (initialized.compareAndSet(false, true)) {
+            // Set the CamelContext ErrorHandler here
+            CamelContext camelContext = getContext();
+            if (camelContext.getErrorHandlerBuilder() != null) {
+                setErrorHandlerBuilder(camelContext.getErrorHandlerBuilder());
+            }
             configure();
             populateRoutes(routes);
         }
@@ -194,21 +199,21 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     public RoutesType getRouteCollection() {
         return this.routeCollection;
     }
-    
+
     /**
-     * Completely disable stream caching for all routes being defined in the same RouteBuilder after this. 
+     * Completely disable stream caching for all routes being defined in the same RouteBuilder after this.
      */
     public void noStreamCaching() {
         StreamCachingInterceptor.noStreamCaching(routeCollection.getInterceptors());
     }
-    
+
     /**
      * Enable stream caching for all routes being defined in the same RouteBuilder after this call.
      */
     public void streamCaching() {
         routeCollection.intercept(new StreamCachingInterceptor());
     }
-    
+
     /**
      * Factory method
      */

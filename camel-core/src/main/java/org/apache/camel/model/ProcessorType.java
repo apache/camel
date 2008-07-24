@@ -1596,7 +1596,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         if (errorHandlerRef != null) {
             return new ErrorHandlerBuilderRef(errorHandlerRef);
         }
-        if (isInheritErrorHandler()) {
+        if (isInheritErrorHandler()) {            
             return new DeadLetterChannelBuilder();
         } else {
             return new NoErrorHandlerBuilder();
