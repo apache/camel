@@ -44,9 +44,9 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>xstream</groupId>
+      <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
-      <version>1.1.3</version>
+      <version>1.3</version>
     </dependency>
     <dependency>
       <groupId>stax</groupId>
@@ -69,7 +69,7 @@
     <dependency>
       <groupId>org.codehaus.woodstox</groupId>
       <artifactId>wstx-asl</artifactId>
-      <version>3.2.1</version>
+      <version>3.2.6</version>
       <scope>test</scope>
     </dependency>
 
@@ -83,6 +83,7 @@
       <artifactId>log4j</artifactId>
       <scope>test</scope>
     </dependency>
+
     <!-- to allow Spring annotations (jmx) to be tested -->
     <dependency>
       <groupId>org.springframework</groupId>
