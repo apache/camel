@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -78,5 +78,7 @@ abstract class SAbstractType extends DSL {
   def delay(period: Period) = new SDelayerType(target.delayer(period.milliseconds))
   
   def resequence(expression: Exchange => Any) = new SResequencerType(target.resequencer(expression))
+  
+  def aggregate(expression: Exchange => Any) = new SAggregatorType(target.aggregator(expression))
 
 }

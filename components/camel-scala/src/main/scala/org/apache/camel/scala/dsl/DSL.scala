@@ -35,5 +35,6 @@ trait DSL {
   def loadbalance : SLoadBalanceType
   def delay(delay: Period) : SDelayerType
   def resequence(expression: Exchange => Any) : SResequencerType
+  def aggregate(expression: Exchange => Any) : SAggregatorType
 
 }
