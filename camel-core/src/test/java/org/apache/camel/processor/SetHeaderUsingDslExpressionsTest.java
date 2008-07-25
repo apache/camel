@@ -46,7 +46,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start").
-                        setHeader("foo", "ABC").
+                        setHeader("foo", constant("ABC")).
                         to("mock:result");
             }
         });

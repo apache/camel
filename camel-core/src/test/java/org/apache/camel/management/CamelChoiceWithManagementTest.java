@@ -97,7 +97,7 @@ public class CamelChoiceWithManagementTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                     .choice()
-                        .when(header("CBR1").isEqualTo("Yes")).to("mock:a").setHeader("Validation", "Yes")
+                        .when(header("CBR1").isEqualTo("Yes")).to("mock:a").setHeader("Validation", constant("Yes"))
                         .when(header("CBR1").isEqualTo("No")).to("mock:b").end()
                     .choice().when(header("Validation").isEqualTo("Yes")).to("mock:c")
                         .when(header("Validation").isEqualTo("No")).to("mock:d").otherwise().to("mock:e").end();

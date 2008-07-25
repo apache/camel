@@ -62,7 +62,7 @@ public class HttpToFileTest extends ContextTestSupport {
 
                 // store the content from the queue as a file
                 from("seda:in").process(new MyJettyProcessor())
-                    .setHeader(FileComponent.HEADER_FILE_NAME, "hello.txt")
+                    .setHeader(FileComponent.HEADER_FILE_NAME, constant("hello.txt"))
                     .to("file://target/myworld?append=false");
             }
         };

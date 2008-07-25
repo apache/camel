@@ -1223,6 +1223,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Adds a processor which sets the header on the IN message to the given value
+     * @deprecated Please use {@link #setHeader(String, Expression)} instead. Will be removed in Camel 2.0.
      */
     public Type setHeader(String name, String value) {
         SetHeaderType answer = new SetHeaderType(name, value);
@@ -1245,15 +1246,6 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      */
     public Type setOutHeader(String name, Expression expression) {
         SetOutHeaderType answer = new SetOutHeaderType(name, expression);
-        addOutput(answer);
-        return (Type) this;
-    }
-
-    /**
-     * Adds a processor which sets the header on the OUT message to the given value
-     */
-    public Type setOutHeader(String name, String value) {
-        SetOutHeaderType answer = new SetOutHeaderType(name, value);
         addOutput(answer);
         return (Type) this;
     }

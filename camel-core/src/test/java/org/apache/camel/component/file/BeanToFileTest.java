@@ -52,7 +52,7 @@ public class BeanToFileTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:in").
                     to("bean:myBean").
-                    setHeader(FileComponent.HEADER_FILE_NAME, "BeanToFileTest.txt").
+                    setHeader(FileComponent.HEADER_FILE_NAME, constant("BeanToFileTest.txt")).
                     to("file://target/?append=false");
             }
         };
