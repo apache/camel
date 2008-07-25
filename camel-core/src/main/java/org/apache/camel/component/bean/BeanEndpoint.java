@@ -28,6 +28,7 @@ import org.apache.camel.impl.ProcessorEndpoint;
  */
 public class BeanEndpoint extends ProcessorEndpoint {
     private boolean cache;
+    private boolean multiParameterArray;
     private String beanName;
     private String method;
     private BeanHolder beanHolder;
@@ -65,6 +66,14 @@ public class BeanEndpoint extends ProcessorEndpoint {
 
     public void setBeanName(String beanName) {
         this.beanName = beanName;
+    }
+
+    public boolean isMultiParameterArray() {
+        return multiParameterArray;
+    }
+
+    public void setMultiParameterArray(boolean mpArray) {
+        multiParameterArray = mpArray;
     }
 
     public boolean isCache() {
@@ -118,6 +127,8 @@ public class BeanEndpoint extends ProcessorEndpoint {
         if (method != null) {
             processor.setMethod(method);
         }
+        processor.setMultiParameterArray(isMultiParameterArray());
+
         return processor;
     }
 }

@@ -36,15 +36,22 @@ public class BeanMethodWithMultipleParametersTest extends ContextTestSupport {
 
     }
 
-    //TODO fix this test
-    public void xtestSendMessage() throws Exception {
+    public void testSendMessageWithURI() throws Exception {
         Object[] args = {"abc", 5, "def"};
-
-        template.sendBodyAndHeader("direct:in", args, BeanProcessor.METHOD_NAME, "myMethod");
+        template.sendBody("bean:myBean?method=myMethod&multiParameterArray=true", args);
 
         assertEquals("bean.foo", "abc", myBean.foo);
         assertEquals("bean.bar", 5, myBean.bar);
         assertEquals("bean.x", "def", myBean.x);
+    }
+
+    public void testSendMessageWithSettingHeader() throws Exception {
+        Object[] args = {"hello", 123, "world"};
+        template.sendBodyAndHeader("direct:in", args, BeanProcessor.MULTI_PARAMETER_ARRAY, true);
+
+        assertEquals("bean.foo", "hello", myBean.foo);
+        assertEquals("bean.bar", 123, myBean.bar);
+        assertEquals("bean.x", "world", myBean.x);
     }
 
     @Override
@@ -62,7 +69,7 @@ public class BeanMethodWithMultipleParametersTest extends ContextTestSupport {
         };
     }
 
-    public static class MyBean {
+    public class MyBean {
         public String foo;
         public int bar;
         public String x;

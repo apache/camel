@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -134,8 +135,18 @@ public class MethodInfo {
         return new Expression<Exchange>() {
             public Object evaluate(Exchange exchange) {
                 Object[] answer = new Object[size];
+                Object body = exchange.getIn().getBody();
+                boolean multiParameterArray = false;
+                if (exchange.getIn().getHeader(BeanProcessor.MULTI_PARAMETER_ARRAY) != null) {
+                    multiParameterArray = exchange.getIn().getHeader(BeanProcessor.MULTI_PARAMETER_ARRAY, Boolean.class);
+                }
                 for (int i = 0; i < size; i++) {
-                    Object value = expressions[i].evaluate(exchange);
+                    Object value = null;
+                    if (multiParameterArray) {
+                        value = ((Object[])body)[i];
+                    } else {
+                        value = expressions[i].evaluate(exchange);
+                    }
                     // now lets try to coerce the value to the required type
                     Class expectedType = parameters.get(i).getType();
                     value = ExchangeHelper.convertToType(exchange, expectedType, value);

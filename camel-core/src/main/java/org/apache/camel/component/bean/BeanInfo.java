@@ -161,12 +161,7 @@ public class BeanInfo {
                     parameterInfo.setExpression(expression);
                     bodyParameters.add(parameterInfo);
                 } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("No expression available for method: " + method.toString()
-                                  + " which already has a body so ignoring parameter: " + i
-                                  + " so ignoring method");
-                    }
-                    return null;
+                    // will ignore the expression for parameter evaluation
                 }
             }
 
@@ -181,6 +176,7 @@ public class BeanInfo {
          * name.length() > 0) { opName = name; } }
          */
         MethodInfo methodInfo = new MethodInfo(clazz, method, parameters, bodyParameters, hasCustomAnnotation);
+
         operations.put(opName, methodInfo);
         if (methodInfo.hasBodyParameter()) {
             operationsWithBody.add(methodInfo);
@@ -230,7 +226,7 @@ public class BeanInfo {
                     // skip this method as the MEP is Out so the method must return someting
                     continue;
                 }
-                
+
                 // try to match the arguments
                 if (methodInfo.bodyParameterMatches(bodyType)) {
                     possibles.add(methodInfo);

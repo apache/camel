@@ -27,7 +27,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 /**
  * Represents the strategy used to figure out how to map a message exchange to a POJO method invocation
  *
- * @version $Revision:$
+ * @version $Revision$
  */
 public class DefaultParameterMappingStrategy implements ParameterMappingStrategy {
     private Map<Class, Expression> parameterTypeToExpressionMap = new ConcurrentHashMap<Class, Expression>();
@@ -37,7 +37,9 @@ public class DefaultParameterMappingStrategy implements ParameterMappingStrategy
     }
 
     public synchronized Expression getDefaultParameterTypeExpression(Class parameterType) {
-        return parameterTypeToExpressionMap.get(parameterType);
+        Expression expression = parameterTypeToExpressionMap.get(parameterType);
+
+        return expression;
     }
 
     /**
@@ -53,7 +55,7 @@ public class DefaultParameterMappingStrategy implements ParameterMappingStrategy
      */
 /*
     public MethodInvocation createInvocation(Object pojo,
-                                             BeanInfo beanInfo, 
+                                             BeanInfo beanInfo,
                                              Exchange messageExchange,
                                              Endpoint pojoEndpoint) throws RuntimeCamelException {
         return beanInfo.createInvocation(pojo, messageExchange);

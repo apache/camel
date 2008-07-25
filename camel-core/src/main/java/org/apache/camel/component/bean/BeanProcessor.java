@@ -37,8 +37,10 @@ import org.apache.commons.logging.LogFactory;
  */
 public class BeanProcessor extends ServiceSupport implements Processor {
     public static final String METHOD_NAME = "org.apache.camel.MethodName";
+    public static final String MULTI_PARAMETER_ARRAY = "org.apache.camel.MultiParameterArray";
     private static final transient Log LOG = LogFactory.getLog(BeanProcessor.class);
 
+    private boolean multiParameterArray;
     private Method methodObject;
     private String method;
     private BeanHolder beanHolder;
@@ -82,6 +84,11 @@ public class BeanProcessor extends ServiceSupport implements Processor {
             return;
         }
         Message in = exchange.getIn();
+
+        if (in.getHeader(MULTI_PARAMETER_ARRAY) == null) {
+            in.setHeader(MULTI_PARAMETER_ARRAY, isMultiParameterArray());
+        }
+
         BeanInvocation beanInvoke = in.getBody(BeanInvocation.class);
         if (beanInvoke != null) {
             beanInvoke.invoke(bean, exchange);
@@ -160,6 +167,14 @@ public class BeanProcessor extends ServiceSupport implements Processor {
 
     public String getMethod() {
         return method;
+    }
+
+    public boolean isMultiParameterArray() {
+        return multiParameterArray;
+    }
+
+    public void setMultiParameterArray(boolean mpArray) {
+        multiParameterArray = mpArray;
     }
 
     /**
