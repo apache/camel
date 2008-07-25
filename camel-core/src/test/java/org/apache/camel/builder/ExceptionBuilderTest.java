@@ -101,7 +101,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
                 // START SNIPPET: exceptionBuilder1
                 exception(NullPointerException.class)
                     .maximumRedeliveries(1)
-                    .setHeader(MESSAGE_INFO, "Damm a NPE")
+                    .setHeader(MESSAGE_INFO, constant("Damm a NPE"))
                     .to(ERROR_QUEUE);
 
                 exception(IOException.class)
@@ -109,25 +109,25 @@ public class ExceptionBuilderTest extends ContextTestSupport {
                     .maximumRedeliveries(3)
                     .backOffMultiplier(1.0)
                     .useExponentialBackOff()
-                    .setHeader(MESSAGE_INFO, "Damm somekind of IO exception")
+                    .setHeader(MESSAGE_INFO, constant("Damm somekind of IO exception"))
                     .to(ERROR_QUEUE);
 
                 exception(Exception.class)
                     .initialRedeliveryDelay(1000L)
                     .maximumRedeliveries(2)
-                    .setHeader(MESSAGE_INFO, "Damm just exception")
+                    .setHeader(MESSAGE_INFO, constant("Damm just exception"))
                     .to(ERROR_QUEUE);
                 // END SNIPPET: exceptionBuilder1
 
                 exception(MyBaseBusinessException.class)
                     .initialRedeliveryDelay(1000L)
                     .maximumRedeliveries(3)
-                    .setHeader(MESSAGE_INFO, "Damm my business is not going to well")
+                    .setHeader(MESSAGE_INFO, constant("Damm my business is not going to well"))
                     .to(BUSINESS_ERROR_QUEUE);
 
                 exception(GeneralSecurityException.class).exception(KeyException.class)
                     .maximumRedeliveries(1)
-                    .setHeader(MESSAGE_INFO, "Damm some security error")
+                    .setHeader(MESSAGE_INFO, constant("Damm some security error"))
                     .to(SECURITY_ERROR_QUEUE);
 
 
@@ -153,4 +153,5 @@ public class ExceptionBuilderTest extends ContextTestSupport {
     }
 
 }
+
 

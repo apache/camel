@@ -70,12 +70,12 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
 
                 exception(MyPolicyException.class)
                     .maximumRedeliveries(1)
-                    .setHeader(MESSAGE_INFO, "Damm my policy exception")
+                    .setHeader(MESSAGE_INFO, constant("Damm my policy exception"))
                     .to(ERROR_QUEUE);
 
                 exception(CamelException.class)
                     .maximumRedeliveries(3)
-                    .setHeader(MESSAGE_INFO, "Damm a Camel exception")
+                    .setHeader(MESSAGE_INFO, constant("Damm a Camel exception"))
                     .to(ERROR_QUEUE);
                 // END SNIPPET e1
 

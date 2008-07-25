@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Unit test for the how FileProducer behaves a bit strantegly when generating filenames
+ * Unit test for the how FileProducer behaves a bit strangely when generating filenames
  */
 public class FilerProducerFileNamesTest extends ContextTestSupport {
 
@@ -62,7 +62,7 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
 
                 from("direct:report2").to("file:target/report2.txt?autoCreate=false");
 
-                from("direct:report3").setHeader(FileComponent.HEADER_FILE_NAME, "report-super.txt").to("file:target/");
+                from("direct:report3").setHeader(FileComponent.HEADER_FILE_NAME, constant("report-super.txt")).to("file:target/");
             }
         };
     }

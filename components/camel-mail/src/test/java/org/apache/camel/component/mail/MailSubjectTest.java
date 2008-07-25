@@ -41,7 +41,7 @@ public class MailSubjectTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:a").setHeader("subject", subject).to("smtp://james2@localhost");
+                from("direct:a").setHeader("subject", constant(subject)).to("smtp://james2@localhost");
                 // END SNIPPET: e1
 
                 from("pop3://localhost?username=james2&password=secret&consumer.delay=1000").to("mock:result");

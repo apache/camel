@@ -50,7 +50,7 @@ public class BeanWithHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:in")
-                    .setHeader("foo", "bar")
+                    .setHeader("foo", constant("bar"))
                     .to("bean:myBean")
                     .to("seda:a");
 

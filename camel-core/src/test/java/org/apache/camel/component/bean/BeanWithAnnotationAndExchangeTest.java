@@ -52,7 +52,7 @@ public class BeanWithAnnotationAndExchangeTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:in")
-                    .setHeader("user", "admin")
+                    .setHeader("user", constant("admin"))
                     .to("bean:myBean")
                     .to("mock:result");
             }
