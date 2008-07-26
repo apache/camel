@@ -180,7 +180,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         // the trick is to try to rename the file, if we can rename then we have exclusive read
         // since its a remote file we can not use java.nio to get a RW access
         String originalName = sftpFile.getFilename();
-        String newName = originalName + ".camel";
+        String newName = originalName + "..exclusiveRead";
         boolean exclusive = false;
         while (! exclusive) {
             try {
