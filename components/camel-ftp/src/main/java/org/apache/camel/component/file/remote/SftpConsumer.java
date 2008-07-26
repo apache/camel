@@ -30,7 +30,6 @@ import org.apache.camel.component.file.FileComponent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     private static final transient Log LOG = LogFactory.getLog(SftpConsumer.class);
     private final SftpEndpoint endpoint;
@@ -41,6 +40,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     private ChannelSftp channel;
     private Session session;
     private boolean setNames;
+    private boolean exclusiveRead = true;
 
     public SftpConsumer(SftpEndpoint endpoint, Processor processor, Session session) {
         super(endpoint, processor);
@@ -57,30 +57,32 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     protected void connectIfNecessary() throws JSchException {
         if (channel == null || !channel.isConnected()) {
             if (session == null || !session.isConnected()) {
-                LOG.info("Session isn't connected, trying to recreate and connect...");
+                LOG.debug("Session isn't connected, trying to recreate and connect.");
                 session = endpoint.createSession();
                 session.connect();
             }
-            LOG.info("Channel isn't connected, trying to recreate and connect...");
+            LOG.debug("Channel isn't connected, trying to recreate and connect.");
             channel = endpoint.createChannelSftp(session);
             channel.connect();
-            LOG.info("Connected to " + endpoint.getConfiguration().toString());
+            LOG.info("Connected to " + endpoint.getConfiguration().remoteServerInformation());
         }
     }
 
     protected void disconnect() throws JSchException {
         if (session != null) {
-            LOG.info("Session is being explicitly disconnected");
+            LOG.debug("Session is being explicitly disconnected");
             session.disconnect();
         }
         if (channel != null) {
-            LOG.info("Channel is being explicitly disconnected");
+            LOG.debug("Channel is being explicitly disconnected");
             channel.disconnect();
         }
     }
 
     protected void poll() throws Exception {
-        // TODO: is there a way to avoid copy-pasting the reconnect logic?
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Polling " + endpoint.getConfiguration());
+        }
         connectIfNecessary();
         // If the attempt to connect isn't successful, then the thrown
         // exception will signify that we couldn't poll
@@ -97,15 +99,15 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         } catch (JSchException e) {
             // If the connection has gone stale, then we must manually disconnect
             // the client before attempting to reconnect
-            LOG.warn("Disconnecting due to exception: " + e.toString());
+            LOG.warn("Disconnecting due to exception: " + e.getMessage());
             disconnect();
             // Rethrow to signify that we didn't poll
             throw e;
         } catch (SftpException e) {
             // Still not sure if/when these come up and what we should do about them
             // client.disconnect();
-            LOG.warn("Caught SftpException:" + e.toString());
-            LOG.warn("Doing nothing for now, need to determine an appropriate action");
+            LOG.warn("Caught SftpException:" + e.getMessage(), e);
+            LOG.warn("Hoping an explicit disconnect/reconnect will solve the problem");
             // Rethrow to signify that we didn't poll
             throw e;
         }
@@ -136,22 +138,72 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     }
 
     private void pollFile(ChannelSftp.LsEntry sftpFile) throws Exception {
-        if (sftpFile.getAttrs().getMTime() * 1000L > lastPollTime) {
-            if (isMatched(sftpFile)) {
-                final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                channel.get(sftpFile.getFilename(), byteArrayOutputStream);
-                RemoteFileExchange exchange = endpoint.createExchange(getFullFileName(sftpFile), byteArrayOutputStream);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Polling file: " + sftpFile);
+        }
 
-                if (isSetNames()) {
-                    String relativePath = getFullFileName(sftpFile).substring(endpoint.getConfiguration().getFile().length());
-                    if (relativePath.startsWith("/")) {
-                        relativePath = relativePath.substring(1);
-                    }
-                    exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, relativePath);
-                }
+        long ts = sftpFile.getAttrs().getMTime() * 1000L;
 
-                getProcessor().process(exchange);
+        // TODO do we need to adjust the TZ? can we?
+        if (ts > lastPollTime && isMatched(sftpFile)) {
+            String remoteServer =  endpoint.getConfiguration().remoteServerInformation();
+
+            // is we use excluse read then acquire the exclusive read (waiting until we got it)
+            if (exclusiveRead) {
+                acquireExclusiveRead(sftpFile);
             }
+
+            // retrieve the file
+            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            channel.get(sftpFile.getFilename(), byteArrayOutputStream);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Retrieved file: " + sftpFile.getFilename() + " from: " + remoteServer);
+            }
+
+            RemoteFileExchange exchange = endpoint.createExchange(getFullFileName(sftpFile), byteArrayOutputStream);
+
+            if (isSetNames()) {
+                String relativePath = getFullFileName(sftpFile).substring(endpoint.getConfiguration().getFile().length());
+                if (relativePath.startsWith("/")) {
+                    relativePath = relativePath.substring(1);
+                }
+                exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, relativePath);
+            }
+
+            getProcessor().process(exchange);
+        }
+    }
+
+    protected void acquireExclusiveRead(ChannelSftp.LsEntry sftpFile) throws SftpException {
+        LOG.trace("Acquiring exclusive read (avoid reading file that is in progress of being written)");
+
+        // the trick is to try to rename the file, if we can rename then we have exclusive read
+        // since its a remote file we can not use java.nio to get a RW access
+        String originalName = sftpFile.getFilename();
+        String newName = originalName + ".camel";
+        boolean exclusive = false;
+        while (! exclusive) {
+            try {
+                channel.rename(originalName, newName);
+                exclusive = true;
+            } catch (SftpException e) {
+                // ignore we can not rename it
+            }
+
+            if (exclusive) {
+                // rename it back so we can read it
+                channel.rename(newName, originalName);
+            } else {
+                LOG.trace("Exclusive read not granted. Sleeping for 1000 millis");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+            }
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Acquired exclusive read to: " + originalName);
         }
     }
 
@@ -193,5 +245,13 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
 
     public void setSetNames(boolean setNames) {
         this.setNames = setNames;
+    }
+
+    public boolean isExclusiveRead() {
+        return exclusiveRead;
+    }
+
+    public void setExclusiveRead(boolean exclusiveRead) {
+        this.exclusiveRead = exclusiveRead;
     }
 }
